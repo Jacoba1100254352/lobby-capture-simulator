@@ -147,6 +147,57 @@
           "format": "float4"
         }
       ]
+    },
+    {
+      "output": "interaction_snapshot.tex",
+      "source": "lobby-capture-interactions.csv",
+      "label": "tab:interactions",
+      "caption": "Selected reform-interaction rows. Substitution metrics report whether constrained influence survives by moving into less visible messengers or venues.",
+      "size": "scriptsize",
+      "rows": [
+        "interaction-enforcement-disclosure-0-35-0-35",
+        "interaction-enforcement-disclosure-1-25-1-25",
+        "interaction-financing-evasion-1-25-0-90",
+        "interaction-cooling-1-25-revolving-door"
+      ],
+      "columns": [
+        {
+          "header": "Scenario",
+          "source": "scenarioName",
+          "format": "label",
+          "labels": {
+            "Interaction enforcement 0.35 disclosure 0.35": "Low enforcement/disclosure",
+            "Interaction enforcement 1.25 disclosure 1.25": "High enforcement/disclosure",
+            "Interaction public financing 1.25 evasion 0.90": "Financing high/evasion high",
+            "Interaction cooling 1.25 strategy revolving-door": "Cooling high/revolving door"
+          }
+        },
+        {
+          "header": "Capture",
+          "source": "captureRate",
+          "format": "float4"
+        },
+        {
+          "header": "Hidden",
+          "source": "hiddenInfluenceShare",
+          "format": "float4"
+        },
+        {
+          "header": "Preserved",
+          "source": "influencePreservationRate",
+          "format": "float4"
+        },
+        {
+          "header": "Net transparency",
+          "source": "netTransparencyGain",
+          "format": "float4"
+        },
+        {
+          "header": "Comment uptake",
+          "source": "commentSubstantiveUptake",
+          "format": "float4"
+        }
+      ]
     }
   ]
 }

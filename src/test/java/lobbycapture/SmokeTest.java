@@ -38,8 +38,13 @@ public final class SmokeTest {
         require(open.adaptationSpeed() >= 0.0, "adaptation speed should be reported");
         require(open.reformDecayPressure() >= 0.0, "reform decay pressure should be reported");
         require(open.commentAuthenticity() >= 0.0 && open.commentAuthenticity() <= 1.0, "comment authenticity should stay bounded");
+        require(open.commentUniqueInformationShare() >= 0.0 && open.commentUniqueInformationShare() <= 1.0, "comment unique information should stay bounded");
+        require(open.commentReviewBurden() >= 0.0 && open.commentReviewBurden() <= 1.0, "comment review burden should stay bounded");
+        require(open.substitutionPressure() >= 0.0 && open.substitutionPressure() <= 1.0, "substitution pressure should stay bounded");
+        require(open.hiddenInfluenceShare() >= 0.0 && open.hiddenInfluenceShare() <= 1.0, "hidden influence should stay bounded");
+        require(open.netTransparencyGain() >= -1.0 && open.netTransparencyGain() <= 1.0, "net transparency gain should stay bounded");
         require(reformThreat.defensiveReformSpendShare() > 0.20, "reform threat should trigger defensive spending");
-        require(bundle.antiCaptureSuccessRate() >= reformThreat.antiCaptureSuccessRate(), "full bundle should preserve at least as much reform success as reform threat case");
+        require(bundle.captureRate() <= reformThreat.captureRate(), "full bundle should reduce capture relative to reform threat case");
         require(evasion.darkMoneySpendShare() >= bundle.darkMoneySpendShare(), "evasion scenario should shift toward dark money");
         require(evasion.evasionPenaltyRate() >= 0.0, "evasion penalty should stay non-negative");
         require(sensitivity.size() == 20, "sensitivity runner should cover reform and evasion sweeps");
@@ -73,6 +78,8 @@ public final class SmokeTest {
         String csvText = Files.readString(csv);
         String markdownText = Files.readString(markdown);
         String manifestText = Files.readString(manifest);
+        require(csvText.contains("commentUniqueInformationShare,commentReviewBurden,commentProceduralAckRate,commentSubstantiveUptake,commentCompressionRate"), csv + " should report comment triage state");
+        require(csvText.contains("substitutionPressure,influencePreservationRate,hiddenInfluenceShare,netTransparencyGain,messengerSubstitutionRate,venueSubstitutionRate"), csv + " should report substitution state");
         require(csvText.contains("clientFundingAdaptation,regulatorAttentionIndex,regulatorQueueBacklog,watchdogFocusIndex,watchdogBudgetConcentration,adaptationSpeed,reformDecayPressure"), csv + " should report adaptive state");
         require(csvText.lines().count() > 1, csv + " should contain report rows");
         require(markdownText.contains("Generated"), markdown + " should include provenance");

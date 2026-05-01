@@ -2,6 +2,8 @@ package lobbycapture.metrics;
 
 import lobbycapture.arena.ContestOutcome;
 import lobbycapture.policy.CaptureScoring;
+import lobbycapture.policy.CommentTriageModel;
+import lobbycapture.policy.CommentTriageReport;
 import lobbycapture.policy.PolicyContest;
 import lobbycapture.reform.ReformRegime;
 import lobbycapture.simulation.WorldState;
@@ -38,10 +40,21 @@ public final class MetricsAccumulator {
     private double commentRecordDistortionSum;
     private double commentAuthenticitySum;
     private double templateCommentSaturationSum;
+    private double commentUniqueInformationSum;
+    private double commentReviewBurdenSum;
+    private double commentProceduralAckSum;
+    private double commentSubstantiveUptakeSum;
+    private double commentCompressionSum;
     private double technicalClaimCredibilitySum;
     private double channelSwitchSum;
     private double evasionShiftSum;
     private double evasionPenaltySum;
+    private double substitutionPressureSum;
+    private double influencePreservationSum;
+    private double hiddenInfluenceSum;
+    private double transparencyGainSum;
+    private double messengerSubstitutionSum;
+    private double venueSubstitutionSum;
     private double clientFundingAdaptationSum;
     private double regulatorAttentionSum;
     private double regulatorQueueSum;
@@ -91,7 +104,10 @@ public final class MetricsAccumulator {
         regulatoryDriftSum += outcome.regulatoryDrift();
         enforcementForbearanceSum += outcome.enforcementForbearance();
         procurementBiasSum += outcome.procurementBias();
-        darkMoneyTraceabilitySum += Values.clamp(1.0 - contest.darkMoneyInfluence(), 0.0, 1.0);
+        double ledgerTraceability = world.contributionLedger().averageTraceability();
+        darkMoneyTraceabilitySum += ledgerTraceability == 0.0
+                ? Values.clamp(1.0 - contest.darkMoneyInfluence(), 0.0, 1.0)
+                : ledgerTraceability;
         largeDonorDependenceSum += Values.clamp(contest.campaignFinanceInfluence(), 0.0, 1.0);
         voucherParticipationSum += reform.democracyVoucherStrength();
         publicFinancingShareSum += reform.publicFinancingStrength();
@@ -99,10 +115,22 @@ public final class MetricsAccumulator {
         commentRecordDistortionSum += contest.commentRecordDistortion();
         commentAuthenticitySum += contest.docket().authenticityShare();
         templateCommentSaturationSum += contest.docket().templateSaturation();
+        CommentTriageReport triage = CommentTriageModel.triage(contest.docket(), contest, reform, commentReviewCapacity(contest, world, reform));
+        commentUniqueInformationSum += triage.uniqueInformationShare();
+        commentReviewBurdenSum += triage.reviewBurden();
+        commentProceduralAckSum += triage.proceduralAckRate();
+        commentSubstantiveUptakeSum += triage.substantiveUptakeRate();
+        commentCompressionSum += triage.duplicateCompressionRate();
         technicalClaimCredibilitySum += contest.docket().technicalClaimCredibility();
         channelSwitchSum += outcome.influenceResult().channelSwitches();
         evasionShiftSum += outcome.influenceResult().evasionShifts();
         evasionPenaltySum += outcome.evasionPenalty();
+        substitutionPressureSum += outcome.influenceResult().substitutionPressure();
+        influencePreservationSum += outcome.influenceResult().influencePreservationRate();
+        hiddenInfluenceSum += outcome.influenceResult().hiddenInfluenceShare();
+        transparencyGainSum += outcome.influenceResult().netTransparencyGain();
+        messengerSubstitutionSum += outcome.influenceResult().messengerSubstitutionRate();
+        venueSubstitutionSum += outcome.influenceResult().venueSubstitutionRate();
         clientFundingAdaptationSum += world.averageClientFundingMultiplier();
         regulatorAttentionSum += world.averageRegulatorAttention();
         regulatorQueueSum += world.averageRegulatorQueue();
@@ -159,10 +187,21 @@ public final class MetricsAccumulator {
                 commentRecordDistortionSum / total,
                 commentAuthenticitySum / total,
                 templateCommentSaturationSum / total,
+                commentUniqueInformationSum / total,
+                commentReviewBurdenSum / total,
+                commentProceduralAckSum / total,
+                commentSubstantiveUptakeSum / total,
+                commentCompressionSum / total,
                 technicalClaimCredibilitySum / total,
                 channelSwitchSum / total,
                 evasionShiftSum / total,
                 evasionPenaltySum / total,
+                substitutionPressureSum / total,
+                influencePreservationSum / total,
+                hiddenInfluenceSum / total,
+                transparencyGainSum / total,
+                messengerSubstitutionSum / total,
+                venueSubstitutionSum / total,
                 clientFundingAdaptationSum / total,
                 regulatorAttentionSum / total,
                 regulatorQueueSum / total,
@@ -186,5 +225,18 @@ public final class MetricsAccumulator {
 
     private static double ratio(int numerator, int denominator) {
         return denominator == 0 ? 0.0 : (double) numerator / denominator;
+    }
+
+    private static double commentReviewCapacity(PolicyContest contest, WorldState world, ReformRegime reform) {
+        return Values.clamp(
+                0.30
+                        + (0.28 * world.regulatorAttention(contest.issueDomain()))
+                        + (0.16 * reform.blindReviewStrength())
+                        + (0.14 * reform.publicAdvocateStrength())
+                        + (0.12 * reform.antiAstroturfStrength())
+                        - (0.20 * world.regulatorQueue(contest.issueDomain())),
+                0.0,
+                1.0
+        );
     }
 }

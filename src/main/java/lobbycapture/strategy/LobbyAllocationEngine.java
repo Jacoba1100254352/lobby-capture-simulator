@@ -5,6 +5,8 @@ import lobbycapture.arena.ContestOutcome;
 import lobbycapture.budget.ClientFundingModel;
 import lobbycapture.budget.ClientFundingResult;
 import lobbycapture.policy.CommentCampaign;
+import lobbycapture.policy.CommentTriageModel;
+import lobbycapture.policy.CommentTriageReport;
 import lobbycapture.policy.Docket;
 import lobbycapture.policy.ContestArena;
 import lobbycapture.policy.PolicyContest;
@@ -18,6 +20,7 @@ import java.util.List;
 
 public final class LobbyAllocationEngine {
     private final ClientFundingModel clientFundingModel = new ClientFundingModel();
+    private final InfluenceSubstitutionEngine substitutionEngine = new InfluenceSubstitutionEngine();
 
     public InfluenceResult apply(PolicyContest contest, WorldState world) {
         ReformRegime reform = world.reformRegime();
@@ -26,6 +29,13 @@ public final class LobbyAllocationEngine {
         double defensiveSpend = 0.0;
         int channelSwitches = 0;
         int evasionShifts = 0;
+        double substitutionWeightSum = 0.0;
+        double substitutionPressureSum = 0.0;
+        double influencePreservationSum = 0.0;
+        double hiddenInfluenceSum = 0.0;
+        double transparencyGainSum = 0.0;
+        double messengerSubstitutionSum = 0.0;
+        double venueSubstitutionSum = 0.0;
         double lobbyPressure = contest.lobbyPressure();
         double perceivedSupport = contest.perceivedPublicSupport();
         double publicBenefit = contest.truePublicBenefit();
@@ -56,7 +66,8 @@ public final class LobbyAllocationEngine {
                 continue;
             }
             StrategyMemory memory = world.memoryFor(group.id(), group.initialStrategy());
-            InfluenceStrategy strategy = selectStrategy(group, contest, reform, world, memory);
+            SubstitutionProfile substitution = substitutionEngine.evaluate(group, contest, reform, world, memory.currentStrategy());
+            InfluenceStrategy strategy = selectStrategy(group, contest, reform, world, memory, substitution);
             double spendIntent = contest.antiCaptureReform()
                     ? DefensiveReformStrategy.spendIntent(group, contest) * memory.reformThreat()
                     : supportiveSpendIntent(group, contest, preference);
@@ -79,10 +90,20 @@ public final class LobbyAllocationEngine {
                 memory.recordEvasionShift();
                 evasionShifts++;
             }
+            if (strategy != memory.currentStrategy() && substitution.hiddenInfluenceShare() > 0.08) {
+                evasionShifts++;
+            }
 
             ChannelAllocation allocation = ChannelAllocation.forStrategy(strategy, spend);
             totalAllocation = totalAllocation.plus(allocation);
             totalSpend += spend;
+            substitutionWeightSum += spend;
+            substitutionPressureSum += spend * substitution.substitutionPressure();
+            influencePreservationSum += spend * substitution.influencePreservationRate();
+            hiddenInfluenceSum += spend * substitution.hiddenInfluenceShare();
+            transparencyGainSum += spend * substitution.netTransparencyGain();
+            messengerSubstitutionSum += spend * substitution.messengerSubstitutionRate();
+            venueSubstitutionSum += spend * substitution.venueSubstitutionRate();
             if (contest.antiCaptureReform()) {
                 defensiveSpend += spend;
             }
@@ -135,6 +156,14 @@ public final class LobbyAllocationEngine {
             }
         }
 
+        CommentTriageReport triage = CommentTriageModel.triage(docket, contest, reform, commentReviewCapacity(contest, world, reform));
+        if (contest.arena() == ContestArena.RULEMAKING || contest.arena() == ContestArena.PUBLIC_INFORMATION) {
+            commentRecordDistortion += triage.recordDistortion() * 0.075;
+            publicBenefit += triage.substantiveUptakeRate() * triage.effectiveInformationWeight() * 0.030;
+            perceivedSupport += (triage.proceduralAckRate() - 0.50) * contest.salience() * 0.025;
+            informationDistortion += triage.reviewBurden() * triage.recordDistortion() * 0.030;
+        }
+
         double financingCorrection = reform.campaignFinanceCounterweight();
         if (financingCorrection > 0.0) {
             perceivedSupport += financingCorrection * (publicBenefit - perceivedSupport) * 0.22;
@@ -167,6 +196,12 @@ public final class LobbyAllocationEngine {
                 funding.averageDisclosureLag(),
                 channelSwitches,
                 evasionShifts,
+                weighted(substitutionPressureSum, substitutionWeightSum),
+                weighted(influencePreservationSum, substitutionWeightSum),
+                weighted(hiddenInfluenceSum, substitutionWeightSum),
+                weighted(transparencyGainSum, substitutionWeightSum),
+                weighted(messengerSubstitutionSum, substitutionWeightSum),
+                weighted(venueSubstitutionSum, substitutionWeightSum),
                 records
         );
     }
@@ -192,10 +227,14 @@ public final class LobbyAllocationEngine {
             PolicyContest contest,
             ReformRegime reform,
             WorldState world,
-            StrategyMemory memory
+            StrategyMemory memory,
+            SubstitutionProfile substitution
     ) {
         if (contest.antiCaptureReform()) {
             return InfluenceStrategy.DEFENSIVE_REFORM;
+        }
+        if (substitution.selectedStrategy() != memory.currentStrategy()) {
+            return substitution.selectedStrategy();
         }
         if (world.evasionFreedom() > 0.0
                 && reform.transparencyStrength() >= 0.52
@@ -279,6 +318,23 @@ public final class LobbyAllocationEngine {
             result -= 0.20 + (0.20 * outcome.sanctionCost());
         }
         return Values.clamp(result, -1.0, 1.0);
+    }
+
+    private static double commentReviewCapacity(PolicyContest contest, WorldState world, ReformRegime reform) {
+        return Values.clamp(
+                0.30
+                        + (0.28 * world.regulatorAttention(contest.issueDomain()))
+                        + (0.16 * reform.blindReviewStrength())
+                        + (0.14 * reform.publicAdvocateStrength())
+                        + (0.12 * reform.antiAstroturfStrength())
+                        - (0.20 * world.regulatorQueue(contest.issueDomain())),
+                0.0,
+                1.0
+        );
+    }
+
+    private static double weighted(double numerator, double denominator) {
+        return denominator == 0.0 ? 0.0 : Values.clamp(numerator / denominator, -1.0, 1.0);
     }
 
     private static LobbyOrganization findLobby(WorldState world, String id) {

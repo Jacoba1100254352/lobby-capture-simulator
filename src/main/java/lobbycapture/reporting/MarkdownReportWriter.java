@@ -19,8 +19,8 @@ public final class MarkdownReportWriter {
         builder.append("- Contests per run: `").append(provenance.contestsPerRun()).append("`\n\n");
 
         builder.append("## Scenario Summary\n\n");
-        builder.append("| Scenario | Directional | Capture rate | Anti-capture success | Defensive spend | Dark-money share | Client funding | Reg attention | Reg queue | Watchdog focus | Adapt speed | Reform decay | Detection | Admin cost |\n");
-        builder.append("| --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |\n");
+        builder.append("| Scenario | Directional | Capture rate | Anti-capture success | Defensive spend | Dark-money share | Hidden influence | Influence preserved | Comment info | Comment burden | Detection | Admin cost |\n");
+        builder.append("| --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |\n");
         for (ScenarioReport report : reports.stream().sorted(Comparator.comparing(ScenarioReport::directionalScore).reversed()).toList()) {
             builder.append("| ").append(report.scenarioName())
                     .append(" | ").append(CsvReportWriter.format(report.directionalScore()))
@@ -28,12 +28,10 @@ public final class MarkdownReportWriter {
                     .append(" | ").append(CsvReportWriter.format(report.antiCaptureSuccessRate()))
                     .append(" | ").append(CsvReportWriter.format(report.defensiveReformSpendShare()))
                     .append(" | ").append(CsvReportWriter.format(report.darkMoneySpendShare()))
-                    .append(" | ").append(CsvReportWriter.format(report.clientFundingPerContest()))
-                    .append(" | ").append(CsvReportWriter.format(report.regulatorAttentionIndex()))
-                    .append(" | ").append(CsvReportWriter.format(report.regulatorQueueBacklog()))
-                    .append(" | ").append(CsvReportWriter.format(report.watchdogFocusIndex()))
-                    .append(" | ").append(CsvReportWriter.format(report.adaptationSpeed()))
-                    .append(" | ").append(CsvReportWriter.format(report.reformDecayPressure()))
+                    .append(" | ").append(CsvReportWriter.format(report.hiddenInfluenceShare()))
+                    .append(" | ").append(CsvReportWriter.format(report.influencePreservationRate()))
+                    .append(" | ").append(CsvReportWriter.format(report.commentUniqueInformationShare()))
+                    .append(" | ").append(CsvReportWriter.format(report.commentReviewBurden()))
                     .append(" | ").append(CsvReportWriter.format(report.detectionRate()))
                     .append(" | ").append(CsvReportWriter.format(report.administrativeCostIndex()))
                     .append(" |\n");
@@ -52,6 +50,8 @@ public final class MarkdownReportWriter {
                     .append(CsvReportWriter.format(reformThreat.antiCaptureSuccessRate()))
                     .append("`, channel switch rate: `")
                     .append(CsvReportWriter.format(reformThreat.channelSwitchRate()))
+                    .append("`, hidden influence: `")
+                    .append(CsvReportWriter.format(reformThreat.hiddenInfluenceShare()))
                     .append("`.\n");
         }
         if (fullBundle != null) {
@@ -70,6 +70,8 @@ public final class MarkdownReportWriter {
                     .append(CsvReportWriter.format(evasion.evasionShiftRate()))
                     .append("`, evasion penalty: `")
                     .append(CsvReportWriter.format(evasion.evasionPenaltyRate()))
+                    .append("`, influence preserved: `")
+                    .append(CsvReportWriter.format(evasion.influencePreservationRate()))
                     .append("`, anti-capture success: `")
                     .append(CsvReportWriter.format(evasion.antiCaptureSuccessRate()))
                     .append("`.\n");

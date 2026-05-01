@@ -1,11 +1,11 @@
 {
   "report": "lobby-capture-ablation",
-  "generatedAt": "2026-05-01T18:22:19.964297Z",
+  "generatedAt": "2026-05-01T22:12:17.833799Z",
   "seed": 242,
   "runs": 40,
   "contestsPerRun": 80,
   "command": "lobbycapture.Main --ablation --runs 40 --contests 80 --seed 242",
-  "gitCommit": "01bd84d",
+  "gitCommit": "a990360",
   "workingTreeDirty": true,
   "javaVersion": "25",
   "calibrationChecksum": "2363be900dbfe92773731c7caa2746c426541a8b74af5a67029138abd2cd321b",

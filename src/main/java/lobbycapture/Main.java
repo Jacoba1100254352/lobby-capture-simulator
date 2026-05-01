@@ -69,6 +69,10 @@ public final class Main {
         System.out.println("darkMoneySpendShare=" + format(report.darkMoneySpendShare()));
         System.out.println("channelSwitchRate=" + format(report.channelSwitchRate()));
         System.out.println("evasionShiftRate=" + format(report.evasionShiftRate()));
+        System.out.println("hiddenInfluenceShare=" + format(report.hiddenInfluenceShare()));
+        System.out.println("influencePreservationRate=" + format(report.influencePreservationRate()));
+        System.out.println("commentUniqueInformationShare=" + format(report.commentUniqueInformationShare()));
+        System.out.println("commentReviewBurden=" + format(report.commentReviewBurden()));
         System.out.println("detectionRate=" + format(report.detectionRate()));
         System.out.println("directionalScore=" + format(report.directionalScore()));
     }

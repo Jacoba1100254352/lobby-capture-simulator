@@ -1,0 +1,6 @@
+source,recipient,issueDomain,amount,flowType,traceability,largeDonorShare
+Finance Leadership PAC,incumbent-a,finance,6.8,PAC,0.72,0.84
+Energy Independent Expenditure,incumbent-a,energy,4.6,SUPER_PAC,0.58,0.76
+Platform Civic Fund,challenger-b,technology,3.9,DARK_MONEY,0.24,0.69
+Small Donor Match Pool,challenger-b,democracy,3.1,PUBLIC_MATCH,0.96,0.18
+Voucher Participants,challenger-b,democracy,2.4,DEMOCRACY_VOUCHER,0.98,0.08

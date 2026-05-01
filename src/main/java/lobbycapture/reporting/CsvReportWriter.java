@@ -8,7 +8,7 @@ import java.util.Locale;
 public final class CsvReportWriter {
     public String write(List<ScenarioReport> reports, ReportProvenance provenance) {
         StringBuilder builder = new StringBuilder();
-        builder.append("generatedAt,seed,runs,contestsPerRun,scenarioKey,scenarioName,totalContests,capturedContests,antiCaptureReforms,enactedAntiCaptureReforms,directionalScore,captureControl,representation,reformFeasibility,captureRate,antiCaptureSuccess,avgCaptureIndex,avgPublicInterest,publicPreferenceDistortion,privateGainRatio,lobbySpendPerContest,clientFundingPerContest,donorInfluenceGini,averageDisclosureLag,defensiveReformSpendShare,captureReturnOnSpend,publicBenefitPerInfluenceDollar,directAccessShare,agendaAccessShare,informationDistortionShare,publicCampaignShare,litigationThreatShare,campaignFinanceShare,darkMoneyShare,revolvingDoorShare,defensiveChannelShare,detectionRate,sanctionRate,policyDistortion,regulatoryDrift,enforcementForbearance,procurementBias,darkMoneyTraceability,largeDonorDependence,voucherParticipation,publicFinancingShare,revolvingDoorInfluence,commentRecordDistortion,commentAuthenticity,templateCommentSaturation,technicalClaimCredibility,channelSwitchRate,evasionShiftRate,evasionPenaltyRate,clientFundingAdaptation,regulatorAttentionIndex,regulatorQueueBacklog,watchdogFocusIndex,watchdogBudgetConcentration,adaptationSpeed,reformDecayPressure,legitimateAdvocacyChill,constitutionalChallengeDelay,administrativeCost\n");
+        builder.append("generatedAt,seed,runs,contestsPerRun,scenarioKey,scenarioName,totalContests,capturedContests,antiCaptureReforms,enactedAntiCaptureReforms,directionalScore,captureControl,representation,reformFeasibility,captureRate,antiCaptureSuccess,avgCaptureIndex,avgPublicInterest,publicPreferenceDistortion,privateGainRatio,lobbySpendPerContest,clientFundingPerContest,donorInfluenceGini,averageDisclosureLag,defensiveReformSpendShare,captureReturnOnSpend,publicBenefitPerInfluenceDollar,directAccessShare,agendaAccessShare,informationDistortionShare,publicCampaignShare,litigationThreatShare,campaignFinanceShare,darkMoneyShare,revolvingDoorShare,defensiveChannelShare,detectionRate,sanctionRate,policyDistortion,regulatoryDrift,enforcementForbearance,procurementBias,darkMoneyTraceability,largeDonorDependence,voucherParticipation,publicFinancingShare,revolvingDoorInfluence,commentRecordDistortion,commentAuthenticity,templateCommentSaturation,commentUniqueInformationShare,commentReviewBurden,commentProceduralAckRate,commentSubstantiveUptake,commentCompressionRate,technicalClaimCredibility,channelSwitchRate,evasionShiftRate,evasionPenaltyRate,substitutionPressure,influencePreservationRate,hiddenInfluenceShare,netTransparencyGain,messengerSubstitutionRate,venueSubstitutionRate,clientFundingAdaptation,regulatorAttentionIndex,regulatorQueueBacklog,watchdogFocusIndex,watchdogBudgetConcentration,adaptationSpeed,reformDecayPressure,legitimateAdvocacyChill,constitutionalChallengeDelay,administrativeCost\n");
         for (ScenarioReport report : reports) {
             builder.append(provenance.generatedAt()).append(',')
                     .append(provenance.seed()).append(',')
@@ -60,10 +60,21 @@ public final class CsvReportWriter {
                     .append(format(report.commentRecordDistortion())).append(',')
                     .append(format(report.commentAuthenticity())).append(',')
                     .append(format(report.templateCommentSaturation())).append(',')
+                    .append(format(report.commentUniqueInformationShare())).append(',')
+                    .append(format(report.commentReviewBurden())).append(',')
+                    .append(format(report.commentProceduralAckRate())).append(',')
+                    .append(format(report.commentSubstantiveUptake())).append(',')
+                    .append(format(report.commentCompressionRate())).append(',')
                     .append(format(report.technicalClaimCredibility())).append(',')
                     .append(format(report.channelSwitchRate())).append(',')
                     .append(format(report.evasionShiftRate())).append(',')
                     .append(format(report.evasionPenaltyRate())).append(',')
+                    .append(format(report.substitutionPressure())).append(',')
+                    .append(format(report.influencePreservationRate())).append(',')
+                    .append(format(report.hiddenInfluenceShare())).append(',')
+                    .append(format(report.netTransparencyGain())).append(',')
+                    .append(format(report.messengerSubstitutionRate())).append(',')
+                    .append(format(report.venueSubstitutionRate())).append(',')
                     .append(format(report.clientFundingAdaptation())).append(',')
                     .append(format(report.regulatorAttentionIndex())).append(',')
                     .append(format(report.regulatorQueueBacklog())).append(',')

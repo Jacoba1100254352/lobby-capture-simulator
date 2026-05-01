@@ -13,6 +13,8 @@ Initial validation targets:
 
 The implementation stores benchmark metadata in `data/calibration/empirical-benchmarks.csv`, normalized fixture rows in `data/fixtures/`, and source-native JSON parser fixtures in `data/fixtures/source-native/`. The fixture scripts copy normalized rows into `data/raw/` so calibration behavior can be reproduced without network access.
 
+The Deep Research reports are distilled into `docs/research/research-synthesis.md` and `data/calibration/parameter-map.csv`. The parameter map is the preferred place to add new empirical moments because it records a model metric, low/mid/high prior, evidence class, source report, model target, and implementation status.
+
 Current calibration links:
 
 - `normalized-lda-lobbying.csv` constrains issue funding scale, issue mix, and disclosure lag.
@@ -39,4 +41,13 @@ Source-native live variables:
 
 The source-native normalizers are distributional bridges. `scripts/test-source-fetchers.py` verifies representative LDA, OpenFEC, Regulations.gov, and Federal Register JSON payloads against exact normalized rows before any live API output is used as a paper snapshot.
 
-`make validate` compares committed report snapshots against `data/calibration/empirical-benchmarks.csv` and writes `reports/validation-summary.csv` plus `reports/validation-summary.md`. Current benchmark rows are deliberately broad plausibility bands. Future research should split each row into observed, proxy, and judgmental calibration classes before the paper treats fit statistics as meaningful evidence.
+`make validate` compares committed report snapshots against both `data/calibration/empirical-benchmarks.csv` and implemented rows in `data/calibration/parameter-map.csv`. It writes `reports/validation-summary.csv` plus `reports/validation-summary.md`, including counts by evidence class. Current benchmark rows are deliberately broad plausibility bands; misses should be read as calibration work queues, not model falsification.
+
+The next paper-grade snapshot is fixed to a closed 2024 environmental slice:
+
+- LDA: 2024 Q1-Q4 LD-2 activity reports, post-filtered to `ENV` and EPA-facing contacts where possible.
+- FEC: 2024 cycle records for the six national party committees, with lobbyist bundled contributions as an optional auxiliary slice.
+- Regulations.gov: EPA documents, dockets, and comments posted in 2024.
+- Federal Register: EPA 2024 rules and proposed rules.
+
+Run `make snapshot-2024-env` after source-native fetches to freeze normalized rows under `data/snapshots/2024-env/` and write a machine-readable manifest with row counts, request templates, hashes, and Git state.

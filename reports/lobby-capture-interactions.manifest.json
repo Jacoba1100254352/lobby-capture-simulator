@@ -1,11 +1,11 @@
 {
   "report": "lobby-capture-interactions",
-  "generatedAt": "2026-05-01T18:24:54.552639Z",
+  "generatedAt": "2026-05-01T22:12:19.360712Z",
   "seed": 342,
   "runs": 25,
   "contestsPerRun": 60,
   "command": "lobbycapture.Main --interactions --runs 25 --contests 60 --seed 342",
-  "gitCommit": "01bd84d",
+  "gitCommit": "a990360",
   "workingTreeDirty": true,
   "javaVersion": "25",
   "calibrationChecksum": "2363be900dbfe92773731c7caa2746c426541a8b74af5a67029138abd2cd321b",

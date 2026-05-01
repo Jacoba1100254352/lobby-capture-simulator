@@ -9,17 +9,21 @@ from pathlib import Path
 
 
 BENCHMARKS = Path("data/calibration/empirical-benchmarks.csv")
+PARAMETER_MAP = Path("data/calibration/parameter-map.csv")
 REPORTS = Path("reports")
 
 
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--benchmarks", type=Path, default=BENCHMARKS)
+    parser.add_argument("--parameter-map", type=Path, default=PARAMETER_MAP)
     parser.add_argument("--reports", type=Path, default=REPORTS)
     parser.add_argument("--output", type=Path, default=REPORTS)
     args = parser.parse_args()
 
     benchmarks = read_benchmarks(args.benchmarks)
+    if args.parameter_map.exists():
+        benchmarks.extend(read_parameter_map(args.parameter_map))
     report_paths = sorted(args.reports.glob("lobby-capture-*.csv"))
     report_paths = [path for path in report_paths if path.name != "validation-summary.csv"]
     if not report_paths:
@@ -38,7 +42,34 @@ def main() -> int:
 
 def read_benchmarks(path: Path) -> list[dict[str, str]]:
     with path.open(newline="", encoding="utf-8") as source:
-        return list(csv.DictReader(source))
+        rows = []
+        for row in csv.DictReader(source):
+            row.setdefault("evidenceType", "benchmark")
+            row.setdefault("targetKind", "report_metric")
+            rows.append(row)
+        return rows
+
+
+def read_parameter_map(path: Path) -> list[dict[str, str]]:
+    rows = []
+    with path.open(newline="", encoding="utf-8") as source:
+        for row in csv.DictReader(source):
+            if row.get("implementationStatus") == "planned":
+                continue
+            rows.append(
+                {
+                    "key": "parameter-map:" + row["parameter"],
+                    "source": row["sourceReport"],
+                    "observable": row["modelTarget"],
+                    "metric": row["modelMetric"],
+                    "min": row["low"],
+                    "max": row["high"],
+                    "notes": row["notes"],
+                    "evidenceType": row["evidenceType"],
+                    "targetKind": row["implementationStatus"],
+                }
+            )
+    return rows
 
 
 def validate_report(report: Path, benchmarks: list[dict[str, str]]) -> list[dict[str, str]]:
@@ -92,6 +123,8 @@ def summary_row(
         "status": status,
         "source": benchmark["source"],
         "observable": benchmark["observable"],
+        "evidenceType": benchmark.get("evidenceType", "benchmark"),
+        "targetKind": benchmark.get("targetKind", "report_metric"),
         "notes": benchmark["notes"],
         "validationNote": validation_note,
     }
@@ -109,11 +142,13 @@ def write_csv(path: Path, rows: list[dict[str, str]]) -> None:
         "status",
         "source",
         "observable",
+        "evidenceType",
+        "targetKind",
         "notes",
         "validationNote",
     ]
     with path.open("w", newline="", encoding="utf-8") as destination:
-        writer = csv.DictWriter(destination, fieldnames=fieldnames)
+        writer = csv.DictWriter(destination, fieldnames=fieldnames, lineterminator="\n")
         writer.writeheader()
         writer.writerows(rows)
 
@@ -130,9 +165,21 @@ def write_markdown(path: Path, rows: list[dict[str, str]]) -> None:
         f"- Miss: `{counts['miss']}`",
         f"- Unknown: `{counts['unknown']}`",
         "",
+        "## Evidence Classes",
+        "",
+    ]
+    for evidence_type in sorted({row["evidenceType"] for row in rows}):
+        evidence_rows = [row for row in rows if row["evidenceType"] == evidence_type]
+        fit = sum(1 for row in evidence_rows if row["status"] == "fit")
+        partial = sum(1 for row in evidence_rows if row["status"] == "partial")
+        miss = sum(1 for row in evidence_rows if row["status"] == "miss")
+        unknown = sum(1 for row in evidence_rows if row["status"] == "unknown")
+        lines.append(f"- `{evidence_type}`: fit `{fit}`, partial `{partial}`, miss `{miss}`, unknown `{unknown}`")
+    lines.extend([
+        "",
         "| Report | Metric | Observed | Benchmark | Status | Note |",
         "| --- | --- | ---: | ---: | --- | --- |",
-    ]
+    ])
     for row in rows:
         observed = range_label(row["observedMin"], row["observedMax"])
         benchmark = range_label(row["benchmarkMin"], row["benchmarkMax"])

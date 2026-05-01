@@ -14,7 +14,7 @@
 \maketitle
 
 \begin{abstract}
-This paper introduces the Lobby Capture Simulator, a Java-based agent simulation focused on lobbying, money in politics, regulatory capture, and anti-capture reform. Unlike a legislature-centered institutional simulator where lobbying is one modifier on votes, this model treats organized interests as the central strategic actors. Lobby organizations allocate finite budgets across direct access, agenda access, information distortion, public campaigns, litigation threats, campaign finance, dark money, revolving-door access, and defensive spending against reform. The first runnable slice tests whether meaningful anti-capture reform threats cause organized interests to shift from ordinary policy capture into defensive reform blocking, and whether bundled reforms remain effective after that adaptation.
+This paper introduces the Lobby Capture Simulator, a Java-based agent simulation focused on lobbying, money in politics, regulatory capture, and anti-capture reform. Unlike a legislature-centered institutional simulator where lobbying is one modifier on votes, this model treats organized interests as the central strategic actors. Lobby organizations allocate finite budgets across direct access, agenda access, information distortion, public campaigns, litigation threats, campaign finance, dark money, revolving-door access, and defensive spending against reform. The current slice tests whether anti-capture reforms suppress influence or shift it into adjacent channels, and whether rulemaking comment systems amplify information or distort the public record.
 \end{abstract}
 
 \section{Motivation}
@@ -22,6 +22,12 @@ This paper introduces the Lobby Capture Simulator, a Java-based agent simulation
 Lobbying and regulatory capture are not merely legislative pressure terms. Organized interests can shape outcomes through campaign finance, public-information distortion, technical comments, litigation delay, procurement design, enforcement priorities, and post-government employment incentives. A useful simulation must therefore model lobbying as an influence economy rather than as a scalar attached to a bill.
 
 The project is intended for comparative institutional analysis. The first priority is to make assumptions explicit enough that reform bundles can be stress-tested against adaptation and evasion. Empirical data are used as plausibility constraints for spending, disclosure, campaign finance, rulemaking, and procurement distributions, not as causal identification by themselves.
+
+\section{Stage-and-Channel Framework}
+
+The model follows a stage-and-channel view of capture. Organized interests can influence electoral selection, legislative agenda setting, agency drafting, notice-and-comment rulemaking, enforcement, litigation, procurement, and implementation. At each stage, the available channels differ: campaign finance is valuable around elections, technical comments and ex parte access are valuable around rulemaking, litigation threats are valuable after an unfavorable rule, and procurement relationships matter during implementation.
+
+The central behavioral assumption is channel substitution. When a reform raises the cost of one route, organized interests first try nearby routes that preserve donors, vendors, messengers, relationships, or policy objectives. Direct giving can become outside spending or dark money; registered lobbying can become advisory work; public comments can become sponsored expert submissions or litigation; procurement lobbying can become consulting or subcontracting pressure. The simulator therefore reports both visible channel mix and inferred hidden influence, because some reforms improve one disclosure surface while moving influence elsewhere \cite{dalbo2006capture,carpenterMoss2014,oecdLobbying2021,brennanDarkMoney2025}.
 
 \section{Model Overview}
 
@@ -31,8 +37,8 @@ Each tick follows six steps:
 
 \begin{enumerate}
   \item A policy contest is selected from the scenario's contest mix.
-  \item Lobby organizations choose a strategy and allocate finite budgets.
-  \item Influence channels modify public support, public benefit, private gain, information distortion, dark-money influence, revolving-door influence, campaign finance influence, and litigation threat.
+  \item Lobby organizations choose a strategy, evaluate substitution pressure, and allocate finite budgets.
+  \item Influence channels modify public support, public benefit, private gain, information distortion, dark-money influence, revolving-door influence, campaign finance influence, litigation threat, comment-record quality, and hidden influence.
   \item The relevant arena resolves the contest under the active reform regime.
   \item Enforcement may detect and sanction capture attempts.
   \item Lobby organizations update strategy memory and issue-specific spending multipliers.
@@ -66,6 +72,17 @@ where \(B_{l,j,t}\) is spendable channel budget, \(I_l\) is influence intensity,
 
 Rulemaking contests carry a docket. Comment campaigns are generated from public-campaign, dark-money, and information-distortion spending. Anti-astroturf strength raises authentication and reduces synthetic comments; sponsor expertise and information bias affect technical-claim credibility. The arena then resolves the contest using the resulting docket authenticity, template saturation, and information distortion.
 
+Comment records are triaged before reporting. A docket is divided into a unique-information core, organized technical content, template saturation, and astroturf or misattributed comments. Duplicate compression, authentication confidence, review burden, procedural acknowledgment, and substantive uptake are calculated separately. This reflects the administrative-law design point that raw comment volume is a noisy salience signal, not a measure of evidentiary quality \cite{acusMassComments2021,nyagFakeComments2021}.
+
+The substitution engine calculates a switch score:
+
+\[
+S_{l,t} =
+E[I] + C_m + A_n + V_o - L_c - D_c - T_s,
+\]
+
+where \(E[I]\) is expected influence under the substitute route, \(C_m\) is messenger credibility, \(A_n\) is anonymity value, \(V_o\) is vendor and relationship overlap, \(L_c\) is legal cost, \(D_c\) is disclosure cost, and \(T_s\) is setup time. The result is not a one-for-one channel replacement. Reports summarize substitution pressure, influence preserved, hidden influence, messenger substitution, venue substitution, and net transparency gain.
+
 Enforcement applies after contest resolution. Detection probability increases with audit rate, enforcement budget, sanctions, public visibility, and evasion legal risk. When detected, sanctions reduce capture effects and add an evasion penalty. This makes evasion valuable only when opacity gains exceed the expected enforcement and disclosure costs.
 
 \section{First Campaign Snapshot}
@@ -88,19 +105,25 @@ Ablation reporting removes one reform component from the full anti-capture bundl
 
 \input{tables/ablation_snapshot.tex}
 
+\section{Interaction Snapshot}
+
+The interaction sweep varies enforcement, disclosure, public financing, evasion freedom, cooling off rules, and revolving door strategy. Table~\ref{tab:interactions} reports selected interaction-runner rows: 25 runs per scenario, 60 contests per run, seed 342. These rows are useful because they separate nominal reform strength from substitution response. A reform can lower visible pressure while preserving influence through hidden messengers or alternate venues.
+
+\input{tables/interaction_snapshot.tex}
+
 \section{Empirical Bridge}
 
-The implementation separates empirical distributional anchors from causal mechanisms. Normalized LDA fixture rows constrain issue funding scale and disclosure lag. Normalized FEC rows constrain donor concentration, public-financing share, and traceability. Normalized Federal Register and Regulations.gov fixture rows constrain docket size, comment authenticity, template saturation, and technical-claim credibility.
+The implementation separates empirical distributional anchors from causal mechanisms. Normalized LDA fixture rows constrain issue funding scale and disclosure lag. Normalized FEC rows constrain donor concentration, public-financing share, and traceability. Normalized Federal Register and Regulations.gov fixture rows constrain docket size, comment authenticity, template saturation, and technical-claim credibility. The parameter map in \texttt{data/calibration/parameter-map.csv} records the intended low, middle, and high ranges for disclosure timing, money concentration, dark-money traceability, comment manipulation, enforcement backlog, procurement concentration, revolving-door share, voucher participation, and substitution.
 
 Those inputs do not estimate the causal effect of a disclosure rule, voucher system, or cooling-off ban. They provide plausible ranges for the simulation state variables. The default fetch workflow copies deterministic fixtures into \texttt{data/raw/}; optional \texttt{--live} modes normalize caller-provided CSV paths or URLs into the same schemas. The causal structure remains explicit in the model equations and arena rules, so validation should compare simulated distributions and directional responses against external data before treating any scenario ranking as substantively reliable.
 
 \section{Validation Plan}
 
-Validation will proceed in layers. LDA data constrain lobbying budgets, clients, registrants, and issue distributions. FEC data constrain campaign finance concentration and outside-spending pressure. Federal Register and Regulations.gov data constrain rulemaking timing, docket volume, comment volume, and agency/topic mix. Voteview and govinfo bill status data constrain legislative arena baselines. Seattle democracy voucher and New York City public matching-funds data constrain public-financing scenarios. USAspending data constrain procurement exposure and recipient concentration \cite{ldaData,fecData,federalRegisterApi,regulationsGovApi,voteview,seattleVouchers,usaspending}.
+Validation proceeds in layers. First, parser and fixture tests ensure stable schemas. Second, \texttt{make validate} compares report metrics against broad benchmark ranges and the typed parameter map. Third, the first paper-grade snapshot freezes a closed 2024 EPA/ENV slice: LDA ENV filings, EPA Federal Register documents, EPA Regulations.gov dockets/comments, and 2024 FEC party-committee data. Later snapshots can add health, transportation, USAspending procurement panels, DIME, and LobbyView once the environmental slice is stable \cite{ldaData,fecData,federalRegisterApi,regulationsGovApi,seattleVouchers,usaspending}.
 
 \section{Next Work}
 
-The next model increment should replace generic live CSV hooks with source-native LDA, FEC, Federal Register, and Regulations.gov downloaders. The next behavioral increment should let clients, regulators, and watchdogs adapt over longer horizons. The next paper increment should generate LaTeX tables from stable CSV snapshots instead of copying values by hand.
+The next model increment should add explicit top-k concentration moments for lobbying clients, donors, and procurement recipients. The next data increment should run the 2024 EPA/ENV live snapshot with credentials and preserve raw payloads plus normalized tables. The next paper increment should convert the interaction table into figures that show where reforms complement one another and where they simply reroute influence.
 
 \bibliographystyle{plain}
 \bibliography{references}

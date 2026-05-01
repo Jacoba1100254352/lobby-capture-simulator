@@ -17,6 +17,10 @@ public record MetricDefinition(String key, String label, MetricDirection directi
         return 1.0 - Values.clamp(value, 0.0, 1.0);
     }
 
+    public static double normalizeSigned(double value) {
+        return Values.clamp((value + 1.0) / 2.0, 0.0, 1.0);
+    }
+
     public static double average(double... values) {
         if (values.length == 0) {
             return 0.0;
@@ -28,4 +32,3 @@ public record MetricDefinition(String key, String label, MetricDirection directi
         return sum / values.length;
     }
 }
-

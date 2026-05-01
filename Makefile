@@ -6,7 +6,7 @@ TEST_SOURCES := $(shell find src/test/java -name "*.java" | sort)
 MAIN_CLASS := lobbycapture.Main
 TEST_CLASSES := lobbycapture.SmokeTest lobbycapture.AdaptationTest
 
-.PHONY: compile test run campaign sensitivity ablation interactions validate tables paper clean
+.PHONY: compile test run campaign sensitivity ablation interactions validate snapshot-2024-env tables paper clean
 
 compile:
 	@mkdir -p out/classes
@@ -37,6 +37,9 @@ interactions: compile
 
 validate:
 	python3 scripts/validate-reports.py
+
+snapshot-2024-env:
+	python3 scripts/create-2024-env-snapshot.py
 
 tables:
 	python3 scripts/generate-paper-tables.py

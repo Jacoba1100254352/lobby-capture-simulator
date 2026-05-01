@@ -1,0 +1,27 @@
+parameter,modelMetric,low,mid,high,evidenceType,sourceReport,modelTarget,implementationStatus,notes
+lobbying_disclosure_lag,averageDisclosureLag,0.20,0.30,0.45,observed,deep-research-report3.md,Disclosure timing distribution,implemented,Normalized analog for 20-45 day usable public visibility.
+campaign_disclosure_lag,averageDisclosureLag,0.01,0.25,0.90,observed,deep-research-report3.md,Fast and periodic campaign visibility,partial,Current metric averages lobbying and campaign source visibility.
+lobbying_sector_concentration,clientFundingAdaptation,0.07,0.09,0.11,inferred,deep-research-report3.md,Top sector share,planned,Requires source snapshot or synthetic top-k report moment.
+lobbying_client_concentration,donorInfluenceGini,0.005,0.010,0.015,proxy,deep-research-report3.md,Top client share,partial,Current report uses donor Gini rather than explicit top-client share.
+top_100_donor_concentration,largeDonorDependence,0.10,0.15,0.20,observed_proxy,deep-research-report3.md,Concentrated electoral funding,implemented,Large donor dependence remains under-calibrated in current snapshots.
+super_pac_large_donor_dependence,largeDonorDependence,0.60,0.70,0.80,observed,deep-research-report3.md,High-end outside-spending dependence,implemented,Use for campaign-dominant and dark-money stress scenarios.
+dark_money_direct_traceability,darkMoneyTraceability,0.02,0.05,0.10,inferred,deep-research-report3.md,Directly visible dark-money share,partial,Current metric reports modeled traceability; future work should split dark-only traceability.
+dark_money_super_pac_routing,hiddenInfluenceShare,0.60,0.68,0.80,inferred,deep-research-report3.md,Opaque transfer routing,implemented,Represented through hidden influence and dark-money spend share.
+rulemaking_comment_volume,commentReviewBurden,0.10,0.45,1.00,observed_proxy,deep-research-report.md,Heavy-tailed comment load,implemented,Normalized review burden stands in for raw heavy-tailed docket size.
+template_fake_comment_prevalence,templateCommentSaturation,0.05,0.30,0.80,observed,deep-research-report3.md,Template or false-attribution share,implemented,Current docket fixtures start in the middle-to-high range.
+unique_substantive_comment_share,commentUniqueInformationShare,0.03,0.10,0.20,proxy,deep-research-report.md,Unique informational content,implemented,Comment triage estimates useful information rather than raw volume.
+technical_attention_multiplier,technicalClaimCredibility,0.20,0.40,0.60,proxy,deep-research-report3.md,Technical credibility and attention weight,implemented,Normalized analog for higher attention to substantive technical comments.
+comment_substantive_uptake,commentSubstantiveUptake,0.01,0.12,0.35,proxy,deep-research-report.md,Substantive use of comment record,implemented,Separates procedural acknowledgment from substantive uptake.
+comment_duplicate_compression,commentCompressionRate,0.50,0.75,0.99,judgmental,deep-research-report1.md,Deduplication and mass-campaign compression,implemented,High values should appear under strong anti-astroturf tooling.
+lobbying_reporting_error_rate,detectionRate,0.05,0.07,0.21,observed,deep-research-report3.md,Compliance errors entering enforcement,partial,Detection is broader than reporting-error incidence.
+lobbying_enforcement_backlog,regulatorQueueBacklog,0.50,0.63,0.75,observed,deep-research-report3.md,Unresolved referrals or workload pressure,implemented,Normalized regulator queue pressure.
+campaign_sanction_incidence,sanctionRate,0.003,0.009,0.015,proxy,deep-research-report3.md,Penalty-bearing campaign cases,partial,Current sanction rate is per contest, not per filer.
+procurement_agency_concentration,procurementBias,0.55,0.59,0.65,observed,deep-research-report3.md,Defense or agency concentration,partial,Current procurement bias is normalized and not yet top-agency share.
+procurement_recipient_concentration,procurementBias,0.25,0.33,0.40,observed_proxy,deep-research-report3.md,Top contractor concentration,partial,Requires USAspending snapshot to become direct.
+revolving_door_share,revolvingDoorInfluence,0.40,0.60,0.75,sectoral,deep-research-report3.md,Sectoral former-official share,partial,Current metric is influence intensity, not headcount share.
+voucher_participation,voucherParticipation,0.03,0.047,0.08,observed,deep-research-report1.md,Resident voucher use rate,partial,Current metric reports regime strength rather than resident turnout.
+public_financing_candidate_uptake,publicFinancingShare,0.25,0.70,0.95,observed_proxy,deep-research-report1.md,Candidate uptake of public financing,partial,Current metric reports regime strength.
+outside_spending_substitution,influencePreservationRate,0.20,0.85,1.50,proxy,deep-research-report1.md,Uncovered activity per constrained dollar,implemented,Normalized preservation rate is capped at 1.0.
+shadow_lobbying_share,hiddenInfluenceShare,0.10,0.40,0.80,proxy,deep-research-report1.md,Off-channel formal lobbying substitution,implemented,Substitution engine estimates hidden share from reform pressure.
+comment_authentication_coverage,commentAuthenticity,0.48,0.67,0.87,observed_proxy,deep-research-report.md,Confirmed commenter share where contact exists,partial,Current metric is all-comment authenticity, not contacted-only confirmation.
+cooling_off_shadow_lobbying,venueSubstitutionRate,0.10,0.40,0.70,proxy,deep-research-report1.md,Advisory and behind-scenes substitution,implemented,Venue substitution rises under access and cooling-off pressure.
