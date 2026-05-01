@@ -27,3 +27,15 @@ Each scenario uses the same core engine and changes the reform regime, channel i
 - evasion freedom at 0.00, 0.30, 0.60, and 0.90.
 
 Sensitivity scenarios use the reform-heavy contest mix so defensive anti-reform spending, evasion, comments, client funding, and enforcement all remain active in the comparison.
+
+`make ablation` adds reform-removal scenarios around the full anti-capture bundle:
+
+- baseline full bundle;
+- no enforcement;
+- no beneficial-owner or dark-money disclosure;
+- no public financing or democracy vouchers;
+- no cooling-off rules;
+- no anti-astroturf authentication;
+- no public advocate or blind review.
+
+The ablation report ranks removals by capture-rate increase and tracks anti-capture success, dark-money share, defensive spending, comment distortion, donor Gini, and detection.

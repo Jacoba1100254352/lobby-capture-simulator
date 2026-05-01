@@ -96,6 +96,16 @@ public final class ScenarioCatalog {
         return scenario(key, name, "Sensitivity sweep scenario.", reform, initialStrategy, evasionFreedom, true, reformHeavyContests());
     }
 
+    public static Scenario ablationScenario(
+            String key,
+            String name,
+            ReformRegime reform,
+            double evasionFreedom,
+            InfluenceStrategy initialStrategy
+    ) {
+        return scenario(key, name, "Ablation scenario removing one anti-capture component under a stressed capture mix.", reform, initialStrategy, evasionFreedom, true, ablationStressContests());
+    }
+
     private static List<LobbyOrganization> lobbies(InfluenceStrategy initialStrategy) {
         return List.of(
                 lobby("energy-trade", "Energy Trade Council", "energy", Map.of(
@@ -277,6 +287,17 @@ public final class ScenarioCatalog {
         contests.add(antiCoolingOff());
         contests.add(antiDarkMoneyDisclosure());
         contests.add(antiAstroturfAuth());
+        return List.copyOf(contests);
+    }
+
+    private static List<PolicyContest> ablationStressContests() {
+        List<PolicyContest> contests = new ArrayList<>();
+        contests.addAll(reformHeavyContests());
+        contests.add(contest("stress-dark-money-rule", "High-gain opaque platform rule", "technology", ContestArena.RULEMAKING, false, 0.50, 0.38, 0.58, 0.96, 0.72, 0.90, 0.28));
+        contests.add(contest("stress-procurement-award", "High-value procurement specification", "procurement", ContestArena.PROCUREMENT, false, 0.44, 0.36, 0.52, 0.94, 0.76, 0.72, 0.30));
+        contests.add(contest("stress-campaign-access", "Large-donor access election", "finance", ContestArena.ELECTION, false, 0.42, 0.34, 0.50, 0.92, 0.70, 0.48, 0.64));
+        contests.add(contest("stress-enforcement-forbearance", "High-stakes enforcement forbearance", "enforcement", ContestArena.ENFORCEMENT, false, 0.46, 0.34, 0.56, 0.95, 0.78, 0.76, 0.34));
+        contests.add(contest("stress-public-information", "Public-information distortion campaign", "public-information", ContestArena.PUBLIC_INFORMATION, false, 0.48, 0.32, 0.58, 0.88, 0.68, 0.62, 0.42));
         return List.copyOf(contests);
     }
 

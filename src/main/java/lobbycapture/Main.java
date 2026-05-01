@@ -1,6 +1,7 @@
 package lobbycapture;
 
 import lobbycapture.metrics.ScenarioReport;
+import lobbycapture.reporting.AblationRunner;
 import lobbycapture.reporting.CampaignRunner;
 import lobbycapture.reporting.SensitivityRunner;
 import lobbycapture.simulation.Scenario;
@@ -39,6 +40,12 @@ public final class Main {
             System.out.println("Wrote reports/lobby-capture-sensitivity.md");
             return;
         }
+        if (options.ablation) {
+            new AblationRunner().write(Path.of("reports"), options.runs, options.contests, options.seed);
+            System.out.println("Wrote reports/lobby-capture-ablation.csv");
+            System.out.println("Wrote reports/lobby-capture-ablation.md");
+            return;
+        }
         Scenario scenario = ScenarioCatalog.require(options.scenarioKey);
         ScenarioReport report = new Simulator().run(scenario, options.runs, options.contests, options.seed);
         printSummary(report);
@@ -68,6 +75,7 @@ public final class Main {
                   make run ARGS="--scenario reform-threat-mobilization --runs 10 --contests 30 --seed 7"
                   make campaign
                   make sensitivity
+                  make ablation
 
                 Options:
                   --list                 List scenarios.
@@ -77,6 +85,7 @@ public final class Main {
                   --seed N               Random seed. Default: 1.
                   --campaign             Run all scenarios and write reports.
                   --sensitivity          Sweep reform strengths and evasion freedom.
+                  --ablation             Remove each full-bundle reform component in turn.
                   --help                 Show this help.
                 """);
     }
@@ -93,6 +102,7 @@ public final class Main {
             boolean list,
             boolean campaign,
             boolean sensitivity,
+            boolean ablation,
             boolean help
     ) {
         private static Options parse(String[] args) {
@@ -103,6 +113,7 @@ public final class Main {
             boolean list = false;
             boolean campaign = false;
             boolean sensitivity = false;
+            boolean ablation = false;
             boolean help = false;
             List<String> arguments = List.of(args);
             for (int index = 0; index < arguments.size(); index++) {
@@ -115,6 +126,7 @@ public final class Main {
                     case "--list" -> list = true;
                     case "--campaign" -> campaign = true;
                     case "--sensitivity" -> sensitivity = true;
+                    case "--ablation" -> ablation = true;
                     case "--help", "-h" -> help = true;
                     default -> throw new IllegalArgumentException("Unknown argument: " + arg);
                 }
@@ -122,7 +134,7 @@ public final class Main {
             if (runs <= 0 || contests <= 0) {
                 throw new IllegalArgumentException("--runs and --contests must be positive.");
             }
-            return new Options(scenario, runs, contests, seed, list, campaign, sensitivity, help);
+            return new Options(scenario, runs, contests, seed, list, campaign, sensitivity, ablation, help);
         }
 
         private static String requireValue(List<String> arguments, int index, String option) {

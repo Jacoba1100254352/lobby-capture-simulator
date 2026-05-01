@@ -6,6 +6,8 @@ reports/*.md
 !reports/lobby-capture-campaign.md
 !reports/lobby-capture-sensitivity.csv
 !reports/lobby-capture-sensitivity.md
+!reports/lobby-capture-ablation.csv
+!reports/lobby-capture-ablation.md
 paper/*.aux
 paper/*.bbl
 paper/*.blg

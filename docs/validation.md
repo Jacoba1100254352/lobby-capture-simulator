@@ -20,3 +20,10 @@ Current calibration links:
 - `normalized-regulatory-dockets.csv` constrains docket volume, comment authenticity, template saturation, and technical-claim credibility.
 
 These files are plausibility inputs. They should not be cited as causal estimates, and paper claims should distinguish three layers: observed distribution, model calibration choice, and simulated mechanism.
+
+The fetch scripts now have two modes:
+
+- default mode copies tracked deterministic fixtures into `data/raw/`;
+- `--live` mode normalizes an explicit CSV path or URL into the same schema and fails if required columns are missing.
+
+Expected live-mode environment variables are `LDA_LIVE_CSV` or `LDA_LIVE_URL`, `FEC_LIVE_CSV` or `FEC_LIVE_URL`, and `REGULATORY_LIVE_CSV` or `REGULATORY_LIVE_URL`.

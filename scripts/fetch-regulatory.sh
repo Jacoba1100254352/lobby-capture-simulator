@@ -1,5 +1,20 @@
 #!/usr/bin/env sh
 set -eu
 mkdir -p data/raw
-cp data/fixtures/normalized-regulatory-dockets.csv data/raw/regulatory-dockets.csv
-echo "Wrote data/raw/regulatory-dockets.csv from the normalized fixture. Replace this with live Federal Register/Regulations.gov normalization when field mapping is finalized."
+if [ "${1:-}" = "--live" ]; then
+  source_file="$(mktemp)"
+  cleanup() { rm -f "$source_file"; }
+  trap cleanup EXIT
+  if [ -n "${REGULATORY_LIVE_CSV:-}" ]; then
+    cp "$REGULATORY_LIVE_CSV" "$source_file"
+  elif [ -n "${REGULATORY_LIVE_URL:-}" ]; then
+    curl -fsSL "$REGULATORY_LIVE_URL" -o "$source_file"
+  else
+    echo "Set REGULATORY_LIVE_CSV or REGULATORY_LIVE_URL before running ./scripts/fetch-regulatory.sh --live." >&2
+    exit 2
+  fi
+  python3 scripts/normalize-calibration.py regulatory "$source_file" data/raw/regulatory-dockets.csv
+else
+  cp data/fixtures/normalized-regulatory-dockets.csv data/raw/regulatory-dockets.csv
+  echo "Wrote data/raw/regulatory-dockets.csv from the normalized fixture. Use --live with REGULATORY_LIVE_CSV or REGULATORY_LIVE_URL for live normalization."
+fi

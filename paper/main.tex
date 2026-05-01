@@ -115,11 +115,34 @@ Disclosure 0.35 & 0.7683 & 0.9900 & 0.1259 & 0.0000 \\
 \label{tab:sensitivity}
 \end{table}
 
+\section{Ablation Snapshot}
+
+Ablation reporting removes one reform component from the full anti-capture bundle under a deliberately stressed contest mix. Table~\ref{tab:ablation} reports the current \texttt{make ablation} snapshot: 40 runs per scenario, 80 contests per run, seed 242. The baseline full bundle has a capture rate of 0.0000 in this stress test, so the capture increase column is equal to the observed capture rate after removal.
+
+\begin{table}[h]
+\centering
+\scriptsize
+\begin{tabular}{@{}lrrrrr@{}}
+\toprule
+Removed component & Capture increase & Reform & Dark money & Comment distortion & Donor Gini \\
+\midrule
+Public advocate/blind review & 0.0378 & 0.9825 & 0.1766 & 0.0001 & 0.1450 \\
+Enforcement & 0.0178 & 0.9955 & 0.1823 & 0.0001 & 0.1624 \\
+Public financing/vouchers & 0.0006 & 0.9978 & 0.1760 & 0.0001 & 0.1432 \\
+Beneficial-owner disclosure & 0.0000 & 1.0000 & 0.2457 & 0.0001 & 0.1485 \\
+Cooling-off rules & 0.0000 & 1.0000 & 0.1750 & 0.0001 & 0.1463 \\
+Anti-astroturf authentication & 0.0000 & 1.0000 & 0.1783 & 0.0003 & 0.1454 \\
+\bottomrule
+\end{tabular}
+\caption{Selected ablation results. Removing public advocate/blind-review capacity creates the largest modeled capture opening, while removing beneficial-owner disclosure mainly shifts spending toward dark money.}
+\label{tab:ablation}
+\end{table}
+
 \section{Empirical Bridge}
 
 The implementation separates empirical distributional anchors from causal mechanisms. Normalized LDA fixture rows constrain issue funding scale and disclosure lag. Normalized FEC rows constrain donor concentration, public-financing share, and traceability. Normalized Federal Register and Regulations.gov fixture rows constrain docket size, comment authenticity, template saturation, and technical-claim credibility.
 
-Those inputs do not estimate the causal effect of a disclosure rule, voucher system, or cooling-off ban. They provide plausible ranges for the simulation state variables. The causal structure remains explicit in the model equations and arena rules, so validation should compare simulated distributions and directional responses against external data before treating any scenario ranking as substantively reliable.
+Those inputs do not estimate the causal effect of a disclosure rule, voucher system, or cooling-off ban. They provide plausible ranges for the simulation state variables. The default fetch workflow copies deterministic fixtures into \texttt{data/raw/}; optional \texttt{--live} modes normalize caller-provided CSV paths or URLs into the same schemas. The causal structure remains explicit in the model equations and arena rules, so validation should compare simulated distributions and directional responses against external data before treating any scenario ranking as substantively reliable.
 
 \section{Validation Plan}
 
@@ -127,7 +150,7 @@ Validation will proceed in layers. LDA data constrain lobbying budgets, clients,
 
 \section{Next Work}
 
-The next model increment should replace deterministic fixture fetchers with optional live-data normalizers while preserving reproducible fixture mode. The next reporting increment should add ablation runs that remove one reform component from the full bundle at a time. The next paper increment should generate LaTeX tables from stable CSV snapshots instead of copying values by hand.
+The next model increment should replace generic live CSV hooks with source-native LDA, FEC, Federal Register, and Regulations.gov downloaders. The next behavioral increment should let clients, regulators, and watchdogs adapt over longer horizons. The next paper increment should generate LaTeX tables from stable CSV snapshots instead of copying values by hand.
 
 \bibliographystyle{plain}
 \bibliography{references}

@@ -12,6 +12,7 @@ make run ARGS="--list"
 make run ARGS="--scenario reform-threat-mobilization --runs 10 --contests 30 --seed 7"
 make campaign
 make sensitivity
+make ablation
 ```
 
 `make campaign` writes:
@@ -24,12 +25,25 @@ make sensitivity
 - `reports/lobby-capture-sensitivity.csv`
 - `reports/lobby-capture-sensitivity.md`
 
+`make ablation` writes:
+
+- `reports/lobby-capture-ablation.csv`
+- `reports/lobby-capture-ablation.md`
+
 The fetch scripts seed normalized local calibration data from tracked fixtures:
 
 ```sh
 ./scripts/fetch-lda.sh
 ./scripts/fetch-fec.sh
 ./scripts/fetch-regulatory.sh
+```
+
+Optional live normalization uses the same output schemas while requiring an explicit local CSV or URL:
+
+```sh
+LDA_LIVE_CSV=/path/to/lda.csv ./scripts/fetch-lda.sh --live
+FEC_LIVE_URL=https://example.org/fec.csv ./scripts/fetch-fec.sh --live
+REGULATORY_LIVE_CSV=/path/to/dockets.csv ./scripts/fetch-regulatory.sh --live
 ```
 
 ## Current Modeling Slice
@@ -48,6 +62,6 @@ It includes:
 - evasion profiles with dark-pool, litigation-funding, procurement-consultant, and revolving-door substitution pressure;
 - arena-specific capture susceptibility;
 - transparency, public financing, democracy vouchers, cooling-off, blind review, public advocates, enforcement, anti-astroturf systems, defensive-spend caps, and dark-money disclosure;
-- raw and composite scenario metrics plus sensitivity sweeps.
+- raw and composite scenario metrics plus sensitivity and ablation sweeps.
 
 The formulas are stylized and comparative. Empirical files under `data/calibration/` and normalized fixtures under `data/fixtures/` are benchmark scaffolds, not causal estimates.

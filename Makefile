@@ -6,7 +6,7 @@ TEST_SOURCES := $(shell find src/test/java -name "*.java" | sort)
 MAIN_CLASS := lobbycapture.Main
 TEST_CLASS := lobbycapture.SmokeTest
 
-.PHONY: compile test run campaign sensitivity paper clean
+.PHONY: compile test run campaign sensitivity ablation paper clean
 
 compile:
 	@mkdir -p out/classes
@@ -25,6 +25,9 @@ campaign: compile
 
 sensitivity: compile
 	$(JAVA) -cp out/classes $(MAIN_CLASS) --sensitivity --runs 30 --contests 70 --seed 142
+
+ablation: compile
+	$(JAVA) -cp out/classes $(MAIN_CLASS) --ablation --runs 40 --contests 80 --seed 242
 
 paper:
 	cd paper && pdflatex -interaction=nonstopmode main.tex

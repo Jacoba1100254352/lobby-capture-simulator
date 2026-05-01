@@ -1,6 +1,7 @@
 package lobbycapture;
 
 import lobbycapture.metrics.ScenarioReport;
+import lobbycapture.reporting.AblationRunner;
 import lobbycapture.reporting.SensitivityRunner;
 import lobbycapture.simulation.ScenarioCatalog;
 import lobbycapture.simulation.Simulator;
@@ -18,6 +19,7 @@ public final class SmokeTest {
         ScenarioReport bundle = simulator.run(ScenarioCatalog.require("full-anti-capture-bundle"), 4, 30, 13L);
         ScenarioReport evasion = simulator.run(ScenarioCatalog.require("bundle-with-evasion"), 4, 30, 14L);
         List<ScenarioReport> sensitivity = new SensitivityRunner().run(1, 10, 15L);
+        List<ScenarioReport> ablation = new AblationRunner().run(1, 10, 16L);
 
         require(open.totalContests() == 120, "open scenario should run all contests");
         require(open.lobbySpendPerContest() > 0.0, "lobbying should spend in baseline");
@@ -28,6 +30,8 @@ public final class SmokeTest {
         require(evasion.darkMoneySpendShare() >= bundle.darkMoneySpendShare(), "evasion scenario should shift toward dark money");
         require(evasion.evasionPenaltyRate() >= 0.0, "evasion penalty should stay non-negative");
         require(sensitivity.size() == 20, "sensitivity runner should cover reform and evasion sweeps");
+        require(ablation.size() == 7, "ablation runner should cover baseline plus six removals");
+        require(ablation.stream().anyMatch(report -> report.scenarioKey().equals("ablation-full-bundle")), "ablation runner should include a baseline");
         require(bundle.directionalScore() >= 0.0 && bundle.directionalScore() <= 1.0, "directional score should stay bounded");
         System.out.println("Smoke tests passed.");
     }

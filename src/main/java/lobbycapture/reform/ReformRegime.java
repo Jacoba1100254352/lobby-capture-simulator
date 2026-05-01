@@ -158,6 +158,168 @@ public record ReformRegime(
         );
     }
 
+    public ReformRegime withoutEnforcement(String tunedName) {
+        return new ReformRegime(
+                tunedName,
+                disclosureStrength,
+                realTimeDisclosure,
+                beneficialOwnerDisclosure,
+                contactLogCoverage,
+                lobbyingBanStrength,
+                coolingOffStrength,
+                publicFinancingStrength,
+                democracyVoucherStrength,
+                contributionLimitStrength,
+                darkMoneyDisclosureStrength,
+                publicAdvocateStrength,
+                blindReviewStrength,
+                antiAstroturfStrength,
+                0.0,
+                0.0,
+                0.0,
+                appealsDelay,
+                defensiveCapShare,
+                scale(administrativeCost, 0.76),
+                falsePositiveCost,
+                constitutionalChallengeRisk
+        );
+    }
+
+    public ReformRegime withoutBeneficialOwnerDisclosure(String tunedName) {
+        return new ReformRegime(
+                tunedName,
+                disclosureStrength,
+                realTimeDisclosure,
+                0.0,
+                contactLogCoverage,
+                lobbyingBanStrength,
+                coolingOffStrength,
+                publicFinancingStrength,
+                democracyVoucherStrength,
+                contributionLimitStrength,
+                0.0,
+                publicAdvocateStrength,
+                blindReviewStrength,
+                antiAstroturfStrength,
+                enforcementBudget,
+                auditRate,
+                sanctionSeverity,
+                appealsDelay,
+                defensiveCapShare,
+                scale(administrativeCost, 0.88),
+                falsePositiveCost,
+                constitutionalChallengeRisk
+        );
+    }
+
+    public ReformRegime withoutPublicFinancing(String tunedName) {
+        return new ReformRegime(
+                tunedName,
+                disclosureStrength,
+                realTimeDisclosure,
+                beneficialOwnerDisclosure,
+                contactLogCoverage,
+                lobbyingBanStrength,
+                coolingOffStrength,
+                0.0,
+                0.0,
+                contributionLimitStrength,
+                darkMoneyDisclosureStrength,
+                publicAdvocateStrength,
+                blindReviewStrength,
+                antiAstroturfStrength,
+                enforcementBudget,
+                auditRate,
+                sanctionSeverity,
+                appealsDelay,
+                defensiveCapShare,
+                scale(administrativeCost, 0.84),
+                falsePositiveCost,
+                constitutionalChallengeRisk
+        );
+    }
+
+    public ReformRegime withoutCoolingOff(String tunedName) {
+        return new ReformRegime(
+                tunedName,
+                disclosureStrength,
+                realTimeDisclosure,
+                beneficialOwnerDisclosure,
+                contactLogCoverage,
+                lobbyingBanStrength,
+                0.0,
+                publicFinancingStrength,
+                democracyVoucherStrength,
+                contributionLimitStrength,
+                darkMoneyDisclosureStrength,
+                publicAdvocateStrength,
+                blindReviewStrength,
+                antiAstroturfStrength,
+                enforcementBudget,
+                auditRate,
+                sanctionSeverity,
+                appealsDelay,
+                defensiveCapShare,
+                scale(administrativeCost, 0.90),
+                falsePositiveCost,
+                constitutionalChallengeRisk
+        );
+    }
+
+    public ReformRegime withoutAntiAstroturf(String tunedName) {
+        return new ReformRegime(
+                tunedName,
+                disclosureStrength,
+                realTimeDisclosure,
+                beneficialOwnerDisclosure,
+                contactLogCoverage,
+                lobbyingBanStrength,
+                coolingOffStrength,
+                publicFinancingStrength,
+                democracyVoucherStrength,
+                contributionLimitStrength,
+                darkMoneyDisclosureStrength,
+                publicAdvocateStrength,
+                blindReviewStrength,
+                0.0,
+                enforcementBudget,
+                auditRate,
+                sanctionSeverity,
+                appealsDelay,
+                defensiveCapShare,
+                scale(administrativeCost, 0.92),
+                falsePositiveCost,
+                constitutionalChallengeRisk
+        );
+    }
+
+    public ReformRegime withoutPublicAdvocateAndBlindReview(String tunedName) {
+        return new ReformRegime(
+                tunedName,
+                disclosureStrength,
+                realTimeDisclosure,
+                beneficialOwnerDisclosure,
+                contactLogCoverage,
+                lobbyingBanStrength,
+                coolingOffStrength,
+                publicFinancingStrength,
+                democracyVoucherStrength,
+                contributionLimitStrength,
+                darkMoneyDisclosureStrength,
+                0.0,
+                0.0,
+                antiAstroturfStrength,
+                enforcementBudget,
+                auditRate,
+                sanctionSeverity,
+                appealsDelay,
+                defensiveCapShare,
+                scale(administrativeCost, 0.82),
+                falsePositiveCost,
+                constitutionalChallengeRisk
+        );
+    }
+
     private static double scale(double value, double multiplier) {
         return Values.clamp(value * multiplier, 0.0, 1.0);
     }
