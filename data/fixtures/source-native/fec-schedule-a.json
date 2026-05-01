@@ -1,0 +1,19 @@
+{
+  "results": [
+    {
+      "contributor_name": "Clean Energy Executive",
+      "committee": {
+        "name": "Clean Energy PAC"
+      },
+      "contribution_receipt_amount": 7500,
+      "contributor_employer": "Pipeline Utility",
+      "contributor_occupation": "CEO"
+    },
+    {
+      "contributor_name": "Platform Founder",
+      "committee_name": "Innovation Super PAC",
+      "contribution_receipt_amount": 250000,
+      "contributor_employer": "AI Platform"
+    }
+  ]
+}

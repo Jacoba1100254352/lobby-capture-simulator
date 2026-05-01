@@ -1,0 +1,40 @@
+{
+  "results": [
+    {
+      "client": {
+        "name": "Example Platform Coalition"
+      },
+      "registrant": {
+        "name": "Example Advocacy LLC"
+      },
+      "income": "$2,500,000",
+      "issues": [
+        {
+          "code": "TEC",
+          "specific_issue": "Data privacy and internet platform competition"
+        }
+      ],
+      "lobbyists": [
+        {
+          "covered_position": "House staff"
+        }
+      ]
+    },
+    {
+      "client": {
+        "name": "Example Platform Coalition"
+      },
+      "registrant": {
+        "name": "Example Advocacy LLC"
+      },
+      "income": "$500,000",
+      "issues": [
+        {
+          "code": "TEC",
+          "specific_issue": "Internet data rules"
+        }
+      ],
+      "lobbyists": []
+    }
+  ]
+}

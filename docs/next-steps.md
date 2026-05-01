@@ -1,6 +1,6 @@
 # Next Steps
 
-The simulator now has a lobbying-centered MVP with calibration fixtures, source-native live calibration downloaders, explicit client funding, rulemaking comment dockets, evasion profiles, adaptive clients/regulators/watchdogs, campaign reports, sensitivity sweeps, ablation sweeps, generated paper tables, and a working paper scaffold.
+The simulator now has a lobbying-centered MVP with calibration fixtures, source-native live calibration downloaders, source JSON parser fixtures, explicit client funding, rulemaking comment dockets, evasion profiles, adaptive clients/regulators/watchdogs, campaign reports, sensitivity sweeps, ablation sweeps, generated paper tables, and a working paper scaffold.
 
 ## Completed in the current slice
 
@@ -14,36 +14,38 @@ The simulator now has a lobbying-centered MVP with calibration fixtures, source-
 - `make sensitivity` sweeps enforcement, disclosure, public financing, cooling-off, and evasion freedom.
 - `make ablation` removes each full-bundle reform component and ranks capture openings.
 - `--live` fetch modes can normalize caller-provided CSVs or query LDA, OpenFEC, Regulations.gov, and Federal Register APIs directly.
-- `make tables` regenerates paper table inputs from report CSV snapshots.
+- Source-native parser fixtures exercise LDA, OpenFEC, Regulations.gov, and Federal Register JSON without network access.
+- Live source fetches retry transient `429` and `5xx` responses and redact API keys from error URLs.
+- `make tables` regenerates paper table inputs from report CSV snapshots using `paper/tables.yml`.
+- Adaptive institutions now include per-client/per-domain funding memory, regulator queue pressure, watchdog monitoring budget allocation, adaptation speed, and reform-decay pressure.
 
-## 1. Add live-data fixtures and rate-limit guards
+## 1. Validate live source snapshots against official bulk/API extracts
 
-The source-native fetchers now exist, but their network behavior should be made safer before routine use.
-
-Deliverables:
-
-- checked-in tiny JSON fixtures that mirror representative LDA, OpenFEC, Regulations.gov, and Federal Register responses;
-- parser tests for those JSON fixtures without hitting the network;
-- backoff/rate-limit handling for source-native live runs;
-- clearer failure messages for empty result sets and authentication errors.
-
-## 2. Improve adaptation realism
-
-Clients, regulators, and watchdogs now adapt, but the behavior is still compact and aggregate.
+The source-native fixture tests cover parser shape, but the empirical bridge still needs a documented live snapshot workflow.
 
 Deliverables:
 
-- per-client funding memory by issue domain rather than one multiplier per client;
-- regulator staff queues and comment-processing capacity constraints;
-- watchdog monitoring budgets allocated across issue domains;
-- adaptation-speed and reform-decay diagnostics.
+- choose pinned date ranges and agencies/committees for first live snapshots;
+- run each source-native fetch with real credentials where required;
+- archive row counts and filter settings in `docs/validation.md`;
+- compare normalized live distributions against the existing synthetic fixtures.
 
-## 3. Move table selection into declarative config
+## 2. Add calibration-fit diagnostics
 
-The paper tables are generated, but row/column selection is still embedded in Python.
+The simulator has calibration inputs and richer adaptation metrics, but it does not yet report how far a scenario lands from benchmark ranges.
 
 Deliverables:
 
-- `paper/tables.yml` defining source report, selected rows, selected columns, labels, and captions;
-- generator support for multiple paper table variants;
-- one-line provenance comments at the top of each generated table.
+- a `make validate` target that compares report metrics against `data/calibration/empirical-benchmarks.csv`;
+- machine-readable validation output under `reports/`;
+- paper text distinguishing benchmark fit, stylized mechanism, and unexplained residual.
+
+## 3. Expand reform interaction experiments
+
+The current sensitivity and ablation sweeps vary one dimension at a time.
+
+Deliverables:
+
+- two-way sweeps for enforcement/disclosure, public financing/dark-money evasion, and cooling-off/revolving-door substitution;
+- interaction plots or tables for the paper;
+- interpretation notes on where reforms complement each other versus displace influence into other channels.

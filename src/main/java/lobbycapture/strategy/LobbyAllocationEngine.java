@@ -31,10 +31,11 @@ public final class LobbyAllocationEngine {
         double publicBenefit = contest.truePublicBenefit();
         double privateGain = contest.privateGain();
         double regulatorAttention = world.regulatorAttention(contest.issueDomain());
+        double regulatorQueue = world.regulatorQueue(contest.issueDomain());
         double watchdogFocus = world.watchdogFocus(contest.issueDomain());
         double publicAdvocatePressure = contest.publicAdvocatePressure()
                 + (reform.publicAdvocateStrength() * 0.16)
-                + (regulatorAttention * reform.publicAdvocateStrength() * 0.08);
+                + (regulatorAttention * reform.publicAdvocateStrength() * (0.08 - (0.03 * regulatorQueue)));
         double watchdogPressure = contest.watchdogPressure()
                 + (reform.transparencyStrength() * 0.10)
                 + (reform.enforcementStrength() * 0.06)
@@ -103,7 +104,8 @@ public final class LobbyAllocationEngine {
                 double accessEffectiveness = 1.0 - (reform.contactLogCoverage() * 0.45) - (reform.lobbyingBanStrength() * 0.35);
                 double informationEffectiveness = 1.0 - (reform.blindReviewStrength() * 0.70)
                         - (reform.publicAdvocateStrength() * 0.30)
-                        - (regulatorAttention * 0.18);
+                        - (regulatorAttention * 0.18)
+                        + (regulatorQueue * 0.12);
                 double campaignEffectiveness = 1.0 - (reform.campaignFinanceCounterweight() * 0.45);
                 double mismatchPenalty = publicMismatchPenalty(group, contest);
                 lobbyPressure += world.pressurePerSpend() * group.influenceIntensity() * fit

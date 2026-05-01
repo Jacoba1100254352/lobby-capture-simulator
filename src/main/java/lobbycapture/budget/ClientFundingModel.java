@@ -34,7 +34,7 @@ public final class ClientFundingModel {
                                 * preference
                                 * exposure
                                 * issueScale
-                                * world.clientFundingMultiplier(client.id())
+                                * world.clientFundingMultiplier(client.id(), contest.issueDomain())
                                 * (0.35 + clientGain + reformThreat),
                         0.0,
                         0.70

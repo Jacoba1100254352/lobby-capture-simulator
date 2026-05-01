@@ -1,31 +1,31 @@
 # Lobby Capture Campaign
 
-- Generated: `2026-05-01T14:58:40.366967Z`
+- Generated: `2026-05-01T15:26:28.172611Z`
 - Seed: `42`
 - Runs per scenario: `40`
 - Contests per run: `80`
 
 ## Scenario Summary
 
-| Scenario | Directional | Capture rate | Anti-capture success | Defensive spend | Dark-money share | Client funding | Reg attention | Watchdog focus | Detection | Admin cost |
-| --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Democracy vouchers | 0.7474 | 0.0000 | 0.9729 | 0.7758 | 0.1452 | 0.0875 | 0.5165 | 0.1240 | 0.0000 | 0.2400 |
-| Full anti-capture bundle | 0.7222 | 0.0000 | 1.0000 | 0.5934 | 0.1740 | 0.0710 | 0.5520 | 0.2237 | 0.0000 | 0.4600 |
-| Anti-capture bundle with evasion | 0.7215 | 0.0000 | 1.0000 | 0.5974 | 0.2488 | 0.0963 | 0.5435 | 0.2238 | 0.0000 | 0.4600 |
-| Low-salience technical rulemaking | 0.6936 | 0.5625 | 0.0000 | 0.0000 | 0.1200 | 0.0884 | 0.9611 | 0.8577 | 0.1806 | 0.0647 |
-| Dark money dominant | 0.6919 | 0.4206 | 0.3473 | 0.5275 | 0.1467 | 0.1392 | 0.8640 | 0.5716 | 0.1250 | 0.0602 |
-| Reform threat mobilization | 0.6884 | 0.0097 | 0.9317 | 0.6411 | 0.2113 | 0.0811 | 0.5608 | 0.2358 | 0.0063 | 0.2005 |
-| Real-time transparency | 0.6862 | 0.0175 | 0.9946 | 0.3659 | 0.1925 | 0.0618 | 0.6061 | 0.2342 | 0.0103 | 0.2009 |
-| Budgeted disclosed lobbying | 0.6861 | 0.0194 | 1.0000 | 0.3589 | 0.1142 | 0.0513 | 0.6130 | 0.2343 | 0.0100 | 0.2009 |
-| Open access lobbying | 0.6819 | 0.5088 | 0.5749 | 0.4326 | 0.1087 | 0.0705 | 0.4650 | 0.3153 | 0.1072 | 0.0587 |
-| Campaign finance dominant | 0.6810 | 0.0644 | 0.0000 | 0.0000 | 0.1000 | 0.0627 | 0.7308 | 0.2126 | 0.0128 | 0.0511 |
-| Revolving-door dominant | 0.6787 | 0.5031 | 0.0000 | 0.0000 | 0.0807 | 0.0996 | 0.7165 | 0.8951 | 0.1697 | 0.0637 |
-| Audit and sanctions | 0.6760 | 0.0041 | 0.9941 | 0.3596 | 0.1289 | 0.0569 | 0.6016 | 0.2210 | 0.0059 | 0.3207 |
-| Cooling-off ban | 0.6441 | 0.0134 | 0.0000 | 0.0000 | 0.0832 | 0.0818 | 0.4564 | 0.0849 | 0.0069 | 0.2806 |
+| Scenario | Directional | Capture rate | Anti-capture success | Defensive spend | Dark-money share | Client funding | Reg attention | Reg queue | Watchdog focus | Adapt speed | Reform decay | Detection | Admin cost |
+| --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
+| Democracy vouchers | 0.7556 | 0.0000 | 0.9729 | 0.7758 | 0.1452 | 0.0980 | 0.3708 | 0.3386 | 0.3153 | 0.0136 | 0.2548 | 0.0000 | 0.2400 |
+| Full anti-capture bundle | 0.7246 | 0.0000 | 1.0000 | 0.5934 | 0.1740 | 0.0896 | 0.3978 | 0.5723 | 0.3153 | 0.0209 | 0.1569 | 0.0000 | 0.4600 |
+| Anti-capture bundle with evasion | 0.7241 | 0.0000 | 1.0000 | 0.5974 | 0.2488 | 0.1217 | 0.3956 | 0.5685 | 0.3153 | 0.0209 | 0.1568 | 0.0000 | 0.4600 |
+| Open access lobbying | 0.7050 | 0.5175 | 0.5533 | 0.4358 | 0.1087 | 0.0707 | 0.3788 | 0.1171 | 0.3153 | 0.0000 | 0.0000 | 0.1038 | 0.0584 |
+| Reform threat mobilization | 0.6965 | 0.0169 | 0.9276 | 0.6423 | 0.2103 | 0.1007 | 0.4116 | 0.5799 | 0.3153 | 0.0245 | 0.1664 | 0.0109 | 0.2010 |
+| Real-time transparency | 0.6954 | 0.0244 | 0.9973 | 0.3614 | 0.1925 | 0.0826 | 0.4435 | 0.6062 | 0.3153 | 0.0244 | 0.0479 | 0.0147 | 0.2013 |
+| Budgeted disclosed lobbying | 0.6949 | 0.0281 | 1.0000 | 0.3607 | 0.1141 | 0.0694 | 0.4457 | 0.6052 | 0.3153 | 0.0247 | 0.0477 | 0.0156 | 0.2014 |
+| Campaign finance dominant | 0.6943 | 0.0950 | 0.0000 | 0.0000 | 0.1000 | 0.0625 | 0.4655 | 0.2988 | 0.3153 | 0.0177 | 0.0000 | 0.0194 | 0.0516 |
+| Audit and sanctions | 0.6860 | 0.0066 | 0.9939 | 0.3553 | 0.1285 | 0.0761 | 0.4286 | 0.5992 | 0.3153 | 0.0233 | 0.0434 | 0.0100 | 0.3211 |
+| Dark money dominant | 0.6809 | 0.5050 | 0.2587 | 0.5190 | 0.1522 | 0.1280 | 0.7091 | 0.6114 | 0.3153 | 0.0541 | 0.0599 | 0.1266 | 0.0603 |
+| Low-salience technical rulemaking | 0.6752 | 0.6716 | 0.0000 | 0.0000 | 0.1200 | 0.0923 | 0.5727 | 0.4279 | 0.3153 | 0.0395 | 0.0000 | 0.1809 | 0.0646 |
+| Revolving-door dominant | 0.6716 | 0.5728 | 0.0000 | 0.0000 | 0.0832 | 0.1023 | 0.5263 | 0.3077 | 0.3152 | 0.0266 | 0.0000 | 0.1788 | 0.0645 |
+| Cooling-off ban | 0.6702 | 0.0247 | 0.0000 | 0.0000 | 0.0836 | 0.0828 | 0.3498 | 0.3066 | 0.3153 | 0.0120 | 0.0000 | 0.0156 | 0.2814 |
 
 ## Defensive Reform Blocking
 
-- `reform-threat-mobilization` defensive spend share: `0.6411`, anti-capture success: `0.9317`, channel switch rate: `2.0984`.
+- `reform-threat-mobilization` defensive spend share: `0.6423`, anti-capture success: `0.9276`, channel switch rate: `2.1000`.
 - `full-anti-capture-bundle` anti-capture success: `1.0000`, detection rate: `0.0000`, capture rate: `0.0000`.
 - `bundle-with-evasion` dark-money share: `0.2488`, evasion shift rate: `0.8647`, evasion penalty: `0.0000`, anti-capture success: `1.0000`.
 

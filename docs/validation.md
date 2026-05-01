@@ -11,7 +11,7 @@ Initial validation targets:
 - Seattle democracy vouchers and NYC public matching funds: voucher participation, public-funds share, donor-base broadening.
 - USAspending: procurement-recipient concentration and agency spending exposure.
 
-The first implementation stores benchmark metadata in `data/calibration/empirical-benchmarks.csv` and normalized fixture rows in `data/fixtures/`. The fixture scripts copy those rows into `data/raw/` so calibration behavior can be reproduced without network access.
+The implementation stores benchmark metadata in `data/calibration/empirical-benchmarks.csv`, normalized fixture rows in `data/fixtures/`, and source-native JSON parser fixtures in `data/fixtures/source-native/`. The fixture scripts copy normalized rows into `data/raw/` so calibration behavior can be reproduced without network access.
 
 Current calibration links:
 
@@ -35,5 +35,6 @@ Source-native live variables:
 - FEC: `FEC_API_KEY`, `FEC_API_BASE`, `FEC_CYCLE`, `FEC_COMMITTEE_ID`.
 - Regulations.gov: `REGULATIONS_API_KEY`, `REGULATIONS_API_BASE`, `REGULATORY_AGENCY`, `REGULATORY_SEARCH_TERM`, `REGULATORY_DATE_FROM`, `REGULATORY_DATE_TO`.
 - Federal Register: `REGULATORY_SOURCE=federal-register`, `FEDERAL_REGISTER_API_BASE`, `FEDERAL_REGISTER_TYPE`, `REGULATORY_SEARCH_TERM`, `REGULATORY_DATE_FROM`, `REGULATORY_DATE_TO`.
+- Retry controls: `SOURCE_FETCH_RETRIES`, `SOURCE_FETCH_BACKOFF_SECONDS`.
 
-The current source-native normalizers are distributional bridges. They should be reviewed against small captured JSON fixtures before live API output is used as a paper snapshot.
+The source-native normalizers are distributional bridges. `scripts/test-source-fetchers.py` verifies representative LDA, OpenFEC, Regulations.gov, and Federal Register JSON payloads against exact normalized rows before any live API output is used as a paper snapshot.

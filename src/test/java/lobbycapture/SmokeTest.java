@@ -30,7 +30,11 @@ public final class SmokeTest {
         require(open.clientFundingPerContest() > 0.0, "clients should replenish lobbying budgets");
         require(open.clientFundingAdaptation() > 0.0, "client funding adaptation should be reported");
         require(open.regulatorAttentionIndex() > 0.0, "regulator attention should be reported");
+        require(open.regulatorQueueBacklog() >= 0.0, "regulator queue backlog should be reported");
         require(open.watchdogFocusIndex() > 0.0, "watchdog focus should be reported");
+        require(open.watchdogBudgetConcentration() > 0.0, "watchdog budget concentration should be reported");
+        require(open.adaptationSpeed() >= 0.0, "adaptation speed should be reported");
+        require(open.reformDecayPressure() >= 0.0, "reform decay pressure should be reported");
         require(open.commentAuthenticity() >= 0.0 && open.commentAuthenticity() <= 1.0, "comment authenticity should stay bounded");
         require(reformThreat.defensiveReformSpendShare() > 0.20, "reform threat should trigger defensive spending");
         require(bundle.antiCaptureSuccessRate() >= reformThreat.antiCaptureSuccessRate(), "full bundle should preserve at least as much reform success as reform threat case");
@@ -63,7 +67,7 @@ public final class SmokeTest {
     private static void verifyReport(Path csv, Path markdown) throws IOException {
         String csvText = Files.readString(csv);
         String markdownText = Files.readString(markdown);
-        require(csvText.contains("clientFundingAdaptation,regulatorAttentionIndex,watchdogFocusIndex"), csv + " should report adaptive state");
+        require(csvText.contains("clientFundingAdaptation,regulatorAttentionIndex,regulatorQueueBacklog,watchdogFocusIndex,watchdogBudgetConcentration,adaptationSpeed,reformDecayPressure"), csv + " should report adaptive state");
         require(csvText.lines().count() > 1, csv + " should contain report rows");
         require(markdownText.contains("Generated"), markdown + " should include provenance");
     }

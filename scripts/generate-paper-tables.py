@@ -5,132 +5,102 @@ from __future__ import annotations
 
 import argparse
 import csv
+import json
 from pathlib import Path
 
 
 REPORTS = Path("reports")
 TABLES = Path("paper/tables")
+CONFIG = Path("paper/tables.yml")
 
 
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--reports", type=Path, default=REPORTS)
     parser.add_argument("--output", type=Path, default=TABLES)
+    parser.add_argument("--config", type=Path, default=CONFIG)
     args = parser.parse_args()
 
     args.output.mkdir(parents=True, exist_ok=True)
-    campaign_rows = read_report(args.reports / "lobby-capture-campaign.csv")
-    sensitivity_rows = read_report(args.reports / "lobby-capture-sensitivity.csv")
-    ablation_rows = read_report(args.reports / "lobby-capture-ablation.csv")
-
-    write(args.output / "campaign_snapshot.tex", campaign_table(campaign_rows))
-    write(args.output / "sensitivity_snapshot.tex", sensitivity_table(sensitivity_rows))
-    write(args.output / "ablation_snapshot.tex", ablation_table(ablation_rows))
+    config = read_config(args.config)
+    for table_config in config["tables"]:
+        source_path = args.reports / table_config["source"]
+        rows = read_report(source_path)
+        selected, baseline = select_rows(rows, table_config)
+        content = render_configured_table(table_config, selected, baseline, source_path, args.config)
+        write(args.output / table_config["output"], content)
     return 0
 
 
-def campaign_table(rows: list[dict[str, str]]) -> str:
-    wanted = [
-        "open-access-lobbying",
-        "reform-threat-mobilization",
-        "full-anti-capture-bundle",
-        "bundle-with-evasion",
-        "low-salience-technical-rulemaking",
-    ]
-    selected = by_key(rows, wanted)
-    body = [
-        [
-            label(row["scenarioName"], {"Low-salience technical rulemaking": "Low-salience rulemaking"}),
-            f4(row["captureRate"]),
-            f4(row["antiCaptureSuccess"]),
-            f4(row["defensiveReformSpendShare"]),
-            f4(row["darkMoneyShare"]),
-            f4(row["clientFundingPerContest"]),
-        ]
-        for row in selected
-    ]
+def render_configured_table(
+        table_config: dict[str, object],
+        selected: list[dict[str, str]],
+        baseline: dict[str, str] | None,
+        source_path: Path,
+        config_path: Path,
+) -> str:
+    body = []
+    for row in selected:
+        body.append([render_cell(column, row, baseline) for column in table_config["columns"]])
     return table(
-        label="tab:first-campaign",
-        caption="Current simulation snapshot. Metrics are comparative model outputs, not calibrated empirical estimates.",
-        headers=["Scenario", "Capture", "Reform", "Defensive", "Dark money", "Funding"],
+        label=str(table_config["label"]),
+        caption=str(table_config["caption"]),
+        headers=[str(column["header"]) for column in table_config["columns"]],
         rows=body,
-        size="scriptsize",
+        size=str(table_config.get("size", "small")),
+        provenance=provenance_comment(selected, source_path, config_path),
     )
 
 
-def sensitivity_table(rows: list[dict[str, str]]) -> str:
-    wanted = [
-        "sensitivity-public-financing-1-25",
-        "sensitivity-public-financing-0-35",
-        "sensitivity-evasion-0-00",
-        "sensitivity-evasion-0-60",
-        "sensitivity-enforcement-0-35",
-        "sensitivity-disclosure-0-35",
-    ]
-    selected = by_key(rows, wanted)
-    renames = {
-        "Sensitivity public financing 1.25": "Public financing 1.25",
-        "Sensitivity public financing 0.35": "Public financing 0.35",
-        "Sensitivity evasion 0.00": "Evasion 0.00",
-        "Sensitivity evasion 0.60": "Evasion 0.60",
-        "Sensitivity enforcement 0.35": "Enforcement 0.35",
-        "Sensitivity disclosure 0.35": "Disclosure 0.35",
-    }
-    body = [
-        [
-            label(row["scenarioName"], renames),
-            f4(row["directionalScore"]),
-            f4(row["antiCaptureSuccess"]),
-            f4(row["darkMoneyShare"]),
-            f4(row["evasionShiftRate"]),
-        ]
-        for row in selected
-    ]
-    return table(
-        label="tab:sensitivity",
-        caption="Selected sensitivity sweep rows. The current bundle is robust in this stylized setup, but evasion freedom strongly shifts spending into opaque channels.",
-        headers=["Scenario", "Directional", "Reform success", "Dark-money share", "Evasion shift"],
-        rows=body,
-        size="small",
-    )
+def select_rows(
+        rows: list[dict[str, str]],
+        table_config: dict[str, object],
+) -> tuple[list[dict[str, str]], dict[str, str] | None]:
+    indexed = {row["scenarioKey"]: row for row in rows}
+    row_mode = table_config.get("rowMode", "listed")
+    if row_mode == "listed":
+        keys = list(table_config["rows"])
+        missing = [key for key in keys if key not in indexed]
+        if missing:
+            raise SystemExit(f"Missing report rows for {table_config['output']}: {', '.join(missing)}")
+        return [indexed[key] for key in keys], None
+    if row_mode == "ablation-delta":
+        baseline_key = str(table_config["baseline"])
+        if baseline_key not in indexed:
+            raise SystemExit(f"Missing ablation baseline for {table_config['output']}: {baseline_key}")
+        baseline = indexed[baseline_key]
+        selected = [row for row in rows if row["scenarioKey"] != baseline_key]
+        selected.sort(key=lambda row: float(row["captureRate"]) - float(baseline["captureRate"]), reverse=True)
+        return selected, baseline
+    raise SystemExit(f"Unknown rowMode for {table_config['output']}: {row_mode}")
 
 
-def ablation_table(rows: list[dict[str, str]]) -> str:
-    baseline = next(row for row in rows if row["scenarioKey"] == "ablation-full-bundle")
-    base_capture = float(baseline["captureRate"])
-    ablations = [row for row in rows if row["scenarioKey"] != "ablation-full-bundle"]
-    ablations.sort(key=lambda row: float(row["captureRate"]) - base_capture, reverse=True)
-    renames = {
-        "No public advocate or blind review": "Public advocate/blind review",
-        "No enforcement": "Enforcement",
-        "No public financing or vouchers": "Public financing/vouchers",
-        "No beneficial-owner disclosure": "Beneficial-owner disclosure",
-        "No cooling-off rules": "Cooling-off rules",
-        "No anti-astroturf authentication": "Anti-astroturf authentication",
-    }
-    body = [
-        [
-            label(row["scenarioName"], renames),
-            f"{float(row['captureRate']) - base_capture:.4f}",
-            f4(row["antiCaptureSuccess"]),
-            f4(row["darkMoneyShare"]),
-            f4(row["commentRecordDistortion"]),
-            f4(row["donorInfluenceGini"]),
-        ]
-        for row in ablations
-    ]
-    return table(
-        label="tab:ablation",
-        caption="Selected ablation results. Removing public advocate/blind-review capacity creates the largest modeled capture opening, while removing beneficial-owner disclosure mainly shifts spending toward dark money.",
-        headers=["Removed component", "Capture increase", "Reform", "Dark money", "Comment distortion", "Donor Gini"],
-        rows=body,
-        size="scriptsize",
-    )
+def render_cell(column: dict[str, object], row: dict[str, str], baseline: dict[str, str] | None) -> str:
+    source = str(column["source"])
+    cell_format = str(column.get("format", "text"))
+    if cell_format == "label":
+        return dict(column.get("labels", {})).get(row[source], row[source])
+    if cell_format == "float4":
+        return f4(row[source])
+    if cell_format == "delta4":
+        if baseline is None:
+            raise SystemExit(f"Column {column['header']} requires a baseline row.")
+        baseline_source = str(column.get("baselineSource", source))
+        return f"{float(row[source]) - float(baseline[baseline_source]):.4f}"
+    return row[source]
 
 
-def table(label: str, caption: str, headers: list[str], rows: list[list[str]], size: str) -> str:
+def table(
+        label: str,
+        caption: str,
+        headers: list[str],
+        rows: list[list[str]],
+        size: str,
+        provenance: str,
+) -> str:
     spec = "l" + ("r" * (len(headers) - 1))
     lines = [
+        provenance,
         "\\begin{table}[h]",
         "\\centering",
         f"\\{size}",
@@ -154,21 +124,27 @@ def table(label: str, caption: str, headers: list[str], rows: list[list[str]], s
     return "\n".join(lines)
 
 
+def provenance_comment(rows: list[dict[str, str]], source_path: Path, config_path: Path) -> str:
+    first = rows[0] if rows else {}
+    parts = [
+        "% Generated by scripts/generate-paper-tables.py",
+        f"source={source_path}",
+        f"config={config_path}",
+    ]
+    for key in ("generatedAt", "seed", "runs", "contestsPerRun"):
+        if first.get(key):
+            parts.append(f"{key}={first[key]}")
+    return "; ".join(parts)
+
+
+def read_config(path: Path) -> dict[str, object]:
+    with path.open(encoding="utf-8") as source:
+        return json.load(source)
+
+
 def read_report(path: Path) -> list[dict[str, str]]:
     with path.open(newline="", encoding="utf-8") as source:
         return list(csv.DictReader(source))
-
-
-def by_key(rows: list[dict[str, str]], keys: list[str]) -> list[dict[str, str]]:
-    indexed = {row["scenarioKey"]: row for row in rows}
-    missing = [key for key in keys if key not in indexed]
-    if missing:
-        raise SystemExit(f"Missing report rows for: {', '.join(missing)}")
-    return [indexed[key] for key in keys]
-
-
-def label(value: str, renames: dict[str, str]) -> str:
-    return renames.get(value, value)
 
 
 def f4(value: str) -> str:

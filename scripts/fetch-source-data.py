@@ -8,6 +8,7 @@ import csv
 import json
 import os
 import sys
+import time
 from datetime import date, datetime
 from pathlib import Path
 from urllib.error import HTTPError, URLError
@@ -64,13 +65,19 @@ def fetch_lda(output: Path) -> int:
         if not next_url:
             break
 
+    rows = normalize_lda_records(records)
+    write_rows(output, ["client", "registrant", "issueDomain", "amount", "disclosureLag", "coveredOfficialShare"], rows, "LDA filings")
+    return 0
+
+
+def normalize_lda_records(records: list[dict[str, object]]) -> list[dict[str, float | str]]:
     grouped: dict[tuple[str, str, str], dict[str, float | str]] = {}
     for record in records:
         client = first_text(record, "client.name", "client_name", "client", default="Unknown client")
         registrant = first_text(record, "registrant.name", "registrant_name", "registrant", default="Unknown registrant")
         amount = money_millions(first_text(record, "income", "expenses", "amount", default="0"))
         disclosure_lag = disclosure_lag_score(first_text(record, "filing_date", "dt_posted", "filing_dt", default=""))
-        covered_share = 0.20 + (0.10 if first_text(record, "lobbyists", "covered_position", default="") else 0.0)
+        covered_share = round(0.20 + (0.10 if first_text(record, "lobbyists", "covered_position", default="") else 0.0), 4)
         for issue in issue_domains_from_lda(record):
             key = (client, registrant, issue)
             existing = grouped.setdefault(
@@ -87,9 +94,7 @@ def fetch_lda(output: Path) -> int:
             existing["amount"] = float(existing["amount"]) + amount
             existing["disclosureLag"] = max(float(existing["disclosureLag"]), disclosure_lag)
             existing["coveredOfficialShare"] = max(float(existing["coveredOfficialShare"]), covered_share)
-
-    write_rows(output, ["client", "registrant", "issueDomain", "amount", "disclosureLag", "coveredOfficialShare"], grouped.values())
-    return 0
+    return [grouped[key] for key in sorted(grouped)]
 
 
 def fetch_fec(output: Path) -> int:
@@ -106,9 +111,14 @@ def fetch_fec(output: Path) -> int:
     if os.environ.get("FEC_COMMITTEE_ID"):
         params["committee_id"] = os.environ["FEC_COMMITTEE_ID"]
     payload = get_json(f"{base}/schedules/schedule_a/?{urlencode(params)}")
+    rows = normalize_fec_records(payload.get("results", []))
+    write_rows(output, ["source", "recipient", "issueDomain", "amount", "flowType", "traceability", "largeDonorShare"], rows, "OpenFEC schedule A records")
+    return 0
 
+
+def normalize_fec_records(records: list[dict[str, object]]) -> list[dict[str, object]]:
     rows = []
-    for record in payload.get("results", []):
+    for record in records:
         source = first_text(record, "contributor_name", "source", default="Unknown contributor")
         recipient = first_text(record, "committee.name", "committee_name", "recipient", default="Unknown recipient")
         amount = money_millions(first_text(record, "contribution_receipt_amount", "amount", default="0"))
@@ -124,17 +134,17 @@ def fetch_fec(output: Path) -> int:
                 "largeDonorShare": min(0.95, 0.35 + (amount * 4.0)),
             }
         )
-
-    write_rows(output, ["source", "recipient", "issueDomain", "amount", "flowType", "traceability", "largeDonorShare"], rows)
-    return 0
+    return rows
 
 
 def fetch_regulatory(output: Path) -> int:
     source = os.environ.get("REGULATORY_SOURCE", "regulations").lower()
     if source == "federal-register":
         rows = fetch_federal_register_rows()
+        source_name = "Federal Register documents"
     else:
         rows = fetch_regulations_gov_rows()
+        source_name = "Regulations.gov documents"
     write_rows(
         output,
         [
@@ -148,6 +158,7 @@ def fetch_regulatory(output: Path) -> int:
             "authenticationShare",
         ],
         rows,
+        source_name,
     )
     return 0
 
@@ -169,6 +180,10 @@ def fetch_regulations_gov_rows() -> list[dict[str, object]]:
         params["filter[postedDate][le]"] = os.environ["REGULATORY_DATE_TO"]
 
     payload = get_json(f"{base}/documents?{urlencode(params)}", {"X-Api-Key": api_key})
+    return normalize_regulations_gov_payload(payload)
+
+
+def normalize_regulations_gov_payload(payload: dict[str, object]) -> list[dict[str, object]]:
     rows = []
     for item in payload.get("data", []):
         attributes = item.get("attributes", {})
@@ -195,6 +210,10 @@ def fetch_federal_register_rows() -> list[dict[str, object]]:
         params["conditions[publication_date][lte]"] = os.environ["REGULATORY_DATE_TO"]
 
     payload = get_json(f"{base}/documents.json?{urlencode(params)}")
+    return normalize_federal_register_payload(payload)
+
+
+def normalize_federal_register_payload(payload: dict[str, object]) -> list[dict[str, object]]:
     rows = []
     for item in payload.get("results", []):
         title = first_text(item, "title", "abstract", default="")
@@ -262,14 +281,25 @@ def get_json(url: str, headers: dict[str, str] | None = None) -> dict[str, objec
     if headers:
         request_headers.update(headers)
     request = Request(url, headers=request_headers)
-    try:
-        with urlopen(request, timeout=30) as response:
-            return json.loads(response.read().decode("utf-8"))
-    except HTTPError as error:
-        detail = error.read().decode("utf-8", errors="replace")[:500]
-        raise SystemExit(f"GET {redact_url(url)} failed with HTTP {error.code}: {detail}") from error
-    except URLError as error:
-        raise SystemExit(f"GET {redact_url(url)} failed: {error.reason}") from error
+    attempts = int_env("SOURCE_FETCH_RETRIES", 3, 1, 8)
+    backoff = float_env("SOURCE_FETCH_BACKOFF_SECONDS", 1.0, 0.0, 30.0)
+    for attempt in range(1, attempts + 1):
+        try:
+            with urlopen(request, timeout=30) as response:
+                return json.loads(response.read().decode("utf-8"))
+        except HTTPError as error:
+            if should_retry(error.code, attempt, attempts):
+                sleep_before_retry(error, attempt, backoff)
+                continue
+            detail = error.read().decode("utf-8", errors="replace")[:500]
+            hint = auth_hint(error.code)
+            raise SystemExit(f"GET {redact_url(url)} failed with HTTP {error.code}: {detail}{hint}") from error
+        except URLError as error:
+            if attempt < attempts:
+                sleep_before_retry(None, attempt, backoff)
+                continue
+            raise SystemExit(f"GET {redact_url(url)} failed after {attempts} attempts: {error.reason}") from error
+    raise AssertionError("unreachable")
 
 
 def first_text(record: dict[str, object], *paths: str, default: str = "") -> str:
@@ -328,11 +358,46 @@ def int_or_zero(value: str) -> int:
 
 
 def bounded_int_env(name: str, default: int, minimum: int, maximum: int) -> str:
+    return str(int_env(name, default, minimum, maximum))
+
+
+def int_env(name: str, default: int, minimum: int, maximum: int) -> int:
     try:
         value = int(os.environ.get(name, str(default)))
     except ValueError:
         value = default
-    return str(max(minimum, min(maximum, value)))
+    return max(minimum, min(maximum, value))
+
+
+def float_env(name: str, default: float, minimum: float, maximum: float) -> float:
+    try:
+        value = float(os.environ.get(name, str(default)))
+    except ValueError:
+        value = default
+    return max(minimum, min(maximum, value))
+
+
+def should_retry(status_code: int, attempt: int, attempts: int) -> bool:
+    return attempt < attempts and (status_code == 429 or 500 <= status_code <= 599)
+
+
+def sleep_before_retry(error: HTTPError | None, attempt: int, backoff: float) -> None:
+    retry_after = error.headers.get("Retry-After") if error is not None else None
+    if retry_after is not None:
+        try:
+            delay = min(30.0, float(retry_after))
+        except ValueError:
+            delay = backoff * attempt
+    else:
+        delay = backoff * attempt
+    if delay > 0.0:
+        time.sleep(delay)
+
+
+def auth_hint(status_code: int) -> str:
+    if status_code in {401, 403}:
+        return " Check the relevant API key environment variable and endpoint permissions."
+    return ""
 
 
 def redact_url(url: str) -> str:
@@ -346,10 +411,10 @@ def redact_url(url: str) -> str:
     return urlunsplit((parts.scheme, parts.netloc, parts.path, query, parts.fragment))
 
 
-def write_rows(output: Path, fieldnames: list[str], rows: object) -> None:
+def write_rows(output: Path, fieldnames: list[str], rows: object, source_name: str = "source API") -> None:
     materialized = list(rows)
     if not materialized:
-        raise SystemExit("Source API returned no rows to normalize.")
+        raise SystemExit(f"{source_name} returned no rows to normalize. Check filters, date ranges, API credentials, and upstream availability.")
     output.parent.mkdir(parents=True, exist_ok=True)
     with output.open("w", newline="", encoding="utf-8") as destination:
         writer = csv.DictWriter(destination, fieldnames=fieldnames)

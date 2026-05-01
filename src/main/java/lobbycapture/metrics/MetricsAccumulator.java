@@ -44,7 +44,11 @@ public final class MetricsAccumulator {
     private double evasionPenaltySum;
     private double clientFundingAdaptationSum;
     private double regulatorAttentionSum;
+    private double regulatorQueueSum;
     private double watchdogFocusSum;
+    private double watchdogBudgetConcentrationSum;
+    private double adaptationSpeedSum;
+    private double reformDecayPressureSum;
     private double administrativeCostSum;
     private ChannelAllocation allocationSum = ChannelAllocation.zero();
 
@@ -101,7 +105,11 @@ public final class MetricsAccumulator {
         evasionPenaltySum += outcome.evasionPenalty();
         clientFundingAdaptationSum += world.averageClientFundingMultiplier();
         regulatorAttentionSum += world.averageRegulatorAttention();
+        regulatorQueueSum += world.averageRegulatorQueue();
         watchdogFocusSum += world.averageWatchdogFocus();
+        watchdogBudgetConcentrationSum += world.watchdogBudgetConcentration();
+        adaptationSpeedSum += world.lastAdaptationSpeed();
+        reformDecayPressureSum += world.lastReformDecayPressure();
         administrativeCostSum += outcome.administrativeCost();
     }
 
@@ -157,7 +165,11 @@ public final class MetricsAccumulator {
                 evasionPenaltySum / total,
                 clientFundingAdaptationSum / total,
                 regulatorAttentionSum / total,
+                regulatorQueueSum / total,
                 watchdogFocusSum / total,
+                watchdogBudgetConcentrationSum / total,
+                adaptationSpeedSum / total,
+                reformDecayPressureSum / total,
                 legitimateAdvocacyChill(),
                 ratio(delayedByChallenge, totalContests),
                 administrativeCostSum / total

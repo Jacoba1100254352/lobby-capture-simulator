@@ -49,7 +49,11 @@ public record ScenarioReport(
         double evasionPenaltyRate,
         double clientFundingAdaptation,
         double regulatorAttentionIndex,
+        double regulatorQueueBacklog,
         double watchdogFocusIndex,
+        double watchdogBudgetConcentration,
+        double adaptationSpeed,
+        double reformDecayPressure,
         double legitimateAdvocacyChillRate,
         double constitutionalChallengeDelay,
         double administrativeCostIndex
@@ -62,6 +66,8 @@ public record ScenarioReport(
                 MetricDefinition.lowerIsBetter(publicPreferenceDistortion),
                 MetricDefinition.lowerIsBetter(enforcementForbearanceRate),
                 MetricDefinition.lowerIsBetter(evasionPenaltyRate),
+                MetricDefinition.lowerIsBetter(regulatorQueueBacklog),
+                MetricDefinition.lowerIsBetter(reformDecayPressure),
                 regulatorAttentionIndex,
                 watchdogFocusIndex,
                 antiCaptureSuccessRate
@@ -75,6 +81,7 @@ public record ScenarioReport(
                 MetricDefinition.lowerIsBetter(donorInfluenceGini),
                 voucherParticipationRate,
                 publicFinancingShare,
+                MetricDefinition.lowerIsBetter(watchdogBudgetConcentration),
                 MetricDefinition.lowerIsBetter(Math.abs(clientFundingAdaptation - 1.0)),
                 MetricDefinition.lowerIsBetter(publicPreferenceDistortion)
         );

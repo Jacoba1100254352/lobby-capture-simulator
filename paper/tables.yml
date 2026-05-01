@@ -1,0 +1,152 @@
+{
+  "tables": [
+    {
+      "output": "campaign_snapshot.tex",
+      "source": "lobby-capture-campaign.csv",
+      "label": "tab:first-campaign",
+      "caption": "Current simulation snapshot. Metrics are comparative model outputs, not calibrated empirical estimates.",
+      "size": "scriptsize",
+      "rows": [
+        "open-access-lobbying",
+        "reform-threat-mobilization",
+        "full-anti-capture-bundle",
+        "bundle-with-evasion",
+        "low-salience-technical-rulemaking"
+      ],
+      "columns": [
+        {
+          "header": "Scenario",
+          "source": "scenarioName",
+          "format": "label",
+          "labels": {
+            "Low-salience technical rulemaking": "Low-salience rulemaking"
+          }
+        },
+        {
+          "header": "Capture",
+          "source": "captureRate",
+          "format": "float4"
+        },
+        {
+          "header": "Reform",
+          "source": "antiCaptureSuccess",
+          "format": "float4"
+        },
+        {
+          "header": "Defensive",
+          "source": "defensiveReformSpendShare",
+          "format": "float4"
+        },
+        {
+          "header": "Dark money",
+          "source": "darkMoneyShare",
+          "format": "float4"
+        },
+        {
+          "header": "Funding",
+          "source": "clientFundingPerContest",
+          "format": "float4"
+        }
+      ]
+    },
+    {
+      "output": "sensitivity_snapshot.tex",
+      "source": "lobby-capture-sensitivity.csv",
+      "label": "tab:sensitivity",
+      "caption": "Selected sensitivity sweep rows. The current bundle is robust in this stylized setup, but evasion freedom strongly shifts spending into opaque channels.",
+      "size": "small",
+      "rows": [
+        "sensitivity-public-financing-1-25",
+        "sensitivity-public-financing-0-35",
+        "sensitivity-evasion-0-00",
+        "sensitivity-evasion-0-60",
+        "sensitivity-enforcement-0-35",
+        "sensitivity-disclosure-0-35"
+      ],
+      "columns": [
+        {
+          "header": "Scenario",
+          "source": "scenarioName",
+          "format": "label",
+          "labels": {
+            "Sensitivity public financing 1.25": "Public financing 1.25",
+            "Sensitivity public financing 0.35": "Public financing 0.35",
+            "Sensitivity evasion 0.00": "Evasion 0.00",
+            "Sensitivity evasion 0.60": "Evasion 0.60",
+            "Sensitivity enforcement 0.35": "Enforcement 0.35",
+            "Sensitivity disclosure 0.35": "Disclosure 0.35"
+          }
+        },
+        {
+          "header": "Directional",
+          "source": "directionalScore",
+          "format": "float4"
+        },
+        {
+          "header": "Reform success",
+          "source": "antiCaptureSuccess",
+          "format": "float4"
+        },
+        {
+          "header": "Dark-money share",
+          "source": "darkMoneyShare",
+          "format": "float4"
+        },
+        {
+          "header": "Evasion shift",
+          "source": "evasionShiftRate",
+          "format": "float4"
+        }
+      ]
+    },
+    {
+      "output": "ablation_snapshot.tex",
+      "source": "lobby-capture-ablation.csv",
+      "label": "tab:ablation",
+      "caption": "Selected ablation results. Removing public advocate/blind-review capacity creates the largest modeled capture opening, while removing beneficial-owner disclosure mainly shifts spending toward dark money.",
+      "size": "scriptsize",
+      "rowMode": "ablation-delta",
+      "baseline": "ablation-full-bundle",
+      "columns": [
+        {
+          "header": "Removed component",
+          "source": "scenarioName",
+          "format": "label",
+          "labels": {
+            "No public advocate or blind review": "Public advocate/blind review",
+            "No enforcement": "Enforcement",
+            "No public financing or vouchers": "Public financing/vouchers",
+            "No beneficial-owner disclosure": "Beneficial-owner disclosure",
+            "No cooling-off rules": "Cooling-off rules",
+            "No anti-astroturf authentication": "Anti-astroturf authentication"
+          }
+        },
+        {
+          "header": "Capture increase",
+          "source": "captureRate",
+          "format": "delta4"
+        },
+        {
+          "header": "Reform",
+          "source": "antiCaptureSuccess",
+          "format": "float4"
+        },
+        {
+          "header": "Dark money",
+          "source": "darkMoneyShare",
+          "format": "float4"
+        },
+        {
+          "header": "Comment distortion",
+          "source": "commentRecordDistortion",
+          "format": "float4"
+        },
+        {
+          "header": "Donor Gini",
+          "source": "donorInfluenceGini",
+          "format": "float4"
+        }
+      ]
+    }
+  ]
+}

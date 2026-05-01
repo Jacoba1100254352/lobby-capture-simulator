@@ -19,8 +19,8 @@ public final class MarkdownReportWriter {
         builder.append("- Contests per run: `").append(provenance.contestsPerRun()).append("`\n\n");
 
         builder.append("## Scenario Summary\n\n");
-        builder.append("| Scenario | Directional | Capture rate | Anti-capture success | Defensive spend | Dark-money share | Client funding | Reg attention | Watchdog focus | Detection | Admin cost |\n");
-        builder.append("| --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |\n");
+        builder.append("| Scenario | Directional | Capture rate | Anti-capture success | Defensive spend | Dark-money share | Client funding | Reg attention | Reg queue | Watchdog focus | Adapt speed | Reform decay | Detection | Admin cost |\n");
+        builder.append("| --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |\n");
         for (ScenarioReport report : reports.stream().sorted(Comparator.comparing(ScenarioReport::directionalScore).reversed()).toList()) {
             builder.append("| ").append(report.scenarioName())
                     .append(" | ").append(CsvReportWriter.format(report.directionalScore()))
@@ -30,7 +30,10 @@ public final class MarkdownReportWriter {
                     .append(" | ").append(CsvReportWriter.format(report.darkMoneySpendShare()))
                     .append(" | ").append(CsvReportWriter.format(report.clientFundingPerContest()))
                     .append(" | ").append(CsvReportWriter.format(report.regulatorAttentionIndex()))
+                    .append(" | ").append(CsvReportWriter.format(report.regulatorQueueBacklog()))
                     .append(" | ").append(CsvReportWriter.format(report.watchdogFocusIndex()))
+                    .append(" | ").append(CsvReportWriter.format(report.adaptationSpeed()))
+                    .append(" | ").append(CsvReportWriter.format(report.reformDecayPressure()))
                     .append(" | ").append(CsvReportWriter.format(report.detectionRate()))
                     .append(" | ").append(CsvReportWriter.format(report.administrativeCostIndex()))
                     .append(" |\n");

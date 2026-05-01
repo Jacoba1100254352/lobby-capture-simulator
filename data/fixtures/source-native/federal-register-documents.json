@@ -1,0 +1,15 @@
+{
+  "results": [
+    {
+      "title": "Bank Capital Rule",
+      "document_number": "2026-00001",
+      "docket_ids": ["FR-2026-0001"],
+      "agencies": [
+        {
+          "slug": "securities-and-exchange-commission",
+          "name": "Securities and Exchange Commission"
+        }
+      ]
+    }
+  ]
+}

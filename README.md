@@ -53,7 +53,9 @@ REGULATIONS_API_KEY=... ./scripts/fetch-regulatory.sh --live
 REGULATORY_SOURCE=federal-register ./scripts/fetch-regulatory.sh --live
 ```
 
-`make tables` regenerates LaTeX table files under `paper/tables/` from the committed report CSV snapshots. `make paper` runs that table generator before building the PDF.
+`make tables` regenerates LaTeX table files under `paper/tables/` from the committed report CSV snapshots. `make paper` runs that table generator before building the PDF. Table selection lives in `paper/tables.yml`, so paper row/column/caption edits do not require changing the generator.
+
+The source-native fetcher has tiny checked-in JSON fixtures under `data/fixtures/source-native/`. `make test` verifies those parser paths without hitting the network. Live source requests retry transient `429` and `5xx` responses; tune with `SOURCE_FETCH_RETRIES` and `SOURCE_FETCH_BACKOFF_SECONDS`.
 
 ## Current Modeling Slice
 
@@ -65,12 +67,12 @@ It includes:
 
 - finite disclosed, dark-money, legal, campaign, grassroots, and research budgets;
 - explicit client funding and client-to-lobby money flows;
-- adaptive channel selection, channel-return memory, client funding multipliers, regulator attention, and watchdog focus;
+- adaptive channel selection, channel-return memory, per-client/per-domain funding multipliers, regulator attention queues, watchdog monitoring budgets, and reform-decay pressure;
 - direct access, agenda access, information distortion, public campaigns, litigation threats, campaign finance, dark money, revolving-door access, and defensive reform spending;
 - first-class rulemaking dockets, comment campaigns, authenticity, template saturation, and technical-claim credibility;
 - evasion profiles with dark-pool, litigation-funding, procurement-consultant, and revolving-door substitution pressure;
 - arena-specific capture susceptibility;
 - transparency, public financing, democracy vouchers, cooling-off, blind review, public advocates, enforcement, anti-astroturf systems, defensive-spend caps, and dark-money disclosure;
-- raw and composite scenario metrics plus sensitivity, ablation, and adaptation metrics.
+- raw and composite scenario metrics plus sensitivity, ablation, adaptation-speed, and reform-decay metrics.
 
 The formulas are stylized and comparative. Empirical files under `data/calibration/` and normalized fixtures under `data/fixtures/` are benchmark scaffolds, not causal estimates.
