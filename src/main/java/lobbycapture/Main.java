@@ -1,0 +1,124 @@
+package lobbycapture;
+
+import lobbycapture.metrics.ScenarioReport;
+import lobbycapture.reporting.CampaignRunner;
+import lobbycapture.simulation.Scenario;
+import lobbycapture.simulation.ScenarioCatalog;
+import lobbycapture.simulation.Simulator;
+
+import java.nio.file.Path;
+import java.util.List;
+import java.util.Locale;
+
+public final class Main {
+    private Main() {
+    }
+
+    public static void main(String[] args) throws Exception {
+        Options options = Options.parse(args);
+        if (options.help) {
+            printHelp();
+            return;
+        }
+        if (options.list) {
+            for (Scenario scenario : ScenarioCatalog.all()) {
+                System.out.println(scenario.key() + " - " + scenario.name());
+            }
+            return;
+        }
+        if (options.campaign) {
+            new CampaignRunner().writeCampaign(Path.of("reports"), options.runs, options.contests, options.seed);
+            System.out.println("Wrote reports/lobby-capture-campaign.csv");
+            System.out.println("Wrote reports/lobby-capture-campaign.md");
+            return;
+        }
+        Scenario scenario = ScenarioCatalog.require(options.scenarioKey);
+        ScenarioReport report = new Simulator().run(scenario, options.runs, options.contests, options.seed);
+        printSummary(report);
+    }
+
+    private static void printSummary(ScenarioReport report) {
+        System.out.println("scenario=" + report.scenarioKey());
+        System.out.println("name=" + report.scenarioName());
+        System.out.println("totalContests=" + report.totalContests());
+        System.out.println("capturedContests=" + report.capturedContests());
+        System.out.println("captureRate=" + format(report.captureRate()));
+        System.out.println("antiCaptureSuccessRate=" + format(report.antiCaptureSuccessRate()));
+        System.out.println("defensiveReformSpendShare=" + format(report.defensiveReformSpendShare()));
+        System.out.println("darkMoneySpendShare=" + format(report.darkMoneySpendShare()));
+        System.out.println("channelSwitchRate=" + format(report.channelSwitchRate()));
+        System.out.println("evasionShiftRate=" + format(report.evasionShiftRate()));
+        System.out.println("detectionRate=" + format(report.detectionRate()));
+        System.out.println("directionalScore=" + format(report.directionalScore()));
+    }
+
+    private static void printHelp() {
+        System.out.println("""
+                Lobby Capture Simulator
+
+                Usage:
+                  make run ARGS="--list"
+                  make run ARGS="--scenario reform-threat-mobilization --runs 10 --contests 30 --seed 7"
+                  make campaign
+
+                Options:
+                  --list                 List scenarios.
+                  --scenario KEY         Scenario key to run.
+                  --runs N               Number of independent runs. Default: 10.
+                  --contests N           Contests per run. Default: 40.
+                  --seed N               Random seed. Default: 1.
+                  --campaign             Run all scenarios and write reports.
+                  --help                 Show this help.
+                """);
+    }
+
+    private static String format(double value) {
+        return String.format(Locale.US, "%.4f", value);
+    }
+
+    private record Options(
+            String scenarioKey,
+            int runs,
+            int contests,
+            long seed,
+            boolean list,
+            boolean campaign,
+            boolean help
+    ) {
+        private static Options parse(String[] args) {
+            String scenario = "reform-threat-mobilization";
+            int runs = 10;
+            int contests = 40;
+            long seed = 1L;
+            boolean list = false;
+            boolean campaign = false;
+            boolean help = false;
+            List<String> arguments = List.of(args);
+            for (int index = 0; index < arguments.size(); index++) {
+                String arg = arguments.get(index);
+                switch (arg) {
+                    case "--scenario" -> scenario = requireValue(arguments, ++index, arg);
+                    case "--runs" -> runs = Integer.parseInt(requireValue(arguments, ++index, arg));
+                    case "--contests" -> contests = Integer.parseInt(requireValue(arguments, ++index, arg));
+                    case "--seed" -> seed = Long.parseLong(requireValue(arguments, ++index, arg));
+                    case "--list" -> list = true;
+                    case "--campaign" -> campaign = true;
+                    case "--help", "-h" -> help = true;
+                    default -> throw new IllegalArgumentException("Unknown argument: " + arg);
+                }
+            }
+            if (runs <= 0 || contests <= 0) {
+                throw new IllegalArgumentException("--runs and --contests must be positive.");
+            }
+            return new Options(scenario, runs, contests, seed, list, campaign, help);
+        }
+
+        private static String requireValue(List<String> arguments, int index, String option) {
+            if (index >= arguments.size()) {
+                throw new IllegalArgumentException(option + " requires a value.");
+            }
+            return arguments.get(index);
+        }
+    }
+}
+

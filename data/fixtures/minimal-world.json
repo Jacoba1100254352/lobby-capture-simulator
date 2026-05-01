@@ -1,0 +1,5 @@
+{
+  "note": "The MVP scenarios are generated in Java. This fixture reserves the JSON shape for future external world specs.",
+  "world": "minimal"
+}
+

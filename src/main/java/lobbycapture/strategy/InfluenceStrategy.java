@@ -1,0 +1,15 @@
+package lobbycapture.strategy;
+
+public enum InfluenceStrategy {
+    BALANCED,
+    DIRECT_ACCESS,
+    AGENDA_ACCESS,
+    INFORMATION_DISTORTION,
+    PUBLIC_CAMPAIGN,
+    LITIGATION_THREAT,
+    CAMPAIGN_FINANCE,
+    DARK_MONEY,
+    REVOLVING_DOOR,
+    DEFENSIVE_REFORM
+}
+

@@ -1,0 +1,14 @@
+.DS_Store
+out/
+reports/*.csv
+reports/*.md
+!reports/lobby-capture-campaign.csv
+!reports/lobby-capture-campaign.md
+paper/*.aux
+paper/*.bbl
+paper/*.blg
+paper/*.log
+paper/*.out
+paper/*.pdf
+data/raw/*
+!data/raw/.gitkeep
