@@ -2,20 +2,26 @@ package lobbycapture.simulation;
 
 import lobbycapture.actor.Candidate;
 import lobbycapture.actor.EnforcementAgency;
+import lobbycapture.actor.InterestClient;
 import lobbycapture.actor.LobbyOrganization;
 import lobbycapture.actor.PublicOfficial;
 import lobbycapture.actor.Regulator;
+import lobbycapture.calibration.CalibrationDataLoader;
+import lobbycapture.calibration.CalibrationProfile;
 import lobbycapture.policy.ContestArena;
 import lobbycapture.policy.PolicyContest;
 import lobbycapture.reform.ReformRegime;
+import lobbycapture.strategy.EvasionProfile;
 import lobbycapture.strategy.InfluenceStrategy;
 
+import java.nio.file.Path;
 import java.util.ArrayList;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
 public final class ScenarioCatalog {
+    private static CalibrationProfile cachedCalibration;
+
     private ScenarioCatalog() {
     }
 
@@ -54,6 +60,7 @@ public final class ScenarioCatalog {
             boolean adaptive,
             List<PolicyContest> contests
     ) {
+        CalibrationProfile calibration = calibration();
         return new Scenario(
                 key,
                 name,
@@ -61,7 +68,10 @@ public final class ScenarioCatalog {
                 new WorldSpec(
                         name,
                         reform,
+                        calibration,
+                        evasionProfile(evasionFreedom),
                         lobbies(initialStrategy),
+                        clients(),
                         officials(),
                         regulators(),
                         candidates(),
@@ -74,6 +84,16 @@ public final class ScenarioCatalog {
                         adaptive
                 )
         );
+    }
+
+    public static Scenario sensitivityScenario(
+            String key,
+            String name,
+            ReformRegime reform,
+            double evasionFreedom,
+            InfluenceStrategy initialStrategy
+    ) {
+        return scenario(key, name, "Sensitivity sweep scenario.", reform, initialStrategy, evasionFreedom, true, reformHeavyContests());
     }
 
     private static List<LobbyOrganization> lobbies(InfluenceStrategy initialStrategy) {
@@ -91,6 +111,25 @@ public final class ScenarioCatalog {
                         "procurement", 1.00, "enforcement", 0.62, "rulemaking", 0.46, "democracy", 0.42
                 ), 0.52, 4.8, 2.4, 2.6, 1.6, 1.2, 1.8, 0.72, 0.74, 0.58, 0.42, 0.38, 0.34, 0.52, 0.80, 0.44, 0.66, 1.6, 0.24, 0.34, initialStrategy)
         );
+    }
+
+    private static List<InterestClient> clients() {
+        return List.of(
+                new InterestClient("energy-producers", "energy", Map.of("energy", 0.86, "rulemaking", 0.74, "democracy", 0.62), 0.88, 0.42, 0.58, 0.54, 0.64, 0.58, 0.42),
+                new InterestClient("platform-operators", "technology", Map.of("technology", 0.90, "rulemaking", 0.82, "democracy", 0.55), 0.82, 0.24, 0.46, 0.48, 0.72, 0.70, 0.50),
+                new InterestClient("financial-firms", "finance", Map.of("finance", 0.92, "election", 0.84, "democracy", 0.70), 0.74, 0.28, 0.66, 0.42, 0.78, 0.76, 0.46),
+                new InterestClient("federal-contractors", "procurement", Map.of("procurement", 0.88, "enforcement", 0.62, "democracy", 0.48), 0.46, 0.86, 0.52, 0.38, 0.58, 0.44, 0.34)
+        );
+    }
+
+    private static EvasionProfile evasionProfile(double evasionFreedom) {
+        if (evasionFreedom >= 0.70) {
+            return EvasionProfile.high();
+        }
+        if (evasionFreedom >= 0.25) {
+            return EvasionProfile.moderate();
+        }
+        return EvasionProfile.low();
     }
 
     private static LobbyOrganization lobby(
@@ -275,7 +314,14 @@ public final class ScenarioCatalog {
             double complexity,
             double salience
     ) {
-        return PolicyContest.of(id, title, domain, arena, antiCapture, publicBenefit, perceivedSupport, trueSupport, privateGain, harm, complexity, salience);
+        return PolicyContest.of(id, title, domain, arena, antiCapture, publicBenefit, perceivedSupport, trueSupport, privateGain, harm, complexity, salience)
+                .withDocket(calibration().docketFor(domain));
+    }
+
+    private static synchronized CalibrationProfile calibration() {
+        if (cachedCalibration == null) {
+            cachedCalibration = CalibrationDataLoader.loadOrEmbedded(Path.of("data", "raw"));
+        }
+        return cachedCalibration;
     }
 }
-

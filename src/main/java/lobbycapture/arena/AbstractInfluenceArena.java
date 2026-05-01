@@ -88,6 +88,7 @@ abstract class AbstractInfluenceArena implements InfluenceArena {
                 0.0,
                 0.0,
                 0.0,
+                0.0,
                 reform.administrativeCost() + (delayed ? reform.constitutionalChallengeRisk() * 0.35 : 0.0),
                 enacted ? "anti-capture reform survived defensive lobbying" : "defensive lobbying blocked reform"
         );
@@ -121,6 +122,7 @@ abstract class AbstractInfluenceArena implements InfluenceArena {
                         + (0.18 * reform.transparencyStrength())
                         + (0.14 * contest.watchdogPressure())
                         - (0.16 * contest.darkMoneyInfluence())
+                        + (0.10 * world.evasionProfile().legalRisk())
                         - (0.08 * reform.appealsDelay()),
                 0.0,
                 1.0
@@ -139,6 +141,9 @@ abstract class AbstractInfluenceArena implements InfluenceArena {
                 0.0,
                 1.0
         );
+        double evasionPenalty = sanctioned
+                ? Values.clamp(world.evasionProfile().legalRisk() * contest.darkMoneyInfluence() * reform.sanctionSeverity(), 0.0, 1.0)
+                : 0.0;
         return new ContestOutcome(
                 contest,
                 arenaType,
@@ -156,6 +161,7 @@ abstract class AbstractInfluenceArena implements InfluenceArena {
                 procurementBias,
                 detectionProbability,
                 sanctioned ? reform.sanctionSeverity() : 0.0,
+                evasionPenalty,
                 reform.administrativeCost() + (detected ? 0.08 : 0.0) + (sanctioned ? 0.06 : 0.0),
                 captured ? "captured outcome survived process" : "public-interest controls held"
         );

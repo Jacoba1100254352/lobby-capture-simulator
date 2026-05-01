@@ -2,6 +2,7 @@ package lobbycapture;
 
 import lobbycapture.metrics.ScenarioReport;
 import lobbycapture.reporting.CampaignRunner;
+import lobbycapture.reporting.SensitivityRunner;
 import lobbycapture.simulation.Scenario;
 import lobbycapture.simulation.ScenarioCatalog;
 import lobbycapture.simulation.Simulator;
@@ -32,6 +33,12 @@ public final class Main {
             System.out.println("Wrote reports/lobby-capture-campaign.md");
             return;
         }
+        if (options.sensitivity) {
+            new SensitivityRunner().write(Path.of("reports"), options.runs, options.contests, options.seed);
+            System.out.println("Wrote reports/lobby-capture-sensitivity.csv");
+            System.out.println("Wrote reports/lobby-capture-sensitivity.md");
+            return;
+        }
         Scenario scenario = ScenarioCatalog.require(options.scenarioKey);
         ScenarioReport report = new Simulator().run(scenario, options.runs, options.contests, options.seed);
         printSummary(report);
@@ -60,6 +67,7 @@ public final class Main {
                   make run ARGS="--list"
                   make run ARGS="--scenario reform-threat-mobilization --runs 10 --contests 30 --seed 7"
                   make campaign
+                  make sensitivity
 
                 Options:
                   --list                 List scenarios.
@@ -68,6 +76,7 @@ public final class Main {
                   --contests N           Contests per run. Default: 40.
                   --seed N               Random seed. Default: 1.
                   --campaign             Run all scenarios and write reports.
+                  --sensitivity          Sweep reform strengths and evasion freedom.
                   --help                 Show this help.
                 """);
     }
@@ -83,6 +92,7 @@ public final class Main {
             long seed,
             boolean list,
             boolean campaign,
+            boolean sensitivity,
             boolean help
     ) {
         private static Options parse(String[] args) {
@@ -92,6 +102,7 @@ public final class Main {
             long seed = 1L;
             boolean list = false;
             boolean campaign = false;
+            boolean sensitivity = false;
             boolean help = false;
             List<String> arguments = List.of(args);
             for (int index = 0; index < arguments.size(); index++) {
@@ -103,6 +114,7 @@ public final class Main {
                     case "--seed" -> seed = Long.parseLong(requireValue(arguments, ++index, arg));
                     case "--list" -> list = true;
                     case "--campaign" -> campaign = true;
+                    case "--sensitivity" -> sensitivity = true;
                     case "--help", "-h" -> help = true;
                     default -> throw new IllegalArgumentException("Unknown argument: " + arg);
                 }
@@ -110,7 +122,7 @@ public final class Main {
             if (runs <= 0 || contests <= 0) {
                 throw new IllegalArgumentException("--runs and --contests must be positive.");
             }
-            return new Options(scenario, runs, contests, seed, list, campaign, help);
+            return new Options(scenario, runs, contests, seed, list, campaign, sensitivity, help);
         }
 
         private static String requireValue(List<String> arguments, int index, String option) {
@@ -121,4 +133,3 @@ public final class Main {
         }
     }
 }
-

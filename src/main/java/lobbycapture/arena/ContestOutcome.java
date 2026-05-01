@@ -21,8 +21,8 @@ public record ContestOutcome(
         double procurementBias,
         double detectionProbability,
         double sanctionCost,
+        double evasionPenalty,
         double administrativeCost,
         String reason
 ) {
 }
-

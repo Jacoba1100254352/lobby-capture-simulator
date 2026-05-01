@@ -20,6 +20,9 @@ public final class MetricsAccumulator {
     private double publicPreferenceDistortionSum;
     private double privateGainRatioSum;
     private double totalSpendSum;
+    private double clientFundingSum;
+    private double donorInfluenceGiniSum;
+    private double disclosureLagSum;
     private double defensiveSpendSum;
     private double truePublicBenefitSum;
     private double policyDistortionSum;
@@ -32,8 +35,12 @@ public final class MetricsAccumulator {
     private double publicFinancingShareSum;
     private double revolvingDoorInfluenceSum;
     private double commentRecordDistortionSum;
+    private double commentAuthenticitySum;
+    private double templateCommentSaturationSum;
+    private double technicalClaimCredibilitySum;
     private double channelSwitchSum;
     private double evasionShiftSum;
+    private double evasionPenaltySum;
     private double administrativeCostSum;
     private ChannelAllocation allocationSum = ChannelAllocation.zero();
 
@@ -62,6 +69,9 @@ public final class MetricsAccumulator {
         allocationSum = allocationSum.plus(allocation);
         double totalSpend = outcome.influenceResult().totalSpend();
         totalSpendSum += totalSpend;
+        clientFundingSum += outcome.influenceResult().clientFunding();
+        donorInfluenceGiniSum += outcome.influenceResult().donorInfluenceGini();
+        disclosureLagSum += outcome.influenceResult().averageDisclosureLag();
         defensiveSpendSum += outcome.influenceResult().defensiveSpend();
         captureIndexSum += outcome.captureIndex();
         publicInterestSum += outcome.publicInterestScore();
@@ -78,8 +88,12 @@ public final class MetricsAccumulator {
         publicFinancingShareSum += reform.publicFinancingStrength();
         revolvingDoorInfluenceSum += contest.revolvingDoorInfluence();
         commentRecordDistortionSum += contest.commentRecordDistortion();
+        commentAuthenticitySum += contest.docket().authenticityShare();
+        templateCommentSaturationSum += contest.docket().templateSaturation();
+        technicalClaimCredibilitySum += contest.docket().technicalClaimCredibility();
         channelSwitchSum += outcome.influenceResult().channelSwitches();
         evasionShiftSum += outcome.influenceResult().evasionShifts();
+        evasionPenaltySum += outcome.evasionPenalty();
         administrativeCostSum += outcome.administrativeCost();
     }
 
@@ -100,6 +114,9 @@ public final class MetricsAccumulator {
                 publicPreferenceDistortionSum / total,
                 privateGainRatioSum / total,
                 totalSpendSum / total,
+                clientFundingSum / total,
+                donorInfluenceGiniSum / total,
+                disclosureLagSum / total,
                 totalSpend == 0.0 ? 0.0 : defensiveSpendSum / totalSpend,
                 totalSpend == 0.0 ? 0.0 : captureIndexSum / totalSpend,
                 totalSpend == 0.0 ? 0.0 : truePublicBenefitSum / totalSpend,
@@ -124,8 +141,12 @@ public final class MetricsAccumulator {
                 publicFinancingShareSum / total,
                 revolvingDoorInfluenceSum / total,
                 commentRecordDistortionSum / total,
+                commentAuthenticitySum / total,
+                templateCommentSaturationSum / total,
+                technicalClaimCredibilitySum / total,
                 channelSwitchSum / total,
                 evasionShiftSum / total,
+                evasionPenaltySum / total,
                 legitimateAdvocacyChill(),
                 ratio(delayedByChallenge, totalContests),
                 administrativeCostSum / total

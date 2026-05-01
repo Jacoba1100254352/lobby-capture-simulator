@@ -12,6 +12,10 @@ The base simulator already has useful primitives:
 
 The new project should not treat lobbying as one wrapper around a bill vote. It should model an influence economy in which organized interests allocate budgets across access, campaigns, litigation, information distortion, dark money, revolving-door incentives, regulatory comments, procurement pressure, and defensive anti-reform spending.
 
+## Current Implementation Status
+
+The repository now contains a runnable Java MVP with a Makefile workflow, scenario catalog, campaign reports, sensitivity sweeps, calibration fixtures, a LaTeX working paper, and smoke tests. Lobby organizations remain the central strategic actors. The active engine includes client funding, contribution-ledger flows, adaptive channel allocation, rulemaking docket/comment campaigns, evasion profiles, enforcement detection and penalties, and anti-capture reform bundles.
+
 ## 1. Proposed Repo Architecture
 
 Use Java with a small Makefile first, matching the base simulator's low-friction workflow. Add Gradle or Maven only when external data ingestion requires stable third-party CSV/JSON dependencies.

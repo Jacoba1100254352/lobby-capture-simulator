@@ -2,10 +2,14 @@ package lobbycapture.simulation;
 
 import lobbycapture.actor.Candidate;
 import lobbycapture.actor.EnforcementAgency;
+import lobbycapture.actor.InterestClient;
 import lobbycapture.actor.LobbyOrganization;
 import lobbycapture.actor.PublicOfficial;
 import lobbycapture.actor.Regulator;
+import lobbycapture.budget.ContributionLedger;
+import lobbycapture.calibration.CalibrationProfile;
 import lobbycapture.reform.ReformRegime;
+import lobbycapture.strategy.EvasionProfile;
 import lobbycapture.strategy.InfluenceStrategy;
 import lobbycapture.strategy.StrategyMemory;
 
@@ -18,6 +22,7 @@ public final class WorldState {
     private final WorldSpec spec;
     private final Random random;
     private final SimulationClock clock = new SimulationClock();
+    private final ContributionLedger contributionLedger = new ContributionLedger();
     private final Map<String, Double> remainingBudgetByLobby = new HashMap<>();
     private final Map<String, StrategyMemory> memoryByLobby = new HashMap<>();
 
@@ -32,6 +37,14 @@ public final class WorldState {
 
     public ReformRegime reformRegime() {
         return spec.reformRegime();
+    }
+
+    public CalibrationProfile calibrationProfile() {
+        return spec.calibrationProfile();
+    }
+
+    public EvasionProfile evasionProfile() {
+        return spec.evasionProfile();
     }
 
     public double spendScale() {
@@ -58,6 +71,10 @@ public final class WorldState {
         return spec.lobbyOrganizations();
     }
 
+    public List<InterestClient> clients() {
+        return spec.clients();
+    }
+
     public List<PublicOfficial> officials() {
         return spec.officials();
     }
@@ -80,6 +97,10 @@ public final class WorldState {
 
     public SimulationClock clock() {
         return clock;
+    }
+
+    public ContributionLedger contributionLedger() {
+        return contributionLedger;
     }
 
     public double remainingBudget(String lobbyId) {

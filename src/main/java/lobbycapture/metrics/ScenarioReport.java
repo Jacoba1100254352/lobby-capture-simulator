@@ -14,6 +14,9 @@ public record ScenarioReport(
         double publicPreferenceDistortion,
         double privateGainRatio,
         double lobbySpendPerContest,
+        double clientFundingPerContest,
+        double donorInfluenceGini,
+        double averageDisclosureLag,
         double defensiveReformSpendShare,
         double captureReturnOnSpend,
         double publicBenefitPerInfluenceDollar,
@@ -38,8 +41,12 @@ public record ScenarioReport(
         double publicFinancingShare,
         double revolvingDoorInfluence,
         double commentRecordDistortion,
+        double commentAuthenticity,
+        double templateCommentSaturation,
+        double technicalClaimCredibility,
         double channelSwitchRate,
         double evasionShiftRate,
+        double evasionPenaltyRate,
         double legitimateAdvocacyChillRate,
         double constitutionalChallengeDelay,
         double administrativeCostIndex
@@ -51,6 +58,7 @@ public record ScenarioReport(
                 MetricDefinition.lowerIsBetter(privateGainRatio / 5.0),
                 MetricDefinition.lowerIsBetter(publicPreferenceDistortion),
                 MetricDefinition.lowerIsBetter(enforcementForbearanceRate),
+                MetricDefinition.lowerIsBetter(evasionPenaltyRate),
                 antiCaptureSuccessRate
         );
     }
@@ -59,6 +67,7 @@ public record ScenarioReport(
         return MetricDefinition.average(
                 averagePublicInterestScore,
                 MetricDefinition.lowerIsBetter(largeDonorDependence),
+                MetricDefinition.lowerIsBetter(donorInfluenceGini),
                 voucherParticipationRate,
                 publicFinancingShare,
                 MetricDefinition.lowerIsBetter(publicPreferenceDistortion)
@@ -78,4 +87,3 @@ public record ScenarioReport(
         return MetricDefinition.average(captureControlScore(), representationScore(), reformFeasibilityScore());
     }
 }
-

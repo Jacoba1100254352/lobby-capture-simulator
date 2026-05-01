@@ -28,6 +28,7 @@ public record PolicyContest(
         double revolvingDoorInfluence,
         double campaignFinanceInfluence,
         double litigationThreat,
+        Docket docket,
         double captureRisk,
         double publicInterestScore
 ) {
@@ -58,6 +59,9 @@ public record PolicyContest(
         Values.requireRange("revolvingDoorInfluence", revolvingDoorInfluence, 0.0, 1.0);
         Values.requireRange("campaignFinanceInfluence", campaignFinanceInfluence, 0.0, 1.0);
         Values.requireRange("litigationThreat", litigationThreat, 0.0, 1.0);
+        if (docket == null) {
+            throw new IllegalArgumentException("docket must not be null.");
+        }
         captureRisk = Values.clamp(captureRisk, 0.0, 1.0);
         publicInterestScore = Values.clamp(publicInterestScore, 0.0, 1.0);
     }
@@ -102,6 +106,7 @@ public record PolicyContest(
                 0.0,
                 0.0,
                 0.0,
+                Docket.empty(issueDomain),
                 0.0,
                 0.0
         );
@@ -148,6 +153,40 @@ public record PolicyContest(
                 Values.clamp(revolvingDoorInfluence, 0.0, 1.0),
                 Values.clamp(campaignFinanceInfluence, 0.0, 1.0),
                 Values.clamp(litigationThreat, 0.0, 1.0),
+                docket,
+                0.0,
+                0.0
+        ).rescored();
+    }
+
+    public PolicyContest withDocket(Docket updatedDocket) {
+        return new PolicyContest(
+                id,
+                title,
+                issueDomain,
+                arena,
+                antiCaptureReform,
+                truePublicBenefit,
+                perceivedPublicSupport,
+                truePublicSupport,
+                publicSignalUncertainty,
+                privateGain,
+                concentratedHarm,
+                technicalComplexity,
+                salience,
+                legalVulnerability,
+                delayValue,
+                implementationCost,
+                lobbyPressure,
+                publicAdvocatePressure,
+                watchdogPressure,
+                informationDistortion,
+                commentRecordDistortion,
+                darkMoneyInfluence,
+                revolvingDoorInfluence,
+                campaignFinanceInfluence,
+                litigationThreat,
+                updatedDocket,
                 0.0,
                 0.0
         ).rescored();
@@ -180,6 +219,7 @@ public record PolicyContest(
                 revolvingDoorInfluence,
                 campaignFinanceInfluence,
                 litigationThreat,
+                docket,
                 captureRisk,
                 publicInterestScore
         );
@@ -218,6 +258,7 @@ public record PolicyContest(
                 revolvingDoorInfluence,
                 campaignFinanceInfluence,
                 litigationThreat,
+                docket,
                 capture,
                 publicInterest
         );
@@ -229,4 +270,3 @@ public record PolicyContest(
         }
     }
 }
-

@@ -4,6 +4,8 @@ reports/*.csv
 reports/*.md
 !reports/lobby-capture-campaign.csv
 !reports/lobby-capture-campaign.md
+!reports/lobby-capture-sensitivity.csv
+!reports/lobby-capture-sensitivity.md
 paper/*.aux
 paper/*.bbl
 paper/*.blg

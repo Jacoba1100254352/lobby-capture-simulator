@@ -78,7 +78,7 @@ public final class Simulator {
                 harm,
                 complexity,
                 salience
-        );
+        ).withDocket(template.docket());
         return contest.withInfluence(
                 template.lobbyPressure(),
                 perceivedSupport,
@@ -99,4 +99,3 @@ public final class Simulator {
         return Values.clamp(value + ((random.nextDouble() - 0.5) * 2.0 * range), 0.0, 1.0);
     }
 }
-

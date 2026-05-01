@@ -8,7 +8,7 @@ import java.util.Locale;
 public final class CsvReportWriter {
     public String write(List<ScenarioReport> reports, ReportProvenance provenance) {
         StringBuilder builder = new StringBuilder();
-        builder.append("generatedAt,seed,runs,contestsPerRun,scenarioKey,scenarioName,totalContests,capturedContests,antiCaptureReforms,enactedAntiCaptureReforms,directionalScore,captureControl,representation,reformFeasibility,captureRate,antiCaptureSuccess,avgCaptureIndex,avgPublicInterest,publicPreferenceDistortion,privateGainRatio,lobbySpendPerContest,defensiveReformSpendShare,captureReturnOnSpend,publicBenefitPerInfluenceDollar,directAccessShare,agendaAccessShare,informationDistortionShare,publicCampaignShare,litigationThreatShare,campaignFinanceShare,darkMoneyShare,revolvingDoorShare,defensiveChannelShare,detectionRate,sanctionRate,policyDistortion,regulatoryDrift,enforcementForbearance,procurementBias,darkMoneyTraceability,largeDonorDependence,voucherParticipation,publicFinancingShare,revolvingDoorInfluence,commentRecordDistortion,channelSwitchRate,evasionShiftRate,legitimateAdvocacyChill,constitutionalChallengeDelay,administrativeCost\n");
+        builder.append("generatedAt,seed,runs,contestsPerRun,scenarioKey,scenarioName,totalContests,capturedContests,antiCaptureReforms,enactedAntiCaptureReforms,directionalScore,captureControl,representation,reformFeasibility,captureRate,antiCaptureSuccess,avgCaptureIndex,avgPublicInterest,publicPreferenceDistortion,privateGainRatio,lobbySpendPerContest,clientFundingPerContest,donorInfluenceGini,averageDisclosureLag,defensiveReformSpendShare,captureReturnOnSpend,publicBenefitPerInfluenceDollar,directAccessShare,agendaAccessShare,informationDistortionShare,publicCampaignShare,litigationThreatShare,campaignFinanceShare,darkMoneyShare,revolvingDoorShare,defensiveChannelShare,detectionRate,sanctionRate,policyDistortion,regulatoryDrift,enforcementForbearance,procurementBias,darkMoneyTraceability,largeDonorDependence,voucherParticipation,publicFinancingShare,revolvingDoorInfluence,commentRecordDistortion,commentAuthenticity,templateCommentSaturation,technicalClaimCredibility,channelSwitchRate,evasionShiftRate,evasionPenaltyRate,legitimateAdvocacyChill,constitutionalChallengeDelay,administrativeCost\n");
         for (ScenarioReport report : reports) {
             builder.append(provenance.generatedAt()).append(',')
                     .append(provenance.seed()).append(',')
@@ -31,6 +31,9 @@ public final class CsvReportWriter {
                     .append(format(report.publicPreferenceDistortion())).append(',')
                     .append(format(report.privateGainRatio())).append(',')
                     .append(format(report.lobbySpendPerContest())).append(',')
+                    .append(format(report.clientFundingPerContest())).append(',')
+                    .append(format(report.donorInfluenceGini())).append(',')
+                    .append(format(report.averageDisclosureLag())).append(',')
                     .append(format(report.defensiveReformSpendShare())).append(',')
                     .append(format(report.captureReturnOnSpend())).append(',')
                     .append(format(report.publicBenefitPerInfluenceDollar())).append(',')
@@ -55,8 +58,12 @@ public final class CsvReportWriter {
                     .append(format(report.publicFinancingShare())).append(',')
                     .append(format(report.revolvingDoorInfluence())).append(',')
                     .append(format(report.commentRecordDistortion())).append(',')
+                    .append(format(report.commentAuthenticity())).append(',')
+                    .append(format(report.templateCommentSaturation())).append(',')
+                    .append(format(report.technicalClaimCredibility())).append(',')
                     .append(format(report.channelSwitchRate())).append(',')
                     .append(format(report.evasionShiftRate())).append(',')
+                    .append(format(report.evasionPenaltyRate())).append(',')
                     .append(format(report.legitimateAdvocacyChillRate())).append(',')
                     .append(format(report.constitutionalChallengeDelay())).append(',')
                     .append(format(report.administrativeCostIndex())).append('\n');
@@ -72,4 +79,3 @@ public final class CsvReportWriter {
         return String.format(Locale.US, "%.4f", value);
     }
 }
-

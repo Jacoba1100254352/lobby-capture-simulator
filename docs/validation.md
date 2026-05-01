@@ -11,5 +11,12 @@ Initial validation targets:
 - Seattle democracy vouchers and NYC public matching funds: voucher participation, public-funds share, donor-base broadening.
 - USAspending: procurement-recipient concentration and agency spending exposure.
 
-The first implementation stores benchmark metadata in `data/calibration/empirical-benchmarks.csv`; importers should be added only after the model surfaces they constrain are stable.
+The first implementation stores benchmark metadata in `data/calibration/empirical-benchmarks.csv` and normalized fixture rows in `data/fixtures/`. The fixture scripts copy those rows into `data/raw/` so calibration behavior can be reproduced without network access.
 
+Current calibration links:
+
+- `normalized-lda-lobbying.csv` constrains issue funding scale, issue mix, and disclosure lag.
+- `normalized-fec-campaign-finance.csv` constrains donor concentration, public-financing share, and traceability.
+- `normalized-regulatory-dockets.csv` constrains docket volume, comment authenticity, template saturation, and technical-claim credibility.
+
+These files are plausibility inputs. They should not be cited as causal estimates, and paper claims should distinguish three layers: observed distribution, model calibration choice, and simulated mechanism.

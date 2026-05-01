@@ -121,5 +121,44 @@ public record ReformRegime(
                 0.72, 0.68, 0.64, 0.72, 0.70, 0.72, 0.24, 0.34, 0.46, 0.10, 0.24
         );
     }
-}
 
+    public ReformRegime withTuning(
+            String tunedName,
+            double disclosureMultiplier,
+            double enforcementMultiplier,
+            double publicFinancingMultiplier,
+            double coolingOffMultiplier
+    ) {
+        return new ReformRegime(
+                tunedName,
+                scale(disclosureStrength, disclosureMultiplier),
+                scale(realTimeDisclosure, disclosureMultiplier),
+                scale(beneficialOwnerDisclosure, disclosureMultiplier),
+                scale(contactLogCoverage, disclosureMultiplier),
+                lobbyingBanStrength,
+                scale(coolingOffStrength, coolingOffMultiplier),
+                scale(publicFinancingStrength, publicFinancingMultiplier),
+                scale(democracyVoucherStrength, publicFinancingMultiplier),
+                scale(contributionLimitStrength, publicFinancingMultiplier),
+                scale(darkMoneyDisclosureStrength, disclosureMultiplier),
+                publicAdvocateStrength,
+                blindReviewStrength,
+                antiAstroturfStrength,
+                scale(enforcementBudget, enforcementMultiplier),
+                scale(auditRate, enforcementMultiplier),
+                scale(sanctionSeverity, enforcementMultiplier),
+                appealsDelay,
+                defensiveCapShare,
+                scale(administrativeCost, Math.max(
+                        Math.max(disclosureMultiplier, enforcementMultiplier),
+                        Math.max(publicFinancingMultiplier, coolingOffMultiplier)
+                )),
+                falsePositiveCost,
+                constitutionalChallengeRisk
+        );
+    }
+
+    private static double scale(double value, double multiplier) {
+        return Values.clamp(value * multiplier, 0.0, 1.0);
+    }
+}

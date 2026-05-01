@@ -9,6 +9,9 @@ public record InfluenceResult(
         ChannelAllocation allocation,
         double totalSpend,
         double defensiveSpend,
+        double clientFunding,
+        double donorInfluenceGini,
+        double averageDisclosureLag,
         int channelSwitches,
         int evasionShifts,
         List<LobbySpendRecord> spendRecords
@@ -17,4 +20,3 @@ public record InfluenceResult(
         spendRecords = List.copyOf(spendRecords);
     }
 }
-

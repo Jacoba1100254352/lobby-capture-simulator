@@ -2,6 +2,10 @@ package lobbycapture.strategy;
 
 import lobbycapture.actor.LobbyOrganization;
 import lobbycapture.arena.ContestOutcome;
+import lobbycapture.budget.ClientFundingModel;
+import lobbycapture.budget.ClientFundingResult;
+import lobbycapture.policy.CommentCampaign;
+import lobbycapture.policy.Docket;
 import lobbycapture.policy.ContestArena;
 import lobbycapture.policy.PolicyContest;
 import lobbycapture.reform.ReformRegime;
@@ -13,8 +17,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 public final class LobbyAllocationEngine {
+    private final ClientFundingModel clientFundingModel = new ClientFundingModel();
+
     public InfluenceResult apply(PolicyContest contest, WorldState world) {
         ReformRegime reform = world.reformRegime();
+        ClientFundingResult funding = clientFundingModel.fund(contest, world);
         double totalSpend = 0.0;
         double defensiveSpend = 0.0;
         int channelSwitches = 0;
@@ -33,6 +40,7 @@ public final class LobbyAllocationEngine {
         double revolvingDoorInfluence = contest.revolvingDoorInfluence();
         double campaignFinanceInfluence = contest.campaignFinanceInfluence();
         double litigationThreat = contest.litigationThreat();
+        Docket docket = contest.docket();
         ChannelAllocation totalAllocation = ChannelAllocation.zero();
         List<LobbySpendRecord> records = new ArrayList<>();
 
@@ -103,13 +111,18 @@ public final class LobbyAllocationEngine {
                 publicBenefit -= allocation.litigationThreat() * 0.018;
                 privateGain += group.influenceIntensity() * spend * (0.026 + (0.038 * fit));
                 informationDistortion += group.informationBias() * informationEffectiveness * allocation.informationDistortion() * 0.075;
-                commentRecordDistortion += commentDistortionEffect(contest, group, allocation, reform);
+                CommentCampaign commentCampaign = CommentCampaign.fromAllocation(docket, group, allocation, reform);
+                docket = docket.withCampaign(commentCampaign);
+                commentRecordDistortion += commentDistortionEffect(contest, group, allocation, reform, commentCampaign);
                 darkMoneyInfluence += group.disclosureAvoidanceSkill() * allocation.darkMoney()
-                        * (1.0 - reform.darkMoneyDisclosureStrength()) * 0.075;
+                        * (1.0 - reform.darkMoneyDisclosureStrength())
+                        * (1.0 + world.evasionProfile().opacity()) * 0.075;
                 revolvingDoorInfluence += group.revolvingDoorNetworkStrength() * allocation.revolvingDoor()
-                        * (1.0 - reform.coolingOffStrength()) * 0.070;
+                        * (1.0 - reform.coolingOffStrength())
+                        * (1.0 + world.evasionProfile().revolvingDoorPlacementShift()) * 0.070;
                 campaignFinanceInfluence += allocation.campaignFinance() * (1.0 - reform.campaignFinanceCounterweight()) * 0.075;
-                litigationThreat += group.litigationThreatSkill() * allocation.litigationThreat() * 0.070;
+                litigationThreat += group.litigationThreatSkill() * allocation.litigationThreat()
+                        * (1.0 + world.evasionProfile().litigationFundingShift()) * 0.070;
             }
         }
 
@@ -133,13 +146,16 @@ public final class LobbyAllocationEngine {
                 revolvingDoorInfluence,
                 campaignFinanceInfluence,
                 litigationThreat
-        );
+        ).withDocket(docket);
         influenced = new TransparencySystem(reform).applyBacklash(influenced);
         return new InfluenceResult(
                 influenced,
                 totalAllocation,
                 totalSpend,
                 defensiveSpend,
+                funding.totalFunding(),
+                funding.donorInfluenceGini(),
+                funding.averageDisclosureLag(),
                 channelSwitches,
                 evasionShifts,
                 records
@@ -174,7 +190,7 @@ public final class LobbyAllocationEngine {
         }
         if (world.evasionFreedom() > 0.0
                 && reform.transparencyStrength() >= 0.52
-                && group.disclosureAvoidanceSkill() * world.evasionFreedom() >= 0.30) {
+                && group.disclosureAvoidanceSkill() * world.evasionFreedom() * (1.0 + world.evasionProfile().opacity()) >= 0.30) {
             return InfluenceStrategy.DARK_MONEY;
         }
         return memory.currentStrategy();
@@ -225,13 +241,14 @@ public final class LobbyAllocationEngine {
             PolicyContest contest,
             LobbyOrganization group,
             ChannelAllocation allocation,
-            ReformRegime reform
+            ReformRegime reform,
+            CommentCampaign campaign
     ) {
         if (contest.arena() != ContestArena.RULEMAKING && contest.arena() != ContestArena.PUBLIC_INFORMATION) {
             return 0.0;
         }
         double authenticationControl = 1.0 - reform.antiAstroturfStrength();
-        return group.astroturfSkill() * authenticationControl
+        return campaign.distortion() * group.astroturfSkill() * authenticationControl
                 * ((0.055 * allocation.publicCampaign()) + (0.045 * allocation.darkMoney()) + (0.035 * allocation.informationDistortion()));
     }
 
@@ -262,4 +279,3 @@ public final class LobbyAllocationEngine {
                 .orElseThrow(() -> new IllegalArgumentException("Unknown lobby organization: " + id));
     }
 }
-

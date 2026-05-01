@@ -3,7 +3,9 @@ package lobbycapture.budget;
 import lobbycapture.util.Gini;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public final class ContributionLedger {
     private final List<MoneyFlow> flows = new ArrayList<>();
@@ -41,7 +43,10 @@ public final class ContributionLedger {
     }
 
     public double donorInfluenceGini() {
-        return Gini.of(flows.stream().map(MoneyFlow::amount).toList());
+        Map<String, Double> amountBySource = new HashMap<>();
+        for (MoneyFlow flow : flows) {
+            amountBySource.merge(flow.sourceId(), flow.amount(), Double::sum);
+        }
+        return Gini.of(amountBySource.values().stream().toList());
     }
 }
-
