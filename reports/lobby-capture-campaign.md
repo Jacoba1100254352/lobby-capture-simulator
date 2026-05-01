@@ -1,31 +1,31 @@
 # Lobby Capture Campaign
 
-- Generated: `2026-05-01T14:20:23.847376Z`
+- Generated: `2026-05-01T14:58:40.366967Z`
 - Seed: `42`
 - Runs per scenario: `40`
 - Contests per run: `80`
 
 ## Scenario Summary
 
-| Scenario | Directional | Capture rate | Anti-capture success | Defensive spend | Dark-money share | Client funding | Detection | Admin cost |
-| --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Democracy vouchers | 0.8035 | 0.0000 | 0.9703 | 0.7815 | 0.1445 | 0.1510 | 0.0000 | 0.2400 |
-| Full anti-capture bundle | 0.7713 | 0.0000 | 1.0000 | 0.5934 | 0.1740 | 0.1214 | 0.0000 | 0.4600 |
-| Anti-capture bundle with evasion | 0.7708 | 0.0000 | 1.0000 | 0.5974 | 0.2488 | 0.1648 | 0.0000 | 0.4600 |
-| Reform threat mobilization | 0.7251 | 0.0428 | 0.9363 | 0.6430 | 0.2105 | 0.1351 | 0.0247 | 0.2021 |
-| Budgeted disclosed lobbying | 0.7153 | 0.0647 | 1.0000 | 0.3569 | 0.1139 | 0.0768 | 0.0341 | 0.2029 |
-| Real-time transparency | 0.7153 | 0.0647 | 0.9860 | 0.3612 | 0.1936 | 0.0924 | 0.0369 | 0.2031 |
-| Audit and sanctions | 0.7082 | 0.0216 | 0.9972 | 0.3577 | 0.1274 | 0.0855 | 0.0291 | 0.3233 |
-| Open access lobbying | 0.6793 | 0.6094 | 0.5171 | 0.4689 | 0.1094 | 0.0722 | 0.1013 | 0.0582 |
-| Campaign finance dominant | 0.6703 | 0.3013 | 0.0000 | 0.0000 | 0.1000 | 0.0600 | 0.0431 | 0.0535 |
-| Dark money dominant | 0.6657 | 0.6313 | 0.2642 | 0.5152 | 0.1635 | 0.1140 | 0.1125 | 0.0591 |
-| Cooling-off ban | 0.6598 | 0.0434 | 0.0000 | 0.0000 | 0.0827 | 0.0860 | 0.0278 | 0.2824 |
-| Low-salience technical rulemaking | 0.6472 | 0.8744 | 0.0000 | 0.0000 | 0.1200 | 0.0682 | 0.1275 | 0.0603 |
-| Revolving-door dominant | 0.6340 | 0.8722 | 0.0000 | 0.0000 | 0.0828 | 0.0802 | 0.1284 | 0.0604 |
+| Scenario | Directional | Capture rate | Anti-capture success | Defensive spend | Dark-money share | Client funding | Reg attention | Watchdog focus | Detection | Admin cost |
+| --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
+| Democracy vouchers | 0.7474 | 0.0000 | 0.9729 | 0.7758 | 0.1452 | 0.0875 | 0.5165 | 0.1240 | 0.0000 | 0.2400 |
+| Full anti-capture bundle | 0.7222 | 0.0000 | 1.0000 | 0.5934 | 0.1740 | 0.0710 | 0.5520 | 0.2237 | 0.0000 | 0.4600 |
+| Anti-capture bundle with evasion | 0.7215 | 0.0000 | 1.0000 | 0.5974 | 0.2488 | 0.0963 | 0.5435 | 0.2238 | 0.0000 | 0.4600 |
+| Low-salience technical rulemaking | 0.6936 | 0.5625 | 0.0000 | 0.0000 | 0.1200 | 0.0884 | 0.9611 | 0.8577 | 0.1806 | 0.0647 |
+| Dark money dominant | 0.6919 | 0.4206 | 0.3473 | 0.5275 | 0.1467 | 0.1392 | 0.8640 | 0.5716 | 0.1250 | 0.0602 |
+| Reform threat mobilization | 0.6884 | 0.0097 | 0.9317 | 0.6411 | 0.2113 | 0.0811 | 0.5608 | 0.2358 | 0.0063 | 0.2005 |
+| Real-time transparency | 0.6862 | 0.0175 | 0.9946 | 0.3659 | 0.1925 | 0.0618 | 0.6061 | 0.2342 | 0.0103 | 0.2009 |
+| Budgeted disclosed lobbying | 0.6861 | 0.0194 | 1.0000 | 0.3589 | 0.1142 | 0.0513 | 0.6130 | 0.2343 | 0.0100 | 0.2009 |
+| Open access lobbying | 0.6819 | 0.5088 | 0.5749 | 0.4326 | 0.1087 | 0.0705 | 0.4650 | 0.3153 | 0.1072 | 0.0587 |
+| Campaign finance dominant | 0.6810 | 0.0644 | 0.0000 | 0.0000 | 0.1000 | 0.0627 | 0.7308 | 0.2126 | 0.0128 | 0.0511 |
+| Revolving-door dominant | 0.6787 | 0.5031 | 0.0000 | 0.0000 | 0.0807 | 0.0996 | 0.7165 | 0.8951 | 0.1697 | 0.0637 |
+| Audit and sanctions | 0.6760 | 0.0041 | 0.9941 | 0.3596 | 0.1289 | 0.0569 | 0.6016 | 0.2210 | 0.0059 | 0.3207 |
+| Cooling-off ban | 0.6441 | 0.0134 | 0.0000 | 0.0000 | 0.0832 | 0.0818 | 0.4564 | 0.0849 | 0.0069 | 0.2806 |
 
 ## Defensive Reform Blocking
 
-- `reform-threat-mobilization` defensive spend share: `0.6430`, anti-capture success: `0.9363`, channel switch rate: `2.1044`.
+- `reform-threat-mobilization` defensive spend share: `0.6411`, anti-capture success: `0.9317`, channel switch rate: `2.0984`.
 - `full-anti-capture-bundle` anti-capture success: `1.0000`, detection rate: `0.0000`, capture rate: `0.0000`.
 - `bundle-with-evasion` dark-money share: `0.2488`, evasion shift rate: `0.8647`, evasion penalty: `0.0000`, anti-capture success: `1.0000`.
 

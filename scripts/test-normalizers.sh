@@ -1,0 +1,39 @@
+#!/usr/bin/env sh
+set -eu
+
+tmpdir="$(mktemp -d)"
+cleanup() {
+  rm -rf "$tmpdir"
+}
+trap cleanup EXIT
+
+python3 scripts/normalize-calibration.py lda data/fixtures/normalized-lda-lobbying.csv "$tmpdir/lda.csv" >/dev/null
+python3 - "$tmpdir/lda.csv" <<'PY'
+import csv
+import sys
+with open(sys.argv[1], newline="", encoding="utf-8") as source:
+    rows = list(csv.DictReader(source))
+assert len(rows) == 4, len(rows)
+assert set(rows[0]) == {"client", "registrant", "issueDomain", "amount", "disclosureLag", "coveredOfficialShare"}
+PY
+
+printf 'client,amount\nA,1\n' > "$tmpdir/bad-lda.csv"
+if python3 scripts/normalize-calibration.py lda "$tmpdir/bad-lda.csv" "$tmpdir/out.csv" >"$tmpdir/bad.out" 2>"$tmpdir/bad.err"; then
+  echo "Expected missing-column normalization failure." >&2
+  exit 1
+fi
+if ! grep -q "missing required fields" "$tmpdir/bad.err"; then
+  echo "Missing-column failure did not explain the schema problem." >&2
+  cat "$tmpdir/bad.err" >&2
+  exit 1
+fi
+
+python3 scripts/generate-paper-tables.py --output "$tmpdir/tables" >/dev/null
+test -s "$tmpdir/tables/campaign_snapshot.tex"
+test -s "$tmpdir/tables/sensitivity_snapshot.tex"
+test -s "$tmpdir/tables/ablation_snapshot.tex"
+grep -q "tab:first-campaign" "$tmpdir/tables/campaign_snapshot.tex"
+grep -q "tab:sensitivity" "$tmpdir/tables/sensitivity_snapshot.tex"
+grep -q "tab:ablation" "$tmpdir/tables/ablation_snapshot.tex"
+
+echo "Normalizer and table-generator tests passed."

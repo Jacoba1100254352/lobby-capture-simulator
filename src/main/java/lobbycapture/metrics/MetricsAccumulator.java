@@ -4,6 +4,7 @@ import lobbycapture.arena.ContestOutcome;
 import lobbycapture.policy.CaptureScoring;
 import lobbycapture.policy.PolicyContest;
 import lobbycapture.reform.ReformRegime;
+import lobbycapture.simulation.WorldState;
 import lobbycapture.strategy.ChannelAllocation;
 import lobbycapture.util.Values;
 
@@ -41,11 +42,15 @@ public final class MetricsAccumulator {
     private double channelSwitchSum;
     private double evasionShiftSum;
     private double evasionPenaltySum;
+    private double clientFundingAdaptationSum;
+    private double regulatorAttentionSum;
+    private double watchdogFocusSum;
     private double administrativeCostSum;
     private ChannelAllocation allocationSum = ChannelAllocation.zero();
 
-    public void add(ContestOutcome outcome, ReformRegime reform) {
+    public void add(ContestOutcome outcome, WorldState world) {
         totalContests++;
+        ReformRegime reform = world.reformRegime();
         PolicyContest contest = outcome.contest();
         if (outcome.captured()) {
             capturedContests++;
@@ -94,6 +99,9 @@ public final class MetricsAccumulator {
         channelSwitchSum += outcome.influenceResult().channelSwitches();
         evasionShiftSum += outcome.influenceResult().evasionShifts();
         evasionPenaltySum += outcome.evasionPenalty();
+        clientFundingAdaptationSum += world.averageClientFundingMultiplier();
+        regulatorAttentionSum += world.averageRegulatorAttention();
+        watchdogFocusSum += world.averageWatchdogFocus();
         administrativeCostSum += outcome.administrativeCost();
     }
 
@@ -147,6 +155,9 @@ public final class MetricsAccumulator {
                 channelSwitchSum / total,
                 evasionShiftSum / total,
                 evasionPenaltySum / total,
+                clientFundingAdaptationSum / total,
+                regulatorAttentionSum / total,
+                watchdogFocusSum / total,
                 legitimateAdvocacyChill(),
                 ratio(delayedByChallenge, totalContests),
                 administrativeCostSum / total

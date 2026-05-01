@@ -34,6 +34,7 @@ public final class ClientFundingModel {
                                 * preference
                                 * exposure
                                 * issueScale
+                                * world.clientFundingMultiplier(client.id())
                                 * (0.35 + clientGain + reformThreat),
                         0.0,
                         0.70
@@ -110,4 +111,3 @@ public final class ClientFundingModel {
         return Values.clamp((0.70 * baseline) + (0.30 * world.reformRegime().transparencyStrength()), 0.0, 1.0);
     }
 }
-

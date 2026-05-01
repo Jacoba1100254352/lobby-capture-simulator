@@ -9,8 +9,11 @@ if [ "${1:-}" = "--live" ]; then
     cp "$LDA_LIVE_CSV" "$source_file"
   elif [ -n "${LDA_LIVE_URL:-}" ]; then
     curl -fsSL "$LDA_LIVE_URL" -o "$source_file"
+  elif [ "${LDA_SOURCE_NATIVE:-1}" = "1" ]; then
+    python3 scripts/fetch-source-data.py lda
+    exit 0
   else
-    echo "Set LDA_LIVE_CSV or LDA_LIVE_URL before running ./scripts/fetch-lda.sh --live." >&2
+    echo "Set LDA_LIVE_CSV, LDA_LIVE_URL, or leave LDA_SOURCE_NATIVE=1 before running ./scripts/fetch-lda.sh --live." >&2
     exit 2
   fi
   python3 scripts/normalize-calibration.py lda "$source_file" data/raw/lda-lobbying.csv

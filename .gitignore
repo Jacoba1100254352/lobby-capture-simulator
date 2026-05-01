@@ -1,5 +1,7 @@
 .DS_Store
 out/
+scripts/__pycache__/
+*.pyc
 reports/*.csv
 reports/*.md
 !reports/lobby-capture-campaign.csv

@@ -24,6 +24,16 @@ These files are plausibility inputs. They should not be cited as causal estimate
 The fetch scripts now have two modes:
 
 - default mode copies tracked deterministic fixtures into `data/raw/`;
-- `--live` mode normalizes an explicit CSV path or URL into the same schema and fails if required columns are missing.
+- `--live` mode normalizes an explicit CSV path or URL into the same schema and fails if required columns are missing;
+- source-native `--live` mode queries LDA, OpenFEC, Regulations.gov, or Federal Register when no explicit CSV/URL is supplied.
 
-Expected live-mode environment variables are `LDA_LIVE_CSV` or `LDA_LIVE_URL`, `FEC_LIVE_CSV` or `FEC_LIVE_URL`, and `REGULATORY_LIVE_CSV` or `REGULATORY_LIVE_URL`.
+Expected live-mode environment variables are `LDA_LIVE_CSV` or `LDA_LIVE_URL`, `FEC_LIVE_CSV` or `FEC_LIVE_URL`, and `REGULATORY_LIVE_CSV` or `REGULATORY_LIVE_URL` for explicit-source normalization.
+
+Source-native live variables:
+
+- LDA: `LDA_API_BASE`, `LDA_API_KEY`, `LDA_YEAR`, `LDA_PERIOD`, `LDA_MAX_PAGES`.
+- FEC: `FEC_API_KEY`, `FEC_API_BASE`, `FEC_CYCLE`, `FEC_COMMITTEE_ID`.
+- Regulations.gov: `REGULATIONS_API_KEY`, `REGULATIONS_API_BASE`, `REGULATORY_AGENCY`, `REGULATORY_SEARCH_TERM`, `REGULATORY_DATE_FROM`, `REGULATORY_DATE_TO`.
+- Federal Register: `REGULATORY_SOURCE=federal-register`, `FEDERAL_REGISTER_API_BASE`, `FEDERAL_REGISTER_TYPE`, `REGULATORY_SEARCH_TERM`, `REGULATORY_DATE_FROM`, `REGULATORY_DATE_TO`.
+
+The current source-native normalizers are distributional bridges. They should be reviewed against small captured JSON fixtures before live API output is used as a paper snapshot.

@@ -6,6 +6,7 @@ import lobbycapture.actor.InterestClient;
 import lobbycapture.actor.LobbyOrganization;
 import lobbycapture.actor.PublicOfficial;
 import lobbycapture.actor.Regulator;
+import lobbycapture.actor.WatchdogGroup;
 import lobbycapture.calibration.CalibrationProfile;
 import lobbycapture.policy.PolicyContest;
 import lobbycapture.reform.ReformRegime;
@@ -23,6 +24,7 @@ public record WorldSpec(
         List<InterestClient> clients,
         List<PublicOfficial> officials,
         List<Regulator> regulators,
+        List<WatchdogGroup> watchdogs,
         List<Candidate> candidates,
         List<EnforcementAgency> enforcementAgencies,
         List<PolicyContest> contestTemplates,
@@ -49,6 +51,7 @@ public record WorldSpec(
         clients = List.copyOf(clients);
         officials = List.copyOf(officials);
         regulators = List.copyOf(regulators);
+        watchdogs = List.copyOf(watchdogs);
         candidates = List.copyOf(candidates);
         enforcementAgencies = List.copyOf(enforcementAgencies);
         contestTemplates = List.copyOf(contestTemplates);

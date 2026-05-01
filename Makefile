@@ -6,7 +6,7 @@ TEST_SOURCES := $(shell find src/test/java -name "*.java" | sort)
 MAIN_CLASS := lobbycapture.Main
 TEST_CLASS := lobbycapture.SmokeTest
 
-.PHONY: compile test run campaign sensitivity ablation paper clean
+.PHONY: compile test run campaign sensitivity ablation tables paper clean
 
 compile:
 	@mkdir -p out/classes
@@ -16,6 +16,7 @@ test: compile
 	@mkdir -p out/test-classes
 	$(JAVAC) -cp out/classes -d out/test-classes $(TEST_SOURCES)
 	$(JAVA) -cp out/classes:out/test-classes $(TEST_CLASS)
+	./scripts/test-normalizers.sh
 
 run: compile
 	$(JAVA) -cp out/classes $(MAIN_CLASS) $(ARGS)
@@ -29,7 +30,10 @@ sensitivity: compile
 ablation: compile
 	$(JAVA) -cp out/classes $(MAIN_CLASS) --ablation --runs 40 --contests 80 --seed 242
 
-paper:
+tables:
+	python3 scripts/generate-paper-tables.py
+
+paper: tables
 	cd paper && pdflatex -interaction=nonstopmode main.tex
 	cd paper && bibtex main
 	cd paper && pdflatex -interaction=nonstopmode main.tex

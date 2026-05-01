@@ -30,10 +30,15 @@ public final class LobbyAllocationEngine {
         double perceivedSupport = contest.perceivedPublicSupport();
         double publicBenefit = contest.truePublicBenefit();
         double privateGain = contest.privateGain();
-        double publicAdvocatePressure = contest.publicAdvocatePressure() + (reform.publicAdvocateStrength() * 0.16);
+        double regulatorAttention = world.regulatorAttention(contest.issueDomain());
+        double watchdogFocus = world.watchdogFocus(contest.issueDomain());
+        double publicAdvocatePressure = contest.publicAdvocatePressure()
+                + (reform.publicAdvocateStrength() * 0.16)
+                + (regulatorAttention * reform.publicAdvocateStrength() * 0.08);
         double watchdogPressure = contest.watchdogPressure()
                 + (reform.transparencyStrength() * 0.10)
-                + (reform.enforcementStrength() * 0.06);
+                + (reform.enforcementStrength() * 0.06)
+                + (watchdogFocus * 0.14);
         double informationDistortion = contest.informationDistortion();
         double commentRecordDistortion = contest.commentRecordDistortion();
         double darkMoneyInfluence = contest.darkMoneyInfluence();
@@ -96,7 +101,9 @@ public final class LobbyAllocationEngine {
             } else {
                 double fit = policyFit(group, contest) * preference;
                 double accessEffectiveness = 1.0 - (reform.contactLogCoverage() * 0.45) - (reform.lobbyingBanStrength() * 0.35);
-                double informationEffectiveness = 1.0 - (reform.blindReviewStrength() * 0.70) - (reform.publicAdvocateStrength() * 0.30);
+                double informationEffectiveness = 1.0 - (reform.blindReviewStrength() * 0.70)
+                        - (reform.publicAdvocateStrength() * 0.30)
+                        - (regulatorAttention * 0.18);
                 double campaignEffectiveness = 1.0 - (reform.campaignFinanceCounterweight() * 0.45);
                 double mismatchPenalty = publicMismatchPenalty(group, contest);
                 lobbyPressure += world.pressurePerSpend() * group.influenceIntensity() * fit

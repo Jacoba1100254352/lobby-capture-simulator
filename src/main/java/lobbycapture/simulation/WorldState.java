@@ -6,12 +6,16 @@ import lobbycapture.actor.InterestClient;
 import lobbycapture.actor.LobbyOrganization;
 import lobbycapture.actor.PublicOfficial;
 import lobbycapture.actor.Regulator;
+import lobbycapture.actor.WatchdogGroup;
+import lobbycapture.arena.ContestOutcome;
 import lobbycapture.budget.ContributionLedger;
 import lobbycapture.calibration.CalibrationProfile;
+import lobbycapture.policy.PolicyContest;
 import lobbycapture.reform.ReformRegime;
 import lobbycapture.strategy.EvasionProfile;
 import lobbycapture.strategy.InfluenceStrategy;
 import lobbycapture.strategy.StrategyMemory;
+import lobbycapture.util.Values;
 
 import java.util.HashMap;
 import java.util.List;
@@ -25,6 +29,9 @@ public final class WorldState {
     private final ContributionLedger contributionLedger = new ContributionLedger();
     private final Map<String, Double> remainingBudgetByLobby = new HashMap<>();
     private final Map<String, StrategyMemory> memoryByLobby = new HashMap<>();
+    private final Map<String, Double> clientFundingMultiplierByClient = new HashMap<>();
+    private final Map<String, Double> regulatorAttentionByDomain = new HashMap<>();
+    private final Map<String, Double> watchdogFocusByDomain = new HashMap<>();
 
     public WorldState(WorldSpec spec, long seed) {
         this.spec = spec;
@@ -32,6 +39,26 @@ public final class WorldState {
         for (LobbyOrganization organization : spec.lobbyOrganizations()) {
             remainingBudgetByLobby.put(organization.id(), organization.totalBudget());
             memoryByLobby.put(organization.id(), new StrategyMemory(organization.initialStrategy()));
+        }
+        for (InterestClient client : spec.clients()) {
+            clientFundingMultiplierByClient.put(client.id(), 1.0);
+        }
+        for (Regulator regulator : spec.regulators()) {
+            regulatorAttentionByDomain.merge(
+                    regulator.domain(),
+                    Values.clamp((0.45 * regulator.staffCapacity()) + (0.35 * regulator.commentProcessingCapacity())
+                            + (0.20 * regulator.independence()), 0.0, 1.0),
+                    Math::max
+            );
+        }
+        double watchdogBase = spec.watchdogs().stream()
+                .mapToDouble(watchdog -> (0.42 * watchdog.investigativeCapacity())
+                        + (0.30 * watchdog.publicReach())
+                        + (0.28 * watchdog.enforcementReferralSkill()))
+                .average()
+                .orElse(0.35);
+        for (PolicyContest contest : spec.contestTemplates()) {
+            watchdogFocusByDomain.putIfAbsent(contest.issueDomain(), Values.clamp(watchdogBase * 0.55, 0.0, 1.0));
         }
     }
 
@@ -83,6 +110,10 @@ public final class WorldState {
         return spec.regulators();
     }
 
+    public List<WatchdogGroup> watchdogs() {
+        return spec.watchdogs();
+    }
+
     public List<Candidate> candidates() {
         return spec.candidates();
     }
@@ -120,5 +151,94 @@ public final class WorldState {
 
     public StrategyMemory memoryFor(String lobbyId, InfluenceStrategy initialStrategy) {
         return memoryByLobby.computeIfAbsent(lobbyId, ignored -> new StrategyMemory(initialStrategy));
+    }
+
+    public double clientFundingMultiplier(String clientId) {
+        return clientFundingMultiplierByClient.getOrDefault(clientId, 1.0);
+    }
+
+    public double regulatorAttention(String issueDomain) {
+        return regulatorAttentionByDomain.getOrDefault(issueDomain, averageRegulatorAttention());
+    }
+
+    public double watchdogFocus(String issueDomain) {
+        return watchdogFocusByDomain.getOrDefault(issueDomain, averageWatchdogFocus());
+    }
+
+    public double averageClientFundingMultiplier() {
+        return average(clientFundingMultiplierByClient, 1.0);
+    }
+
+    public double averageRegulatorAttention() {
+        return average(regulatorAttentionByDomain, 0.35);
+    }
+
+    public double averageWatchdogFocus() {
+        return average(watchdogFocusByDomain, 0.25);
+    }
+
+    public void adaptInstitutions(ContestOutcome outcome) {
+        if (!adaptiveStrategies()) {
+            return;
+        }
+        PolicyContest contest = outcome.contest();
+        adaptClients(contest, outcome);
+        adaptRegulators(contest, outcome);
+        adaptWatchdogs(contest, outcome);
+    }
+
+    private void adaptClients(PolicyContest contest, ContestOutcome outcome) {
+        for (InterestClient client : clients()) {
+            if (!clientAffected(client, contest)) {
+                continue;
+            }
+            double old = clientFundingMultiplier(client.id());
+            double captureReturn = outcome.captured() ? contest.privateGain() - (0.42 * client.publicHarmExternality()) : -0.05 * contest.privateGain();
+            double reformReturn = contest.antiCaptureReform()
+                    ? (outcome.antiCaptureReformEnacted() ? -0.18 : 0.16) * client.riskTolerance()
+                    : 0.0;
+            double sanctionDrag = outcome.sanctioned()
+                    ? (0.20 + (0.20 * outcome.sanctionCost())) * (0.35 + client.reputationalRisk())
+                    : 0.0;
+            double delta = (0.08 * captureReturn) + reformReturn - sanctionDrag;
+            clientFundingMultiplierByClient.put(client.id(), Values.clamp(old + delta, 0.55, 1.75));
+        }
+    }
+
+    private void adaptRegulators(PolicyContest contest, ContestOutcome outcome) {
+        double old = regulatorAttention(contest.issueDomain());
+        double docketAlarm = (0.22 * contest.commentRecordDistortion()) + (0.10 * contest.docket().templateSaturation());
+        double captureAlarm = outcome.captured() ? 0.16 : 0.0;
+        double sanctionLearning = outcome.detected() ? 0.06 : 0.0;
+        double quietDecay = outcome.captured() || contest.commentRecordDistortion() > 0.08 ? 0.0 : 0.025;
+        regulatorAttentionByDomain.put(
+                contest.issueDomain(),
+                Values.clamp(old + docketAlarm + captureAlarm + sanctionLearning - quietDecay, 0.0, 1.0)
+        );
+    }
+
+    private void adaptWatchdogs(PolicyContest contest, ContestOutcome outcome) {
+        double old = watchdogFocus(contest.issueDomain());
+        double opacityAlarm = (0.18 * contest.darkMoneyInfluence()) + (0.12 * contest.informationDistortion())
+                + (0.10 * contest.commentRecordDistortion()) + (outcome.captured() ? 0.14 : 0.0);
+        double referralLearning = outcome.detected() ? 0.05 : 0.0;
+        double decay = opacityAlarm < 0.04 ? 0.02 : 0.0;
+        watchdogFocusByDomain.put(
+                contest.issueDomain(),
+                Values.clamp(old + opacityAlarm + referralLearning - decay, 0.0, 1.0)
+        );
+    }
+
+    private static boolean clientAffected(InterestClient client, PolicyContest contest) {
+        return client.sector().equals(contest.issueDomain())
+                || client.privateGainByPolicy().containsKey(contest.issueDomain())
+                || (contest.antiCaptureReform() && client.privateGainByPolicy().containsKey("democracy"));
+    }
+
+    private static double average(Map<String, Double> values, double fallback) {
+        if (values.isEmpty()) {
+            return fallback;
+        }
+        return values.values().stream().mapToDouble(Double::doubleValue).average().orElse(fallback);
     }
 }

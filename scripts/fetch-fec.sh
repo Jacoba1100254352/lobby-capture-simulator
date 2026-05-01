@@ -9,8 +9,11 @@ if [ "${1:-}" = "--live" ]; then
     cp "$FEC_LIVE_CSV" "$source_file"
   elif [ -n "${FEC_LIVE_URL:-}" ]; then
     curl -fsSL "$FEC_LIVE_URL" -o "$source_file"
+  elif [ "${FEC_SOURCE_NATIVE:-1}" = "1" ]; then
+    python3 scripts/fetch-source-data.py fec
+    exit 0
   else
-    echo "Set FEC_LIVE_CSV or FEC_LIVE_URL before running ./scripts/fetch-fec.sh --live." >&2
+    echo "Set FEC_LIVE_CSV, FEC_LIVE_URL, or leave FEC_SOURCE_NATIVE=1 before running ./scripts/fetch-fec.sh --live." >&2
     exit 2
   fi
   python3 scripts/normalize-calibration.py fec "$source_file" data/raw/fec-campaign-finance.csv

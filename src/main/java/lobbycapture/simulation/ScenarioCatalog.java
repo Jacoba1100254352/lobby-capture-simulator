@@ -6,6 +6,7 @@ import lobbycapture.actor.InterestClient;
 import lobbycapture.actor.LobbyOrganization;
 import lobbycapture.actor.PublicOfficial;
 import lobbycapture.actor.Regulator;
+import lobbycapture.actor.WatchdogGroup;
 import lobbycapture.calibration.CalibrationDataLoader;
 import lobbycapture.calibration.CalibrationProfile;
 import lobbycapture.policy.ContestArena;
@@ -74,6 +75,7 @@ public final class ScenarioCatalog {
                         clients(),
                         officials(),
                         regulators(),
+                        watchdogs(),
                         candidates(),
                         enforcementAgencies(reform),
                         contests,
@@ -209,6 +211,13 @@ public final class ScenarioCatalog {
         return List.of(
                 new Regulator("market-agency", "finance", 0.62, 0.54, 0.44, 0.72, 0.48, 0.42, 0.58, 0.52, 0.56),
                 new Regulator("safety-agency", "energy", 0.70, 0.58, 0.46, 0.68, 0.52, 0.44, 0.52, 0.46, 0.50)
+        );
+    }
+
+    private static List<WatchdogGroup> watchdogs() {
+        return List.of(
+                new WatchdogGroup("public-integrity-watch", 0.62, 0.58, 0.66),
+                new WatchdogGroup("rulemaking-transparency-project", 0.54, 0.46, 0.58)
         );
     }
 

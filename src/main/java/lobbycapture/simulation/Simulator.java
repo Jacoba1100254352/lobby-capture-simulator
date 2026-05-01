@@ -44,8 +44,9 @@ public final class Simulator {
                 PolicyContest contest = nextContest(scenario.worldSpec().contestTemplates(), world.random(), run, index);
                 InfluenceResult influence = lobbying.apply(contest, world);
                 ContestOutcome outcome = arenas.get(influence.contest().arena()).resolve(influence, world);
-                metrics.add(outcome, world.reformRegime());
                 lobbying.observe(outcome, world);
+                world.adaptInstitutions(outcome);
+                metrics.add(outcome, world);
                 world.clock().advance();
             }
         }
