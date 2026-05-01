@@ -84,6 +84,12 @@ def main() -> int:
         },
         "sources": entries,
     }
+    status_path = args.output / "live-run-status.csv"
+    if status_path.exists():
+        manifest["liveRunStatus"] = {
+            "file": str(status_path),
+            "sha256": sha256(status_path),
+        }
     manifest_path = args.output / "manifest.json"
     manifest_path.write_text(json.dumps(manifest, indent=2) + "\n", encoding="utf-8")
     write_readme(args.output, entries)
@@ -144,6 +150,14 @@ def write_readme(root: Path, entries: list[dict[str, object]]) -> None:
     for entry in entries:
         lines.append(
             f"| {entry['source']} | {entry['rowCount']} | {entry['status']} | `{entry['normalizedFile']}` |"
+        )
+    status_path = root / "live-run-status.csv"
+    if status_path.exists():
+        lines.extend(
+            [
+                "",
+                "`live-run-status.csv` records which official live requests completed and which were blocked by public API limits or missing credentials.",
+            ]
         )
     lines.append("")
     (root / "README.md").write_text("\n".join(lines), encoding="utf-8")

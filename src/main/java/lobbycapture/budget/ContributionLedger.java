@@ -42,6 +42,40 @@ public final class ContributionLedger {
         return flows.stream().mapToDouble(flow -> flow.amount() * flow.traceability()).sum() / total;
     }
 
+    public double darkMoneyDirectVisibility() {
+        double darkTotal = flows.stream()
+                .filter(flow -> flow.flowType() == FundingSource.DARK_MONEY || flow.flowType() == FundingSource.SUPER_PAC)
+                .mapToDouble(MoneyFlow::amount)
+                .sum();
+        if (darkTotal == 0.0) {
+            return 0.0;
+        }
+        return flows.stream()
+                .filter(flow -> flow.flowType() == FundingSource.DARK_MONEY || flow.flowType() == FundingSource.SUPER_PAC)
+                .mapToDouble(flow -> flow.amount() * flow.traceability())
+                .sum() / darkTotal;
+    }
+
+    public double largeDonorDependence() {
+        double total = totalAmount();
+        if (total == 0.0) {
+            return 0.0;
+        }
+        return flows.stream().mapToDouble(flow -> flow.amount() * flow.coordinationRisk()).sum() / total;
+    }
+
+    public double publicFinancingSourceShare() {
+        double total = totalAmount();
+        if (total == 0.0) {
+            return 0.0;
+        }
+        double publicFunding = flows.stream()
+                .filter(flow -> flow.flowType() == FundingSource.PUBLIC_MATCH || flow.flowType() == FundingSource.DEMOCRACY_VOUCHER)
+                .mapToDouble(MoneyFlow::amount)
+                .sum();
+        return publicFunding / total;
+    }
+
     public double donorInfluenceGini() {
         Map<String, Double> amountBySource = new HashMap<>();
         for (MoneyFlow flow : flows) {

@@ -16,6 +16,10 @@ reports/*.md
 !reports/lobby-capture-interactions.md
 !reports/validation-summary.csv
 !reports/validation-summary.md
+!reports/source-moments.csv
+!reports/source-moments.md
+!reports/calibration-queue.csv
+!reports/calibration-queue.md
 paper/*.aux
 paper/*.bbl
 paper/*.blg

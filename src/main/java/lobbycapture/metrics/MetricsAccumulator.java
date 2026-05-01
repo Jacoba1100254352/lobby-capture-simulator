@@ -33,9 +33,12 @@ public final class MetricsAccumulator {
     private double enforcementForbearanceSum;
     private double procurementBiasSum;
     private double darkMoneyTraceabilitySum;
+    private double darkMoneyDirectVisibilitySum;
     private double largeDonorDependenceSum;
     private double voucherParticipationSum;
+    private double voucherResidentParticipationSum;
     private double publicFinancingShareSum;
+    private double publicFinancingCandidateUptakeSum;
     private double revolvingDoorInfluenceSum;
     private double commentRecordDistortionSum;
     private double commentAuthenticitySum;
@@ -108,9 +111,15 @@ public final class MetricsAccumulator {
         darkMoneyTraceabilitySum += ledgerTraceability == 0.0
                 ? Values.clamp(1.0 - contest.darkMoneyInfluence(), 0.0, 1.0)
                 : ledgerTraceability;
-        largeDonorDependenceSum += Values.clamp(contest.campaignFinanceInfluence(), 0.0, 1.0);
+        darkMoneyDirectVisibilitySum += world.contributionLedger().darkMoneyDirectVisibility();
+        double ledgerLargeDonorDependence = world.contributionLedger().largeDonorDependence();
+        largeDonorDependenceSum += ledgerLargeDonorDependence == 0.0
+                ? Values.clamp(contest.campaignFinanceInfluence(), 0.0, 1.0)
+                : ledgerLargeDonorDependence;
         voucherParticipationSum += reform.democracyVoucherStrength();
+        voucherResidentParticipationSum += voucherResidentParticipation(reform, world.contributionLedger().publicFinancingSourceShare());
         publicFinancingShareSum += reform.publicFinancingStrength();
+        publicFinancingCandidateUptakeSum += publicFinancingCandidateUptake(reform, ledgerLargeDonorDependence);
         revolvingDoorInfluenceSum += contest.revolvingDoorInfluence();
         commentRecordDistortionSum += contest.commentRecordDistortion();
         commentAuthenticitySum += contest.docket().authenticityShare();
@@ -180,9 +189,12 @@ public final class MetricsAccumulator {
                 enforcementForbearanceSum / total,
                 procurementBiasSum / total,
                 darkMoneyTraceabilitySum / total,
+                darkMoneyDirectVisibilitySum / total,
                 largeDonorDependenceSum / total,
                 voucherParticipationSum / total,
+                voucherResidentParticipationSum / total,
                 publicFinancingShareSum / total,
+                publicFinancingCandidateUptakeSum / total,
                 revolvingDoorInfluenceSum / total,
                 commentRecordDistortionSum / total,
                 commentAuthenticitySum / total,
@@ -225,6 +237,27 @@ public final class MetricsAccumulator {
 
     private static double ratio(int numerator, int denominator) {
         return denominator == 0 ? 0.0 : (double) numerator / denominator;
+    }
+
+    private static double voucherResidentParticipation(ReformRegime reform, double publicFinancingSourceShare) {
+        return Values.clamp(
+                0.008
+                        + (0.070 * reform.democracyVoucherStrength())
+                        + (0.020 * publicFinancingSourceShare),
+                0.0,
+                1.0
+        );
+    }
+
+    private static double publicFinancingCandidateUptake(ReformRegime reform, double largeDonorDependence) {
+        return Values.clamp(
+                0.18
+                        + (0.68 * reform.publicFinancingStrength())
+                        + (0.10 * reform.democracyVoucherStrength())
+                        - (0.16 * largeDonorDependence),
+                0.0,
+                1.0
+        );
     }
 
     private static double commentReviewCapacity(PolicyContest contest, WorldState world, ReformRegime reform) {

@@ -5,6 +5,7 @@ from __future__ import annotations
 
 import argparse
 import csv
+import hashlib
 import json
 import os
 import sys
@@ -17,6 +18,7 @@ from urllib.request import Request, urlopen
 
 
 MODEL_DOMAINS = ("energy", "technology", "finance", "procurement", "democracy")
+RAW_SEQUENCE = 0
 
 
 def main() -> int:
@@ -65,6 +67,7 @@ def fetch_lda(output: Path) -> int:
         if not next_url:
             break
 
+    records = [record for record in records if record_matches_lda_filters(record)]
     rows = normalize_lda_records(records)
     write_rows(output, ["client", "registrant", "issueDomain", "amount", "disclosureLag", "coveredOfficialShare"], rows, "LDA filings")
     return 0
@@ -240,22 +243,61 @@ def regulatory_row(docket_id: str, title: str, agency: str, comment_volume: int)
 
 
 def issue_domains_from_lda(record: dict[str, object]) -> list[str]:
-    issues = record.get("issues") or record.get("issue_codes") or []
+    issues = record.get("lobbying_activities") or record.get("issues") or record.get("issue_codes") or []
     if isinstance(issues, dict):
         issues = [issues]
     domains = []
     for issue in issues if isinstance(issues, list) else []:
-        text = json.dumps(issue) if not isinstance(issue, str) else issue
+        if isinstance(issue, dict):
+            text = " ".join(
+                first_text(
+                    issue,
+                    "general_issue_code",
+                    "general_issue_code_display",
+                    "description",
+                    default=json.dumps(issue),
+                ).split()
+            )
+        else:
+            text = issue if isinstance(issue, str) else json.dumps(issue)
         domains.append(classify_domain(text))
     if not domains:
         domains.append(classify_domain(json.dumps(record)))
     return sorted(set(domains))
 
 
+def record_matches_lda_filters(record: dict[str, object]) -> bool:
+    issue_codes = set(split_env("LDA_ISSUE_CODE"))
+    if issue_codes and not (issue_codes & set(lda_issue_codes(record))):
+        return False
+    text_filter = os.environ.get("LDA_TEXT_FILTER", "").strip().lower()
+    if text_filter and text_filter not in json.dumps(record).lower():
+        return False
+    return True
+
+
+def lda_issue_codes(record: dict[str, object]) -> list[str]:
+    activities = record.get("lobbying_activities") or []
+    if isinstance(activities, dict):
+        activities = [activities]
+    codes = []
+    for activity in activities if isinstance(activities, list) else []:
+        if isinstance(activity, dict):
+            code = first_text(activity, "general_issue_code", default="").upper()
+            if code:
+                codes.append(code)
+    return codes
+
+
+def split_env(name: str) -> list[str]:
+    value = os.environ.get(name, "")
+    return [part.strip().upper() for part in value.split(",") if part.strip()]
+
+
 def classify_domain(text: str) -> str:
     normalized = text.lower()
     rules = {
-        "energy": ("energy", "oil", "gas", "electric", "climate", "pipeline", "utility"),
+        "energy": ("energy", "oil", "gas", "electric", "climate", "pipeline", "utility", "environment", "environmental", "epa", "clean air", "env"),
         "technology": ("technology", "platform", "data", "privacy", "internet", "software", "telecom", "ai"),
         "finance": ("finance", "bank", "securities", "capital", "insurance", "tax", "credit"),
         "procurement": ("procurement", "contract", "defense", "acquisition", "federal services"),
@@ -286,7 +328,9 @@ def get_json(url: str, headers: dict[str, str] | None = None) -> dict[str, objec
     for attempt in range(1, attempts + 1):
         try:
             with urlopen(request, timeout=30) as response:
-                return json.loads(response.read().decode("utf-8"))
+                text = response.read().decode("utf-8")
+                write_raw_payload(url, text)
+                return json.loads(text)
         except HTTPError as error:
             if should_retry(error.code, attempt, attempts):
                 sleep_before_retry(error, attempt, backoff)
@@ -411,13 +455,28 @@ def redact_url(url: str) -> str:
     return urlunsplit((parts.scheme, parts.netloc, parts.path, query, parts.fragment))
 
 
+def write_raw_payload(url: str, text: str) -> None:
+    raw_dir = os.environ.get("SOURCE_RAW_DIR")
+    if not raw_dir:
+        return
+    global RAW_SEQUENCE
+    RAW_SEQUENCE += 1
+    root = Path(raw_dir)
+    root.mkdir(parents=True, exist_ok=True)
+    digest = hashlib.sha256(url.encode("utf-8")).hexdigest()[:12]
+    path = root / f"{RAW_SEQUENCE:04d}-{digest}.json"
+    path.write_text(text, encoding="utf-8")
+    with (root / "request-manifest.jsonl").open("a", encoding="utf-8") as manifest:
+        manifest.write(json.dumps({"file": path.name, "url": redact_url(url)}) + "\n")
+
+
 def write_rows(output: Path, fieldnames: list[str], rows: object, source_name: str = "source API") -> None:
     materialized = list(rows)
     if not materialized:
         raise SystemExit(f"{source_name} returned no rows to normalize. Check filters, date ranges, API credentials, and upstream availability.")
     output.parent.mkdir(parents=True, exist_ok=True)
     with output.open("w", newline="", encoding="utf-8") as destination:
-        writer = csv.DictWriter(destination, fieldnames=fieldnames)
+        writer = csv.DictWriter(destination, fieldnames=fieldnames, lineterminator="\n")
         writer.writeheader()
         for row in materialized:
             writer.writerow({field: format_value(row[field]) for field in fieldnames})

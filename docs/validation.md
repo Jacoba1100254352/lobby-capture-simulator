@@ -20,6 +20,7 @@ Current calibration links:
 - `normalized-lda-lobbying.csv` constrains issue funding scale, issue mix, and disclosure lag.
 - `normalized-fec-campaign-finance.csv` constrains donor concentration, public-financing share, and traceability.
 - `normalized-regulatory-dockets.csv` constrains docket volume, comment authenticity, template saturation, and technical-claim credibility.
+- `reports/source-moments.csv` records direct top-k concentration, traceability, public-financing, and comment-record moments from the current snapshot and fixture baselines.
 
 These files are plausibility inputs. They should not be cited as causal estimates, and paper claims should distinguish three layers: observed distribution, model calibration choice, and simulated mechanism.
 
@@ -38,10 +39,15 @@ Source-native live variables:
 - Regulations.gov: `REGULATIONS_API_KEY`, `REGULATIONS_API_BASE`, `REGULATORY_AGENCY`, `REGULATORY_SEARCH_TERM`, `REGULATORY_DATE_FROM`, `REGULATORY_DATE_TO`.
 - Federal Register: `REGULATORY_SOURCE=federal-register`, `FEDERAL_REGISTER_API_BASE`, `FEDERAL_REGISTER_TYPE`, `REGULATORY_SEARCH_TERM`, `REGULATORY_DATE_FROM`, `REGULATORY_DATE_TO`.
 - Retry controls: `SOURCE_FETCH_RETRIES`, `SOURCE_FETCH_BACKOFF_SECONDS`.
+- Raw-payload archive control: `SOURCE_RAW_DIR`.
 
 The source-native normalizers are distributional bridges. `scripts/test-source-fetchers.py` verifies representative LDA, OpenFEC, Regulations.gov, and Federal Register JSON payloads against exact normalized rows before any live API output is used as a paper snapshot.
 
+`make source-moments` writes `reports/source-moments.csv` plus `reports/source-moments.md`. It compares the current 2024 EPA/ENV normalized snapshot against the deterministic fixture baseline on source-level moments such as top-client share, top-donor share, amount-weighted traceability, dark-money direct visibility, public-financing source share, and comment-volume concentration.
+
 `make validate` compares committed report snapshots against both `data/calibration/empirical-benchmarks.csv` and implemented rows in `data/calibration/parameter-map.csv`. It writes `reports/validation-summary.csv` plus `reports/validation-summary.md`, including counts by evidence class. Current benchmark rows are deliberately broad plausibility bands; misses should be read as calibration work queues, not model falsification.
+
+`make calibration-queue` writes `reports/calibration-queue.csv` plus `reports/calibration-queue.md`. It classifies misses and partial overlaps as model tuning, metric splits, direct source moments, scenario coverage, scale alignment, or benchmark review.
 
 The next paper-grade snapshot is fixed to a closed 2024 environmental slice:
 
@@ -50,4 +56,13 @@ The next paper-grade snapshot is fixed to a closed 2024 environmental slice:
 - Regulations.gov: EPA documents, dockets, and comments posted in 2024.
 - Federal Register: EPA 2024 rules and proposed rules.
 
-Run `make snapshot-2024-env` after source-native fetches to freeze normalized rows under `data/snapshots/2024-env/` and write a machine-readable manifest with row counts, request templates, hashes, and Git state.
+Run `scripts/run-2024-env-live-snapshot.sh` to execute the pinned live slice. The runner preserves raw public API payloads under ignored `data/raw/source-payloads/2024-env/`, writes normalized rows under `data/raw/`, freezes `data/snapshots/2024-env/`, and records per-source status in `data/snapshots/2024-env/live-run-status.csv`.
+
+The current committed 2024 EPA/ENV snapshot was generated from official public endpoints on May 1, 2026 with public/demo access:
+
+- LDA: 13 normalized 2024 `ENV` rows from the public Senate LDA API, filtered over the first three pages of each quarter.
+- FEC: 100 normalized 2024 OpenFEC rows from four national party committees before the public `DEMO_KEY` hourly limit blocked the remaining two committee requests.
+- Regulations.gov: public `DEMO_KEY` request was blocked by an upstream rate limit.
+- Federal Register: 100 normalized EPA 2024 document rows from the public Federal Register API.
+
+Run `make snapshot-2024-env` after any subsequent source-native fetches to freeze normalized rows under `data/snapshots/2024-env/` and write a machine-readable manifest with row counts, request templates, hashes, and Git state.

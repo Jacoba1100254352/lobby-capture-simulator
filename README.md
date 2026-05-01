@@ -14,9 +14,12 @@ make campaign
 make sensitivity
 make ablation
 make interactions
+make source-moments
 make validate
+make calibration-queue
 make snapshot-2024-env
 make tables
+make figures
 make paper
 ```
 
@@ -47,6 +50,13 @@ Each report run also writes a `*.manifest.json` sidecar with seed, runs, contest
 
 Validation now also reads `data/calibration/parameter-map.csv`, which classifies targets as observed, inferred, proxy, sectoral, or judgmental. The parameter map is the bridge from the Deep Research reports to simulator metrics.
 
+`make source-moments` writes direct diagnostics from normalized source tables:
+
+- `reports/source-moments.csv`
+- `reports/source-moments.md`
+
+`make calibration-queue` classifies validation misses and partial overlaps into model-tuning, metric-split, source-moment, scenario-coverage, scale-alignment, or benchmark-review work.
+
 The fetch scripts seed normalized local calibration data from tracked fixtures:
 
 ```sh
@@ -68,9 +78,17 @@ REGULATIONS_API_KEY=... ./scripts/fetch-regulatory.sh --live
 REGULATORY_SOURCE=federal-register ./scripts/fetch-regulatory.sh --live
 ```
 
+The pinned 2024 EPA/ENV live runner is:
+
+```sh
+scripts/run-2024-env-live-snapshot.sh
+```
+
+It preserves raw public API payloads under ignored `data/raw/source-payloads/2024-env/`, writes normalized rows into `data/raw/`, runs the snapshot freezer, and emits source moments. If no personal API keys are configured it uses official public/demo access where possible and records rate-limit gaps in `data/snapshots/2024-env/live-run-status.csv`.
+
 `make snapshot-2024-env` freezes the current normalized source rows under `data/snapshots/2024-env/` and writes a manifest for the first closed-window paper snapshot: 2024 LDA `ENV`, EPA Regulations.gov/Federal Register activity, and the 2024 FEC cycle. Live paper snapshots should run the source-native fetchers with those fixed filters before freezing.
 
-`make tables` regenerates LaTeX table files under `paper/tables/` from the committed report CSV snapshots. `make paper` runs that table generator before building the PDF. Table selection lives in `paper/tables.yml`, so paper row/column/caption edits do not require changing the generator.
+`make tables` regenerates LaTeX table files under `paper/tables/` from the committed report CSV snapshots. `make figures` regenerates paper interaction figures under `paper/figures/`. `make paper` runs both generators before building the PDF. Table selection lives in `paper/tables.yml`, so paper row/column/caption edits do not require changing the generator.
 
 The source-native fetcher has tiny checked-in JSON fixtures under `data/fixtures/source-native/`. `make test` verifies those parser paths without hitting the network. Live source requests retry transient `429` and `5xx` responses; tune with `SOURCE_FETCH_RETRIES` and `SOURCE_FETCH_BACKOFF_SECONDS`.
 
@@ -88,6 +106,7 @@ It includes:
 - direct access, agenda access, information distortion, public campaigns, litigation threats, campaign finance, dark money, revolving-door access, and defensive reform spending;
 - first-class rulemaking dockets, comment campaigns, authenticity, template saturation, and technical-claim credibility;
 - comment-record triage with unique-information share, duplicate compression, review burden, procedural acknowledgment, and substantive uptake;
+- split validation-facing source metrics for all-flow traceability, dark-money direct visibility, resident voucher participation, and candidate public-financing uptake;
 - evasion profiles with dark-pool, litigation-funding, procurement-consultant, and revolving-door substitution pressure;
 - an influence-substitution engine that reports hidden influence, preserved influence capacity, messenger substitution, venue substitution, and net transparency gain after reforms constrain a channel;
 - arena-specific capture susceptibility;

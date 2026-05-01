@@ -1,7 +1,7 @@
 {
   "snapshot": "2024-env",
-  "generatedAt": "2026-05-01T22:18:36.036994+00:00",
-  "gitCommit": "a990360",
+  "generatedAt": "2026-05-01T23:02:49.288337+00:00",
+  "gitCommit": "0975e40",
   "gitTreeState": "dirty",
   "scope": {
     "calendarWindow": "2024-01-01/2024-12-31",
@@ -17,8 +17,8 @@
       "description": "LDA 2024 Q1-Q4 LD-2 activity reports, post-filtered to ENV and EPA-facing contacts when live payloads are available.",
       "requestTemplate": "LDA_YEAR=2024 LDA_PERIOD={first_quarter,second_quarter,third_quarter,fourth_quarter} ./scripts/fetch-lda.sh --live",
       "normalizedFile": "data/snapshots/2024-env/normalized/lda-lobbying.csv",
-      "rowCount": 4,
-      "sha256": "797230cbe7ae3bbd481d0ccb50aff6b6da12195c2cec8a4c273e289e32cb39a7",
+      "rowCount": 13,
+      "sha256": "dbc198972afdb168908414a6495677b5faa74107fa6ea28582e058858360037b",
       "status": "copied"
     },
     {
@@ -26,8 +26,8 @@
       "description": "FEC 2024 cycle six national party committee receipts/disbursements, plus optional lobbyist bundled contributions.",
       "requestTemplate": "FEC_CYCLE=2024 FEC_COMMITTEE_ID in C00010603,C00042366,C00000935,C00003418,C00027466,C00075820 ./scripts/fetch-fec.sh --live",
       "normalizedFile": "data/snapshots/2024-env/normalized/fec-campaign-finance.csv",
-      "rowCount": 5,
-      "sha256": "9f37276bf4fb8e1d74038246e228f2a4cbdc393922bf8d56e61669569d3dcfc7",
+      "rowCount": 100,
+      "sha256": "0fbcbdf43ed9850a641ef33d54667c18d9a411324fc1d2cc5657cb5ce6291000",
       "status": "copied"
     },
     {
@@ -35,9 +35,13 @@
       "description": "EPA 2024 Regulations.gov/Federal Register rulemaking docket and document slice.",
       "requestTemplate": "REGULATORY_AGENCY=EPA REGULATORY_DATE_FROM=2024-01-01 REGULATORY_DATE_TO=2024-12-31 ./scripts/fetch-regulatory.sh --live",
       "normalizedFile": "data/snapshots/2024-env/normalized/regulatory-dockets.csv",
-      "rowCount": 4,
-      "sha256": "c6340520201473bd86be684caaa6721a682c8f4e886fe643c58bba1257fa1140",
+      "rowCount": 100,
+      "sha256": "076d1f13e8e93f2724bcbe602a7b42bede068643c2fb144c54baca67bc8ef684",
       "status": "copied"
     }
-  ]
+  ],
+  "liveRunStatus": {
+    "file": "data/snapshots/2024-env/live-run-status.csv",
+    "sha256": "952f106ec74c2b55659d1a5322ded3b1dcab4caa927085ac9e71bde745966c27"
+  }
 }

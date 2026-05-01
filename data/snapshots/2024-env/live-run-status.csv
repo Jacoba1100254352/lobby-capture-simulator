@@ -1,0 +1,13 @@
+source,status,notes
+lda-first_quarter,ok,public LDA API normalized with ENV filter and first 3 pages
+lda-second_quarter,ok,public LDA API normalized with ENV filter and first 3 pages
+lda-third_quarter,ok,public LDA API normalized with ENV filter and first 3 pages
+lda-fourth_quarter,ok,public LDA API normalized with ENV filter and first 3 pages
+fec-C00010603,ok,OpenFEC DEMO_KEY normalized before rate limit
+fec-C00042366,ok,OpenFEC DEMO_KEY normalized before rate limit
+fec-C00000935,ok,OpenFEC DEMO_KEY normalized before rate limit
+fec-C00003418,ok,OpenFEC DEMO_KEY normalized before rate limit
+fec-C00027466,unavailable,OpenFEC DEMO_KEY hit hourly rate limit before this committee
+fec-C00075820,unavailable,OpenFEC DEMO_KEY hit hourly rate limit before this committee
+regulations-gov,unavailable,Regulations.gov DEMO_KEY returned public rate-limit error
+federal-register,ok,Federal Register API normalized EPA 2024 documents

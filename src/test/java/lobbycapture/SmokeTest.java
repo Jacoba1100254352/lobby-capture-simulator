@@ -40,6 +40,9 @@ public final class SmokeTest {
         require(open.commentAuthenticity() >= 0.0 && open.commentAuthenticity() <= 1.0, "comment authenticity should stay bounded");
         require(open.commentUniqueInformationShare() >= 0.0 && open.commentUniqueInformationShare() <= 1.0, "comment unique information should stay bounded");
         require(open.commentReviewBurden() >= 0.0 && open.commentReviewBurden() <= 1.0, "comment review burden should stay bounded");
+        require(open.darkMoneyDirectVisibility() >= 0.0 && open.darkMoneyDirectVisibility() <= 1.0, "dark-money visibility should stay bounded");
+        require(open.voucherResidentParticipation() >= 0.0 && open.voucherResidentParticipation() <= 1.0, "voucher participation should stay bounded");
+        require(open.publicFinancingCandidateUptake() >= 0.0 && open.publicFinancingCandidateUptake() <= 1.0, "public financing uptake should stay bounded");
         require(open.substitutionPressure() >= 0.0 && open.substitutionPressure() <= 1.0, "substitution pressure should stay bounded");
         require(open.hiddenInfluenceShare() >= 0.0 && open.hiddenInfluenceShare() <= 1.0, "hidden influence should stay bounded");
         require(open.netTransparencyGain() >= -1.0 && open.netTransparencyGain() <= 1.0, "net transparency gain should stay bounded");
@@ -79,6 +82,7 @@ public final class SmokeTest {
         String markdownText = Files.readString(markdown);
         String manifestText = Files.readString(manifest);
         require(csvText.contains("commentUniqueInformationShare,commentReviewBurden,commentProceduralAckRate,commentSubstantiveUptake,commentCompressionRate"), csv + " should report comment triage state");
+        require(csvText.contains("darkMoneyTraceability,darkMoneyDirectVisibility,largeDonorDependence,voucherParticipation,voucherResidentParticipation,publicFinancingShare,publicFinancingCandidateUptake"), csv + " should report split source-state metrics");
         require(csvText.contains("substitutionPressure,influencePreservationRate,hiddenInfluenceShare,netTransparencyGain,messengerSubstitutionRate,venueSubstitutionRate"), csv + " should report substitution state");
         require(csvText.contains("clientFundingAdaptation,regulatorAttentionIndex,regulatorQueueBacklog,watchdogFocusIndex,watchdogBudgetConcentration,adaptationSpeed,reformDecayPressure"), csv + " should report adaptive state");
         require(csvText.lines().count() > 1, csv + " should contain report rows");

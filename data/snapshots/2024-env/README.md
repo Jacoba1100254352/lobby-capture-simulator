@@ -13,6 +13,8 @@ The current command freezes whatever normalized files are present under `data/ra
 
 | Source | Rows | Status | Normalized file |
 | --- | ---: | --- | --- |
-| lda | 4 | copied | `data/snapshots/2024-env/normalized/lda-lobbying.csv` |
-| fec | 5 | copied | `data/snapshots/2024-env/normalized/fec-campaign-finance.csv` |
-| regulatory | 4 | copied | `data/snapshots/2024-env/normalized/regulatory-dockets.csv` |
+| lda | 13 | copied | `data/snapshots/2024-env/normalized/lda-lobbying.csv` |
+| fec | 100 | copied | `data/snapshots/2024-env/normalized/fec-campaign-finance.csv` |
+| regulatory | 100 | copied | `data/snapshots/2024-env/normalized/regulatory-dockets.csv` |
+
+`live-run-status.csv` records which official live requests completed and which were blocked by public API limits or missing credentials.
