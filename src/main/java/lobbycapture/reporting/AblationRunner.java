@@ -34,6 +34,13 @@ public final class AblationRunner {
         ReportProvenance provenance = ReportProvenance.now(seed, runs, contestsPerRun);
         Files.writeString(reportsDir.resolve("lobby-capture-ablation.csv"), new CsvReportWriter().write(reports, provenance));
         Files.writeString(reportsDir.resolve("lobby-capture-ablation.md"), writeMarkdown(reports, provenance));
+        ReportManifestWriter.write(
+                reportsDir,
+                "lobby-capture-ablation",
+                "lobbycapture.Main --ablation --runs " + runs + " --contests " + contestsPerRun + " --seed " + seed,
+                provenance,
+                List.of("lobby-capture-ablation.csv", "lobby-capture-ablation.md")
+        );
     }
 
     private static List<Scenario> scenarios() {

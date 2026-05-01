@@ -1,6 +1,6 @@
 # Next Steps
 
-The simulator now has a lobbying-centered MVP with calibration fixtures, source-native live calibration downloaders, source JSON parser fixtures, explicit client funding, rulemaking comment dockets, evasion profiles, adaptive clients/regulators/watchdogs, campaign reports, sensitivity sweeps, ablation sweeps, generated paper tables, and a working paper scaffold.
+The simulator now has a lobbying-centered MVP with calibration fixtures, source-native live calibration downloaders, source JSON parser fixtures, explicit client funding, rulemaking comment dockets, evasion profiles, adaptive clients/regulators/watchdogs, campaign reports, sensitivity sweeps, ablation sweeps, interaction sweeps, validation summaries, generated paper tables, and a working paper scaffold.
 
 ## Completed in the current slice
 
@@ -13,6 +13,9 @@ The simulator now has a lobbying-centered MVP with calibration fixtures, source-
 - Scenario reports also include client-funding adaptation, regulator attention, and watchdog focus.
 - `make sensitivity` sweeps enforcement, disclosure, public financing, cooling-off, and evasion freedom.
 - `make ablation` removes each full-bundle reform component and ranks capture openings.
+- `make interactions` runs two-way sweeps for enforcement/disclosure, public financing/evasion, and cooling-off/revolving-door strategy.
+- `make validate` compares report metrics against benchmark plausibility bands and writes CSV/Markdown summaries.
+- Report manifests record command, source Git state, Java version, seed/runs/contests, and calibration checksum.
 - `--live` fetch modes can normalize caller-provided CSVs or query LDA, OpenFEC, Regulations.gov, and Federal Register APIs directly.
 - Source-native parser fixtures exercise LDA, OpenFEC, Regulations.gov, and Federal Register JSON without network access.
 - Live source fetches retry transient `429` and `5xx` responses and redact API keys from error URLs.
@@ -30,22 +33,22 @@ Deliverables:
 - archive row counts and filter settings in `docs/validation.md`;
 - compare normalized live distributions against the existing synthetic fixtures.
 
-## 2. Add calibration-fit diagnostics
+## 2. Tighten calibration-fit diagnostics
 
-The simulator has calibration inputs and richer adaptation metrics, but it does not yet report how far a scenario lands from benchmark ranges.
+The first validation target exists, but the benchmark catalog is still thin and mostly broad plausibility bands.
 
 Deliverables:
 
-- a `make validate` target that compares report metrics against `data/calibration/empirical-benchmarks.csv`;
-- machine-readable validation output under `reports/`;
-- paper text distinguishing benchmark fit, stylized mechanism, and unexplained residual.
+- add benchmark rows for dark-money traceability, disclosure lag, comment template saturation, regulator queue burden, and adaptation speed;
+- classify benchmark quality as observed, proxy, or judgmental;
+- add a paper subsection distinguishing benchmark fit, stylized mechanism, and unexplained residual.
 
 ## 3. Expand reform interaction experiments
 
-The current sensitivity and ablation sweeps vary one dimension at a time.
+The first interaction sweep exists, but it is still table/report oriented.
 
 Deliverables:
 
-- two-way sweeps for enforcement/disclosure, public financing/dark-money evasion, and cooling-off/revolving-door substitution;
 - interaction plots or tables for the paper;
 - interpretation notes on where reforms complement each other versus displace influence into other channels.
+- optional three-way stress test for disclosure, enforcement, and evasion freedom.

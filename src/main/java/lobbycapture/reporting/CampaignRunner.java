@@ -30,6 +30,12 @@ public final class CampaignRunner {
         ReportProvenance provenance = ReportProvenance.now(seed, runs, contestsPerRun);
         Files.writeString(reportsDir.resolve("lobby-capture-campaign.csv"), new CsvReportWriter().write(reports, provenance));
         Files.writeString(reportsDir.resolve("lobby-capture-campaign.md"), new MarkdownReportWriter().write(reports, provenance));
+        ReportManifestWriter.write(
+                reportsDir,
+                "lobby-capture-campaign",
+                "lobbycapture.Main --campaign --runs " + runs + " --contests " + contestsPerRun + " --seed " + seed,
+                provenance,
+                List.of("lobby-capture-campaign.csv", "lobby-capture-campaign.md")
+        );
     }
 }
-

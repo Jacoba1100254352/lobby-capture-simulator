@@ -1,4 +1,6 @@
 .DS_Store
+.idea/
+*.iml
 out/
 scripts/__pycache__/
 *.pyc
@@ -10,6 +12,10 @@ reports/*.md
 !reports/lobby-capture-sensitivity.md
 !reports/lobby-capture-ablation.csv
 !reports/lobby-capture-ablation.md
+!reports/lobby-capture-interactions.csv
+!reports/lobby-capture-interactions.md
+!reports/validation-summary.csv
+!reports/validation-summary.md
 paper/*.aux
 paper/*.bbl
 paper/*.blg

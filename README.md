@@ -13,6 +13,8 @@ make run ARGS="--scenario reform-threat-mobilization --runs 10 --contests 30 --s
 make campaign
 make sensitivity
 make ablation
+make interactions
+make validate
 make tables
 make paper
 ```
@@ -31,6 +33,16 @@ make paper
 
 - `reports/lobby-capture-ablation.csv`
 - `reports/lobby-capture-ablation.md`
+
+`make interactions` writes:
+
+- `reports/lobby-capture-interactions.csv`
+- `reports/lobby-capture-interactions.md`
+
+Each report run also writes a `*.manifest.json` sidecar with seed, runs, contests, command, Java version, source Git state, and calibration checksum. `make validate` compares committed report snapshots against benchmark plausibility ranges and writes:
+
+- `reports/validation-summary.csv`
+- `reports/validation-summary.md`
 
 The fetch scripts seed normalized local calibration data from tracked fixtures:
 
@@ -74,5 +86,6 @@ It includes:
 - arena-specific capture susceptibility;
 - transparency, public financing, democracy vouchers, cooling-off, blind review, public advocates, enforcement, anti-astroturf systems, defensive-spend caps, and dark-money disclosure;
 - raw and composite scenario metrics plus sensitivity, ablation, adaptation-speed, and reform-decay metrics.
+- validation summaries and two-way reform interaction sweeps.
 
 The formulas are stylized and comparative. Empirical files under `data/calibration/` and normalized fixtures under `data/fixtures/` are benchmark scaffolds, not causal estimates.

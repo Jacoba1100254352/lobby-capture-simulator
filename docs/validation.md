@@ -38,3 +38,5 @@ Source-native live variables:
 - Retry controls: `SOURCE_FETCH_RETRIES`, `SOURCE_FETCH_BACKOFF_SECONDS`.
 
 The source-native normalizers are distributional bridges. `scripts/test-source-fetchers.py` verifies representative LDA, OpenFEC, Regulations.gov, and Federal Register JSON payloads against exact normalized rows before any live API output is used as a paper snapshot.
+
+`make validate` compares committed report snapshots against `data/calibration/empirical-benchmarks.csv` and writes `reports/validation-summary.csv` plus `reports/validation-summary.md`. Current benchmark rows are deliberately broad plausibility bands. Future research should split each row into observed, proxy, and judgmental calibration classes before the paper treats fit statistics as meaningful evidence.

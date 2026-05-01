@@ -2,6 +2,5 @@ key,source,observable,metric,min,max,notes
 lobbying-spend-observable,LDA.gov and Senate LDA bulk data,visible lobbying spend in budgeted lobbying scenarios,lobbySpendPerContest,0.01,5.00,Abstract budget-unit range; validates observability and relative scale.
 campaign-finance-concentration,FEC campaign finance data,large-donor and outside-spending concentration,largeDonorDependence,0.10,0.95,Used as a plausibility band rather than a causal target.
 rulemaking-duration,Federal Register and Regulations.gov,rulemaking and docket timing,constitutionalChallengeDelay,0.00,0.80,Proxy range until real timing importers exist.
-voucher-participation,Seattle Democracy Voucher data,voucher participation and public-funds share,voucherParticipationRate,0.00,1.00,Scenario-dependent public financing target.
-procurement-concentration,USAspending,recipient concentration by agency and award type,procurementBiasIndex,0.00,1.00,Future procurement-capture calibration target.
-
+voucher-participation,Seattle Democracy Voucher data,voucher participation and public-funds share,voucherParticipation,0.00,1.00,Scenario-dependent public financing target.
+procurement-concentration,USAspending,recipient concentration by agency and award type,procurementBias,0.00,1.00,Future procurement-capture calibration target.

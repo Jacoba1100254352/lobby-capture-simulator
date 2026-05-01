@@ -3,6 +3,7 @@ package lobbycapture;
 import lobbycapture.metrics.ScenarioReport;
 import lobbycapture.reporting.AblationRunner;
 import lobbycapture.reporting.CampaignRunner;
+import lobbycapture.reporting.InteractionRunner;
 import lobbycapture.reporting.SensitivityRunner;
 import lobbycapture.simulation.Scenario;
 import lobbycapture.simulation.ScenarioCatalog;
@@ -46,6 +47,12 @@ public final class Main {
             System.out.println("Wrote reports/lobby-capture-ablation.md");
             return;
         }
+        if (options.interactions) {
+            new InteractionRunner().write(Path.of("reports"), options.runs, options.contests, options.seed);
+            System.out.println("Wrote reports/lobby-capture-interactions.csv");
+            System.out.println("Wrote reports/lobby-capture-interactions.md");
+            return;
+        }
         Scenario scenario = ScenarioCatalog.require(options.scenarioKey);
         ScenarioReport report = new Simulator().run(scenario, options.runs, options.contests, options.seed);
         printSummary(report);
@@ -76,6 +83,7 @@ public final class Main {
                   make campaign
                   make sensitivity
                   make ablation
+                  make interactions
 
                 Options:
                   --list                 List scenarios.
@@ -86,6 +94,7 @@ public final class Main {
                   --campaign             Run all scenarios and write reports.
                   --sensitivity          Sweep reform strengths and evasion freedom.
                   --ablation             Remove each full-bundle reform component in turn.
+                  --interactions         Run two-way reform interaction sweeps.
                   --help                 Show this help.
                 """);
     }
@@ -103,6 +112,7 @@ public final class Main {
             boolean campaign,
             boolean sensitivity,
             boolean ablation,
+            boolean interactions,
             boolean help
     ) {
         private static Options parse(String[] args) {
@@ -114,6 +124,7 @@ public final class Main {
             boolean campaign = false;
             boolean sensitivity = false;
             boolean ablation = false;
+            boolean interactions = false;
             boolean help = false;
             List<String> arguments = List.of(args);
             for (int index = 0; index < arguments.size(); index++) {
@@ -127,6 +138,7 @@ public final class Main {
                     case "--campaign" -> campaign = true;
                     case "--sensitivity" -> sensitivity = true;
                     case "--ablation" -> ablation = true;
+                    case "--interactions" -> interactions = true;
                     case "--help", "-h" -> help = true;
                     default -> throw new IllegalArgumentException("Unknown argument: " + arg);
                 }
@@ -134,7 +146,7 @@ public final class Main {
             if (runs <= 0 || contests <= 0) {
                 throw new IllegalArgumentException("--runs and --contests must be positive.");
             }
-            return new Options(scenario, runs, contests, seed, list, campaign, sensitivity, ablation, help);
+            return new Options(scenario, runs, contests, seed, list, campaign, sensitivity, ablation, interactions, help);
         }
 
         private static String requireValue(List<String> arguments, int index, String option) {

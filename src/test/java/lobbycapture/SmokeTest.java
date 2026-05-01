@@ -3,6 +3,7 @@ package lobbycapture;
 import lobbycapture.metrics.ScenarioReport;
 import lobbycapture.reporting.AblationRunner;
 import lobbycapture.reporting.CampaignRunner;
+import lobbycapture.reporting.InteractionRunner;
 import lobbycapture.reporting.SensitivityRunner;
 import lobbycapture.simulation.ScenarioCatalog;
 import lobbycapture.simulation.Simulator;
@@ -23,6 +24,7 @@ public final class SmokeTest {
         ScenarioReport bundle = simulator.run(ScenarioCatalog.require("full-anti-capture-bundle"), 4, 30, 13L);
         ScenarioReport evasion = simulator.run(ScenarioCatalog.require("bundle-with-evasion"), 4, 30, 14L);
         List<ScenarioReport> sensitivity = new SensitivityRunner().run(1, 10, 15L);
+        List<ScenarioReport> interactions = new InteractionRunner().run(1, 10, 16L);
         List<ScenarioReport> ablation = new AblationRunner().run(3, 30, 242L);
 
         require(open.totalContests() == 120, "open scenario should run all contests");
@@ -41,6 +43,7 @@ public final class SmokeTest {
         require(evasion.darkMoneySpendShare() >= bundle.darkMoneySpendShare(), "evasion scenario should shift toward dark money");
         require(evasion.evasionPenaltyRate() >= 0.0, "evasion penalty should stay non-negative");
         require(sensitivity.size() == 20, "sensitivity runner should cover reform and evasion sweeps");
+        require(interactions.size() == 24, "interaction runner should cover two-way reform sweeps");
         require(ablation.size() == 7, "ablation runner should cover baseline plus six removals");
         require(ablation.stream().anyMatch(report -> report.scenarioKey().equals("ablation-full-bundle")), "ablation runner should include a baseline");
         require(largestAblationOpening(ablation) > 0.0, "stressed ablation should expose at least one capture opening");
@@ -55,21 +58,26 @@ public final class SmokeTest {
             new CampaignRunner().writeCampaign(reports, 1, 5, 91L);
             new SensitivityRunner().write(reports, 1, 5, 92L);
             new AblationRunner().write(reports, 1, 5, 93L);
+            new InteractionRunner().write(reports, 1, 5, 94L);
 
-            verifyReport(reports.resolve("lobby-capture-campaign.csv"), reports.resolve("lobby-capture-campaign.md"));
-            verifyReport(reports.resolve("lobby-capture-sensitivity.csv"), reports.resolve("lobby-capture-sensitivity.md"));
-            verifyReport(reports.resolve("lobby-capture-ablation.csv"), reports.resolve("lobby-capture-ablation.md"));
+            verifyReport(reports.resolve("lobby-capture-campaign.csv"), reports.resolve("lobby-capture-campaign.md"), reports.resolve("lobby-capture-campaign.manifest.json"));
+            verifyReport(reports.resolve("lobby-capture-sensitivity.csv"), reports.resolve("lobby-capture-sensitivity.md"), reports.resolve("lobby-capture-sensitivity.manifest.json"));
+            verifyReport(reports.resolve("lobby-capture-ablation.csv"), reports.resolve("lobby-capture-ablation.md"), reports.resolve("lobby-capture-ablation.manifest.json"));
+            verifyReport(reports.resolve("lobby-capture-interactions.csv"), reports.resolve("lobby-capture-interactions.md"), reports.resolve("lobby-capture-interactions.manifest.json"));
         } finally {
             deleteRecursively(reports);
         }
     }
 
-    private static void verifyReport(Path csv, Path markdown) throws IOException {
+    private static void verifyReport(Path csv, Path markdown, Path manifest) throws IOException {
         String csvText = Files.readString(csv);
         String markdownText = Files.readString(markdown);
+        String manifestText = Files.readString(manifest);
         require(csvText.contains("clientFundingAdaptation,regulatorAttentionIndex,regulatorQueueBacklog,watchdogFocusIndex,watchdogBudgetConcentration,adaptationSpeed,reformDecayPressure"), csv + " should report adaptive state");
         require(csvText.lines().count() > 1, csv + " should contain report rows");
         require(markdownText.contains("Generated"), markdown + " should include provenance");
+        require(manifestText.contains("\"gitCommit\""), manifest + " should include git provenance");
+        require(manifestText.contains("\"calibrationChecksum\""), manifest + " should include calibration checksum");
     }
 
     private static void deleteRecursively(Path root) throws IOException {

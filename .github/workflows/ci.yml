@@ -1,0 +1,28 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Compile Python scripts
+        run: python3 -m py_compile scripts/*.py
+      - name: Run tests
+        run: make test
+      - name: Run interaction sweep
+        run: make interactions
+      - name: Generate paper tables
+        run: make tables
+      - name: Validate report snapshots
+        run: make validate

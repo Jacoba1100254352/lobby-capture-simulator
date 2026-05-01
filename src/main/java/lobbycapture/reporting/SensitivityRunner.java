@@ -32,6 +32,13 @@ public final class SensitivityRunner {
         ReportProvenance provenance = ReportProvenance.now(seed, runs, contestsPerRun);
         Files.writeString(reportsDir.resolve("lobby-capture-sensitivity.csv"), new CsvReportWriter().write(reports, provenance));
         Files.writeString(reportsDir.resolve("lobby-capture-sensitivity.md"), new MarkdownReportWriter().write("Lobby Capture Sensitivity Sweep", reports, provenance));
+        ReportManifestWriter.write(
+                reportsDir,
+                "lobby-capture-sensitivity",
+                "lobbycapture.Main --sensitivity --runs " + runs + " --contests " + contestsPerRun + " --seed " + seed,
+                provenance,
+                List.of("lobby-capture-sensitivity.csv", "lobby-capture-sensitivity.md")
+        );
     }
 
     private static List<Scenario> scenarios() {
