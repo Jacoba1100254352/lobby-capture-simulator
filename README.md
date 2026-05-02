@@ -21,6 +21,8 @@ make snapshot-2024-env
 make tables
 make figures
 make paper
+make paper-word-count
+make wiley-template
 ```
 
 `make campaign` writes:
@@ -107,6 +109,18 @@ It preserves raw public API payloads under ignored `data/raw/source-payloads/202
 `make snapshot-2024-env` freezes the current normalized source rows under `data/snapshots/2024-env/` and writes a manifest for the first closed-window paper snapshot: 2024 LDA `ENV`, EPA Regulations.gov/Federal Register activity, the 2024 FEC cycle, EPA fiscal-year 2024 USAspending awards, and the configured revolving-door panel. Live paper snapshots should run the source-native fetchers with those fixed filters before freezing.
 
 `make tables` regenerates LaTeX table files under `paper/tables/` from the committed report CSV snapshots. `make figures` regenerates paper interaction figures under `paper/figures/`. `make paper` runs both generators before building the PDF. Table selection lives in `paper/tables.yml`, so paper row/column/caption edits do not require changing the generator.
+
+## Paper and Submission Target
+
+The primary paper target is now **Regulation & Governance**. The default build, `make paper`, produces a compile-stable local manuscript from `paper/main.tex`. `make paper-word-count` estimates the manuscript against the reported 11,000-word Regulation & Governance cap, including generated references when `paper/main.bbl` exists.
+
+The Wiley-template path is available but intentionally separate from the default build:
+
+- `make wiley-template` downloads Wiley's official `WileyDesign.zip` into ignored `paper/.wiley-template/`.
+- `paper/regulation-governance-wiley.tex` is the Regulation & Governance/Wiley wrapper using Wiley's `USG` class.
+- `make paper-wiley` attempts that build and reports missing local TeX packages if TeX Live Basic is too small.
+
+Submission strategy details live in `docs/submission-strategy.md`.
 
 The source-native fetcher has tiny checked-in JSON fixtures under `data/fixtures/source-native/`. `make test` verifies those parser paths without hitting the network. Live source requests retry transient `429` and `5xx` responses; tune with `SOURCE_FETCH_RETRIES` and `SOURCE_FETCH_BACKOFF_SECONDS`.
 

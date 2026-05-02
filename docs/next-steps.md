@@ -1,6 +1,6 @@
 # Next Steps
 
-The simulator now has a lobbying-centered MVP with calibration fixtures, source-native live calibration downloaders, source JSON parser fixtures, explicit client funding, rulemaking comment dockets, comment triage, evasion profiles, an influence-substitution engine, adaptive clients/regulators/watchdogs, campaign reports, sensitivity sweeps, ablation sweeps, interaction sweeps, validation summaries, calibration queues, source moments, generated paper tables and figures, a 2024 EPA/ENV snapshot, and a working paper scaffold.
+The simulator now has a lobbying-centered MVP with calibration fixtures, source-native live calibration downloaders, source JSON parser fixtures, explicit client funding, rulemaking comment dockets, comment triage, evasion profiles, an influence-substitution engine, adaptive clients/regulators/watchdogs, campaign reports, sensitivity sweeps, ablation sweeps, interaction sweeps, validation summaries, calibration queues, source moments, generated paper tables and figures, a 2024 EPA/ENV snapshot, and a Regulation & Governance-oriented working paper scaffold.
 
 ## Completed in the current slice
 
@@ -30,8 +30,21 @@ The simulator now has a lobbying-centered MVP with calibration fixtures, source-
 - `make tables` regenerates paper table inputs from report CSV snapshots using `paper/tables.yml`.
 - `make figures` regenerates the paper interaction tradeoff figure.
 - Adaptive institutions now include per-client/per-domain funding memory, regulator queue pressure, watchdog monitoring budget allocation, adaptation speed, and reform-decay pressure.
+- The paper now has a Regulation & Governance framing, a Wiley-template wrapper, a word-count check, and a separate submission strategy note.
 
-## 1. Rerun the 2024 EPA/ENV live snapshot with personal API keys
+## 1. Compress the paper into a Regulation & Governance submission package
+
+The paper is now pointed at Regulation & Governance, but it still reads like a compact working paper plus reproducibility artifact. Before submission, it should become a tighter article with a supplement.
+
+Deliverables:
+
+- keep one flagship reform-bundle comparison in the main article;
+- move full scenario catalogs, sensitivity matrices, ablation matrices, implementation details, and parser details to supplementary material;
+- run `make paper-word-count` after each major edit and keep the full manuscript under the reported 11,000-word cap;
+- use `paper/regulation-governance-wiley.tex` with `make paper-wiley` once the full Wiley TeX dependency set is available;
+- prepare a separate anonymized package only if the paper is retargeted to a double-blind venue.
+
+## 2. Rerun the 2024 EPA/ENV live snapshot with personal API keys
 
 The first live run used public/demo access. It produced a useful snapshot, but public rate limits blocked Regulations.gov and two OpenFEC committee requests.
 
@@ -43,7 +56,7 @@ Deliverables:
 - compare normalized live distributions against the current partial snapshot and deterministic fixtures;
 - rerun `make snapshot-2024-env source-moments validate calibration-queue paper` and commit the refreshed artifacts.
 
-## 2. Add USAspending and revolving-door source panels
+## 3. Add USAspending and revolving-door source panels
 
 The source-moment layer now covers LDA, OpenFEC, and regulatory dockets. Procurement and revolving-door validation still need direct data rather than proxy report metrics.
 
@@ -53,7 +66,7 @@ Deliverables:
 - add a revolving-door source panel or import path and keep headcount share separate from influence intensity;
 - update `data/calibration/parameter-map.csv` so procurement and revolving-door rows point at direct source moments where possible.
 
-## 3. Work down the P1 calibration queue
+## 4. Work down the P1 calibration queue
 
 `reports/calibration-queue.md` now identifies the highest-priority remaining gaps.
 

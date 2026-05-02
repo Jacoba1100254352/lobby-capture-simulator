@@ -14,7 +14,7 @@ The new project should not treat lobbying as one wrapper around a bill vote. It 
 
 ## Current Implementation Status
 
-The repository now contains a runnable Java MVP with a Makefile workflow, scenario catalog, campaign reports, sensitivity sweeps, ablation sweeps, interaction sweeps, validation summaries, calibration queues, source-level moment reports, calibration fixtures, a partial 2024 EPA/ENV live snapshot, source-native live normalization hooks, source JSON parser fixtures, configurable generated paper tables and figures, a LaTeX working paper, and smoke tests. Lobby organizations remain the central strategic actors. The active engine includes client funding, contribution-ledger flows, adaptive channel allocation, influence substitution, per-client/per-domain funding memory, regulator attention queues, watchdog monitoring budgets, rulemaking docket/comment campaigns, comment triage, evasion profiles, enforcement detection and penalties, adaptation-speed diagnostics, reform-decay pressure, and anti-capture reform bundles.
+The repository now contains a runnable Java MVP with a Makefile workflow, scenario catalog, campaign reports, sensitivity sweeps, ablation sweeps, interaction sweeps, validation summaries, calibration queues, source-level moment reports, calibration fixtures, a partial 2024 EPA/ENV live snapshot, source-native live normalization hooks, source JSON parser fixtures, configurable generated paper tables and figures, a Regulation & Governance-oriented LaTeX working paper, a Wiley-template submission wrapper, and smoke tests. Lobby organizations remain the central strategic actors. The active engine includes client funding, contribution-ledger flows, adaptive channel allocation, influence substitution, per-client/per-domain funding memory, regulator attention queues, watchdog monitoring budgets, rulemaking docket/comment campaigns, comment triage, evasion profiles, enforcement detection and penalties, adaptation-speed diagnostics, reform-decay pressure, and anti-capture reform bundles.
 
 ## 1. Proposed Repo Architecture
 
@@ -532,6 +532,7 @@ Use empirical data for scale, distributions, and plausibility checks. Do not cla
 - Add seed robustness, scenario ablations, sensitivity sweeps, and report manifests.
 - Add tests for deterministic seeds, budget conservation, disclosure lag, enforcement sanctions, adaptive strategy learning, and reform bundle interactions.
 - Write `docs/validation.md`, `docs/scenario-catalog.md`, and an ODD+D style model appendix.
+- Maintain a Regulation & Governance submission path with word-count checks, a Wiley-template wrapper, and a supplement-ready separation between article claims and reproducibility artifacts.
 - Package an anonymous/shareable archive if needed.
 
 ## 7. Code To Copy Or Adapt From Existing Simulator
