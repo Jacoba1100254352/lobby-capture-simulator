@@ -1,7 +1,7 @@
 {
   "snapshot": "2024-env",
-  "generatedAt": "2026-05-01T23:02:49.288337+00:00",
-  "gitCommit": "0975e40",
+  "generatedAt": "2026-05-02T02:30:17.776817+00:00",
+  "gitCommit": "a0c708b",
   "gitTreeState": "dirty",
   "scope": {
     "calendarWindow": "2024-01-01/2024-12-31",
@@ -38,10 +38,28 @@
       "rowCount": 100,
       "sha256": "076d1f13e8e93f2724bcbe602a7b42bede068643c2fb144c54baca67bc8ef684",
       "status": "copied"
+    },
+    {
+      "source": "usaspending",
+      "description": "EPA fiscal-year 2024 USAspending award panel for procurement concentration moments.",
+      "requestTemplate": "USASPENDING_FISCAL_YEAR=2024 USASPENDING_AGENCY='Environmental Protection Agency' ./scripts/fetch-usaspending.sh --live",
+      "normalizedFile": "data/snapshots/2024-env/normalized/usaspending-awards.csv",
+      "rowCount": 200,
+      "sha256": "359de403081a9363a934761e7070e5cb9308f89867b09eaf01c3d7749ce160fb",
+      "status": "copied"
+    },
+    {
+      "source": "revolving-door",
+      "description": "Normalized revolving-door source panel from a licensed/exported CSV or tracked fixture.",
+      "requestTemplate": "REVOLVING_DOOR_LIVE_CSV=/path/to/export.csv ./scripts/fetch-revolving-door.sh --live",
+      "normalizedFile": "data/snapshots/2024-env/normalized/revolving-door.csv",
+      "rowCount": 5,
+      "sha256": "64bc4264fa34b930486dc0b60de33b2e3fefd66aa2b89a8d9c98faea5105d025",
+      "status": "copied"
     }
   ],
   "liveRunStatus": {
     "file": "data/snapshots/2024-env/live-run-status.csv",
-    "sha256": "952f106ec74c2b55659d1a5322ded3b1dcab4caa927085ac9e71bde745966c27"
+    "sha256": "d1e3142be2b88271dbd4e5e6a0daf95e308ef21ac70975feffc9eff500f03128"
   }
 }

@@ -11,3 +11,5 @@ fec-C00027466,unavailable,OpenFEC DEMO_KEY hit hourly rate limit before this com
 fec-C00075820,unavailable,OpenFEC DEMO_KEY hit hourly rate limit before this committee
 regulations-gov,unavailable,Regulations.gov DEMO_KEY returned public rate-limit error
 federal-register,ok,Federal Register API normalized EPA 2024 documents
+usaspending,ok,USAspending public API normalized EPA fiscal-year 2024 awards without an API key
+revolving-door,fixture,no licensed/source export configured; fixture copied for schema continuity

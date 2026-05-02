@@ -44,6 +44,7 @@ public final class ClientFundingModel {
                 }
                 FundingSource source = fundingSource(client, world);
                 double traceability = traceabilityFor(source, calibration, contest.issueDomain(), world);
+                double largeDonorDependence = largeDonorDependenceFor(source, calibration, contest.issueDomain(), world);
                 double disclosureLag = Values.clamp(
                         (0.55 * calibration.disclosureLag(contest.issueDomain()))
                                 + (0.45 * world.evasionProfile().disclosureLag()),
@@ -59,7 +60,7 @@ public final class ClientFundingModel {
                         amount,
                         disclosureLag,
                         traceability,
-                        source == FundingSource.DARK_MONEY ? 0.42 : 0.18,
+                        largeDonorDependence,
                         contest.id(),
                         contest.issueDomain(),
                         world.clock().tick(),
@@ -109,5 +110,19 @@ public final class ClientFundingModel {
                     - (0.35 * world.evasionProfile().opacity()), 0.0, 1.0);
         }
         return Values.clamp((0.70 * baseline) + (0.30 * world.reformRegime().transparencyStrength()), 0.0, 1.0);
+    }
+
+    private static double largeDonorDependenceFor(
+            FundingSource source,
+            CalibrationProfile calibration,
+            String issueDomain,
+            WorldState world
+    ) {
+        double baseline = calibration.largeDonorShare(issueDomain);
+        if (source == FundingSource.PUBLIC_MATCH || source == FundingSource.DEMOCRACY_VOUCHER) {
+            return Values.clamp((0.35 * baseline) - (0.18 * world.reformRegime().campaignFinanceCounterweight()), 0.0, 1.0);
+        }
+        double opacityPressure = source == FundingSource.DARK_MONEY ? 0.12 + (0.08 * world.evasionProfile().opacity()) : 0.04;
+        return Values.clamp((0.68 * baseline) + opacityPressure, 0.0, 1.0);
     }
 }

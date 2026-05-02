@@ -1,6 +1,6 @@
 # Lobby Capture Ablation Report
 
-- Generated: `2026-05-01T22:59:09.421228Z`
+- Generated: `2026-05-02T02:32:45.625417Z`
 - Seed: `242`
 - Runs per scenario: `40`
 - Contests per run: `80`
@@ -10,25 +10,25 @@
 
 | Removed component | Capture increase | Capture rate | Anti-capture success | Dark-money share | Defensive spend | Comment distortion | Donor Gini | Detection |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| No public advocate or blind review | 0.0253 | 0.0253 | 0.9894 | 0.2620 | 0.4932 | 0.0098 | 0.1276 | 0.0341 |
-| No enforcement | 0.0056 | 0.0056 | 0.9977 | 0.2824 | 0.4919 | 0.0089 | 0.1359 | 0.0006 |
-| No beneficial-owner disclosure | 0.0000 | 0.0000 | 1.0000 | 0.1463 | 0.4964 | 0.0086 | 0.1271 | 0.0000 |
-| No public financing or vouchers | 0.0000 | 0.0000 | 0.9989 | 0.1311 | 0.5044 | 0.0089 | 0.1214 | 0.0000 |
-| No cooling-off rules | 0.0000 | 0.0000 | 1.0000 | 0.1221 | 0.5022 | 0.0089 | 0.1282 | 0.0000 |
-| No anti-astroturf authentication | 0.0000 | 0.0000 | 1.0000 | 0.2612 | 0.4943 | 0.0101 | 0.1215 | 0.0000 |
+| No public advocate or blind review | 0.0225 | 0.0225 | 0.9860 | 0.2553 | 0.5162 | 0.0063 | 0.1239 | 0.1841 |
+| No enforcement | 0.0041 | 0.0041 | 1.0000 | 0.2738 | 0.5195 | 0.0056 | 0.1209 | 0.0438 |
+| No beneficial-owner disclosure | 0.0000 | 0.0000 | 0.9988 | 0.1471 | 0.4977 | 0.0055 | 0.1432 | 0.1759 |
+| No public financing or vouchers | 0.0000 | 0.0000 | 0.9989 | 0.1330 | 0.5098 | 0.0052 | 0.1357 | 0.1506 |
+| No cooling-off rules | 0.0000 | 0.0000 | 1.0000 | 0.1215 | 0.5033 | 0.0054 | 0.1322 | 0.1575 |
+| No anti-astroturf authentication | 0.0000 | 0.0000 | 1.0000 | 0.2591 | 0.4988 | 0.0069 | 0.1217 | 0.1566 |
 
 ## Full Snapshot
 
 | Scenario | Directional | Capture rate | Anti-capture success | Comment authenticity | Template saturation | Admin cost |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: |
-| Ablation baseline full bundle | 0.6681 | 0.0000 | 1.0000 | 0.2450 | 0.4312 | 0.4600 |
-| No enforcement | 0.6751 | 0.0056 | 0.9977 | 0.2470 | 0.4283 | 0.3497 |
-| No beneficial-owner disclosure | 0.6704 | 0.0000 | 1.0000 | 0.2409 | 0.4375 | 0.4048 |
-| No public financing or vouchers | 0.6567 | 0.0000 | 0.9989 | 0.2428 | 0.4346 | 0.3864 |
-| No cooling-off rules | 0.6725 | 0.0000 | 1.0000 | 0.2421 | 0.4359 | 0.4140 |
-| No anti-astroturf authentication | 0.6711 | 0.0000 | 1.0000 | 0.2298 | 0.4405 | 0.4232 |
-| No public advocate or blind review | 0.6732 | 0.0253 | 0.9894 | 0.2455 | 0.4306 | 0.3811 |
+| Ablation baseline full bundle | 0.6526 | 0.0000 | 1.0000 | 0.6278 | 0.4303 | 0.4739 |
+| No enforcement | 0.6515 | 0.0041 | 1.0000 | 0.6268 | 0.4330 | 0.3531 |
+| No beneficial-owner disclosure | 0.6545 | 0.0000 | 0.9988 | 0.6289 | 0.4276 | 0.4196 |
+| No public financing or vouchers | 0.6402 | 0.0000 | 0.9989 | 0.6279 | 0.4300 | 0.3992 |
+| No cooling-off rules | 0.6562 | 0.0000 | 1.0000 | 0.6276 | 0.4312 | 0.4272 |
+| No anti-astroturf authentication | 0.6564 | 0.0000 | 1.0000 | 0.5860 | 0.4383 | 0.4362 |
+| No public advocate or blind review | 0.6584 | 0.0225 | 0.9860 | 0.6240 | 0.4400 | 0.3935 |
 
 ## Interpretation Guardrail
 
-The largest modeled capture opening is `No public advocate or blind review`, with capture-rate change `0.0253`. This is a comparative simulation result, not a causal empirical estimate.
+The largest modeled capture opening is `No public advocate or blind review`, with capture-rate change `0.0225`. This is a comparative simulation result, not a causal empirical estimate.

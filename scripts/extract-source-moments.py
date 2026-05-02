@@ -37,6 +37,8 @@ def extract_scope(scope: str, root: Path, prefix: str) -> list[dict[str, str]]:
     rows.extend(lda_moments(scope, root / f"{prefix}lda-lobbying.csv"))
     rows.extend(fec_moments(scope, root / f"{prefix}fec-campaign-finance.csv"))
     rows.extend(regulatory_moments(scope, root / f"{prefix}regulatory-dockets.csv"))
+    rows.extend(usaspending_moments(scope, root / f"{prefix}usaspending-awards.csv"))
+    rows.extend(revolving_door_moments(scope, root / f"{prefix}revolving-door.csv"))
     return rows
 
 
@@ -99,6 +101,40 @@ def regulatory_moments(scope: str, path: Path) -> list[dict[str, str]]:
     ]
 
 
+def usaspending_moments(scope: str, path: Path) -> list[dict[str, str]]:
+    rows = read_rows(path)
+    if not rows:
+        return [moment(scope, "usaspending", "procurementRows", 0.0, "observed", f"{path} missing or empty")]
+    by_recipient = grouped_amount(rows, "recipient")
+    by_agency = grouped_amount(rows, "agency")
+    by_sub_agency = grouped_amount(rows, "subAgency")
+    total = sum(number(row.get("amount")) for row in rows)
+    return [
+        moment(scope, "usaspending", "procurementRows", len(rows), "observed", "normalized USAspending award rows"),
+        moment(scope, "usaspending", "procurementTotalAwards", total, "observed", "sum of normalized USAspending award amount"),
+        moment(scope, "usaspending", "procurementRecipientTop1Share", top_share(by_recipient, 1), "observed", "largest recipient share of normalized award amount"),
+        moment(scope, "usaspending", "procurementRecipientTop3Share", top_share(by_recipient, 3), "observed", "top three recipients share of normalized award amount"),
+        moment(scope, "usaspending", "procurementAgencyTop1Share", top_share(by_agency, 1), "observed", "largest awarding agency share of normalized award amount"),
+        moment(scope, "usaspending", "procurementSubAgencyTop3Share", top_share(by_sub_agency, 3), "observed", "top three sub-agencies share of normalized award amount"),
+        moment(scope, "usaspending", "procurementAwardCount", sum(number(row.get("awardCount")) for row in rows), "observed", "sum of normalized award or transaction counts"),
+    ]
+
+
+def revolving_door_moments(scope: str, path: Path) -> list[dict[str, str]]:
+    rows = read_rows(path)
+    if not rows:
+        return [moment(scope, "revolving-door", "revolvingDoorRows", 0.0, "observed", f"{path} missing or empty")]
+    former_rows = [row for row in rows if row.get("formerOfficialRole", "").strip()]
+    by_agency = grouped_count(rows, "agency")
+    return [
+        moment(scope, "revolving-door", "revolvingDoorRows", len(rows), "observed", "normalized revolving-door rows"),
+        moment(scope, "revolving-door", "revolvingDoorFormerOfficialShare", safe_divide(len(former_rows), len(rows)), "observed_proxy", "share of rows with former official role"),
+        moment(scope, "revolving-door", "revolvingDoorAgencyTop1Share", top_share(by_agency, 1), "observed_proxy", "largest agency share of normalized revolving-door rows"),
+        moment(scope, "revolving-door", "revolvingDoorCoolingOffUnderOneYearShare", safe_divide(sum(1 for row in rows if number(row.get("coolingOffMonths")) < 12), len(rows)), "observed_proxy", "share of rows with cooling-off interval below one year"),
+        moment(scope, "revolving-door", "revolvingDoorInfluenceMean", average([number(row.get("influenceShare")) for row in rows]), "proxy", "mean normalized influence share from source panel"),
+    ]
+
+
 def read_rows(path: Path) -> list[dict[str, str]]:
     if not path.exists():
         return []
@@ -110,6 +146,13 @@ def grouped_amount(rows: list[dict[str, str]], key: str, amount_key: str = "amou
     grouped: dict[str, float] = defaultdict(float)
     for row in rows:
         grouped[row.get(key, "") or "unknown"] += number(row.get(amount_key))
+    return dict(grouped)
+
+
+def grouped_count(rows: list[dict[str, str]], key: str) -> dict[str, float]:
+    grouped: dict[str, float] = defaultdict(float)
+    for row in rows:
+        grouped[row.get(key, "") or "unknown"] += 1.0
     return dict(grouped)
 
 

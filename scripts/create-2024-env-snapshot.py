@@ -33,6 +33,16 @@ SOURCES = {
         "description": "EPA 2024 Regulations.gov/Federal Register rulemaking docket and document slice.",
         "request": "REGULATORY_AGENCY=EPA REGULATORY_DATE_FROM=2024-01-01 REGULATORY_DATE_TO=2024-12-31 ./scripts/fetch-regulatory.sh --live",
     },
+    "usaspending": {
+        "input": RAW / "usaspending-awards.csv",
+        "description": "EPA fiscal-year 2024 USAspending award panel for procurement concentration moments.",
+        "request": "USASPENDING_FISCAL_YEAR=2024 USASPENDING_AGENCY='Environmental Protection Agency' ./scripts/fetch-usaspending.sh --live",
+    },
+    "revolving-door": {
+        "input": RAW / "revolving-door.csv",
+        "description": "Normalized revolving-door source panel from a licensed/exported CSV or tracked fixture.",
+        "request": "REVOLVING_DOOR_LIVE_CSV=/path/to/export.csv ./scripts/fetch-revolving-door.sh --live",
+    },
 }
 
 
@@ -141,6 +151,8 @@ def write_readme(root: Path, entries: list[dict[str, object]]) -> None:
         "- LDA issue code: ENV.",
         "- Agency: EPA.",
         "- FEC cycle: 2024, with the six national party committees as the first electoral-pressure panel.",
+        "- USAspending fiscal year: 2024, Environmental Protection Agency awards.",
+        "- Revolving-door panel: licensed/source export when available; fixture otherwise.",
         "",
         "The current command freezes whatever normalized files are present under `data/raw/`. Live paper snapshots should first run the request templates in `manifest.json`, preserve raw payloads outside git when too large, normalize into the same schemas, and then rerun `make snapshot-2024-env`.",
         "",

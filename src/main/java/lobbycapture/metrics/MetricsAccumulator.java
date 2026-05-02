@@ -122,9 +122,9 @@ public final class MetricsAccumulator {
         publicFinancingCandidateUptakeSum += publicFinancingCandidateUptake(reform, ledgerLargeDonorDependence);
         revolvingDoorInfluenceSum += contest.revolvingDoorInfluence();
         commentRecordDistortionSum += contest.commentRecordDistortion();
-        commentAuthenticitySum += contest.docket().authenticityShare();
         templateCommentSaturationSum += contest.docket().templateSaturation();
         CommentTriageReport triage = CommentTriageModel.triage(contest.docket(), contest, reform, commentReviewCapacity(contest, world, reform));
+        commentAuthenticitySum += triage.authenticationConfidence();
         commentUniqueInformationSum += triage.uniqueInformationShare();
         commentReviewBurdenSum += triage.reviewBurden();
         commentProceduralAckSum += triage.proceduralAckRate();

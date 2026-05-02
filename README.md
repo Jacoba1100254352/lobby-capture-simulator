@@ -63,7 +63,22 @@ The fetch scripts seed normalized local calibration data from tracked fixtures:
 ./scripts/fetch-lda.sh
 ./scripts/fetch-fec.sh
 ./scripts/fetch-regulatory.sh
+./scripts/fetch-usaspending.sh
+./scripts/fetch-revolving-door.sh
 ```
+
+## Data Credentials
+
+`.env.example` lists every configured source variable. Copy it to `.env` and fill in private values there; `.env` is ignored by git and the fetch scripts load it automatically.
+
+Credential and source-access links:
+
+- LDA API key: <https://lda.gov/api/register/>
+- FEC/OpenFEC API key: <https://api.data.gov/signup/>
+- Regulations.gov API key: <https://api.data.gov/signup/>
+- Regulations.gov API docs: <https://open.gsa.gov/api/regulationsgov/>
+- USAspending API docs: <https://api.usaspending.gov/docs/endpoints> (no key currently required)
+- OpenSecrets API/account access: <https://www.opensecrets.org/api/admin/index.php>
 
 Optional live normalization uses the same output schemas. You can pass an explicit local CSV/URL, or let the scripts query their upstream source-native APIs:
 
@@ -71,11 +86,14 @@ Optional live normalization uses the same output schemas. You can pass an explic
 LDA_LIVE_CSV=/path/to/lda.csv ./scripts/fetch-lda.sh --live
 FEC_LIVE_URL=https://example.org/fec.csv ./scripts/fetch-fec.sh --live
 REGULATORY_LIVE_CSV=/path/to/dockets.csv ./scripts/fetch-regulatory.sh --live
+USASPENDING_LIVE_CSV=/path/to/awards.csv ./scripts/fetch-usaspending.sh --live
+REVOLVING_DOOR_LIVE_CSV=/path/to/revolving-door.csv ./scripts/fetch-revolving-door.sh --live
 
 LDA_API_KEY=... ./scripts/fetch-lda.sh --live
 FEC_API_KEY=... ./scripts/fetch-fec.sh --live
 REGULATIONS_API_KEY=... ./scripts/fetch-regulatory.sh --live
 REGULATORY_SOURCE=federal-register ./scripts/fetch-regulatory.sh --live
+./scripts/fetch-usaspending.sh --live
 ```
 
 The pinned 2024 EPA/ENV live runner is:
@@ -86,7 +104,7 @@ scripts/run-2024-env-live-snapshot.sh
 
 It preserves raw public API payloads under ignored `data/raw/source-payloads/2024-env/`, writes normalized rows into `data/raw/`, runs the snapshot freezer, and emits source moments. If no personal API keys are configured it uses official public/demo access where possible and records rate-limit gaps in `data/snapshots/2024-env/live-run-status.csv`.
 
-`make snapshot-2024-env` freezes the current normalized source rows under `data/snapshots/2024-env/` and writes a manifest for the first closed-window paper snapshot: 2024 LDA `ENV`, EPA Regulations.gov/Federal Register activity, and the 2024 FEC cycle. Live paper snapshots should run the source-native fetchers with those fixed filters before freezing.
+`make snapshot-2024-env` freezes the current normalized source rows under `data/snapshots/2024-env/` and writes a manifest for the first closed-window paper snapshot: 2024 LDA `ENV`, EPA Regulations.gov/Federal Register activity, the 2024 FEC cycle, EPA fiscal-year 2024 USAspending awards, and the configured revolving-door panel. Live paper snapshots should run the source-native fetchers with those fixed filters before freezing.
 
 `make tables` regenerates LaTeX table files under `paper/tables/` from the committed report CSV snapshots. `make figures` regenerates paper interaction figures under `paper/figures/`. `make paper` runs both generators before building the PDF. Table selection lives in `paper/tables.yml`, so paper row/column/caption edits do not require changing the generator.
 

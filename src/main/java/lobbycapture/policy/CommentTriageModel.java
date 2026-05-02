@@ -23,30 +23,35 @@ public final class CommentTriageModel {
         double astroturfShare = docket.astroturfComments() / total;
         double saturation = docket.templateSaturation();
         double authentication = Values.clamp(
-                (0.65 * docket.authenticityShare()) + (0.35 * docket.authenticationShare()),
+                0.28
+                        + (0.42 * docket.authenticationShare())
+                        + (0.20 * genuineShare)
+                        + (0.06 * reform.realTimeDisclosure())
+                        + (0.05 * reform.antiAstroturfStrength())
+                        - (0.10 * astroturfShare),
                 0.0,
                 1.0
         );
         double dedupeTooling = Values.clamp(
-                0.18
-                        + (0.38 * reform.antiAstroturfStrength())
-                        + (0.18 * reform.blindReviewStrength())
+                0.25
+                        + (0.45 * reform.antiAstroturfStrength())
+                        + (0.20 * reform.blindReviewStrength())
                         + (0.16 * reform.publicAdvocateStrength())
-                        + (0.10 * reform.enforcementStrength()),
+                        + (0.14 * reform.enforcementStrength()),
                 0.0,
                 1.0
         );
         double duplicateCompression = Values.clamp(
-                (saturation * (0.34 + (0.58 * dedupeTooling)))
-                        + (astroturfShare * reform.antiAstroturfStrength() * 0.22),
+                (saturation * (0.50 + (0.60 * dedupeTooling)))
+                        + (astroturfShare * reform.antiAstroturfStrength() * 0.28),
                 0.0,
                 1.0
         );
         double uniqueInformation = Values.clamp(
-                (genuineShare * (0.18 + (0.42 * docket.technicalClaimCredibility())))
-                        + (templateShare * 0.025)
-                        + (Math.max(0.0, 1.0 - saturation) * 0.06)
-                        - (astroturfShare * 0.05),
+                (genuineShare * (0.10 + (0.32 * docket.technicalClaimCredibility())))
+                        + (templateShare * 0.012)
+                        + (Math.max(0.0, 1.0 - saturation) * 0.035)
+                        - (astroturfShare * 0.075),
                 0.0,
                 1.0
         );

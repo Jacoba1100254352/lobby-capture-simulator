@@ -1,13 +1,13 @@
 {
   "report": "lobby-capture-sensitivity",
-  "generatedAt": "2026-05-01T22:59:08.644573Z",
+  "generatedAt": "2026-05-02T02:32:44.944401Z",
   "seed": 142,
   "runs": 30,
   "contestsPerRun": 70,
   "command": "lobbycapture.Main --sensitivity --runs 30 --contests 70 --seed 142",
-  "gitCommit": "0975e40",
+  "gitCommit": "a0c708b",
   "workingTreeDirty": true,
   "javaVersion": "25",
-  "calibrationChecksum": "73de9ea99973254cc780bd769e7fc13995c69b902cd154e0276859085bcdf705",
+  "calibrationChecksum": "9c49695a54e778b06f5f1c07cdd401cd65a33fac55beca59f7e9ee955da20edd",
   "reportFiles": ["lobby-capture-sensitivity.csv", "lobby-capture-sensitivity.md"]
 }

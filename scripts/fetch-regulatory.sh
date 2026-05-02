@@ -1,5 +1,6 @@
 #!/usr/bin/env sh
 set -eu
+. ./scripts/load-env.sh
 mkdir -p data/raw
 if [ "${1:-}" = "--live" ]; then
   source_file="$(mktemp)"

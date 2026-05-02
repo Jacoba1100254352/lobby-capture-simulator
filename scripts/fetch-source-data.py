@@ -34,6 +34,9 @@ def main() -> int:
     regulatory = subparsers.add_parser("regulatory", help="Fetch Regulations.gov or Federal Register records.")
     regulatory.add_argument("--output", type=Path, default=Path("data/raw/regulatory-dockets.csv"))
 
+    usaspending = subparsers.add_parser("usaspending", help="Fetch USAspending award records.")
+    usaspending.add_argument("--output", type=Path, default=Path("data/raw/usaspending-awards.csv"))
+
     args = parser.parse_args()
     if args.kind == "lda":
         return fetch_lda(args.output)
@@ -41,11 +44,13 @@ def main() -> int:
         return fetch_fec(args.output)
     if args.kind == "regulatory":
         return fetch_regulatory(args.output)
+    if args.kind == "usaspending":
+        return fetch_usaspending(args.output)
     raise AssertionError(args.kind)
 
 
 def fetch_lda(output: Path) -> int:
-    base = os.environ.get("LDA_API_BASE", "https://lda.senate.gov/api/v1").rstrip("/")
+    base = os.environ.get("LDA_API_BASE", "https://lda.gov/api/v1").rstrip("/")
     params = {
         "page_size": os.environ.get("LDA_PAGE_SIZE", "25"),
     }
@@ -164,6 +169,83 @@ def fetch_regulatory(output: Path) -> int:
         source_name,
     )
     return 0
+
+
+def fetch_usaspending(output: Path) -> int:
+    base = os.environ.get("USASPENDING_API_BASE", "https://api.usaspending.gov/api/v2").rstrip("/")
+    limit = int_env("USASPENDING_PAGE_SIZE", 100, 1, 100)
+    max_pages = int_env("USASPENDING_MAX_PAGES", 2, 1, 20)
+    start_date, end_date = usaspending_time_period()
+    rows = []
+    for page in range(1, max_pages + 1):
+        payload = {
+            "filters": {
+                "time_period": [{"start_date": start_date, "end_date": end_date}],
+                "agencies": [
+                    {
+                        "type": os.environ.get("USASPENDING_AGENCY_TYPE", "awarding"),
+                        "tier": os.environ.get("USASPENDING_AGENCY_TIER", "toptier"),
+                        "name": os.environ.get("USASPENDING_AGENCY", "Environmental Protection Agency"),
+                    }
+                ],
+                "award_type_codes": split_csv_env("USASPENDING_AWARD_TYPE_CODES", "A,B,C,D"),
+            },
+            "fields": [
+                "Award ID",
+                "Recipient Name",
+                "Award Amount",
+                "Awarding Agency",
+                "Awarding Sub Agency",
+                "Award Type",
+            ],
+            "page": page,
+            "limit": limit,
+            "sort": os.environ.get("USASPENDING_SORT", "Award Amount"),
+            "order": os.environ.get("USASPENDING_ORDER", "desc"),
+        }
+        response = post_json(f"{base}/search/spending_by_award/", payload)
+        page_rows = normalize_usaspending_records(response.get("results", []))
+        rows.extend(page_rows)
+        metadata = response.get("page_metadata", {})
+        if not metadata.get("hasNext"):
+            break
+    write_rows(
+        output,
+        ["awardId", "recipient", "agency", "subAgency", "awardType", "amount", "issueDomain", "awardCount"],
+        rows,
+        "USAspending awards",
+    )
+    return 0
+
+
+def usaspending_time_period() -> tuple[str, str]:
+    if os.environ.get("USASPENDING_DATE_FROM") and os.environ.get("USASPENDING_DATE_TO"):
+        return os.environ["USASPENDING_DATE_FROM"], os.environ["USASPENDING_DATE_TO"]
+    fiscal_year = int_env("USASPENDING_FISCAL_YEAR", 2024, 2008, 2100)
+    return f"{fiscal_year - 1}-10-01", f"{fiscal_year}-09-30"
+
+
+def normalize_usaspending_records(records: list[dict[str, object]]) -> list[dict[str, object]]:
+    rows = []
+    for record in records:
+        award_id = first_text(record, "Award ID", "award_id", "generated_internal_id", default="UNKNOWN")
+        recipient = first_text(record, "Recipient Name", "recipient_name", "recipient", default="Unknown recipient")
+        agency = first_text(record, "Awarding Agency", "awarding_agency", default="Unknown agency")
+        sub_agency = first_text(record, "Awarding Sub Agency", "awarding_sub_agency", default=agency)
+        award_type = first_text(record, "Award Type", "award_type", default="contract")
+        rows.append(
+            {
+                "awardId": award_id,
+                "recipient": recipient,
+                "agency": agency,
+                "subAgency": sub_agency,
+                "awardType": award_type or "contract",
+                "amount": money_millions(first_text(record, "Award Amount", "award_amount", "amount", default="0")),
+                "issueDomain": os.environ.get("USASPENDING_ISSUE_DOMAIN", "procurement"),
+                "awardCount": 1,
+            }
+        )
+    return rows
 
 
 def fetch_regulations_gov_rows() -> list[dict[str, object]]:
@@ -294,6 +376,11 @@ def split_env(name: str) -> list[str]:
     return [part.strip().upper() for part in value.split(",") if part.strip()]
 
 
+def split_csv_env(name: str, default: str) -> list[str]:
+    value = os.environ.get(name, default)
+    return [part.strip() for part in value.split(",") if part.strip()]
+
+
 def classify_domain(text: str) -> str:
     normalized = text.lower()
     rules = {
@@ -319,17 +406,41 @@ def infer_fec_flow_type(recipient: str) -> str:
 
 
 def get_json(url: str, headers: dict[str, str] | None = None) -> dict[str, object] | list[object]:
+    return request_json("GET", url, headers)
+
+
+def post_json(
+        url: str,
+        payload: dict[str, object],
+        headers: dict[str, str] | None = None
+) -> dict[str, object]:
+    request_headers = {"Content-Type": "application/json"}
+    if headers:
+        request_headers.update(headers)
+    body = json.dumps(payload, sort_keys=True).encode("utf-8")
+    response = request_json("POST", url, request_headers, body)
+    if not isinstance(response, dict):
+        raise SystemExit(f"POST {redact_url(url)} returned a non-object JSON payload.")
+    return response
+
+
+def request_json(
+        method: str,
+        url: str,
+        headers: dict[str, str] | None = None,
+        body: bytes | None = None
+) -> dict[str, object] | list[object]:
     request_headers = {"User-Agent": "lobby-capture-simulator/0.1"}
     if headers:
         request_headers.update(headers)
-    request = Request(url, headers=request_headers)
+    request = Request(url, data=body, headers=request_headers, method=method)
     attempts = int_env("SOURCE_FETCH_RETRIES", 3, 1, 8)
     backoff = float_env("SOURCE_FETCH_BACKOFF_SECONDS", 1.0, 0.0, 30.0)
     for attempt in range(1, attempts + 1):
         try:
             with urlopen(request, timeout=30) as response:
                 text = response.read().decode("utf-8")
-                write_raw_payload(url, text)
+                write_raw_payload(url, text, method, body)
                 return json.loads(text)
         except HTTPError as error:
             if should_retry(error.code, attempt, attempts):
@@ -337,12 +448,12 @@ def get_json(url: str, headers: dict[str, str] | None = None) -> dict[str, objec
                 continue
             detail = error.read().decode("utf-8", errors="replace")[:500]
             hint = auth_hint(error.code)
-            raise SystemExit(f"GET {redact_url(url)} failed with HTTP {error.code}: {detail}{hint}") from error
+            raise SystemExit(f"{method} {redact_url(url)} failed with HTTP {error.code}: {detail}{hint}") from error
         except URLError as error:
             if attempt < attempts:
                 sleep_before_retry(None, attempt, backoff)
                 continue
-            raise SystemExit(f"GET {redact_url(url)} failed after {attempts} attempts: {error.reason}") from error
+            raise SystemExit(f"{method} {redact_url(url)} failed after {attempts} attempts: {error.reason}") from error
     raise AssertionError("unreachable")
 
 
@@ -455,7 +566,7 @@ def redact_url(url: str) -> str:
     return urlunsplit((parts.scheme, parts.netloc, parts.path, query, parts.fragment))
 
 
-def write_raw_payload(url: str, text: str) -> None:
+def write_raw_payload(url: str, text: str, method: str = "GET", body: bytes | None = None) -> None:
     raw_dir = os.environ.get("SOURCE_RAW_DIR")
     if not raw_dir:
         return
@@ -463,11 +574,15 @@ def write_raw_payload(url: str, text: str) -> None:
     RAW_SEQUENCE += 1
     root = Path(raw_dir)
     root.mkdir(parents=True, exist_ok=True)
-    digest = hashlib.sha256(url.encode("utf-8")).hexdigest()[:12]
+    request_identity = method.encode("utf-8") + url.encode("utf-8") + (body or b"")
+    digest = hashlib.sha256(request_identity).hexdigest()[:12]
     path = root / f"{RAW_SEQUENCE:04d}-{digest}.json"
     path.write_text(text, encoding="utf-8")
+    entry = {"file": path.name, "method": method, "url": redact_url(url)}
+    if body:
+        entry["requestBodySha256"] = hashlib.sha256(body).hexdigest()
     with (root / "request-manifest.jsonl").open("a", encoding="utf-8") as manifest:
-        manifest.write(json.dumps({"file": path.name, "url": redact_url(url)}) + "\n")
+        manifest.write(json.dumps(entry) + "\n")
 
 
 def write_rows(output: Path, fieldnames: list[str], rows: object, source_name: str = "source API") -> None:

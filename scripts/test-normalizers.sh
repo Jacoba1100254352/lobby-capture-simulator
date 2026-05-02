@@ -42,6 +42,8 @@ grep -q "tab:first-campaign" "$tmpdir/tables/campaign_snapshot.tex"
 grep -q "tab:sensitivity" "$tmpdir/tables/sensitivity_snapshot.tex"
 grep -q "tab:ablation" "$tmpdir/tables/ablation_snapshot.tex"
 grep -q "lobbyingClientTop1Share" "$tmpdir/reports/source-moments.csv"
+grep -q "procurementRecipientTop3Share" "$tmpdir/reports/source-moments.csv"
+grep -q "revolvingDoorFormerOfficialShare" "$tmpdir/reports/source-moments.csv"
 
 python3 scripts/test-source-fetchers.py
 

@@ -18,6 +18,7 @@ def main() -> int:
     assert_fec(fetchers)
     assert_regulations(fetchers)
     assert_federal_register(fetchers)
+    assert_usaspending(fetchers)
     assert fetchers.redact_url("https://example.test/path?api_key=SECRET&x=1").endswith("api_key=REDACTED&x=1")
     print("Source-native parser fixture tests passed.")
     return 0
@@ -96,6 +97,22 @@ def assert_federal_register(fetchers) -> None:
             "authenticationShare": 0.32,
         }
     ], rows
+
+
+def assert_usaspending(fetchers) -> None:
+    payload = read_json("usaspending-awards.json")
+    rows = fetchers.normalize_usaspending_records(payload["results"])
+    assert rows[0] == {
+        "awardId": "EPW05049",
+        "recipient": "CDM FEDERAL PROGRAMS CORPORATION",
+        "agency": "Environmental Protection Agency",
+        "subAgency": "Environmental Protection Agency",
+        "awardType": "contract",
+        "amount": 145.8637,
+        "issueDomain": "procurement",
+        "awardCount": 1,
+    }, rows[0]
+    assert rows[1]["recipient"] == "LOCKHEED MARTIN SERVICES, LLC", rows[1]
 
 
 def read_json(name: str):

@@ -4,6 +4,7 @@ set -euo pipefail
 tmpdir="$(mktemp -d)"
 trap 'rm -rf "$tmpdir"' EXIT
 
+. ./scripts/load-env.sh
 raw_dir="${SOURCE_RAW_DIR:-data/raw/source-payloads/2024-env}"
 mkdir -p data/raw "$raw_dir"
 status_file="$tmpdir/live-run-status.csv"
@@ -22,7 +23,7 @@ append_csv() {
   fi
 }
 
-rm -f data/raw/lda-lobbying.csv data/raw/fec-campaign-finance.csv data/raw/regulatory-dockets.csv
+rm -f data/raw/lda-lobbying.csv data/raw/fec-campaign-finance.csv data/raw/regulatory-dockets.csv data/raw/usaspending-awards.csv data/raw/revolving-door.csv
 
 for period in first_quarter second_quarter third_quarter fourth_quarter; do
   SOURCE_RAW_DIR="$raw_dir/lda-$period" \
@@ -75,6 +76,28 @@ if SOURCE_RAW_DIR="$raw_dir/federal-register" \
   printf "federal-register,ok,normalized rows appended\n" >> "$status_file"
 else
   printf "federal-register,unavailable,upstream request returned no rows or failed\n" >> "$status_file"
+fi
+
+if SOURCE_RAW_DIR="$raw_dir/usaspending" \
+  USASPENDING_FISCAL_YEAR="${USASPENDING_FISCAL_YEAR:-2024}" \
+  USASPENDING_AGENCY="${USASPENDING_AGENCY:-Environmental Protection Agency}" \
+  USASPENDING_PAGE_SIZE="${USASPENDING_PAGE_SIZE:-100}" \
+  USASPENDING_MAX_PAGES="${USASPENDING_MAX_PAGES:-2}" \
+    python3 scripts/fetch-source-data.py usaspending; then
+  printf "usaspending,ok,normalized EPA award rows written\n" >> "$status_file"
+else
+  printf "usaspending,unavailable,upstream USAspending request returned no rows or failed\n" >> "$status_file"
+fi
+
+if [ -n "${REVOLVING_DOOR_LIVE_CSV:-}" ] || [ -n "${REVOLVING_DOOR_LIVE_URL:-}" ]; then
+  if ./scripts/fetch-revolving-door.sh --live; then
+    printf "revolving-door,ok,normalized configured source export written\n" >> "$status_file"
+  else
+    printf "revolving-door,unavailable,configured source export could not be normalized\n" >> "$status_file"
+  fi
+else
+  ./scripts/fetch-revolving-door.sh
+  printf "revolving-door,fixture,no licensed/source export configured; fixture copied for schema continuity\n" >> "$status_file"
 fi
 
 mkdir -p data/snapshots/2024-env

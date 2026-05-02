@@ -39,6 +39,8 @@ DIRECT_SOURCE_HINTS = {
     "darkMoneyTraceability": "moneyFlowTraceability",
     "commentAuthenticity": "commentAuthenticationShareMean",
     "commentCompressionRate": "commentTemplateShareMean",
+    "procurementBias": "procurementRecipientTop3Share",
+    "revolvingDoorInfluence": "revolvingDoorFormerOfficialShare",
     "publicFinancingShare": "publicFinancingSourceShare",
     "voucherParticipation": "publicFinancingSourceShare",
 }

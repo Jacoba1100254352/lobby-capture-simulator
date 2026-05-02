@@ -1,0 +1,6 @@
+awardId,recipient,agency,subAgency,awardType,amount,issueDomain,awardCount
+EPA-ENV-001,CDM Federal Programs Corporation,Environmental Protection Agency,Office of Air and Radiation,contract,240.0000,procurement,18
+EPA-ENV-002,Environmental Systems Research Institute,Environmental Protection Agency,Office of Environmental Information,contract,180.0000,procurement,12
+EPA-ENV-003,Clean Water Engineering Partners,Environmental Protection Agency,Office of Water,contract,150.0000,procurement,9
+EPA-ENV-004,Regional Remediation Services,Environmental Protection Agency,Office of Land and Emergency Management,contract,70.0000,procurement,5
+EPA-ENV-005,Public Comment Technology Cooperative,Environmental Protection Agency,Office of Mission Support,contract,60.0000,procurement,4

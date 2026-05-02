@@ -55,6 +55,41 @@ SCHEMAS = {
             "authenticationShare": ["authenticationShare", "authentication_share"],
         },
     },
+    "usaspending": {
+        "fields": ["awardId", "recipient", "agency", "subAgency", "awardType", "amount", "issueDomain", "awardCount"],
+        "aliases": {
+            "awardId": ["awardId", "award_id", "award number", "Award ID"],
+            "recipient": ["recipient", "recipient_name", "Recipient Name"],
+            "agency": ["agency", "awarding_agency", "Awarding Agency"],
+            "subAgency": ["subAgency", "sub_agency", "awarding_sub_agency", "Awarding Sub Agency"],
+            "awardType": ["awardType", "award_type", "Award Type"],
+            "amount": ["amount", "award_amount", "Award Amount", "obligation"],
+            "issueDomain": ["issueDomain", "issue", "issue_domain", "sector"],
+            "awardCount": ["awardCount", "award_count", "transaction_count", "count"],
+        },
+    },
+    "revolving-door": {
+        "fields": [
+            "person",
+            "organization",
+            "sector",
+            "agency",
+            "formerOfficialRole",
+            "coolingOffMonths",
+            "sourceType",
+            "influenceShare",
+        ],
+        "aliases": {
+            "person": ["person", "name", "lobbyist_name"],
+            "organization": ["organization", "employer", "client", "firm"],
+            "sector": ["sector", "issueDomain", "issue_domain", "industry"],
+            "agency": ["agency", "former_agency", "government_agency"],
+            "formerOfficialRole": ["formerOfficialRole", "former_official_role", "revolving_door_role", "previous_position"],
+            "coolingOffMonths": ["coolingOffMonths", "cooling_off_months", "months_since_service"],
+            "sourceType": ["sourceType", "source_type", "source"],
+            "influenceShare": ["influenceShare", "influence_share", "share", "weight"],
+        },
+    },
 }
 
 

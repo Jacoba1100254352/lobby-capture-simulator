@@ -1,0 +1,26 @@
+{
+  "spending_level": "awards",
+  "limit": 2,
+  "results": [
+    {
+      "Award ID": "EPW05049",
+      "Recipient Name": "CDM FEDERAL PROGRAMS CORPORATION",
+      "Award Amount": 145863709.03,
+      "Awarding Agency": "Environmental Protection Agency",
+      "Awarding Sub Agency": "Environmental Protection Agency",
+      "Award Type": null
+    },
+    {
+      "Award ID": "EPW09031",
+      "Recipient Name": "LOCKHEED MARTIN SERVICES, LLC",
+      "Award Amount": 139903833.61,
+      "Awarding Agency": "Environmental Protection Agency",
+      "Awarding Sub Agency": "Environmental Protection Agency",
+      "Award Type": null
+    }
+  ],
+  "page_metadata": {
+    "page": 1,
+    "hasNext": false
+  }
+}

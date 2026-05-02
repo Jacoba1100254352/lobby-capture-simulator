@@ -27,6 +27,18 @@ These are direct moments from normalized calibration tables. They are source dia
 | snapshot | regulatory | `commentTemplateShareMean` | 0.4600 | observed_proxy | mean normalized template share |
 | snapshot | regulatory | `commentAuthenticationShareMean` | 0.3200 | observed_proxy | mean normalized authentication share |
 | snapshot | regulatory | `technicalClaimCredibilityMean` | 0.5000 | proxy | mean normalized technical claim credibility |
+| snapshot | usaspending | `procurementRows` | 200.0000 | observed | normalized USAspending award rows |
+| snapshot | usaspending | `procurementTotalAwards` | 4871.4339 | observed | sum of normalized USAspending award amount |
+| snapshot | usaspending | `procurementRecipientTop1Share` | 0.0677 | observed | largest recipient share of normalized award amount |
+| snapshot | usaspending | `procurementRecipientTop3Share` | 0.1723 | observed | top three recipients share of normalized award amount |
+| snapshot | usaspending | `procurementAgencyTop1Share` | 1.0000 | observed | largest awarding agency share of normalized award amount |
+| snapshot | usaspending | `procurementSubAgencyTop3Share` | 1.0000 | observed | top three sub-agencies share of normalized award amount |
+| snapshot | usaspending | `procurementAwardCount` | 200.0000 | observed | sum of normalized award or transaction counts |
+| snapshot | revolving-door | `revolvingDoorRows` | 5.0000 | observed | normalized revolving-door rows |
+| snapshot | revolving-door | `revolvingDoorFormerOfficialShare` | 0.8000 | observed_proxy | share of rows with former official role |
+| snapshot | revolving-door | `revolvingDoorAgencyTop1Share` | 0.6000 | observed_proxy | largest agency share of normalized revolving-door rows |
+| snapshot | revolving-door | `revolvingDoorCoolingOffUnderOneYearShare` | 0.4000 | observed_proxy | share of rows with cooling-off interval below one year |
+| snapshot | revolving-door | `revolvingDoorInfluenceMean` | 0.5460 | proxy | mean normalized influence share from source panel |
 | fixture | lda | `ldaRows` | 4.0000 | observed | normalized LDA rows |
 | fixture | lda | `ldaTotalSpend` | 30.5000 | observed | sum of normalized LDA amount |
 | fixture | lda | `lobbyingClientTop1Share` | 0.2984 | observed | largest client share of normalized LDA amount |
@@ -50,3 +62,15 @@ These are direct moments from normalized calibration tables. They are source dia
 | fixture | regulatory | `commentTemplateShareMean` | 0.4800 | observed_proxy | mean normalized template share |
 | fixture | regulatory | `commentAuthenticationShareMean` | 0.3100 | observed_proxy | mean normalized authentication share |
 | fixture | regulatory | `technicalClaimCredibilityMean` | 0.4875 | proxy | mean normalized technical claim credibility |
+| fixture | usaspending | `procurementRows` | 5.0000 | observed | normalized USAspending award rows |
+| fixture | usaspending | `procurementTotalAwards` | 700.0000 | observed | sum of normalized USAspending award amount |
+| fixture | usaspending | `procurementRecipientTop1Share` | 0.3429 | observed | largest recipient share of normalized award amount |
+| fixture | usaspending | `procurementRecipientTop3Share` | 0.8143 | observed | top three recipients share of normalized award amount |
+| fixture | usaspending | `procurementAgencyTop1Share` | 1.0000 | observed | largest awarding agency share of normalized award amount |
+| fixture | usaspending | `procurementSubAgencyTop3Share` | 0.8143 | observed | top three sub-agencies share of normalized award amount |
+| fixture | usaspending | `procurementAwardCount` | 48.0000 | observed | sum of normalized award or transaction counts |
+| fixture | revolving-door | `revolvingDoorRows` | 5.0000 | observed | normalized revolving-door rows |
+| fixture | revolving-door | `revolvingDoorFormerOfficialShare` | 0.8000 | observed_proxy | share of rows with former official role |
+| fixture | revolving-door | `revolvingDoorAgencyTop1Share` | 0.6000 | observed_proxy | largest agency share of normalized revolving-door rows |
+| fixture | revolving-door | `revolvingDoorCoolingOffUnderOneYearShare` | 0.4000 | observed_proxy | share of rows with cooling-off interval below one year |
+| fixture | revolving-door | `revolvingDoorInfluenceMean` | 0.5460 | proxy | mean normalized influence share from source panel |

@@ -119,7 +119,8 @@ abstract class AbstractInfluenceArena implements InfluenceArena {
                 + randomNoise(world, 0.06);
         boolean capturedBeforeAudit = capturePressure >= 0.48;
         double detectionProbability = Values.clamp(
-                reform.auditRate()
+                0.025
+                        + reform.auditRate()
                         + (0.34 * reform.enforcementStrength())
                         + (0.18 * reform.transparencyStrength())
                         + (0.14 * contest.watchdogPressure())
@@ -131,8 +132,15 @@ abstract class AbstractInfluenceArena implements InfluenceArena {
                 0.0,
                 1.0
         );
-        boolean detected = capturedBeforeAudit && world.random().nextDouble() < detectionProbability;
-        boolean sanctioned = detected && world.random().nextDouble() < Values.clamp(reform.sanctionSeverity() * reform.enforcementStrength(), 0.0, 1.0);
+        double processFlagProbability = detectionProbability * (capturedBeforeAudit ? 1.0 : 0.22);
+        boolean detected = world.random().nextDouble() < processFlagProbability;
+        double sanctionProbability = Values.clamp(
+                (capturedBeforeAudit ? 1.0 : 0.18)
+                        * (0.06 + (0.62 * reform.sanctionSeverity() * reform.enforcementStrength())),
+                0.0,
+                1.0
+        );
+        boolean sanctioned = detected && world.random().nextDouble() < sanctionProbability;
         boolean reversed = sanctioned && world.random().nextDouble() < Values.clamp(reform.sanctionSeverity() * 0.65, 0.0, 1.0);
         boolean captured = capturedBeforeAudit && !reversed;
         double regulatoryDrift = arenaType == ContestArena.RULEMAKING ? drift(contest, captured, 0.82) : drift(contest, captured, 0.18);

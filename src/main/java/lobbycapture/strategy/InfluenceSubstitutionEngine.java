@@ -106,8 +106,13 @@ public final class InfluenceSubstitutionEngine {
                 : currentStrategy;
         double activated = Values.clamp(switchScore * (0.45 + (0.55 * world.evasionFreedom())), 0.0, 1.0);
         double hiddenShare = Values.clamp(
-                activated * (0.24 + (0.46 * anonymityValue) + (0.20 * world.evasionProfile().opacity()))
-                        - (0.18 * reform.transparencyStrength()),
+                activated * (
+                        0.36
+                                + (0.58 * anonymityValue)
+                                + (0.28 * world.evasionProfile().opacity())
+                                + (0.22 * world.evasionFreedom())
+                )
+                        - (0.10 * Math.max(0.0, reform.transparencyStrength() - world.evasionFreedom())),
                 0.0,
                 1.0
         );
