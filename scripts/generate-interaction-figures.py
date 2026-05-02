@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Generate LaTeX interaction figures from interaction report snapshots."""
+"""Generate LaTeX figure fragments from report snapshots."""
 
 from __future__ import annotations
 
@@ -8,28 +8,87 @@ import csv
 from pathlib import Path
 
 
-REPORT = Path("reports/lobby-capture-interactions.csv")
-OUTPUT = Path("paper/figures/interaction_tradeoffs.tex")
+CAMPAIGN_REPORT = Path("reports/lobby-capture-campaign.csv")
+INTERACTION_REPORT = Path("reports/lobby-capture-interactions.csv")
+SENSITIVITY_REPORT = Path("reports/lobby-capture-sensitivity.csv")
+FIGURE_DIR = Path("paper/figures")
 
-
-ROWS = {
-    "interaction-enforcement-disclosure-0-35-0-35": "Low enforcement/disclosure",
-    "interaction-enforcement-disclosure-1-25-1-25": "High enforcement/disclosure",
-    "interaction-financing-evasion-1-25-0-90": "High financing/high evasion",
-    "interaction-cooling-1-25-revolving-door": "Cooling high/revolving door",
+INTERACTION_ROWS = {
+    "interaction-enforcement-disclosure-0-35-0-35": "Low E/D",
+    "interaction-enforcement-disclosure-1-25-1-25": "High E/D",
+    "interaction-financing-evasion-1-25-0-90": "Finance+evasion",
+    "interaction-cooling-1-25-revolving-door": "Cooling+door",
 }
+
+SCENARIO_TRADEOFF_ROWS = {
+    "open-access-lobbying": ("Open", 3.0, 5.0, "l"),
+    "low-salience-technical-rulemaking": ("Rule", 3.0, -5.0, "l"),
+    "campaign-finance-dominant": ("Camp", 3.0, 5.0, "l"),
+    "dark-money-dominant": ("Dark", 3.0, 5.0, "l"),
+    "revolving-door-dominant": ("Door", 3.0, -5.0, "l"),
+    "real-time-transparency": ("RTD", 3.0, -5.0, "l"),
+    "democracy-vouchers": ("Vouch", 3.0, 5.0, "l"),
+    "full-anti-capture-bundle": ("Bundle", 3.0, -5.0, "l"),
+    "bundle-with-evasion": ("Evasion", 3.0, 5.0, "l"),
+}
+
+CHANNEL_ROWS = [
+    ("open-access-lobbying", "Open access"),
+    ("low-salience-technical-rulemaking", "Rulemaking"),
+    ("campaign-finance-dominant", "Campaign"),
+    ("dark-money-dominant", "Dark money"),
+    ("democracy-vouchers", "Vouchers"),
+    ("full-anti-capture-bundle", "Full bundle"),
+    ("bundle-with-evasion", "Bundle+evasion"),
+]
+
+CHANNELS = [
+    ("directAccessShare", "Access", "black!20"),
+    ("informationDistortionShare", "Info", "black!35"),
+    ("publicCampaignShare", "Public", "black!50"),
+    ("campaignFinanceShare", "Campaign", "black!65"),
+    ("darkMoneyShare", "Dark", "black!80"),
+    ("revolvingDoorShare", "Door", "black!90"),
+    ("defensiveChannelShare", "Defense", "black"),
+]
+
+EVASION_ROWS = [
+    ("sensitivity-evasion-0-00", "0.00"),
+    ("sensitivity-evasion-0-30", "0.30"),
+    ("sensitivity-evasion-0-60", "0.60"),
+    ("sensitivity-evasion-0-90", "0.90"),
+]
 
 
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--report", type=Path, default=REPORT)
-    parser.add_argument("--output", type=Path, default=OUTPUT)
+    parser.add_argument("--campaign-report", type=Path, default=CAMPAIGN_REPORT)
+    parser.add_argument("--interaction-report", type=Path, default=INTERACTION_REPORT)
+    parser.add_argument("--sensitivity-report", type=Path, default=SENSITIVITY_REPORT)
+    parser.add_argument("--figure-dir", type=Path, default=FIGURE_DIR)
+    parser.add_argument("--output", type=Path, help="Compatibility path for the interaction figure; all figures are written to its parent directory.")
     args = parser.parse_args()
 
-    rows = select_rows(read_rows(args.report))
-    args.output.parent.mkdir(parents=True, exist_ok=True)
-    args.output.write_text(render(rows, args.report), encoding="utf-8")
-    print(f"Wrote {args.output}")
+    if args.output is not None:
+        args.figure_dir = args.output.parent
+
+    args.figure_dir.mkdir(parents=True, exist_ok=True)
+    campaign_rows = index_rows(read_rows(args.campaign_report))
+    interaction_rows = index_rows(read_rows(args.interaction_report))
+    sensitivity_rows = index_rows(read_rows(args.sensitivity_report))
+
+    write_channel_mix(campaign_rows, args.campaign_report, args.figure_dir)
+    write_scenario_tradeoffs(campaign_rows, args.campaign_report, args.figure_dir)
+    write_evasion_sensitivity(sensitivity_rows, args.sensitivity_report, args.figure_dir)
+    write_interaction_tradeoffs(interaction_rows, args.interaction_report, args.figure_dir)
+
+    for name in (
+        "channel_mix.tex",
+        "scenario_tradeoffs.tex",
+        "evasion_sensitivity.tex",
+        "interaction_tradeoffs.tex",
+    ):
+        print(f"Wrote {args.figure_dir / name}")
     return 0
 
 
@@ -38,65 +97,295 @@ def read_rows(path: Path) -> list[dict[str, str]]:
         return list(csv.DictReader(source))
 
 
-def select_rows(rows: list[dict[str, str]]) -> list[dict[str, str]]:
-    indexed = {row["scenarioKey"]: row for row in rows}
-    missing = [key for key in ROWS if key not in indexed]
+def index_rows(rows: list[dict[str, str]]) -> dict[str, dict[str, str]]:
+    return {row["scenarioKey"]: row for row in rows}
+
+
+def require_rows(indexed: dict[str, dict[str, str]], keys: list[str]) -> None:
+    missing = [key for key in keys if key not in indexed]
     if missing:
-        raise SystemExit("Missing interaction rows: " + ", ".join(missing))
-    return [indexed[key] for key in ROWS]
+        raise SystemExit("Missing figure rows: " + ", ".join(missing))
 
 
-def render(rows: list[dict[str, str]], report: Path) -> str:
+def write_channel_mix(indexed: dict[str, dict[str, str]], report: Path, figure_dir: Path) -> None:
+    require_rows(indexed, [key for key, _label in CHANNEL_ROWS])
+    left = 38.0
+    bottom = 14.0
+    bar_width = 74.0
+    bar_height = 3.2
+    row_gap = 6.6
     lines = [
         f"% Generated by scripts/generate-interaction-figures.py; source={report}",
         "\\begin{figure}[h]",
         "\\centering",
+        "\\begingroup",
+        "\\setlength{\\unitlength}{1mm}",
+        "\\begin{picture}(128,72)",
         "\\scriptsize",
-        "\\begin{tabular}{@{}lcccc@{}}",
-        "\\toprule",
-        "Scenario & Hidden influence & Influence preserved & Net transparency & Comment uptake \\\\",
-        "\\midrule",
     ]
-    for row in rows:
-        label = ROWS[row["scenarioKey"]]
-        lines.append(
-            " & ".join(
-                [
-                    escape(label),
-                    bar(row["hiddenInfluenceShare"]),
-                    bar(row["influencePreservationRate"]),
-                    signed(row["netTransparencyGain"]),
-                    value(row["commentSubstantiveUptake"]),
-                ]
-            )
-            + " \\\\"
-        )
+    for tick in (0.0, 0.25, 0.5, 0.75, 1.0):
+        x = left + tick * bar_width
+        lines.append(put(x, bottom - 3.5, f"\\makebox(0,0){{{tick:g}}}"))
+        lines.append(put(x, bottom, "\\color{black!15}\\line(0,1){48.0}"))
+    for index, (key, label) in enumerate(reversed(CHANNEL_ROWS)):
+        row = indexed[key]
+        y = bottom + index * row_gap
+        lines.append(put(2.0, y + 1.4, "\\makebox(0,0)[l]{" + escape(label) + "}"))
+        x = left
+        for field, _legend, shade in CHANNELS:
+            width = max(0.0, min(bar_width, as_float(row[field]) * bar_width))
+            if width > 0.05:
+                lines.append(
+                    put(x, y, "\\color{" + shade + "}\\rule{" + fmt(width) + "mm}{" + f"{bar_height}mm" + "}")
+                )
+            x += width
+    lines.append(put(left, bottom, "\\line(1,0){" + fmt(bar_width) + "}"))
+    lines.append(put(left, bottom, "\\line(0,1){48.0}"))
+    legend_y = 65.0
+    legend_x = 2.0
+    for field, label, shade in CHANNELS:
+        lines.append(put(legend_x, legend_y, "\\color{" + shade + "}\\rule{4mm}{2.5mm}"))
+        lines.append(put(legend_x + 5.0, legend_y + 1.0, "\\makebox(0,0)[l]{" + escape(label) + "}"))
+        legend_x += 17.0
     lines.extend(
         [
-            "\\bottomrule",
-            "\\end{tabular}",
-            "\\caption{Interaction tradeoffs. Bars show the relative magnitude of hidden influence and preserved influence after reforms bind.}",
-            "\\label{fig:interaction-tradeoffs}",
+            put(left + bar_width / 2.0, 3.0, "\\makebox(0,0){Share of lobby spending by channel}"),
+            "\\end{picture}",
+            "\\endgroup",
+            "\\caption{Channel allocation mix for selected scenarios. The stacked bars show how the model routes lobbying budgets across access, information, public campaigns, campaign finance, dark money, revolving-door pressure, and defensive reform spending.}",
+            "\\label{fig:channel-mix}",
             "\\end{figure}",
             "",
         ]
     )
-    return "\n".join(lines)
+    (figure_dir / "channel_mix.tex").write_text("\n".join(lines), encoding="utf-8")
 
 
-def bar(raw: str) -> str:
-    numeric = float(raw)
-    width = max(0.0, min(8.0, numeric * 8.0))
-    return f"\\rule{{{width:.2f}em}}{{0.7ex}} {numeric:.4f}"
+def write_scenario_tradeoffs(indexed: dict[str, dict[str, str]], report: Path, figure_dir: Path) -> None:
+    require_rows(indexed, list(SCENARIO_TRADEOFF_ROWS))
+    lines = scatter_header(
+        report,
+        "capture rate",
+        "Hidden influence share",
+        x_max=0.75,
+        y_max=0.40,
+        x_ticks=(0.0, 0.25, 0.5, 0.75),
+        y_ticks=(0.0, 0.1, 0.2, 0.3, 0.4),
+        y_label="Hidden influence $\\uparrow$",
+    )
+    left, bottom, width, height = plot_area()
+    for key, (label, dx, dy, anchor) in SCENARIO_TRADEOFF_ROWS.items():
+        row = indexed[key]
+        x = left + scale(as_float(row["captureRate"]), 0.75) * width
+        y = bottom + scale(as_float(row["hiddenInfluenceShare"]), 0.40) * height
+        color = "black"
+        point_size = "1.7mm"
+        if key in {"full-anti-capture-bundle", "bundle-with-evasion"}:
+            color = "black!65"
+            point_size = "2.0mm"
+        put_point(lines, x, y, label, color, point_size, dx, dy, anchor)
+    lines.extend(
+        scatter_footer(
+            "Capture rate $\\rightarrow$",
+            "Scenario tradeoff between observed capture and hidden influence. The low-capture bundle cases remain substantively different when evasion preserves hidden influence capacity.",
+            "fig:scenario-tradeoffs",
+        )
+    )
+    (figure_dir / "scenario_tradeoffs.tex").write_text("\n".join(lines), encoding="utf-8")
 
 
-def signed(raw: str) -> str:
-    numeric = float(raw)
-    return f"{numeric:+.4f}"
+def write_evasion_sensitivity(indexed: dict[str, dict[str, str]], report: Path, figure_dir: Path) -> None:
+    require_rows(indexed, [key for key, _label in EVASION_ROWS])
+    left, bottom, width, height = plot_area()
+    y_max = 0.40
+    lines = [
+        f"% Generated by scripts/generate-interaction-figures.py; source={report}",
+        "\\begin{figure}[h]",
+        "\\centering",
+        "\\begingroup",
+        "\\setlength{\\unitlength}{1mm}",
+        "\\begin{picture}(128,84)",
+        "\\scriptsize",
+    ]
+    for tick in (0.0, 0.3, 0.6, 0.9):
+        x = left + (tick / 0.9) * width
+        lines.append(put(x, bottom, "\\color{black!15}\\line(0,1){" + fmt(height) + "}"))
+        lines.append(put(x, bottom - 3.0, f"\\makebox(0,0){{{tick:.1f}}}"))
+    for tick in (0.0, 0.1, 0.2, 0.3, 0.4):
+        y = bottom + (tick / y_max) * height
+        lines.append(put(left, y, "\\color{black!15}\\line(1,0){" + fmt(width) + "}"))
+        lines.append(put(left - 4.0, y, f"\\makebox(0,0)[r]{{{tick:.1f}}}"))
+    lines.append(put(left, bottom, "\\line(1,0){" + fmt(width) + "}"))
+    lines.append(put(left, bottom, "\\line(0,1){" + fmt(height) + "}"))
+
+    hidden_points = []
+    transparency_points = []
+    for key, raw_x in EVASION_ROWS:
+        row = indexed[key]
+        x = left + (float(raw_x) / 0.9) * width
+        hidden_points.append((x, bottom + scale(as_float(row["hiddenInfluenceShare"]), y_max) * height))
+        transparency_points.append((x, bottom + scale(as_float(row["netTransparencyGain"]), y_max) * height))
+    append_polyline(lines, hidden_points, "black")
+    append_polyline(lines, transparency_points, "black!50")
+    for x, y in hidden_points:
+        lines.append(put(x, y, "\\makebox(0,0){\\color{black}\\rule{1.9mm}{1.9mm}}"))
+    for x, y in transparency_points:
+        lines.append(put(x, y, "\\makebox(0,0){\\color{black!50}\\rule{1.9mm}{1.9mm}}"))
+    lines.extend(
+        [
+            "\\put(82.0,70.5){\\color{black}\\rule{5mm}{0.4mm}}",
+            "\\put(89.0,70.5){\\makebox(0,0)[l]{Hidden influence}}",
+            "\\put(82.0,66.5){\\color{black!50}\\rule{5mm}{0.4mm}}",
+            "\\put(89.0,66.5){\\makebox(0,0)[l]{Net transparency}}",
+            put(left + width / 2.0, 3.0, "\\makebox(0,0){Evasion freedom $\\rightarrow$}"),
+            "\\put(5.0,43.0){\\rotatebox{90}{Share / gain}}",
+            "\\end{picture}",
+            "\\endgroup",
+            "\\caption{Sensitivity to evasion freedom. Hidden influence rises as evasion freedom increases, while net transparency gains fall, illustrating why reform assessment should track substitution rather than visible capture alone.}",
+            "\\label{fig:evasion-sensitivity}",
+            "\\end{figure}",
+            "",
+        ]
+    )
+    (figure_dir / "evasion_sensitivity.tex").write_text("\n".join(lines), encoding="utf-8")
 
 
-def value(raw: str) -> str:
-    return f"{float(raw):.4f}"
+def write_interaction_tradeoffs(indexed: dict[str, dict[str, str]], report: Path, figure_dir: Path) -> None:
+    require_rows(indexed, list(INTERACTION_ROWS))
+    lines = scatter_header(
+        report,
+        "hidden influence",
+        "Net transparency gain",
+        x_max=0.40,
+        y_max=0.40,
+        x_ticks=(0.0, 0.1, 0.2, 0.3, 0.4),
+        y_ticks=(0.0, 0.1, 0.2, 0.3, 0.4),
+        y_label="Net transparency $\\uparrow$",
+    )
+    left, bottom, width, height = plot_area()
+    offsets = {
+        "interaction-enforcement-disclosure-0-35-0-35": (3.0, -5.0, "l"),
+        "interaction-enforcement-disclosure-1-25-1-25": (3.0, 5.0, "l"),
+        "interaction-financing-evasion-1-25-0-90": (-3.0, 5.0, "r"),
+        "interaction-cooling-1-25-revolving-door": (3.0, -5.0, "l"),
+    }
+    for key, label in INTERACTION_ROWS.items():
+        row = indexed[key]
+        x = left + scale(as_float(row["hiddenInfluenceShare"]), 0.40) * width
+        y = bottom + scale(as_float(row["netTransparencyGain"]), 0.40) * height
+        dx, dy, anchor = offsets[key]
+        put_point(lines, x, y, label, "black", "1.8mm", dx, dy, anchor)
+    lines.extend(
+        scatter_footer(
+            "Hidden influence $\\rightarrow$",
+            "Interaction tradeoff view. Points compare hidden influence against net transparency gain after reforms bind; the desirable direction is upper-left.",
+            "fig:interaction-tradeoffs",
+        )
+    )
+    (figure_dir / "interaction_tradeoffs.tex").write_text("\n".join(lines), encoding="utf-8")
+
+
+def scatter_header(
+    report: Path,
+    x_label: str,
+    y_axis: str,
+    x_max: float,
+    y_max: float,
+    x_ticks: tuple[float, ...],
+    y_ticks: tuple[float, ...],
+    y_label: str,
+) -> list[str]:
+    left, bottom, width, height = plot_area()
+    lines = [
+        f"% Generated by scripts/generate-interaction-figures.py; source={report}; x={x_label}; y={y_axis}",
+        "\\begin{figure}[h]",
+        "\\centering",
+        "\\begingroup",
+        "\\setlength{\\unitlength}{1mm}",
+        "\\begin{picture}(128,84)",
+        "\\scriptsize",
+    ]
+    for tick in x_ticks:
+        x = left + tick / x_max * width
+        lines.append(put(x, bottom, "\\color{black!15}\\line(0,1){" + fmt(height) + "}"))
+        lines.append(put(x, bottom - 3.0, f"\\makebox(0,0){{{tick:.2g}}}"))
+    for tick in y_ticks:
+        y = bottom + tick / y_max * height
+        lines.append(put(left, y, "\\color{black!15}\\line(1,0){" + fmt(width) + "}"))
+        lines.append(put(left - 4.0, y, f"\\makebox(0,0)[r]{{{tick:.1f}}}"))
+    lines.append(put(left, bottom, "\\line(1,0){" + fmt(width) + "}"))
+    lines.append(put(left, bottom, "\\line(0,1){" + fmt(height) + "}"))
+    lines.append(put(5.0, 43.0, "\\rotatebox{90}{" + y_label + "}"))
+    return lines
+
+
+def scatter_footer(x_axis_label: str, caption: str, label: str) -> list[str]:
+    left, _bottom, width, _height = plot_area()
+    return [
+        put(left + width / 2.0, 3.0, "\\makebox(0,0){" + x_axis_label + "}"),
+        "\\end{picture}",
+        "\\endgroup",
+        f"\\caption{{{caption}}}",
+        f"\\label{{{label}}}",
+        "\\end{figure}",
+        "",
+    ]
+
+
+def put_point(
+    lines: list[str],
+    x: float,
+    y: float,
+    label: str,
+    color: str,
+    point_size: str,
+    dx: float,
+    dy: float,
+    anchor: str,
+) -> None:
+    label_x = x + dx
+    label_y = y + dy
+    lines.append(put(x, y, "\\makebox(0,0){\\color{" + color + "}\\rule{" + point_size + "}{" + point_size + "}}"))
+    lines.append(put(label_x, label_y, "\\makebox(0,0)[" + anchor + "]{\\color{" + color + "}" + escape(label) + "}"))
+
+
+def append_polyline(lines: list[str], points: list[tuple[float, float]], color: str) -> None:
+    if len(points) < 2:
+        return
+    lines.append("\\linethickness{0.35mm}")
+    for (x1, y1), (x2, y2) in zip(points, points[1:]):
+        mid_x = (x1 + x2) / 2.0
+        mid_y = (y1 + y2) / 2.0
+        lines.append(
+            "{\\color{"
+            + color
+            + "}"
+            + f"\\qbezier[40]({fmt(x1)},{fmt(y1)})({fmt(mid_x)},{fmt(mid_y)})({fmt(x2)},{fmt(y2)})"
+            + "}"
+        )
+    lines.append("\\linethickness{0.25mm}")
+
+
+def plot_area() -> tuple[float, float, float, float]:
+    return 24.0, 14.0, 88.0, 55.0
+
+
+def scale(value: float, max_value: float) -> float:
+    if max_value <= 0.0:
+        return 0.0
+    return max(0.0, min(1.0, value / max_value))
+
+
+def as_float(row_value: str) -> float:
+    return float(row_value)
+
+
+def fmt(value: float) -> str:
+    return f"{value:.1f}"
+
+
+def put(x: float, y: float, content: str) -> str:
+    return f"\\put({fmt(x)},{fmt(y)}){{{content}}}"
 
 
 def escape(value: str) -> str:

@@ -21,7 +21,7 @@ make paper-wiley
 
 `make paper` is the default reproducible build. `make wiley-template` downloads Wiley's official `WileyDesign.zip` bundle into ignored `paper/.wiley-template/`; `make paper-wiley` uses the Regulation & Governance/Wiley wrapper and reports missing local TeX packages if the installed TeX distribution is too small for Wiley's generic class.
 
-Paper table selection is defined in `paper/tables.yml`; generated files in `paper/tables/` include a one-line provenance comment with the source report snapshot and config path. The current table set includes campaign, sensitivity, ablation, and interaction snapshots. `make figures` also regenerates the interaction tradeoff figure under `paper/figures/`.
+Paper table selection is defined in `paper/tables.yml`; generated files in `paper/tables/` include a one-line provenance comment with the source report snapshot and config path. The current table set includes campaign, sensitivity, ablation, and interaction snapshots. `make figures` regenerates the channel-mix, evasion-sensitivity, scenario-tradeoff, and interaction-tradeoff line-art figures under `paper/figures/`.
 
 Report snapshots have adjacent `*.manifest.json` files, `make source-moments` writes direct source diagnostics, and `make validate` plus `make calibration-queue` write validation summaries and classified follow-up queues under `reports/`.
 The draft follows the stage-and-channel framing in `docs/research/research-synthesis.md`, with `data/calibration/parameter-map.csv` acting as the parameter appendix scaffold.

@@ -76,11 +76,17 @@ Table~\ref{tab:first-campaign} reports selected results from the current campaig
 
 The early result is directionally useful: reform threats trigger substantial defensive spending, and evasion scenarios shift toward dark money. Low-salience technical rulemaking remains the weakest surface in the first implementation, which is consistent with the model's emphasis on information asymmetry and weak public attention.
 
+\input{figures/channel_mix}
+
 \section{Sensitivity Snapshot}
 
 The current sensitivity sweep varies enforcement, disclosure, public financing, cooling-off, and evasion freedom around the full anti-capture bundle. Table~\ref{tab:sensitivity} reports selected rows from \texttt{make sensitivity}: 30 runs per scenario, 70 contests per run, seed 142.
 
 \input{tables/sensitivity_snapshot.tex}
+
+Figure~\ref{fig:evasion-sensitivity} isolates the evasion slice from the sensitivity table. It is the clearest visual diagnostic for the paper's central mechanism: stronger evasion freedom can preserve hidden influence even when visible capture remains low.
+
+\input{figures/evasion_sensitivity}
 
 \section{Ablation Snapshot}
 
@@ -111,6 +117,8 @@ Validation proceeds in layers. First, parser and fixture tests ensure stable sch
 \section{Discussion}
 
 The first results should be read as mechanism checks rather than policy estimates. They show that anti-capture reform should be evaluated by asking three questions at once: whether capture outcomes fall, whether visible pressure falls, and whether influence capacity is preserved in less visible channels. The model is deliberately useful for stress-testing reform packages because it allows nominally strong rules to fail through substitution, administrative burden, weak enforcement, or defensive mobilization.
+
+\input{figures/scenario_tradeoffs}
 
 This framing fits a regulatory-governance audience because the unit of analysis is not a single vote or donation, but a design problem across institutional venues. Transparency systems, disclosure lags, public financing, comment authentication, enforcement budgets, and revolving-door rules are modeled as interacting features of a governance architecture. The policy-relevant output is therefore not a single reform ranking, but a map of where influence moves when a rule binds.
 

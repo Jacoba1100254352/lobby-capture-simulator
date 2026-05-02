@@ -59,6 +59,7 @@ paper: tables figures
 	cd paper && bibtex main
 	cd paper && pdflatex -interaction=nonstopmode main.tex
 	cd paper && pdflatex -interaction=nonstopmode main.tex
+	cd paper && pdflatex -interaction=nonstopmode main.tex
 
 paper-word-count:
 	python3 scripts/check-paper-word-count.py
