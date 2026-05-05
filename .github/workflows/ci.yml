@@ -12,7 +12,7 @@ jobs:
       - uses: actions/setup-java@v4
         with:
           distribution: temurin
-          java-version: "17"
+          java-version: "21"
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
@@ -20,9 +20,11 @@ jobs:
         run: python3 -m py_compile scripts/*.py
       - name: Run tests
         run: make test
-      - name: Run interaction sweep
-        run: make interactions
-      - name: Generate paper tables
-        run: make tables
-      - name: Validate report snapshots
-        run: make validate
+      - name: Regenerate report snapshots and validation artifacts
+        run: make campaign sensitivity ablation interactions source-moments validate calibration-queue tables
+      - name: Install paper build dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y texlive-latex-recommended texlive-latex-extra texlive-fonts-recommended texlive-bibtex-extra texlive-pictures inkscape poppler-utils
+      - name: Build local paper and check word count
+        run: make paper paper-word-count

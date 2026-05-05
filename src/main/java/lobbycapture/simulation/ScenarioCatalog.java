@@ -98,6 +98,25 @@ public final class ScenarioCatalog {
         return scenario(key, name, "Sensitivity sweep scenario.", reform, initialStrategy, evasionFreedom, true, reformHeavyContests());
     }
 
+    public static Scenario stressedSensitivityScenario(
+            String key,
+            String name,
+            ReformRegime reform,
+            double evasionFreedom,
+            InfluenceStrategy initialStrategy
+    ) {
+        return scenario(
+                key,
+                name,
+                "Sensitivity sweep scenario with high-gain capture opportunities retained in the contest mix.",
+                reform,
+                initialStrategy,
+                evasionFreedom,
+                true,
+                ablationStressContests()
+        );
+    }
+
     public static Scenario ablationScenario(
             String key,
             String name,

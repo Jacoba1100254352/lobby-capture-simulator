@@ -20,7 +20,7 @@ WIDTH = 1800
 HEIGHT = 1100
 
 INTERACTION_ROWS = {
-    "interaction-enforcement-disclosure-0-35-0-35": "Low E/D",
+    "interaction-enforcement-disclosure-0-10-0-10": "Low E/D",
     "interaction-enforcement-disclosure-1-25-1-25": "High E/D",
     "interaction-financing-evasion-1-25-0-90": "Finance+evasion",
     "interaction-cooling-1-25-revolving-door": "Cooling+door",
@@ -229,7 +229,7 @@ def write_evasion_sensitivity(indexed: dict[str, dict[str, str]], report: Path, 
 def write_interaction_tradeoffs(indexed: dict[str, dict[str, str]], report: Path, figure_dir: Path) -> None:
     require_rows(indexed, list(INTERACTION_ROWS))
     offsets = {
-        "interaction-enforcement-disclosure-0-35-0-35": (64, -38, "start"),
+        "interaction-enforcement-disclosure-0-10-0-10": (64, -38, "start"),
         "interaction-enforcement-disclosure-1-25-1-25": (64, -38, "start"),
         "interaction-financing-evasion-1-25-0-90": (-64, -38, "end"),
         "interaction-cooling-1-25-revolving-door": (64, 42, "start"),

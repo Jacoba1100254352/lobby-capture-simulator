@@ -1,6 +1,6 @@
 \section{Motivation and Contribution}
 
-Lobbying and regulatory capture are not merely legislative pressure terms. Organized interests can shape outcomes through campaign finance, public-information distortion, technical comments, litigation delay, procurement design, enforcement priorities, and post-government employment incentives. A useful simulation must therefore model lobbying as an influence economy rather than as a scalar attached to a bill \citep{stigler1971economicRegulation,dalbo2006capture,carpenterMoss2014}.
+Lobbying and regulatory capture are not merely legislative pressure terms. Organized interests can shape outcomes through campaign finance, public-information distortion, technical comments, litigation delay, procurement design, enforcement priorities, and post-government employment incentives. A useful simulation must therefore model lobbying as an influence economy rather than as a scalar attached to a bill \citep{stigler1971economicRegulation,grossmanHelpman1994,hallDeardorff2006,dalbo2006capture,deFigueiredoRichter2014,carpenterMoss2014}.
 
 The project is intended for comparative institutional analysis. Its design contribution is a transparent mechanism model of strategic channel substitution: when one influence route becomes costly, interests may preserve influence by moving money, expertise, messengers, or pressure into adjacent venues. The current prototype therefore treats reform evaluation as a governance-design problem rather than a single-channel deterrence problem. It asks whether disclosure, public financing, cooling-off, anti-astroturf, public-advocate, blind-review, and enforcement systems reduce capture itself or mainly shift capture into less visible forms.
 
@@ -8,7 +8,7 @@ The contribution is threefold. First, the model makes lobbying organizations and
 
 \section{Stage-and-Channel Framework}
 
-The model follows a stage-and-channel view of capture. Organized interests can influence electoral selection, legislative agenda setting, agency drafting, notice-and-comment rulemaking, enforcement, litigation, procurement, and implementation. At each stage, the available channels differ: campaign finance is valuable around elections, technical comments and ex parte access are valuable around rulemaking, litigation threats are valuable after an unfavorable rule, and procurement relationships matter during implementation.
+The model follows a stage-and-channel view of capture. Organized interests can influence electoral selection, legislative agenda setting, agency drafting, notice-and-comment rulemaking, enforcement, litigation, procurement, and implementation. At each stage, the available channels differ: campaign finance is valuable around elections, technical comments and ex parte access are valuable around rulemaking, litigation threats are valuable after an unfavorable rule, and procurement relationships matter during implementation \citep{mccubbins1987administrative,yackeeYackee2006}.
 
 The central behavioral assumption is channel substitution. When a reform raises the cost of one route, organized interests first try nearby routes that preserve donors, vendors, messengers, relationships, or policy objectives. Direct giving can become outside spending or dark money; registered lobbying can become advisory work; public comments can become sponsored expert submissions or litigation; procurement lobbying can become consulting or subcontracting pressure. The simulator therefore reports both visible channel mix and inferred hidden influence, because some reforms improve one disclosure surface while moving influence elsewhere \citep{dalbo2006capture,carpenterMoss2014,oecdLobbying2021,brennanDarkMoney2025}.
 
@@ -68,6 +68,18 @@ where \(E[I]\) is expected influence under the substitute route, \(C_m\) is mess
 
 Enforcement applies after contest resolution. Detection probability increases with audit rate, enforcement budget, sanctions, public visibility, and evasion legal risk. When detected, sanctions reduce capture effects and add an evasion penalty. This makes evasion valuable only when opacity gains exceed expected enforcement and disclosure costs.
 
+\section{Resolution, Calibration, and Replication Design}
+
+Each arena resolves contests by combining baseline contest vulnerability with arena-specific susceptibility, channel pressure, public backlash, reform controls, and stochastic noise. For non-reform contests, the implemented capture-pressure score is
+
+\[
+C_t = R_t + A_a + I_t - K_t - B_t + \epsilon_t,
+\]
+
+where \(R_t\) is contest-level capture risk, \(A_a\) is arena susceptibility, \(I_t\) is weighted information, campaign-finance, revolving-door, and litigation pressure, \(K_t\) is the active reform-control bundle, \(B_t\) is public backlash under transparency, and \(\epsilon_t\) is bounded run noise. Capture is recorded only if the pre-audit score crosses the arena threshold and is not reversed by detection and sanctions. Anti-capture contests are resolved separately by comparing the public case for reform against defensive lobbying, litigation delay, and constitutional challenge risk.
+
+The model is initialized from a fixed scenario catalog, a calibration profile, and deterministic source fixtures or normalized public-data snapshots. Randomness enters through contest sampling, channel-allocation variation, process detection, sanctions, and final contest resolution. Every report is generated with fixed seeds and records run counts, contests per run, Java version, source Git state, and calibration checksum. Report CSVs include Wilson intervals for binomial capture and reform-success outcomes; tables in the article report selected interval columns while the full report snapshots remain in the repository. The ODD-style model description in \texttt{docs/odd-model.md} and the scenario catalog in \texttt{docs/scenario-catalog.md} are intended as online supplement material.
+
 \section{First Campaign Snapshot}
 
 Table~\ref{tab:first-campaign} reports selected results from the current campaign snapshot: 40 runs per scenario, 80 contests per run, seed 42. The table reports captured-contest counts as well as rates because zero observed captures in finite stylized runs should be interpreted as a diagnostic outcome, not as proof that a reform eliminates capture. The full snapshot is generated by \texttt{make campaign} and written under the \texttt{reports/} directory.
@@ -80,7 +92,7 @@ The early result is directionally useful but limited. Reform threats trigger sub
 
 \section{Sensitivity Snapshot}
 
-The current sensitivity sweep varies enforcement, disclosure, public financing, cooling-off, and evasion freedom around the full anti-capture bundle. Table~\ref{tab:sensitivity} reports selected rows from \texttt{make sensitivity}: 30 runs per scenario, 70 contests per run, seed 142.
+The current sensitivity sweep varies enforcement, disclosure, public financing, cooling-off, and evasion freedom around the full anti-capture bundle while retaining high-gain contests in the stress-test mix. Table~\ref{tab:sensitivity} reports selected rows from \texttt{make sensitivity}: 30 runs per scenario, 70 contests per run, seed 142.
 
 \input{tables/sensitivity_snapshot.tex}
 
@@ -90,13 +102,13 @@ Figure~\ref{fig:evasion-sensitivity} isolates the evasion slice from the sensiti
 
 \section{Ablation Snapshot}
 
-Ablation reporting removes one reform component from the full anti-capture bundle under a deliberately stressed contest mix. Table~\ref{tab:ablation} reports the current \texttt{make ablation} snapshot: 40 runs per scenario, 80 contests per run, seed 242. The baseline full bundle has a capture rate of 0.0000 in this stress test, so the capture increase column is equal to the observed capture rate after removal.
+Ablation reporting removes one reform component from the full anti-capture bundle under a deliberately stressed contest mix. Table~\ref{tab:ablation} reports the current \texttt{make ablation} snapshot: 40 runs per scenario, 80 contests per run, seed 242. The capture-increase column is measured against the full-bundle baseline in the same stress-test family.
 
 \input{tables/ablation_snapshot.tex}
 
 \section{Interaction Snapshot}
 
-The interaction sweep varies enforcement, disclosure, public financing, evasion freedom, cooling-off rules, and revolving-door strategy. Table~\ref{tab:interactions} reports selected interaction-runner rows: 25 runs per scenario, 60 contests per run, seed 342. All selected rows in this finite-run slice record zero observed captured contests, so the table intentionally focuses on substitution diagnostics rather than repeating a degenerate capture column. These rows are useful because they separate nominal reform strength from substitution response. A reform can lower visible pressure while preserving influence through hidden messengers or alternate venues.
+The interaction sweep varies enforcement, disclosure, public financing, evasion freedom, cooling-off rules, and revolving-door strategy under the stressed contest mix. Table~\ref{tab:interactions} reports selected interaction-runner rows: 25 runs per scenario, 60 contests per run, seed 342. These rows are useful because they separate nominal reform strength from substitution response. A reform can lower visible pressure while preserving influence through hidden messengers or alternate venues.
 
 \input{tables/interaction_snapshot.tex}
 
@@ -108,7 +120,7 @@ Figure~\ref{fig:interaction-tradeoffs} presents the same interaction slice as a 
 
 The implementation separates empirical distributional anchors from causal mechanisms. Normalized LDA rows are intended to constrain issue funding scale and disclosure lag. Normalized FEC rows are intended to constrain donor concentration, public-financing share, and traceability. Normalized Federal Register and Regulations.gov rows are intended to constrain docket size, comment authenticity, template saturation, and technical-claim credibility. The parameter map in \texttt{data/calibration/parameter-map.csv} records the intended low, middle, and high ranges for disclosure timing, money concentration, dark-money traceability, comment manipulation, enforcement backlog, procurement concentration, revolving-door share, voucher participation, and substitution. The source-moment report in \texttt{reports/source-moments.csv} separately records top-client, top-donor, traceability, public-financing, and comment-record moments so the paper can distinguish source distributions from simulated outcomes.
 
-The current committed snapshot is still not a representative empirical panel. It is a closed-window reproducibility scaffold for the 2024 EPA/ENV slice. The live runner now records successful LDA, OpenFEC, Regulations.gov, Federal Register, and USAspending requests, but the FEC panel is still a national-party committee slice rather than a dark-money or public-financing panel, and revolving-door moments still depend on a fixture unless a licensed export is configured. Those inputs do not estimate the causal effect of a disclosure rule, voucher system, or cooling-off ban. They provide schema checks, plausible state-variable ranges, and warning signs for calibration. The default fetch workflow copies deterministic fixtures into \texttt{data/raw/}; optional \texttt{--live} modes normalize caller-provided CSV paths, URLs, or source-native API responses into the same schemas. The causal structure remains explicit in the model equations and arena rules, so validation must compare simulated distributions and directional responses against stronger external data before treating any scenario ranking as substantively reliable.
+The current committed snapshot is still not a representative empirical panel. It is a closed-window reproducibility scaffold for the 2024 EPA/ENV slice. The live runner now records successful LDA, OpenFEC, Regulations.gov, Federal Register, and USAspending requests, but the FEC panel is still a national-party committee slice rather than a dark-money or public-financing panel, and revolving-door moments still depend on a fixture unless a licensed export is configured. Those inputs do not estimate the causal effect of a disclosure rule, voucher system, or cooling-off ban. Dark-money, public-financing, and revolving-door outputs should therefore be read as internal stress-test variables in the current paper, not as source-calibrated empirical estimates. The inputs provide schema checks, plausible state-variable ranges, and warning signs for calibration. The default fetch workflow copies deterministic fixtures into \texttt{data/raw/}; optional \texttt{--live} modes normalize caller-provided CSV paths, URLs, or source-native API responses into the same schemas. The causal structure remains explicit in the model equations and arena rules, so validation must compare simulated distributions and directional responses against stronger external data before treating any scenario ranking as substantively reliable.
 
 \section{Validation Plan}
 
@@ -126,6 +138,6 @@ This framing fits a regulatory-governance audience because the unit of analysis 
 
 The main limitation is evidentiary rather than computational. The simulator now has reproducible scenarios, generated reports, source parsers, source moments, and validation queues, but the public-data bridge remains preliminary. A submission-ready version should rerun the 2024 EPA/ENV slice with stable OpenFEC and Regulations.gov access, regenerate the snapshot from a clean source tree, and report whether the source-moment diagnostics remain stable under a fuller panel. It should also replace the fixture-based revolving-door panel with a documented source export and keep procurement concentration separate from simulated procurement bias.
 
-The second limitation is uncertainty presentation. Current tables report deterministic aggregate means for fixed seeds and finite run counts. The manuscript should therefore avoid policy-estimate language until report writers include uncertainty intervals, multi-seed robustness summaries, and scenario-specific sensitivity diagnostics. In its present form, the strongest defensible claim is that the model exposes reform-failure mechanisms that a single-channel lobbying model would miss.
+The second limitation is uncertainty presentation. Report writers now include Wilson intervals for binomial capture and reform-success outcomes, but the current article still relies on fixed seeds and finite run counts. The manuscript should therefore avoid policy-estimate language until the main tables are backed by multi-seed robustness summaries and scenario-specific sensitivity diagnostics. In its present form, the strongest defensible claim is that the model exposes reform-failure mechanisms that a single-channel lobbying model would miss.
 
 The third limitation is calibration coverage. Some benchmark misses may reflect model parameters, but others likely reflect benchmark definitions that combine incompatible quantities. Future work should split direct source moments from simulated outcome moments, tune comment compression and authenticity against docket-level data, calibrate detection and sanction incidence against enforcement records, and add explicit stress scenarios for hidden substitution and revolving-door influence. These steps would support a narrower submission package in which the main article presents one flagship reform-bundle comparison and the full scenario catalog, ablation matrix, parser details, and calibration queue sit in an online supplement.

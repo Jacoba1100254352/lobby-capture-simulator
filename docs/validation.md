@@ -41,7 +41,7 @@ Source-native live variables:
 - Retry controls: `SOURCE_FETCH_RETRIES`, `SOURCE_FETCH_BACKOFF_SECONDS`.
 - Raw-payload archive control: `SOURCE_RAW_DIR`.
 
-The source-native normalizers are distributional bridges. `scripts/test-source-fetchers.py` verifies representative LDA, OpenFEC, Regulations.gov, and Federal Register JSON payloads against exact normalized rows before any live API output is used as a paper snapshot.
+The source-native normalizers are distributional bridges. `scripts/test-source-fetchers.py` verifies representative LDA, OpenFEC, Regulations.gov, Federal Register, and USAspending JSON payloads against exact normalized rows before any live API output is used as a paper snapshot.
 
 `make source-moments` writes `reports/source-moments.csv` plus `reports/source-moments.md`. It compares the current 2024 EPA/ENV normalized snapshot against the deterministic fixture baseline on source-level moments such as top-client share, top-donor share, amount-weighted traceability, dark-money direct visibility, public-financing source share, and comment-volume concentration.
 

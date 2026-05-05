@@ -45,10 +45,10 @@ public final class InteractionRunner {
     private static List<Scenario> scenarios() {
         List<Scenario> scenarios = new ArrayList<>();
         ReformRegime base = ReformRegime.fullBundle();
-        double[] levels = {0.35, 0.80, 1.25};
+        double[] levels = {0.10, 0.80, 1.25};
         for (double enforcement : levels) {
             for (double disclosure : levels) {
-                scenarios.add(ScenarioCatalog.sensitivityScenario(
+                scenarios.add(ScenarioCatalog.stressedSensitivityScenario(
                         key("enforcement-disclosure", enforcement, disclosure),
                         "Interaction enforcement " + label(enforcement) + " disclosure " + label(disclosure),
                         base.withTuning("interaction enforcement/disclosure", disclosure, enforcement, 1.0, 1.0),
@@ -61,7 +61,7 @@ public final class InteractionRunner {
         double[] evasionLevels = {0.00, 0.45, 0.90};
         for (double financing : financingLevels) {
             for (double evasion : evasionLevels) {
-                scenarios.add(ScenarioCatalog.sensitivityScenario(
+                scenarios.add(ScenarioCatalog.stressedSensitivityScenario(
                         key("financing-evasion", financing, evasion),
                         "Interaction public financing " + label(financing) + " evasion " + label(evasion),
                         base.withTuning("interaction public financing/evasion", 1.0, 1.0, financing, 1.0),
@@ -73,7 +73,7 @@ public final class InteractionRunner {
         InfluenceStrategy[] strategies = {InfluenceStrategy.BALANCED, InfluenceStrategy.REVOLVING_DOOR};
         for (double cooling : levels) {
             for (InfluenceStrategy strategy : strategies) {
-                scenarios.add(ScenarioCatalog.sensitivityScenario(
+                scenarios.add(ScenarioCatalog.stressedSensitivityScenario(
                         "interaction-cooling-" + label(cooling).replace('.', '-') + "-" + strategy.name().toLowerCase(Locale.US).replace('_', '-'),
                         "Interaction cooling " + label(cooling) + " strategy " + strategy.name().toLowerCase(Locale.US).replace('_', '-'),
                         base.withTuning("interaction cooling/strategy", 1.0, 1.0, 1.0, cooling),

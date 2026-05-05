@@ -121,6 +121,9 @@ The Wiley-template path is available but intentionally separate from the default
 - `make wiley-tex-deps` installs the extra Wiley-template LaTeX packages into the user TeX tree through `tlmgr --usermode`.
 - `paper/regulation-governance-wiley.tex` is the Regulation & Governance/Wiley wrapper using Wiley's `USG` class.
 - `make paper-wiley` builds the Wiley wrapper after the official bundle and TeX dependencies are available. It writes ignored scratch files under `paper/.wiley-build/` to work around a BibTeX failure in the current Wiley archive's primary Chicago style file while still using the downloaded Wiley class and template assets.
+- `make submission-package` builds the Wiley wrapper and writes `dist/lobby-capture-wiley-submission.zip` with the root LaTeX file, compiled PDF, patched peer-review class copy, bibliography, generated tables, and generated figure files.
+
+The Wiley build patches only the generated `.wiley-build/USG.cls` copy to remove generic template sample journal art, the sample Open Access badge, and placeholder publication metadata. The downloaded Wiley template remains unmodified under ignored `paper/.wiley-template/`.
 
 Submission strategy details live in `docs/submission-strategy.md`.
 
@@ -147,5 +150,6 @@ It includes:
 - transparency, public financing, democracy vouchers, cooling-off, blind review, public advocates, enforcement, anti-astroturf systems, defensive-spend caps, and dark-money disclosure;
 - raw and composite scenario metrics plus sensitivity, ablation, adaptation-speed, and reform-decay metrics.
 - validation summaries and two-way reform interaction sweeps.
+- wide generated paper tables, vector/PDF figures, and a Wiley submission-package target.
 
 The formulas are stylized and comparative. Empirical files under `data/calibration/` and normalized fixtures under `data/fixtures/` are benchmark scaffolds, not causal estimates.

@@ -6,7 +6,7 @@ TEST_SOURCES := $(shell find src/test/java -name "*.java" | sort)
 MAIN_CLASS := lobbycapture.Main
 TEST_CLASSES := lobbycapture.SmokeTest lobbycapture.AdaptationTest
 
-.PHONY: compile test run campaign sensitivity ablation interactions source-moments calibration-queue validate snapshot-2024-env tables figures paper paper-word-count wiley-template wiley-tex-deps paper-wiley clean
+.PHONY: compile test run campaign sensitivity ablation interactions source-moments calibration-queue validate snapshot-2024-env tables figures paper paper-word-count wiley-template wiley-tex-deps paper-wiley submission-package clean
 
 compile:
 	@mkdir -p out/classes
@@ -73,8 +73,12 @@ wiley-tex-deps:
 paper-wiley: tables figures wiley-template
 	./scripts/build-wiley-paper.sh
 
+submission-package: paper-wiley paper-word-count
+	./scripts/build-submission-package.sh
+
 clean:
 	rm -rf out
 	rm -f paper/*.aux paper/*.bbl paper/*.blg paper/*.log paper/*.out paper/*.pdf paper/*.pag paper/*.synctex.gz
 	rm -f reports/validation-summary.csv reports/validation-summary.md
 	rm -f reports/source-moments.csv reports/source-moments.md reports/calibration-queue.csv reports/calibration-queue.md
+	rm -rf dist

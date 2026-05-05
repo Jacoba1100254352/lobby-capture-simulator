@@ -3,6 +3,7 @@
 *.iml
 .env
 out/
+dist/
 scripts/__pycache__/
 *.pyc
 reports/*.csv

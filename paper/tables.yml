@@ -5,7 +5,9 @@
       "source": "lobby-capture-campaign.csv",
       "label": "tab:first-campaign",
       "caption": "Current simulation snapshot. Metrics are comparative model outputs, not calibrated empirical estimates; zero captured contests are finite-run observations rather than proof of elimination.",
-      "size": "scriptsize",
+      "size": "footnotesize",
+      "environment": "table*",
+      "width": "\\textwidth",
       "rows": [
         "open-access-lobbying",
         "reform-threat-mobilization",
@@ -29,9 +31,11 @@
           "format": "count-ratio"
         },
         {
-          "header": "Capture",
+          "header": "Capture (95% CI)",
           "source": "captureRate",
-          "format": "float4"
+          "lowerSource": "captureRateLower95",
+          "upperSource": "captureRateUpper95",
+          "format": "float3ci"
         },
         {
           "header": "Hidden",
@@ -59,15 +63,17 @@
       "output": "sensitivity_snapshot.tex",
       "source": "lobby-capture-sensitivity.csv",
       "label": "tab:sensitivity",
-      "caption": "Selected sensitivity sweep rows. The current bundle is robust in this stylized setup, but evasion freedom strongly shifts spending into opaque channels.",
-      "size": "small",
+      "caption": "Selected sensitivity sweep rows under the stressed contest mix. Weak controls reopen observed capture, while evasion freedom shifts spending into opaque channels even when reform success remains high.",
+      "size": "footnotesize",
+      "environment": "table*",
+      "width": "\\textwidth",
       "rows": [
+        "sensitivity-enforcement-0-10",
+        "sensitivity-disclosure-0-10",
         "sensitivity-public-financing-1-25",
         "sensitivity-public-financing-0-35",
         "sensitivity-evasion-0-00",
-        "sensitivity-evasion-0-60",
-        "sensitivity-enforcement-0-35",
-        "sensitivity-disclosure-0-35"
+        "sensitivity-evasion-0-60"
       ],
       "columns": [
         {
@@ -79,18 +85,27 @@
             "Sensitivity public financing 0.35": "Public financing 0.35",
             "Sensitivity evasion 0.00": "Evasion 0.00",
             "Sensitivity evasion 0.60": "Evasion 0.60",
-            "Sensitivity enforcement 0.35": "Enforcement 0.35",
-            "Sensitivity disclosure 0.35": "Disclosure 0.35"
+            "Sensitivity enforcement 0.10": "Enforcement 0.10",
+            "Sensitivity disclosure 0.10": "Disclosure 0.10"
           }
         },
         {
-          "header": "Directional",
-          "source": "directionalScore",
-          "format": "float4"
+          "header": "Capture (95% CI)",
+          "source": "captureRate",
+          "lowerSource": "captureRateLower95",
+          "upperSource": "captureRateUpper95",
+          "format": "float3ci"
         },
         {
-          "header": "Reform success",
+          "header": "Reform (95% CI)",
           "source": "antiCaptureSuccess",
+          "lowerSource": "antiCaptureSuccessLower95",
+          "upperSource": "antiCaptureSuccessUpper95",
+          "format": "float3ci"
+        },
+        {
+          "header": "Hidden",
+          "source": "hiddenInfluenceShare",
           "format": "float4"
         },
         {
@@ -110,7 +125,9 @@
       "source": "lobby-capture-ablation.csv",
       "label": "tab:ablation",
       "caption": "Selected ablation results. Removing public advocate/blind-review capacity creates the largest modeled capture opening, while removing beneficial-owner disclosure mainly shifts spending toward dark money.",
-      "size": "scriptsize",
+      "size": "footnotesize",
+      "environment": "table*",
+      "width": "\\textwidth",
       "rowMode": "ablation-delta",
       "baseline": "ablation-full-bundle",
       "columns": [
@@ -158,10 +175,12 @@
       "output": "interaction_snapshot.tex",
       "source": "lobby-capture-interactions.csv",
       "label": "tab:interactions",
-      "caption": "Selected reform-interaction rows. The table intentionally reports substitution diagnostics rather than the degenerate observed-capture column, because all selected finite-run interaction rows report zero observed captured contests.",
+      "caption": "Selected reform-interaction rows under the stressed contest mix. The table reports capture with Wilson intervals alongside substitution diagnostics so the mechanism is not reduced to a single observed-capture column.",
       "size": "scriptsize",
+      "environment": "table*",
+      "width": "\\textwidth",
       "rows": [
-        "interaction-enforcement-disclosure-0-35-0-35",
+        "interaction-enforcement-disclosure-0-10-0-10",
         "interaction-enforcement-disclosure-1-25-1-25",
         "interaction-financing-evasion-1-25-0-90",
         "interaction-cooling-1-25-revolving-door"
@@ -172,41 +191,48 @@
           "source": "scenarioName",
           "format": "label",
           "labels": {
-            "Interaction enforcement 0.35 disclosure 0.35": "Low enforcement/disclosure",
-            "Interaction enforcement 1.25 disclosure 1.25": "High enforcement/disclosure",
-            "Interaction public financing 1.25 evasion 0.90": "Financing high/evasion high",
-            "Interaction cooling 1.25 strategy revolving-door": "Cooling high/revolving door"
+            "Interaction enforcement 0.10 disclosure 0.10": "Low E/D",
+            "Interaction enforcement 1.25 disclosure 1.25": "High E/D",
+            "Interaction public financing 1.25 evasion 0.90": "High finance/evasion",
+            "Interaction cooling 1.25 strategy revolving-door": "High cooling/RD"
           }
         },
         {
-          "header": "Hidden",
+          "header": "Cap. (95% CI)",
+          "source": "captureRate",
+          "lowerSource": "captureRateLower95",
+          "upperSource": "captureRateUpper95",
+          "format": "float3ci"
+        },
+        {
+          "header": "Hid.",
           "source": "hiddenInfluenceShare",
-          "format": "float4"
+          "format": "float3"
         },
         {
-          "header": "Preserved",
+          "header": "Pres.",
           "source": "influencePreservationRate",
-          "format": "float4"
+          "format": "float3"
         },
         {
-          "header": "Net transparency",
+          "header": "Net trans.",
           "source": "netTransparencyGain",
-          "format": "float4"
+          "format": "float3"
         },
         {
-          "header": "Evasion shift",
+          "header": "Evasion",
           "source": "evasionShiftRate",
-          "format": "float4"
+          "format": "float3"
         },
         {
           "header": "Venue",
           "source": "venueSubstitutionRate",
-          "format": "float4"
+          "format": "float3"
         },
         {
-          "header": "Comment uptake",
+          "header": "Comment",
           "source": "commentSubstantiveUptake",
-          "format": "float4"
+          "format": "float3"
         }
       ]
     }

@@ -44,30 +44,30 @@ public final class SensitivityRunner {
     private static List<Scenario> scenarios() {
         List<Scenario> scenarios = new ArrayList<>();
         ReformRegime base = ReformRegime.fullBundle();
-        double[] levels = {0.35, 0.65, 1.00, 1.25};
+        double[] levels = {0.10, 0.35, 0.80, 1.25};
         for (double level : levels) {
-            scenarios.add(ScenarioCatalog.sensitivityScenario(
+            scenarios.add(ScenarioCatalog.stressedSensitivityScenario(
                     key("enforcement", level),
                     "Sensitivity enforcement " + label(level),
                     base.withTuning("sensitivity enforcement " + label(level), 1.0, level, 1.0, 1.0),
                     0.35,
                     InfluenceStrategy.BALANCED
             ));
-            scenarios.add(ScenarioCatalog.sensitivityScenario(
+            scenarios.add(ScenarioCatalog.stressedSensitivityScenario(
                     key("disclosure", level),
                     "Sensitivity disclosure " + label(level),
                     base.withTuning("sensitivity disclosure " + label(level), level, 1.0, 1.0, 1.0),
                     0.35,
                     InfluenceStrategy.BALANCED
             ));
-            scenarios.add(ScenarioCatalog.sensitivityScenario(
+            scenarios.add(ScenarioCatalog.stressedSensitivityScenario(
                     key("public-financing", level),
                     "Sensitivity public financing " + label(level),
                     base.withTuning("sensitivity public financing " + label(level), 1.0, 1.0, level, 1.0),
                     0.35,
                     InfluenceStrategy.CAMPAIGN_FINANCE
             ));
-            scenarios.add(ScenarioCatalog.sensitivityScenario(
+            scenarios.add(ScenarioCatalog.stressedSensitivityScenario(
                     key("cooling-off", level),
                     "Sensitivity cooling off " + label(level),
                     base.withTuning("sensitivity cooling off " + label(level), 1.0, 1.0, 1.0, level),
@@ -77,7 +77,7 @@ public final class SensitivityRunner {
         }
         double[] evasionLevels = {0.00, 0.30, 0.60, 0.90};
         for (double evasion : evasionLevels) {
-            scenarios.add(ScenarioCatalog.sensitivityScenario(
+            scenarios.add(ScenarioCatalog.stressedSensitivityScenario(
                     key("evasion", evasion),
                     "Sensitivity evasion " + label(evasion),
                     base,

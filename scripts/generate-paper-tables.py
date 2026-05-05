@@ -48,6 +48,9 @@ def render_configured_table(
         headers=[str(column["header"]) for column in table_config["columns"]],
         rows=body,
         size=str(table_config.get("size", "small")),
+        environment=str(table_config.get("environment", "table")),
+        placement=str(table_config.get("placement", "tbp")),
+        width=str(table_config.get("width", "\\linewidth")),
         provenance=provenance_comment(selected, source_path, config_path),
     )
 
@@ -82,6 +85,12 @@ def render_cell(column: dict[str, object], row: dict[str, str], baseline: dict[s
         return dict(column.get("labels", {})).get(row[source], row[source])
     if cell_format == "float4":
         return f4(row[source])
+    if cell_format == "float3":
+        return f"{float(row[source]):.3f}"
+    if cell_format == "float3ci":
+        lower = str(column["lowerSource"])
+        upper = str(column["upperSource"])
+        return f"{float(row[source]):.3f} [{float(row[lower]):.3f}, {float(row[upper]):.3f}]"
     if cell_format == "count-ratio":
         denominator_source = str(column["denominatorSource"])
         return f"{int(float(row[source]))}/{int(float(row[denominator_source]))}"
@@ -99,16 +108,21 @@ def table(
         headers: list[str],
         rows: list[list[str]],
         size: str,
+        environment: str,
+        placement: str,
+        width: str,
         provenance: str,
 ) -> str:
+    if environment not in {"table", "table*"}:
+        raise SystemExit(f"Unsupported table environment: {environment}")
     spec = "l" + ("r" * (len(headers) - 1))
     lines = [
         provenance,
-        "\\begin{table}[h]",
+        f"\\begin{{{environment}}}[{placement}]",
         "\\centering",
         f"\\{size}",
-        "\\resizebox{\\linewidth}{!}{%",
-        f"\\begin{{tabular}}{{@{{}}{spec}@{{}}}}",
+        "\\setlength{\\tabcolsep}{4pt}",
+        f"\\begin{{tabular*}}{{{width}}}{{@{{\\extracolsep{{\\fill}}}}{spec}@{{}}}}",
         "\\toprule",
         " & ".join(escape(header) for header in headers) + " \\\\",
         "\\midrule",
@@ -118,11 +132,10 @@ def table(
     lines.extend(
         [
             "\\bottomrule",
-            "\\end{tabular}",
-            "}",
+            "\\end{tabular*}",
             f"\\caption{{{escape(caption)}}}",
             f"\\label{{{label}}}",
-            "\\end{table}",
+            f"\\end{{{environment}}}",
             "",
         ]
     )

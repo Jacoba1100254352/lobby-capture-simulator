@@ -20,10 +20,10 @@ Each scenario uses the same core engine and changes the reform regime, channel i
 
 `make sensitivity` adds temporary sweep scenarios that are not listed by `--list`:
 
-- enforcement strength at 0.35, 0.65, 1.00, and 1.25 times the full-bundle baseline;
-- disclosure strength at 0.35, 0.65, 1.00, and 1.25 times the full-bundle baseline;
-- public financing at 0.35, 0.65, 1.00, and 1.25 times the full-bundle baseline;
-- cooling-off strength at 0.35, 0.65, 1.00, and 1.25 times the full-bundle baseline;
+- enforcement strength at 0.10, 0.35, 0.80, and 1.25 times the full-bundle baseline;
+- disclosure strength at 0.10, 0.35, 0.80, and 1.25 times the full-bundle baseline;
+- public financing at 0.10, 0.35, 0.80, and 1.25 times the full-bundle baseline;
+- cooling-off strength at 0.10, 0.35, 0.80, and 1.25 times the full-bundle baseline;
 - evasion freedom at 0.00, 0.30, 0.60, and 0.90.
 
 Sensitivity scenarios use the reform-heavy contest mix so defensive anti-reform spending, evasion, comments, client funding, and enforcement all remain active in the comparison.

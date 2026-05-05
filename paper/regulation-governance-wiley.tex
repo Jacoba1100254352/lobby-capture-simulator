@@ -1,12 +1,14 @@
 % Target venue: Regulation & Governance (Wiley).
 % Requires the official WileyDesign.zip bundle fetched by `make wiley-template`.
-\documentclass[CHICAGO,twocolumn]{USG}
+\documentclass{USG}
 
 \usepackage{amsmath}
 \usepackage{booktabs}
 \usepackage{xcolor}
 \usepackage{graphicx}
 \usepackage{url}
+\usepackage[authoryear]{NJDnatbib}
+\bibliographystyle{wileyNJD-Chicago}
 
 \hypersetup{
   pdftitle={Strategic Channel Substitution and Regulatory Capture: A Simulation Model of Lobbying and Anti-Capture Reform},
@@ -34,27 +36,15 @@
 \fundingInfo{No external funding is reported.}
 \keywords{regulation | governance | lobbying | regulatory capture | computational simulation | transparency | enforcement}
 
-\abstract[ABSTRACT]{Regulatory capture persists not only because organized interests spend money, but because they can move influence across institutional venues when a reform closes one visible route. This article introduces the Lobby Capture Simulator, a Java-based agent simulation that treats lobbying organizations, funders, and influence channels as the central strategic system. Lobby organizations allocate finite budgets across direct access, agenda access, information distortion, public campaigns, litigation threats, campaign finance, dark money, revolving-door access, and defensive spending against reform. Policy contests are resolved across legislative, rulemaking, procurement, litigation, enforcement, campaign, and public-information arenas. The current prototype uses public administrative data as distributional anchors and validation diagnostics rather than causal estimates. Its first results should therefore be read as mechanism checks: anti-capture bundles can reduce observed capture in stylized runs while still preserving hidden influence capacity through venue, messenger, and financing substitution.}
+\abstract[ABSTRACT]{Regulatory capture persists not only because organized interests spend money, but because they can move influence across venues when reforms close visible routes. This article introduces the Lobby Capture Simulator, a Java-based agent simulation in which lobby organizations and funders allocate finite budgets across access, information distortion, public campaigns, litigation threats, campaign finance, dark money, revolving-door access, and defensive anti-reform spending. The current prototype uses public administrative data as distributional anchors and validation diagnostics rather than causal estimates; its first results are mechanism checks showing that anti-capture bundles can reduce observed capture while hidden influence survives through venue, messenger, and financing substitution.}
 
 \maketitle
+\clearpage
 
 \input{sections/reggov-body}
 
-\bmsubsection*{Data and Code Availability}
-
-The simulator source, scenario configurations, validation scripts, generated paper tables, generated vector figure sources, generated PDF figure files, and committed report snapshots are maintained in this repository. Private credentials and raw source payloads are intentionally excluded from version control. The default reproducibility path is \texttt{make test campaign sensitivity ablation interactions source-moments validate calibration-queue paper}; the pinned environmental validation snapshot is generated with \texttt{make snapshot-2024-env}.
-
-\bmsubsection*{AI Use Disclosure}
-
-OpenAI ChatGPT/Codex was used as an assistant for code scaffolding, editorial revision, research-prompt drafting, and manuscript organization. The author reviewed and edited the output and is responsible for all text, code, citations, analyses, and conclusions. AI tools were not used to fabricate, alter, or manipulate empirical source data or simulation results.
-
-\bmsubsection*{Financial Disclosure}
-
-No external funding is reported.
-
-\bmsubsection*{Conflicts of Interest}
-
-The author declares no conflicts of interest.
+\newcommand{\submissionsection}[1]{\bmsubsection*{#1}}
+\input{sections/submission-declarations}
 
 \bibliography{references}
 
