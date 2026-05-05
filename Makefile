@@ -6,7 +6,7 @@ TEST_SOURCES := $(shell find src/test/java -name "*.java" | sort)
 MAIN_CLASS := lobbycapture.Main
 TEST_CLASSES := lobbycapture.SmokeTest lobbycapture.AdaptationTest
 
-.PHONY: compile test run campaign sensitivity ablation interactions source-moments calibration-queue validate snapshot-2024-env tables figures paper paper-word-count wiley-template paper-wiley clean
+.PHONY: compile test run campaign sensitivity ablation interactions source-moments calibration-queue validate snapshot-2024-env tables figures paper paper-word-count wiley-template wiley-tex-deps paper-wiley clean
 
 compile:
 	@mkdir -p out/classes
@@ -66,6 +66,9 @@ paper-word-count:
 
 wiley-template:
 	./scripts/fetch-wiley-template.sh
+
+wiley-tex-deps:
+	./scripts/install-wiley-tex-deps.sh
 
 paper-wiley: tables figures wiley-template
 	./scripts/build-wiley-paper.sh

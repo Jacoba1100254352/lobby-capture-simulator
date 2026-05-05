@@ -2,33 +2,39 @@
 
 These are direct moments from normalized calibration tables. They are source diagnostics, not causal estimates.
 
+## Representativeness Warnings
+
+- Snapshot FEC rows contain no DARK_MONEY or SUPER_PAC flow share; dark-money calibration still depends on benchmark and scenario assumptions.
+- Snapshot FEC rows contain no public-match or democracy-voucher flow share; public-financing calibration still depends on external benchmarks.
+- Snapshot revolving-door row count is 5; replace the fixture/export stub before using revolving-door moments as empirical anchors.
+
 | Scope | Source | Metric | Value | Evidence | Notes |
 | --- | --- | --- | ---: | --- | --- |
-| snapshot | lda | `ldaRows` | 13.0000 | observed | normalized LDA rows |
-| snapshot | lda | `ldaTotalSpend` | 0.0050 | observed | sum of normalized LDA amount |
-| snapshot | lda | `lobbyingClientTop1Share` | 1.0000 | observed | largest client share of normalized LDA amount |
-| snapshot | lda | `lobbyingClientTop3Share` | 1.0000 | observed | top three clients share of normalized LDA amount |
-| snapshot | lda | `lobbyingRegistrantTop3Share` | 1.0000 | observed | top three registrants share of normalized LDA amount |
-| snapshot | lda | `lobbyingSectorTopShare` | 1.0000 | observed | largest issue-domain share of normalized LDA amount |
+| snapshot | lda | `ldaRows` | 121.0000 | observed | normalized LDA rows |
+| snapshot | lda | `ldaTotalSpend` | 1.1295 | observed | sum of normalized LDA amount |
+| snapshot | lda | `lobbyingClientTop1Share` | 0.3763 | observed | largest client share of normalized LDA amount |
+| snapshot | lda | `lobbyingClientTop3Share` | 0.8898 | observed | top three clients share of normalized LDA amount |
+| snapshot | lda | `lobbyingRegistrantTop3Share` | 0.8898 | observed | top three registrants share of normalized LDA amount |
+| snapshot | lda | `lobbyingSectorTopShare` | 0.5551 | observed | largest issue-domain share of normalized LDA amount |
 | snapshot | lda | `lobbyingDisclosureLagMean` | 1.0000 | observed | mean normalized LDA disclosure lag |
-| snapshot | fec | `fecRows` | 100.0000 | observed | normalized OpenFEC rows |
-| snapshot | fec | `fecTotalReceipts` | 505.0783 | observed | sum of normalized FEC amount |
-| snapshot | fec | `fecDonorTop1Share` | 0.2292 | observed | largest donor share of normalized FEC amount |
-| snapshot | fec | `fecDonorTop3Share` | 0.5893 | observed | top three donor share of normalized FEC amount |
-| snapshot | fec | `fecRecipientTop3Share` | 0.9086 | observed | top three recipient share of normalized FEC amount |
-| snapshot | fec | `fecLargeDonorWeightedShare` | 0.9500 | observed_proxy | amount-weighted normalized large donor share |
+| snapshot | fec | `fecRows` | 600.0000 | observed | normalized OpenFEC rows |
+| snapshot | fec | `fecTotalReceipts` | 926.7037 | observed | sum of normalized FEC amount |
+| snapshot | fec | `fecDonorTop1Share` | 0.1467 | observed | largest donor share of normalized FEC amount |
+| snapshot | fec | `fecDonorTop3Share` | 0.3747 | observed | top three donor share of normalized FEC amount |
+| snapshot | fec | `fecRecipientTop3Share` | 0.7665 | observed | top three recipient share of normalized FEC amount |
+| snapshot | fec | `fecLargeDonorWeightedShare` | 0.9492 | observed_proxy | amount-weighted normalized large donor share |
 | snapshot | fec | `moneyFlowTraceability` | 0.6200 | observed_proxy | amount-weighted traceability across all normalized FEC rows |
 | snapshot | fec | `darkMoneyDirectVisibility` | 0.0000 | inferred | amount-weighted traceability among DARK_MONEY and SUPER_PAC rows |
 | snapshot | fec | `darkMoneySourceShare` | 0.0000 | observed_proxy | DARK_MONEY and SUPER_PAC share of normalized FEC amount |
 | snapshot | fec | `publicFinancingSourceShare` | 0.0000 | observed_proxy | public-match or voucher share of normalized FEC amount |
-| snapshot | regulatory | `regulatoryRows` | 100.0000 | observed | normalized regulatory rows |
-| snapshot | regulatory | `commentVolumeMean` | 118.2000 | observed_proxy | mean normalized comment volume |
-| snapshot | regulatory | `commentVolumeTop1DocketShare` | 0.0102 | observed_proxy | largest docket share of normalized comments |
+| snapshot | regulatory | `regulatoryRows` | 200.0000 | observed | normalized regulatory rows |
+| snapshot | regulatory | `commentVolumeMean` | 119.7000 | observed_proxy | mean normalized comment volume |
+| snapshot | regulatory | `commentVolumeTop1DocketShare` | 0.0752 | observed_proxy | largest docket share of normalized comments |
 | snapshot | regulatory | `commentTemplateShareMean` | 0.4600 | observed_proxy | mean normalized template share |
 | snapshot | regulatory | `commentAuthenticationShareMean` | 0.3200 | observed_proxy | mean normalized authentication share |
 | snapshot | regulatory | `technicalClaimCredibilityMean` | 0.5000 | proxy | mean normalized technical claim credibility |
 | snapshot | usaspending | `procurementRows` | 200.0000 | observed | normalized USAspending award rows |
-| snapshot | usaspending | `procurementTotalAwards` | 4871.4339 | observed | sum of normalized USAspending award amount |
+| snapshot | usaspending | `procurementTotalAwards` | 4872.5023 | observed | sum of normalized USAspending award amount |
 | snapshot | usaspending | `procurementRecipientTop1Share` | 0.0677 | observed | largest recipient share of normalized award amount |
 | snapshot | usaspending | `procurementRecipientTop3Share` | 0.1723 | observed | top three recipients share of normalized award amount |
 | snapshot | usaspending | `procurementAgencyTop1Share` | 1.0000 | observed | largest awarding agency share of normalized award amount |

@@ -1,13 +1,13 @@
 {
   "report": "lobby-capture-campaign",
-  "generatedAt": "2026-05-02T02:32:43.910637Z",
+  "generatedAt": "2026-05-05T01:55:23.103954Z",
   "seed": 42,
   "runs": 40,
   "contestsPerRun": 80,
   "command": "lobbycapture.Main --campaign --runs 40 --contests 80 --seed 42",
-  "gitCommit": "a0c708b",
+  "gitCommit": "e65abc3",
   "workingTreeDirty": true,
-  "javaVersion": "25",
-  "calibrationChecksum": "9c49695a54e778b06f5f1c07cdd401cd65a33fac55beca59f7e9ee955da20edd",
+  "javaVersion": "21.0.7",
+  "calibrationChecksum": "5f4015e94ebc82a6acd18e599586b4f51f22055bf93ed4072521333285ee1875",
   "reportFiles": ["lobby-capture-campaign.csv", "lobby-capture-campaign.md"]
 }

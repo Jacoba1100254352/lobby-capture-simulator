@@ -210,15 +210,60 @@ def write_markdown(path: Path, rows: list[dict[str, str]]) -> None:
         "",
         "These are direct moments from normalized calibration tables. They are source diagnostics, not causal estimates.",
         "",
+    ]
+    warnings = representativeness_warnings(rows)
+    if warnings:
+        lines.extend(["## Representativeness Warnings", ""])
+        for warning in warnings:
+            lines.append(f"- {warning}")
+        lines.append("")
+    lines.extend([
         "| Scope | Source | Metric | Value | Evidence | Notes |",
         "| --- | --- | --- | ---: | --- | --- |",
-    ]
+    ])
     for row in rows:
         lines.append(
             f"| {row['scope']} | {row['source']} | `{row['metric']}` | {row['value']} | {row['evidenceType']} | {row['notes']} |"
         )
     lines.append("")
     path.write_text("\n".join(lines), encoding="utf-8")
+
+
+def representativeness_warnings(rows: list[dict[str, str]]) -> list[str]:
+    warnings: list[str] = []
+    lda_rows = metric_value(rows, "snapshot", "lda", "ldaRows")
+    if lda_rows < 50:
+        warnings.append(
+            f"Snapshot LDA row count is {lda_rows:.0f}; treat LDA concentration and disclosure-lag moments as smoke-test diagnostics."
+        )
+    for metric_name in ("lobbyingClientTop1Share", "lobbyingClientTop3Share", "lobbyingRegistrantTop3Share"):
+        value = metric_value(rows, "snapshot", "lda", metric_name)
+        if value >= 0.95:
+            warnings.append(
+                f"Snapshot `{metric_name}` is {value:.4f}; this usually indicates a very narrow or incomplete LDA slice."
+            )
+    fec_rows = metric_value(rows, "snapshot", "fec", "fecRows")
+    if fec_rows < 500:
+        warnings.append(
+            f"Snapshot FEC row count is {fec_rows:.0f}; use FEC moments as panel diagnostics rather than representative election-cycle estimates."
+        )
+    if metric_value(rows, "snapshot", "fec", "darkMoneySourceShare") == 0.0:
+        warnings.append("Snapshot FEC rows contain no DARK_MONEY or SUPER_PAC flow share; dark-money calibration still depends on benchmark and scenario assumptions.")
+    if metric_value(rows, "snapshot", "fec", "publicFinancingSourceShare") == 0.0:
+        warnings.append("Snapshot FEC rows contain no public-match or democracy-voucher flow share; public-financing calibration still depends on external benchmarks.")
+    revolving_rows = metric_value(rows, "snapshot", "revolving-door", "revolvingDoorRows")
+    if revolving_rows <= 10:
+        warnings.append(
+            f"Snapshot revolving-door row count is {revolving_rows:.0f}; replace the fixture/export stub before using revolving-door moments as empirical anchors."
+        )
+    return warnings
+
+
+def metric_value(rows: list[dict[str, str]], scope: str, source: str, metric_name: str) -> float:
+    for row in rows:
+        if row["scope"] == scope and row["source"] == source and row["metric"] == metric_name:
+            return number(row["value"])
+    return 0.0
 
 
 if __name__ == "__main__":

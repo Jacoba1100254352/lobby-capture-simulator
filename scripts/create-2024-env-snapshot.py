@@ -54,6 +54,7 @@ def main() -> int:
 
     normalized = args.output / "normalized"
     normalized.mkdir(parents=True, exist_ok=True)
+    live_status = read_live_status(args.output / "live-run-status.csv")
     entries = []
     for key, source in SOURCES.items():
         source_path = args.raw / source["input"].name
@@ -62,11 +63,12 @@ def main() -> int:
             copy_normalized_csv(source_path, destination)
             row_count = count_rows(destination)
             checksum = sha256(destination)
-            status = "copied"
+            status, notes = source_status(key, live_status)
         else:
             row_count = 0
             checksum = "missing"
             status = "missing"
+            notes = "normalized source file missing"
         entries.append(
             {
                 "source": key,
@@ -76,6 +78,7 @@ def main() -> int:
                 "rowCount": row_count,
                 "sha256": checksum,
                 "status": status,
+                "statusNotes": notes,
             }
         )
 
@@ -83,7 +86,8 @@ def main() -> int:
         "snapshot": "2024-env",
         "generatedAt": datetime.now(timezone.utc).isoformat(),
         "gitCommit": git("rev-parse", "--short", "HEAD"),
-        "gitTreeState": git_tree_state(),
+        "gitTreeState": git_tree_state(exclude_prefixes=(str(args.output) + "/",)),
+        "gitTreeStateScope": f"working tree status excluding generated files under {args.output}/",
         "scope": {
             "calendarWindow": "2024-01-01/2024-12-31",
             "fecCycle": "2024",
@@ -125,6 +129,36 @@ def sha256(path: Path) -> str:
     return digest.hexdigest()
 
 
+def read_live_status(path: Path) -> list[dict[str, str]]:
+    if not path.exists():
+        return []
+    with path.open(newline="", encoding="utf-8") as source:
+        return list(csv.DictReader(source))
+
+
+def source_status(source: str, live_status: list[dict[str, str]]) -> tuple[str, str]:
+    if not live_status:
+        return "copied", "normalized file copied from data/raw"
+    names = {
+        "lda": [row for row in live_status if row["source"].startswith("lda-")],
+        "fec": [row for row in live_status if row["source"].startswith("fec-")],
+        "regulatory": [row for row in live_status if row["source"] in {"regulations-gov", "federal-register"}],
+        "usaspending": [row for row in live_status if row["source"] == "usaspending"],
+        "revolving-door": [row for row in live_status if row["source"] == "revolving-door"],
+    }.get(source, [])
+    if not names:
+        return "copied", "normalized file copied from data/raw"
+    statuses = {row["status"] for row in names}
+    notes = "; ".join(f"{row['source']}: {row['status']} ({row['notes']})" for row in names)
+    if statuses == {"ok"}:
+        return "live", notes
+    if "fixture" in statuses:
+        return "fixture", notes
+    if "ok" in statuses:
+        return "partial-live", notes
+    return "unavailable", notes
+
+
 def git(*args: str) -> str:
     try:
         return subprocess.check_output(("git", *args), text=True).strip()
@@ -132,11 +166,21 @@ def git(*args: str) -> str:
         return "unknown"
 
 
-def git_tree_state() -> str:
+def git_tree_state(exclude_prefixes: tuple[str, ...] = ()) -> str:
     status = git("status", "--short")
     if status == "unknown":
         return "unknown"
-    return "dirty" if status else "clean"
+    dirty_paths = []
+    for line in status.splitlines():
+        if not line:
+            continue
+        path = line[3:]
+        if " -> " in path:
+            path = path.split(" -> ", 1)[1]
+        if any(path == prefix.rstrip("/") or path.startswith(prefix) for prefix in exclude_prefixes):
+            continue
+        dirty_paths.append(path)
+    return "dirty" if dirty_paths else "clean"
 
 
 def write_readme(root: Path, entries: list[dict[str, object]]) -> None:

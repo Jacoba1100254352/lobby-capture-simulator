@@ -82,6 +82,9 @@ def render_cell(column: dict[str, object], row: dict[str, str], baseline: dict[s
         return dict(column.get("labels", {})).get(row[source], row[source])
     if cell_format == "float4":
         return f4(row[source])
+    if cell_format == "count-ratio":
+        denominator_source = str(column["denominatorSource"])
+        return f"{int(float(row[source]))}/{int(float(row[denominator_source]))}"
     if cell_format == "delta4":
         if baseline is None:
             raise SystemExit(f"Column {column['header']} requires a baseline row.")
@@ -104,6 +107,7 @@ def table(
         "\\begin{table}[h]",
         "\\centering",
         f"\\{size}",
+        "\\resizebox{\\linewidth}{!}{%",
         f"\\begin{{tabular}}{{@{{}}{spec}@{{}}}}",
         "\\toprule",
         " & ".join(escape(header) for header in headers) + " \\\\",
@@ -115,6 +119,7 @@ def table(
         [
             "\\bottomrule",
             "\\end{tabular}",
+            "}",
             f"\\caption{{{escape(caption)}}}",
             f"\\label{{{label}}}",
             "\\end{table}",
@@ -133,7 +138,8 @@ def provenance_comment(rows: list[dict[str, str]], source_path: Path, config_pat
     ]
     for key in ("generatedAt", "seed", "runs", "contestsPerRun"):
         if first.get(key):
-            parts.append(f"{key}={first[key]}")
+            label = "reportGeneratedAt" if key == "generatedAt" else key
+            parts.append(f"{label}={first[key]}")
     return "; ".join(parts)
 
 

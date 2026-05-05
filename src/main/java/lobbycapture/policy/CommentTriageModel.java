@@ -42,16 +42,16 @@ public final class CommentTriageModel {
                 1.0
         );
         double duplicateCompression = Values.clamp(
-                (saturation * (0.50 + (0.60 * dedupeTooling)))
-                        + (astroturfShare * reform.antiAstroturfStrength() * 0.28),
+                (saturation * (0.82 + (0.52 * dedupeTooling)))
+                        + (astroturfShare * reform.antiAstroturfStrength() * 0.34),
                 0.0,
                 1.0
         );
         double uniqueInformation = Values.clamp(
-                (genuineShare * (0.10 + (0.32 * docket.technicalClaimCredibility())))
-                        + (templateShare * 0.012)
-                        + (Math.max(0.0, 1.0 - saturation) * 0.035)
-                        - (astroturfShare * 0.075),
+                (genuineShare * (0.07 + (0.25 * docket.technicalClaimCredibility())))
+                        + (templateShare * 0.006)
+                        + (Math.max(0.0, 1.0 - saturation) * 0.020)
+                        - (astroturfShare * 0.095),
                 0.0,
                 1.0
         );

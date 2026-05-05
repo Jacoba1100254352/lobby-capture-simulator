@@ -33,9 +33,10 @@ Wiley provides a generic LaTeX authoring template for Wiley journals. This repo 
 - `paper/main.tex` is the compile-stable local manuscript used by `make paper`.
 - `paper/regulation-governance-wiley.tex` is the Regulation & Governance/Wiley wrapper that uses Wiley's `USG` class.
 - `make wiley-template` downloads the official `WileyDesign.zip` bundle into ignored `paper/.wiley-template/`.
+- `make wiley-tex-deps` installs the extra Wiley-template packages into the user TeX tree through `tlmgr --usermode`.
 - `make paper-wiley` attempts the Wiley-template build after the official bundle is fetched.
 
-The default build remains `make paper` because the official Wiley template depends on packages that are not always present in TeX Live Basic. The Wiley page also instructs authors to check the specific journal guidance and to submit both a LaTeX source bundle and a compiled PDF when submitting LaTeX through Wiley Research Exchange. `make figures` requires Inkscape on `PATH` so the generated SVG sources can be converted into Wiley-preferred PDF graphics.
+The default build remains `make paper` because it is faster and uses the local article wrapper, but the Wiley wrapper is now reproducible after `make wiley-template wiley-tex-deps`. The build script creates ignored scratch files under `paper/.wiley-build/` and exposes Wiley's bundled `wileyNJD-Chicago-lastoo.bst` fallback under the class-required `wileyNJD-Chicago.bst` name; the primary `.bst` bundled in the current Wiley archive emits duplicate-function BibTeX errors on TeX Live 2026. The Wiley page also instructs authors to check the specific journal guidance and to submit both a LaTeX source bundle and a compiled PDF when submitting LaTeX through Wiley Research Exchange. `make figures` requires Inkscape on `PATH` so the generated SVG sources can be converted into Wiley-preferred PDF graphics.
 
 ## Submission Formatting Status
 
@@ -45,11 +46,12 @@ Current formatting choices made in the repository:
 - the manuscript includes data/code availability, financial disclosure, conflicts of interest, and AI-use disclosure statements;
 - generated graphs are separate numbered PDF figure files, with legends retained in the manuscript through the LaTeX wrappers;
 - the primary local draft uses `plainnat` author-year citations and a conventional 1-inch-margin article layout for compile stability;
-- the Wiley-specific wrapper uses the official `USG` class once the downloaded template and full TeX package set are available.
+- the Wiley-specific wrapper uses the official `USG` class once the downloaded template and full TeX package set are available;
+- generated tables are width-constrained for the local and Wiley wrappers so the submission build does not depend on manual table edits.
 
 Before live submission, re-check the Regulation & Governance author page in Wiley Online Library under Contribute because Wiley notes that journal-specific instructions override generic Wiley guidance.
 
-On this machine, `make paper-wiley` fetches the official bundle successfully but reports a smaller local TeX install: `dashrule.sty`, `multirow.sty`, `cuted.sty`, `floatpag.sty`, `dblfloatfix.sty`, `soul.sty`, `xargs.sty`, `tcolorbox.sty`, `varwidth.sty`, `tikzpagenodes.sty`, `boites.sty`, and `wrapfig.sty` are missing. The local submission draft should therefore continue to use `make paper` until those packages or a fuller TeX Live installation are available.
+On this machine, the missing Wiley-template packages have been installed into the user TeX tree with `make wiley-tex-deps`, and `make paper-wiley` should be treated as the reproducibility check for the Wiley wrapper.
 
 ## Backup Target
 

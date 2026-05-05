@@ -58,11 +58,14 @@ The next paper-grade snapshot is fixed to a closed 2024 environmental slice:
 
 Run `scripts/run-2024-env-live-snapshot.sh` to execute the pinned live slice. The runner preserves raw public API payloads under ignored `data/raw/source-payloads/2024-env/`, writes normalized rows under `data/raw/`, freezes `data/snapshots/2024-env/`, and records per-source status in `data/snapshots/2024-env/live-run-status.csv`.
 
-The current committed 2024 EPA/ENV snapshot was generated from official public endpoints on May 1, 2026 with public/demo access:
+The current committed 2024 EPA/ENV snapshot was regenerated from official endpoints on May 5, 2026 using the configured local API keys where required:
 
-- LDA: 13 normalized 2024 `ENV` rows from the public Senate LDA API, filtered over the first three pages of each quarter.
-- FEC: 100 normalized 2024 OpenFEC rows from four national party committees before the public `DEMO_KEY` hourly limit blocked the remaining two committee requests.
-- Regulations.gov: public `DEMO_KEY` request was blocked by an upstream rate limit.
-- Federal Register: 100 normalized EPA 2024 document rows from the public Federal Register API.
+- LDA: 121 normalized 2024 `ENV` rows from the Senate LDA API.
+- FEC: 600 normalized 2024 OpenFEC rows from the six national party committee requests.
+- Regulations.gov and Federal Register: 200 combined EPA 2024 regulatory rows.
+- USAspending: 200 EPA fiscal-year 2024 award rows.
+- Revolving door: 5 fixture rows because no licensed or exported source panel is configured yet.
+
+The snapshot is stronger than the earlier public/demo run, but it is still not a representative empirical panel. The FEC slice covers national party committee flows rather than dark-money or public-financing sources, and the revolving-door file remains a fixture. `reports/source-moments.md` records these representativeness warnings directly.
 
 Run `make snapshot-2024-env` after any subsequent source-native fetches to freeze normalized rows under `data/snapshots/2024-env/` and write a machine-readable manifest with row counts, request templates, hashes, and Git state.

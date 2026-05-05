@@ -19,13 +19,15 @@ public final class MarkdownReportWriter {
         builder.append("- Contests per run: `").append(provenance.contestsPerRun()).append("`\n\n");
 
         builder.append("## Scenario Summary\n\n");
-        builder.append("| Scenario | Directional | Capture rate | Anti-capture success | Defensive spend | Dark-money share | Hidden influence | Influence preserved | Comment info | Comment burden | Detection | Admin cost |\n");
-        builder.append("| --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |\n");
+        builder.append("| Scenario | Directional | Capture rate | Capture 95% CI | Anti-capture success | Anti-capture 95% CI | Defensive spend | Dark-money share | Hidden influence | Influence preserved | Comment info | Comment burden | Detection | Admin cost |\n");
+        builder.append("| --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |\n");
         for (ScenarioReport report : reports.stream().sorted(Comparator.comparing(ScenarioReport::directionalScore).reversed()).toList()) {
             builder.append("| ").append(report.scenarioName())
                     .append(" | ").append(CsvReportWriter.format(report.directionalScore()))
                     .append(" | ").append(CsvReportWriter.format(report.captureRate()))
+                    .append(" | ").append(CsvReportWriter.formatWilsonInterval(report.capturedContests(), report.totalContests()))
                     .append(" | ").append(CsvReportWriter.format(report.antiCaptureSuccessRate()))
+                    .append(" | ").append(CsvReportWriter.formatWilsonInterval(report.enactedAntiCaptureReforms(), report.antiCaptureReforms()))
                     .append(" | ").append(CsvReportWriter.format(report.defensiveReformSpendShare()))
                     .append(" | ").append(CsvReportWriter.format(report.darkMoneySpendShare()))
                     .append(" | ").append(CsvReportWriter.format(report.hiddenInfluenceShare()))

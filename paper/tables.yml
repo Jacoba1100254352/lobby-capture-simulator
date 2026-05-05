@@ -4,7 +4,7 @@
       "output": "campaign_snapshot.tex",
       "source": "lobby-capture-campaign.csv",
       "label": "tab:first-campaign",
-      "caption": "Current simulation snapshot. Metrics are comparative model outputs, not calibrated empirical estimates.",
+      "caption": "Current simulation snapshot. Metrics are comparative model outputs, not calibrated empirical estimates; zero captured contests are finite-run observations rather than proof of elimination.",
       "size": "scriptsize",
       "rows": [
         "open-access-lobbying",
@@ -23,13 +23,24 @@
           }
         },
         {
+          "header": "Captured",
+          "source": "capturedContests",
+          "denominatorSource": "totalContests",
+          "format": "count-ratio"
+        },
+        {
           "header": "Capture",
           "source": "captureRate",
           "format": "float4"
         },
         {
-          "header": "Reform",
-          "source": "antiCaptureSuccess",
+          "header": "Hidden",
+          "source": "hiddenInfluenceShare",
+          "format": "float4"
+        },
+        {
+          "header": "Preserved",
+          "source": "influencePreservationRate",
           "format": "float4"
         },
         {
@@ -40,11 +51,6 @@
         {
           "header": "Dark money",
           "source": "darkMoneyShare",
-          "format": "float4"
-        },
-        {
-          "header": "Funding",
-          "source": "clientFundingPerContest",
           "format": "float4"
         }
       ]
@@ -152,7 +158,7 @@
       "output": "interaction_snapshot.tex",
       "source": "lobby-capture-interactions.csv",
       "label": "tab:interactions",
-      "caption": "Selected reform-interaction rows. Substitution metrics report whether constrained influence survives by moving into less visible messengers or venues.",
+      "caption": "Selected reform-interaction rows. The table intentionally reports substitution diagnostics rather than the degenerate observed-capture column, because all selected finite-run interaction rows report zero observed captured contests.",
       "size": "scriptsize",
       "rows": [
         "interaction-enforcement-disclosure-0-35-0-35",
@@ -173,11 +179,6 @@
           }
         },
         {
-          "header": "Capture",
-          "source": "captureRate",
-          "format": "float4"
-        },
-        {
           "header": "Hidden",
           "source": "hiddenInfluenceShare",
           "format": "float4"
@@ -190,6 +191,16 @@
         {
           "header": "Net transparency",
           "source": "netTransparencyGain",
+          "format": "float4"
+        },
+        {
+          "header": "Evasion shift",
+          "source": "evasionShiftRate",
+          "format": "float4"
+        },
+        {
+          "header": "Venue",
+          "source": "venueSubstitutionRate",
           "format": "float4"
         },
         {

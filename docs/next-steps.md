@@ -21,7 +21,7 @@ The simulator now has a lobbying-centered MVP with calibration fixtures, source-
 - Influence substitution reports pressure to switch, preserved influence capacity, hidden influence, messenger substitution, venue substitution, and net transparency gain.
 - `make snapshot-2024-env` writes a closed-window snapshot manifest and freezes normalized rows for the 2024 environmental validation slice.
 - `scripts/run-2024-env-live-snapshot.sh` executes the pinned 2024 EPA/ENV live run, preserves ignored raw payloads, and records public API rate-limit gaps.
-- The current committed 2024 EPA/ENV snapshot has 13 LDA rows, 100 OpenFEC rows, and 100 Federal Register regulatory rows; Regulations.gov and two OpenFEC committee requests were blocked by public/demo rate limits.
+- The current committed 2024 EPA/ENV snapshot has 121 LDA rows, 600 OpenFEC rows, 200 combined Regulations.gov/Federal Register regulatory rows, and 200 USAspending rows; the remaining empirical gap is the fixture-based revolving-door panel and the lack of dark-money/public-financing rows in the current FEC slice.
 - `--live` fetch modes can normalize caller-provided CSVs or query LDA, OpenFEC, Regulations.gov, and Federal Register APIs directly.
 - Source-native parser fixtures exercise LDA, OpenFEC, Regulations.gov, and Federal Register JSON without network access.
 - Live source fetches retry transient `429` and `5xx` responses and redact API keys from error URLs.
@@ -41,19 +41,21 @@ Deliverables:
 - keep one flagship reform-bundle comparison in the main article;
 - move full scenario catalogs, sensitivity matrices, ablation matrices, implementation details, and parser details to supplementary material;
 - run `make paper-word-count` after each major edit and keep the full manuscript under the reported 11,000-word cap;
-- use `paper/regulation-governance-wiley.tex` with `make paper-wiley` once the full Wiley TeX dependency set is available;
+- use `paper/regulation-governance-wiley.tex` with `make paper-wiley` for the Wiley-template reproducibility check;
 - prepare a separate anonymized package only if the paper is retargeted to a double-blind venue.
 
-## 2. Rerun the 2024 EPA/ENV live snapshot with personal API keys
+## 2. Expand the empirical source panels beyond the first 2024 EPA/ENV live snapshot
 
-The first live run used public/demo access. It produced a useful snapshot, but public rate limits blocked Regulations.gov and two OpenFEC committee requests.
+The first key-backed live run now completes the LDA, six-committee OpenFEC, Regulations.gov, Federal Register, and USAspending requests. The remaining problem is representativeness, not request failure.
 
 Deliverables:
 
-- rerun `scripts/run-2024-env-live-snapshot.sh` with personal `FEC_API_KEY` and `REGULATIONS_API_KEY`;
+- add a dark-money/outside-spending FEC or OpenSecrets-style panel rather than relying on national party committee flows;
+- add a public-financing/voucher source panel rather than relying only on external benchmarks;
+- replace the revolving-door fixture with a documented licensed/exported source panel;
 - preserve raw source payloads outside git if they are too large;
 - archive updated row counts and filter settings in `docs/validation.md`;
-- compare normalized live distributions against the current partial snapshot and deterministic fixtures;
+- compare normalized live distributions against the current snapshot and deterministic fixtures;
 - rerun `make snapshot-2024-env source-moments validate calibration-queue paper` and commit the refreshed artifacts.
 
 ## 3. Add USAspending and revolving-door source panels

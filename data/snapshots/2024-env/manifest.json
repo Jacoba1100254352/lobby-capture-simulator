@@ -1,8 +1,9 @@
 {
   "snapshot": "2024-env",
-  "generatedAt": "2026-05-02T02:30:17.776817+00:00",
-  "gitCommit": "a0c708b",
+  "generatedAt": "2026-05-05T01:49:47.451854+00:00",
+  "gitCommit": "e65abc3",
   "gitTreeState": "dirty",
+  "gitTreeStateScope": "working tree status excluding generated files under data/snapshots/2024-env/",
   "scope": {
     "calendarWindow": "2024-01-01/2024-12-31",
     "fecCycle": "2024",
@@ -17,8 +18,8 @@
       "description": "LDA 2024 Q1-Q4 LD-2 activity reports, post-filtered to ENV and EPA-facing contacts when live payloads are available.",
       "requestTemplate": "LDA_YEAR=2024 LDA_PERIOD={first_quarter,second_quarter,third_quarter,fourth_quarter} ./scripts/fetch-lda.sh --live",
       "normalizedFile": "data/snapshots/2024-env/normalized/lda-lobbying.csv",
-      "rowCount": 13,
-      "sha256": "dbc198972afdb168908414a6495677b5faa74107fa6ea28582e058858360037b",
+      "rowCount": 121,
+      "sha256": "30ea8984607fbd8ff79c951194046dc478e77ec5b45ba45fb8c160e5176a7b6f",
       "status": "copied"
     },
     {
@@ -26,8 +27,8 @@
       "description": "FEC 2024 cycle six national party committee receipts/disbursements, plus optional lobbyist bundled contributions.",
       "requestTemplate": "FEC_CYCLE=2024 FEC_COMMITTEE_ID in C00010603,C00042366,C00000935,C00003418,C00027466,C00075820 ./scripts/fetch-fec.sh --live",
       "normalizedFile": "data/snapshots/2024-env/normalized/fec-campaign-finance.csv",
-      "rowCount": 100,
-      "sha256": "0fbcbdf43ed9850a641ef33d54667c18d9a411324fc1d2cc5657cb5ce6291000",
+      "rowCount": 600,
+      "sha256": "26f55e5ea2af8bcdfd644e65d0441811cb993e73657a8515fd9a353c4baec083",
       "status": "copied"
     },
     {
@@ -35,8 +36,8 @@
       "description": "EPA 2024 Regulations.gov/Federal Register rulemaking docket and document slice.",
       "requestTemplate": "REGULATORY_AGENCY=EPA REGULATORY_DATE_FROM=2024-01-01 REGULATORY_DATE_TO=2024-12-31 ./scripts/fetch-regulatory.sh --live",
       "normalizedFile": "data/snapshots/2024-env/normalized/regulatory-dockets.csv",
-      "rowCount": 100,
-      "sha256": "076d1f13e8e93f2724bcbe602a7b42bede068643c2fb144c54baca67bc8ef684",
+      "rowCount": 200,
+      "sha256": "2be43d46882d1211c734281ba7e18b0bb133a2a2ab5ef6f8341f0814890e4654",
       "status": "copied"
     },
     {
@@ -45,7 +46,7 @@
       "requestTemplate": "USASPENDING_FISCAL_YEAR=2024 USASPENDING_AGENCY='Environmental Protection Agency' ./scripts/fetch-usaspending.sh --live",
       "normalizedFile": "data/snapshots/2024-env/normalized/usaspending-awards.csv",
       "rowCount": 200,
-      "sha256": "359de403081a9363a934761e7070e5cb9308f89867b09eaf01c3d7749ce160fb",
+      "sha256": "876be1b456e6dd3a57379ef82efba5e2f6ae78d7be108cb296be313e435911ff",
       "status": "copied"
     },
     {
@@ -60,6 +61,6 @@
   ],
   "liveRunStatus": {
     "file": "data/snapshots/2024-env/live-run-status.csv",
-    "sha256": "d1e3142be2b88271dbd4e5e6a0daf95e308ef21ac70975feffc9eff500f03128"
+    "sha256": "bbd8e5305ad720fe1000dff52a4f1f7df389b7c1cf60821136abfb2f2292994b"
   }
 }

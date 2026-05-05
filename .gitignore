@@ -27,6 +27,9 @@ paper/*.blg
 paper/*.log
 paper/*.out
 paper/*.pdf
+paper/*.pag
+paper/*.eps
+paper/.wiley-build/
 paper/.wiley-template/
 data/raw/*
 !data/raw/.gitkeep

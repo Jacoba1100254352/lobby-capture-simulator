@@ -23,6 +23,7 @@ make figures
 make paper
 make paper-word-count
 make wiley-template
+make wiley-tex-deps
 ```
 
 `make campaign` writes:
@@ -117,8 +118,9 @@ The primary paper target is now **Regulation & Governance**. The default build, 
 The Wiley-template path is available but intentionally separate from the default build:
 
 - `make wiley-template` downloads Wiley's official `WileyDesign.zip` into ignored `paper/.wiley-template/`.
+- `make wiley-tex-deps` installs the extra Wiley-template LaTeX packages into the user TeX tree through `tlmgr --usermode`.
 - `paper/regulation-governance-wiley.tex` is the Regulation & Governance/Wiley wrapper using Wiley's `USG` class.
-- `make paper-wiley` attempts that build and reports missing local TeX packages if TeX Live Basic is too small.
+- `make paper-wiley` builds the Wiley wrapper after the official bundle and TeX dependencies are available. It writes ignored scratch files under `paper/.wiley-build/` to work around a BibTeX failure in the current Wiley archive's primary Chicago style file while still using the downloaded Wiley class and template assets.
 
 Submission strategy details live in `docs/submission-strategy.md`.
 

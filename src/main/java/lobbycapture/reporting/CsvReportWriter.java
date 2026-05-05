@@ -8,8 +8,10 @@ import java.util.Locale;
 public final class CsvReportWriter {
     public String write(List<ScenarioReport> reports, ReportProvenance provenance) {
         StringBuilder builder = new StringBuilder();
-        builder.append("generatedAt,seed,runs,contestsPerRun,scenarioKey,scenarioName,totalContests,capturedContests,antiCaptureReforms,enactedAntiCaptureReforms,directionalScore,captureControl,representation,reformFeasibility,captureRate,antiCaptureSuccess,avgCaptureIndex,avgPublicInterest,publicPreferenceDistortion,privateGainRatio,lobbySpendPerContest,clientFundingPerContest,donorInfluenceGini,averageDisclosureLag,defensiveReformSpendShare,captureReturnOnSpend,publicBenefitPerInfluenceDollar,directAccessShare,agendaAccessShare,informationDistortionShare,publicCampaignShare,litigationThreatShare,campaignFinanceShare,darkMoneyShare,revolvingDoorShare,defensiveChannelShare,detectionRate,sanctionRate,policyDistortion,regulatoryDrift,enforcementForbearance,procurementBias,darkMoneyTraceability,darkMoneyDirectVisibility,largeDonorDependence,voucherParticipation,voucherResidentParticipation,publicFinancingShare,publicFinancingCandidateUptake,revolvingDoorInfluence,commentRecordDistortion,commentAuthenticity,templateCommentSaturation,commentUniqueInformationShare,commentReviewBurden,commentProceduralAckRate,commentSubstantiveUptake,commentCompressionRate,technicalClaimCredibility,channelSwitchRate,evasionShiftRate,evasionPenaltyRate,substitutionPressure,influencePreservationRate,hiddenInfluenceShare,netTransparencyGain,messengerSubstitutionRate,venueSubstitutionRate,clientFundingAdaptation,regulatorAttentionIndex,regulatorQueueBacklog,watchdogFocusIndex,watchdogBudgetConcentration,adaptationSpeed,reformDecayPressure,legitimateAdvocacyChill,constitutionalChallengeDelay,administrativeCost\n");
+        builder.append("generatedAt,seed,runs,contestsPerRun,scenarioKey,scenarioName,totalContests,capturedContests,antiCaptureReforms,enactedAntiCaptureReforms,directionalScore,captureControl,representation,reformFeasibility,captureRate,captureRateLower95,captureRateUpper95,antiCaptureSuccess,antiCaptureSuccessLower95,antiCaptureSuccessUpper95,avgCaptureIndex,avgPublicInterest,publicPreferenceDistortion,privateGainRatio,lobbySpendPerContest,clientFundingPerContest,donorInfluenceGini,averageDisclosureLag,defensiveReformSpendShare,captureReturnOnSpend,publicBenefitPerInfluenceDollar,directAccessShare,agendaAccessShare,informationDistortionShare,publicCampaignShare,litigationThreatShare,campaignFinanceShare,darkMoneyShare,revolvingDoorShare,defensiveChannelShare,detectionRate,sanctionRate,policyDistortion,regulatoryDrift,enforcementForbearance,procurementBias,darkMoneyTraceability,darkMoneyDirectVisibility,largeDonorDependence,voucherParticipation,voucherResidentParticipation,publicFinancingShare,publicFinancingCandidateUptake,revolvingDoorInfluence,commentRecordDistortion,commentAuthenticity,templateCommentSaturation,commentUniqueInformationShare,commentReviewBurden,commentProceduralAckRate,commentSubstantiveUptake,commentCompressionRate,technicalClaimCredibility,channelSwitchRate,evasionShiftRate,evasionPenaltyRate,substitutionPressure,influencePreservationRate,hiddenInfluenceShare,netTransparencyGain,messengerSubstitutionRate,venueSubstitutionRate,clientFundingAdaptation,regulatorAttentionIndex,regulatorQueueBacklog,watchdogFocusIndex,watchdogBudgetConcentration,adaptationSpeed,reformDecayPressure,legitimateAdvocacyChill,constitutionalChallengeDelay,administrativeCost\n");
         for (ScenarioReport report : reports) {
+            double[] captureInterval = wilsonInterval(report.capturedContests(), report.totalContests());
+            double[] antiCaptureInterval = wilsonInterval(report.enactedAntiCaptureReforms(), report.antiCaptureReforms());
             builder.append(provenance.generatedAt()).append(',')
                     .append(provenance.seed()).append(',')
                     .append(provenance.runs()).append(',')
@@ -25,7 +27,11 @@ public final class CsvReportWriter {
                     .append(format(report.representationScore())).append(',')
                     .append(format(report.reformFeasibilityScore())).append(',')
                     .append(format(report.captureRate())).append(',')
+                    .append(format(captureInterval[0])).append(',')
+                    .append(format(captureInterval[1])).append(',')
                     .append(format(report.antiCaptureSuccessRate())).append(',')
+                    .append(format(antiCaptureInterval[0])).append(',')
+                    .append(format(antiCaptureInterval[1])).append(',')
                     .append(format(report.averageCaptureIndex())).append(',')
                     .append(format(report.averagePublicInterestScore())).append(',')
                     .append(format(report.publicPreferenceDistortion())).append(',')
@@ -98,5 +104,26 @@ public final class CsvReportWriter {
 
     static String format(double value) {
         return String.format(Locale.US, "%.4f", value);
+    }
+
+    static String formatWilsonInterval(int successes, int trials) {
+        double[] interval = wilsonInterval(successes, trials);
+        return "[" + format(interval[0]) + ", " + format(interval[1]) + "]";
+    }
+
+    private static double[] wilsonInterval(int successes, int trials) {
+        if (trials <= 0) {
+            return new double[]{0.0, 0.0};
+        }
+        double z = 1.959963984540054;
+        double n = trials;
+        double p = successes / n;
+        double denominator = 1.0 + (z * z / n);
+        double center = p + (z * z / (2.0 * n));
+        double margin = z * Math.sqrt((p * (1.0 - p) / n) + (z * z / (4.0 * n * n)));
+        return new double[]{
+                Math.max(0.0, (center - margin) / denominator),
+                Math.min(1.0, (center + margin) / denominator)
+        };
     }
 }
