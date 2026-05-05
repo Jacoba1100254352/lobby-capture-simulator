@@ -39,12 +39,12 @@ text { font-family: Helvetica, Arial, sans-serif; font-size: 34px; fill: #111; }
 <line x1="260" y1="170" x2="260" y2="890" class="axis"/>
 <text x="875" y="994" text-anchor="middle">Hidden influence</text>
 <text x="80" y="530" text-anchor="middle" transform="rotate(-90 80 530)">Net transparency gain</text>
-<rect x="677.9" y="847.8" width="24" height="24" fill="#111111" class="point"/>
-<text x="753.9" y="821.8" text-anchor="start" class="label">Low E/D</text>
-<rect x="551.2" y="251.2" width="24" height="24" fill="#111111" class="point"/>
-<text x="627.2" y="225.2" text-anchor="start" class="label">High E/D</text>
-<rect x="1260.0" y="707" width="24" height="24" fill="#111111" class="point"/>
-<text x="1208.0" y="681" text-anchor="end" class="label">Finance+evasion</text>
-<rect x="602.5" y="406.9" width="24" height="24" fill="#111111" class="point"/>
-<text x="678.5" y="460.9" text-anchor="start" class="label">Cooling+door</text>
+<rect x="738.5" y="878" width="24" height="24" fill="#111111" class="point"/>
+<text x="814.5" y="852" text-anchor="start" class="label">Low E/D</text>
+<rect x="601.9" y="158" width="24" height="24" fill="#111111" class="point"/>
+<text x="677.9" y="132" text-anchor="start" class="label">High E/D</text>
+<rect x="1432.2" y="675.3" width="24" height="24" fill="#111111" class="point"/>
+<text x="1380.2" y="649.3" text-anchor="end" class="label">Finance+evasion</text>
+<rect x="661.0" y="335.1" width="24" height="24" fill="#111111" class="point"/>
+<text x="737.0" y="389.1" text-anchor="start" class="label">Cooling+door</text>
 </svg>

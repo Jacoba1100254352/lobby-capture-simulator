@@ -37,16 +37,16 @@ text { font-family: Helvetica, Arial, sans-serif; font-size: 34px; fill: #111; }
 <line x1="260" y1="170" x2="260" y2="890" class="axis"/>
 <text x="875" y="994" text-anchor="middle">Evasion freedom</text>
 <text x="80" y="530" text-anchor="middle" transform="rotate(-90 80 530)">Share / gain</text>
-<polyline points="260,860.5 670,716.1 1080,537.6 1490,283.6" class="series-primary"/>
-<polyline points="260,303.7 670,421.3 1080,519.9 1490,708.7" class="series-secondary"/>
-<rect x="248" y="848.5" width="24" height="24" fill="#111111" class="point"/>
-<rect x="658" y="704.1" width="24" height="24" fill="#111111" class="point"/>
-<rect x="1068" y="525.6" width="24" height="24" fill="#111111" class="point"/>
-<rect x="1478" y="271.6" width="24" height="24" fill="#111111" class="point"/>
-<rect x="248" y="291.7" width="24" height="24" fill="#777777" class="point"/>
-<rect x="658" y="409.3" width="24" height="24" fill="#777777" class="point"/>
-<rect x="1068" y="507.9" width="24" height="24" fill="#777777" class="point"/>
-<rect x="1478" y="696.7" width="24" height="24" fill="#777777" class="point"/>
+<polyline points="260,857.1 670,686.8 1080,490.0 1490,180.1" class="series-primary"/>
+<polyline points="260,214.5 670,332.5 1080,468.4 1490,679.4" class="series-secondary"/>
+<rect x="248" y="845.1" width="24" height="24" fill="#111111" class="point"/>
+<rect x="658" y="674.8" width="24" height="24" fill="#111111" class="point"/>
+<rect x="1068" y="478.0" width="24" height="24" fill="#111111" class="point"/>
+<rect x="1478" y="168.1" width="24" height="24" fill="#111111" class="point"/>
+<rect x="248" y="202.5" width="24" height="24" fill="#777777" class="point"/>
+<rect x="658" y="320.5" width="24" height="24" fill="#777777" class="point"/>
+<rect x="1068" y="456.4" width="24" height="24" fill="#777777" class="point"/>
+<rect x="1478" y="667.4" width="24" height="24" fill="#777777" class="point"/>
 <line x1="1210" y1="170" x2="1290" y2="170" class="series-primary"/>
 <text x="1312" y="178" text-anchor="start" class="small">Hidden influence</text>
 <line x1="1210" y1="224" x2="1290" y2="224" class="series-secondary"/>

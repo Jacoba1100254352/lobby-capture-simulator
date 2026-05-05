@@ -1,11 +1,11 @@
 {
   "report": "lobby-capture-interactions",
-  "generatedAt": "2026-05-05T02:16:28.780149Z",
+  "generatedAt": "2026-05-05T02:47:21.893289Z",
   "seed": 342,
   "runs": 25,
   "contestsPerRun": 60,
   "command": "lobbycapture.Main --interactions --runs 25 --contests 60 --seed 342",
-  "gitCommit": "f6ab294",
+  "gitCommit": "7c94ef3",
   "workingTreeDirty": false,
   "workingTreeDirtyScope": "tracked status excluding generated reports, paper tables, paper figures, and 2024-env snapshot outputs",
   "javaVersion": "21.0.7",
