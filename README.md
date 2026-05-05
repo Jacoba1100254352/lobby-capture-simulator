@@ -46,7 +46,7 @@ make wiley-tex-deps
 - `reports/lobby-capture-interactions.csv`
 - `reports/lobby-capture-interactions.md`
 
-Each report run also writes a `*.manifest.json` sidecar with seed, runs, contests, command, Java version, source Git state, and calibration checksum. `make validate` compares committed report snapshots against benchmark plausibility ranges and writes:
+Each report run also writes a `*.manifest.json` sidecar with seed, runs, contests, command, Java version, source Git state, and calibration checksum. The Git-state field excludes tracked generated reports, paper tables, paper figures, and the pinned 2024-env snapshot outputs so rerunning the report suite does not falsely mark later manifests dirty because earlier generated artifacts changed. `make validate` compares committed report snapshots against benchmark plausibility ranges and writes:
 
 - `reports/validation-summary.csv`
 - `reports/validation-summary.md`

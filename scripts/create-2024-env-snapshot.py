@@ -86,8 +86,18 @@ def main() -> int:
         "snapshot": "2024-env",
         "generatedAt": datetime.now(timezone.utc).isoformat(),
         "gitCommit": git("rev-parse", "--short", "HEAD"),
-        "gitTreeState": git_tree_state(exclude_prefixes=(str(args.output) + "/",)),
-        "gitTreeStateScope": f"working tree status excluding generated files under {args.output}/",
+        "gitTreeState": git_tree_state(
+            exclude_prefixes=(
+                str(args.output) + "/",
+                "reports/",
+                "paper/tables/",
+                "paper/figures/",
+            )
+        ),
+        "gitTreeStateScope": (
+            "working tree status excluding generated 2024-env snapshot, reports, "
+            "paper tables, and paper figures"
+        ),
         "scope": {
             "calendarWindow": "2024-01-01/2024-12-31",
             "fecCycle": "2024",

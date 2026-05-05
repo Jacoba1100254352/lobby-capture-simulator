@@ -12,6 +12,13 @@ import java.util.HexFormat;
 import java.util.List;
 
 public final class ReportManifestWriter {
+    private static final List<String> GENERATED_STATUS_PREFIXES = List.of(
+            "reports/",
+            "paper/tables/",
+            "paper/figures/",
+            "data/snapshots/2024-env/"
+    );
+
     private ReportManifestWriter() {
     }
 
@@ -32,7 +39,8 @@ public final class ReportManifestWriter {
         append(builder, "contestsPerRun", Integer.toString(provenance.contestsPerRun()), false, true);
         append(builder, "command", command, true);
         append(builder, "gitCommit", git("rev-parse", "--short", "HEAD"), true);
-        append(builder, "workingTreeDirty", Boolean.toString(!git("status", "--porcelain").isBlank()), false, true);
+        append(builder, "workingTreeDirty", Boolean.toString(!sourceStatus().isBlank()), false, true);
+        append(builder, "workingTreeDirtyScope", "tracked status excluding generated reports, paper tables, paper figures, and 2024-env snapshot outputs", true);
         append(builder, "javaVersion", System.getProperty("java.version"), true);
         append(builder, "calibrationChecksum", checksumDirectory(Path.of("data", "raw")), true);
         appendArray(builder, "reportFiles", reportFiles);
@@ -85,6 +93,37 @@ public final class ReportManifestWriter {
             Thread.currentThread().interrupt();
             return "unknown";
         }
+    }
+
+    private static String sourceStatus() {
+        String status = git("status", "--porcelain");
+        if ("unknown".equals(status)) {
+            return status;
+        }
+        StringBuilder dirty = new StringBuilder();
+        for (String line : status.split("\\R")) {
+            if (line.isBlank()) {
+                continue;
+            }
+            String path = line.length() > 3 ? line.substring(3) : line;
+            if (path.contains(" -> ")) {
+                path = path.substring(path.indexOf(" -> ") + 4);
+            }
+            if (isGeneratedPath(path)) {
+                continue;
+            }
+            dirty.append(line).append('\n');
+        }
+        return dirty.toString();
+    }
+
+    private static boolean isGeneratedPath(String path) {
+        for (String prefix : GENERATED_STATUS_PREFIXES) {
+            if (path.equals(prefix.substring(0, prefix.length() - 1)) || path.startsWith(prefix)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     private static String checksumDirectory(Path directory) throws IOException {
