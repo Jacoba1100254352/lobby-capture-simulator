@@ -6,7 +6,7 @@ TEST_SOURCES := $(shell find src/test/java -name "*.java" | sort)
 MAIN_CLASS := lobbycapture.Main
 TEST_CLASSES := lobbycapture.SmokeTest lobbycapture.AdaptationTest
 
-.PHONY: compile test run campaign sensitivity ablation interactions source-moments calibration-queue validate snapshot-2024-env tables figures paper paper-word-count wiley-template wiley-tex-deps paper-wiley submission-package clean
+.PHONY: compile test run campaign sensitivity ablation interactions source-moments calibration-queue validate snapshot-2024-env tables figures paper paper-word-count wiley-template wiley-tex-deps paper-wiley submission-package paper-artifacts paper-artifacts-check clean
 
 compile:
 	@mkdir -p out/classes
@@ -75,6 +75,12 @@ paper-wiley: tables figures wiley-template
 
 submission-package: paper-wiley paper-word-count
 	./scripts/build-submission-package.sh
+
+paper-artifacts: campaign sensitivity ablation interactions source-moments validate calibration-queue tables figures paper paper-wiley submission-package paper-word-count
+	python3 scripts/check-paper-artifacts.py
+
+paper-artifacts-check: paper-artifacts
+	python3 scripts/check-paper-artifacts.py --git-clean
 
 clean:
 	rm -rf out

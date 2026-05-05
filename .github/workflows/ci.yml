@@ -20,11 +20,9 @@ jobs:
         run: python3 -m py_compile scripts/*.py
       - name: Run tests
         run: make test
-      - name: Regenerate report snapshots and validation artifacts
-        run: make campaign sensitivity ablation interactions source-moments validate calibration-queue tables
       - name: Install paper build dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install -y texlive-latex-recommended texlive-latex-extra texlive-fonts-recommended texlive-bibtex-extra texlive-pictures inkscape poppler-utils
-      - name: Build local paper and check word count
-        run: make paper paper-word-count
+          sudo apt-get install -y texlive-latex-recommended texlive-latex-extra texlive-fonts-recommended texlive-fonts-extra texlive-bibtex-extra texlive-pictures inkscape poppler-utils zip unzip
+      - name: Build and verify paper PDFs and submission package
+        run: make paper-artifacts-check

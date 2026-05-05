@@ -9,7 +9,30 @@ ZIP_PATH="$DIST_DIR/lobby-capture-wiley-submission.zip"
 TEMPLATE_DIR="$PAPER_DIR/.wiley-template/Optimal-Design-layout"
 BUILD_DIR="$PAPER_DIR/.wiley-build"
 
-if [ ! -f "$PAPER_DIR/regulation-governance-wiley.pdf" ]; then
+if ! python3 - "$ROOT_DIR" <<'PY'
+from pathlib import Path
+import sys
+
+root = Path(sys.argv[1])
+paper = root / "paper"
+pdf = paper / "regulation-governance-wiley.pdf"
+build_class = paper / ".wiley-build" / "USG.cls"
+inputs = [
+    paper / "regulation-governance-wiley.tex",
+    paper / "references.bib",
+    root / "scripts" / "build-wiley-paper.sh",
+    *sorted((paper / "sections").glob("*.tex")),
+    *sorted((paper / "tables").glob("*.tex")),
+    *sorted((paper / "figures").glob("*.tex")),
+    *sorted((paper / "figures").glob("Figure_*.pdf")),
+]
+if not pdf.exists() or not build_class.exists():
+    raise SystemExit(1)
+pdf_mtime = pdf.stat().st_mtime
+if any(path.exists() and path.stat().st_mtime > pdf_mtime + 1 for path in inputs):
+    raise SystemExit(1)
+PY
+then
   "$ROOT_DIR/scripts/build-wiley-paper.sh"
 fi
 

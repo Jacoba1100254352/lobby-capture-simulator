@@ -24,6 +24,10 @@ make paper
 make paper-word-count
 make wiley-template
 make wiley-tex-deps
+make paper-wiley
+make submission-package
+make paper-artifacts
+make paper-artifacts-check
 ```
 
 `make campaign` writes:
@@ -109,7 +113,7 @@ It preserves raw public API payloads under ignored `data/raw/source-payloads/202
 
 `make snapshot-2024-env` freezes the current normalized source rows under `data/snapshots/2024-env/` and writes a manifest for the first closed-window paper snapshot: 2024 LDA `ENV`, EPA Regulations.gov/Federal Register activity, the 2024 FEC cycle, EPA fiscal-year 2024 USAspending awards, and the configured revolving-door panel. Live paper snapshots should run the source-native fetchers with those fixed filters before freezing.
 
-`make tables` regenerates LaTeX table files under `paper/tables/` from the committed report CSV snapshots. `make figures` regenerates paper interaction figures under `paper/figures/`. `make paper` runs both generators before building the PDF. Table selection lives in `paper/tables.yml`, so paper row/column/caption edits do not require changing the generator.
+`make tables` regenerates LaTeX table files under `paper/tables/` from the committed report CSV snapshots. `make figures` regenerates paper interaction figures under `paper/figures/`. `make paper` runs both generators before building the local PDF. Table selection lives in `paper/tables.yml`, so paper row/column/caption edits do not require changing the generator.
 
 ## Paper and Submission Target
 
@@ -122,6 +126,8 @@ The Wiley-template path is available but intentionally separate from the default
 - `paper/regulation-governance-wiley.tex` is the Regulation & Governance/Wiley wrapper using Wiley's `USG` class.
 - `make paper-wiley` builds the Wiley wrapper after the official bundle and TeX dependencies are available. It writes ignored scratch files under `paper/.wiley-build/` to work around a BibTeX failure in the current Wiley archive's primary Chicago style file while still using the downloaded Wiley class and template assets.
 - `make submission-package` builds the Wiley wrapper and writes `dist/lobby-capture-wiley-submission.zip` with the root LaTeX file, compiled PDF, patched peer-review class copy, bibliography, generated tables, and generated figure files.
+- `make paper-artifacts` is the full paper refresh target. It reruns the committed report sweeps, source moments, validation, calibration queue, tables, figures, local PDF, Wiley PDF, word count, and submission zip.
+- `make paper-artifacts-check` runs the same refresh and then fails if tracked generated reports, tables, or figures changed. CI uses this target so stale paper inputs cannot pass without rebuilding PDFs and committing regenerated tracked artifacts.
 
 The Wiley build patches only the generated `.wiley-build/USG.cls` copy to remove generic template sample journal art, the sample Open Access badge, and placeholder publication metadata. The downloaded Wiley template remains unmodified under ignored `paper/.wiley-template/`.
 
