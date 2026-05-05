@@ -16,12 +16,13 @@ Working article frame:
 
 ## Figure Plan
 
-Wiley's figure-preparation guidance treats graphs, flowcharts, diagrams, scatter plots, and other text-based figures as line art and lists EPS/PDF as preferred formats. The current manuscript therefore uses generated LaTeX line-art figures rather than bitmap screenshots:
+Wiley's figure-preparation guidance treats graphs, flowcharts, diagrams, scatter plots, and other text-based figures as line art and lists EPS/PDF as preferred formats. Wiley's LaTeX guidance also asks authors to provide electronic graphics files and not create figures using LaTeX code. The current manuscript therefore uses separate generated PDF figure files, with SVG sources retained for reproducibility:
 
-- `paper/figures/channel_mix.tex`: stacked channel-allocation bars for selected scenarios.
-- `paper/figures/evasion_sensitivity.tex`: line chart showing hidden influence rising as evasion freedom increases.
-- `paper/figures/interaction_tradeoffs.tex`: hidden-influence versus net-transparency interaction scatter.
-- `paper/figures/scenario_tradeoffs.tex`: capture-rate versus hidden-influence scenario scatter.
+- `paper/figures/Figure_1_channel_mix.pdf` and `.svg`: stacked channel-allocation bars for selected scenarios.
+- `paper/figures/Figure_2_evasion_sensitivity.pdf` and `.svg`: line chart showing hidden influence rising as evasion freedom increases.
+- `paper/figures/Figure_3_interaction_tradeoffs.pdf` and `.svg`: hidden-influence versus net-transparency interaction scatter.
+- `paper/figures/Figure_4_scenario_tradeoffs.pdf` and `.svg`: capture-rate versus hidden-influence scenario scatter.
+- `paper/figures/channel_mix.tex`, `evasion_sensitivity.tex`, `interaction_tradeoffs.tex`, and `scenario_tradeoffs.tex`: thin LaTeX wrappers that include the PDF graphics and keep captions/labels in the manuscript.
 
 These are intentionally analytical figures, not illustrative decoration. They make the paper's mechanism legible while keeping the source reproducible from committed report CSVs.
 
@@ -34,7 +35,19 @@ Wiley provides a generic LaTeX authoring template for Wiley journals. This repo 
 - `make wiley-template` downloads the official `WileyDesign.zip` bundle into ignored `paper/.wiley-template/`.
 - `make paper-wiley` attempts the Wiley-template build after the official bundle is fetched.
 
-The default build remains `make paper` because the official Wiley template depends on packages that are not always present in TeX Live Basic. The Wiley page also instructs authors to check the specific journal guidance and to submit both a LaTeX source bundle and a compiled PDF when submitting LaTeX through Wiley Research Exchange.
+The default build remains `make paper` because the official Wiley template depends on packages that are not always present in TeX Live Basic. The Wiley page also instructs authors to check the specific journal guidance and to submit both a LaTeX source bundle and a compiled PDF when submitting LaTeX through Wiley Research Exchange. `make figures` requires Inkscape on `PATH` so the generated SVG sources can be converted into Wiley-preferred PDF graphics.
+
+## Submission Formatting Status
+
+Current formatting choices made in the repository:
+
+- author, affiliation, country, and corresponding email are present in the local article and Wiley wrapper;
+- the manuscript includes data/code availability, financial disclosure, conflicts of interest, and AI-use disclosure statements;
+- generated graphs are separate numbered PDF figure files, with legends retained in the manuscript through the LaTeX wrappers;
+- the primary local draft uses `plainnat` author-year citations and a conventional 1-inch-margin article layout for compile stability;
+- the Wiley-specific wrapper uses the official `USG` class once the downloaded template and full TeX package set are available.
+
+Before live submission, re-check the Regulation & Governance author page in Wiley Online Library under Contribute because Wiley notes that journal-specific instructions override generic Wiley guidance.
 
 On this machine, `make paper-wiley` fetches the official bundle successfully but reports a smaller local TeX install: `dashrule.sty`, `multirow.sty`, `cuted.sty`, `floatpag.sty`, `dblfloatfix.sty`, `soul.sty`, `xargs.sty`, `tcolorbox.sty`, `varwidth.sty`, `tikzpagenodes.sty`, `boites.sty`, and `wrapfig.sty` are missing. The local submission draft should therefore continue to use `make paper` until those packages or a fuller TeX Live installation are available.
 
@@ -78,5 +91,7 @@ The practical reason not to use ACM now is that ACM's template is production inf
 - Congress Institutional Simulator ACM paper reference: `/Users/jacobanderson/Documents/simulators/Congress Institutional Simulator/paper/README.md`
 - Wiley figure-preparation guidance: <https://authorservices-ppd.wiley.com/author-resources/Journal-Authors/Prepare/manuscript-preparation-guidelines.html/figure-preparation.html>
 - Wiley LaTeX authoring template: <https://authors.wiley.com/author-resources/Journal-Authors/Prepare/latex-template.html>
+- Wiley submission help and data-availability guidance: <https://authors.wiley.com/help/submitting-your-manuscript.html>
+- Wiley publishing ethics and AI disclosure guidance: <https://authors.wiley.com/ethics-guidelines/index.html>
 - Wiley template bundle used by `make wiley-template`: <https://authors.wiley.com/asset/WileyDesign.zip>
 - ACM LaTeX article-preparation guidance: <https://authors.acm.org/proceedings/production-information/preparing-your-article-with-latex>

@@ -28,7 +28,7 @@ The simulator now has a lobbying-centered MVP with calibration fixtures, source-
 - `make source-moments` records direct source-level top-k concentration, traceability, and comment-record moments.
 - `make calibration-queue` classifies validation misses and partial overlaps into actionable work categories.
 - `make tables` regenerates paper table inputs from report CSV snapshots using `paper/tables.yml`.
-- `make figures` regenerates the paper interaction tradeoff figure.
+- `make figures` regenerates the paper's numbered SVG/PDF figure assets and LaTeX wrappers.
 - Adaptive institutions now include per-client/per-domain funding memory, regulator queue pressure, watchdog monitoring budget allocation, adaptation speed, and reform-decay pressure.
 - The paper now has a Regulation & Governance framing, a Wiley-template wrapper, a word-count check, and a separate submission strategy note.
 

@@ -1,0 +1,54 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1800px" height="1100px" viewBox="0 0 1800 1100" role="img">
+<title>Sensitivity to evasion freedom</title>
+<desc>Line chart showing hidden influence rising as evasion freedom increases and net transparency gain falling.</desc>
+<style>
+text { font-family: Helvetica, Arial, sans-serif; font-size: 34px; fill: #111; }
+.title { font-size: 46px; font-weight: 700; }
+.subtitle { font-size: 30px; fill: #444; }
+.small, .tick, .label { font-size: 28px; }
+.axis { stroke: #111; stroke-width: 5; fill: none; }
+.grid { stroke: #d8d8d8; stroke-width: 3; fill: none; }
+.segment, .point, .legend-swatch { stroke: #111; stroke-width: 2; }
+.series-primary { stroke: #111; stroke-width: 8; fill: none; }
+.series-secondary { stroke: #777; stroke-width: 8; fill: none; stroke-dasharray: 24 18; }
+</style>
+<rect width="100%" height="100%" fill="#fff"/>
+<text x="70" y="72" text-anchor="start" class="title">Sensitivity to evasion freedom</text>
+<text x="70" y="122" text-anchor="start" class="subtitle">Hidden influence and transparency response</text>
+<line x1="260" y1="170" x2="260" y2="890" class="grid"/>
+<text x="260" y="938" text-anchor="middle" class="tick">0</text>
+<line x1="670" y1="170" x2="670" y2="890" class="grid"/>
+<text x="670" y="938" text-anchor="middle" class="tick">0.3</text>
+<line x1="1080" y1="170" x2="1080" y2="890" class="grid"/>
+<text x="1080" y="938" text-anchor="middle" class="tick">0.6</text>
+<line x1="1490" y1="170" x2="1490" y2="890" class="grid"/>
+<text x="1490" y="938" text-anchor="middle" class="tick">0.9</text>
+<line x1="260" y1="890" x2="1490" y2="890" class="grid"/>
+<text x="220" y="900" text-anchor="end" class="tick">0.0</text>
+<line x1="260" y1="710" x2="1490" y2="710" class="grid"/>
+<text x="220" y="720" text-anchor="end" class="tick">0.1</text>
+<line x1="260" y1="530" x2="1490" y2="530" class="grid"/>
+<text x="220" y="540" text-anchor="end" class="tick">0.2</text>
+<line x1="260" y1="350" x2="1490" y2="350" class="grid"/>
+<text x="220" y="360" text-anchor="end" class="tick">0.3</text>
+<line x1="260" y1="170" x2="1490" y2="170" class="grid"/>
+<text x="220" y="180" text-anchor="end" class="tick">0.4</text>
+<line x1="260" y1="890" x2="1490" y2="890" class="axis"/>
+<line x1="260" y1="170" x2="260" y2="890" class="axis"/>
+<text x="875" y="994" text-anchor="middle">Evasion freedom</text>
+<text x="80" y="530" text-anchor="middle" transform="rotate(-90 80 530)">Share / gain</text>
+<polyline points="260,860.5 670,716.1 1080,537.6 1490,283.6" class="series-primary"/>
+<polyline points="260,303.7 670,421.3 1080,519.9 1490,708.7" class="series-secondary"/>
+<rect x="248" y="848.5" width="24" height="24" fill="#111111" class="point"/>
+<rect x="658" y="704.1" width="24" height="24" fill="#111111" class="point"/>
+<rect x="1068" y="525.6" width="24" height="24" fill="#111111" class="point"/>
+<rect x="1478" y="271.6" width="24" height="24" fill="#111111" class="point"/>
+<rect x="248" y="291.7" width="24" height="24" fill="#777777" class="point"/>
+<rect x="658" y="409.3" width="24" height="24" fill="#777777" class="point"/>
+<rect x="1068" y="507.9" width="24" height="24" fill="#777777" class="point"/>
+<rect x="1478" y="696.7" width="24" height="24" fill="#777777" class="point"/>
+<line x1="1210" y1="170" x2="1290" y2="170" class="series-primary"/>
+<text x="1312" y="178" text-anchor="start" class="small">Hidden influence</text>
+<line x1="1210" y1="224" x2="1290" y2="224" class="series-secondary"/>
+<text x="1312" y="232" text-anchor="start" class="small">Net transparency</text>
+</svg>
