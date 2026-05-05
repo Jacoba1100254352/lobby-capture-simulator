@@ -170,15 +170,20 @@ def source_status(source: str, live_status: list[dict[str, str]]) -> tuple[str, 
 
 
 def git(*args: str) -> str:
+    output = git_raw(*args)
+    return output.strip() if output is not None else "unknown"
+
+
+def git_raw(*args: str) -> str | None:
     try:
-        return subprocess.check_output(("git", *args), text=True).strip()
+        return subprocess.check_output(("git", *args), text=True)
     except (OSError, subprocess.CalledProcessError):
-        return "unknown"
+        return None
 
 
 def git_tree_state(exclude_prefixes: tuple[str, ...] = ()) -> str:
-    status = git("status", "--short")
-    if status == "unknown":
+    status = git_raw("status", "--short")
+    if status is None:
         return "unknown"
     dirty_paths = []
     for line in status.splitlines():

@@ -77,6 +77,11 @@ public final class ReportManifestWriter {
     }
 
     private static String git(String... args) {
+        String output = gitRaw(args);
+        return output == null ? "unknown" : output.trim();
+    }
+
+    private static String gitRaw(String... args) {
         try {
             List<String> command = new ArrayList<>();
             command.add("git");
@@ -86,19 +91,19 @@ public final class ReportManifestWriter {
                     .start();
             String output = new String(process.getInputStream().readAllBytes(), StandardCharsets.UTF_8);
             int status = process.waitFor();
-            return status == 0 ? output.trim() : "unknown";
+            return status == 0 ? output : null;
         } catch (IOException exception) {
-            return "unknown";
+            return null;
         } catch (InterruptedException exception) {
             Thread.currentThread().interrupt();
-            return "unknown";
+            return null;
         }
     }
 
     private static String sourceStatus() {
-        String status = git("status", "--porcelain");
-        if ("unknown".equals(status)) {
-            return status;
+        String status = gitRaw("status", "--porcelain");
+        if (status == null) {
+            return "unknown";
         }
         StringBuilder dirty = new StringBuilder();
         for (String line : status.split("\\R")) {
