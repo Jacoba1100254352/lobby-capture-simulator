@@ -1,11 +1,11 @@
 {
   "report": "lobby-capture-campaign",
-  "generatedAt": "2026-05-05T02:47:18.086863Z",
+  "generatedAt": "2026-05-05T00:00:00Z",
   "seed": 42,
   "runs": 40,
   "contestsPerRun": 80,
   "command": "lobbycapture.Main --campaign --runs 40 --contests 80 --seed 42",
-  "gitCommit": "7c94ef3",
+  "gitCommit": "tracked-artifact-build",
   "workingTreeDirty": false,
   "workingTreeDirtyScope": "tracked status excluding generated reports, paper tables, paper figures, and 2024-env snapshot outputs",
   "javaVersion": "21.0.7",

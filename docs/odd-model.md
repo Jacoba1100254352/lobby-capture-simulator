@@ -1,26 +1,161 @@
-# ODD Model Sketch
+# ODD Model Description
+
+This document is the supporting-information model description for the Lobby Capture Simulator. It follows the spirit of the ODD protocol: purpose, entities, state variables, process overview, scheduling, design concepts, initialization, inputs, submodels, and outputs.
 
 ## Purpose
 
-The model compares how organized interests allocate influence budgets under ordinary policy capture opportunities and under anti-capture reform threats.
+The model compares how organized interests allocate influence budgets under ordinary policy capture opportunities and under anti-capture reform threats. Its main question is whether reforms reduce capture or shift influence into less visible channels. It is a mechanism model, not a causal estimate of any single statute, agency rule, or campaign-finance law.
 
-## Entities
+## Entities and State Variables
 
-Primary strategic entities are lobby organizations. Target entities include public officials, regulators, candidates, enforcement agencies, and public-information systems. Policy contests can represent statutes, agency rules, enforcement priorities, procurement decisions, litigation posture, or reform proposals.
+### Lobby Organization
 
-## Process Overview
+Lobby organizations are the central adaptive actors.
 
-Each tick generates or selects a policy contest. Lobby organizations allocate finite budgets across influence channels. Arenas resolve the contest using public-interest, capture, reform, disclosure, enforcement, and arena-specific susceptibility terms. Lobby organizations observe returns and adapt future channel choices.
+- Identity and scope: `id`, name, issue-domain preferences, baseline influence intensity.
+- Budget state: total budget, channel-specific accounts, donor/client replenishment, defensive reform budget, disclosure lag, traceability.
+- Capability state: direct access capital, technical expertise, public campaign skill, information-bias skill, astroturf skill, litigation skill, revolving-door network strength, disclosure-avoidance skill.
+- Adaptation state: channel return memory, issue-specific funding multipliers, evasion profile, reform-threat sensitivity, defensive spending multiplier.
+- Output state: spend records, money-flow records, hidden influence, influence preservation, messenger substitution, venue substitution, evasion shift.
+
+### Interest Client and Funding Source
+
+Interest clients replenish lobby budgets when expected private gain, regulatory exposure, procurement exposure, or reform threat justifies spending.
+
+- Client state: issue domain, expected private gain, exposure to contests, secrecy preference, reputational risk tolerance.
+- Funding-source state: source type, amount, traceability, disclosure lag, legal risk, reputational risk, contest link.
+- Flow state: source-to-lobby transfers are recorded in the contribution ledger and later summarized as donor concentration, large-donor dependence, dark-money share, public-financing share, and traceability.
+
+### Public Official, Regulator, Candidate, and Enforcement Agency
+
+Target institutions define the contest arena and reform controls.
+
+- Public officials: access susceptibility, agenda susceptibility, public backlash sensitivity.
+- Regulators: queue pressure, technical review capacity, rulemaking susceptibility, enforcement attention.
+- Candidates: campaign finance susceptibility, public-financing uptake, voucher participation.
+- Enforcement agencies: audit probability, enforcement budget, sanction strength, false-positive cost, appeal delay, backlog.
+
+### Watchdog and Public Advocate
+
+Watchdogs and public advocates provide countervailing monitoring and review capacity.
+
+- Watchdog state: attention budget, monitoring priority by issue, detection support, public-signal amplification.
+- Public-advocate state: review capacity, blind-review strength, comment-record filtering, technical counterexpertise.
+
+### Policy Contest and Arena
+
+A policy contest is the unit of resolution. It can represent legislation, agency drafting, notice-and-comment rulemaking, enforcement priority, procurement, litigation posture, election pressure, or anti-capture reform.
+
+- Contest state: issue domain, arena type, public benefit, private gain, baseline capture risk, public salience, technical complexity, reform relevance, procurement exposure, enforcement exposure.
+- Arena state: susceptibility parameters for election, legislative, rulemaking, enforcement, litigation, procurement, and public-information arenas.
+- Docket state for rulemaking: comment volume, template saturation, authentication confidence, technical-claim credibility, unique-information share, procedural acknowledgement, review burden, substantive uptake.
+
+### Reform Regime
+
+The reform regime changes channel costs, visibility, and enforcement.
+
+- Transparency controls: disclosure strength, real-time contact transparency, contact logs, beneficial-owner disclosure, dark-money disclosure.
+- Participation controls: public financing, democracy vouchers, contribution limits, public advocates, blind review.
+- Employment and access controls: lobbying bans, cooling-off rules, revolving-door restrictions.
+- Process controls: anti-astroturf authentication, audits, sanctions, enforcement budgets, appeal delay, defensive-spending caps, constitutional challenge risk.
+
+## Process Overview and Scheduling
+
+Each simulation tick resolves one selected policy contest. Report runners aggregate many contests across many runs.
+
+1. Select a contest from the scenario contest mix using the seeded random source.
+2. Replenish lobby budgets through client funding when expected private gain, exposure, secrecy needs, or reform threat justify additional money.
+3. For each lobby organization, compute substitution pressure and choose channel allocations subject to channel budgets and reform controls.
+4. Apply channel effects to the contest state: public support, public benefit, private gain, agenda pressure, information distortion, campaign-finance pressure, dark-money influence, litigation threat, revolving-door influence, technical comment quality, defensive anti-reform pressure, and hidden influence.
+5. If the contest has a rulemaking docket, generate and triage public comments into unique content, organized technical content, template saturation, and astroturf or misattributed comments.
+6. Resolve the contest in its arena by combining contest vulnerability, arena susceptibility, channel pressure, reform controls, public backlash, and stochastic noise.
+7. Apply enforcement detection and sanctions. Detection can reverse or reduce a capture outcome and imposes evasion penalties.
+8. Update lobby strategy memory, issue-specific funding multipliers, regulator attention, watchdog focus, adaptation speed, and reform-decay pressure.
+9. Record metrics for the scenario report and manifest.
 
 ## Design Concepts
 
-The central concepts are budget scarcity, information asymmetry, channel substitution, reform evasion, defensive anti-reform spending, public backlash, and enforcement deterrence.
+- Budget scarcity: influence is allocated across channels rather than applied as a scalar.
+- Channel substitution: when one channel becomes costly or visible, actors shift to adjacent routes that preserve messengers, relationships, or objectives.
+- Hidden influence: reforms can reduce observed capture while preserving influence capacity in less visible channels.
+- Defensive reform spending: anti-capture reform threats can mobilize lobbying that targets the reform itself.
+- Information asymmetry: rulemaking and low-salience technical contests are more vulnerable to expertise capture and comment-record distortion.
+- Public backlash: transparency and public salience can reduce capture pressure when visible influence generates backlash.
+- Enforcement deterrence: evasion is valuable only if opacity gains exceed expected detection, sanctions, legal cost, and disclosure cost.
+- Adaptive memory: successful channels receive higher future allocation weight; failed or detected channels lose weight.
 
 ## Initialization
 
-Scenarios define lobby groups, reform regimes, spend scale, channel adaptability, and contest mixes. Seeded random sources make runs reproducible.
+Scenarios define lobby organizations, interest clients, contest mixes, reform regimes, channel incentives, arena susceptibility, evasion freedom, and adaptation strength. The default calibration profile loads deterministic fixtures or normalized public-data snapshots from `data/raw/` and `data/snapshots/`. Seeded random sources make report runs reproducible.
+
+Main report targets use fixed run designs:
+
+- Campaign snapshot: 40 runs, 80 contests per run, seed 42.
+- Sensitivity snapshot: 30 runs, 70 contests per run, seed 142.
+- Ablation snapshot: 40 runs, 80 contests per run, seed 242.
+- Interaction snapshot: 25 runs, 60 contests per run, seed 342.
+
+Each report manifest records the command, seed, run count, contest count, Java version, Git state, and calibration checksum.
+
+## Input Data and Calibration Mapping
+
+External data constrain plausible ranges and schema behavior. They do not identify causal reform effects.
+
+- LDA rows constrain issue funding scale, registrant/client concentration, issue-domain mix, and disclosure lag.
+- FEC rows constrain donor concentration, public-financing share, traceability, and large-donor dependence.
+- Federal Register and Regulations.gov rows constrain docket volume, comment authenticity, template saturation, and technical-claim credibility.
+- USAspending rows constrain procurement-recipient and awarding-agency concentration.
+- Revolving-door rows currently provide a fixture-backed schema continuity check unless a licensed/exported source panel is configured.
+- Seattle voucher and public-financing benchmarks constrain participation and candidate uptake ranges.
+
+The file `data/calibration/parameter-map.csv` records the intended low, middle, and high ranges, evidence class, source report, model target, and implementation status for each validation-facing quantity.
+
+## Submodels
+
+### Client Funding
+
+Client funding is proportional to lobby issue preference, client exposure, issue scale, private gain, and reform-threat pressure, then clipped to the scenario maximum. Funding flows retain source type, traceability, lag, legal risk, reputational risk, and contest linkage.
+
+### Channel Allocation
+
+Lobby organizations allocate spend to direct access, agenda access, information distortion, public campaign, litigation threat, campaign finance, dark money, revolving door, and defensive reform spending. Channel weights combine the active strategy, issue preference, influence intensity, learned return memory, and evasion or reform-threat adjustments.
+
+### Rulemaking Comment Triage
+
+Rulemaking contests create dockets. Comment campaigns can produce genuine public comments, sponsored technical comments, templates, synthetic comments, or misattributed comments. The triage model estimates authenticity, duplicate compression, unique-information share, review burden, technical credibility, procedural acknowledgement, and substantive uptake.
+
+### Substitution Engine
+
+The substitution engine calculates a switch score from expected substitute influence, messenger credibility, anonymity value, venue overlap, legal cost, disclosure cost, and setup time. It reports substitution pressure, influence preservation, hidden influence, messenger substitution, venue substitution, and net transparency gain.
+
+### Contest Resolution
+
+Non-reform contests combine baseline capture risk, arena susceptibility, channel pressure, reform controls, public backlash, and bounded stochastic noise. Anti-capture contests compare public reform pressure against defensive lobbying, litigation delay, and constitutional challenge risk.
+
+### Enforcement
+
+Enforcement probability increases with audit rate, enforcement budget, sanctions, public visibility, and evasion legal risk. Detected capture attempts can be reduced or reversed and generate penalties that affect future adaptation.
 
 ## Outputs
 
-Reports include capture rates, anti-capture reform success, channel spend shares, defensive spending, public-preference distortion, dark-money traceability, donor dependence, revolving-door influence, enforcement detection, sanctions, and composite directional scores.
+Scenario reports include:
 
+- capture rate and captured-contest counts;
+- anti-capture reform success;
+- channel spend shares;
+- defensive reform spending;
+- hidden influence and influence preservation;
+- messenger, venue, and evasion substitution;
+- public-preference distortion;
+- comment authenticity, template saturation, compression, and substantive uptake;
+- dark-money traceability and donor concentration;
+- revolving-door influence;
+- procurement bias;
+- detection, sanctions, and backlog;
+- Wilson intervals for binomial capture and reform-success outcomes.
+
+Generated paper tables and figures are derived from committed report CSVs. The full report snapshots, source moments, validation summary, and calibration queue remain in the repository and are included in the Wiley submission support bundle.
+
+## Known Boundaries
+
+The current model is strongest as a comparative mechanism prototype. The 2024 EPA/ENV source snapshot is not yet representative for dark-money, public-financing, or revolving-door calibration. Several full-bundle reform scenarios sit in a saturated anti-capture region, so the current paper emphasizes substitution diagnostics rather than definitive reform rankings.

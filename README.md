@@ -129,6 +129,8 @@ The Wiley-template path is available but intentionally separate from the default
 - `make paper-artifacts` is the full paper refresh target. It reruns the committed report sweeps, source moments, validation, calibration queue, tables, figures, local PDF, Wiley PDF, word count, and submission zip.
 - `make paper-artifacts-check` runs the same refresh and then verifies the local PDF, Wiley PDF, and submission zip are present, fresh relative to their inputs, and free of generic Wiley-template placeholder text. CI uses this target so stale paper inputs cannot pass without rebuilding the PDFs and submission package.
 
+Makefile report targets set deterministic `LOBBY_CAPTURE_REPORT_TIMESTAMP` and `LOBBY_CAPTURE_REPORT_GIT_COMMIT` values so committed CSV, Markdown, and manifest artifacts can be regenerated without timestamp/provenance-only diffs. Direct `java -cp out/classes lobbycapture.Main ...` runs still use the live clock and current Git commit unless those variables or `SOURCE_DATE_EPOCH` are set.
+
 The Wiley build patches only the generated `.wiley-build/USG.cls` copy to remove generic template sample journal art, the sample Open Access badge, and placeholder publication metadata. The downloaded Wiley template remains unmodified under ignored `paper/.wiley-template/`.
 
 Submission strategy details live in `docs/submission-strategy.md`.

@@ -1,5 +1,8 @@
 JAVAC ?= javac
 JAVA ?= java
+REPORT_GENERATED_AT ?= 2026-05-05T00:00:00Z
+REPORT_GIT_COMMIT ?= tracked-artifact-build
+REPORT_ENV := LOBBY_CAPTURE_REPORT_TIMESTAMP=$(REPORT_GENERATED_AT) LOBBY_CAPTURE_REPORT_GIT_COMMIT=$(REPORT_GIT_COMMIT)
 
 MAIN_SOURCES := $(shell find src/main/java -name "*.java" | sort)
 TEST_SOURCES := $(shell find src/test/java -name "*.java" | sort)
@@ -24,16 +27,16 @@ run: compile
 	$(JAVA) -cp out/classes $(MAIN_CLASS) $(ARGS)
 
 campaign: compile
-	$(JAVA) -cp out/classes $(MAIN_CLASS) --campaign --runs 40 --contests 80 --seed 42
+	$(REPORT_ENV) $(JAVA) -cp out/classes $(MAIN_CLASS) --campaign --runs 40 --contests 80 --seed 42
 
 sensitivity: compile
-	$(JAVA) -cp out/classes $(MAIN_CLASS) --sensitivity --runs 30 --contests 70 --seed 142
+	$(REPORT_ENV) $(JAVA) -cp out/classes $(MAIN_CLASS) --sensitivity --runs 30 --contests 70 --seed 142
 
 ablation: compile
-	$(JAVA) -cp out/classes $(MAIN_CLASS) --ablation --runs 40 --contests 80 --seed 242
+	$(REPORT_ENV) $(JAVA) -cp out/classes $(MAIN_CLASS) --ablation --runs 40 --contests 80 --seed 242
 
 interactions: compile
-	$(JAVA) -cp out/classes $(MAIN_CLASS) --interactions --runs 25 --contests 60 --seed 342
+	$(REPORT_ENV) $(JAVA) -cp out/classes $(MAIN_CLASS) --interactions --runs 25 --contests 60 --seed 342
 
 source-moments:
 	python3 scripts/extract-source-moments.py

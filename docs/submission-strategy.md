@@ -35,9 +35,9 @@ Wiley provides a generic LaTeX authoring template for Wiley journals. This repo 
 - `make wiley-template` downloads the official `WileyDesign.zip` bundle into ignored `paper/.wiley-template/`.
 - `make wiley-tex-deps` installs the extra Wiley-template packages into the user TeX tree through `tlmgr --usermode`.
 - `make paper-wiley` attempts the Wiley-template build after the official bundle is fetched.
-- `make submission-package` creates `dist/lobby-capture-wiley-submission.zip` with the root LaTeX file, compiled PDF, generated tables, generated figure files, bibliography, Wiley support files, and patched peer-review class copy.
+- `make submission-package` creates `dist/lobby-capture-wiley-submission.zip` with root-level LaTeX source, compiled PDF, generated tables, generated figure files, supporting information files, bibliography, Wiley support files, and patched peer-review class copy.
 - `make paper-artifacts` is the normal post-edit refresh path: it reruns report sweeps, source moments, validation, calibration queue, generated tables, generated figures, the local PDF, the Wiley PDF, word count, and the submission zip.
-- `make paper-artifacts-check` is the PDF/submission guard: it runs the full refresh, verifies the local and Wiley PDFs exist and are newer than their paper inputs, checks the submission zip contents, and screens the Wiley PDF for generic template placeholder text.
+- `make paper-artifacts-check` is the PDF/submission guard: it runs the full refresh, verifies the local and Wiley PDFs exist and are newer than their paper inputs, checks the submission zip contents, compiles the extracted submission zip from its root, and screens the Wiley PDF for generic template placeholder text.
 
 The default build remains `make paper` because it is faster and uses the local article wrapper, but the Wiley wrapper is now reproducible after `make wiley-template wiley-tex-deps`. The build script creates ignored scratch files under `paper/.wiley-build/`, patches only the generated class copy to remove generic template sample journal art and placeholder publication metadata, and exposes Wiley's bundled `wileyNJD-Chicago-lastoo.bst` fallback under the class-required `wileyNJD-Chicago.bst` name; the primary `.bst` bundled in the current Wiley archive emits duplicate-function BibTeX errors on TeX Live 2026. The Wiley page also instructs authors to check the specific journal guidance and to submit both a LaTeX source bundle and a compiled PDF when submitting LaTeX through Wiley Research Exchange. `make figures` requires Inkscape on `PATH` so the generated SVG sources can be converted into Wiley-preferred PDF graphics.
 
@@ -51,7 +51,7 @@ Current formatting choices made in the repository:
 - the primary local draft uses `plainnat` author-year citations and a conventional 1-inch-margin article layout for compile stability;
 - the Wiley-specific wrapper uses the official `USG` class once the downloaded template and full TeX package set are available;
 - generated tables are set as wide table floats without `resizebox` scaling so the Wiley two-column reviewer PDF stays readable;
-- CI runs Java 21 tests and `make paper-artifacts-check`, which rebuilds report snapshots, validation outputs, generated tables, generated figures, the local PDF, the Wiley PDF, word count, and the Wiley submission package before checking PDF freshness and package contents.
+- CI runs Java 21 tests and `make paper-artifacts-check`, which rebuilds report snapshots, validation outputs, generated tables, generated figures, the local PDF, the Wiley PDF, word count, and the Wiley submission package before checking PDF freshness, package contents, and standalone package compilation. CI then runs `git diff --exit-code` so regenerated tracked artifacts cannot drift silently.
 
 Before live submission, re-check the Regulation & Governance author page in Wiley Online Library under Contribute because Wiley notes that journal-specific instructions override generic Wiley guidance.
 

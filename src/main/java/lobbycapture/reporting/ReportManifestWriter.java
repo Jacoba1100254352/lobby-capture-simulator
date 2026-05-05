@@ -38,7 +38,7 @@ public final class ReportManifestWriter {
         append(builder, "runs", Integer.toString(provenance.runs()), false, true);
         append(builder, "contestsPerRun", Integer.toString(provenance.contestsPerRun()), false, true);
         append(builder, "command", command, true);
-        append(builder, "gitCommit", git("rev-parse", "--short", "HEAD"), true);
+        append(builder, "gitCommit", configured("LOBBY_CAPTURE_REPORT_GIT_COMMIT", git("rev-parse", "--short", "HEAD")), true);
         append(builder, "workingTreeDirty", Boolean.toString(!sourceStatus().isBlank()), false, true);
         append(builder, "workingTreeDirtyScope", "tracked status excluding generated reports, paper tables, paper figures, and 2024-env snapshot outputs", true);
         append(builder, "javaVersion", System.getProperty("java.version"), true);
@@ -79,6 +79,11 @@ public final class ReportManifestWriter {
     private static String git(String... args) {
         String output = gitRaw(args);
         return output == null ? "unknown" : output.trim();
+    }
+
+    private static String configured(String name, String fallback) {
+        String value = System.getenv(name);
+        return value == null || value.isBlank() ? fallback : value;
     }
 
     private static String gitRaw(String... args) {

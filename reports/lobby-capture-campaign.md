@@ -1,6 +1,6 @@
 # Lobby Capture Campaign
 
-- Generated: `2026-05-05T02:47:18.086863Z`
+- Generated: `2026-05-05T00:00:00Z`
 - Seed: `42`
 - Runs per scenario: `40`
 - Contests per run: `80`

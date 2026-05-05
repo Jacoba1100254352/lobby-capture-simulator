@@ -4,8 +4,10 @@
 from __future__ import annotations
 
 import os
+import shutil
 import subprocess
 import sys
+import tempfile
 import zipfile
 from pathlib import Path
 
@@ -19,22 +21,29 @@ WILEY_PDF = PAPER / "regulation-governance-wiley.pdf"
 SUBMISSION_ZIP = DIST / "lobby-capture-wiley-submission.zip"
 
 EXPECTED_ZIP_MEMBERS = {
-    "lobby-capture-wiley-submission/main.tex",
-    "lobby-capture-wiley-submission/main.pdf",
-    "lobby-capture-wiley-submission/references.bib",
-    "lobby-capture-wiley-submission/USG.cls",
-    "lobby-capture-wiley-submission/wileyNJD-Chicago.bst",
-    "lobby-capture-wiley-submission/SUBMISSION_README.txt",
-    "lobby-capture-wiley-submission/sections/reggov-body.tex",
-    "lobby-capture-wiley-submission/sections/submission-declarations.tex",
-    "lobby-capture-wiley-submission/tables/campaign_snapshot.tex",
-    "lobby-capture-wiley-submission/tables/sensitivity_snapshot.tex",
-    "lobby-capture-wiley-submission/tables/ablation_snapshot.tex",
-    "lobby-capture-wiley-submission/tables/interaction_snapshot.tex",
-    "lobby-capture-wiley-submission/figures/Figure_1_channel_mix.pdf",
-    "lobby-capture-wiley-submission/figures/Figure_2_evasion_sensitivity.pdf",
-    "lobby-capture-wiley-submission/figures/Figure_3_interaction_tradeoffs.pdf",
-    "lobby-capture-wiley-submission/figures/Figure_4_scenario_tradeoffs.pdf",
+    "main.tex",
+    "main.pdf",
+    "references.bib",
+    "USG.cls",
+    "lettersp.sty",
+    "wileyNJD-Chicago.bst",
+    "SUBMISSION_README.txt",
+    "sections/reggov-body.tex",
+    "sections/submission-declarations.tex",
+    "tables/campaign_snapshot.tex",
+    "tables/sensitivity_snapshot.tex",
+    "tables/ablation_snapshot.tex",
+    "tables/interaction_snapshot.tex",
+    "figures/Figure_1_channel_mix.pdf",
+    "figures/Figure_2_evasion_sensitivity.pdf",
+    "figures/Figure_3_interaction_tradeoffs.pdf",
+    "figures/Figure_4_scenario_tradeoffs.pdf",
+    "supporting-information/ODD-model.md",
+    "supporting-information/scenario-catalog.md",
+    "supporting-information/validation-plan.md",
+    "supporting-information/source-moments.md",
+    "supporting-information/validation-summary.md",
+    "supporting-information/calibration-queue.md",
 }
 
 
@@ -44,6 +53,7 @@ def main() -> int:
     failures.extend(check_freshness())
     failures.extend(check_wiley_text())
     failures.extend(check_submission_zip())
+    failures.extend(check_submission_zip_compiles())
 
     if failures:
         print("Paper artifact check failed:", file=sys.stderr)
@@ -107,6 +117,15 @@ def submission_inputs() -> list[Path]:
         PAPER / "regulation-governance-wiley.tex",
         PAPER / "references.bib",
         ROOT / "scripts" / "build-submission-package.sh",
+        ROOT / "docs" / "odd-model.md",
+        ROOT / "docs" / "scenario-catalog.md",
+        ROOT / "docs" / "validation.md",
+        ROOT / "reports" / "source-moments.md",
+        ROOT / "reports" / "validation-summary.md",
+        ROOT / "reports" / "calibration-queue.md",
+        PAPER / ".wiley-build" / "USG.cls",
+        PAPER / ".wiley-build" / "wileyNJD-Chicago.bst",
+        PAPER / ".wiley-template" / "Optimal-Design-layout" / "LETTERSP.STY",
         *sorted((PAPER / "sections").glob("*.tex")),
         *sorted((PAPER / "tables").glob("*.tex")),
         *sorted((PAPER / "figures").glob("*.tex")),
@@ -148,11 +167,84 @@ def check_submission_zip() -> list[str]:
                 for member in sorted(EXPECTED_ZIP_MEMBERS - names)
             ]
             with WILEY_PDF.open("rb") as pdf:
-                if archive.read("lobby-capture-wiley-submission/main.pdf") != pdf.read():
+                if archive.read("main.pdf") != pdf.read():
                     failures.append("submission zip main.pdf differs from paper/regulation-governance-wiley.pdf")
             return failures
     except (OSError, KeyError, zipfile.BadZipFile) as error:
         return [f"could not inspect submission zip: {error}"]
+
+
+def check_submission_zip_compiles() -> list[str]:
+    if not SUBMISSION_ZIP.exists():
+        return []
+    required = ["pdflatex", "bibtex"]
+    missing = [binary for binary in required if shutil.which(binary) is None]
+    if missing:
+        return [f"could not compile submission zip; missing binaries: {', '.join(missing)}"]
+
+    with tempfile.TemporaryDirectory(prefix="lobby-capture-submission-") as temp_dir:
+        temp = Path(temp_dir)
+        try:
+            with zipfile.ZipFile(SUBMISSION_ZIP) as archive:
+                archive.extractall(temp)
+        except (OSError, zipfile.BadZipFile) as error:
+            return [f"could not extract submission zip for compile check: {error}"]
+
+        env = os.environ.copy()
+        for key in ("TEXINPUTS", "BIBINPUTS", "BSTINPUTS"):
+            env.pop(key, None)
+        commands = [
+            ["pdflatex", "-interaction=nonstopmode", "main.tex"],
+            ["bibtex", "main"],
+            ["pdflatex", "-interaction=nonstopmode", "main.tex"],
+            ["pdflatex", "-interaction=nonstopmode", "main.tex"],
+        ]
+        for command in commands:
+            result = subprocess.run(
+                command,
+                cwd=temp,
+                env=env,
+                text=True,
+                stdout=subprocess.PIPE,
+                stderr=subprocess.STDOUT,
+            )
+            if command[0] == "pdflatex" and is_nonfatal_latex_pass(result.stdout, temp / "main.pdf"):
+                continue
+            if result.returncode != 0:
+                tail = "\n".join(result.stdout.splitlines()[-20:])
+                return [
+                    "submission zip does not compile from extracted root with "
+                    f"`{' '.join(command)}`:\n{tail}"
+                ]
+        final_log = temp / "main.log"
+        if not final_log.exists():
+            return ["submission zip compile check did not produce main.log"]
+        log_text = final_log.read_text(encoding="utf-8", errors="replace")
+        unresolved_markers = [
+            "There were undefined citations",
+            "Citation(s) may have changed",
+            "There were undefined references",
+            "Rerun to get cross-references right",
+        ]
+        failures = [marker for marker in unresolved_markers if marker in log_text]
+        if failures:
+            return [
+                "submission zip compile ended with unresolved LaTeX state: "
+                + ", ".join(failures)
+            ]
+    return []
+
+
+def is_nonfatal_latex_pass(output: str, pdf_path: Path) -> bool:
+    if "Output written on main.pdf" not in output or not pdf_path.exists():
+        return False
+    fatal_markers = [
+        "! LaTeX Error:",
+        "! Emergency stop.",
+        "Fatal error occurred",
+        " ==> Fatal error occurred",
+    ]
+    return not any(marker in output for marker in fatal_markers)
 
 
 if __name__ == "__main__":

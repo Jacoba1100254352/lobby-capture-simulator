@@ -10,6 +10,10 @@
       "width": "\\textwidth",
       "rows": [
         "open-access-lobbying",
+        "budgeted-disclosed-lobbying",
+        "campaign-finance-dominant",
+        "dark-money-dominant",
+        "revolving-door-dominant",
         "reform-threat-mobilization",
         "full-anti-capture-bundle",
         "bundle-with-evasion",
@@ -21,7 +25,15 @@
           "source": "scenarioName",
           "format": "label",
           "labels": {
-            "Low-salience technical rulemaking": "Low-salience rulemaking"
+            "Low-salience technical rulemaking": "Low-salience rulemaking",
+            "Open access lobbying": "Open access",
+            "Budgeted disclosed lobbying": "Budgeted/disclosed",
+            "Campaign finance dominant": "Campaign finance",
+            "Dark money dominant": "Dark money",
+            "Revolving-door dominant": "Revolving door",
+            "Reform threat mobilization": "Reform threat",
+            "Full anti-capture bundle": "Full bundle",
+            "Anti-capture bundle with evasion": "Bundle+evasion"
           }
         },
         {
@@ -73,7 +85,8 @@
         "sensitivity-public-financing-1-25",
         "sensitivity-public-financing-0-35",
         "sensitivity-evasion-0-00",
-        "sensitivity-evasion-0-60"
+        "sensitivity-evasion-0-60",
+        "sensitivity-evasion-0-90"
       ],
       "columns": [
         {
@@ -85,6 +98,7 @@
             "Sensitivity public financing 0.35": "Public financing 0.35",
             "Sensitivity evasion 0.00": "Evasion 0.00",
             "Sensitivity evasion 0.60": "Evasion 0.60",
+            "Sensitivity evasion 0.90": "Evasion 0.90",
             "Sensitivity enforcement 0.10": "Enforcement 0.10",
             "Sensitivity disclosure 0.10": "Disclosure 0.10"
           }

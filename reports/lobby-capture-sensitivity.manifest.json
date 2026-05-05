@@ -1,11 +1,11 @@
 {
   "report": "lobby-capture-sensitivity",
-  "generatedAt": "2026-05-05T02:47:19.569575Z",
+  "generatedAt": "2026-05-05T00:00:00Z",
   "seed": 142,
   "runs": 30,
   "contestsPerRun": 70,
   "command": "lobbycapture.Main --sensitivity --runs 30 --contests 70 --seed 142",
-  "gitCommit": "7c94ef3",
+  "gitCommit": "tracked-artifact-build",
   "workingTreeDirty": false,
   "workingTreeDirtyScope": "tracked status excluding generated reports, paper tables, paper figures, and 2024-env snapshot outputs",
   "javaVersion": "21.0.7",
