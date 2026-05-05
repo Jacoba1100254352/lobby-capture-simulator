@@ -27,15 +27,15 @@ INTERACTION_ROWS = {
 }
 
 SCENARIO_TRADEOFF_ROWS = {
-    "open-access-lobbying": ("Open", 70, 52, "start"),
-    "low-salience-technical-rulemaking": ("Rule", 70, 46, "start"),
-    "campaign-finance-dominant": ("Camp", 70, -44, "start"),
-    "dark-money-dominant": ("Dark", 70, 5, "start"),
-    "revolving-door-dominant": ("Door", 70, 46, "start"),
-    "real-time-transparency": ("RTD", 70, -44, "start"),
-    "democracy-vouchers": ("Vouch", 70, 74, "start"),
-    "full-anti-capture-bundle": ("Bundle", 70, 18, "start"),
-    "bundle-with-evasion": ("Evasion", 70, -44, "start"),
+    "open-access-lobbying": "Open",
+    "low-salience-technical-rulemaking": "Rule",
+    "campaign-finance-dominant": "Camp",
+    "dark-money-dominant": "Dark",
+    "revolving-door-dominant": "Door",
+    "real-time-transparency": "RTD",
+    "democracy-vouchers": "Vouch",
+    "full-anti-capture-bundle": "Bundle",
+    "bundle-with-evasion": "Evasion",
 }
 
 CHANNEL_ROWS = [
@@ -205,10 +205,14 @@ def write_evasion_sensitivity(indexed: dict[str, dict[str, str]], report: Path, 
     for x, y in transparency_points:
         body.append(rect(x - 12, y - 12, 24, 24, "#777777", "point"))
 
-    body.append(line(1210, 170, 1290, 170, "series-primary"))
-    body.append(text(1312, 178, "Hidden influence", anchor="start", css_class="small"))
-    body.append(line(1210, 224, 1290, 224, "series-secondary"))
-    body.append(text(1312, 232, "Net transparency", anchor="start", css_class="small"))
+    endpoint_labels = layout_labels(
+        plot,
+        [
+            LabelTarget("Hidden influence", *hidden_points[-1]),
+            LabelTarget("Net transparency", *transparency_points[-1]),
+        ],
+    )
+    draw_label_callouts(body, endpoint_labels)
 
     write_svg_and_pdf(
         figure_dir,
@@ -228,29 +232,21 @@ def write_evasion_sensitivity(indexed: dict[str, dict[str, str]], report: Path, 
 
 def write_interaction_tradeoffs(indexed: dict[str, dict[str, str]], report: Path, figure_dir: Path) -> None:
     require_rows(indexed, list(INTERACTION_ROWS))
-    offsets = {
-        "interaction-enforcement-disclosure-0-10-0-10": (64, -38, "start"),
-        "interaction-enforcement-disclosure-1-25-1-25": (64, -38, "start"),
-        "interaction-financing-evasion-1-25-0-90": (-64, -38, "end"),
-        "interaction-cooling-1-25-revolving-door": (64, 42, "start"),
-    }
     body = scatter_body(
         title="Interaction tradeoff view",
         subtitle="Hidden influence versus net transparency gain",
         x_label="Hidden influence",
         y_label="Net transparency gain",
         x_max=0.4,
-        y_max=0.4,
+        y_min=-0.1,
+        y_max=0.45,
         x_ticks=(0.0, 0.1, 0.2, 0.3, 0.4),
-        y_ticks=(0.0, 0.1, 0.2, 0.3, 0.4),
+        y_ticks=(-0.1, 0.0, 0.1, 0.2, 0.3, 0.4),
         points=[
             ScatterPoint(
                 label=label,
                 x=as_float(indexed[key]["hiddenInfluenceShare"]),
                 y=as_float(indexed[key]["netTransparencyGain"]),
-                dx=offsets[key][0],
-                dy=offsets[key][1],
-                anchor=offsets[key][2],
                 emphasis=False,
             )
             for key, label in INTERACTION_ROWS.items()
@@ -276,15 +272,12 @@ def write_interaction_tradeoffs(indexed: dict[str, dict[str, str]], report: Path
 def write_scenario_tradeoffs(indexed: dict[str, dict[str, str]], report: Path, figure_dir: Path) -> None:
     require_rows(indexed, list(SCENARIO_TRADEOFF_ROWS))
     points = []
-    for key, (label, dx, dy, anchor) in SCENARIO_TRADEOFF_ROWS.items():
+    for key, label in SCENARIO_TRADEOFF_ROWS.items():
         points.append(
             ScatterPoint(
                 label=label,
                 x=as_float(indexed[key]["captureRate"]),
                 y=as_float(indexed[key]["hiddenInfluenceShare"]),
-                dx=dx,
-                dy=dy,
-                anchor=anchor,
                 emphasis=key in {"full-anti-capture-bundle", "bundle-with-evasion"},
             )
         )
@@ -293,6 +286,7 @@ def write_scenario_tradeoffs(indexed: dict[str, dict[str, str]], report: Path, f
         subtitle="Observed capture versus hidden influence",
         x_label="Capture rate",
         y_label="Hidden influence share",
+        x_min=-0.02,
         x_max=0.75,
         y_max=0.4,
         x_ticks=(0.0, 0.25, 0.5, 0.75),
@@ -326,29 +320,54 @@ def scatter_body(
     x_ticks: tuple[float, ...],
     y_ticks: tuple[float, ...],
     points: list["ScatterPoint"],
+    x_min: float = 0.0,
+    y_min: float = 0.0,
 ) -> list[str]:
     plot = Plot(left=260, top=170, width=1230, height=720)
     body: list[str] = []
     body.extend(title_block(title, subtitle))
-    draw_axes(body, plot, x_ticks, y_ticks, x_max, y_max, x_label, y_label)
+    draw_axes(body, plot, x_ticks, y_ticks, x_max, y_max, x_label, y_label, x_min=x_min, y_min=y_min)
+    label_targets: list[LabelTarget] = []
     for point in points:
-        x, y = plot.point(point.x, point.y, x_max, y_max)
+        x, y = plot.point(point.x, point.y, x_max, y_max, x_min=x_min, y_min=y_min)
         size = 32 if point.emphasis else 24
         color = "#555555" if point.emphasis else "#111111"
         body.append(rect(x - size / 2, y - size / 2, size, size, color, "point"))
-        body.append(text(x + point.dx, y + point.dy, point.label, anchor=point.anchor, css_class="label"))
+        label_targets.append(LabelTarget(point.label, x, y))
+    draw_label_callouts(body, layout_labels(plot, label_targets))
     return body
 
 
 class ScatterPoint:
-    def __init__(self, label: str, x: float, y: float, dx: int, dy: int, anchor: str, emphasis: bool) -> None:
+    def __init__(self, label: str, x: float, y: float, emphasis: bool) -> None:
         self.label = label
         self.x = x
         self.y = y
-        self.dx = dx
-        self.dy = dy
-        self.anchor = anchor
         self.emphasis = emphasis
+
+
+class LabelTarget:
+    def __init__(self, label: str, point_x: float, point_y: float) -> None:
+        self.label = label
+        self.point_x = point_x
+        self.point_y = point_y
+
+
+class LabelPlacement:
+    def __init__(self, target: LabelTarget, x: float, y: float, width: float, height: float) -> None:
+        self.target = target
+        self.x = x
+        self.y = y
+        self.width = width
+        self.height = height
+
+    @property
+    def right(self) -> float:
+        return self.x + self.width
+
+    @property
+    def bottom(self) -> float:
+        return self.y + self.height
 
 
 class Plot:
@@ -362,10 +381,120 @@ class Plot:
     def bottom(self) -> int:
         return self.top + self.height
 
-    def point(self, x_value: float, y_value: float, x_max: float, y_max: float) -> tuple[float, float]:
-        x = self.left + scale(x_value, x_max) * self.width
-        y = self.bottom - scale(y_value, y_max) * self.height
+    def point(
+            self,
+            x_value: float,
+            y_value: float,
+            x_max: float,
+            y_max: float,
+            x_min: float = 0.0,
+            y_min: float = 0.0,
+    ) -> tuple[float, float]:
+        x = self.left + scale_range(x_value, x_min, x_max) * self.width
+        y = self.bottom - scale_range(y_value, y_min, y_max) * self.height
         return x, y
+
+
+def layout_labels(plot: Plot, targets: list[LabelTarget]) -> list[LabelPlacement]:
+    placements: list[LabelPlacement] = []
+    min_x = plot.left - 5
+    max_x = WIDTH - 20
+    min_y = 145
+    max_y = plot.bottom - 18
+    for target in sorted(targets, key=lambda item: (item.point_y, item.point_x)):
+        width = label_width(target.label)
+        height = 46
+        candidates = label_candidates(target, width, height)
+        placements.append(
+            best_label_candidate(target, candidates, width, height, placements, targets, min_x, max_x, min_y, max_y)
+        )
+    return placements
+
+
+def label_candidates(target: LabelTarget, width: float, height: float) -> list[tuple[float, float]]:
+    x = target.point_x
+    y = target.point_y
+    gap = 42
+    return [
+        (x + gap, y - height - 16),
+        (x + gap, y + 16),
+        (x - width - gap, y - height - 16),
+        (x - width - gap, y + 16),
+        (x + gap, y - height / 2),
+        (x - width - gap, y - height / 2),
+        (x - width / 2, y - height - gap),
+        (x - width / 2, y + gap),
+    ]
+
+
+def best_label_candidate(
+        target: LabelTarget,
+        candidates: list[tuple[float, float]],
+        width: float,
+        height: float,
+        placed: list[LabelPlacement],
+        targets: list[LabelTarget],
+        min_x: float,
+        max_x: float,
+        min_y: float,
+        max_y: float,
+) -> LabelPlacement:
+    best: tuple[float, LabelPlacement] | None = None
+    for raw_x, raw_y in candidates:
+        x = min(max(raw_x, min_x), max_x - width)
+        y = min(max(raw_y, min_y), max_y - height)
+        candidate = LabelPlacement(target, x, y, width, height)
+        overlap = sum(overlap_area(candidate, other) for other in placed)
+        point_overlap_count = sum(point_in_box(other.point_x, other.point_y, candidate, padding=18) for other in targets)
+        distance = abs((x + width / 2) - target.point_x) + abs((y + height / 2) - target.point_y)
+        edge_penalty = 50 if x in {min_x, max_x - width} or y in {min_y, max_y - height} else 0
+        point_penalty = 1000000 * point_overlap_count
+        score = overlap * 1000 + point_penalty + distance + edge_penalty
+        if best is None or score < best[0]:
+            best = (score, candidate)
+    assert best is not None
+    return best[1]
+
+
+def overlap_area(first: LabelPlacement, second: LabelPlacement) -> float:
+    padding = 10
+    left = max(first.x - padding, second.x - padding)
+    right = min(first.right + padding, second.right + padding)
+    top = max(first.y - padding, second.y - padding)
+    bottom = min(first.bottom + padding, second.bottom + padding)
+    if right <= left or bottom <= top:
+        return 0.0
+    return (right - left) * (bottom - top)
+
+
+def point_in_box(x: float, y: float, placement: LabelPlacement, padding: float) -> bool:
+    return (
+        placement.x - padding <= x <= placement.right + padding
+        and placement.y - padding <= y <= placement.bottom + padding
+    )
+
+
+def label_width(label: str) -> float:
+    return max(82, len(label) * 15 + 30)
+
+
+def draw_label_callouts(body: list[str], placements: list[LabelPlacement]) -> None:
+    for placement in placements:
+        start_x, start_y = nearest_box_edge(placement)
+        body.append(line(placement.target.point_x, placement.target.point_y, start_x, start_y, "leader"))
+    for placement in placements:
+        body.append(rect(placement.x, placement.y, placement.width, placement.height, "#ffffff", "label-box"))
+        body.append(text(placement.x + 15, placement.y + 31, placement.target.label, anchor="start", css_class="label"))
+
+
+def nearest_box_edge(placement: LabelPlacement) -> tuple[float, float]:
+    x = min(max(placement.target.point_x, placement.x), placement.right)
+    y = min(max(placement.target.point_y, placement.y), placement.bottom)
+    if placement.x < placement.target.point_x < placement.right:
+        y = placement.y if placement.target.point_y < placement.y else placement.bottom
+    if placement.y < placement.target.point_y < placement.bottom:
+        x = placement.x if placement.target.point_x < placement.x else placement.right
+    return x, y
 
 
 def draw_axes(
@@ -377,13 +506,15 @@ def draw_axes(
     y_max: float,
     x_label: str,
     y_label: str,
+    x_min: float = 0.0,
+    y_min: float = 0.0,
 ) -> None:
     for tick in x_ticks:
-        x = plot.left + tick / x_max * plot.width
+        x = plot.left + scale_range(tick, x_min, x_max) * plot.width
         body.append(line(x, plot.top, x, plot.bottom, "grid"))
         body.append(text(x, plot.bottom + 48, f"{tick:.2g}", anchor="middle", css_class="tick"))
     for tick in y_ticks:
-        y = plot.bottom - tick / y_max * plot.height
+        y = plot.bottom - scale_range(tick, y_min, y_max) * plot.height
         body.append(line(plot.left, y, plot.left + plot.width, y, "grid"))
         body.append(text(plot.left - 40, y + 10, f"{tick:.1f}", anchor="end", css_class="tick"))
     body.append(line(plot.left, plot.bottom, plot.left + plot.width, plot.bottom, "axis"))
@@ -459,6 +590,8 @@ def svg_document(title: str, description: str, body: list[str]) -> str:
             ".axis { stroke: #111; stroke-width: 5; fill: none; }",
             ".grid { stroke: #d8d8d8; stroke-width: 3; fill: none; }",
             ".segment, .point, .legend-swatch { stroke: #111; stroke-width: 2; }",
+            ".label-box { fill: #fff; stroke: #111; stroke-width: 2; }",
+            ".leader { stroke: #333; stroke-width: 2; fill: none; stroke-dasharray: 8 8; }",
             ".series-primary { stroke: #111; stroke-width: 8; fill: none; }",
             ".series-secondary { stroke: #777; stroke-width: 8; fill: none; stroke-dasharray: 24 18; }",
             "</style>",
@@ -513,6 +646,12 @@ def scale(value: float, max_value: float) -> float:
     if max_value <= 0.0:
         return 0.0
     return max(0.0, min(1.0, value / max_value))
+
+
+def scale_range(value: float, min_value: float, max_value: float) -> float:
+    if max_value <= min_value:
+        return 0.0
+    return max(0.0, min(1.0, (value - min_value) / (max_value - min_value)))
 
 
 def as_float(row_value: str) -> float:

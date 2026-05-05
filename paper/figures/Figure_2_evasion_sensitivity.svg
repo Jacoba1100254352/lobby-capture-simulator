@@ -9,6 +9,8 @@ text { font-family: Helvetica, Arial, sans-serif; font-size: 34px; fill: #111; }
 .axis { stroke: #111; stroke-width: 5; fill: none; }
 .grid { stroke: #d8d8d8; stroke-width: 3; fill: none; }
 .segment, .point, .legend-swatch { stroke: #111; stroke-width: 2; }
+.label-box { fill: #fff; stroke: #111; stroke-width: 2; }
+.leader { stroke: #333; stroke-width: 2; fill: none; stroke-dasharray: 8 8; }
 .series-primary { stroke: #111; stroke-width: 8; fill: none; }
 .series-secondary { stroke: #777; stroke-width: 8; fill: none; stroke-dasharray: 24 18; }
 </style>
@@ -47,8 +49,10 @@ text { font-family: Helvetica, Arial, sans-serif; font-size: 34px; fill: #111; }
 <rect x="658" y="320.5" width="24" height="24" fill="#777777" class="point"/>
 <rect x="1068" y="456.4" width="24" height="24" fill="#777777" class="point"/>
 <rect x="1478" y="667.4" width="24" height="24" fill="#777777" class="point"/>
-<line x1="1210" y1="170" x2="1290" y2="170" class="series-primary"/>
-<text x="1312" y="178" text-anchor="start" class="small">Hidden influence</text>
-<line x1="1210" y1="224" x2="1290" y2="224" class="series-secondary"/>
-<text x="1312" y="232" text-anchor="start" class="small">Net transparency</text>
+<line x1="1490" y1="180.1" x2="1490" y2="222.1" class="leader"/>
+<line x1="1490" y1="679.4" x2="1490" y2="637.4" class="leader"/>
+<rect x="1355" y="222.1" width="270" height="46" fill="#ffffff" class="label-box"/>
+<text x="1370" y="253.1" text-anchor="start" class="label">Hidden influence</text>
+<rect x="1355" y="591.4" width="270" height="46" fill="#ffffff" class="label-box"/>
+<text x="1370" y="622.4" text-anchor="start" class="label">Net transparency</text>
 </svg>
