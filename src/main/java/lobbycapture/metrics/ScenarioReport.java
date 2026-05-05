@@ -9,6 +9,10 @@ public record ScenarioReport(
         int enactedAntiCaptureReforms,
         double captureRate,
         double antiCaptureSuccessRate,
+        double observedCaptureRate,
+        double hiddenCaptureIndex,
+        double totalInfluenceDistortion,
+        double substitutionFailureRisk,
         double averageCaptureIndex,
         double averagePublicInterestScore,
         double publicPreferenceDistortion,
@@ -20,6 +24,7 @@ public record ScenarioReport(
         double defensiveReformSpendShare,
         double captureReturnOnSpend,
         double publicBenefitPerInfluenceDollar,
+        double visibleLobbyingSpendShare,
         double directAccessSpendShare,
         double agendaAccessSpendShare,
         double informationDistortionSpendShare,
@@ -28,9 +33,11 @@ public record ScenarioReport(
         double campaignFinanceSpendShare,
         double darkMoneySpendShare,
         double revolvingDoorSpendShare,
+        double intermediarySpendShare,
         double defensiveChannelSpendShare,
         double detectionRate,
         double sanctionRate,
+        double enforcementCapacityIndex,
         double averagePolicyDistortion,
         double regulatoryDrift,
         double enforcementForbearanceRate,
@@ -51,7 +58,9 @@ public record ScenarioReport(
         double commentProceduralAckRate,
         double commentSubstantiveUptake,
         double commentCompressionRate,
+        double commentFloodingIndex,
         double technicalClaimCredibility,
+        double technicalRulemakingDistortion,
         double channelSwitchRate,
         double evasionShiftRate,
         double evasionPenaltyRate,
@@ -70,12 +79,18 @@ public record ScenarioReport(
         double reformDecayPressure,
         double legitimateAdvocacyChillRate,
         double constitutionalChallengeDelay,
-        double administrativeCostIndex
+        double administrativeCostIndex,
+        double captureRateSeedStdDev,
+        double hiddenInfluenceSeedStdDev,
+        double totalInfluenceDistortionSeedStdDev
 ) {
     public double captureControlScore() {
         return MetricDefinition.average(
-                MetricDefinition.lowerIsBetter(captureRate),
+                MetricDefinition.lowerIsBetter(observedCaptureRate),
                 MetricDefinition.lowerIsBetter(averageCaptureIndex),
+                MetricDefinition.lowerIsBetter(hiddenCaptureIndex),
+                MetricDefinition.lowerIsBetter(totalInfluenceDistortion),
+                MetricDefinition.lowerIsBetter(substitutionFailureRisk),
                 MetricDefinition.lowerIsBetter(privateGainRatio / 5.0),
                 MetricDefinition.lowerIsBetter(publicPreferenceDistortion),
                 MetricDefinition.lowerIsBetter(enforcementForbearanceRate),
@@ -87,7 +102,17 @@ public record ScenarioReport(
                 MetricDefinition.normalizeSigned(netTransparencyGain),
                 regulatorAttentionIndex,
                 watchdogFocusIndex,
-                antiCaptureSuccessRate
+                enforcementCapacityIndex,
+                antiCaptureSuccessRate * MetricDefinition.lowerIsBetter(substitutionFailureRisk)
+        );
+    }
+
+    public double distortionMinimizationScore() {
+        return MetricDefinition.average(
+                MetricDefinition.lowerIsBetter(totalInfluenceDistortion),
+                MetricDefinition.lowerIsBetter(substitutionFailureRisk),
+                MetricDefinition.lowerIsBetter(hiddenCaptureIndex),
+                MetricDefinition.lowerIsBetter(administrativeCostIndex)
         );
     }
 
@@ -116,6 +141,6 @@ public record ScenarioReport(
     }
 
     public double directionalScore() {
-        return MetricDefinition.average(captureControlScore(), representationScore(), reformFeasibilityScore());
+        return MetricDefinition.average(captureControlScore(), representationScore(), reformFeasibilityScore(), distortionMinimizationScore());
     }
 }

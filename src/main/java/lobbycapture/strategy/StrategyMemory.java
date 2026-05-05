@@ -83,10 +83,13 @@ public final class StrategyMemory {
                     : InfluenceStrategy.CAMPAIGN_FINANCE;
         }
         if (contest.arena() == ContestArena.RULEMAKING && contest.technicalComplexity() >= 0.60) {
-            return InfluenceStrategy.INFORMATION_DISTORTION;
+            return contest.salience() <= 0.50 ? InfluenceStrategy.INTERMEDIARY : InfluenceStrategy.INFORMATION_DISTORTION;
         }
         if (contest.arena() == ContestArena.LITIGATION || contest.legalVulnerability() >= 0.58) {
             return InfluenceStrategy.LITIGATION_THREAT;
+        }
+        if (contest.arena() == ContestArena.PUBLIC_INFORMATION && contest.commentRecordDistortion() >= 0.40) {
+            return InfluenceStrategy.INTERMEDIARY;
         }
         if (contest.revolvingDoorInfluence() >= 0.42) {
             return InfluenceStrategy.REVOLVING_DOOR;
@@ -112,4 +115,3 @@ public final class StrategyMemory {
         return bestReturn > 0.04 ? best : null;
     }
 }
-

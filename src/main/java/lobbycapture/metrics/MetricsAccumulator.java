@@ -4,11 +4,16 @@ import lobbycapture.arena.ContestOutcome;
 import lobbycapture.policy.CaptureScoring;
 import lobbycapture.policy.CommentTriageModel;
 import lobbycapture.policy.CommentTriageReport;
+import lobbycapture.policy.ContestArena;
 import lobbycapture.policy.PolicyContest;
 import lobbycapture.reform.ReformRegime;
 import lobbycapture.simulation.WorldState;
 import lobbycapture.strategy.ChannelAllocation;
+import lobbycapture.strategy.InfluenceChannel;
 import lobbycapture.util.Values;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public final class MetricsAccumulator {
     private int totalContests;
@@ -29,6 +34,9 @@ public final class MetricsAccumulator {
     private double defensiveSpendSum;
     private double truePublicBenefitSum;
     private double policyDistortionSum;
+    private double hiddenCaptureIndexSum;
+    private double totalInfluenceDistortionSum;
+    private double substitutionFailureRiskSum;
     private double regulatoryDriftSum;
     private double enforcementForbearanceSum;
     private double procurementBiasSum;
@@ -48,7 +56,9 @@ public final class MetricsAccumulator {
     private double commentProceduralAckSum;
     private double commentSubstantiveUptakeSum;
     private double commentCompressionSum;
+    private double commentFloodingSum;
     private double technicalClaimCredibilitySum;
+    private double technicalRulemakingDistortionSum;
     private double channelSwitchSum;
     private double evasionShiftSum;
     private double evasionPenaltySum;
@@ -66,7 +76,13 @@ public final class MetricsAccumulator {
     private double adaptationSpeedSum;
     private double reformDecayPressureSum;
     private double administrativeCostSum;
+    private double visibleLobbyingSpendSum;
+    private double intermediarySpendSum;
+    private double enforcementCapacitySum;
     private ChannelAllocation allocationSum = ChannelAllocation.zero();
+    private final List<Double> runCaptureRates = new ArrayList<>();
+    private final List<Double> runHiddenInfluenceShares = new ArrayList<>();
+    private final List<Double> runTotalInfluenceDistortions = new ArrayList<>();
 
     public void add(ContestOutcome outcome, WorldState world) {
         totalContests++;
@@ -131,6 +147,21 @@ public final class MetricsAccumulator {
         commentSubstantiveUptakeSum += triage.substantiveUptakeRate();
         commentCompressionSum += triage.duplicateCompressionRate();
         technicalClaimCredibilitySum += contest.docket().technicalClaimCredibility();
+        double commentFloodingIndex = commentFloodingIndex(contest, triage);
+        double technicalRulemakingDistortion = technicalRulemakingDistortion(contest, triage);
+        double enforcementCapacity = enforcementCapacity(contest, world, reform);
+        double hiddenCaptureIndex = hiddenCaptureIndex(outcome, totalSpend);
+        commentFloodingSum += commentFloodingIndex;
+        technicalRulemakingDistortionSum += technicalRulemakingDistortion;
+        enforcementCapacitySum += enforcementCapacity;
+        hiddenCaptureIndexSum += hiddenCaptureIndex;
+        totalInfluenceDistortionSum += totalInfluenceDistortion(
+                outcome,
+                hiddenCaptureIndex,
+                commentFloodingIndex,
+                technicalRulemakingDistortion
+        );
+        substitutionFailureRiskSum += substitutionFailureRisk(outcome, hiddenCaptureIndex, totalSpend);
         channelSwitchSum += outcome.influenceResult().channelSwitches();
         evasionShiftSum += outcome.influenceResult().evasionShifts();
         evasionPenaltySum += outcome.evasionPenalty();
@@ -148,6 +179,20 @@ public final class MetricsAccumulator {
         adaptationSpeedSum += world.lastAdaptationSpeed();
         reformDecayPressureSum += world.lastReformDecayPressure();
         administrativeCostSum += outcome.administrativeCost();
+        visibleLobbyingSpendSum += allocation.directAccess()
+                + allocation.agendaAccess()
+                + allocation.publicCampaign()
+                + allocation.campaignFinance();
+        intermediarySpendSum += allocation.intermediary();
+    }
+
+    public void recordRun(MetricsAccumulator runMetrics) {
+        if (runMetrics.totalContests == 0) {
+            return;
+        }
+        runCaptureRates.add(runMetrics.captureRateValue());
+        runHiddenInfluenceShares.add(runMetrics.hiddenInfluenceShareValue());
+        runTotalInfluenceDistortions.add(runMetrics.totalInfluenceDistortionValue());
     }
 
     public ScenarioReport toReport(String scenarioKey, String scenarioName) {
@@ -162,6 +207,10 @@ public final class MetricsAccumulator {
                 enactedAntiCaptureReforms,
                 ratio(capturedContests, totalContests),
                 ratio(enactedAntiCaptureReforms, antiCaptureReforms),
+                ratio(capturedContests, totalContests),
+                hiddenCaptureIndexSum / total,
+                totalInfluenceDistortionSum / total,
+                substitutionFailureRiskSum / total,
                 captureIndexSum / total,
                 publicInterestSum / total,
                 publicPreferenceDistortionSum / total,
@@ -173,17 +222,20 @@ public final class MetricsAccumulator {
                 totalSpend == 0.0 ? 0.0 : defensiveSpendSum / totalSpend,
                 totalSpend == 0.0 ? 0.0 : captureIndexSum / totalSpend,
                 totalSpend == 0.0 ? 0.0 : truePublicBenefitSum / totalSpend,
-                allocationSum.share(lobbycapture.strategy.InfluenceChannel.DIRECT_ACCESS),
-                allocationSum.share(lobbycapture.strategy.InfluenceChannel.AGENDA_ACCESS),
-                allocationSum.share(lobbycapture.strategy.InfluenceChannel.INFORMATION_DISTORTION),
-                allocationSum.share(lobbycapture.strategy.InfluenceChannel.PUBLIC_CAMPAIGN),
-                allocationSum.share(lobbycapture.strategy.InfluenceChannel.LITIGATION_THREAT),
-                allocationSum.share(lobbycapture.strategy.InfluenceChannel.CAMPAIGN_FINANCE),
-                allocationSum.share(lobbycapture.strategy.InfluenceChannel.DARK_MONEY),
-                allocationSum.share(lobbycapture.strategy.InfluenceChannel.REVOLVING_DOOR),
-                allocationSum.share(lobbycapture.strategy.InfluenceChannel.DEFENSIVE_REFORM),
+                totalSpend == 0.0 ? 0.0 : visibleLobbyingSpendSum / totalSpend,
+                allocationSum.share(InfluenceChannel.DIRECT_ACCESS),
+                allocationSum.share(InfluenceChannel.AGENDA_ACCESS),
+                allocationSum.share(InfluenceChannel.INFORMATION_DISTORTION),
+                allocationSum.share(InfluenceChannel.PUBLIC_CAMPAIGN),
+                allocationSum.share(InfluenceChannel.LITIGATION_THREAT),
+                allocationSum.share(InfluenceChannel.CAMPAIGN_FINANCE),
+                allocationSum.share(InfluenceChannel.DARK_MONEY),
+                allocationSum.share(InfluenceChannel.REVOLVING_DOOR),
+                allocationSum.share(InfluenceChannel.INTERMEDIARY),
+                allocationSum.share(InfluenceChannel.DEFENSIVE_REFORM),
                 ratio(detectedCaptured, totalContests),
                 ratio(sanctionedCaptured, totalContests),
+                enforcementCapacitySum / total,
                 policyDistortionSum / total,
                 regulatoryDriftSum / total,
                 enforcementForbearanceSum / total,
@@ -204,7 +256,9 @@ public final class MetricsAccumulator {
                 commentProceduralAckSum / total,
                 commentSubstantiveUptakeSum / total,
                 commentCompressionSum / total,
+                commentFloodingSum / total,
                 technicalClaimCredibilitySum / total,
+                technicalRulemakingDistortionSum / total,
                 channelSwitchSum / total,
                 evasionShiftSum / total,
                 evasionPenaltySum / total,
@@ -223,7 +277,10 @@ public final class MetricsAccumulator {
                 reformDecayPressureSum / total,
                 legitimateAdvocacyChill(),
                 ratio(delayedByChallenge, totalContests),
-                administrativeCostSum / total
+                administrativeCostSum / total,
+                stdDev(runCaptureRates),
+                stdDev(runHiddenInfluenceShares),
+                stdDev(runTotalInfluenceDistortions)
         );
     }
 
@@ -237,6 +294,134 @@ public final class MetricsAccumulator {
 
     private static double ratio(int numerator, int denominator) {
         return denominator == 0 ? 0.0 : (double) numerator / denominator;
+    }
+
+    private double captureRateValue() {
+        return ratio(capturedContests, totalContests);
+    }
+
+    private double hiddenInfluenceShareValue() {
+        return totalContests == 0 ? 0.0 : hiddenInfluenceSum / totalContests;
+    }
+
+    private double totalInfluenceDistortionValue() {
+        return totalContests == 0 ? 0.0 : totalInfluenceDistortionSum / totalContests;
+    }
+
+    private static double hiddenCaptureIndex(ContestOutcome outcome, double totalSpend) {
+        double defensiveShare = totalSpend == 0.0 ? 0.0 : outcome.influenceResult().defensiveSpend() / totalSpend;
+        double privateUpside = Values.clamp(CaptureScoring.privateGainRatio(outcome.contest()) / 5.0, 0.0, 1.0);
+        double hiddenCarrier = Values.clamp(
+                (0.48 * outcome.influenceResult().hiddenInfluenceShare())
+                        + (0.18 * outcome.influenceResult().influencePreservationRate())
+                        + (0.14 * outcome.influenceResult().messengerSubstitutionRate())
+                        + (0.10 * outcome.influenceResult().venueSubstitutionRate())
+                        + (0.10 * defensiveShare),
+                0.0,
+                1.0
+        );
+        double capturePressure = Values.clamp(
+                (0.34 * outcome.captureIndex())
+                        + (0.20 * outcome.policyDistortion())
+                        + (0.16 * privateUpside)
+                        + (0.12 * outcome.enforcementForbearance())
+                        + (0.10 * outcome.procurementBias())
+                        + (0.08 * (outcome.captured() ? 1.0 : 0.0)),
+                0.0,
+                1.0
+        );
+        return Values.clamp(hiddenCarrier * (0.34 + (0.66 * capturePressure)), 0.0, 1.0);
+    }
+
+    private static double totalInfluenceDistortion(
+            ContestOutcome outcome,
+            double hiddenCaptureIndex,
+            double commentFloodingIndex,
+            double technicalRulemakingDistortion
+    ) {
+        return Values.clamp(
+                (0.16 * (outcome.captured() ? 1.0 : 0.0))
+                        + (0.16 * outcome.captureIndex())
+                        + (0.15 * hiddenCaptureIndex)
+                        + (0.12 * outcome.policyDistortion())
+                        + (0.09 * outcome.influenceResult().hiddenInfluenceShare())
+                        + (0.08 * outcome.influenceResult().influencePreservationRate())
+                        + (0.07 * outcome.procurementBias())
+                        + (0.06 * outcome.enforcementForbearance())
+                        + (0.05 * commentFloodingIndex)
+                        + (0.04 * technicalRulemakingDistortion)
+                        + (0.02 * outcome.administrativeCost()),
+                0.0,
+                1.0
+        );
+    }
+
+    private static double substitutionFailureRisk(ContestOutcome outcome, double hiddenCaptureIndex, double totalSpend) {
+        double defensiveShare = totalSpend == 0.0 ? 0.0 : outcome.influenceResult().defensiveSpend() / totalSpend;
+        return Values.clamp(
+                (0.30 * hiddenCaptureIndex)
+                        + (0.22 * outcome.influenceResult().hiddenInfluenceShare())
+                        + (0.18 * outcome.influenceResult().influencePreservationRate())
+                        + (0.12 * outcome.influenceResult().venueSubstitutionRate())
+                        + (0.10 * outcome.influenceResult().messengerSubstitutionRate())
+                        + (0.08 * defensiveShare),
+                0.0,
+                1.0
+        );
+    }
+
+    private static double commentFloodingIndex(PolicyContest contest, CommentTriageReport triage) {
+        return Values.clamp(
+                (0.36 * triage.reviewBurden())
+                        + (0.26 * contest.docket().templateSaturation())
+                        + (0.18 * contest.commentRecordDistortion())
+                        + (0.12 * (1.0 - triage.authenticationConfidence()))
+                        + (0.08 * (1.0 - triage.duplicateCompressionRate())),
+                0.0,
+                1.0
+        );
+    }
+
+    private static double technicalRulemakingDistortion(PolicyContest contest, CommentTriageReport triage) {
+        if (contest.arena() != ContestArena.RULEMAKING && contest.arena() != ContestArena.PUBLIC_INFORMATION) {
+            return 0.0;
+        }
+        return Values.clamp(
+                (0.34 * contest.technicalComplexity())
+                        + (0.22 * contest.informationDistortion())
+                        + (0.18 * triage.recordDistortion())
+                        + (0.14 * triage.reviewBurden())
+                        + (0.12 * (1.0 - triage.substantiveUptakeRate())),
+                0.0,
+                1.0
+        );
+    }
+
+    private static double enforcementCapacity(PolicyContest contest, WorldState world, ReformRegime reform) {
+        return Values.clamp(
+                (0.30 * reform.enforcementBudget())
+                        + (0.22 * reform.auditRate())
+                        + (0.18 * reform.sanctionSeverity())
+                        + (0.18 * world.regulatorAttention(contest.issueDomain()))
+                        + (0.12 * world.averageWatchdogFocus())
+                        - (0.18 * world.regulatorQueue(contest.issueDomain())),
+                0.0,
+                1.0
+        );
+    }
+
+    private static double stdDev(List<Double> values) {
+        if (values.size() < 2) {
+            return 0.0;
+        }
+        double average = values.stream().mapToDouble(Double::doubleValue).average().orElse(0.0);
+        double variance = values.stream()
+                .mapToDouble(value -> {
+                    double delta = value - average;
+                    return delta * delta;
+                })
+                .sum() / (values.size() - 1);
+        return Math.sqrt(variance);
     }
 
     private static double voucherResidentParticipation(ReformRegime reform, double publicFinancingSourceShare) {

@@ -58,10 +58,10 @@
       "description": "Normalized revolving-door source panel from a licensed/exported CSV or tracked fixture.",
       "requestTemplate": "REVOLVING_DOOR_LIVE_CSV=/path/to/export.csv ./scripts/fetch-revolving-door.sh --live",
       "normalizedFile": "data/snapshots/2024-env/normalized/revolving-door.csv",
-      "rowCount": 5,
-      "sha256": "64bc4264fa34b930486dc0b60de33b2e3fefd66aa2b89a8d9c98faea5105d025",
+      "rowCount": 14,
+      "sha256": "d798a8a55b1626c9652e9f71f156ead08ff5d9b2e2a26ed4b17831e0796ae936",
       "status": "fixture",
-      "statusNotes": "revolving-door: fixture (no licensed/source export configured; fixture copied for schema continuity)"
+      "statusNotes": "revolving-door: expanded tracked fixture (no licensed/source export configured; fixture copied for schema continuity and broader mechanism testing)"
     }
   ],
   "liveRunStatus": {

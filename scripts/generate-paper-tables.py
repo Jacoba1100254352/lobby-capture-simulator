@@ -73,7 +73,8 @@ def select_rows(
             raise SystemExit(f"Missing ablation baseline for {table_config['output']}: {baseline_key}")
         baseline = indexed[baseline_key]
         selected = [row for row in rows if row["scenarioKey"] != baseline_key]
-        selected.sort(key=lambda row: float(row["captureRate"]) - float(baseline["captureRate"]), reverse=True)
+        sort_source = str(table_config.get("sortSource", "captureRate"))
+        selected.sort(key=lambda row: float(row[sort_source]) - float(baseline[sort_source]), reverse=True)
         return selected, baseline
     raise SystemExit(f"Unknown rowMode for {table_config['output']}: {row_mode}")
 

@@ -90,6 +90,10 @@ public final class LobbyAllocationEngine {
                 memory.recordEvasionShift();
                 evasionShifts++;
             }
+            if (strategy == InfluenceStrategy.INTERMEDIARY && memory.currentStrategy() != InfluenceStrategy.INTERMEDIARY) {
+                memory.recordEvasionShift();
+                evasionShifts++;
+            }
             if (strategy != memory.currentStrategy() && substitution.hiddenInfluenceShare() > 0.08) {
                 evasionShifts++;
             }
@@ -113,13 +117,16 @@ public final class LobbyAllocationEngine {
                 double defensivePower = defensivePower(allocation, group);
                 lobbyPressure -= world.pressurePerSpend() * group.influenceIntensity() * defensivePower;
                 perceivedSupport -= world.publicCampaignEffect() * group.publicCampaignSkill()
-                        * ((0.16 * allocation.publicCampaign()) + (0.11 * allocation.darkMoney()));
-                perceivedSupport -= group.informationBias() * allocation.informationDistortion() * 0.06;
+                        * ((0.16 * allocation.publicCampaign()) + (0.11 * allocation.darkMoney()) + (0.08 * allocation.intermediary()));
+                perceivedSupport -= group.informationBias() * (allocation.informationDistortion() + (0.40 * allocation.intermediary())) * 0.06;
                 litigationThreat += group.litigationThreatSkill() * allocation.litigationThreat() * 0.08;
-                informationDistortion += group.informationBias() * allocation.informationDistortion() * 0.06;
+                litigationThreat += group.litigationThreatSkill() * allocation.intermediary() * 0.020;
+                informationDistortion += group.informationBias() * (allocation.informationDistortion() + (0.55 * allocation.intermediary())) * 0.06;
                 darkMoneyInfluence += group.disclosureAvoidanceSkill() * allocation.darkMoney() * (1.0 - reform.darkMoneyDisclosureStrength()) * 0.08;
+                darkMoneyInfluence += group.disclosureAvoidanceSkill() * allocation.intermediary()
+                        * (1.0 - reform.beneficialOwnerDisclosure()) * 0.035;
                 campaignFinanceInfluence += allocation.campaignFinance() * 0.035;
-                publicBenefit -= group.informationBias() * allocation.informationDistortion() * 0.025;
+                publicBenefit -= group.informationBias() * (allocation.informationDistortion() + (0.40 * allocation.intermediary())) * 0.025;
             } else {
                 double fit = policyFit(group, contest) * preference;
                 double accessEffectiveness = 1.0 - (reform.contactLogCoverage() * 0.45) - (reform.lobbyingBanStrength() * 0.35);
@@ -132,27 +139,39 @@ public final class LobbyAllocationEngine {
                 lobbyPressure += world.pressurePerSpend() * group.influenceIntensity() * fit
                         * ((0.78 * allocation.directAccess() * accessEffectiveness)
                         + (0.62 * allocation.agendaAccess() * accessEffectiveness)
-                        + (0.42 * allocation.revolvingDoor()));
+                        + (0.42 * allocation.revolvingDoor())
+                        + (0.26 * allocation.intermediary() * accessEffectiveness));
                 perceivedSupport += world.publicCampaignEffect() * group.publicCampaignSkill() * group.informationBias()
-                        * campaignEffectiveness * ((0.09 * allocation.publicCampaign()) + (0.045 * allocation.darkMoney()));
-                perceivedSupport += group.informationBias() * informationEffectiveness * allocation.informationDistortion() * 0.045;
-                perceivedSupport -= mismatchPenalty * (allocation.publicCampaign() + allocation.darkMoney()) * 0.025;
-                publicBenefit -= group.informationBias() * informationEffectiveness * allocation.informationDistortion() * 0.028;
+                        * campaignEffectiveness * ((0.09 * allocation.publicCampaign()) + (0.045 * allocation.darkMoney()) + (0.040 * allocation.intermediary()));
+                perceivedSupport += group.informationBias() * informationEffectiveness
+                        * (allocation.informationDistortion() + (0.62 * allocation.intermediary())) * 0.045;
+                perceivedSupport -= mismatchPenalty * (allocation.publicCampaign() + allocation.darkMoney() + allocation.intermediary()) * 0.025;
+                publicBenefit -= group.informationBias() * informationEffectiveness
+                        * (allocation.informationDistortion() + (0.54 * allocation.intermediary())) * 0.028;
                 publicBenefit -= allocation.litigationThreat() * 0.018;
-                privateGain += group.influenceIntensity() * spend * (0.026 + (0.038 * fit));
-                informationDistortion += group.informationBias() * informationEffectiveness * allocation.informationDistortion() * 0.075;
+                privateGain += group.influenceIntensity() * spend * (0.026 + (0.038 * fit) + (0.008 * allocation.intermediary() / Math.max(0.000001, spend)));
+                informationDistortion += group.informationBias() * informationEffectiveness
+                        * (allocation.informationDistortion() + (0.66 * allocation.intermediary())) * 0.075;
                 CommentCampaign commentCampaign = CommentCampaign.fromAllocation(docket, group, allocation, reform);
                 docket = docket.withCampaign(commentCampaign);
                 commentRecordDistortion += commentDistortionEffect(contest, group, allocation, reform, commentCampaign);
                 darkMoneyInfluence += group.disclosureAvoidanceSkill() * allocation.darkMoney()
                         * (1.0 - reform.darkMoneyDisclosureStrength())
                         * (1.0 + world.evasionProfile().opacity()) * 0.075;
+                darkMoneyInfluence += group.disclosureAvoidanceSkill() * allocation.intermediary()
+                        * (1.0 - reform.beneficialOwnerDisclosure())
+                        * (1.0 + world.evasionProfile().opacity()) * 0.038;
                 revolvingDoorInfluence += group.revolvingDoorNetworkStrength() * allocation.revolvingDoor()
                         * (1.0 - reform.coolingOffStrength())
                         * (1.0 + world.evasionProfile().revolvingDoorPlacementShift()) * 0.070;
+                revolvingDoorInfluence += group.revolvingDoorNetworkStrength() * allocation.intermediary()
+                        * (1.0 - reform.contactLogCoverage())
+                        * (1.0 + world.evasionProfile().revolvingDoorPlacementShift()) * 0.026;
                 campaignFinanceInfluence += allocation.campaignFinance() * (1.0 - reform.campaignFinanceCounterweight()) * 0.075;
                 litigationThreat += group.litigationThreatSkill() * allocation.litigationThreat()
                         * (1.0 + world.evasionProfile().litigationFundingShift()) * 0.070;
+                litigationThreat += group.litigationThreatSkill() * allocation.intermediary()
+                        * (1.0 + world.evasionProfile().litigationFundingShift()) * 0.024;
             }
         }
 
@@ -282,6 +301,7 @@ public final class LobbyAllocationEngine {
                 + (0.16 * allocation.litigationThreat())
                 + (0.12 * allocation.darkMoney())
                 + (0.08 * allocation.informationDistortion())
+                + (0.07 * allocation.intermediary())
                 + (group.defensiveMultiplier() * 0.04);
     }
 
@@ -297,7 +317,10 @@ public final class LobbyAllocationEngine {
         }
         double authenticationControl = 1.0 - reform.antiAstroturfStrength();
         return campaign.distortion() * group.astroturfSkill() * authenticationControl
-                * ((0.055 * allocation.publicCampaign()) + (0.045 * allocation.darkMoney()) + (0.035 * allocation.informationDistortion()));
+                * ((0.055 * allocation.publicCampaign())
+                + (0.045 * allocation.darkMoney())
+                + (0.040 * allocation.intermediary())
+                + (0.035 * allocation.informationDistortion()));
     }
 
     private static double returnSignal(LobbyOrganization group, InfluenceStrategy strategy, ContestOutcome outcome) {

@@ -2,7 +2,8 @@ JAVAC ?= javac
 JAVA ?= java
 REPORT_GENERATED_AT ?= 2026-05-05T00:00:00Z
 REPORT_GIT_COMMIT ?= tracked-artifact-build
-REPORT_ENV := LOBBY_CAPTURE_REPORT_TIMESTAMP=$(REPORT_GENERATED_AT) LOBBY_CAPTURE_REPORT_GIT_COMMIT=$(REPORT_GIT_COMMIT)
+REPORT_GIT_DIRTY ?= false
+REPORT_ENV := LOBBY_CAPTURE_REPORT_TIMESTAMP=$(REPORT_GENERATED_AT) LOBBY_CAPTURE_REPORT_GIT_COMMIT=$(REPORT_GIT_COMMIT) LOBBY_CAPTURE_REPORT_WORKING_TREE_DIRTY=$(REPORT_GIT_DIRTY)
 
 MAIN_SOURCES := $(shell find src/main/java -name "*.java" | sort)
 TEST_SOURCES := $(shell find src/test/java -name "*.java" | sort)
@@ -87,6 +88,6 @@ paper-artifacts-check: paper-artifacts
 clean:
 	rm -rf out
 	rm -f paper/*.aux paper/*.bbl paper/*.blg paper/*.log paper/*.out paper/*.pdf paper/*.pag paper/*.synctex.gz
-	rm -f reports/validation-summary.csv reports/validation-summary.md
+	rm -f reports/validation-summary.csv reports/validation-summary.md reports/substitution-audit.csv reports/substitution-audit.md
 	rm -f reports/source-moments.csv reports/source-moments.md reports/calibration-queue.csv reports/calibration-queue.md
 	rm -rf dist

@@ -108,29 +108,29 @@ public final class AblationRunner {
         builder.append("- Contests per run: `").append(provenance.contestsPerRun()).append("`\n");
         builder.append("- Baseline: `").append(baseline.scenarioName()).append("`\n\n");
 
-        builder.append("## Capture Opening Ranking\n\n");
-        builder.append("| Removed component | Capture increase | Capture rate | Anti-capture success | Dark-money share | Defensive spend | Comment distortion | Donor Gini | Detection |\n");
-        builder.append("| --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |\n");
+        builder.append("## Distortion Opening Ranking\n\n");
+        builder.append("| Removed component | Total distortion increase | Capture increase | Hidden capture increase | Substitution risk | Comment flooding | Donor Gini | Enforcement capacity |\n");
+        builder.append("| --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |\n");
         for (ScenarioReport report : rankedAblations(reports, baseline)) {
             builder.append("| ").append(report.scenarioName())
-                    .append(" | ").append(format(report.captureRate() - baseline.captureRate()))
-                    .append(" | ").append(format(report.captureRate()))
-                    .append(" | ").append(format(report.antiCaptureSuccessRate()))
-                    .append(" | ").append(format(report.darkMoneySpendShare()))
-                    .append(" | ").append(format(report.defensiveReformSpendShare()))
-                    .append(" | ").append(format(report.commentRecordDistortion()))
+                    .append(" | ").append(format(report.totalInfluenceDistortion() - baseline.totalInfluenceDistortion()))
+                    .append(" | ").append(format(report.observedCaptureRate() - baseline.observedCaptureRate()))
+                    .append(" | ").append(format(report.hiddenCaptureIndex() - baseline.hiddenCaptureIndex()))
+                    .append(" | ").append(format(report.substitutionFailureRisk()))
+                    .append(" | ").append(format(report.commentFloodingIndex()))
                     .append(" | ").append(format(report.donorInfluenceGini()))
-                    .append(" | ").append(format(report.detectionRate()))
+                    .append(" | ").append(format(report.enforcementCapacityIndex()))
                     .append(" |\n");
         }
 
         builder.append("\n## Full Snapshot\n\n");
-        builder.append("| Scenario | Directional | Capture rate | Anti-capture success | Comment authenticity | Template saturation | Admin cost |\n");
-        builder.append("| --- | ---: | ---: | ---: | ---: | ---: | ---: |\n");
+        builder.append("| Scenario | Total distortion | Observed capture | Hidden capture | Anti-capture success | Comment authenticity | Template saturation | Admin cost |\n");
+        builder.append("| --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |\n");
         for (ScenarioReport report : reports) {
             builder.append("| ").append(report.scenarioName())
-                    .append(" | ").append(format(report.directionalScore()))
-                    .append(" | ").append(format(report.captureRate()))
+                    .append(" | ").append(format(report.totalInfluenceDistortion()))
+                    .append(" | ").append(format(report.observedCaptureRate()))
+                    .append(" | ").append(format(report.hiddenCaptureIndex()))
                     .append(" | ").append(format(report.antiCaptureSuccessRate()))
                     .append(" | ").append(format(report.commentAuthenticity()))
                     .append(" | ").append(format(report.templateCommentSaturation()))
@@ -140,10 +140,10 @@ public final class AblationRunner {
 
         ScenarioReport largestOpening = rankedAblations(reports, baseline).stream().findFirst().orElse(baseline);
         builder.append("\n## Interpretation Guardrail\n\n");
-        builder.append("The largest modeled capture opening is `")
+        builder.append("The largest modeled distortion opening is `")
                 .append(largestOpening.scenarioName())
-                .append("`, with capture-rate change `")
-                .append(format(largestOpening.captureRate() - baseline.captureRate()))
+                .append("`, with total-distortion change `")
+                .append(format(largestOpening.totalInfluenceDistortion() - baseline.totalInfluenceDistortion()))
                 .append("`. This is a comparative simulation result, not a causal empirical estimate.\n");
         return builder.toString();
     }
@@ -158,7 +158,7 @@ public final class AblationRunner {
     private static List<ScenarioReport> rankedAblations(List<ScenarioReport> reports, ScenarioReport baseline) {
         return reports.stream()
                 .filter(report -> !report.scenarioKey().equals(BASELINE_KEY))
-                .sorted(Comparator.comparingDouble((ScenarioReport report) -> report.captureRate() - baseline.captureRate()).reversed())
+                .sorted(Comparator.comparingDouble((ScenarioReport report) -> report.totalInfluenceDistortion() - baseline.totalInfluenceDistortion()).reversed())
                 .toList();
     }
 

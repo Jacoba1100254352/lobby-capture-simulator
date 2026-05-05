@@ -32,8 +32,11 @@ SCENARIO_TRADEOFF_ROWS = {
     "campaign-finance-dominant": "Camp",
     "dark-money-dominant": "Dark",
     "revolving-door-dominant": "Door",
+    "intermediary-substitution": "Inter",
     "real-time-transparency": "RTD",
-    "democracy-vouchers": "Vouch",
+    "comment-authenticity-rules": "Auth",
+    "procurement-firewalls": "Proc",
+    "venue-shifting-detection": "Venue",
     "full-anti-capture-bundle": "Bundle",
     "bundle-with-evasion": "Evasion",
 }
@@ -43,6 +46,7 @@ CHANNEL_ROWS = [
     ("low-salience-technical-rulemaking", "Rulemaking"),
     ("campaign-finance-dominant", "Campaign"),
     ("dark-money-dominant", "Dark money"),
+    ("intermediary-substitution", "Intermediary"),
     ("democracy-vouchers", "Vouchers"),
     ("full-anti-capture-bundle", "Full bundle"),
     ("bundle-with-evasion", "Bundle+evasion"),
@@ -54,7 +58,8 @@ CHANNELS = [
     ("publicCampaignShare", "Public", "#808080"),
     ("campaignFinanceShare", "Campaign", "#595959"),
     ("darkMoneyShare", "Dark", "#333333"),
-    ("revolvingDoorShare", "Door", "#1a1a1a"),
+    ("revolvingDoorShare", "Door", "#1f4e79"),
+    ("intermediaryShare", "Intermediary", "#8c564b"),
     ("defensiveChannelShare", "Defense", "#000000"),
 ]
 
@@ -178,38 +183,38 @@ def write_evasion_sensitivity(indexed: dict[str, dict[str, str]], report: Path, 
     require_rows(indexed, [key for key, _label in EVASION_ROWS])
     plot = Plot(left=260, top=170, width=1230, height=720)
     body: list[str] = []
-    body.extend(title_block("Sensitivity to evasion freedom", "Hidden influence and transparency response"))
+    body.extend(title_block("Sensitivity to evasion freedom", "Hidden influence and total distortion response"))
     draw_axes(
         body,
         plot,
         x_ticks=(0.0, 0.3, 0.6, 0.9),
-        y_ticks=(0.0, 0.1, 0.2, 0.3, 0.4),
+        y_ticks=(0.0, 0.1, 0.2, 0.3, 0.4, 0.5),
         x_max=0.9,
-        y_max=0.4,
+        y_max=0.5,
         x_label="Evasion freedom",
-        y_label="Share / gain",
+        y_label="Share / distortion",
     )
 
     hidden_points = []
-    transparency_points = []
+    distortion_points = []
     for key, raw_x in EVASION_ROWS:
         row = indexed[key]
         x_value = float(raw_x)
-        hidden_points.append(plot.point(x_value, as_float(row["hiddenInfluenceShare"]), 0.9, 0.4))
-        transparency_points.append(plot.point(x_value, as_float(row["netTransparencyGain"]), 0.9, 0.4))
+        hidden_points.append(plot.point(x_value, as_float(row["hiddenInfluenceShare"]), 0.9, 0.5))
+        distortion_points.append(plot.point(x_value, as_float(row["totalInfluenceDistortion"]), 0.9, 0.5))
 
     body.append(polyline(hidden_points, "series-primary"))
-    body.append(polyline(transparency_points, "series-secondary"))
+    body.append(polyline(distortion_points, "series-secondary"))
     for x, y in hidden_points:
         body.append(rect(x - 12, y - 12, 24, 24, "#111111", "point"))
-    for x, y in transparency_points:
+    for x, y in distortion_points:
         body.append(rect(x - 12, y - 12, 24, 24, "#777777", "point"))
 
     endpoint_labels = layout_labels(
         plot,
         [
             LabelTarget("Hidden influence", *hidden_points[-1]),
-            LabelTarget("Net transparency", *transparency_points[-1]),
+            LabelTarget("Total distortion", *distortion_points[-1]),
         ],
     )
     draw_label_callouts(body, endpoint_labels)
@@ -218,14 +223,14 @@ def write_evasion_sensitivity(indexed: dict[str, dict[str, str]], report: Path, 
         figure_dir,
         "Figure_2_evasion_sensitivity",
         "Sensitivity to evasion freedom",
-        "Line chart showing hidden influence rising as evasion freedom increases and net transparency gain falling.",
+        "Line chart showing hidden influence and total influence distortion as evasion freedom changes.",
         body,
     )
     write_wrapper(
         figure_dir / "evasion_sensitivity.tex",
         "Figure_2_evasion_sensitivity.pdf",
         report,
-        "Sensitivity to evasion freedom. Hidden influence rises as evasion freedom increases, while net transparency gains fall, illustrating why reform assessment should track substitution rather than visible capture alone.",
+        "Sensitivity to evasion freedom. Hidden influence and total influence distortion are tracked together, illustrating why reform assessment should track substitution rather than visible capture alone.",
         "fig:evasion-sensitivity",
     )
 
@@ -234,19 +239,19 @@ def write_interaction_tradeoffs(indexed: dict[str, dict[str, str]], report: Path
     require_rows(indexed, list(INTERACTION_ROWS))
     body = scatter_body(
         title="Interaction tradeoff view",
-        subtitle="Hidden influence versus net transparency gain",
+        subtitle="Hidden influence versus total distortion",
         x_label="Hidden influence",
-        y_label="Net transparency gain",
+        y_label="Total influence distortion",
         x_max=0.4,
-        y_min=-0.1,
+        y_min=0.0,
         y_max=0.45,
         x_ticks=(0.0, 0.1, 0.2, 0.3, 0.4),
-        y_ticks=(-0.1, 0.0, 0.1, 0.2, 0.3, 0.4),
+        y_ticks=(0.0, 0.1, 0.2, 0.3, 0.4),
         points=[
             ScatterPoint(
                 label=label,
                 x=as_float(indexed[key]["hiddenInfluenceShare"]),
-                y=as_float(indexed[key]["netTransparencyGain"]),
+                y=as_float(indexed[key]["totalInfluenceDistortion"]),
                 emphasis=False,
             )
             for key, label in INTERACTION_ROWS.items()
@@ -256,16 +261,16 @@ def write_interaction_tradeoffs(indexed: dict[str, dict[str, str]], report: Path
         figure_dir,
         "Figure_3_interaction_tradeoffs",
         "Interaction tradeoff view",
-        "Scatter plot comparing hidden influence against net transparency gain after reforms bind.",
+        "Scatter plot comparing hidden influence against total influence distortion after reforms bind.",
         body,
     )
     write_wrapper(
         figure_dir / "interaction_tradeoffs.tex",
         "Figure_3_interaction_tradeoffs.pdf",
         report,
-        "Interaction tradeoff view. Points compare hidden influence against net transparency gain after reforms bind; the desirable direction is upper-left.",
+        "Interaction tradeoff view. Points compare hidden influence against total influence distortion after reforms bind; the desirable direction is lower-left.",
         "fig:interaction-tradeoffs",
-        extra="x=hidden influence; y=Net transparency gain",
+        extra="x=hidden influence; y=Total influence distortion",
     )
 
 
@@ -276,37 +281,37 @@ def write_scenario_tradeoffs(indexed: dict[str, dict[str, str]], report: Path, f
         points.append(
             ScatterPoint(
                 label=label,
-                x=as_float(indexed[key]["captureRate"]),
-                y=as_float(indexed[key]["hiddenInfluenceShare"]),
+                x=as_float(indexed[key]["observedCaptureRate"]),
+                y=as_float(indexed[key]["totalInfluenceDistortion"]),
                 emphasis=key in {"full-anti-capture-bundle", "bundle-with-evasion"},
             )
         )
     body = scatter_body(
         title="Scenario tradeoff view",
-        subtitle="Observed capture versus hidden influence",
+        subtitle="Observed capture versus total distortion",
         x_label="Capture rate",
-        y_label="Hidden influence share",
+        y_label="Total influence distortion",
         x_min=-0.02,
-        x_max=0.75,
-        y_max=0.4,
-        x_ticks=(0.0, 0.25, 0.5, 0.75),
-        y_ticks=(0.0, 0.1, 0.2, 0.3, 0.4),
+        x_max=1.0,
+        y_max=0.55,
+        x_ticks=(0.0, 0.25, 0.5, 0.75, 1.0),
+        y_ticks=(0.0, 0.1, 0.2, 0.3, 0.4, 0.5),
         points=points,
     )
     write_svg_and_pdf(
         figure_dir,
         "Figure_4_scenario_tradeoffs",
         "Scenario tradeoff view",
-        "Scatter plot comparing observed capture rates against hidden influence shares across selected scenarios.",
+        "Scatter plot comparing observed capture rates against total influence distortion across selected scenarios.",
         body,
     )
     write_wrapper(
         figure_dir / "scenario_tradeoffs.tex",
         "Figure_4_scenario_tradeoffs.pdf",
         report,
-        "Scenario tradeoff between observed capture and hidden influence. The low-capture bundle cases remain substantively different when evasion preserves hidden influence capacity.",
+        "Scenario tradeoff between observed capture and total influence distortion. Low-capture cases remain substantively different when evasion or intermediaries preserve influence capacity.",
         "fig:scenario-tradeoffs",
-        extra="x=capture rate; y=Hidden influence share",
+        extra="x=capture rate; y=Total influence distortion",
     )
 
 

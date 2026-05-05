@@ -63,17 +63,28 @@ public final class Main {
         System.out.println("name=" + report.scenarioName());
         System.out.println("totalContests=" + report.totalContests());
         System.out.println("capturedContests=" + report.capturedContests());
-        System.out.println("captureRate=" + format(report.captureRate()));
+        System.out.println("observedCaptureRate=" + format(report.observedCaptureRate()));
+        System.out.println("hiddenCaptureIndex=" + format(report.hiddenCaptureIndex()));
+        System.out.println("totalInfluenceDistortion=" + format(report.totalInfluenceDistortion()));
+        System.out.println("substitutionFailureRisk=" + format(report.substitutionFailureRisk()));
         System.out.println("antiCaptureSuccessRate=" + format(report.antiCaptureSuccessRate()));
+        System.out.println("visibleLobbyingSpendShare=" + format(report.visibleLobbyingSpendShare()));
+        System.out.println("intermediarySpendShare=" + format(report.intermediarySpendShare()));
         System.out.println("defensiveReformSpendShare=" + format(report.defensiveReformSpendShare()));
         System.out.println("darkMoneySpendShare=" + format(report.darkMoneySpendShare()));
         System.out.println("channelSwitchRate=" + format(report.channelSwitchRate()));
         System.out.println("evasionShiftRate=" + format(report.evasionShiftRate()));
         System.out.println("hiddenInfluenceShare=" + format(report.hiddenInfluenceShare()));
         System.out.println("influencePreservationRate=" + format(report.influencePreservationRate()));
+        System.out.println("commentFloodingIndex=" + format(report.commentFloodingIndex()));
+        System.out.println("technicalRulemakingDistortion=" + format(report.technicalRulemakingDistortion()));
         System.out.println("commentUniqueInformationShare=" + format(report.commentUniqueInformationShare()));
         System.out.println("commentReviewBurden=" + format(report.commentReviewBurden()));
         System.out.println("detectionRate=" + format(report.detectionRate()));
+        System.out.println("enforcementCapacityIndex=" + format(report.enforcementCapacityIndex()));
+        System.out.println("captureRateSeedStdDev=" + format(report.captureRateSeedStdDev()));
+        System.out.println("hiddenInfluenceSeedStdDev=" + format(report.hiddenInfluenceSeedStdDev()));
+        System.out.println("totalInfluenceDistortionSeedStdDev=" + format(report.totalInfluenceDistortionSeedStdDev()));
         System.out.println("directionalScore=" + format(report.directionalScore()));
     }
 

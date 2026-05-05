@@ -19,10 +19,14 @@ public record CommentCampaign(
             ChannelAllocation allocation,
             ReformRegime reform
     ) {
-        double commentSpend = allocation.publicCampaign() + allocation.darkMoney() + allocation.informationDistortion();
+        double commentSpend = allocation.publicCampaign()
+                + allocation.darkMoney()
+                + allocation.informationDistortion()
+                + (1.18 * allocation.intermediary());
         int generated = (int) Math.round(commentSpend * (18.0 + (sponsor.astroturfSkill() * 36.0)));
         int astroturf = (int) Math.round(generated * sponsor.astroturfSkill() * (1.0 - reform.antiAstroturfStrength()));
-        int template = (int) Math.round(generated * (0.30 + (0.30 * sponsor.informationBias())));
+        double intermediaryShare = commentSpend == 0.0 ? 0.0 : allocation.intermediary() / commentSpend;
+        int template = (int) Math.round(generated * (0.30 + (0.30 * sponsor.informationBias()) + (0.12 * intermediaryShare)));
         int genuine = Math.max(0, generated - astroturf - template);
         double credibility = Values.clamp(
                 (0.50 * sponsor.technicalExpertise())
@@ -46,4 +50,3 @@ public record CommentCampaign(
         return Values.clamp(((templateComments * 0.42) + (astroturfComments * 0.78)) / total, 0.0, 1.0);
     }
 }
-

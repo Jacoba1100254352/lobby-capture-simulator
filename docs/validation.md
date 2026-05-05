@@ -11,7 +11,7 @@ Initial validation targets:
 - Seattle democracy vouchers and NYC public matching funds: voucher participation, public-funds share, donor-base broadening.
 - USAspending: procurement-recipient concentration and agency spending exposure.
 
-The implementation stores benchmark metadata in `data/calibration/empirical-benchmarks.csv`, normalized fixture rows in `data/fixtures/`, and source-native JSON parser fixtures in `data/fixtures/source-native/`. The fixture scripts copy normalized rows into `data/raw/` so calibration behavior can be reproduced without network access.
+The implementation stores benchmark metadata in `data/calibration/empirical-benchmarks.csv`, normalized fixture rows in `data/fixtures/`, source-native JSON parser fixtures in `data/fixtures/source-native/`, and the committed paper snapshot under `data/snapshots/2024-env/normalized/`. Report generation defaults to that committed snapshot so ignored `data/raw/` live-fetch outputs cannot alter paper artifacts unless `LOBBY_CAPTURE_CALIBRATION_DIR` is set explicitly.
 
 The Deep Research reports are distilled into `docs/research/research-synthesis.md` and `data/calibration/parameter-map.csv`. The parameter map is the preferred place to add new empirical moments because it records a model metric, low/mid/high prior, evidence class, source report, model target, and implementation status.
 
@@ -26,7 +26,7 @@ These files are plausibility inputs. They should not be cited as causal estimate
 
 The fetch scripts now have two modes:
 
-- default mode copies tracked deterministic fixtures into `data/raw/`;
+- default mode copies tracked deterministic fixtures into `data/raw/` for snapshot preparation and local experiments;
 - `--live` mode normalizes an explicit CSV path or URL into the same schema and fails if required columns are missing;
 - source-native `--live` mode queries LDA, OpenFEC, Regulations.gov, or Federal Register when no explicit CSV/URL is supplied.
 
@@ -45,7 +45,7 @@ The source-native normalizers are distributional bridges. `scripts/test-source-f
 
 `make source-moments` writes `reports/source-moments.csv` plus `reports/source-moments.md`. It compares the current 2024 EPA/ENV normalized snapshot against the deterministic fixture baseline on source-level moments such as top-client share, top-donor share, amount-weighted traceability, dark-money direct visibility, public-financing source share, and comment-volume concentration.
 
-`make validate` compares committed report snapshots against both `data/calibration/empirical-benchmarks.csv` and implemented rows in `data/calibration/parameter-map.csv`. It writes `reports/validation-summary.csv` plus `reports/validation-summary.md`, including counts by evidence class. Current benchmark rows are deliberately broad plausibility bands; misses should be read as calibration work queues, not model falsification.
+`make validate` compares committed report snapshots against both `data/calibration/empirical-benchmarks.csv` and implemented rows in `data/calibration/parameter-map.csv`. It writes `reports/validation-summary.csv` plus `reports/validation-summary.md`, including counts by evidence class. It also writes `reports/substitution-audit.csv` and `reports/substitution-audit.md`, which flag reforms that lower observed capture while increasing hidden influence, hidden capture, total distortion, or substitution-failure risk. Current benchmark rows are deliberately broad plausibility bands; misses should be read as calibration work queues, not model falsification.
 
 `make calibration-queue` writes `reports/calibration-queue.csv` plus `reports/calibration-queue.md`. It classifies misses and partial overlaps as model tuning, metric splits, direct source moments, scenario coverage, scale alignment, or benchmark review.
 
@@ -64,7 +64,7 @@ The current committed 2024 EPA/ENV snapshot was regenerated from official endpoi
 - FEC: 600 normalized 2024 OpenFEC rows from the six national party committee requests.
 - Regulations.gov and Federal Register: 200 combined EPA 2024 regulatory rows.
 - USAspending: 200 EPA fiscal-year 2024 award rows.
-- Revolving door: 5 fixture rows because no licensed or exported source panel is configured yet.
+- Revolving door: 14 tracked fixture rows because no licensed or exported source panel is configured yet.
 
 The snapshot is stronger than the earlier public/demo run, but it is still not a representative empirical panel. The FEC slice covers national party committee flows rather than dark-money or public-financing sources, and the revolving-door file remains a fixture. `reports/source-moments.md` records these representativeness warnings directly.
 

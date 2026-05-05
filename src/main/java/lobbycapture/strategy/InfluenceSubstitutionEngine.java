@@ -65,6 +65,15 @@ public final class InfluenceSubstitutionEngine {
                 0.0,
                 1.0
         );
+        double intermediaryFit = Values.clamp(
+                (0.34 * group.technicalExpertise())
+                        + (0.24 * group.publicCampaignSkill())
+                        + (0.18 * group.disclosureAvoidanceSkill())
+                        + (0.14 * group.accessCapital())
+                        + (0.10 * contest.technicalComplexity()),
+                0.0,
+                1.0
+        );
         double vendorOverlap = Values.clamp(
                 (0.28 * group.revolvingDoorNetworkStrength())
                         + (0.24 * group.accessCapital())
@@ -94,7 +103,8 @@ public final class InfluenceSubstitutionEngine {
                 (0.34 * channelPressure)
                         + (0.22 * anonymityValue)
                         + (0.18 * messengerCredibility)
-                        + (0.16 * vendorOverlap)
+                        + (0.12 * vendorOverlap)
+                        + (0.08 * intermediaryFit)
                         + (0.10 * world.evasionFreedom())
                         - (0.18 * legalCost)
                         - (0.10 * setupTime),
@@ -111,6 +121,7 @@ public final class InfluenceSubstitutionEngine {
                                 + (0.58 * anonymityValue)
                                 + (0.28 * world.evasionProfile().opacity())
                                 + (0.22 * world.evasionFreedom())
+                                + (0.16 * intermediaryFit)
                 )
                         - (0.10 * Math.max(0.0, reform.transparencyStrength() - world.evasionFreedom())),
                 0.0,
@@ -170,6 +181,7 @@ public final class InfluenceSubstitutionEngine {
             case CAMPAIGN_FINANCE -> campaignPressure;
             case DARK_MONEY -> opacityPressure;
             case REVOLVING_DOOR -> Math.max(accessPressure, contest.arena() == ContestArena.PROCUREMENT ? 0.62 : accessPressure);
+            case INTERMEDIARY -> Math.max(commentPressure, Math.max(accessPressure, opacityPressure)) * 0.88;
             case INFORMATION_DISTORTION, PUBLIC_CAMPAIGN -> commentPressure;
             case LITIGATION_THREAT -> legalVenuePressure;
             case BALANCED -> Math.max(Math.max(accessPressure, campaignPressure), Math.max(opacityPressure, commentPressure)) * 0.72;
@@ -186,6 +198,12 @@ public final class InfluenceSubstitutionEngine {
             double commentPressure,
             double legalVenuePressure
     ) {
+        if (current == InfluenceStrategy.INTERMEDIARY && opacityPressure > 0.70) {
+            return legalVenuePressure > 0.45 ? InfluenceStrategy.LITIGATION_THREAT : InfluenceStrategy.PUBLIC_CAMPAIGN;
+        }
+        if (commentPressure >= 0.50 && (accessPressure >= 0.35 || opacityPressure >= 0.35)) {
+            return InfluenceStrategy.INTERMEDIARY;
+        }
         if (campaignPressure >= Math.max(accessPressure, commentPressure)) {
             return InfluenceStrategy.DARK_MONEY;
         }
@@ -196,7 +214,7 @@ public final class InfluenceSubstitutionEngine {
             return contest.legalVulnerability() > 0.45 ? InfluenceStrategy.LITIGATION_THREAT : InfluenceStrategy.INFORMATION_DISTORTION;
         }
         if (accessPressure >= 0.50) {
-            return legalVenuePressure > 0.50 ? InfluenceStrategy.LITIGATION_THREAT : InfluenceStrategy.PUBLIC_CAMPAIGN;
+            return legalVenuePressure > 0.50 ? InfluenceStrategy.LITIGATION_THREAT : InfluenceStrategy.INTERMEDIARY;
         }
         if (contest.arena() == ContestArena.PROCUREMENT) {
             return InfluenceStrategy.REVOLVING_DOOR;

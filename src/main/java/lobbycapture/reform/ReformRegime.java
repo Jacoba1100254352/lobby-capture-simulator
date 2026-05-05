@@ -122,6 +122,78 @@ public record ReformRegime(
         );
     }
 
+    public static ReformRegime hardLobbyingBudgets() {
+        return new ReformRegime(
+                "hard lobbying budgets",
+                0.70, 0.62, 0.54, 0.66, 0.72, 0.36, 0.14, 0.08, 0.42, 0.48,
+                0.36, 0.24, 0.28, 0.56, 0.48, 0.56, 0.28, 0.18, 0.38, 0.12, 0.38
+        );
+    }
+
+    public static ReformRegime publicInterestRepresentationFunds() {
+        return new ReformRegime(
+                "public-interest representation funds",
+                0.52, 0.42, 0.34, 0.44, 0.08, 0.10, 0.48, 0.52, 0.34, 0.30,
+                0.78, 0.62, 0.40, 0.46, 0.38, 0.42, 0.16, 0.62, 0.30, 0.07, 0.16
+        );
+    }
+
+    public static ReformRegime randomizedAuditSanctions() {
+        return new ReformRegime(
+                "randomized audit and sanctions",
+                0.56, 0.42, 0.38, 0.48, 0.12, 0.22, 0.10, 0.06, 0.26, 0.40,
+                0.34, 0.32, 0.28, 0.78, 0.86, 0.82, 0.18, 0.44, 0.36, 0.09, 0.20
+        );
+    }
+
+    public static ReformRegime machineReadableMeetingLogs() {
+        return new ReformRegime(
+                "machine-readable meeting logs",
+                0.86, 0.92, 0.64, 0.90, 0.10, 0.14, 0.06, 0.03, 0.18, 0.58,
+                0.30, 0.18, 0.28, 0.44, 0.38, 0.44, 0.10, 0.52, 0.26, 0.06, 0.14
+        );
+    }
+
+    public static ReformRegime enforcedCoolingOff() {
+        return new ReformRegime(
+                "enforced cooling-off periods",
+                0.56, 0.46, 0.38, 0.68, 0.36, 0.88, 0.08, 0.04, 0.22, 0.34,
+                0.34, 0.30, 0.20, 0.62, 0.58, 0.68, 0.20, 0.42, 0.34, 0.10, 0.26
+        );
+    }
+
+    public static ReformRegime commentAuthenticityRules() {
+        return new ReformRegime(
+                "comment-authenticity rules",
+                0.56, 0.46, 0.44, 0.48, 0.08, 0.12, 0.08, 0.04, 0.18, 0.36,
+                0.42, 0.56, 0.86, 0.56, 0.52, 0.58, 0.14, 0.48, 0.40, 0.12, 0.18
+        );
+    }
+
+    public static ReformRegime publicAdvocateOffice() {
+        return new ReformRegime(
+                "public advocate office",
+                0.48, 0.38, 0.34, 0.42, 0.06, 0.08, 0.26, 0.22, 0.18, 0.28,
+                0.90, 0.72, 0.42, 0.50, 0.40, 0.42, 0.12, 0.66, 0.34, 0.08, 0.14
+        );
+    }
+
+    public static ReformRegime procurementFirewall() {
+        return new ReformRegime(
+                "procurement firewalls",
+                0.62, 0.54, 0.50, 0.78, 0.28, 0.54, 0.08, 0.04, 0.22, 0.36,
+                0.54, 0.62, 0.28, 0.70, 0.68, 0.74, 0.20, 0.36, 0.42, 0.10, 0.24
+        );
+    }
+
+    public static ReformRegime venueShiftingDetection() {
+        return new ReformRegime(
+                "venue-shifting detection",
+                0.78, 0.76, 0.76, 0.78, 0.20, 0.40, 0.22, 0.18, 0.34, 0.72,
+                0.54, 0.52, 0.60, 0.74, 0.72, 0.70, 0.18, 0.40, 0.44, 0.10, 0.22
+        );
+    }
+
     public ReformRegime withTuning(
             String tunedName,
             double disclosureMultiplier,

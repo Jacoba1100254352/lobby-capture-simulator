@@ -39,6 +39,7 @@ public final class Simulator {
     public ScenarioReport run(Scenario scenario, int runs, int contestsPerRun, long seed) {
         MetricsAccumulator metrics = new MetricsAccumulator();
         for (int run = 0; run < runs; run++) {
+            MetricsAccumulator runMetrics = new MetricsAccumulator();
             WorldState world = new WorldState(scenario.worldSpec(), seed + (run * 10_007L));
             for (int index = 0; index < contestsPerRun; index++) {
                 PolicyContest contest = nextContest(scenario.worldSpec().contestTemplates(), world.random(), run, index);
@@ -47,8 +48,10 @@ public final class Simulator {
                 lobbying.observe(outcome, world);
                 world.adaptInstitutions(outcome);
                 metrics.add(outcome, world);
+                runMetrics.add(outcome, world);
                 world.clock().advance();
             }
+            metrics.recordRun(runMetrics);
         }
         return metrics.toReport(scenario.key(), scenario.name());
     }

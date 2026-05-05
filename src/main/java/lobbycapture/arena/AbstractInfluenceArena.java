@@ -100,6 +100,14 @@ abstract class AbstractInfluenceArena implements InfluenceArena {
                 + (campaignFinanceWeight * contest.campaignFinanceInfluence())
                 + (revolvingDoorWeight * contest.revolvingDoorInfluence())
                 + (litigationWeight * contest.litigationThreat());
+        double hiddenSubstitutionPressure = Values.clamp(
+                (0.16 * influence.hiddenInfluenceShare())
+                        + (0.11 * influence.influencePreservationRate())
+                        + (0.08 * influence.venueSubstitutionRate())
+                        + (0.05 * influence.messengerSubstitutionRate()),
+                0.0,
+                1.0
+        );
         double publicBacklash = publicVisibility * reform.transparencyStrength() * Math.max(0.0, contest.lobbyPressure());
         double reformControl = (0.24 * reform.transparencyStrength())
                 + (0.22 * reform.enforcementStrength())
@@ -110,11 +118,20 @@ abstract class AbstractInfluenceArena implements InfluenceArena {
                 + (0.05 * reform.coolingOffStrength())
                 + (0.07 * world.regulatorAttention(contest.issueDomain()) * (1.0 - (0.30 * world.regulatorQueue(contest.issueDomain()))))
                 + (0.05 * world.watchdogFocus(contest.issueDomain()));
+        double controlLeakage = Values.clamp(
+                1.0
+                        - (0.22 * influence.hiddenInfluenceShare())
+                        - (0.10 * influence.influencePreservationRate())
+                        - (0.08 * influence.venueSubstitutionRate()),
+                0.62,
+                1.0
+        );
         double capturePressure = contest.captureRisk()
                 + captureSusceptibility
                 + channelPressure
+                + hiddenSubstitutionPressure
                 + (0.10 * contest.technicalComplexity())
-                - (0.35 * reformControl)
+                - (0.35 * reformControl * controlLeakage)
                 - (0.18 * publicBacklash)
                 + randomNoise(world, 0.06);
         boolean capturedBeforeAudit = capturePressure >= 0.48;
@@ -125,6 +142,7 @@ abstract class AbstractInfluenceArena implements InfluenceArena {
                         + (0.18 * reform.transparencyStrength())
                         + (0.14 * contest.watchdogPressure())
                         - (0.16 * contest.darkMoneyInfluence())
+                        - (0.10 * influence.hiddenInfluenceShare())
                         + (0.10 * world.evasionProfile().legalRisk())
                         + (0.10 * world.watchdogFocus(contest.issueDomain()))
                         + (0.07 * world.regulatorAttention(contest.issueDomain()) * (1.0 - (0.35 * world.regulatorQueue(contest.issueDomain()))))

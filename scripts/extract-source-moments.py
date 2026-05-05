@@ -59,6 +59,8 @@ def lda_moments(scope: str, path: Path) -> list[dict[str, str]]:
         moment(scope, "lda", "lobbyingRegistrantTop3Share", top_share(by_registrant, 3), "observed", "top three registrants share of normalized LDA amount"),
         moment(scope, "lda", "lobbyingSectorTopShare", top_share(by_sector, 1), "observed", "largest issue-domain share of normalized LDA amount"),
         moment(scope, "lda", "lobbyingDisclosureLagMean", average([number(row.get("disclosureLag")) for row in rows]), "observed", "mean normalized LDA disclosure lag"),
+        moment(scope, "lda", "coveredOfficialShareMean", average([number(row.get("coveredOfficialShare")) for row in rows]), "observed_proxy", "mean share of covered-official contact visibility"),
+        moment(scope, "lda", "lobbyingClientHerfindahl", herfindahl(by_client), "observed", "client concentration Herfindahl over normalized LDA amount"),
     ]
 
 
@@ -77,6 +79,7 @@ def fec_moments(scope: str, path: Path) -> list[dict[str, str]]:
         moment(scope, "fec", "fecTotalReceipts", total, "observed", "sum of normalized FEC amount"),
         moment(scope, "fec", "fecDonorTop1Share", top_share(by_source, 1), "observed", "largest donor share of normalized FEC amount"),
         moment(scope, "fec", "fecDonorTop3Share", top_share(by_source, 3), "observed", "top three donor share of normalized FEC amount"),
+        moment(scope, "fec", "fecDonorGini", gini(amounts), "observed", "donor amount Gini across normalized FEC rows"),
         moment(scope, "fec", "fecRecipientTop3Share", top_share(by_recipient, 3), "observed", "top three recipient share of normalized FEC amount"),
         moment(scope, "fec", "fecLargeDonorWeightedShare", weighted(rows, "largeDonorShare", "amount"), "observed_proxy", "amount-weighted normalized large donor share"),
         moment(scope, "fec", "moneyFlowTraceability", weighted(rows, "traceability", "amount"), "observed_proxy", "amount-weighted traceability across all normalized FEC rows"),
@@ -97,6 +100,7 @@ def regulatory_moments(scope: str, path: Path) -> list[dict[str, str]]:
         moment(scope, "regulatory", "commentVolumeTop1DocketShare", top_share(by_docket, 1), "observed_proxy", "largest docket share of normalized comments"),
         moment(scope, "regulatory", "commentTemplateShareMean", average([number(row.get("templateShare")) for row in rows]), "observed_proxy", "mean normalized template share"),
         moment(scope, "regulatory", "commentAuthenticationShareMean", average([number(row.get("authenticationShare")) for row in rows]), "observed_proxy", "mean normalized authentication share"),
+        moment(scope, "regulatory", "commentFloodingIndex", comment_flooding_index(rows, by_docket), "proxy", "combined top-docket concentration, template share, and low-authentication pressure"),
         moment(scope, "regulatory", "technicalClaimCredibilityMean", average([number(row.get("technicalClaimCredibility")) for row in rows]), "proxy", "mean normalized technical claim credibility"),
     ]
 
@@ -114,7 +118,9 @@ def usaspending_moments(scope: str, path: Path) -> list[dict[str, str]]:
         moment(scope, "usaspending", "procurementTotalAwards", total, "observed", "sum of normalized USAspending award amount"),
         moment(scope, "usaspending", "procurementRecipientTop1Share", top_share(by_recipient, 1), "observed", "largest recipient share of normalized award amount"),
         moment(scope, "usaspending", "procurementRecipientTop3Share", top_share(by_recipient, 3), "observed", "top three recipients share of normalized award amount"),
+        moment(scope, "usaspending", "procurementRecipientHerfindahl", herfindahl(by_recipient), "observed", "recipient award-amount Herfindahl"),
         moment(scope, "usaspending", "procurementAgencyTop1Share", top_share(by_agency, 1), "observed", "largest awarding agency share of normalized award amount"),
+        moment(scope, "usaspending", "procurementAgencyHerfindahl", herfindahl(by_agency), "observed", "awarding-agency amount Herfindahl"),
         moment(scope, "usaspending", "procurementSubAgencyTop3Share", top_share(by_sub_agency, 3), "observed", "top three sub-agencies share of normalized award amount"),
         moment(scope, "usaspending", "procurementAwardCount", sum(number(row.get("awardCount")) for row in rows), "observed", "sum of normalized award or transaction counts"),
     ]
@@ -125,12 +131,17 @@ def revolving_door_moments(scope: str, path: Path) -> list[dict[str, str]]:
     if not rows:
         return [moment(scope, "revolving-door", "revolvingDoorRows", 0.0, "observed", f"{path} missing or empty")]
     former_rows = [row for row in rows if row.get("formerOfficialRole", "").strip()]
+    fixture_rows = [row for row in rows if "fixture" in row.get("sourceType", "").lower()]
     by_agency = grouped_count(rows, "agency")
     return [
         moment(scope, "revolving-door", "revolvingDoorRows", len(rows), "observed", "normalized revolving-door rows"),
+        moment(scope, "revolving-door", "revolvingDoorFixtureShare", safe_divide(len(fixture_rows), len(rows)), "diagnostic", "share of rows marked as tracked fixture rather than live/exported source"),
         moment(scope, "revolving-door", "revolvingDoorFormerOfficialShare", safe_divide(len(former_rows), len(rows)), "observed_proxy", "share of rows with former official role"),
         moment(scope, "revolving-door", "revolvingDoorAgencyTop1Share", top_share(by_agency, 1), "observed_proxy", "largest agency share of normalized revolving-door rows"),
         moment(scope, "revolving-door", "revolvingDoorCoolingOffUnderOneYearShare", safe_divide(sum(1 for row in rows if number(row.get("coolingOffMonths")) < 12), len(rows)), "observed_proxy", "share of rows with cooling-off interval below one year"),
+        moment(scope, "revolving-door", "revolvingDoorCoolingOffMeanMonths", average([number(row.get("coolingOffMonths")) for row in rows]), "observed_proxy", "mean cooling-off interval in months"),
+        moment(scope, "revolving-door", "revolvingDoorHighInfluenceShare", safe_divide(sum(1 for row in rows if number(row.get("influenceShare")) >= 0.60), len(rows)), "proxy", "share of rows with high normalized influence"),
+        moment(scope, "revolving-door", "revolvingDoorInfluenceWeightedFormerOfficialShare", weighted_indicator(rows, "formerOfficialRole", "influenceShare"), "proxy", "influence-weighted former-official share"),
         moment(scope, "revolving-door", "revolvingDoorInfluenceMean", average([number(row.get("influenceShare")) for row in rows]), "proxy", "mean normalized influence share from source panel"),
     ]
 
@@ -163,11 +174,47 @@ def top_share(amounts: dict[str, float], count: int) -> float:
     return sum(sorted(amounts.values(), reverse=True)[:count]) / total
 
 
+def herfindahl(amounts: dict[str, float]) -> float:
+    total = sum(amounts.values())
+    if total <= 0.0:
+        return 0.0
+    return sum((amount / total) ** 2 for amount in amounts.values())
+
+
+def gini(values: list[float]) -> float:
+    positives = sorted(value for value in values if value >= 0.0)
+    if not positives:
+        return 0.0
+    total = sum(positives)
+    if total <= 0.0:
+        return 0.0
+    weighted_sum = sum((index + 1) * value for index, value in enumerate(positives))
+    count = len(positives)
+    return ((2.0 * weighted_sum) / (count * total)) - ((count + 1.0) / count)
+
+
 def weighted(rows: list[dict[str, str]], value_key: str, weight_key: str) -> float:
     total = sum(number(row.get(weight_key)) for row in rows)
     if total <= 0.0:
         return 0.0
     return sum(number(row.get(value_key)) * number(row.get(weight_key)) for row in rows) / total
+
+
+def weighted_indicator(rows: list[dict[str, str]], indicator_key: str, weight_key: str) -> float:
+    total = sum(number(row.get(weight_key)) for row in rows)
+    if total <= 0.0:
+        return 0.0
+    return sum((1.0 if row.get(indicator_key, "").strip() else 0.0) * number(row.get(weight_key)) for row in rows) / total
+
+
+def comment_flooding_index(rows: list[dict[str, str]], by_docket: dict[str, float]) -> float:
+    value = (
+        (0.34 * top_share(by_docket, 1))
+        + (0.30 * average([number(row.get("templateShare")) for row in rows]))
+        + (0.20 * average([1.0 - number(row.get("authenticationShare")) for row in rows]))
+        + (0.16 * average([number(row.get("commentVolume")) for row in rows]) / 2500.0)
+    )
+    return max(0.0, min(1.0, value))
 
 
 def average(values: list[float]) -> float:
@@ -256,6 +303,13 @@ def representativeness_warnings(rows: list[dict[str, str]]) -> list[str]:
         warnings.append(
             f"Snapshot revolving-door row count is {revolving_rows:.0f}; replace the fixture/export stub before using revolving-door moments as empirical anchors."
         )
+    if metric_value(rows, "snapshot", "revolving-door", "revolvingDoorFixtureShare") > 0.0:
+        warnings.append(
+            "Snapshot revolving-door rows are tracked fixtures; they support schema and mechanism tests, not empirical calibration."
+        )
+    warnings.append(
+        "Think-tank, association, and sponsored-expert intermediary routing is modeled but not yet anchored by a direct public-data panel."
+    )
     return warnings
 
 

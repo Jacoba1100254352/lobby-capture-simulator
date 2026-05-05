@@ -4,7 +4,7 @@
       "output": "campaign_snapshot.tex",
       "source": "lobby-capture-campaign.csv",
       "label": "tab:first-campaign",
-      "caption": "Current simulation snapshot. Metrics are comparative model outputs, not calibrated empirical estimates; zero captured contests are finite-run observations rather than proof of elimination.",
+      "caption": "Current simulation snapshot. Metrics are comparative model outputs, not calibrated empirical estimates. Observed capture is reported with hidden capture, total distortion, and substitution risk so lower measured capture is not treated as sufficient reform success.",
       "size": "footnotesize",
       "environment": "table*",
       "width": "\\textwidth",
@@ -14,10 +14,13 @@
         "campaign-finance-dominant",
         "dark-money-dominant",
         "revolving-door-dominant",
+        "intermediary-substitution",
+        "comment-authenticity-rules",
+        "procurement-firewalls",
+        "venue-shifting-detection",
         "reform-threat-mobilization",
         "full-anti-capture-bundle",
-        "bundle-with-evasion",
-        "low-salience-technical-rulemaking"
+        "bundle-with-evasion"
       ],
       "columns": [
         {
@@ -31,6 +34,10 @@
             "Campaign finance dominant": "Campaign finance",
             "Dark money dominant": "Dark money",
             "Revolving-door dominant": "Revolving door",
+            "Think-tank and association intermediaries": "Intermediaries",
+            "Comment-authenticity rules": "Comment auth.",
+            "Procurement firewalls": "Procurement firewall",
+            "Venue-shifting detection": "Venue detection",
             "Reform threat mobilization": "Reform threat",
             "Full anti-capture bundle": "Full bundle",
             "Anti-capture bundle with evasion": "Bundle+evasion"
@@ -50,23 +57,28 @@
           "format": "float3ci"
         },
         {
-          "header": "Hidden",
-          "source": "hiddenInfluenceShare",
+          "header": "Hidden cap.",
+          "source": "hiddenCaptureIndex",
           "format": "float4"
         },
         {
-          "header": "Preserved",
-          "source": "influencePreservationRate",
+          "header": "Total dist.",
+          "source": "totalInfluenceDistortion",
+          "format": "float4"
+        },
+        {
+          "header": "Subst. risk",
+          "source": "substitutionFailureRisk",
+          "format": "float4"
+        },
+        {
+          "header": "Intermed.",
+          "source": "intermediaryShare",
           "format": "float4"
         },
         {
           "header": "Defensive",
           "source": "defensiveReformSpendShare",
-          "format": "float4"
-        },
-        {
-          "header": "Dark money",
-          "source": "darkMoneyShare",
           "format": "float4"
         }
       ]
@@ -75,7 +87,7 @@
       "output": "sensitivity_snapshot.tex",
       "source": "lobby-capture-sensitivity.csv",
       "label": "tab:sensitivity",
-      "caption": "Selected sensitivity sweep rows under the stressed contest mix. Weak controls reopen observed capture, while evasion freedom shifts spending into opaque channels even when reform success remains high.",
+      "caption": "Selected sensitivity sweep rows under the stressed contest mix. Rows report total distortion and substitution risk because visible capture and nominal reform success can move differently from hidden influence.",
       "size": "footnotesize",
       "environment": "table*",
       "width": "\\textwidth",
@@ -111,25 +123,23 @@
           "format": "float3ci"
         },
         {
-          "header": "Reform (95% CI)",
-          "source": "antiCaptureSuccess",
-          "lowerSource": "antiCaptureSuccessLower95",
-          "upperSource": "antiCaptureSuccessUpper95",
-          "format": "float3ci"
-        },
-        {
-          "header": "Hidden",
-          "source": "hiddenInfluenceShare",
+          "header": "Total dist.",
+          "source": "totalInfluenceDistortion",
           "format": "float4"
         },
         {
-          "header": "Dark-money share",
-          "source": "darkMoneyShare",
+          "header": "Hidden cap.",
+          "source": "hiddenCaptureIndex",
           "format": "float4"
         },
         {
-          "header": "Evasion shift",
-          "source": "evasionShiftRate",
+          "header": "Subst. risk",
+          "source": "substitutionFailureRisk",
+          "format": "float4"
+        },
+        {
+          "header": "Dist. SD",
+          "source": "totalInfluenceDistortionSeedStdDev",
           "format": "float4"
         }
       ]
@@ -138,12 +148,13 @@
       "output": "ablation_snapshot.tex",
       "source": "lobby-capture-ablation.csv",
       "label": "tab:ablation",
-      "caption": "Selected ablation results. Removing public advocate/blind-review capacity creates the largest modeled capture opening, while removing beneficial-owner disclosure mainly shifts spending toward dark money.",
+      "caption": "Selected ablation results. Removals are ranked by total-distortion increase, not by observed capture alone.",
       "size": "footnotesize",
       "environment": "table*",
       "width": "\\textwidth",
       "rowMode": "ablation-delta",
       "baseline": "ablation-full-bundle",
+      "sortSource": "totalInfluenceDistortion",
       "columns": [
         {
           "header": "Removed component",
@@ -159,28 +170,28 @@
           }
         },
         {
-          "header": "Capture increase",
-          "source": "captureRate",
+          "header": "Dist. increase",
+          "source": "totalInfluenceDistortion",
           "format": "delta4"
         },
         {
-          "header": "Reform",
-          "source": "antiCaptureSuccess",
+          "header": "Cap. inc.",
+          "source": "observedCaptureRate",
+          "format": "delta4"
+        },
+        {
+          "header": "Hidden cap.",
+          "source": "hiddenCaptureIndex",
+          "format": "delta4"
+        },
+        {
+          "header": "Subst. risk",
+          "source": "substitutionFailureRisk",
           "format": "float4"
         },
         {
-          "header": "Dark money",
-          "source": "darkMoneyShare",
-          "format": "float4"
-        },
-        {
-          "header": "Comment distortion",
-          "source": "commentRecordDistortion",
-          "format": "float4"
-        },
-        {
-          "header": "Donor Gini",
-          "source": "donorInfluenceGini",
+          "header": "Comment flood",
+          "source": "commentFloodingIndex",
           "format": "float4"
         }
       ]
@@ -189,7 +200,7 @@
       "output": "interaction_snapshot.tex",
       "source": "lobby-capture-interactions.csv",
       "label": "tab:interactions",
-      "caption": "Selected reform-interaction rows under the stressed contest mix. The table reports capture with Wilson intervals alongside substitution diagnostics so the mechanism is not reduced to a single observed-capture column.",
+      "caption": "Selected reform-interaction rows under the stressed contest mix. The table reports capture with Wilson intervals alongside total-distortion and substitution diagnostics.",
       "size": "scriptsize",
       "environment": "table*",
       "width": "\\textwidth",
@@ -219,23 +230,23 @@
           "format": "float3ci"
         },
         {
-          "header": "Hid.",
+          "header": "Dist.",
+          "source": "totalInfluenceDistortion",
+          "format": "float3"
+        },
+        {
+          "header": "Hid. cap.",
+          "source": "hiddenCaptureIndex",
+          "format": "float3"
+        },
+        {
+          "header": "Risk",
+          "source": "substitutionFailureRisk",
+          "format": "float3"
+        },
+        {
+          "header": "Hidden",
           "source": "hiddenInfluenceShare",
-          "format": "float3"
-        },
-        {
-          "header": "Pres.",
-          "source": "influencePreservationRate",
-          "format": "float3"
-        },
-        {
-          "header": "Net trans.",
-          "source": "netTransparencyGain",
-          "format": "float3"
-        },
-        {
-          "header": "Evasion",
-          "source": "evasionShiftRate",
           "format": "float3"
         },
         {
@@ -244,8 +255,13 @@
           "format": "float3"
         },
         {
-          "header": "Comment",
-          "source": "commentSubstantiveUptake",
+          "header": "Intermed.",
+          "source": "intermediaryShare",
+          "format": "float3"
+        },
+        {
+          "header": "Admin",
+          "source": "administrativeCost",
           "format": "float3"
         }
       ]

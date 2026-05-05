@@ -34,10 +34,20 @@ public final class ScenarioCatalog {
                 scenario("campaign-finance-dominant", "Campaign finance dominant", "Influence mainly flows through campaigns and outside spending.", ReformRegime.minimalDisclosure(), InfluenceStrategy.CAMPAIGN_FINANCE, 0.20, true, electionContests()),
                 scenario("dark-money-dominant", "Dark money dominant", "Opaque intermediaries dominate public and campaign pressure.", ReformRegime.minimalDisclosure(), InfluenceStrategy.DARK_MONEY, 0.75, true, standardContests()),
                 scenario("revolving-door-dominant", "Revolving-door dominant", "Access networks and future-employment incentives dominate.", ReformRegime.minimalDisclosure(), InfluenceStrategy.REVOLVING_DOOR, 0.20, true, agencyContests()),
+                scenario("intermediary-substitution", "Think-tank and association intermediaries", "Visible lobbying constraints push influence through sponsored research, associations, and expert messengers.", ReformRegime.realTimeTransparency(), InfluenceStrategy.INTERMEDIARY, 0.70, true, technicalRulemakingContests()),
                 scenario("real-time-transparency", "Real-time transparency", "Contact logs and rapid disclosure are strong, but other controls are moderate.", ReformRegime.realTimeTransparency(), InfluenceStrategy.BALANCED, 0.35, true, standardContests()),
                 scenario("democracy-vouchers", "Democracy vouchers", "Public financing and vouchers reduce donor dependence.", ReformRegime.democracyVouchers(), InfluenceStrategy.CAMPAIGN_FINANCE, 0.30, true, electionAndReformContests()),
                 scenario("cooling-off-ban", "Cooling-off ban", "Revolving-door access is restricted.", ReformRegime.coolingOffBan(), InfluenceStrategy.REVOLVING_DOOR, 0.30, true, agencyContests()),
                 scenario("audit-and-sanctions", "Audit and sanctions", "Risk-weighted enforcement targets capture attempts.", ReformRegime.auditAndSanctions(), InfluenceStrategy.BALANCED, 0.25, true, standardContests()),
+                scenario("hard-lobbying-budgets", "Hard lobbying budgets", "Strict expenditure caps and access limits test whether influence moves to indirect messengers.", ReformRegime.hardLobbyingBudgets(), InfluenceStrategy.BALANCED, 0.55, true, standardContests()),
+                scenario("public-interest-representation-funds", "Public-interest representation funds", "Public-interest advocates and representation funds counter technical and legal asymmetries.", ReformRegime.publicInterestRepresentationFunds(), InfluenceStrategy.INFORMATION_DISTORTION, 0.35, true, technicalRulemakingContests()),
+                scenario("randomized-audit-sanctions", "Randomized audit and sanctions", "Randomized audits raise expected evasion costs across channels.", ReformRegime.randomizedAuditSanctions(), InfluenceStrategy.BALANCED, 0.40, true, standardContests()),
+                scenario("machine-readable-meeting-logs", "Machine-readable meeting logs", "Real-time structured meeting logs improve visibility of direct and indirect contacts.", ReformRegime.machineReadableMeetingLogs(), InfluenceStrategy.DIRECT_ACCESS, 0.45, true, agencyContests()),
+                scenario("enforced-cooling-off", "Enforced cooling-off periods", "Cooling-off rules are paired with audit and sanction capacity.", ReformRegime.enforcedCoolingOff(), InfluenceStrategy.REVOLVING_DOOR, 0.40, true, agencyContests()),
+                scenario("comment-authenticity-rules", "Comment-authenticity rules", "Authentication and deduplication target comment flooding and synthetic salience.", ReformRegime.commentAuthenticityRules(), InfluenceStrategy.INTERMEDIARY, 0.50, true, commentFloodingContests()),
+                scenario("public-advocate-office", "Public advocate office", "Dedicated public advocates and blind review counter one-sided technical submissions.", ReformRegime.publicAdvocateOffice(), InfluenceStrategy.INFORMATION_DISTORTION, 0.35, true, technicalRulemakingContests()),
+                scenario("procurement-firewalls", "Procurement firewalls", "Procurement contact controls, blind review, and sanctions target vendor capture.", ReformRegime.procurementFirewall(), InfluenceStrategy.REVOLVING_DOOR, 0.45, true, procurementContests()),
+                scenario("venue-shifting-detection", "Venue-shifting detection", "Transparency and enforcement systems explicitly track movement across venues and messengers.", ReformRegime.venueShiftingDetection(), InfluenceStrategy.INTERMEDIARY, 0.65, true, ablationStressContests()),
                 scenario("full-anti-capture-bundle", "Full anti-capture bundle", "Transparency, enforcement, public financing, blind review, public advocate, anti-astroturf systems, and cooling-off controls.", ReformRegime.fullBundle(), InfluenceStrategy.BALANCED, 0.35, true, reformHeavyContests()),
                 scenario("bundle-with-evasion", "Anti-capture bundle with evasion", "Strong reform bundle plus high ability to shift toward darker channels.", ReformRegime.fullBundle(), InfluenceStrategy.BALANCED, 0.90, true, reformHeavyContests()),
                 scenario("reform-threat-mobilization", "Reform threat mobilization", "High-salience reform proposals trigger adaptive defensive spending by affected interests.", ReformRegime.realTimeTransparency(), InfluenceStrategy.DIRECT_ACCESS, 0.50, true, reformHeavyContests())
@@ -299,6 +309,34 @@ public final class ScenarioCatalog {
         return contest("procurement-spec", "Procurement specification design", "procurement", ContestArena.PROCUREMENT, false, 0.48, 0.40, 0.46, 0.78, 0.56, 0.56, 0.30);
     }
 
+    private static List<PolicyContest> procurementContests() {
+        return List.of(
+                procurementContest(),
+                contest("procurement-firewall-award", "Firewall-sensitive award specification", "procurement", ContestArena.PROCUREMENT, false, 0.50, 0.34, 0.54, 0.92, 0.76, 0.70, 0.32),
+                contest("procurement-subcontract-routing", "Subcontractor eligibility routing", "procurement", ContestArena.PROCUREMENT, false, 0.44, 0.32, 0.50, 0.86, 0.70, 0.62, 0.28),
+                antiCoolingOff()
+        );
+    }
+
+    private static List<PolicyContest> technicalRulemakingContests() {
+        List<PolicyContest> contests = new ArrayList<>();
+        contests.addAll(rulemakingContests());
+        contests.add(contest("technical-guidance-benchmark", "Technical benchmark guidance", "technology", ContestArena.RULEMAKING, false, 0.58, 0.38, 0.62, 0.86, 0.64, 0.94, 0.24));
+        contests.add(contest("standards-incorporation-rule", "Standards incorporation rule", "rulemaking", ContestArena.RULEMAKING, false, 0.56, 0.36, 0.60, 0.84, 0.62, 0.92, 0.22));
+        contests.add(contest("expert-evidence-advisory", "Expert evidence advisory docket", "public-information", ContestArena.PUBLIC_INFORMATION, false, 0.54, 0.34, 0.58, 0.80, 0.60, 0.88, 0.26));
+        contests.add(antiAstroturfAuth());
+        return List.copyOf(contests);
+    }
+
+    private static List<PolicyContest> commentFloodingContests() {
+        return List.of(
+                contest("mass-comment-rule", "Mass-comment rulemaking docket", "rulemaking", ContestArena.RULEMAKING, false, 0.56, 0.30, 0.60, 0.82, 0.66, 0.78, 0.42),
+                contest("public-information-salience", "Synthetic public-information campaign", "public-information", ContestArena.PUBLIC_INFORMATION, false, 0.48, 0.28, 0.62, 0.78, 0.64, 0.66, 0.54),
+                contest("template-heavy-guidance", "Template-heavy technical guidance", "technology", ContestArena.RULEMAKING, false, 0.52, 0.34, 0.58, 0.84, 0.68, 0.90, 0.36),
+                antiAstroturfAuth()
+        );
+    }
+
     private static List<PolicyContest> electionAndReformContests() {
         List<PolicyContest> contests = new ArrayList<>();
         contests.addAll(electionContests());
@@ -369,7 +407,11 @@ public final class ScenarioCatalog {
 
     private static synchronized CalibrationProfile calibration() {
         if (cachedCalibration == null) {
-            cachedCalibration = CalibrationDataLoader.loadOrEmbedded(Path.of("data", "raw"));
+            String configuredDirectory = System.getenv("LOBBY_CAPTURE_CALIBRATION_DIR");
+            Path calibrationDirectory = configuredDirectory == null || configuredDirectory.isBlank()
+                    ? Path.of("data", "snapshots", "2024-env", "normalized")
+                    : Path.of(configuredDirectory);
+            cachedCalibration = CalibrationDataLoader.loadOrEmbedded(calibrationDirectory);
         }
         return cachedCalibration;
     }

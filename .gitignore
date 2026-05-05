@@ -18,6 +18,8 @@ reports/*.md
 !reports/lobby-capture-interactions.md
 !reports/validation-summary.csv
 !reports/validation-summary.md
+!reports/substitution-audit.csv
+!reports/substitution-audit.md
 !reports/source-moments.csv
 !reports/source-moments.md
 !reports/calibration-queue.csv

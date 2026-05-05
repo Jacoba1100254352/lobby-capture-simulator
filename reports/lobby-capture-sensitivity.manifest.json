@@ -8,7 +8,7 @@
   "gitCommit": "tracked-artifact-build",
   "workingTreeDirty": false,
   "workingTreeDirtyScope": "tracked status excluding generated reports, paper tables, paper figures, and 2024-env snapshot outputs",
-  "javaVersion": "21.0.7",
-  "calibrationChecksum": "4256e79f450e886fa06bb67c7054737482d25831654bc4d9588583466e9c5bb4",
+  "javaVersion": "25",
+  "calibrationChecksum": "eb45fb2de24a30faf4f423e13560161fa727233193db6b1b906fe2b7d9b48d89",
   "reportFiles": ["lobby-capture-sensitivity.csv", "lobby-capture-sensitivity.md"]
 }

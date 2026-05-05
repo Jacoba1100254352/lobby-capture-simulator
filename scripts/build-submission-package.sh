@@ -50,6 +50,7 @@ cp "$ROOT_DIR/docs/scenario-catalog.md" "$STAGING_DIR/supporting-information/sce
 cp "$ROOT_DIR/docs/validation.md" "$STAGING_DIR/supporting-information/validation-plan.md"
 cp "$ROOT_DIR/reports/source-moments.md" "$STAGING_DIR/supporting-information/source-moments.md"
 cp "$ROOT_DIR/reports/validation-summary.md" "$STAGING_DIR/supporting-information/validation-summary.md"
+cp "$ROOT_DIR/reports/substitution-audit.md" "$STAGING_DIR/supporting-information/substitution-audit.md"
 cp "$ROOT_DIR/reports/calibration-queue.md" "$STAGING_DIR/supporting-information/calibration-queue.md"
 mkdir -p "$STAGING_DIR/figures"
 cp "$PAPER_DIR"/figures/Figure_*.pdf "$STAGING_DIR/figures/"
@@ -63,6 +64,10 @@ if [ -f "$STAGING_DIR/LETTERSP.STY" ]; then
   mv "$STAGING_DIR/lettersp.sty.tmp" "$STAGING_DIR/lettersp.sty"
 elif [ -f "$TEMPLATE_DIR/LETTERSP.STY" ]; then
   cp "$TEMPLATE_DIR/LETTERSP.STY" "$STAGING_DIR/lettersp.sty"
+fi
+if [ ! -f "$STAGING_DIR/lettersp.sty" ]; then
+  printf 'Missing lettersp.sty in Wiley submission staging directory.\n' >&2
+  exit 2
 fi
 mkdir -p "$STAGING_DIR/images"
 cp "$TEMPLATE_DIR/images/Wiley_logo.eps" "$STAGING_DIR/images/"

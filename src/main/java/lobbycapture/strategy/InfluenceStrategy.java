@@ -10,6 +10,6 @@ public enum InfluenceStrategy {
     CAMPAIGN_FINANCE,
     DARK_MONEY,
     REVOLVING_DOOR,
+    INTERMEDIARY,
     DEFENSIVE_REFORM
 }
-

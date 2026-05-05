@@ -39,10 +39,13 @@ public final class ReportManifestWriter {
         append(builder, "contestsPerRun", Integer.toString(provenance.contestsPerRun()), false, true);
         append(builder, "command", command, true);
         append(builder, "gitCommit", configured("LOBBY_CAPTURE_REPORT_GIT_COMMIT", git("rev-parse", "--short", "HEAD")), true);
-        append(builder, "workingTreeDirty", Boolean.toString(!sourceStatus().isBlank()), false, true);
+        append(builder, "workingTreeDirty", configured(
+                "LOBBY_CAPTURE_REPORT_WORKING_TREE_DIRTY",
+                Boolean.toString(!sourceStatus().isBlank())
+        ), false, true);
         append(builder, "workingTreeDirtyScope", "tracked status excluding generated reports, paper tables, paper figures, and 2024-env snapshot outputs", true);
         append(builder, "javaVersion", System.getProperty("java.version"), true);
-        append(builder, "calibrationChecksum", checksumDirectory(Path.of("data", "raw")), true);
+        append(builder, "calibrationChecksum", checksumDirectory(calibrationDirectory()), true);
         appendArray(builder, "reportFiles", reportFiles);
         builder.append("}\n");
         Files.writeString(reportsDir.resolve(baseName + ".manifest.json"), builder.toString(), StandardCharsets.UTF_8);
@@ -134,6 +137,13 @@ public final class ReportManifestWriter {
             }
         }
         return false;
+    }
+
+    private static Path calibrationDirectory() {
+        String configuredDirectory = System.getenv("LOBBY_CAPTURE_CALIBRATION_DIR");
+        return configuredDirectory == null || configuredDirectory.isBlank()
+                ? Path.of("data", "snapshots", "2024-env", "normalized")
+                : Path.of(configuredDirectory);
     }
 
     private static String checksumDirectory(Path directory) throws IOException {

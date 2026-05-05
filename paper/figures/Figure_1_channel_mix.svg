@@ -17,73 +17,89 @@ text { font-family: Helvetica, Arial, sans-serif; font-size: 34px; fill: #111; }
 <rect width="100%" height="100%" fill="#fff"/>
 <text x="70" y="72" text-anchor="start" class="title">Channel allocation mix</text>
 <text x="70" y="122" text-anchor="start" class="subtitle">Share of lobby spending by channel</text>
-<line x1="440" y1="288" x2="440" y2="902" class="grid"/>
-<text x="440" y="950" text-anchor="middle" class="tick">0</text>
-<line x1="700" y1="288" x2="700" y2="902" class="grid"/>
-<text x="700" y="950" text-anchor="middle" class="tick">0.25</text>
-<line x1="960" y1="288" x2="960" y2="902" class="grid"/>
-<text x="960" y="950" text-anchor="middle" class="tick">0.5</text>
-<line x1="1220" y1="288" x2="1220" y2="902" class="grid"/>
-<text x="1220" y="950" text-anchor="middle" class="tick">0.75</text>
-<line x1="1480" y1="288" x2="1480" y2="902" class="grid"/>
-<text x="1480" y="950" text-anchor="middle" class="tick">1</text>
+<line x1="440" y1="288" x2="440" y2="984" class="grid"/>
+<text x="440" y="1032" text-anchor="middle" class="tick">0</text>
+<line x1="700" y1="288" x2="700" y2="984" class="grid"/>
+<text x="700" y="1032" text-anchor="middle" class="tick">0.25</text>
+<line x1="960" y1="288" x2="960" y2="984" class="grid"/>
+<text x="960" y="1032" text-anchor="middle" class="tick">0.5</text>
+<line x1="1220" y1="288" x2="1220" y2="984" class="grid"/>
+<text x="1220" y="1032" text-anchor="middle" class="tick">0.75</text>
+<line x1="1480" y1="288" x2="1480" y2="984" class="grid"/>
+<text x="1480" y="1032" text-anchor="middle" class="tick">1</text>
 <text x="70" y="339" text-anchor="start">Open access</text>
-<rect x="440" y="310" width="130.6" height="38" fill="#d0d0d0" class="segment"/>
-<rect x="570.6" y="310" width="136.7" height="38" fill="#ababab" class="segment"/>
-<rect x="707.3" y="310" width="166.5" height="38" fill="#808080" class="segment"/>
-<rect x="873.8" y="310" width="96.5" height="38" fill="#595959" class="segment"/>
-<rect x="970.3" y="310" width="112.9" height="38" fill="#333333" class="segment"/>
-<rect x="1083.2" y="310" width="93.5" height="38" fill="#1a1a1a" class="segment"/>
-<rect x="1176.7" y="310" width="44.6" height="38" fill="#000000" class="segment"/>
+<rect x="440" y="310" width="119.1" height="38" fill="#d0d0d0" class="segment"/>
+<rect x="559.1" y="310" width="125.9" height="38" fill="#ababab" class="segment"/>
+<rect x="685.0" y="310" width="152.5" height="38" fill="#808080" class="segment"/>
+<rect x="837.5" y="310" width="85.5" height="38" fill="#595959" class="segment"/>
+<rect x="923.0" y="310" width="102.9" height="38" fill="#333333" class="segment"/>
+<rect x="1025.8" y="310" width="86.7" height="38" fill="#1f4e79" class="segment"/>
+<rect x="1112.6" y="310" width="83.2" height="38" fill="#8c564b" class="segment"/>
+<rect x="1195.8" y="310" width="46.2" height="38" fill="#000000" class="segment"/>
 <text x="70" y="421" text-anchor="start">Rulemaking</text>
-<rect x="440" y="392" width="83.2" height="38" fill="#d0d0d0" class="segment"/>
-<rect x="523.2" y="392" width="520" height="38" fill="#ababab" class="segment"/>
-<rect x="1043.2" y="392" width="83.2" height="38" fill="#808080" class="segment"/>
-<rect x="1126.4" y="392" width="20.8" height="38" fill="#595959" class="segment"/>
-<rect x="1147.2" y="392" width="124.8" height="38" fill="#333333" class="segment"/>
-<rect x="1272" y="392" width="62.4" height="38" fill="#1a1a1a" class="segment"/>
+<rect x="440" y="392" width="62.3" height="38" fill="#d0d0d0" class="segment"/>
+<rect x="502.3" y="392" width="465.6" height="38" fill="#ababab" class="segment"/>
+<rect x="967.9" y="392" width="73.8" height="38" fill="#808080" class="segment"/>
+<rect x="1041.7" y="392" width="21" height="38" fill="#595959" class="segment"/>
+<rect x="1062.8" y="392" width="125.7" height="38" fill="#333333" class="segment"/>
+<rect x="1188.5" y="392" width="52" height="38" fill="#1f4e79" class="segment"/>
+<rect x="1240.5" y="392" width="104.2" height="38" fill="#8c564b" class="segment"/>
 <text x="70" y="503" text-anchor="start">Campaign</text>
-<rect x="440" y="474" width="83.2" height="38" fill="#d0d0d0" class="segment"/>
-<rect x="523.2" y="474" width="41.6" height="38" fill="#ababab" class="segment"/>
-<rect x="564.8" y="474" width="83.2" height="38" fill="#808080" class="segment"/>
-<rect x="648" y="474" width="540.8" height="38" fill="#595959" class="segment"/>
-<rect x="1188.8" y="474" width="104" height="38" fill="#333333" class="segment"/>
-<rect x="1292.8" y="474" width="62.4" height="38" fill="#1a1a1a" class="segment"/>
+<rect x="440" y="474" width="72.8" height="38" fill="#d0d0d0" class="segment"/>
+<rect x="512.8" y="474" width="41.6" height="38" fill="#ababab" class="segment"/>
+<rect x="554.4" y="474" width="72.8" height="38" fill="#808080" class="segment"/>
+<rect x="627.2" y="474" width="499.2" height="38" fill="#595959" class="segment"/>
+<rect x="1126.4" y="474" width="104" height="38" fill="#333333" class="segment"/>
+<rect x="1230.4" y="474" width="52" height="38" fill="#1f4e79" class="segment"/>
+<rect x="1282.4" y="474" width="83.2" height="38" fill="#8c564b" class="segment"/>
 <text x="70" y="585" text-anchor="start">Dark money</text>
-<rect x="440" y="556" width="81.6" height="38" fill="#d0d0d0" class="segment"/>
-<rect x="521.6" y="556" width="132.3" height="38" fill="#ababab" class="segment"/>
-<rect x="653.9" y="556" width="221.7" height="38" fill="#808080" class="segment"/>
-<rect x="875.7" y="556" width="71.3" height="38" fill="#595959" class="segment"/>
-<rect x="947" y="556" width="202.5" height="38" fill="#333333" class="segment"/>
-<rect x="1149.5" y="556" width="65.1" height="38" fill="#1a1a1a" class="segment"/>
-<rect x="1214.6" y="556" width="55.6" height="38" fill="#000000" class="segment"/>
-<text x="70" y="667" text-anchor="start">Vouchers</text>
-<rect x="440" y="638" width="76.8" height="38" fill="#d0d0d0" class="segment"/>
-<rect x="516.8" y="638" width="124.8" height="38" fill="#ababab" class="segment"/>
-<rect x="641.6" y="638" width="195.1" height="38" fill="#808080" class="segment"/>
-<rect x="836.7" y="638" width="75.0" height="38" fill="#595959" class="segment"/>
-<rect x="911.6" y="638" width="193.4" height="38" fill="#333333" class="segment"/>
-<rect x="1105.1" y="638" width="49.8" height="38" fill="#1a1a1a" class="segment"/>
-<rect x="1154.9" y="638" width="82.6" height="38" fill="#000000" class="segment"/>
-<text x="70" y="749" text-anchor="start">Full bundle</text>
-<rect x="440" y="720" width="81.7" height="38" fill="#d0d0d0" class="segment"/>
-<rect x="521.7" y="720" width="255.1" height="38" fill="#ababab" class="segment"/>
-<rect x="776.9" y="720" width="175.9" height="38" fill="#808080" class="segment"/>
-<rect x="952.7" y="720" width="55.5" height="38" fill="#595959" class="segment"/>
-<rect x="1008.3" y="720" width="132.4" height="38" fill="#333333" class="segment"/>
-<rect x="1140.6" y="720" width="54.8" height="38" fill="#1a1a1a" class="segment"/>
-<rect x="1195.5" y="720" width="63.6" height="38" fill="#000000" class="segment"/>
-<text x="70" y="831" text-anchor="start">Bundle+evasion</text>
-<rect x="440" y="802" width="80.6" height="38" fill="#d0d0d0" class="segment"/>
-<rect x="520.6" y="802" width="238.9" height="38" fill="#ababab" class="segment"/>
-<rect x="759.5" y="802" width="178.2" height="38" fill="#808080" class="segment"/>
-<rect x="937.6" y="802" width="58.0" height="38" fill="#595959" class="segment"/>
-<rect x="995.7" y="802" width="144.6" height="38" fill="#333333" class="segment"/>
-<rect x="1140.2" y="802" width="54.1" height="38" fill="#1a1a1a" class="segment"/>
-<rect x="1194.3" y="802" width="64.3" height="38" fill="#000000" class="segment"/>
-<line x1="440" y1="290" x2="440" y2="902" class="axis"/>
-<line x1="440" y1="902" x2="1480" y2="902" class="axis"/>
-<text x="960" y="994" text-anchor="middle">Share of lobby spending by channel</text>
+<rect x="440" y="556" width="62.9" height="38" fill="#d0d0d0" class="segment"/>
+<rect x="502.9" y="556" width="112" height="38" fill="#ababab" class="segment"/>
+<rect x="614.9" y="556" width="220.2" height="38" fill="#808080" class="segment"/>
+<rect x="835.1" y="556" width="64.0" height="38" fill="#595959" class="segment"/>
+<rect x="899.1" y="556" width="193.4" height="38" fill="#333333" class="segment"/>
+<rect x="1092.5" y="556" width="70.9" height="38" fill="#1f4e79" class="segment"/>
+<rect x="1163.4" y="556" width="90.6" height="38" fill="#8c564b" class="segment"/>
+<rect x="1254" y="556" width="47.5" height="38" fill="#000000" class="segment"/>
+<text x="70" y="667" text-anchor="start">Intermediary</text>
+<rect x="440" y="638" width="58.0" height="38" fill="#d0d0d0" class="segment"/>
+<rect x="498.0" y="638" width="114.4" height="38" fill="#ababab" class="segment"/>
+<rect x="612.4" y="638" width="226.9" height="38" fill="#808080" class="segment"/>
+<rect x="839.4" y="638" width="65.8" height="38" fill="#595959" class="segment"/>
+<rect x="905.2" y="638" width="215.6" height="38" fill="#333333" class="segment"/>
+<rect x="1120.8" y="638" width="46.3" height="38" fill="#1f4e79" class="segment"/>
+<rect x="1167.1" y="638" width="90.1" height="38" fill="#8c564b" class="segment"/>
+<rect x="1257.1" y="638" width="47.2" height="38" fill="#000000" class="segment"/>
+<text x="70" y="749" text-anchor="start">Vouchers</text>
+<rect x="440" y="720" width="65.4" height="38" fill="#d0d0d0" class="segment"/>
+<rect x="505.4" y="720" width="114.4" height="38" fill="#ababab" class="segment"/>
+<rect x="619.8" y="720" width="174.8" height="38" fill="#808080" class="segment"/>
+<rect x="794.6" y="720" width="64.9" height="38" fill="#595959" class="segment"/>
+<rect x="859.5" y="720" width="186.1" height="38" fill="#333333" class="segment"/>
+<rect x="1045.6" y="720" width="49.5" height="38" fill="#1f4e79" class="segment"/>
+<rect x="1095.1" y="720" width="88.2" height="38" fill="#8c564b" class="segment"/>
+<rect x="1183.3" y="720" width="79.2" height="38" fill="#000000" class="segment"/>
+<text x="70" y="831" text-anchor="start">Full bundle</text>
+<rect x="440" y="802" width="64.8" height="38" fill="#d0d0d0" class="segment"/>
+<rect x="504.8" y="802" width="144.7" height="38" fill="#ababab" class="segment"/>
+<rect x="649.5" y="802" width="203.4" height="38" fill="#808080" class="segment"/>
+<rect x="852.9" y="802" width="55.6" height="38" fill="#595959" class="segment"/>
+<rect x="908.5" y="802" width="152.0" height="38" fill="#333333" class="segment"/>
+<rect x="1060.6" y="802" width="51.4" height="38" fill="#1f4e79" class="segment"/>
+<rect x="1111.9" y="802" width="96.6" height="38" fill="#8c564b" class="segment"/>
+<rect x="1208.6" y="802" width="63.9" height="38" fill="#000000" class="segment"/>
+<text x="70" y="913" text-anchor="start">Bundle+evasion</text>
+<rect x="440" y="884" width="63.6" height="38" fill="#d0d0d0" class="segment"/>
+<rect x="503.6" y="884" width="145.5" height="38" fill="#ababab" class="segment"/>
+<rect x="649.1" y="884" width="215.6" height="38" fill="#808080" class="segment"/>
+<rect x="864.7" y="884" width="55.5" height="38" fill="#595959" class="segment"/>
+<rect x="920.3" y="884" width="153.5" height="38" fill="#333333" class="segment"/>
+<rect x="1073.8" y="884" width="50.9" height="38" fill="#1f4e79" class="segment"/>
+<rect x="1124.6" y="884" width="97.0" height="38" fill="#8c564b" class="segment"/>
+<rect x="1221.7" y="884" width="58.1" height="38" fill="#000000" class="segment"/>
+<line x1="440" y1="290" x2="440" y2="984" class="axis"/>
+<line x1="440" y1="984" x2="1480" y2="984" class="axis"/>
+<text x="960" y="1076" text-anchor="middle">Share of lobby spending by channel</text>
 <rect x="70" y="156" width="42" height="28" fill="#d0d0d0" class="legend-swatch"/>
 <text x="126" y="180" text-anchor="start" class="small">Access</text>
 <rect x="475" y="156" width="42" height="28" fill="#ababab" class="legend-swatch"/>
@@ -94,8 +110,10 @@ text { font-family: Helvetica, Arial, sans-serif; font-size: 34px; fill: #111; }
 <text x="1341" y="180" text-anchor="start" class="small">Campaign</text>
 <rect x="70" y="206" width="42" height="28" fill="#333333" class="legend-swatch"/>
 <text x="126" y="230" text-anchor="start" class="small">Dark</text>
-<rect x="475" y="206" width="42" height="28" fill="#1a1a1a" class="legend-swatch"/>
+<rect x="475" y="206" width="42" height="28" fill="#1f4e79" class="legend-swatch"/>
 <text x="531" y="230" text-anchor="start" class="small">Door</text>
-<rect x="880" y="206" width="42" height="28" fill="#000000" class="legend-swatch"/>
-<text x="936" y="230" text-anchor="start" class="small">Defense</text>
+<rect x="880" y="206" width="42" height="28" fill="#8c564b" class="legend-swatch"/>
+<text x="936" y="230" text-anchor="start" class="small">Intermediary</text>
+<rect x="1285" y="206" width="42" height="28" fill="#000000" class="legend-swatch"/>
+<text x="1341" y="230" text-anchor="start" class="small">Defense</text>
 </svg>

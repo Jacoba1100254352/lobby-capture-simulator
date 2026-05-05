@@ -4,3 +4,11 @@ campaign-finance-concentration,FEC campaign finance data,large-donor and outside
 rulemaking-duration,Federal Register and Regulations.gov,rulemaking and docket timing,constitutionalChallengeDelay,0.00,0.80,Proxy range until real timing importers exist.
 voucher-participation,Seattle Democracy Voucher data,voucher participation and public-funds share,voucherParticipation,0.00,1.00,Scenario-dependent public financing target.
 procurement-concentration,USAspending,recipient concentration by agency and award type,procurementBias,0.00,1.00,Future procurement-capture calibration target.
+observed-capture-split,simulation diagnostics,observed capture is reported separately from hidden capture,observedCaptureRate,0.00,1.00,Bounded diagnostic range; not an empirical treatment-effect target.
+hidden-capture-split,simulation diagnostics,hidden capture preserved through substitute channels,hiddenCaptureIndex,0.00,1.00,Bounded mechanism diagnostic for substitution failure.
+total-influence-distortion,simulation diagnostics,total visible plus hidden influence distortion,totalInfluenceDistortion,0.00,1.00,Primary synthetic reform ranking metric; lower is better.
+substitution-failure-risk,simulation diagnostics,lower observed capture with higher hidden influence or distortion,substitutionFailureRisk,0.00,1.00,Flags possible reform failure despite lower measured capture.
+intermediary-routing,think-tank and association bridge,share of spend routed through sponsored intermediaries,intermediaryShare,0.00,0.65,Scenario diagnostic until a direct intermediary data panel is available.
+enforcement-capacity,agency budgets audits and sanctions,enforcement capacity index,enforcementCapacityIndex,0.00,1.00,Bounded synthetic enforcement-capacity diagnostic.
+comment-flooding,Regulations.gov and Federal Register,comment flooding pressure,commentFloodingIndex,0.00,1.00,Combines source proxy moments and synthetic docket triage.
+technical-rulemaking-distortion,rulemaking dockets,technical rulemaking distortion,technicalRulemakingDistortion,0.00,1.00,Mechanism diagnostic for low-salience technical capture.

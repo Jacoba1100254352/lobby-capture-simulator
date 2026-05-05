@@ -7,33 +7,33 @@
 
 ## Scenario Summary
 
-| Scenario | Directional | Capture rate | Capture 95% CI | Anti-capture success | Anti-capture 95% CI | Defensive spend | Dark-money share | Hidden influence | Influence preserved | Comment info | Comment burden | Detection | Admin cost |
-| --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Interaction cooling 0.80 strategy revolving-door | 0.6524 | 0.0000 | [0.0000, 0.0026] | 1.0000 | [0.9910, 1.0000] | 0.5338 | 0.1260 | 0.1302 | 0.3422 | 0.1526 | 0.1899 | 0.1740 | 0.4747 |
-| Interaction public financing 0.80 evasion 0.00 | 0.6522 | 0.0000 | [0.0000, 0.0026] | 1.0000 | [0.9907, 1.0000] | 0.5275 | 0.1199 | 0.0182 | 0.3113 | 0.1493 | 0.1862 | 0.1607 | 0.4734 |
-| Interaction cooling 0.10 strategy balanced | 0.6514 | 0.0000 | [0.0000, 0.0026] | 1.0000 | [0.9905, 1.0000] | 0.5155 | 0.1255 | 0.1291 | 0.3466 | 0.1512 | 0.1890 | 0.1613 | 0.4734 |
-| Interaction cooling 0.10 strategy revolving-door | 0.6508 | 0.0000 | [0.0000, 0.0026] | 1.0000 | [0.9898, 1.0000] | 0.5112 | 0.1266 | 0.1322 | 0.3552 | 0.1505 | 0.1868 | 0.1600 | 0.4733 |
-| Interaction cooling 0.80 strategy balanced | 0.6501 | 0.0000 | [0.0000, 0.0026] | 1.0000 | [0.9910, 1.0000] | 0.5370 | 0.1250 | 0.1284 | 0.3405 | 0.1506 | 0.1895 | 0.1440 | 0.4719 |
-| Interaction enforcement 0.80 disclosure 0.80 | 0.6500 | 0.0000 | [0.0000, 0.0026] | 1.0000 | [0.9911, 1.0000] | 0.5330 | 0.1251 | 0.1399 | 0.3490 | 0.1508 | 0.1904 | 0.1507 | 0.4724 |
-| Interaction public financing 1.25 evasion 0.00 | 0.6485 | 0.0000 | [0.0000, 0.0026] | 1.0000 | [0.9916, 1.0000] | 0.5561 | 0.2619 | 0.0183 | 0.2989 | 0.1530 | 0.1926 | 0.1440 | 0.5872 |
-| Interaction public financing 0.80 evasion 0.45 | 0.6465 | 0.0000 | [0.0000, 0.0026] | 1.0000 | [0.9903, 1.0000] | 0.5236 | 0.1373 | 0.1674 | 0.3634 | 0.1508 | 0.1878 | 0.1620 | 0.4735 |
-| Interaction public financing 1.25 evasion 0.45 | 0.6453 | 0.0000 | [0.0000, 0.0026] | 1.0000 | [0.9912, 1.0000] | 0.5455 | 0.2654 | 0.1631 | 0.3519 | 0.1524 | 0.1908 | 0.1707 | 0.5897 |
-| Interaction enforcement 0.80 disclosure 0.10 | 0.6446 | 0.0227 | [0.0163, 0.0315] | 0.9570 | [0.9331, 0.9727] | 0.5355 | 0.1344 | 0.1477 | 0.3415 | 0.1520 | 0.1910 | 0.1493 | 0.4728 |
-| Interaction public financing 0.35 evasion 0.00 | 0.6446 | 0.0000 | [0.0000, 0.0026] | 1.0000 | [0.9912, 1.0000] | 0.5443 | 0.1190 | 0.0171 | 0.3033 | 0.1512 | 0.1899 | 0.1600 | 0.4733 |
-| Interaction enforcement 1.25 disclosure 1.25 | 0.6411 | 0.0000 | [0.0000, 0.0026] | 1.0000 | [0.9906, 1.0000] | 0.5401 | 0.1264 | 0.1151 | 0.3334 | 0.1521 | 0.1893 | 0.1500 | 0.5881 |
-| Interaction enforcement 1.25 disclosure 0.80 | 0.6409 | 0.0000 | [0.0000, 0.0026] | 1.0000 | [0.9912, 1.0000] | 0.5399 | 0.1250 | 0.1328 | 0.3227 | 0.1509 | 0.1871 | 0.1687 | 0.5895 |
-| Interaction cooling 1.25 strategy revolving-door | 0.6408 | 0.0000 | [0.0000, 0.0026] | 1.0000 | [0.9905, 1.0000] | 0.5215 | 0.1255 | 0.1343 | 0.3499 | 0.1522 | 0.1906 | 0.1733 | 0.5895 |
-| Interaction enforcement 0.80 disclosure 1.25 | 0.6400 | 0.0000 | [0.0000, 0.0026] | 1.0000 | [0.9910, 1.0000] | 0.5343 | 0.1255 | 0.1198 | 0.3523 | 0.1516 | 0.1902 | 0.1487 | 0.5874 |
-| Interaction enforcement 0.10 disclosure 0.80 | 0.6389 | 0.0127 | [0.0081, 0.0197] | 0.9897 | [0.9738, 0.9960] | 0.5159 | 0.2742 | 0.1554 | 0.4008 | 0.1491 | 0.1915 | 0.0620 | 0.4651 |
-| Interaction cooling 1.25 strategy balanced | 0.6385 | 0.0000 | [0.0000, 0.0026] | 1.0000 | [0.9906, 1.0000] | 0.5229 | 0.1249 | 0.1329 | 0.3473 | 0.1513 | 0.1889 | 0.1500 | 0.5878 |
-| Interaction enforcement 1.25 disclosure 0.10 | 0.6376 | 0.0027 | [0.0010, 0.0068] | 0.9783 | [0.9593, 0.9885] | 0.5481 | 0.1307 | 0.1425 | 0.3188 | 0.1503 | 0.1896 | 0.1760 | 0.5903 |
-| Interaction public financing 0.35 evasion 0.45 | 0.6371 | 0.0000 | [0.0000, 0.0026] | 0.9976 | [0.9867, 0.9996] | 0.5327 | 0.1344 | 0.1616 | 0.3532 | 0.1534 | 0.1915 | 0.1500 | 0.4726 |
-| Interaction public financing 0.80 evasion 0.90 | 0.6358 | 0.0000 | [0.0000, 0.0026] | 1.0000 | [0.9911, 1.0000] | 0.5438 | 0.1419 | 0.3883 | 0.4129 | 0.1509 | 0.1892 | 0.1660 | 0.4742 |
-| Interaction public financing 1.25 evasion 0.90 | 0.6326 | 0.0000 | [0.0000, 0.0026] | 1.0000 | [0.9914, 1.0000] | 0.5438 | 0.2660 | 0.3851 | 0.4076 | 0.1512 | 0.1897 | 0.1620 | 0.5886 |
-| Interaction enforcement 0.10 disclosure 0.10 | 0.6316 | 0.0733 | [0.0612, 0.0876] | 0.9084 | [0.8763, 0.9328] | 0.5655 | 0.1360 | 0.1595 | 0.3850 | 0.1512 | 0.1913 | 0.0447 | 0.4637 |
-| Interaction enforcement 0.10 disclosure 1.25 | 0.6311 | 0.0000 | [0.0000, 0.0026] | 0.9976 | [0.9864, 0.9996] | 0.5259 | 0.1271 | 0.1316 | 0.3945 | 0.1527 | 0.1954 | 0.0620 | 0.5800 |
-| Interaction public financing 0.35 evasion 0.90 | 0.6258 | 0.0000 | [0.0000, 0.0026] | 1.0000 | [0.9909, 1.0000] | 0.5257 | 0.1431 | 0.3890 | 0.4158 | 0.1508 | 0.1893 | 0.1500 | 0.4726 |
+| Scenario | Total distortion | Observed capture | Capture 95% CI | Hidden capture | Substitution risk | Hidden influence | Intermediary share | Defensive spend | Comment flood | Enforcement capacity | Admin cost |
+| --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
+| Interaction public financing 1.25 evasion 0.00 | 0.1074 | 0.0180 | [0.0124, 0.0261] | 0.0521 | 0.1204 | 0.0381 | 0.0947 | 0.5565 | 0.2363 | 0.5146 | 0.5891 |
+| Interaction public financing 0.80 evasion 0.00 | 0.1107 | 0.0320 | [0.0242, 0.0422] | 0.0527 | 0.1204 | 0.0388 | 0.0961 | 0.5289 | 0.2360 | 0.5200 | 0.4753 |
+| Interaction public financing 0.35 evasion 0.00 | 0.1147 | 0.0453 | [0.0359, 0.0571] | 0.0523 | 0.1191 | 0.0377 | 0.0935 | 0.5293 | 0.2357 | 0.5223 | 0.4791 |
+| Interaction enforcement 1.25 disclosure 1.25 | 0.1350 | 0.0447 | [0.0353, 0.0563] | 0.0868 | 0.1738 | 0.1553 | 0.0953 | 0.5340 | 0.2325 | 0.6482 | 0.5943 |
+| Interaction enforcement 1.25 disclosure 0.80 | 0.1419 | 0.0713 | [0.0594, 0.0855] | 0.0881 | 0.1724 | 0.1664 | 0.0986 | 0.5266 | 0.2363 | 0.6499 | 0.6009 |
+| Interaction cooling 0.10 strategy balanced | 0.1479 | 0.1107 | [0.0958, 0.1275] | 0.0893 | 0.1743 | 0.1604 | 0.0955 | 0.5248 | 0.2348 | 0.5303 | 0.4846 |
+| Interaction cooling 1.25 strategy revolving-door | 0.1485 | 0.0973 | [0.0833, 0.1134] | 0.0913 | 0.1786 | 0.1655 | 0.0954 | 0.5284 | 0.2345 | 0.5298 | 0.5985 |
+| Interaction cooling 0.80 strategy revolving-door | 0.1505 | 0.1020 | [0.0877, 0.1183] | 0.0927 | 0.1804 | 0.1703 | 0.0961 | 0.5001 | 0.2347 | 0.5329 | 0.4850 |
+| Interaction cooling 0.10 strategy revolving-door | 0.1511 | 0.1087 | [0.0939, 0.1254] | 0.0914 | 0.1775 | 0.1668 | 0.0962 | 0.4957 | 0.2345 | 0.5321 | 0.4844 |
+| Interaction cooling 0.80 strategy balanced | 0.1511 | 0.1167 | [0.1014, 0.1339] | 0.0912 | 0.1772 | 0.1638 | 0.0954 | 0.5221 | 0.2345 | 0.5306 | 0.4840 |
+| Interaction enforcement 0.80 disclosure 1.25 | 0.1521 | 0.1113 | [0.0964, 0.1283] | 0.0918 | 0.1806 | 0.1581 | 0.0951 | 0.5209 | 0.2347 | 0.4285 | 0.5980 |
+| Interaction cooling 1.25 strategy balanced | 0.1524 | 0.1073 | [0.0927, 0.1240] | 0.0925 | 0.1798 | 0.1676 | 0.0953 | 0.5177 | 0.2348 | 0.5306 | 0.5994 |
+| Interaction public financing 1.25 evasion 0.45 | 0.1620 | 0.1327 | [0.1164, 0.1508] | 0.1032 | 0.1955 | 0.2009 | 0.0952 | 0.5295 | 0.2335 | 0.5319 | 0.6006 |
+| Interaction enforcement 0.80 disclosure 0.80 | 0.1654 | 0.1760 | [0.1576, 0.1961] | 0.0944 | 0.1796 | 0.1695 | 0.0989 | 0.5174 | 0.2359 | 0.4343 | 0.4878 |
+| Interaction enforcement 1.25 disclosure 0.10 | 0.1673 | 0.1793 | [0.1607, 0.1996] | 0.0910 | 0.1702 | 0.1731 | 0.0877 | 0.5500 | 0.2378 | 0.6643 | 0.6140 |
+| Interaction public financing 0.35 evasion 0.45 | 0.1676 | 0.1600 | [0.1423, 0.1794] | 0.1037 | 0.1932 | 0.2004 | 0.0959 | 0.5033 | 0.2331 | 0.5393 | 0.4903 |
+| Interaction public financing 0.80 evasion 0.45 | 0.1732 | 0.1727 | [0.1544, 0.1926] | 0.1063 | 0.1976 | 0.2062 | 0.0952 | 0.5065 | 0.2341 | 0.5385 | 0.4910 |
+| Interaction enforcement 0.10 disclosure 1.25 | 0.1950 | 0.2647 | [0.2430, 0.2876] | 0.1052 | 0.1977 | 0.1738 | 0.0957 | 0.4809 | 0.2352 | 0.0954 | 0.5866 |
+| Interaction enforcement 0.80 disclosure 0.10 | 0.2081 | 0.3427 | [0.3191, 0.3671] | 0.1018 | 0.1816 | 0.1830 | 0.0896 | 0.5042 | 0.2387 | 0.4510 | 0.4954 |
+| Interaction enforcement 0.10 disclosure 0.80 | 0.2284 | 0.3980 | [0.3735, 0.4230] | 0.1126 | 0.2012 | 0.1924 | 0.1017 | 0.4305 | 0.2381 | 0.1062 | 0.4737 |
+| Interaction enforcement 0.10 disclosure 0.10 | 0.2637 | 0.5500 | [0.5247, 0.5750] | 0.1160 | 0.1968 | 0.1948 | 0.0873 | 0.5841 | 0.2402 | 0.1130 | 0.4699 |
+| Interaction public financing 0.80 evasion 0.90 | 0.2818 | 0.4933 | [0.4681, 0.5186] | 0.1960 | 0.3072 | 0.4498 | 0.0945 | 0.4844 | 0.2314 | 0.5619 | 0.5233 |
+| Interaction public financing 1.25 evasion 0.90 | 0.2860 | 0.4873 | [0.4621, 0.5126] | 0.2002 | 0.3159 | 0.4649 | 0.0948 | 0.4626 | 0.2318 | 0.5646 | 0.6376 |
+| Interaction public financing 0.35 evasion 0.90 | 0.2876 | 0.5133 | [0.4880, 0.5386] | 0.1969 | 0.3062 | 0.4515 | 0.0952 | 0.4642 | 0.2311 | 0.5644 | 0.5252 |
 
 ## Interpretation Guardrail
 
-The metrics are comparative simulation outputs. Calibration files define plausibility bands; they do not make causal empirical claims.
+Empirical claims are limited to source-moment diagnostics and validation ranges. Synthetic findings are generated by the simulator. Design recommendations are speculative until stronger public-data bridges validate the substitution and hidden-capture mechanisms.

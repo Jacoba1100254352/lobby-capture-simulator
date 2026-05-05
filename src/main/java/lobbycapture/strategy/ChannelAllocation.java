@@ -11,6 +11,7 @@ public record ChannelAllocation(
         double campaignFinance,
         double darkMoney,
         double revolvingDoor,
+        double intermediary,
         double defensiveReform
 ) {
     public ChannelAllocation {
@@ -22,25 +23,27 @@ public record ChannelAllocation(
         Values.requireRange("campaignFinance", campaignFinance, 0.0, 1_000_000.0);
         Values.requireRange("darkMoney", darkMoney, 0.0, 1_000_000.0);
         Values.requireRange("revolvingDoor", revolvingDoor, 0.0, 1_000_000.0);
+        Values.requireRange("intermediary", intermediary, 0.0, 1_000_000.0);
         Values.requireRange("defensiveReform", defensiveReform, 0.0, 1_000_000.0);
     }
 
     public static ChannelAllocation zero() {
-        return new ChannelAllocation(0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0);
+        return new ChannelAllocation(0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0);
     }
 
     public static ChannelAllocation forStrategy(InfluenceStrategy strategy, double spend) {
         double[] shares = switch (strategy) {
-            case DIRECT_ACCESS -> new double[]{0.48, 0.18, 0.08, 0.05, 0.04, 0.06, 0.03, 0.08, 0.00};
-            case AGENDA_ACCESS -> new double[]{0.14, 0.48, 0.10, 0.04, 0.07, 0.05, 0.04, 0.08, 0.00};
-            case INFORMATION_DISTORTION -> new double[]{0.08, 0.10, 0.50, 0.08, 0.04, 0.02, 0.12, 0.06, 0.00};
-            case PUBLIC_CAMPAIGN -> new double[]{0.06, 0.08, 0.12, 0.48, 0.04, 0.06, 0.12, 0.04, 0.00};
-            case LITIGATION_THREAT -> new double[]{0.06, 0.10, 0.08, 0.05, 0.52, 0.03, 0.06, 0.10, 0.00};
-            case CAMPAIGN_FINANCE -> new double[]{0.08, 0.10, 0.04, 0.08, 0.02, 0.52, 0.10, 0.06, 0.00};
-            case DARK_MONEY -> new double[]{0.05, 0.08, 0.12, 0.14, 0.05, 0.08, 0.44, 0.04, 0.00};
-            case REVOLVING_DOOR -> new double[]{0.14, 0.12, 0.08, 0.02, 0.06, 0.04, 0.04, 0.50, 0.00};
-            case DEFENSIVE_REFORM -> new double[]{0.08, 0.10, 0.12, 0.20, 0.16, 0.07, 0.12, 0.05, 0.10};
-            case BALANCED -> new double[]{0.16, 0.14, 0.14, 0.13, 0.10, 0.11, 0.10, 0.12, 0.00};
+            case DIRECT_ACCESS -> new double[]{0.45, 0.17, 0.07, 0.05, 0.04, 0.05, 0.03, 0.08, 0.06, 0.00};
+            case AGENDA_ACCESS -> new double[]{0.13, 0.45, 0.09, 0.04, 0.07, 0.05, 0.04, 0.08, 0.05, 0.00};
+            case INFORMATION_DISTORTION -> new double[]{0.06, 0.09, 0.45, 0.07, 0.04, 0.02, 0.12, 0.05, 0.10, 0.00};
+            case PUBLIC_CAMPAIGN -> new double[]{0.05, 0.07, 0.11, 0.43, 0.04, 0.06, 0.12, 0.04, 0.08, 0.00};
+            case LITIGATION_THREAT -> new double[]{0.05, 0.09, 0.07, 0.05, 0.49, 0.03, 0.06, 0.09, 0.07, 0.00};
+            case CAMPAIGN_FINANCE -> new double[]{0.07, 0.09, 0.04, 0.07, 0.02, 0.48, 0.10, 0.05, 0.08, 0.00};
+            case DARK_MONEY -> new double[]{0.04, 0.07, 0.11, 0.13, 0.04, 0.07, 0.40, 0.04, 0.10, 0.00};
+            case REVOLVING_DOOR -> new double[]{0.12, 0.10, 0.07, 0.02, 0.05, 0.04, 0.04, 0.45, 0.11, 0.00};
+            case INTERMEDIARY -> new double[]{0.05, 0.10, 0.20, 0.18, 0.04, 0.04, 0.22, 0.05, 0.12, 0.00};
+            case DEFENSIVE_REFORM -> new double[]{0.07, 0.09, 0.11, 0.18, 0.15, 0.06, 0.11, 0.05, 0.08, 0.10};
+            case BALANCED -> new double[]{0.15, 0.13, 0.13, 0.12, 0.09, 0.10, 0.09, 0.11, 0.08, 0.00};
         };
         return new ChannelAllocation(
                 spend * shares[0],
@@ -51,7 +54,8 @@ public record ChannelAllocation(
                 spend * shares[5],
                 spend * shares[6],
                 spend * shares[7],
-                spend * shares[8]
+                spend * shares[8],
+                spend * shares[9]
         );
     }
 
@@ -65,13 +69,14 @@ public record ChannelAllocation(
                 campaignFinance + other.campaignFinance,
                 darkMoney + other.darkMoney,
                 revolvingDoor + other.revolvingDoor,
+                intermediary + other.intermediary,
                 defensiveReform + other.defensiveReform
         );
     }
 
     public double total() {
         return directAccess + agendaAccess + informationDistortion + publicCampaign + litigationThreat
-                + campaignFinance + darkMoney + revolvingDoor + defensiveReform;
+                + campaignFinance + darkMoney + revolvingDoor + intermediary + defensiveReform;
     }
 
     public double share(InfluenceChannel channel) {
@@ -88,8 +93,8 @@ public record ChannelAllocation(
             case CAMPAIGN_FINANCE -> campaignFinance / total;
             case DARK_MONEY -> darkMoney / total;
             case REVOLVING_DOOR -> revolvingDoor / total;
+            case INTERMEDIARY -> intermediary / total;
             case DEFENSIVE_REFORM -> defensiveReform / total;
         };
     }
 }
-

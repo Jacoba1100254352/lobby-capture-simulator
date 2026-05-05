@@ -19,22 +19,20 @@ public final class MarkdownReportWriter {
         builder.append("- Contests per run: `").append(provenance.contestsPerRun()).append("`\n\n");
 
         builder.append("## Scenario Summary\n\n");
-        builder.append("| Scenario | Directional | Capture rate | Capture 95% CI | Anti-capture success | Anti-capture 95% CI | Defensive spend | Dark-money share | Hidden influence | Influence preserved | Comment info | Comment burden | Detection | Admin cost |\n");
-        builder.append("| --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |\n");
-        for (ScenarioReport report : reports.stream().sorted(Comparator.comparing(ScenarioReport::directionalScore).reversed()).toList()) {
+        builder.append("| Scenario | Total distortion | Observed capture | Capture 95% CI | Hidden capture | Substitution risk | Hidden influence | Intermediary share | Defensive spend | Comment flood | Enforcement capacity | Admin cost |\n");
+        builder.append("| --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |\n");
+        for (ScenarioReport report : reports.stream().sorted(Comparator.comparing(ScenarioReport::totalInfluenceDistortion)).toList()) {
             builder.append("| ").append(report.scenarioName())
-                    .append(" | ").append(CsvReportWriter.format(report.directionalScore()))
-                    .append(" | ").append(CsvReportWriter.format(report.captureRate()))
+                    .append(" | ").append(CsvReportWriter.format(report.totalInfluenceDistortion()))
+                    .append(" | ").append(CsvReportWriter.format(report.observedCaptureRate()))
                     .append(" | ").append(CsvReportWriter.formatWilsonInterval(report.capturedContests(), report.totalContests()))
-                    .append(" | ").append(CsvReportWriter.format(report.antiCaptureSuccessRate()))
-                    .append(" | ").append(CsvReportWriter.formatWilsonInterval(report.enactedAntiCaptureReforms(), report.antiCaptureReforms()))
-                    .append(" | ").append(CsvReportWriter.format(report.defensiveReformSpendShare()))
-                    .append(" | ").append(CsvReportWriter.format(report.darkMoneySpendShare()))
+                    .append(" | ").append(CsvReportWriter.format(report.hiddenCaptureIndex()))
+                    .append(" | ").append(CsvReportWriter.format(report.substitutionFailureRisk()))
                     .append(" | ").append(CsvReportWriter.format(report.hiddenInfluenceShare()))
-                    .append(" | ").append(CsvReportWriter.format(report.influencePreservationRate()))
-                    .append(" | ").append(CsvReportWriter.format(report.commentUniqueInformationShare()))
-                    .append(" | ").append(CsvReportWriter.format(report.commentReviewBurden()))
-                    .append(" | ").append(CsvReportWriter.format(report.detectionRate()))
+                    .append(" | ").append(CsvReportWriter.format(report.intermediarySpendShare()))
+                    .append(" | ").append(CsvReportWriter.format(report.defensiveReformSpendShare()))
+                    .append(" | ").append(CsvReportWriter.format(report.commentFloodingIndex()))
+                    .append(" | ").append(CsvReportWriter.format(report.enforcementCapacityIndex()))
                     .append(" | ").append(CsvReportWriter.format(report.administrativeCostIndex()))
                     .append(" |\n");
         }
@@ -54,6 +52,8 @@ public final class MarkdownReportWriter {
                     .append(CsvReportWriter.format(reformThreat.channelSwitchRate()))
                     .append("`, hidden influence: `")
                     .append(CsvReportWriter.format(reformThreat.hiddenInfluenceShare()))
+                    .append("`, substitution failure risk: `")
+                    .append(CsvReportWriter.format(reformThreat.substitutionFailureRisk()))
                     .append("`.\n");
         }
         if (fullBundle != null) {
@@ -61,8 +61,8 @@ public final class MarkdownReportWriter {
                     .append(CsvReportWriter.format(fullBundle.antiCaptureSuccessRate()))
                     .append("`, detection rate: `")
                     .append(CsvReportWriter.format(fullBundle.detectionRate()))
-                    .append("`, capture rate: `")
-                    .append(CsvReportWriter.format(fullBundle.captureRate()))
+                    .append("`, total distortion: `")
+                    .append(CsvReportWriter.format(fullBundle.totalInfluenceDistortion()))
                     .append("`.\n");
         }
         if (evasion != null) {
@@ -74,15 +74,47 @@ public final class MarkdownReportWriter {
                     .append(CsvReportWriter.format(evasion.evasionPenaltyRate()))
                     .append("`, influence preserved: `")
                     .append(CsvReportWriter.format(evasion.influencePreservationRate()))
-                    .append("`, anti-capture success: `")
-                    .append(CsvReportWriter.format(evasion.antiCaptureSuccessRate()))
+                    .append("`, substitution failure risk: `")
+                    .append(CsvReportWriter.format(evasion.substitutionFailureRisk()))
                     .append("`.\n");
         }
+        appendSubstitutionReadout(builder, reports);
         appendSensitivityReadout(builder, reports);
 
         builder.append("\n## Interpretation Guardrail\n\n");
-        builder.append("The metrics are comparative simulation outputs. Calibration files define plausibility bands; they do not make causal empirical claims.\n");
+        builder.append("Empirical claims are limited to source-moment diagnostics and validation ranges. Synthetic findings are generated by the simulator. Design recommendations are speculative until stronger public-data bridges validate the substitution and hidden-capture mechanisms.\n");
         return builder.toString();
+    }
+
+    private static void appendSubstitutionReadout(StringBuilder builder, List<ScenarioReport> reports) {
+        ScenarioReport openAccess = find(reports, "open-access-lobbying");
+        if (openAccess == null) {
+            return;
+        }
+        List<ScenarioReport> risky = reports.stream()
+                .filter(report -> !report.scenarioKey().equals(openAccess.scenarioKey()))
+                .filter(report -> report.observedCaptureRate() < openAccess.observedCaptureRate()
+                        && (report.hiddenInfluenceShare() > openAccess.hiddenInfluenceShare()
+                        || report.totalInfluenceDistortion() > openAccess.totalInfluenceDistortion()
+                        || report.substitutionFailureRisk() > openAccess.substitutionFailureRisk()))
+                .sorted(Comparator.comparing(ScenarioReport::substitutionFailureRisk).reversed())
+                .limit(5)
+                .toList();
+        if (risky.isEmpty()) {
+            return;
+        }
+        builder.append("\n## Substitution-Failure Readout\n\n");
+        builder.append("Lower observed capture is flagged as a possible failure when hidden influence, total distortion, or substitution risk rises relative to open access.\n\n");
+        builder.append("| Scenario | Capture change | Hidden change | Distortion change | Substitution risk |\n");
+        builder.append("| --- | ---: | ---: | ---: | ---: |\n");
+        for (ScenarioReport report : risky) {
+            builder.append("| ").append(report.scenarioName())
+                    .append(" | ").append(CsvReportWriter.format(report.observedCaptureRate() - openAccess.observedCaptureRate()))
+                    .append(" | ").append(CsvReportWriter.format(report.hiddenInfluenceShare() - openAccess.hiddenInfluenceShare()))
+                    .append(" | ").append(CsvReportWriter.format(report.totalInfluenceDistortion() - openAccess.totalInfluenceDistortion()))
+                    .append(" | ").append(CsvReportWriter.format(report.substitutionFailureRisk()))
+                    .append(" |\n");
+        }
     }
 
     private static void appendSensitivityReadout(StringBuilder builder, List<ScenarioReport> reports) {
@@ -92,22 +124,22 @@ public final class MarkdownReportWriter {
         if (sensitivityReports.isEmpty()) {
             return;
         }
-        ScenarioReport bestDirectional = sensitivityReports.stream()
-                .max(Comparator.comparing(ScenarioReport::directionalScore))
+        ScenarioReport bestDistortion = sensitivityReports.stream()
+                .min(Comparator.comparing(ScenarioReport::totalInfluenceDistortion))
                 .orElseThrow();
         ScenarioReport worstCapture = sensitivityReports.stream()
-                .max(Comparator.comparing(ScenarioReport::captureRate))
+                .max(Comparator.comparing(ScenarioReport::observedCaptureRate))
                 .orElseThrow();
-        ScenarioReport highestEvasion = sensitivityReports.stream()
-                .max(Comparator.comparing(ScenarioReport::darkMoneySpendShare))
+        ScenarioReport highestSubstitutionRisk = sensitivityReports.stream()
+                .max(Comparator.comparing(ScenarioReport::substitutionFailureRisk))
                 .orElseThrow();
         builder.append("\n## Sensitivity Readout\n\n");
-        builder.append("- Highest directional score: `").append(bestDirectional.scenarioName())
-                .append("` at `").append(CsvReportWriter.format(bestDirectional.directionalScore())).append("`.\n");
+        builder.append("- Lowest total distortion: `").append(bestDistortion.scenarioName())
+                .append("` at `").append(CsvReportWriter.format(bestDistortion.totalInfluenceDistortion())).append("`.\n");
         builder.append("- Highest capture rate: `").append(worstCapture.scenarioName())
-                .append("` at `").append(CsvReportWriter.format(worstCapture.captureRate())).append("`.\n");
-        builder.append("- Highest dark-money share: `").append(highestEvasion.scenarioName())
-                .append("` at `").append(CsvReportWriter.format(highestEvasion.darkMoneySpendShare())).append("`.\n");
+                .append("` at `").append(CsvReportWriter.format(worstCapture.observedCaptureRate())).append("`.\n");
+        builder.append("- Highest substitution failure risk: `").append(highestSubstitutionRisk.scenarioName())
+                .append("` at `").append(CsvReportWriter.format(highestSubstitutionRisk.substitutionFailureRisk())).append("`.\n");
     }
 
     private static ScenarioReport find(List<ScenarioReport> reports, String key) {
