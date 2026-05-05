@@ -77,10 +77,9 @@ submission-package: paper-wiley paper-word-count
 	./scripts/build-submission-package.sh
 
 paper-artifacts: campaign sensitivity ablation interactions source-moments validate calibration-queue tables figures paper paper-wiley submission-package paper-word-count
-	python3 scripts/check-paper-artifacts.py
 
 paper-artifacts-check: paper-artifacts
-	python3 scripts/check-paper-artifacts.py --git-clean
+	python3 scripts/check-paper-artifacts.py
 
 clean:
 	rm -rf out

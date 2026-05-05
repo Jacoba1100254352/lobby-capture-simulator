@@ -127,7 +127,7 @@ The Wiley-template path is available but intentionally separate from the default
 - `make paper-wiley` builds the Wiley wrapper after the official bundle and TeX dependencies are available. It writes ignored scratch files under `paper/.wiley-build/` to work around a BibTeX failure in the current Wiley archive's primary Chicago style file while still using the downloaded Wiley class and template assets.
 - `make submission-package` builds the Wiley wrapper and writes `dist/lobby-capture-wiley-submission.zip` with the root LaTeX file, compiled PDF, patched peer-review class copy, bibliography, generated tables, and generated figure files.
 - `make paper-artifacts` is the full paper refresh target. It reruns the committed report sweeps, source moments, validation, calibration queue, tables, figures, local PDF, Wiley PDF, word count, and submission zip.
-- `make paper-artifacts-check` runs the same refresh and then fails if tracked generated reports, tables, or figures changed. CI uses this target so stale paper inputs cannot pass without rebuilding PDFs and committing regenerated tracked artifacts.
+- `make paper-artifacts-check` runs the same refresh and then verifies the local PDF, Wiley PDF, and submission zip are present, fresh relative to their inputs, and free of generic Wiley-template placeholder text. CI uses this target so stale paper inputs cannot pass without rebuilding the PDFs and submission package.
 
 The Wiley build patches only the generated `.wiley-build/USG.cls` copy to remove generic template sample journal art, the sample Open Access badge, and placeholder publication metadata. The downloaded Wiley template remains unmodified under ignored `paper/.wiley-template/`.
 

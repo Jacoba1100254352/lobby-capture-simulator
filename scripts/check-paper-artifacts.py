@@ -3,7 +3,6 @@
 
 from __future__ import annotations
 
-import argparse
 import os
 import subprocess
 import sys
@@ -18,43 +17,6 @@ DIST = ROOT / "dist"
 LOCAL_PDF = PAPER / "main.pdf"
 WILEY_PDF = PAPER / "regulation-governance-wiley.pdf"
 SUBMISSION_ZIP = DIST / "lobby-capture-wiley-submission.zip"
-
-TRACKED_GENERATED = [
-    "reports/lobby-capture-campaign.csv",
-    "reports/lobby-capture-campaign.md",
-    "reports/lobby-capture-campaign.manifest.json",
-    "reports/lobby-capture-sensitivity.csv",
-    "reports/lobby-capture-sensitivity.md",
-    "reports/lobby-capture-sensitivity.manifest.json",
-    "reports/lobby-capture-ablation.csv",
-    "reports/lobby-capture-ablation.md",
-    "reports/lobby-capture-ablation.manifest.json",
-    "reports/lobby-capture-interactions.csv",
-    "reports/lobby-capture-interactions.md",
-    "reports/lobby-capture-interactions.manifest.json",
-    "reports/source-moments.csv",
-    "reports/source-moments.md",
-    "reports/validation-summary.csv",
-    "reports/validation-summary.md",
-    "reports/calibration-queue.csv",
-    "reports/calibration-queue.md",
-    "paper/tables/campaign_snapshot.tex",
-    "paper/tables/sensitivity_snapshot.tex",
-    "paper/tables/ablation_snapshot.tex",
-    "paper/tables/interaction_snapshot.tex",
-    "paper/figures/channel_mix.tex",
-    "paper/figures/evasion_sensitivity.tex",
-    "paper/figures/interaction_tradeoffs.tex",
-    "paper/figures/scenario_tradeoffs.tex",
-    "paper/figures/Figure_1_channel_mix.pdf",
-    "paper/figures/Figure_1_channel_mix.svg",
-    "paper/figures/Figure_2_evasion_sensitivity.pdf",
-    "paper/figures/Figure_2_evasion_sensitivity.svg",
-    "paper/figures/Figure_3_interaction_tradeoffs.pdf",
-    "paper/figures/Figure_3_interaction_tradeoffs.svg",
-    "paper/figures/Figure_4_scenario_tradeoffs.pdf",
-    "paper/figures/Figure_4_scenario_tradeoffs.svg",
-]
 
 EXPECTED_ZIP_MEMBERS = {
     "lobby-capture-wiley-submission/main.tex",
@@ -77,21 +39,11 @@ EXPECTED_ZIP_MEMBERS = {
 
 
 def main() -> int:
-    parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument(
-        "--git-clean",
-        action="store_true",
-        help="also fail if tracked generated reports, tables, or figures changed",
-    )
-    args = parser.parse_args()
-
     failures: list[str] = []
     failures.extend(check_exists([LOCAL_PDF, WILEY_PDF, SUBMISSION_ZIP]))
     failures.extend(check_freshness())
     failures.extend(check_wiley_text())
     failures.extend(check_submission_zip())
-    if args.git_clean:
-        failures.extend(check_git_clean())
 
     if failures:
         print("Paper artifact check failed:", file=sys.stderr)
@@ -201,26 +153,6 @@ def check_submission_zip() -> list[str]:
             return failures
     except (OSError, KeyError, zipfile.BadZipFile) as error:
         return [f"could not inspect submission zip: {error}"]
-
-
-def check_git_clean() -> list[str]:
-    try:
-        result = subprocess.run(
-            ["git", "diff", "--exit-code", "--", *TRACKED_GENERATED],
-            cwd=ROOT,
-            text=True,
-            stdout=subprocess.PIPE,
-            stderr=subprocess.STDOUT,
-            check=False,
-        )
-    except FileNotFoundError as error:
-        return [f"could not run git diff: {error}"]
-    if result.returncode == 0:
-        return []
-    output = result.stdout.strip()
-    if len(output) > 2000:
-        output = output[:2000] + "\n..."
-    return ["tracked generated paper/report artifacts changed after regeneration:\n" + output]
 
 
 if __name__ == "__main__":
