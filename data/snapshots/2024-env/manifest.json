@@ -1,9 +1,9 @@
 {
   "snapshot": "2024-env",
-  "generatedAt": "2026-05-05T01:49:47.451854+00:00",
-  "gitCommit": "e65abc3",
-  "gitTreeState": "dirty",
-  "gitTreeStateScope": "working tree status excluding generated files under data/snapshots/2024-env/",
+  "generatedAt": "2026-05-05T02:16:20.953207+00:00",
+  "gitCommit": "f6ab294",
+  "gitTreeState": "clean",
+  "gitTreeStateScope": "working tree status excluding generated 2024-env snapshot, reports, paper tables, and paper figures",
   "scope": {
     "calendarWindow": "2024-01-01/2024-12-31",
     "fecCycle": "2024",
@@ -20,7 +20,8 @@
       "normalizedFile": "data/snapshots/2024-env/normalized/lda-lobbying.csv",
       "rowCount": 121,
       "sha256": "30ea8984607fbd8ff79c951194046dc478e77ec5b45ba45fb8c160e5176a7b6f",
-      "status": "copied"
+      "status": "live",
+      "statusNotes": "lda-first_quarter: ok (normalized rows appended); lda-second_quarter: ok (normalized rows appended); lda-third_quarter: ok (normalized rows appended); lda-fourth_quarter: ok (normalized rows appended)"
     },
     {
       "source": "fec",
@@ -29,7 +30,8 @@
       "normalizedFile": "data/snapshots/2024-env/normalized/fec-campaign-finance.csv",
       "rowCount": 600,
       "sha256": "26f55e5ea2af8bcdfd644e65d0441811cb993e73657a8515fd9a353c4baec083",
-      "status": "copied"
+      "status": "live",
+      "statusNotes": "fec-C00010603: ok (normalized rows appended); fec-C00042366: ok (normalized rows appended); fec-C00000935: ok (normalized rows appended); fec-C00003418: ok (normalized rows appended); fec-C00027466: ok (normalized rows appended); fec-C00075820: ok (normalized rows appended)"
     },
     {
       "source": "regulatory",
@@ -38,7 +40,8 @@
       "normalizedFile": "data/snapshots/2024-env/normalized/regulatory-dockets.csv",
       "rowCount": 200,
       "sha256": "2be43d46882d1211c734281ba7e18b0bb133a2a2ab5ef6f8341f0814890e4654",
-      "status": "copied"
+      "status": "live",
+      "statusNotes": "regulations-gov: ok (normalized rows appended); federal-register: ok (normalized rows appended)"
     },
     {
       "source": "usaspending",
@@ -47,7 +50,8 @@
       "normalizedFile": "data/snapshots/2024-env/normalized/usaspending-awards.csv",
       "rowCount": 200,
       "sha256": "876be1b456e6dd3a57379ef82efba5e2f6ae78d7be108cb296be313e435911ff",
-      "status": "copied"
+      "status": "live",
+      "statusNotes": "usaspending: ok (normalized EPA award rows written)"
     },
     {
       "source": "revolving-door",
@@ -56,7 +60,8 @@
       "normalizedFile": "data/snapshots/2024-env/normalized/revolving-door.csv",
       "rowCount": 5,
       "sha256": "64bc4264fa34b930486dc0b60de33b2e3fefd66aa2b89a8d9c98faea5105d025",
-      "status": "copied"
+      "status": "fixture",
+      "statusNotes": "revolving-door: fixture (no licensed/source export configured; fixture copied for schema continuity)"
     }
   ],
   "liveRunStatus": {

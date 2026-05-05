@@ -1,6 +1,6 @@
 # Lobby Capture Ablation Report
 
-- Generated: `2026-05-05T01:55:26.001012Z`
+- Generated: `2026-05-05T02:16:27.262865Z`
 - Seed: `242`
 - Runs per scenario: `40`
 - Contests per run: `80`
