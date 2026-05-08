@@ -41,6 +41,7 @@ public final class InfluenceSubstitutionEngine {
                 0.0,
                 1.0
         );
+        double crossVenueDetection = reform.crossVenueDetectionStrength();
         double legalVenuePressure = Values.clamp(
                 (0.55 * contest.legalVulnerability())
                         + (0.30 * contest.delayValue())
@@ -87,7 +88,8 @@ public final class InfluenceSubstitutionEngine {
                 (0.38 * world.evasionProfile().legalRisk())
                         + (0.28 * reform.enforcementStrength())
                         + (0.20 * reform.sanctionSeverity())
-                        + (0.14 * contest.legalVulnerability()),
+                        + (0.14 * contest.legalVulnerability())
+                        + (0.12 * crossVenueDetection),
                 0.0,
                 1.0
         );
@@ -107,6 +109,7 @@ public final class InfluenceSubstitutionEngine {
                         + (0.08 * intermediaryFit)
                         + (0.10 * world.evasionFreedom())
                         - (0.18 * legalCost)
+                        - (0.10 * crossVenueDetection)
                         - (0.10 * setupTime),
                 0.0,
                 1.0
@@ -114,7 +117,11 @@ public final class InfluenceSubstitutionEngine {
         InfluenceStrategy selected = switchScore > 0.34
                 ? nearestSubstitute(currentStrategy, contest, accessPressure, campaignPressure, opacityPressure, commentPressure, legalVenuePressure)
                 : currentStrategy;
-        double activated = Values.clamp(switchScore * (0.45 + (0.55 * world.evasionFreedom())), 0.0, 1.0);
+        double activated = Values.clamp(
+                switchScore * (0.45 + (0.55 * world.evasionFreedom())) * (1.0 - (0.18 * crossVenueDetection)),
+                0.0,
+                1.0
+        );
         double hiddenShare = Values.clamp(
                 activated * (
                         0.36
@@ -123,7 +130,8 @@ public final class InfluenceSubstitutionEngine {
                                 + (0.22 * world.evasionFreedom())
                                 + (0.16 * intermediaryFit)
                 )
-                        - (0.10 * Math.max(0.0, reform.transparencyStrength() - world.evasionFreedom())),
+                        - (0.10 * Math.max(0.0, reform.transparencyStrength() - world.evasionFreedom()))
+                        - (0.12 * crossVenueDetection),
                 0.0,
                 1.0
         );
@@ -132,7 +140,8 @@ public final class InfluenceSubstitutionEngine {
                         + (0.52 * activated)
                         + (0.20 * vendorOverlap)
                         + (0.16 * messengerCredibility)
-                        - (0.18 * legalCost),
+                        - (0.18 * legalCost)
+                        - (0.10 * crossVenueDetection),
                 0.0,
                 1.0
         );
@@ -142,13 +151,15 @@ public final class InfluenceSubstitutionEngine {
                 1.0
         );
         double venue = Values.clamp(
-                activated * (0.22 + (0.35 * legalVenuePressure) + (0.22 * accessPressure) + (0.14 * campaignPressure)),
+                activated * (0.22 + (0.35 * legalVenuePressure) + (0.22 * accessPressure) + (0.14 * campaignPressure))
+                        - (0.18 * crossVenueDetection),
                 0.0,
                 1.0
         );
         double transparencyGain = Values.clamp(
                 (0.52 * reform.transparencyStrength())
                         + (0.20 * reform.enforcementStrength())
+                        + (0.18 * crossVenueDetection)
                         - (0.62 * hiddenShare)
                         - (0.16 * messenger),
                 -1.0,

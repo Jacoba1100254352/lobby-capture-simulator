@@ -20,7 +20,9 @@ The simulator now has a lobbying-centered MVP with calibration fixtures, source-
 - Comment triage reports unique-information share, review burden, duplicate compression, procedural acknowledgment, and substantive uptake.
 - Influence substitution reports pressure to switch, preserved influence capacity, hidden influence, messenger substitution, venue substitution, and net transparency gain.
 - Influence-network diagnostics report path opacity, donor concentration, intermediary centrality, official-access centrality, procurement exposure, revolving-door bridges, comment-network load, venue-shift load, and legibility.
-- `make portfolio` screens reform bundles by total distortion, hidden capture, substitution risk, administrative burden, network opacity, and legitimate-advocacy chill.
+- `make portfolio` screens research-backed reform portfolio families by total distortion, hidden capture, substitution risk, administrative burden, network opacity, legitimate-advocacy chill, speech-restriction risk, cross-venue detection, and participation protection.
+- The substitution audit now treats lower observed capture with higher hidden influence, hidden capture, total distortion, substitution risk, network opacity, venue-shift load, or channel-network load as a possible reform failure.
+- `docs/source-data-roadmap.md` records the direct/proxy/restricted public-data roadmap for LDA, FEC, IRS, nonprofit, procurement, rulemaking, witness, advisory-committee, OGE, OpenSecrets, LegiStorm, and ProPublica-style panels.
 - `make snapshot-2024-env` writes a closed-window snapshot manifest and freezes normalized rows for the 2024 environmental validation slice.
 - `scripts/run-2024-env-live-snapshot.sh` executes the pinned 2024 EPA/ENV live run, preserves ignored raw payloads, and records public API rate-limit gaps.
 - The current committed 2024 EPA/ENV snapshot has 121 LDA rows, 600 OpenFEC rows, 200 combined Regulations.gov/Federal Register regulatory rows, and 200 USAspending rows; the remaining empirical gap is the fixture-based revolving-door panel and the lack of dark-money/public-financing rows in the current FEC slice.
@@ -54,19 +56,22 @@ Deliverables:
 
 - add a dark-money/outside-spending FEC or OpenSecrets-style panel rather than relying on national party committee flows;
 - add a public-financing/voucher source panel rather than relying only on external benchmarks;
+- add IRS 8871/8872, TEOS, and Form 990 XML rows for 527s, 501(c)(4)s, 501(c)(6)s, think tanks, associations, and nonprofit intermediaries;
+- add FACA, House witness disclosure, and OGE panels for sponsored-expert, advisory-committee, and official-access bridges;
 - replace the revolving-door fixture with a documented licensed/exported source panel;
 - preserve raw source payloads outside git if they are too large;
 - archive updated row counts and filter settings in `docs/validation.md`;
 - compare normalized live distributions against the current snapshot and deterministic fixtures;
 - rerun `make snapshot-2024-env source-moments validate calibration-queue paper` and commit the refreshed artifacts.
 
-## 3. Add USAspending and revolving-door source panels
+## 3. Add SAM/FPDS and revolving-door source panels
 
-The source-moment layer now covers LDA, OpenFEC, and regulatory dockets. Procurement and revolving-door validation still need direct data rather than proxy report metrics.
+The source-moment layer now covers LDA, OpenFEC, regulatory dockets, and USAspending. Procurement and revolving-door validation still need richer direct data rather than proxy report metrics.
 
 Deliverables:
 
-- add a USAspending fetcher and source moments for top-recipient and top-agency concentration;
+- expand the USAspending bridge with SAM/FPDS UEI, PIID, modification, exclusion, and award-action fields;
+- add source moments for single-bid exposure, ex-post modification risk, price-only awards, award concentration, and procurement firewall coverage;
 - add a revolving-door source panel or import path and keep headcount share separate from influence intensity;
 - update `data/calibration/parameter-map.csv` so procurement and revolving-door rows point at direct source moments where possible.
 
@@ -80,3 +85,4 @@ Deliverables:
 - decide whether high-end Super PAC large-donor dependence should be scenario-specific rather than applied to every report;
 - add scenario coverage where hidden substitution and revolving-door influence are intentionally stressed;
 - replace synthetic influence-network diagnostics with direct network panels where sources permit.
+- split speech-restriction risk, legitimate-advocacy chill, false-positive costs, and participation protection in the paper's portfolio interpretation.

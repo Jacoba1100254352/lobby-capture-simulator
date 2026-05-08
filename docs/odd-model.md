@@ -141,7 +141,7 @@ Current strategy-to-channel templates are deterministic share vectors before bud
 
 ### Influence Network
 
-Each channel allocation creates weighted influence-network paths from a lobby organization to the contest domain. Paths are typed by channel and scored for opacity, donor concentration, intermediary dependence, official access, procurement linkage, revolving-door linkage, comment mobilization, and venue shift. Scenario reports aggregate these into `networkOpacityIndex`, `donorNetworkConcentration`, `intermediaryCentrality`, `officialAccessCentrality`, `procurementNetworkExposure`, `revolvingDoorBridgeIndex`, `commentNetworkLoad`, `venueShiftNetworkLoad`, and `networkLegibilityIndex`.
+Each channel allocation creates weighted influence-network paths from a lobby organization to the contest domain. Paths are typed by channel and scored for opacity, donor concentration, intermediary dependence, official access, procurement linkage, revolving-door linkage, comment mobilization, and venue shift. Scenario reports aggregate these into `networkOpacityIndex`, `donorNetworkConcentration`, `intermediaryCentrality`, `officialAccessCentrality`, `procurementNetworkExposure`, `revolvingDoorBridgeIndex`, `commentNetworkLoad`, `venueShiftNetworkLoad`, `networkLegibilityIndex`, `crossVenueDetectionIndex`, `participationProtectionIndex`, and `speechRestrictionRisk`.
 
 These are synthetic path diagnostics. They do not claim to reconstruct observed social networks. Their purpose is to keep substitution visible when formal lobbying declines but influence moves through sponsored research, trade associations, procurement relationships, dark-money routes, consulting, litigation, or adjacent venues.
 
@@ -229,11 +229,11 @@ Scenario reports include:
 - revolving-door influence;
 - technical rulemaking distortion;
 - procurement bias;
-- influence-network opacity, legibility, donor concentration, intermediary centrality, official-access centrality, procurement exposure, revolving-door bridge strength, comment-network load, and venue-shift load;
+- influence-network opacity, legibility, donor concentration, intermediary centrality, official-access centrality, procurement exposure, revolving-door bridge strength, comment-network load, venue-shift load, cross-venue detection, participation protection, and speech-restriction risk;
 - enforcement capacity, detection, sanctions, and backlog;
 - Wilson intervals for binomial capture and reform-success outcomes.
 
-The primary synthetic comparison for reform packages is `totalInfluenceDistortion`, not `captureRate`. If observed capture falls while hidden influence, hidden capture, total distortion, or substitution failure risk rises, the validation audit treats the reform as a possible failure rather than a clean success.
+The primary synthetic comparison for reform packages is `totalInfluenceDistortion`, not `captureRate`. If observed capture falls while hidden influence, hidden capture, total distortion, substitution failure risk, network opacity, venue shifting, or channel-network load rises, the validation audit treats the reform as a possible failure rather than a clean success.
 
 Generated paper tables and figures are derived from committed report CSVs. The full report snapshots, portfolio screen, source moments, validation summary, substitution audit, and calibration queue remain in the repository and are included in the Wiley submission support bundle.
 

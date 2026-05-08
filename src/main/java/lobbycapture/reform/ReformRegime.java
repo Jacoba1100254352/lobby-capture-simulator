@@ -68,10 +68,51 @@ public record ReformRegime(
     }
 
     public double reformProtectionStrength() {
-        return Values.clamp((0.22 * transparencyStrength()) + (0.18 * campaignFinanceCounterweight())
-                + (0.18 * publicAdvocateStrength) + (0.15 * blindReviewStrength)
-                + (0.14 * enforcementStrength()) + (0.08 * antiAstroturfStrength)
-                + (0.05 * coolingOffStrength), 0.0, 1.0);
+        return Values.clamp((0.20 * transparencyStrength()) + (0.16 * campaignFinanceCounterweight())
+                + (0.17 * publicAdvocateStrength) + (0.14 * blindReviewStrength)
+                + (0.13 * enforcementStrength()) + (0.08 * antiAstroturfStrength)
+                + (0.05 * coolingOffStrength) + (0.07 * crossVenueDetectionStrength()), 0.0, 1.0);
+    }
+
+    public double crossVenueDetectionStrength() {
+        return Values.clamp(
+                (0.20 * contactLogCoverage)
+                        + (0.18 * beneficialOwnerDisclosure)
+                        + (0.16 * darkMoneyDisclosureStrength)
+                        + (0.14 * auditRate)
+                        + (0.13 * enforcementBudget)
+                        + (0.11 * realTimeDisclosure)
+                        + (0.08 * disclosureStrength),
+                0.0,
+                1.0
+        );
+    }
+
+    public double participationProtectionStrength() {
+        return Values.clamp(
+                (0.34 * publicAdvocateStrength)
+                        + (0.22 * democracyVoucherStrength)
+                        + (0.18 * publicFinancingStrength)
+                        + (0.12 * blindReviewStrength)
+                        + (0.10 * contactLogCoverage)
+                        + (0.04 * disclosureStrength)
+                        - (0.18 * falsePositiveCost),
+                0.0,
+                1.0
+        );
+    }
+
+    public double speechRestrictionRisk() {
+        return Values.clamp(
+                (0.38 * lobbyingBanStrength)
+                        + (0.24 * constitutionalChallengeRisk)
+                        + (0.18 * antiAstroturfStrength)
+                        + (0.12 * contributionLimitStrength)
+                        + (0.08 * falsePositiveCost)
+                        - (0.16 * participationProtectionStrength()),
+                0.0,
+                1.0
+        );
     }
 
     public static ReformRegime minimalDisclosure() {
@@ -119,6 +160,78 @@ public record ReformRegime(
                 "full anti-capture bundle",
                 0.82, 0.78, 0.78, 0.76, 0.34, 0.68, 0.62, 0.64, 0.56, 0.74,
                 0.72, 0.68, 0.64, 0.72, 0.70, 0.72, 0.24, 0.34, 0.46, 0.10, 0.24
+        );
+    }
+
+    public static ReformRegime transparencyFirstBaseline() {
+        return new ReformRegime(
+                "transparency-first baseline",
+                0.82, 0.82, 0.52, 0.82, 0.08, 0.12, 0.04, 0.02, 0.14, 0.48,
+                0.18, 0.12, 0.20, 0.36, 0.30, 0.34, 0.12, 0.58, 0.22, 0.05, 0.12
+        );
+    }
+
+    public static ReformRegime balancedComplianceCore() {
+        return new ReformRegime(
+                "balanced compliance core",
+                0.72, 0.68, 0.62, 0.70, 0.18, 0.58, 0.16, 0.10, 0.26, 0.54,
+                0.36, 0.34, 0.38, 0.66, 0.62, 0.66, 0.18, 0.44, 0.36, 0.08, 0.20
+        );
+    }
+
+    public static ReformRegime electoralSubstitutionShield() {
+        return new ReformRegime(
+                "electoral substitution shield",
+                0.62, 0.60, 0.66, 0.56, 0.10, 0.16, 0.78, 0.76, 0.58, 0.76,
+                0.34, 0.18, 0.24, 0.56, 0.54, 0.60, 0.16, 0.52, 0.40, 0.08, 0.22
+        );
+    }
+
+    public static ReformRegime rulemakingIntegrityStack() {
+        return new ReformRegime(
+                "rulemaking integrity stack",
+                0.68, 0.62, 0.54, 0.62, 0.08, 0.12, 0.20, 0.16, 0.18, 0.42,
+                0.78, 0.66, 0.82, 0.58, 0.54, 0.58, 0.16, 0.50, 0.44, 0.11, 0.18
+        );
+    }
+
+    public static ReformRegime procurementHardeningStack() {
+        return new ReformRegime(
+                "procurement hardening stack",
+                0.66, 0.58, 0.72, 0.82, 0.22, 0.62, 0.08, 0.04, 0.20, 0.48,
+                0.54, 0.76, 0.28, 0.72, 0.70, 0.76, 0.22, 0.38, 0.50, 0.10, 0.24
+        );
+    }
+
+    public static ReformRegime countervailingRepresentationStack() {
+        return new ReformRegime(
+                "countervailing representation stack",
+                0.54, 0.46, 0.36, 0.48, 0.04, 0.08, 0.58, 0.58, 0.34, 0.30,
+                0.92, 0.70, 0.48, 0.48, 0.40, 0.44, 0.12, 0.66, 0.36, 0.06, 0.12
+        );
+    }
+
+    public static ReformRegime highDeterrenceEnforcementStack() {
+        return new ReformRegime(
+                "high-deterrence enforcement stack",
+                0.70, 0.62, 0.68, 0.74, 0.32, 0.78, 0.10, 0.06, 0.28, 0.62,
+                0.42, 0.60, 0.46, 0.88, 0.88, 0.88, 0.26, 0.30, 0.54, 0.14, 0.30
+        );
+    }
+
+    public static ReformRegime civilLibertiesConstrainedPortfolio() {
+        return new ReformRegime(
+                "civil-liberties-constrained portfolio",
+                0.78, 0.76, 0.72, 0.74, 0.04, 0.58, 0.44, 0.46, 0.30, 0.68,
+                0.72, 0.54, 0.56, 0.66, 0.62, 0.64, 0.18, 0.48, 0.38, 0.05, 0.12
+        );
+    }
+
+    public static ReformRegime fullAntiSubstitutionPortfolio() {
+        return new ReformRegime(
+                "full anti-substitution portfolio",
+                0.86, 0.84, 0.84, 0.84, 0.22, 0.76, 0.66, 0.66, 0.52, 0.80,
+                0.78, 0.74, 0.70, 0.80, 0.78, 0.78, 0.22, 0.36, 0.52, 0.10, 0.22
         );
     }
 

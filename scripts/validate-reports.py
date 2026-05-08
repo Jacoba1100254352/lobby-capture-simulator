@@ -140,9 +140,33 @@ def substitution_status(row: dict[str, str], baseline: dict[str, str]) -> str:
     distortion_delta = metric(row, "totalInfluenceDistortion") - metric(baseline, "totalInfluenceDistortion")
     risk_delta = metric(row, "substitutionFailureRisk") - metric(baseline, "substitutionFailureRisk")
     visible_delta = metric(row, "visibleLobbyingSpendShare") - metric(baseline, "visibleLobbyingSpendShare")
-    if capture_delta < -0.02 and (hidden_delta > 0.02 or hidden_capture_delta > 0.02 or distortion_delta > 0.02 or risk_delta > 0.02):
+    network_delta = metric(row, "networkOpacityIndex") - metric(baseline, "networkOpacityIndex")
+    venue_shift_delta = metric(row, "venueShiftNetworkLoad") - metric(baseline, "venueShiftNetworkLoad")
+    channel_movement_delta = max(
+        metric(row, "intermediaryCentrality") - metric(baseline, "intermediaryCentrality"),
+        metric(row, "procurementNetworkExposure") - metric(baseline, "procurementNetworkExposure"),
+        metric(row, "revolvingDoorBridgeIndex") - metric(baseline, "revolvingDoorBridgeIndex"),
+        metric(row, "commentNetworkLoad") - metric(baseline, "commentNetworkLoad"),
+    )
+    hidden_or_distorted = any_moved(
+        hidden_delta,
+        hidden_capture_delta,
+        distortion_delta,
+        risk_delta,
+        network_delta,
+        venue_shift_delta,
+        channel_movement_delta,
+    )
+    if capture_delta < -0.02 and hidden_or_distorted:
         return "possible_failure"
-    if visible_delta < -0.02 and (hidden_delta > 0.02 or hidden_capture_delta > 0.02 or risk_delta > 0.02):
+    if visible_delta < -0.02 and any_moved(
+        hidden_delta,
+        hidden_capture_delta,
+        risk_delta,
+        network_delta,
+        venue_shift_delta,
+        channel_movement_delta,
+    ):
         return "substitution_tradeoff"
     if capture_delta < -0.02 and distortion_delta <= 0.02 and risk_delta <= 0.02:
         return "improved"
@@ -164,6 +188,12 @@ def substitution_row(report: Path, row: dict[str, str], baseline: dict[str, str]
         "totalInfluenceDistortionDelta": delta(row, baseline, "totalInfluenceDistortion"),
         "substitutionFailureRiskDelta": delta(row, baseline, "substitutionFailureRisk"),
         "visibleLobbyingSpendShareDelta": delta(row, baseline, "visibleLobbyingSpendShare"),
+        "networkOpacityDelta": delta(row, baseline, "networkOpacityIndex"),
+        "venueShiftNetworkLoadDelta": delta(row, baseline, "venueShiftNetworkLoad"),
+        "intermediaryCentralityDelta": delta(row, baseline, "intermediaryCentrality"),
+        "procurementNetworkExposureDelta": delta(row, baseline, "procurementNetworkExposure"),
+        "revolvingDoorBridgeDelta": delta(row, baseline, "revolvingDoorBridgeIndex"),
+        "commentNetworkLoadDelta": delta(row, baseline, "commentNetworkLoad"),
         "intermediarySpendShare": f4(metric(row, "intermediaryShare")),
         "darkMoneySpendShare": f4(metric(row, "darkMoneyShare")),
         "defensiveReformSpendShare": f4(metric(row, "defensiveReformSpendShare")),
@@ -180,6 +210,10 @@ def metric(row: dict[str, str], key: str) -> float:
         return float(row.get(key, "0") or "0")
     except ValueError:
         return 0.0
+
+
+def any_moved(*deltas: float) -> bool:
+    return any(delta > 0.02 for delta in deltas)
 
 
 def summary_row(
@@ -244,6 +278,12 @@ def write_substitution_csv(path: Path, rows: list[dict[str, str]]) -> None:
         "totalInfluenceDistortionDelta",
         "substitutionFailureRiskDelta",
         "visibleLobbyingSpendShareDelta",
+        "networkOpacityDelta",
+        "venueShiftNetworkLoadDelta",
+        "intermediaryCentralityDelta",
+        "procurementNetworkExposureDelta",
+        "revolvingDoorBridgeDelta",
+        "commentNetworkLoadDelta",
         "intermediarySpendShare",
         "darkMoneySpendShare",
         "defensiveReformSpendShare",
@@ -300,7 +340,7 @@ def write_substitution_markdown(path: Path, rows: list[dict[str, str]]) -> None:
     lines = [
         "# Substitution Audit",
         "",
-        "This audit treats lower observed capture as insufficient when hidden influence, hidden capture, total distortion, or substitution failure risk rises. It is a diagnostic over synthetic simulation reports, not an empirical causal claim.",
+        "This audit treats lower observed capture as insufficient when hidden influence, hidden capture, total distortion, substitution failure risk, network opacity, venue shifting, or channel-network load rises. It is a diagnostic over synthetic simulation reports, not an empirical causal claim.",
         "",
         f"- Possible failure: `{counts['possible_failure']}`",
         f"- Substitution tradeoff: `{counts['substitution_tradeoff']}`",
@@ -310,8 +350,8 @@ def write_substitution_markdown(path: Path, rows: list[dict[str, str]]) -> None:
         "",
         "## Flagged Rows",
         "",
-        "| Report | Scenario | Status | Capture delta | Hidden delta | Hidden capture delta | Total distortion delta | Risk delta | Visible spend delta | Intermediary | Dark money | Defensive | Admin |",
-        "| --- | --- | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |",
+        "| Report | Scenario | Status | Capture delta | Hidden delta | Hidden capture delta | Total distortion delta | Risk delta | Visible spend delta | Network opacity delta | Venue delta | Interm. load delta | Procurement delta | Revolving delta | Comment delta | Intermediary | Dark money | Defensive | Admin |",
+        "| --- | --- | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |",
     ]
     flagged = [
         row for row in rows
@@ -323,11 +363,14 @@ def write_substitution_markdown(path: Path, rows: list[dict[str, str]]) -> None:
             f"{row['observedCaptureDelta']} | {row['hiddenInfluenceDelta']} | "
             f"{row['hiddenCaptureDelta']} | {row['totalInfluenceDistortionDelta']} | "
             f"{row['substitutionFailureRiskDelta']} | {row['visibleLobbyingSpendShareDelta']} | "
+            f"{row['networkOpacityDelta']} | {row['venueShiftNetworkLoadDelta']} | "
+            f"{row['intermediaryCentralityDelta']} | {row['procurementNetworkExposureDelta']} | "
+            f"{row['revolvingDoorBridgeDelta']} | {row['commentNetworkLoadDelta']} | "
             f"{row['intermediarySpendShare']} | {row['darkMoneySpendShare']} | "
             f"{row['defensiveReformSpendShare']} | {row['administrativeCost']} |"
         )
     if not flagged:
-        lines.append("| n/a | n/a | no flagged rows |  |  |  |  |  |  |  |  |  |  |")
+        lines.append("| n/a | n/a | no flagged rows |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |")
     lines.append("")
     path.write_text("\n".join(lines), encoding="utf-8")
 

@@ -133,6 +133,7 @@ abstract class AbstractInfluenceArena implements InfluenceArena {
                 + (0.10 * reform.campaignFinanceCounterweight())
                 + (0.07 * reform.antiAstroturfStrength())
                 + (0.05 * reform.coolingOffStrength())
+                + (0.06 * reform.crossVenueDetectionStrength())
                 + (0.07 * world.regulatorAttention(contest.issueDomain()) * (1.0 - (0.30 * world.regulatorQueue(contest.issueDomain()))))
                 + (0.05 * world.watchdogFocus(contest.issueDomain()));
         double controlLeakage = Values.clamp(
@@ -141,7 +142,8 @@ abstract class AbstractInfluenceArena implements InfluenceArena {
                         - (0.10 * influence.influencePreservationRate())
                         - (0.08 * influence.venueSubstitutionRate())
                         - (0.07 * influence.networkSnapshot().networkOpacityIndex())
-                        - (0.05 * influence.networkSnapshot().venueShiftNetworkLoad()),
+                        - (0.05 * influence.networkSnapshot().venueShiftNetworkLoad())
+                        + (0.08 * reform.crossVenueDetectionStrength()),
                 0.62,
                 1.0
         );
@@ -166,6 +168,7 @@ abstract class AbstractInfluenceArena implements InfluenceArena {
                         - (0.10 * influence.hiddenInfluenceShare())
                         - (0.10 * influence.networkSnapshot().networkOpacityIndex())
                         + (0.08 * influence.networkSnapshot().networkLegibilityIndex())
+                        + (0.08 * reform.crossVenueDetectionStrength())
                         + (0.10 * world.evasionProfile().legalRisk())
                         + (0.10 * world.watchdogFocus(contest.issueDomain()))
                         + (0.07 * world.regulatorAttention(contest.issueDomain()) * (1.0 - (0.35 * world.regulatorQueue(contest.issueDomain()))))
@@ -219,7 +222,7 @@ abstract class AbstractInfluenceArena implements InfluenceArena {
                 detectionProbability,
                 sanctioned ? reform.sanctionSeverity() : 0.0,
                 evasionPenalty,
-                reform.administrativeCost() + (0.05 * rulemakingProcessFriction) + (0.06 * procurementPathPressure) + (detected ? 0.08 : 0.0) + (sanctioned ? 0.06 : 0.0),
+                reform.administrativeCost() + (0.04 * reform.crossVenueDetectionStrength()) + (0.05 * rulemakingProcessFriction) + (0.06 * procurementPathPressure) + (detected ? 0.08 : 0.0) + (sanctioned ? 0.06 : 0.0),
                 captured ? "captured outcome survived process" : "public-interest controls held"
         );
     }

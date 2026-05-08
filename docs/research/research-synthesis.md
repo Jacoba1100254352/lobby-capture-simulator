@@ -1,6 +1,6 @@
 # Deep Research Synthesis
 
-This note distills the six Deep Research reports supplied in May 2026 into project decisions for the Lobby Capture Simulator. The reports are source notes, not direct empirical identification. Their shared design lesson is that organized interests adapt across channels: reforms usually change the price, route, visibility, and timing of influence before they eliminate influence.
+This note distills the nine Deep Research reports supplied in May 2026 into project decisions for the Lobby Capture Simulator. The reports are source notes, not direct empirical identification. Their shared design lesson is that organized interests adapt across channels: reforms usually change the price, route, visibility, and timing of influence before they eliminate influence.
 
 ## Source Reports
 
@@ -10,6 +10,9 @@ This note distills the six Deep Research reports supplied in May 2026 into proje
 - `deep-research-report3.md`: empirical calibration ranges for money, rulemaking, enforcement, procurement, and revolving-door variables.
 - `deep-research-report4.md`: influence substitution taxonomy and reporting requirements.
 - `deep-research-report5.md`: literature map, paper framing, and original contribution.
+- `Lobby Capture Simulator - Substitution and Capture Parameter Ranges.md`: direct, proxy, and judgmental parameter ranges for meeting registers, procurement data, public financing, cooling-off substitution, comment authentication, fake-comment shocks, procurement revolving-door risks, and LDA compliance.
+- `Lobby Capture Simulator - Public Influence Network Data Sources.md`: public-source acquisition plan and identifier spine for LDA, FEC, IRS, nonprofit, procurement, rulemaking, witness, advisory-committee, OGE, OpenSecrets, LegiStorm, and ProPublica-style panels.
+- `Lobby Capture Simulator - Reform Portfolio Design and Failure Modes.md`: reform portfolio families, evasion/failure modes, civil-liberties constraints, participation-protection logic, and anti-substitution design criteria.
 
 ## Model Consequences
 
@@ -21,6 +24,10 @@ Reforms should operate on portfolios. Public financing changes candidate depende
 
 The simulator's original contribution should be dynamic substitution after reform. The key reported outcome is not only whether capture fell, but how much influence capacity survived, where it moved, and whether the new route is more or less observable.
 
+The second May 2026 synthesis strengthens this into an explicit anti-substitution screen. Hard budgets and bans should be treated as legally fragile designs with high substitution elasticity unless backed by venue-shifting detection. Public-interest funds and public advocate offices should reduce distortion by adding countervailing capacity, not by suppressing participation. Comment-authenticity systems should prioritize provenance labels, sponsor disclosure, and duplicate compression over universal identity proofing. Real-time meeting logs and machine-readable procurement records improve observability, but they are incomplete unless matched to beneficial owners, dark-money entities, intermediaries, officials, and award recipients.
+
+The source-data plan should use direct observed sources where possible and keep proxy panels labeled. LDA, FEC/OpenFEC, Regulations.gov, Federal Register, USAspending, SAM/FPDS, IRS 8871/8872, and Form 990 records are the strongest public anchors. FACA, House witness disclosures, OGE records, ProPublica, OpenSecrets, and LegiStorm can fill access, intermediary, and revolving-door gaps, but coverage, licensing, and missingness have to be documented. The immediate matching spine should use LDA registrant/client IDs, FEC committee and candidate IDs, IRS EINs, SAM UEIs, PIIDs, docket IDs, document IDs, comment IDs, and official/person names only after source-native IDs are exhausted.
+
 ## Implementation Priorities
 
 1. Keep `data/calibration/parameter-map.csv` as the translation layer from research priors to simulator moments.
@@ -29,6 +36,9 @@ The simulator's original contribution should be dynamic substitution after refor
 4. Add substitution metrics to every report: pressure to switch, hidden influence, influence preserved, messenger substitution, venue substitution, and net transparency change.
 5. Use a closed 2024 EPA/ENV snapshot as the first paper-grade validation slice before adding health, transportation, or multi-agency panels.
 6. Reframe the paper around stages and channels: capture theory, influence mechanisms, institutional arenas, reforms/enforcement, simulation, calibration, and institutional design.
+7. Treat any reform that lowers observed capture while raising hidden influence, hidden capture, network opacity, venue-shift load, or total distortion as a possible failure.
+8. Add portfolio metrics for cross-venue detection, participation protection, speech-restriction risk, legitimate-advocacy chill, and administrative burden.
+9. Build the next validation bridge from outside spending, nonprofit/intermediary records, SAM/FPDS procurement records, FACA/witness access records, and a documented revolving-door source panel.
 
 ## Evidence Discipline
 

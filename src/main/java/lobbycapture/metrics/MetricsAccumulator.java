@@ -76,6 +76,7 @@ public final class MetricsAccumulator {
     private double adaptationSpeedSum;
     private double reformDecayPressureSum;
     private double administrativeCostSum;
+    private double legitimateAdvocacyChillSum;
     private double visibleLobbyingSpendSum;
     private double intermediarySpendSum;
     private double enforcementCapacitySum;
@@ -88,6 +89,9 @@ public final class MetricsAccumulator {
     private double commentNetworkLoadSum;
     private double venueShiftNetworkLoadSum;
     private double networkLegibilitySum;
+    private double crossVenueDetectionSum;
+    private double participationProtectionSum;
+    private double speechRestrictionRiskSum;
     private ChannelAllocation allocationSum = ChannelAllocation.zero();
     private final List<Double> runCaptureRates = new ArrayList<>();
     private final List<Double> runHiddenInfluenceShares = new ArrayList<>();
@@ -202,6 +206,10 @@ public final class MetricsAccumulator {
         adaptationSpeedSum += world.lastAdaptationSpeed();
         reformDecayPressureSum += world.lastReformDecayPressure();
         administrativeCostSum += outcome.administrativeCost();
+        legitimateAdvocacyChillSum += legitimateAdvocacyChill(outcome, reform);
+        crossVenueDetectionSum += reform.crossVenueDetectionStrength();
+        participationProtectionSum += reform.participationProtectionStrength();
+        speechRestrictionRiskSum += reform.speechRestrictionRisk();
         visibleLobbyingSpendSum += allocation.directAccess()
                 + allocation.agendaAccess()
                 + allocation.publicCampaign()
@@ -298,7 +306,7 @@ public final class MetricsAccumulator {
                 watchdogBudgetConcentrationSum / total,
                 adaptationSpeedSum / total,
                 reformDecayPressureSum / total,
-                legitimateAdvocacyChill(),
+                legitimateAdvocacyChillSum / total,
                 ratio(delayedByChallenge, totalContests),
                 administrativeCostSum / total,
                 stdDev(runCaptureRates),
@@ -312,16 +320,23 @@ public final class MetricsAccumulator {
                 revolvingDoorBridgeSum / total,
                 commentNetworkLoadSum / total,
                 venueShiftNetworkLoadSum / total,
-                networkLegibilitySum / total
+                networkLegibilitySum / total,
+                crossVenueDetectionSum / total,
+                participationProtectionSum / total,
+                speechRestrictionRiskSum / total
         );
     }
 
-    private double legitimateAdvocacyChill() {
-        if (totalContests == 0) {
-            return 0.0;
-        }
-        double lowSpendPressure = totalSpendSum / totalContests < 0.08 ? 0.08 : 0.0;
-        return Values.clamp(lowSpendPressure + (administrativeCostSum / Math.max(1.0, totalContests) * 0.18), 0.0, 1.0);
+    private static double legitimateAdvocacyChill(ContestOutcome outcome, ReformRegime reform) {
+        return Values.clamp(
+                (0.30 * reform.speechRestrictionRisk())
+                        + (0.22 * reform.falsePositiveCost())
+                        + (0.20 * outcome.administrativeCost())
+                        + (0.10 * reform.antiAstroturfStrength())
+                        - (0.18 * reform.participationProtectionStrength()),
+                0.0,
+                1.0
+        );
     }
 
     private static double ratio(int numerator, int denominator) {

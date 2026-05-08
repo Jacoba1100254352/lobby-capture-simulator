@@ -95,16 +95,17 @@ The ablation report ranks removals by total-distortion increase and tracks obser
 
 `make portfolio` adds a reform-portfolio screen around the stressed contest mix:
 
-- machine-readable meeting logs;
-- public-interest representation funds;
-- randomized audits and sanctions;
-- comment-authenticity controls;
-- procurement firewalls;
-- venue-shifting detection;
-- hard lobbying budgets;
-- full anti-capture bundle;
-- full anti-capture bundle under high evasion.
+- transparency-first baseline;
+- balanced compliance core;
+- electoral substitution shield;
+- rulemaking integrity stack;
+- procurement hardening stack;
+- countervailing representation stack;
+- high-deterrence enforcement stack;
+- civil-liberties-constrained portfolio;
+- full anti-substitution portfolio;
+- full anti-substitution portfolio under high evasion.
 
-The portfolio report ranks candidate bundles by total influence distortion, hidden capture, substitution risk, administrative burden, network opacity, and legitimate-advocacy chill. It is a design screen, not a welfare estimate.
+The portfolio report ranks candidate bundles by total influence distortion, hidden capture, substitution risk, administrative burden, network opacity, legitimate-advocacy chill, and speech-restriction risk, while rewarding cross-venue detection and participation protection. It is a design screen, not a welfare estimate.
 
-`make validate` also writes `reports/substitution-audit.csv` and `reports/substitution-audit.md`. That audit compares each report row against an open-access or highest-visible-lobbying baseline and flags cases where observed capture falls but hidden influence, hidden capture, total distortion, or substitution-failure risk rises.
+`make validate` also writes `reports/substitution-audit.csv` and `reports/substitution-audit.md`. That audit compares each report row against an open-access or highest-visible-lobbying baseline and flags cases where observed capture falls but hidden influence, hidden capture, total distortion, substitution-failure risk, network opacity, venue-shift load, or channel-network load rises.

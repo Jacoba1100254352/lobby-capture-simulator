@@ -1,58 +1,76 @@
 # Substitution Audit
 
-This audit treats lower observed capture as insufficient when hidden influence, hidden capture, total distortion, or substitution failure risk rises. It is a diagnostic over synthetic simulation reports, not an empirical causal claim.
+This audit treats lower observed capture as insufficient when hidden influence, hidden capture, total distortion, substitution failure risk, network opacity, venue shifting, or channel-network load rises. It is a diagnostic over synthetic simulation reports, not an empirical causal claim.
 
-- Possible failure: `16`
-- Substitution tradeoff: `11`
-- Worse total distortion: `17`
-- Improved: `30`
-- No material tradeoff: `4`
+- Possible failure: `26`
+- Substitution tradeoff: `31`
+- Worse total distortion: `5`
+- Improved: `5`
+- No material tradeoff: `12`
 
 ## Flagged Rows
 
-| Report | Scenario | Status | Capture delta | Hidden delta | Hidden capture delta | Total distortion delta | Risk delta | Visible spend delta | Intermediary | Dark money | Defensive | Admin |
-| --- | --- | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| lobby-capture-ablation.csv | No beneficial-owner disclosure | possible_failure | -0.1131 | 0.0569 | 0.0084 | -0.0115 | 0.0232 | -0.0537 | 0.1000 | 0.1956 | 0.4349 | 0.4653 |
-| lobby-capture-campaign.csv | Low-salience technical rulemaking | substitution_tradeoff | 0.1088 | 0.0573 | 0.0211 | 0.0488 | 0.0357 | -0.2157 | 0.1001 | 0.1206 | 0.0000 | 0.0930 |
-| lobby-capture-campaign.csv | Campaign finance dominant | worse_total_distortion | 0.1059 | 0.0705 | 0.0280 | 0.0281 | 0.0407 | 0.2535 | 0.0800 | 0.1000 | 0.0000 | 0.0737 |
-| lobby-capture-campaign.csv | Dark money dominant | substitution_tradeoff | 0.0034 | 0.2755 | 0.0967 | 0.0663 | 0.1477 | -0.0432 | 0.0868 | 0.1823 | 0.4416 | 0.0783 |
-| lobby-capture-campaign.csv | Revolving-door dominant | substitution_tradeoff | 0.1084 | 0.0561 | 0.0221 | 0.0492 | 0.0369 | -0.1704 | 0.1096 | 0.0427 | 0.0000 | 0.0801 |
-| lobby-capture-campaign.csv | Think-tank and association intermediaries | possible_failure | -0.0497 | 0.3220 | 0.1143 | 0.0596 | 0.1607 | -0.0390 | 0.0862 | 0.2019 | 0.4745 | 0.2661 |
-| lobby-capture-campaign.csv | Real-time transparency | possible_failure | -0.1053 | 0.1082 | 0.0399 | -0.0073 | 0.0572 | -0.0278 | 0.0887 | 0.2095 | 0.2706 | 0.2600 |
-| lobby-capture-campaign.csv | Cooling-off ban | substitution_tradeoff | 0.0753 | 0.1507 | 0.0569 | 0.0534 | 0.0830 | -0.0865 | 0.1200 | 0.2200 | 0.0000 | 0.3497 |
-| lobby-capture-campaign.csv | Audit and sanctions | possible_failure | -0.3059 | 0.0735 | 0.0166 | -0.0564 | 0.0293 | -0.0172 | 0.0875 | 0.1899 | 0.3160 | 0.4082 |
-| lobby-capture-campaign.csv | Hard lobbying budgets | possible_failure | -0.1106 | 0.2186 | 0.0765 | 0.0172 | 0.1168 | -0.0927 | 0.1049 | 0.2334 | 0.2610 | 0.4571 |
-| lobby-capture-campaign.csv | Public-interest representation funds | possible_failure | -0.1519 | 0.1368 | 0.0477 | -0.0056 | 0.0756 | -0.0307 | 0.0874 | 0.2207 | 0.3125 | 0.3610 |
-| lobby-capture-campaign.csv | Randomized audit and sanctions | possible_failure | -0.3650 | 0.1296 | 0.0337 | -0.0602 | 0.0574 | -0.0173 | 0.0872 | 0.1904 | 0.3240 | 0.4494 |
-| lobby-capture-campaign.csv | Machine-readable meeting logs | worse_total_distortion | 0.0513 | 0.1798 | 0.0686 | 0.0481 | 0.0947 | 0.0043 | 0.0899 | 0.2592 | 0.0000 | 0.3443 |
-| lobby-capture-campaign.csv | Enforced cooling-off periods | possible_failure | -0.0509 | 0.1909 | 0.0657 | 0.0301 | 0.0987 | -0.0865 | 0.1200 | 0.2200 | 0.0000 | 0.4450 |
-| lobby-capture-campaign.csv | Comment-authenticity rules | possible_failure | -0.2434 | 0.1918 | 0.0701 | -0.0099 | 0.1019 | -0.0743 | 0.1038 | 0.1754 | 0.3451 | 0.4676 |
-| lobby-capture-campaign.csv | Public advocate office | possible_failure | -0.1312 | 0.1641 | 0.0579 | 0.0042 | 0.0862 | -0.1634 | 0.0934 | 0.1167 | 0.2930 | 0.4041 |
-| lobby-capture-campaign.csv | Procurement firewalls | possible_failure | -0.2934 | 0.0962 | 0.0375 | -0.0223 | 0.0447 | -0.0812 | 0.1129 | 0.2004 | 0.1664 | 0.5005 |
-| lobby-capture-campaign.csv | Venue-shifting detection | possible_failure | -0.3687 | 0.2162 | 0.0735 | -0.0518 | 0.1068 | -0.0286 | 0.0951 | 0.1535 | 0.4345 | 0.5101 |
-| lobby-capture-campaign.csv | Full anti-capture bundle | possible_failure | -0.7544 | 0.0709 | 0.0122 | -0.1873 | 0.0295 | -0.0515 | 0.0930 | 0.1464 | 0.6056 | 0.4869 |
-| lobby-capture-campaign.csv | Anti-capture bundle with evasion | possible_failure | -0.4072 | 0.3278 | 0.1038 | -0.0605 | 0.1594 | -0.0383 | 0.0928 | 0.1465 | 0.5480 | 0.5244 |
-| lobby-capture-campaign.csv | Reform threat mobilization | possible_failure | -0.3237 | 0.0909 | 0.0305 | -0.0735 | 0.0466 | -0.0633 | 0.0845 | 0.1576 | 0.7191 | 0.2411 |
-| lobby-capture-interactions.csv | Interaction enforcement 0.10 disclosure 0.10 | substitution_tradeoff | 0.5960 | 0.1603 | 0.0684 | 0.1839 | 0.1060 | -0.0801 | 0.0865 | 0.1132 | 0.6156 | 0.4734 |
-| lobby-capture-interactions.csv | Interaction enforcement 0.10 disclosure 0.80 | substitution_tradeoff | 0.5014 | 0.1469 | 0.0628 | 0.1487 | 0.0937 | -0.0500 | 0.1016 | 0.1863 | 0.4204 | 0.4823 |
-| lobby-capture-interactions.csv | Interaction enforcement 0.10 disclosure 1.25 | worse_total_distortion | 0.3534 | 0.1376 | 0.0585 | 0.1097 | 0.0846 | -0.0051 | 0.0958 | 0.1550 | 0.4386 | 0.5971 |
-| lobby-capture-interactions.csv | Interaction enforcement 0.80 disclosure 0.10 | substitution_tradeoff | 0.4607 | 0.1497 | 0.0566 | 0.1437 | 0.0924 | -0.1054 | 0.0901 | 0.1289 | 0.4731 | 0.5135 |
-| lobby-capture-interactions.csv | Interaction enforcement 0.80 disclosure 0.80 | substitution_tradeoff | 0.2794 | 0.1296 | 0.0467 | 0.0900 | 0.0746 | -0.0460 | 0.0993 | 0.1728 | 0.4969 | 0.5091 |
-| lobby-capture-interactions.csv | Interaction enforcement 0.80 disclosure 1.25 | worse_total_distortion | 0.1407 | 0.1187 | 0.0422 | 0.0534 | 0.0650 | -0.0179 | 0.0955 | 0.1536 | 0.5077 | 0.6136 |
-| lobby-capture-interactions.csv | Interaction enforcement 1.25 disclosure 0.10 | substitution_tradeoff | 0.2254 | 0.1376 | 0.0427 | 0.0855 | 0.0786 | -0.0877 | 0.0883 | 0.1225 | 0.5208 | 0.6400 |
-| lobby-capture-interactions.csv | Interaction enforcement 1.25 disclosure 0.80 | substitution_tradeoff | 0.1094 | 0.1290 | 0.0390 | 0.0524 | 0.0681 | -0.0449 | 0.0992 | 0.1693 | 0.5066 | 0.6226 |
-| lobby-capture-interactions.csv | Interaction enforcement 1.25 disclosure 1.25 | substitution_tradeoff | -0.0013 | 0.1111 | 0.0330 | 0.0162 | 0.0549 | -0.0204 | 0.0949 | 0.1519 | 0.5359 | 0.6088 |
-| lobby-capture-interactions.csv | Interaction public financing 0.35 evasion 0.45 | worse_total_distortion | 0.2627 | 0.1688 | 0.0588 | 0.0929 | 0.0891 | -0.0069 | 0.0956 | 0.1541 | 0.4581 | 0.5139 |
-| lobby-capture-interactions.csv | Interaction public financing 0.35 evasion 0.90 | worse_total_distortion | 0.4694 | 0.4199 | 0.1485 | 0.1841 | 0.2117 | -0.0022 | 0.0951 | 0.1534 | 0.4433 | 0.5365 |
-| lobby-capture-interactions.csv | Interaction public financing 0.80 evasion 0.45 | worse_total_distortion | 0.2174 | 0.1647 | 0.0563 | 0.0803 | 0.0879 | -0.0107 | 0.0950 | 0.1526 | 0.4877 | 0.5112 |
-| lobby-capture-interactions.csv | Interaction public financing 0.80 evasion 0.90 | worse_total_distortion | 0.4640 | 0.4077 | 0.1459 | 0.1785 | 0.2082 | -0.0020 | 0.0940 | 0.1503 | 0.4742 | 0.5329 |
-| lobby-capture-interactions.csv | Interaction public financing 1.25 evasion 0.45 | worse_total_distortion | 0.2087 | 0.1640 | 0.0561 | 0.0791 | 0.0889 | -0.0101 | 0.0947 | 0.1517 | 0.4937 | 0.6234 |
-| lobby-capture-interactions.csv | Interaction public financing 1.25 evasion 0.90 | worse_total_distortion | 0.4614 | 0.4195 | 0.1489 | 0.1814 | 0.2157 | -0.0014 | 0.0942 | 0.1509 | 0.4648 | 0.6506 |
-| lobby-capture-interactions.csv | Interaction cooling 0.10 strategy balanced | worse_total_distortion | 0.1627 | 0.1241 | 0.0412 | 0.0590 | 0.0650 | -0.0128 | 0.0951 | 0.1529 | 0.4935 | 0.5054 |
-| lobby-capture-interactions.csv | Interaction cooling 0.10 strategy revolving-door | worse_total_distortion | 0.1540 | 0.1265 | 0.0414 | 0.0580 | 0.0662 | -0.0130 | 0.0957 | 0.1545 | 0.4778 | 0.5056 |
-| lobby-capture-interactions.csv | Interaction cooling 0.80 strategy balanced | worse_total_distortion | 0.1500 | 0.1253 | 0.0418 | 0.0571 | 0.0667 | -0.0119 | 0.0949 | 0.1524 | 0.4947 | 0.5028 |
-| lobby-capture-interactions.csv | Interaction cooling 0.80 strategy revolving-door | worse_total_distortion | 0.1527 | 0.1298 | 0.0433 | 0.0602 | 0.0692 | -0.0141 | 0.0960 | 0.1553 | 0.4742 | 0.5055 |
-| lobby-capture-interactions.csv | Interaction cooling 1.25 strategy balanced | worse_total_distortion | 0.1180 | 0.1271 | 0.0414 | 0.0506 | 0.0682 | -0.0162 | 0.0951 | 0.1527 | 0.5101 | 0.6151 |
-| lobby-capture-interactions.csv | Interaction cooling 1.25 strategy revolving-door | worse_total_distortion | 0.1127 | 0.1252 | 0.0405 | 0.0488 | 0.0671 | -0.0174 | 0.0951 | 0.1526 | 0.5161 | 0.6154 |
-| lobby-capture-sensitivity.csv | Sensitivity evasion 0.60 | possible_failure | -0.1053 | 0.0943 | 0.0234 | -0.0058 | 0.0395 | -0.0074 | 0.0961 | 0.1559 | 0.4352 | 0.5225 |
-| lobby-capture-sensitivity.csv | Sensitivity evasion 0.90 | worse_total_distortion | 0.0376 | 0.2751 | 0.0875 | 0.0544 | 0.1257 | -0.0005 | 0.0944 | 0.1515 | 0.4512 | 0.5360 |
+| Report | Scenario | Status | Capture delta | Hidden delta | Hidden capture delta | Total distortion delta | Risk delta | Visible spend delta | Network opacity delta | Venue delta | Interm. load delta | Procurement delta | Revolving delta | Comment delta | Intermediary | Dark money | Defensive | Admin |
+| --- | --- | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
+| lobby-capture-ablation.csv | No enforcement | substitution_tradeoff | 0.0775 | 0.0624 | 0.0272 | 0.0278 | 0.0484 | -0.0244 | 0.0137 | 0.0486 | 0.0065 | -0.1458 | 0.0048 | -0.0049 | 0.0962 | 0.1558 | 0.4581 | 0.3791 |
+| lobby-capture-ablation.csv | No beneficial-owner disclosure | substitution_tradeoff | 0.0319 | 0.1210 | 0.0386 | 0.0321 | 0.0763 | -0.0671 | 0.1908 | 0.1182 | 0.0171 | -0.1479 | 0.0037 | -0.0094 | 0.0974 | 0.1978 | 0.4805 | 0.4541 |
+| lobby-capture-ablation.csv | No cooling-off rules | possible_failure | -0.1206 | 0.0130 | 0.0024 | -0.0343 | 0.0056 | -0.0223 | -0.0065 | -0.0017 | -0.0033 | -0.1469 | 0.2422 | -0.0063 | 0.0925 | 0.1532 | 0.5067 | 0.4557 |
+| lobby-capture-ablation.csv | No anti-astroturf authentication | possible_failure | -0.1175 | -0.0007 | -0.0020 | -0.0340 | -0.0012 | -0.0017 | -0.0024 | -0.0018 | -0.0002 | -0.1480 | -0.0010 | 0.0769 | 0.0838 | 0.1707 | 0.4941 | 0.4657 |
+| lobby-capture-campaign.csv | Budgeted disclosed lobbying | possible_failure | -0.5050 | -0.0526 | -0.0251 | -0.1370 | -0.0524 | 0.0530 | -0.2916 | -0.0693 | 0.0355 | -0.0516 | -0.0706 | 0.0131 | 0.0827 | 0.1328 | 0.3210 | 0.2628 |
+| lobby-capture-campaign.csv | Low-salience technical rulemaking | substitution_tradeoff | 0.1210 | 0.0549 | 0.0201 | 0.0512 | 0.0341 | -0.2145 | 0.0685 | 0.0354 | 0.0835 | -0.1008 | -0.0851 | 0.3326 | 0.1001 | 0.1206 | 0.0000 | 0.0968 |
+| lobby-capture-campaign.csv | Campaign finance dominant | worse_total_distortion | 0.1144 | 0.0674 | 0.0265 | 0.0294 | 0.0388 | 0.2547 | 0.0564 | 0.0310 | -0.0360 | -0.1430 | -0.0578 | -0.1898 | 0.0800 | 0.1000 | 0.0000 | 0.0777 |
+| lobby-capture-campaign.csv | Dark money dominant | substitution_tradeoff | 0.0141 | 0.2615 | 0.0913 | 0.0660 | 0.1407 | -0.0383 | 0.1870 | 0.2102 | 0.0839 | -0.0303 | -0.0258 | 0.0542 | 0.0863 | 0.1884 | 0.4428 | 0.0816 |
+| lobby-capture-campaign.csv | Revolving-door dominant | substitution_tradeoff | 0.1203 | 0.0535 | 0.0208 | 0.0511 | 0.0350 | -0.1682 | 0.0892 | 0.0715 | -0.0328 | 0.0574 | 0.2324 | -0.0244 | 0.1095 | 0.0427 | 0.0000 | 0.0846 |
+| lobby-capture-campaign.csv | Think-tank and association intermediaries | possible_failure | -0.0825 | 0.1822 | 0.0572 | 0.0171 | 0.0688 | -0.0457 | -0.1107 | 0.0925 | 0.0988 | -0.1396 | -0.0955 | 0.2864 | 0.0870 | 0.2141 | 0.4514 | 0.2874 |
+| lobby-capture-campaign.csv | Real-time transparency | possible_failure | -0.3684 | 0.0129 | -0.0028 | -0.0910 | -0.0154 | 0.0174 | -0.2210 | -0.0104 | 0.0676 | -0.0535 | -0.0627 | 0.0241 | 0.0849 | 0.1587 | 0.2989 | 0.2700 |
+| lobby-capture-campaign.csv | Democracy vouchers | possible_failure | -0.7159 | 0.0006 | -0.0098 | -0.2027 | -0.0056 | -0.0289 | -0.0312 | 0.0228 | 0.0522 | -0.1222 | -0.0731 | -0.1898 | 0.0819 | 0.1399 | 0.7252 | 0.2552 |
+| lobby-capture-campaign.csv | Cooling-off ban | possible_failure | -0.0356 | 0.0794 | 0.0236 | 0.0085 | 0.0287 | -0.0853 | -0.0695 | 0.0464 | 0.1046 | -0.1199 | -0.2978 | 0.0400 | 0.1200 | 0.2200 | 0.0000 | 0.3635 |
+| lobby-capture-campaign.csv | Audit and sanctions | possible_failure | -0.5350 | 0.0003 | -0.0142 | -0.1290 | -0.0267 | 0.0320 | -0.1107 | -0.0229 | 0.0466 | -0.0785 | -0.0996 | 0.0068 | 0.0860 | 0.1403 | 0.3435 | 0.3961 |
+| lobby-capture-campaign.csv | Hard lobbying budgets | possible_failure | -0.4078 | 0.1014 | 0.0221 | -0.0788 | 0.0304 | -0.0745 | -0.1046 | 0.0605 | 0.0980 | -0.0896 | -0.1731 | 0.0177 | 0.0997 | 0.2168 | 0.3273 | 0.4608 |
+| lobby-capture-campaign.csv | Public-interest representation funds | possible_failure | -0.3506 | 0.0729 | 0.0172 | -0.0644 | 0.0277 | -0.0456 | -0.0319 | 0.0552 | 0.0965 | -0.2440 | -0.1221 | 0.2338 | 0.0882 | 0.2314 | 0.3310 | 0.3655 |
+| lobby-capture-campaign.csv | Randomized audit and sanctions | possible_failure | -0.6418 | 0.0309 | -0.0072 | -0.1489 | -0.0157 | 0.0284 | -0.1231 | -0.0075 | 0.0514 | -0.1017 | -0.1097 | 0.0083 | 0.0851 | 0.1484 | 0.3511 | 0.4332 |
+| lobby-capture-campaign.csv | Machine-readable meeting logs | possible_failure | -0.5409 | 0.0441 | 0.0023 | -0.1200 | -0.0040 | -0.0186 | -0.2246 | 0.0195 | 0.0887 | -0.1033 | -0.0892 | 0.0239 | 0.0900 | 0.2833 | 0.0000 | 0.3340 |
+| lobby-capture-campaign.csv | Enforced cooling-off periods | possible_failure | -0.4590 | 0.0875 | 0.0149 | -0.0888 | 0.0200 | -0.0853 | -0.1018 | 0.0372 | 0.1045 | -0.1297 | -0.3255 | 0.0396 | 0.1200 | 0.2200 | 0.0000 | 0.4244 |
+| lobby-capture-campaign.csv | Comment-authenticity rules | possible_failure | -0.3731 | 0.1091 | 0.0317 | -0.0617 | 0.0416 | -0.0735 | -0.0608 | 0.0563 | 0.0881 | -0.2319 | -0.1212 | 0.0760 | 0.1043 | 0.1767 | 0.3443 | 0.4723 |
+| lobby-capture-campaign.csv | Public advocate office | possible_failure | -0.3297 | 0.0948 | 0.0252 | -0.0568 | 0.0346 | -0.1619 | -0.0677 | 0.0219 | 0.0772 | -0.2506 | -0.1035 | 0.2005 | 0.0933 | 0.1167 | 0.3083 | 0.4074 |
+| lobby-capture-campaign.csv | Procurement firewalls | possible_failure | -0.5543 | 0.0146 | -0.0053 | -0.1152 | -0.0211 | -0.0415 | -0.1835 | -0.0007 | 0.0818 | 0.2399 | -0.2022 | -0.1898 | 0.1026 | 0.1736 | 0.2805 | 0.4904 |
+| lobby-capture-campaign.csv | Venue-shifting detection | possible_failure | -0.7228 | 0.0755 | 0.0095 | -0.1686 | 0.0064 | -0.0432 | -0.2080 | 0.0159 | 0.0790 | -0.1460 | -0.1854 | -0.0484 | 0.0947 | 0.1594 | 0.4934 | 0.4928 |
+| lobby-capture-campaign.csv | Full anti-capture bundle | possible_failure | -0.8781 | -0.0187 | -0.0204 | -0.2398 | -0.0386 | -0.0454 | -0.2756 | -0.0439 | 0.0671 | -0.1811 | -0.2733 | -0.0638 | 0.0916 | 0.1421 | 0.6178 | 0.4918 |
+| lobby-capture-campaign.csv | Anti-capture bundle with evasion | possible_failure | -0.7718 | 0.1750 | 0.0342 | -0.1786 | 0.0548 | -0.0505 | -0.1736 | 0.0802 | 0.0720 | -0.1880 | -0.2550 | -0.0610 | 0.0932 | 0.1471 | 0.5987 | 0.5031 |
+| lobby-capture-campaign.csv | Reform threat mobilization | possible_failure | -0.4772 | 0.0171 | -0.0022 | -0.1293 | -0.0086 | -0.0496 | -0.1698 | 0.0240 | 0.0720 | -0.0649 | -0.0752 | -0.0249 | 0.0832 | 0.1555 | 0.7325 | 0.2491 |
+| lobby-capture-interactions.csv | Interaction enforcement 0.10 disclosure 0.10 | substitution_tradeoff | 0.6767 | 0.1793 | 0.0819 | 0.2221 | 0.1459 | -0.0898 | 0.4402 | 0.1894 | 0.0010 | -0.0056 | 0.0096 | -0.0064 | 0.0857 | 0.1129 | 0.6219 | 0.4761 |
+| lobby-capture-interactions.csv | Interaction enforcement 0.10 disclosure 0.80 | substitution_tradeoff | 0.3314 | 0.1099 | 0.0464 | 0.1163 | 0.0861 | -0.0632 | 0.1832 | 0.1194 | 0.0255 | 0.0045 | 0.0098 | 0.0081 | 0.1011 | 0.1782 | 0.4491 | 0.4919 |
+| lobby-capture-interactions.csv | Interaction enforcement 0.10 disclosure 1.25 | substitution_tradeoff | 0.0687 | 0.0513 | 0.0228 | 0.0343 | 0.0419 | -0.0352 | -0.0034 | 0.0525 | 0.0175 | -0.0005 | 0.0087 | 0.0033 | 0.0952 | 0.1529 | 0.5218 | 0.6073 |
+| lobby-capture-interactions.csv | Interaction enforcement 0.80 disclosure 0.10 | substitution_tradeoff | 0.4854 | 0.1518 | 0.0612 | 0.1651 | 0.1176 | -0.1116 | 0.4328 | 0.1539 | 0.0059 | -0.0016 | 0.0099 | -0.0060 | 0.0892 | 0.1282 | 0.4882 | 0.5173 |
+| lobby-capture-interactions.csv | Interaction enforcement 0.80 disclosure 0.80 | substitution_tradeoff | 0.0780 | 0.0735 | 0.0250 | 0.0410 | 0.0525 | -0.0477 | 0.1606 | 0.0736 | 0.0152 | -0.0030 | 0.0145 | 0.0012 | 0.0964 | 0.1587 | 0.5265 | 0.5013 |
+| lobby-capture-interactions.csv | Interaction enforcement 0.80 disclosure 1.25 | substitution_tradeoff | -0.0066 | 0.0217 | 0.0093 | 0.0056 | 0.0172 | -0.0390 | -0.0118 | 0.0268 | 0.0178 | -0.0008 | 0.0086 | 0.0009 | 0.0954 | 0.1533 | 0.5345 | 0.6156 |
+| lobby-capture-interactions.csv | Interaction enforcement 1.25 disclosure 0.10 | substitution_tradeoff | 0.2274 | 0.1231 | 0.0424 | 0.0980 | 0.0923 | -0.0898 | 0.4175 | 0.1242 | -0.0015 | 0.0078 | 0.0150 | -0.0111 | 0.0869 | 0.1221 | 0.5585 | 0.6346 |
+| lobby-capture-interactions.csv | Interaction enforcement 1.25 disclosure 0.80 | substitution_tradeoff | 0.0120 | 0.0543 | 0.0157 | 0.0216 | 0.0353 | -0.0427 | 0.1480 | 0.0524 | 0.0127 | 0.0089 | 0.0167 | -0.0008 | 0.0954 | 0.1545 | 0.5323 | 0.6170 |
+| lobby-capture-interactions.csv | Interaction public financing 0.35 evasion 0.45 | substitution_tradeoff | 0.0420 | 0.0708 | 0.0225 | 0.0290 | 0.0423 | -0.0373 | 0.0891 | 0.0587 | 0.0183 | 0.0022 | 0.0096 | -0.0068 | 0.0952 | 0.1574 | 0.5199 | 0.5017 |
+| lobby-capture-interactions.csv | Interaction public financing 0.35 evasion 0.90 | substitution_tradeoff | 0.2327 | 0.2610 | 0.0820 | 0.1080 | 0.1322 | -0.0336 | 0.1652 | 0.1623 | 0.0175 | -0.0007 | 0.0305 | 0.0006 | 0.0954 | 0.1549 | 0.5043 | 0.5223 |
+| lobby-capture-interactions.csv | Interaction public financing 0.80 evasion 0.45 | substitution_tradeoff | 0.0247 | 0.0717 | 0.0223 | 0.0244 | 0.0426 | -0.0364 | 0.0867 | 0.0580 | 0.0183 | 0.0005 | 0.0085 | 0.0067 | 0.0954 | 0.1532 | 0.5251 | 0.5010 |
+| lobby-capture-interactions.csv | Interaction public financing 0.80 evasion 0.90 | substitution_tradeoff | 0.2014 | 0.2638 | 0.0818 | 0.1000 | 0.1348 | -0.0325 | 0.1642 | 0.1670 | 0.0172 | 0.0012 | 0.0290 | 0.0059 | 0.0950 | 0.1524 | 0.5161 | 0.5212 |
+| lobby-capture-interactions.csv | Interaction public financing 1.25 evasion 0.45 | substitution_tradeoff | 0.0154 | 0.0714 | 0.0221 | 0.0222 | 0.0431 | -0.0391 | 0.0866 | 0.0590 | 0.0176 | -0.0021 | 0.0084 | 0.0015 | 0.0952 | 0.1525 | 0.5416 | 0.6159 |
+| lobby-capture-interactions.csv | Interaction public financing 1.25 evasion 0.90 | substitution_tradeoff | 0.1734 | 0.2624 | 0.0808 | 0.0946 | 0.1356 | -0.0326 | 0.1649 | 0.1710 | 0.0167 | -0.0030 | 0.0296 | 0.0028 | 0.0948 | 0.1518 | 0.5224 | 0.6319 |
+| lobby-capture-interactions.csv | Interaction cooling 0.10 strategy balanced | substitution_tradeoff | 0.0180 | 0.0391 | 0.0130 | 0.0149 | 0.0266 | -0.0217 | 0.0631 | 0.0377 | 0.0073 | -0.0009 | 0.2217 | 0.0029 | 0.0919 | 0.1490 | 0.5227 | 0.5015 |
+| lobby-capture-interactions.csv | Interaction cooling 0.80 strategy balanced | substitution_tradeoff | 0.0094 | 0.0401 | 0.0134 | 0.0128 | 0.0273 | -0.0281 | 0.0627 | 0.0376 | 0.0094 | 0.0040 | 0.0599 | 0.0026 | 0.0932 | 0.1461 | 0.5411 | 0.4991 |
+| lobby-capture-interactions.csv | Interaction cooling 0.80 strategy revolving-door | substitution_tradeoff | 0.0067 | 0.0410 | 0.0135 | 0.0124 | 0.0276 | -0.0280 | 0.0633 | 0.0378 | 0.0103 | 0.0023 | 0.0602 | 0.0036 | 0.0935 | 0.1462 | 0.5323 | 0.5011 |
+| lobby-capture-interactions.csv | Interaction cooling 1.25 strategy balanced | substitution_tradeoff | 0.0054 | 0.0433 | 0.0142 | 0.0172 | 0.0291 | -0.0375 | 0.0698 | 0.0414 | 0.0190 | 0.0066 | -0.0380 | 0.0043 | 0.0959 | 0.1544 | 0.5126 | 0.6157 |
+| lobby-capture-interactions.csv | Interaction cooling 1.25 strategy revolving-door | substitution_tradeoff | 0.0040 | 0.0436 | 0.0142 | 0.0155 | 0.0292 | -0.0378 | 0.0695 | 0.0411 | 0.0186 | -0.0074 | -0.0386 | 0.0042 | 0.0955 | 0.1536 | 0.5256 | 0.6157 |
+| lobby-capture-portfolio.csv | Portfolio: balanced compliance core | possible_failure | -0.2772 | 0.0046 | -0.0054 | -0.0638 | -0.0033 | -0.0124 | 0.0261 | -0.0078 | -0.0008 | -0.0427 | -0.1507 | -0.0222 | 0.0854 | 0.1801 | 0.4887 | 0.4213 |
+| lobby-capture-portfolio.csv | Portfolio: electoral substitution shield | possible_failure | -0.1339 | 0.0452 | 0.0100 | -0.0181 | 0.0230 | -0.0561 | 0.1004 | 0.0394 | 0.0162 | -0.0088 | -0.0167 | -0.0115 | 0.0884 | 0.2371 | 0.4614 | 0.4700 |
+| lobby-capture-portfolio.csv | Portfolio: rulemaking integrity stack | possible_failure | -0.2706 | 0.0652 | 0.0152 | -0.0505 | 0.0327 | -0.0520 | 0.0808 | 0.0286 | 0.0072 | -0.0993 | 0.0060 | -0.0736 | 0.0970 | 0.1822 | 0.4798 | 0.4937 |
+| lobby-capture-portfolio.csv | Portfolio: countervailing representation stack | possible_failure | -0.2331 | 0.0403 | 0.0088 | -0.0460 | 0.0262 | -0.0344 | 0.1150 | 0.0192 | -0.0031 | -0.1078 | 0.0279 | -0.0374 | 0.0983 | 0.1588 | 0.4533 | 0.4046 |
+| lobby-capture-portfolio.csv | Portfolio: high-deterrence enforcement stack | possible_failure | -0.3906 | 0.0451 | 0.0025 | -0.0830 | 0.0113 | -0.0632 | 0.0511 | 0.0115 | 0.0142 | -0.0955 | -0.2163 | -0.0357 | 0.0973 | 0.1936 | 0.4915 | 0.5960 |
+| lobby-capture-portfolio.csv | Portfolio: full anti-substitution under high evasion | possible_failure | -0.4090 | 0.1825 | 0.0419 | -0.0736 | 0.0708 | -0.0336 | -0.0044 | 0.0622 | 0.0039 | -0.1116 | -0.1908 | -0.0610 | 0.0962 | 0.1555 | 0.5112 | 0.5714 |
+| lobby-capture-sensitivity.csv | Sensitivity enforcement 0.10 | worse_total_distortion | 0.1981 | 0.0851 | 0.0357 | 0.0750 | 0.0653 | -0.0166 | 0.0817 | 0.0825 | 0.0149 | -0.0056 | 0.0054 | 0.0089 | 0.0959 | 0.1552 | 0.4703 | 0.4925 |
+| lobby-capture-sensitivity.csv | Sensitivity disclosure 0.10 | substitution_tradeoff | 0.3857 | 0.1424 | 0.0535 | 0.1407 | 0.1072 | -0.0951 | 0.4249 | 0.1410 | 0.0024 | 0.0089 | 0.0092 | -0.0050 | 0.0888 | 0.1264 | 0.4851 | 0.5244 |
+| lobby-capture-sensitivity.csv | Sensitivity public financing 0.10 | worse_total_distortion | 0.0305 | 0.0400 | 0.0137 | 0.0201 | 0.0266 | -0.0069 | 0.0605 | 0.0363 | 0.0054 | 0.0006 | 0.0107 | 0.0032 | 0.0929 | 0.1481 | 0.5070 | 0.5031 |
+| lobby-capture-sensitivity.csv | Sensitivity enforcement 0.35 | substitution_tradeoff | 0.1205 | 0.0716 | 0.0282 | 0.0510 | 0.0535 | -0.0232 | 0.0791 | 0.0681 | 0.0145 | -0.0090 | 0.0045 | 0.0127 | 0.0956 | 0.1539 | 0.5112 | 0.4953 |
+| lobby-capture-sensitivity.csv | Sensitivity disclosure 0.35 | substitution_tradeoff | 0.2457 | 0.1190 | 0.0415 | 0.0972 | 0.0869 | -0.0397 | 0.3460 | 0.1254 | 0.0145 | -0.0079 | 0.0099 | 0.0081 | 0.0967 | 0.1679 | 0.5027 | 0.5125 |
+| lobby-capture-sensitivity.csv | Sensitivity public financing 0.35 | worse_total_distortion | 0.0305 | 0.0406 | 0.0139 | 0.0200 | 0.0270 | -0.0052 | 0.0608 | 0.0362 | 0.0052 | -0.0030 | 0.0102 | 0.0048 | 0.0927 | 0.1485 | 0.5024 | 0.5009 |
+| lobby-capture-sensitivity.csv | Sensitivity enforcement 0.80 | substitution_tradeoff | 0.0457 | 0.0519 | 0.0182 | 0.0273 | 0.0358 | -0.0255 | 0.0720 | 0.0473 | 0.0157 | -0.0084 | 0.0044 | 0.0149 | 0.0961 | 0.1550 | 0.5061 | 0.5028 |
+| lobby-capture-sensitivity.csv | Sensitivity disclosure 0.80 | substitution_tradeoff | 0.0614 | 0.0655 | 0.0211 | 0.0351 | 0.0446 | -0.0362 | 0.1543 | 0.0623 | 0.0122 | 0.0010 | 0.0121 | 0.0014 | 0.0971 | 0.1606 | 0.5109 | 0.5007 |
+| lobby-capture-sensitivity.csv | Sensitivity cooling off 1.25 | substitution_tradeoff | 0.0181 | 0.0429 | 0.0143 | 0.0196 | 0.0287 | -0.0265 | 0.0680 | 0.0404 | 0.0161 | -0.0012 | -0.0415 | 0.0070 | 0.0964 | 0.1560 | 0.5044 | 0.6152 |
+| lobby-capture-sensitivity.csv | Sensitivity evasion 0.60 | substitution_tradeoff | 0.0614 | 0.1211 | 0.0372 | 0.0427 | 0.0677 | -0.0267 | 0.1121 | 0.0912 | 0.0155 | -0.0019 | 0.0058 | 0.0065 | 0.0960 | 0.1548 | 0.5173 | 0.5034 |
+| lobby-capture-sensitivity.csv | Sensitivity evasion 0.90 | worse_total_distortion | 0.1843 | 0.2704 | 0.0829 | 0.0989 | 0.1376 | -0.0197 | 0.1644 | 0.1697 | 0.0155 | -0.0046 | 0.0258 | 0.0085 | 0.0959 | 0.1549 | 0.4861 | 0.5177 |

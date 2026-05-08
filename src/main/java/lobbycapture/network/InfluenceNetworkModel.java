@@ -66,7 +66,7 @@ public final class InfluenceNetworkModel {
                 procurementLink(channel, group, contest, reform),
                 revolvingDoorLink(channel, group, reform, world),
                 commentMobilization(channel, group, contest, reform),
-                venueShift(channel, world, substitution)
+                venueShift(channel, world, reform, substitution)
         ));
     }
 
@@ -89,7 +89,8 @@ public final class InfluenceNetworkModel {
                         + (0.18 * world.evasionFreedom())
                         - (0.28 * reform.transparencyStrength())
                         - (0.10 * reform.contactLogCoverage())
-                        - (0.08 * reform.darkMoneyDisclosureStrength()),
+                        - (0.08 * reform.darkMoneyDisclosureStrength())
+                        - (0.10 * reform.crossVenueDetectionStrength()),
                 0.0,
                 1.0
         );
@@ -178,7 +179,7 @@ public final class InfluenceNetworkModel {
         );
     }
 
-    private static double venueShift(InfluenceChannel channel, WorldState world, SubstitutionProfile substitution) {
+    private static double venueShift(InfluenceChannel channel, WorldState world, ReformRegime reform, SubstitutionProfile substitution) {
         double channelPressure = switch (channel) {
             case DARK_MONEY, INTERMEDIARY -> 0.34;
             case LITIGATION_THREAT, DEFENSIVE_REFORM -> 0.22;
@@ -189,7 +190,8 @@ public final class InfluenceNetworkModel {
                 channelPressure
                         + (0.42 * substitution.venueSubstitutionRate())
                         + (0.24 * substitution.messengerSubstitutionRate())
-                        + (0.16 * world.evasionFreedom()),
+                        + (0.16 * world.evasionFreedom())
+                        - (0.18 * reform.crossVenueDetectionStrength()),
                 0.0,
                 1.0
         );

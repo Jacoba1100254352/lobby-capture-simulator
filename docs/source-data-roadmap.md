@@ -1,0 +1,55 @@
+# Public Source Data Roadmap
+
+This roadmap translates the May 2026 source-data research into acquisition tasks. It keeps three layers separate:
+
+- direct observed data: source rows that measure a public record directly;
+- proxy data: public records that approximate hidden or partly private activity;
+- restricted or poor-fit data: useful context that should not be treated as a reproducible public validation source unless an export/license is configured.
+
+## Identifier Spine
+
+The matching spine should prefer stable source-native identifiers:
+
+- LDA: registrant ID, client ID, filing UUID, issue code, covered official position, agency/contact fields.
+- FEC/OpenFEC: committee ID, candidate ID, cycle, schedule, transaction ID, spender/payee names.
+- IRS and nonprofit records: EIN, organization name, subsection, tax period, return object ID.
+- SAM/FPDS/USAspending: UEI, recipient name, awarding agency, PIID, award ID, modification number.
+- Regulations.gov and Federal Register: docket ID, document ID, comment ID, object ID, comment-on ID, CFR/title metadata.
+- Personnel and access records: official name, agency, position title, date range, employer, committee/hearing ID.
+
+## Source Matrix
+
+| Source | Evidence layer | Use in model | Access/key | Current status |
+| --- | --- | --- | --- | --- |
+| Senate/LDA bulk and API | Direct observed | visible lobbying spend, issue-domain mix, registrant/client concentration, agencies and covered positions | `LDA_API_KEY`; <https://lda.gov/api/register/> | Implemented source-native fetcher and 2024 ENV snapshot |
+| FEC/OpenFEC | Direct observed | hard-money flows, PAC/party committees, independent expenditures, electioneering communications, lobbyist bundling | `FEC_API_KEY`; <https://api.data.gov/signup/> | Implemented for six national party committees; outside-spending panel still needed |
+| IRS 8871/8872 | Direct observed for 527s | politically active organization identities and reported receipts/disbursements | public bulk/web data | Planned |
+| IRS TEOS and Form 990 XML | Direct observed nonprofit filings, with donor limits | nonprofit intermediaries, association capacity, grantee/contractor links | public bulk; `IRS_TEOS_BULK_BASE`, `IRS_FORM990_BULK_BASE` | Planned |
+| ProPublica Nonprofit Explorer | Convenience layer | nonprofit metadata and 990 lookup by EIN | `PROPUBLICA_NONPROFIT_API_KEY`; <https://projects.propublica.org/nonprofits/api> | Planned optional overlay |
+| OpenSecrets | Curated proxy overlay | outside spending, dark-money routing, industry classifications, lobbying overlays | `OPENSECRETS_API_KEY`; <https://www.opensecrets.org/api/admin/index.php> | Optional; do not treat as canonical raw source |
+| LegiStorm | Curated/restricted overlay | staff movements, congressional employment, some revolving-door links | `LEGISTORM_API_KEY`; <https://www.legistorm.com/api.html> | Optional/restricted; keep license status explicit |
+| FACA database | Direct/proxy access record | advisory committee membership, sponsored expert access, venue shifting | public web data; `FACA_DATA_BASE` | Planned |
+| House witness disclosures | Direct/proxy access record | sponsored-expert testimony, association/think-tank intermediaries | public committee pages | Planned |
+| OGE disclosures | Direct/proxy personnel record | senior-official financial interests and post-employment context | public web data; `OGE_DISCLOSURE_BASE` | Planned |
+| USAspending | Direct observed procurement | prime awards, recipient/agency concentration, award types | no key currently required; `USASPENDING_API_BASE` | Implemented source-native parser/fetcher |
+| SAM.gov/FPDS | Direct observed procurement | UEI/PIID matching, contract awards, exclusions, modifications | `SAM_API_KEY`; <https://open.gsa.gov/api/> | Planned expansion beyond USAspending |
+| GAO protests | Direct observed dispute outcomes | procurement challenge pressure and sustain rates | public reports/data | Planned |
+| Regulations.gov | Direct observed rulemaking | dockets, documents, comments, comment volume, duplicate/authenticity fields where available | `REGULATIONS_API_KEY`; <https://api.data.gov/signup/> | Implemented source-native fetcher |
+| Federal Register | Direct observed rulemaking | proposed/final rules, dates, agency/topic metadata | no key; `FEDERAL_REGISTER_API_BASE` | Implemented source-native fetcher |
+
+## Acquisition Sequence
+
+1. Freeze the current 2024 EPA/ENV slice as the baseline paper snapshot.
+2. Add an OpenFEC outside-spending and lobbyist-bundling slice so campaign substitution is not represented only by national party committee flows.
+3. Add IRS 8871/8872 plus TEOS/Form 990 rows for 527, 501(c)(4), 501(c)(6), association, and think-tank intermediaries. Keep donor invisibility as a measured missingness property, not as a filled-in fact.
+4. Add SAM/FPDS identifiers and modification records to the existing USAspending bridge for procurement firewalls, ex-post modifications, and single-bid or price-only risks.
+5. Replace the fixture revolving-door panel with a documented source export from LegiStorm, OGE, ProPublica appointee records, FACA, or manually archived public personnel data.
+6. Add FACA and House witness disclosure panels for expert-access and intermediary venue-shifting diagnostics.
+7. Rerun `make snapshot-2024-env source-moments validate calibration-queue paper-artifacts-check` and commit regenerated artifacts.
+
+## Claim Discipline
+
+- LDA, FEC, Regulations.gov, Federal Register, USAspending, SAM/FPDS, IRS 8871/8872, and filed Form 990 data can support observed distribution claims within their coverage limits.
+- OpenSecrets, LegiStorm, ProPublica, FACA, House witness disclosures, and OGE records can strengthen bridge panels, but licensing, coverage, matching, and missingness must be disclosed.
+- 501(c)(4) and 501(c)(6) donor identities are often not public. The simulator should model this as opacity and traceability, not infer hidden donors without source support.
+- Cross-venue detection, participation protection, and speech-restriction risk are portfolio-design metrics until source panels are built to observe coverage, false positives, and enforcement practice.

@@ -41,6 +41,7 @@ EXPECTED_ZIP_MEMBERS = {
     "supporting-information/ODD-model.md",
     "supporting-information/scenario-catalog.md",
     "supporting-information/validation-plan.md",
+    "supporting-information/source-data-roadmap.md",
     "supporting-information/source-moments.md",
     "supporting-information/validation-summary.md",
     "supporting-information/substitution-audit.md",
@@ -122,6 +123,7 @@ def submission_inputs() -> list[Path]:
         ROOT / "docs" / "odd-model.md",
         ROOT / "docs" / "scenario-catalog.md",
         ROOT / "docs" / "validation.md",
+        ROOT / "docs" / "source-data-roadmap.md",
         ROOT / "reports" / "source-moments.md",
         ROOT / "reports" / "validation-summary.md",
         ROOT / "reports" / "substitution-audit.md",
@@ -200,6 +202,8 @@ def check_submission_zip_compiles() -> list[str]:
         commands = [
             ["pdflatex", "-interaction=nonstopmode", "main.tex"],
             ["bibtex", "main"],
+            ["pdflatex", "-interaction=nonstopmode", "main.tex"],
+            ["pdflatex", "-interaction=nonstopmode", "main.tex"],
             ["pdflatex", "-interaction=nonstopmode", "main.tex"],
             ["pdflatex", "-interaction=nonstopmode", "main.tex"],
         ]

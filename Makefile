@@ -10,7 +10,7 @@ TEST_SOURCES := $(shell find src/test/java -name "*.java" | sort)
 MAIN_CLASS := lobbycapture.Main
 TEST_CLASSES := lobbycapture.SmokeTest lobbycapture.AdaptationTest
 
-.PHONY: compile test run campaign sensitivity ablation interactions portfolio source-moments calibration-queue validate snapshot-2024-env tables figures paper paper-word-count wiley-template wiley-tex-deps paper-wiley submission-package paper-artifacts paper-artifacts-check clean
+.PHONY: compile test run campaign sensitivity ablation interactions portfolio source-moments calibration-queue validate snapshot-2024-env tables figures paper paper-build paper-word-count wiley-template wiley-tex-deps paper-wiley paper-wiley-build submission-package submission-package-build paper-artifacts paper-artifacts-check clean
 
 compile:
 	@mkdir -p out/classes
@@ -60,13 +60,15 @@ tables:
 figures:
 	python3 scripts/generate-interaction-figures.py
 
-paper: tables figures
+paper-build:
 	rm -f paper/main.aux paper/main.bbl paper/main.blg
 	cd paper && pdflatex -interaction=nonstopmode main.tex
 	cd paper && bibtex main
 	cd paper && pdflatex -interaction=nonstopmode main.tex
 	cd paper && pdflatex -interaction=nonstopmode main.tex
 	cd paper && pdflatex -interaction=nonstopmode main.tex
+
+paper: tables figures paper-build
 
 paper-word-count:
 	python3 scripts/check-paper-word-count.py
@@ -77,13 +79,17 @@ wiley-template:
 wiley-tex-deps:
 	./scripts/install-wiley-tex-deps.sh
 
-paper-wiley: tables figures wiley-template
+paper-wiley-build: wiley-template
 	./scripts/build-wiley-paper.sh
 
-submission-package: paper-wiley paper-word-count
+paper-wiley: tables figures paper-wiley-build
+
+submission-package-build:
 	./scripts/build-submission-package.sh
 
-paper-artifacts: campaign sensitivity ablation interactions portfolio source-moments validate calibration-queue tables figures paper paper-wiley submission-package paper-word-count
+submission-package: paper-wiley paper-word-count submission-package-build
+
+paper-artifacts: campaign sensitivity ablation interactions portfolio source-moments validate calibration-queue tables figures paper-build paper-wiley-build paper-word-count submission-package-build
 
 paper-artifacts-check: paper-artifacts
 	python3 scripts/check-paper-artifacts.py

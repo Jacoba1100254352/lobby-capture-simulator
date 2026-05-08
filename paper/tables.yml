@@ -200,18 +200,20 @@
       "output": "portfolio_snapshot.tex",
       "source": "lobby-capture-portfolio.csv",
       "label": "tab:portfolio",
-      "caption": "Portfolio screen under the stressed contest mix. Rows are candidate design bundles; the table reports total distortion, hidden capture, substitution risk, network opacity, and administrative burden so the preferred portfolio is not chosen by visible capture alone.",
+      "caption": "Portfolio screen under the stressed contest mix. Rows are candidate design bundles; the table reports total distortion, hidden capture, substitution risk, cross-venue detection, network opacity, legitimate-advocacy chill, and administrative burden so the preferred portfolio is not chosen by visible capture alone.",
       "size": "scriptsize",
       "environment": "table*",
       "width": "\\textwidth",
       "rows": [
-        "portfolio-meeting-logs",
-        "portfolio-public-interest-funds",
-        "portfolio-randomized-audits",
-        "portfolio-procurement-firewalls",
-        "portfolio-venue-detection",
-        "portfolio-full-bundle",
-        "portfolio-full-bundle-high-evasion"
+        "portfolio-transparency-first",
+        "portfolio-balanced-compliance",
+        "portfolio-electoral-shield",
+        "portfolio-rulemaking-integrity",
+        "portfolio-procurement-hardening",
+        "portfolio-countervailing-representation",
+        "portfolio-civil-liberties",
+        "portfolio-full-anti-substitution",
+        "portfolio-full-anti-substitution-high-evasion"
       ],
       "columns": [
         {
@@ -219,13 +221,15 @@
           "source": "scenarioName",
           "format": "label",
           "labels": {
-            "Portfolio: machine-readable meeting logs": "Meeting logs",
-            "Portfolio: public-interest representation funds": "Public-interest funds",
-            "Portfolio: randomized audits and sanctions": "Random audits",
-            "Portfolio: procurement firewalls": "Procurement firewall",
-            "Portfolio: venue-shifting detection": "Venue detection",
-            "Portfolio: full anti-capture bundle": "Full bundle",
-            "Portfolio: full bundle under high evasion": "Full+evasion"
+            "Portfolio: transparency-first baseline": "Transparency",
+            "Portfolio: balanced compliance core": "Balanced",
+            "Portfolio: electoral substitution shield": "Electoral shield",
+            "Portfolio: rulemaking integrity stack": "Rulemaking",
+            "Portfolio: procurement hardening stack": "Procurement",
+            "Portfolio: countervailing representation stack": "Countervailing",
+            "Portfolio: civil-liberties-constrained portfolio": "Civil-liberties",
+            "Portfolio: full anti-substitution portfolio": "Full anti-sub.",
+            "Portfolio: full anti-substitution under high evasion": "Full+evasion"
           }
         },
         {
@@ -244,13 +248,23 @@
           "format": "float3"
         },
         {
-          "header": "Risk",
+          "header": "Subst.",
           "source": "substitutionFailureRisk",
+          "format": "float3"
+        },
+        {
+          "header": "Venue det.",
+          "source": "crossVenueDetectionIndex",
           "format": "float3"
         },
         {
           "header": "Opacity",
           "source": "networkOpacityIndex",
+          "format": "float3"
+        },
+        {
+          "header": "Chill",
+          "source": "legitimateAdvocacyChill",
           "format": "float3"
         },
         {

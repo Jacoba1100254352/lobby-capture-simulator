@@ -49,6 +49,7 @@ public final class LobbyAllocationEngine {
         double publicAdvocatePressure = contest.publicAdvocatePressure()
                 + (reform.publicAdvocateStrength() * 0.16)
                 + (regulatorAttention * reform.publicAdvocateStrength() * (0.08 - (0.03 * regulatorQueue)));
+        double crossVenueDetection = reform.crossVenueDetectionStrength();
         double watchdogPressure = contest.watchdogPressure()
                 + (reform.transparencyStrength() * 0.10)
                 + (reform.enforcementStrength() * 0.06)
@@ -142,7 +143,8 @@ public final class LobbyAllocationEngine {
                 publicBenefit -= group.informationBias() * (allocation.informationDistortion() + (0.40 * allocation.intermediary())) * 0.025;
             } else {
                 double fit = policyFit(group, contest) * preference;
-                double accessEffectiveness = 1.0 - (reform.contactLogCoverage() * 0.45) - (reform.lobbyingBanStrength() * 0.35);
+                double accessEffectiveness = 1.0 - (reform.contactLogCoverage() * 0.45) - (reform.lobbyingBanStrength() * 0.35)
+                        - (crossVenueDetection * 0.10);
                 double informationEffectiveness = 1.0 - (reform.blindReviewStrength() * 0.70)
                         - (reform.publicAdvocateStrength() * 0.30)
                         - (regulatorAttention * 0.18)
@@ -170,16 +172,20 @@ public final class LobbyAllocationEngine {
                 commentRecordDistortion += commentDistortionEffect(contest, group, allocation, reform, commentCampaign);
                 darkMoneyInfluence += group.disclosureAvoidanceSkill() * allocation.darkMoney()
                         * (1.0 - reform.darkMoneyDisclosureStrength())
-                        * (1.0 + world.evasionProfile().opacity()) * 0.075;
+                        * (1.0 + world.evasionProfile().opacity())
+                        * (1.0 - (0.18 * crossVenueDetection)) * 0.075;
                 darkMoneyInfluence += group.disclosureAvoidanceSkill() * allocation.intermediary()
                         * (1.0 - reform.beneficialOwnerDisclosure())
-                        * (1.0 + world.evasionProfile().opacity()) * 0.038;
+                        * (1.0 + world.evasionProfile().opacity())
+                        * (1.0 - (0.14 * crossVenueDetection)) * 0.038;
                 revolvingDoorInfluence += group.revolvingDoorNetworkStrength() * allocation.revolvingDoor()
                         * (1.0 - reform.coolingOffStrength())
-                        * (1.0 + world.evasionProfile().revolvingDoorPlacementShift()) * 0.070;
+                        * (1.0 + world.evasionProfile().revolvingDoorPlacementShift())
+                        * (1.0 - (0.12 * crossVenueDetection)) * 0.070;
                 revolvingDoorInfluence += group.revolvingDoorNetworkStrength() * allocation.intermediary()
                         * (1.0 - reform.contactLogCoverage())
-                        * (1.0 + world.evasionProfile().revolvingDoorPlacementShift()) * 0.026;
+                        * (1.0 + world.evasionProfile().revolvingDoorPlacementShift())
+                        * (1.0 - (0.10 * crossVenueDetection)) * 0.026;
                 campaignFinanceInfluence += allocation.campaignFinance() * (1.0 - reform.campaignFinanceCounterweight()) * 0.075;
                 litigationThreat += group.litigationThreatSkill() * allocation.litigationThreat()
                         * (1.0 + world.evasionProfile().litigationFundingShift()) * 0.070;

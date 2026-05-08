@@ -91,7 +91,10 @@ Credential and source-access links:
 - Regulations.gov API key: <https://api.data.gov/signup/>
 - Regulations.gov API docs: <https://open.gsa.gov/api/regulationsgov/>
 - USAspending API docs: <https://api.usaspending.gov/docs/endpoints> (no key currently required)
+- SAM.gov public APIs: <https://open.gsa.gov/api/>
 - OpenSecrets API/account access: <https://www.opensecrets.org/api/admin/index.php>
+- ProPublica Nonprofit Explorer API: <https://projects.propublica.org/nonprofits/api>
+- LegiStorm API/account access: <https://www.legistorm.com/api.html>
 
 Optional live normalization uses the same output schemas. You can pass an explicit local CSV/URL, or let the scripts query their upstream source-native APIs:
 
@@ -116,6 +119,8 @@ scripts/run-2024-env-live-snapshot.sh
 ```
 
 It preserves raw public API payloads under ignored `data/raw/source-payloads/2024-env/`, writes normalized rows into `data/raw/`, runs the snapshot freezer, and emits source moments. If no personal API keys are configured it uses official public/demo access where possible and records rate-limit gaps in `data/snapshots/2024-env/live-run-status.csv`.
+
+`docs/source-data-roadmap.md` records the next source panels and matching identifiers: LDA registrant/client IDs, FEC committee/candidate IDs, IRS EINs, SAM UEIs, PIIDs, docket/document/comment IDs, and official/person records. The project keeps direct observed source rows separate from proxy overlays and synthetic design metrics.
 
 `make snapshot-2024-env` freezes the current normalized source rows under `data/snapshots/2024-env/` and writes a manifest for the first closed-window paper snapshot: 2024 LDA `ENV`, EPA Regulations.gov/Federal Register activity, the 2024 FEC cycle, EPA fiscal-year 2024 USAspending awards, and the configured revolving-door panel. Live paper snapshots should run the source-native fetchers with those fixed filters before freezing.
 
@@ -160,11 +165,11 @@ It includes:
 - split validation-facing source metrics for all-flow traceability, dark-money direct visibility, resident voucher participation, and candidate public-financing uptake;
 - evasion profiles with dark-pool, litigation-funding, procurement-consultant, and revolving-door substitution pressure;
 - an influence-substitution engine that reports hidden influence, preserved influence capacity, messenger substitution, venue substitution, and net transparency gain after reforms constrain a channel;
-- an influence-network diagnostic layer that reports modeled path opacity, donor concentration, intermediary centrality, official-access centrality, procurement exposure, revolving-door bridges, comment-network load, venue-shift load, and legibility;
+- an influence-network diagnostic layer that reports modeled path opacity, donor concentration, intermediary centrality, official-access centrality, procurement exposure, revolving-door bridges, comment-network load, venue-shift load, legibility, cross-venue detection, participation protection, and speech-restriction risk;
 - arena-specific capture susceptibility;
 - transparency, public financing, democracy vouchers, cooling-off, blind review, public advocates, enforcement, anti-astroturf systems, defensive-spend caps, and dark-money disclosure;
 - raw and composite scenario metrics plus sensitivity, ablation, adaptation-speed, and reform-decay metrics.
-- validation summaries and two-way reform interaction sweeps.
+- validation summaries, substitution-failure audits, portfolio screens, and two-way reform interaction sweeps.
 - wide generated paper tables, vector/PDF figures, and a Wiley submission-package target.
 
 The formulas are stylized and comparative. Empirical files under `data/calibration/` and normalized fixtures under `data/fixtures/` are benchmark scaffolds, not causal estimates.

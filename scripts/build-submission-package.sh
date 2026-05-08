@@ -48,6 +48,7 @@ mkdir -p "$STAGING_DIR/supporting-information"
 cp "$ROOT_DIR/docs/odd-model.md" "$STAGING_DIR/supporting-information/ODD-model.md"
 cp "$ROOT_DIR/docs/scenario-catalog.md" "$STAGING_DIR/supporting-information/scenario-catalog.md"
 cp "$ROOT_DIR/docs/validation.md" "$STAGING_DIR/supporting-information/validation-plan.md"
+cp "$ROOT_DIR/docs/source-data-roadmap.md" "$STAGING_DIR/supporting-information/source-data-roadmap.md"
 cp "$ROOT_DIR/reports/source-moments.md" "$STAGING_DIR/supporting-information/source-moments.md"
 cp "$ROOT_DIR/reports/validation-summary.md" "$STAGING_DIR/supporting-information/validation-summary.md"
 cp "$ROOT_DIR/reports/substitution-audit.md" "$STAGING_DIR/supporting-information/substitution-audit.md"
@@ -86,6 +87,8 @@ Supporting information: supporting-information/
 Compile from this directory with:
 pdflatex -interaction=nonstopmode main.tex
 bibtex main
+pdflatex -interaction=nonstopmode main.tex
+pdflatex -interaction=nonstopmode main.tex
 pdflatex -interaction=nonstopmode main.tex
 pdflatex -interaction=nonstopmode main.tex
 EOF

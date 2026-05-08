@@ -44,15 +44,16 @@ public final class PortfolioRunner {
 
     private static List<Scenario> scenarios() {
         return List.of(
-                portfolio("portfolio-meeting-logs", "Portfolio: machine-readable meeting logs", ReformRegime.machineReadableMeetingLogs(), 0.45, InfluenceStrategy.DIRECT_ACCESS),
-                portfolio("portfolio-public-interest-funds", "Portfolio: public-interest representation funds", ReformRegime.publicInterestRepresentationFunds(), 0.35, InfluenceStrategy.INFORMATION_DISTORTION),
-                portfolio("portfolio-randomized-audits", "Portfolio: randomized audits and sanctions", ReformRegime.randomizedAuditSanctions(), 0.40, InfluenceStrategy.BALANCED),
-                portfolio("portfolio-comment-authenticity", "Portfolio: comment authenticity controls", ReformRegime.commentAuthenticityRules(), 0.50, InfluenceStrategy.INTERMEDIARY),
-                portfolio("portfolio-procurement-firewalls", "Portfolio: procurement firewalls", ReformRegime.procurementFirewall(), 0.45, InfluenceStrategy.REVOLVING_DOOR),
-                portfolio("portfolio-venue-detection", "Portfolio: venue-shifting detection", ReformRegime.venueShiftingDetection(), 0.65, InfluenceStrategy.INTERMEDIARY),
-                portfolio("portfolio-hard-budgets", "Portfolio: hard lobbying budgets", ReformRegime.hardLobbyingBudgets(), 0.55, InfluenceStrategy.BALANCED),
-                portfolio("portfolio-full-bundle", "Portfolio: full anti-capture bundle", ReformRegime.fullBundle(), 0.35, InfluenceStrategy.BALANCED),
-                portfolio("portfolio-full-bundle-high-evasion", "Portfolio: full bundle under high evasion", ReformRegime.fullBundle(), 0.90, InfluenceStrategy.BALANCED)
+                portfolio("portfolio-transparency-first", "Portfolio: transparency-first baseline", ReformRegime.transparencyFirstBaseline(), 0.45, InfluenceStrategy.DIRECT_ACCESS),
+                portfolio("portfolio-balanced-compliance", "Portfolio: balanced compliance core", ReformRegime.balancedComplianceCore(), 0.45, InfluenceStrategy.BALANCED),
+                portfolio("portfolio-electoral-shield", "Portfolio: electoral substitution shield", ReformRegime.electoralSubstitutionShield(), 0.55, InfluenceStrategy.CAMPAIGN_FINANCE),
+                portfolio("portfolio-rulemaking-integrity", "Portfolio: rulemaking integrity stack", ReformRegime.rulemakingIntegrityStack(), 0.50, InfluenceStrategy.INTERMEDIARY),
+                portfolio("portfolio-procurement-hardening", "Portfolio: procurement hardening stack", ReformRegime.procurementHardeningStack(), 0.45, InfluenceStrategy.REVOLVING_DOOR),
+                portfolio("portfolio-countervailing-representation", "Portfolio: countervailing representation stack", ReformRegime.countervailingRepresentationStack(), 0.35, InfluenceStrategy.INFORMATION_DISTORTION),
+                portfolio("portfolio-high-deterrence", "Portfolio: high-deterrence enforcement stack", ReformRegime.highDeterrenceEnforcementStack(), 0.60, InfluenceStrategy.BALANCED),
+                portfolio("portfolio-civil-liberties", "Portfolio: civil-liberties-constrained portfolio", ReformRegime.civilLibertiesConstrainedPortfolio(), 0.45, InfluenceStrategy.BALANCED),
+                portfolio("portfolio-full-anti-substitution", "Portfolio: full anti-substitution portfolio", ReformRegime.fullAntiSubstitutionPortfolio(), 0.35, InfluenceStrategy.BALANCED),
+                portfolio("portfolio-full-anti-substitution-high-evasion", "Portfolio: full anti-substitution under high evasion", ReformRegime.fullAntiSubstitutionPortfolio(), 0.90, InfluenceStrategy.BALANCED)
         );
     }
 
@@ -64,9 +65,9 @@ public final class PortfolioRunner {
         StringBuilder builder = new StringBuilder();
         builder.append(new MarkdownReportWriter().write("Reform Portfolio Screen", reports, provenance));
         builder.append("\n## Portfolio Dominance Screen\n\n");
-        builder.append("The design loss below minimizes total influence distortion first, then hidden capture, substitution risk, administrative burden, and network opacity. It is a synthetic policy-design screen, not an empirical welfare estimate.\n\n");
-        builder.append("| Rank | Portfolio | Design loss | Total dist. | Hidden cap. | Risk | Admin | Network opacity | Legibility |\n");
-        builder.append("| ---: | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |\n");
+        builder.append("The design loss below minimizes total influence distortion first, then hidden capture, substitution risk, administrative burden, network opacity, legitimate-advocacy chill, and speech-restriction risk. It rewards cross-venue detection and participation protection. It is a synthetic policy-design screen, not an empirical welfare estimate.\n\n");
+        builder.append("| Rank | Portfolio | Design loss | Total dist. | Hidden cap. | Risk | Admin | Network opacity | Venue det. | Participation | Speech risk |\n");
+        builder.append("| ---: | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |\n");
         int rank = 1;
         for (ScenarioReport report : reports.stream().sorted(Comparator.comparing(PortfolioRunner::designLoss)).toList()) {
             builder.append("| ").append(rank++)
@@ -77,18 +78,25 @@ public final class PortfolioRunner {
                     .append(" | ").append(CsvReportWriter.format(report.substitutionFailureRisk()))
                     .append(" | ").append(CsvReportWriter.format(report.administrativeCostIndex()))
                     .append(" | ").append(CsvReportWriter.format(report.networkOpacityIndex()))
-                    .append(" | ").append(CsvReportWriter.format(report.networkLegibilityIndex()))
+                    .append(" | ").append(CsvReportWriter.format(report.crossVenueDetectionIndex()))
+                    .append(" | ").append(CsvReportWriter.format(report.participationProtectionIndex()))
+                    .append(" | ").append(CsvReportWriter.format(report.speechRestrictionRisk()))
                     .append(" |\n");
         }
         return builder.toString();
     }
 
     private static double designLoss(ScenarioReport report) {
-        return (0.32 * report.totalInfluenceDistortion())
-                + (0.22 * report.hiddenCaptureIndex())
-                + (0.18 * report.substitutionFailureRisk())
-                + (0.12 * report.administrativeCostIndex())
-                + (0.10 * report.networkOpacityIndex())
-                + (0.06 * report.legitimateAdvocacyChillRate());
+        return Math.max(0.0,
+                (0.30 * report.totalInfluenceDistortion())
+                        + (0.20 * report.hiddenCaptureIndex())
+                        + (0.16 * report.substitutionFailureRisk())
+                        + (0.10 * report.administrativeCostIndex())
+                        + (0.09 * report.networkOpacityIndex())
+                        + (0.07 * report.legitimateAdvocacyChillRate())
+                        + (0.06 * report.speechRestrictionRisk())
+                        - (0.05 * report.crossVenueDetectionIndex())
+                        - (0.03 * report.participationProtectionIndex())
+        );
     }
 }

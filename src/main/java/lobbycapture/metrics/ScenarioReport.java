@@ -91,7 +91,10 @@ public record ScenarioReport(
         double revolvingDoorBridgeIndex,
         double commentNetworkLoad,
         double venueShiftNetworkLoad,
-        double networkLegibilityIndex
+        double networkLegibilityIndex,
+        double crossVenueDetectionIndex,
+        double participationProtectionIndex,
+        double speechRestrictionRisk
 ) {
     public double captureControlScore() {
         return MetricDefinition.average(
@@ -109,6 +112,7 @@ public record ScenarioReport(
                 MetricDefinition.lowerIsBetter(regulatorQueueBacklog),
                 MetricDefinition.lowerIsBetter(reformDecayPressure),
                 MetricDefinition.normalizeSigned(netTransparencyGain),
+                crossVenueDetectionIndex,
                 regulatorAttentionIndex,
                 watchdogFocusIndex,
                 enforcementCapacityIndex,
@@ -123,7 +127,9 @@ public record ScenarioReport(
                 MetricDefinition.lowerIsBetter(hiddenCaptureIndex),
                 MetricDefinition.lowerIsBetter(networkOpacityIndex),
                 MetricDefinition.lowerIsBetter(venueShiftNetworkLoad),
-                MetricDefinition.lowerIsBetter(administrativeCostIndex)
+                MetricDefinition.lowerIsBetter(speechRestrictionRisk),
+                MetricDefinition.lowerIsBetter(administrativeCostIndex),
+                crossVenueDetectionIndex
         );
     }
 
@@ -134,6 +140,7 @@ public record ScenarioReport(
                 MetricDefinition.lowerIsBetter(donorInfluenceGini),
                 voucherResidentParticipation,
                 publicFinancingCandidateUptake,
+                participationProtectionIndex,
                 commentUniqueInformationShare,
                 commentSubstantiveUptake,
                 MetricDefinition.lowerIsBetter(watchdogBudgetConcentration),
@@ -147,6 +154,8 @@ public record ScenarioReport(
                 MetricDefinition.lowerIsBetter(administrativeCostIndex),
                 MetricDefinition.lowerIsBetter(legitimateAdvocacyChillRate),
                 MetricDefinition.lowerIsBetter(constitutionalChallengeDelay),
+                MetricDefinition.lowerIsBetter(speechRestrictionRisk),
+                participationProtectionIndex,
                 detectionRate
         );
     }

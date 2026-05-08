@@ -60,6 +60,9 @@ public final class SmokeTest {
         require(open.netTransparencyGain() >= -1.0 && open.netTransparencyGain() <= 1.0, "net transparency gain should stay bounded");
         require(open.networkOpacityIndex() >= 0.0 && open.networkOpacityIndex() <= 1.0, "network opacity should stay bounded");
         require(open.networkLegibilityIndex() >= 0.0 && open.networkLegibilityIndex() <= 1.0, "network legibility should stay bounded");
+        require(open.crossVenueDetectionIndex() >= 0.0 && open.crossVenueDetectionIndex() <= 1.0, "cross-venue detection should stay bounded");
+        require(open.participationProtectionIndex() >= 0.0 && open.participationProtectionIndex() <= 1.0, "participation protection should stay bounded");
+        require(open.speechRestrictionRisk() >= 0.0 && open.speechRestrictionRisk() <= 1.0, "speech restriction risk should stay bounded");
         require(open.donorNetworkConcentration() >= 0.0 && open.donorNetworkConcentration() <= 1.0, "network donor concentration should stay bounded");
         require(open.officialAccessCentrality() >= 0.0 && open.officialAccessCentrality() <= 1.0, "official access centrality should stay bounded");
         require(intermediary.intermediaryCentrality() > 0.0, "intermediary network centrality should be reported");
@@ -72,7 +75,7 @@ public final class SmokeTest {
         require(sensitivity.size() == 20, "sensitivity runner should cover reform and evasion sweeps");
         require(interactions.size() == 24, "interaction runner should cover two-way reform sweeps");
         require(ablation.size() == 7, "ablation runner should cover baseline plus six removals");
-        require(portfolio.size() == 9, "portfolio runner should cover reform portfolio candidates");
+        require(portfolio.size() == 10, "portfolio runner should cover reform portfolio candidates");
         require(ablation.stream().anyMatch(report -> report.scenarioKey().equals("ablation-full-bundle")), "ablation runner should include a baseline");
         require(largestAblationOpening(ablation) > 0.0, "stressed ablation should expose at least one distortion opening");
         require(bundle.directionalScore() >= 0.0 && bundle.directionalScore() <= 1.0, "directional score should stay bounded");
@@ -108,7 +111,7 @@ public final class SmokeTest {
         require(csvText.contains("observedCaptureRate,hiddenCaptureIndex,totalInfluenceDistortion,substitutionFailureRisk"), csv + " should report capture and distortion splits");
         require(csvText.contains("visibleLobbyingSpendShare,directAccessShare,agendaAccessShare,informationDistortionShare,publicCampaignShare,litigationThreatShare,campaignFinanceShare,darkMoneyShare,revolvingDoorShare,intermediaryShare"), csv + " should report visible and intermediary spend state");
         require(csvText.contains("substitutionPressure,influencePreservationRate,hiddenInfluenceShare,netTransparencyGain,messengerSubstitutionRate,venueSubstitutionRate"), csv + " should report substitution state");
-        require(csvText.contains("networkOpacityIndex,donorNetworkConcentration,intermediaryCentrality,officialAccessCentrality,procurementNetworkExposure,revolvingDoorBridgeIndex,commentNetworkLoad,venueShiftNetworkLoad,networkLegibilityIndex"), csv + " should report influence-network state");
+        require(csvText.contains("networkOpacityIndex,donorNetworkConcentration,intermediaryCentrality,officialAccessCentrality,procurementNetworkExposure,revolvingDoorBridgeIndex,commentNetworkLoad,venueShiftNetworkLoad,networkLegibilityIndex,crossVenueDetectionIndex,participationProtectionIndex,speechRestrictionRisk"), csv + " should report influence-network and civil-liberties state");
         require(csvText.contains("clientFundingAdaptation,regulatorAttentionIndex,regulatorQueueBacklog,watchdogFocusIndex,watchdogBudgetConcentration,adaptationSpeed,reformDecayPressure"), csv + " should report adaptive state");
         require(csvText.lines().count() > 1, csv + " should contain report rows");
         require(markdownText.contains("Generated"), markdown + " should include provenance");

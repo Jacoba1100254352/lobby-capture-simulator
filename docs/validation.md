@@ -10,6 +10,9 @@ Initial validation targets:
 - Voteview and govinfo bill status: legislative attrition and coalition plausibility for legislative arenas.
 - Seattle democracy vouchers and NYC public matching funds: voucher participation, public-funds share, donor-base broadening.
 - USAspending: procurement-recipient concentration and agency spending exposure.
+- SAM/FPDS: contract-award identifiers, UEI/PIID matching, modifications, exclusions, and procurement-firewall stress tests.
+- IRS 8871/8872, TEOS, and Form 990 XML: nonprofit, 527, association, think-tank, and intermediary panels, while preserving public-donor missingness.
+- FACA, House witness disclosures, OGE, OpenSecrets, LegiStorm, and ProPublica-style panels: access, expert, intermediary, and revolving-door bridges where coverage and licensing allow.
 
 The implementation stores benchmark metadata in `data/calibration/empirical-benchmarks.csv`, normalized fixture rows in `data/fixtures/`, source-native JSON parser fixtures in `data/fixtures/source-native/`, and the committed paper snapshot under `data/snapshots/2024-env/normalized/`. Report generation defaults to that committed snapshot so ignored `data/raw/` live-fetch outputs cannot alter paper artifacts unless `LOBBY_CAPTURE_CALIBRATION_DIR` is set explicitly.
 
@@ -43,11 +46,13 @@ Source-native live variables:
 
 The source-native normalizers are distributional bridges. `scripts/test-source-fetchers.py` verifies representative LDA, OpenFEC, Regulations.gov, Federal Register, and USAspending JSON payloads against exact normalized rows before any live API output is used as a paper snapshot.
 
+The source acquisition roadmap in `docs/source-data-roadmap.md` records the intended identifier spine and distinguishes direct observed sources from proxy and restricted overlays. New source panels should be added there before their moments are promoted into `data/calibration/parameter-map.csv`.
+
 `make source-moments` writes `reports/source-moments.csv` plus `reports/source-moments.md`. It compares the current 2024 EPA/ENV normalized snapshot against the deterministic fixture baseline on source-level moments such as top-client share, top-donor share, amount-weighted traceability, dark-money direct visibility, public-financing source share, and comment-volume concentration.
 
-`make validate` compares committed report snapshots against both `data/calibration/empirical-benchmarks.csv` and implemented rows in `data/calibration/parameter-map.csv`. It writes `reports/validation-summary.csv` plus `reports/validation-summary.md`, including counts by evidence class. It also writes `reports/substitution-audit.csv` and `reports/substitution-audit.md`, which flag reforms that lower observed capture while increasing hidden influence, hidden capture, total distortion, or substitution-failure risk. Network metrics are included as synthetic path diagnostics: they currently validate bounds and mechanism direction, not observed network reconstruction. Current benchmark rows are deliberately broad plausibility bands; misses should be read as calibration work queues, not model falsification.
+`make validate` compares committed report snapshots against both `data/calibration/empirical-benchmarks.csv` and implemented rows in `data/calibration/parameter-map.csv`. It writes `reports/validation-summary.csv` plus `reports/validation-summary.md`, including counts by evidence class. It also writes `reports/substitution-audit.csv` and `reports/substitution-audit.md`, which flag reforms that lower observed capture while increasing hidden influence, hidden capture, total distortion, substitution-failure risk, network opacity, venue-shift load, or channel-network load. Network metrics are included as synthetic path diagnostics: they currently validate bounds and mechanism direction, not observed network reconstruction. Current benchmark rows are deliberately broad plausibility bands; misses should be read as calibration work queues, not model falsification.
 
-`make portfolio` writes `reports/lobby-capture-portfolio.csv` plus `reports/lobby-capture-portfolio.md`. It screens reform bundles by total influence distortion, hidden capture, substitution risk, administrative burden, network opacity, and legitimate-advocacy chill.
+`make portfolio` writes `reports/lobby-capture-portfolio.csv` plus `reports/lobby-capture-portfolio.md`. It screens reform bundles by total influence distortion, hidden capture, substitution risk, administrative burden, network opacity, legitimate-advocacy chill, speech-restriction risk, cross-venue detection, and participation protection.
 
 `make calibration-queue` writes `reports/calibration-queue.csv` plus `reports/calibration-queue.md`. It classifies misses and partial overlaps as model tuning, metric splits, direct source moments, scenario coverage, scale alignment, or benchmark review.
 
@@ -57,6 +62,8 @@ The next paper-grade snapshot is fixed to a closed 2024 environmental slice:
 - FEC: 2024 cycle records for the six national party committees, with lobbyist bundled contributions as an optional auxiliary slice.
 - Regulations.gov: EPA documents, dockets, and comments posted in 2024.
 - Federal Register: EPA 2024 rules and proposed rules.
+- USAspending/SAM/FPDS: EPA FY2024 awards, UEIs, PIIDs, and modification records where source access permits.
+- Intermediaries and revolving door: IRS nonprofit/527 rows plus a licensed or public personnel/access panel.
 
 Run `scripts/run-2024-env-live-snapshot.sh` to execute the pinned live slice. The runner preserves raw public API payloads under ignored `data/raw/source-payloads/2024-env/`, writes normalized rows under `data/raw/`, freezes `data/snapshots/2024-env/`, and records per-source status in `data/snapshots/2024-env/live-run-status.csv`.
 

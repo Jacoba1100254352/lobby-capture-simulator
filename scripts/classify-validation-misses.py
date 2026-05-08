@@ -30,6 +30,11 @@ CATEGORY_BY_METRIC = {
     "voucherParticipation": ("metric-split", "split resident voucher participation from regime strength"),
     "publicFinancingShare": ("metric-split", "split candidate uptake from public-financing regime strength"),
     "venueSubstitutionRate": ("scenario-coverage", "add cooling-off and advisory-lobbying stress cases"),
+    "networkOpacityIndex": ("direct-source-moment", "anchor with source-network panels that connect LDA, FEC, IRS, docket, and procurement identifiers"),
+    "venueShiftNetworkLoad": ("scenario-coverage", "add venue-shifting detection stress cases and source panels for alternate venues"),
+    "crossVenueDetectionIndex": ("benchmark-review", "treat as a synthetic portfolio capability until linked source coverage is measured"),
+    "participationProtectionIndex": ("benchmark-review", "separate representation equalization from restrictions on participation"),
+    "speechRestrictionRisk": ("benchmark-review", "bound legal and civil-liberties risk with reform-specific evidence"),
 }
 
 
@@ -43,6 +48,8 @@ DIRECT_SOURCE_HINTS = {
     "revolvingDoorInfluence": "revolvingDoorFormerOfficialShare",
     "publicFinancingShare": "publicFinancingSourceShare",
     "voucherParticipation": "publicFinancingSourceShare",
+    "networkOpacityIndex": "moneyFlowTraceability",
+    "venueShiftNetworkLoad": "venueShiftNetworkLoad",
 }
 
 
