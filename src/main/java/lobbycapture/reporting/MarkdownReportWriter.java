@@ -79,6 +79,7 @@ public final class MarkdownReportWriter {
                     .append("`.\n");
         }
         appendSubstitutionReadout(builder, reports);
+        appendNetworkReadout(builder, reports);
         appendSensitivityReadout(builder, reports);
 
         builder.append("\n## Interpretation Guardrail\n\n");
@@ -113,6 +114,31 @@ public final class MarkdownReportWriter {
                     .append(" | ").append(CsvReportWriter.format(report.hiddenInfluenceShare() - openAccess.hiddenInfluenceShare()))
                     .append(" | ").append(CsvReportWriter.format(report.totalInfluenceDistortion() - openAccess.totalInfluenceDistortion()))
                     .append(" | ").append(CsvReportWriter.format(report.substitutionFailureRisk()))
+                    .append(" |\n");
+        }
+    }
+
+    private static void appendNetworkReadout(StringBuilder builder, List<ScenarioReport> reports) {
+        List<ScenarioReport> networkHeavy = reports.stream()
+                .sorted(Comparator.comparing(ScenarioReport::networkOpacityIndex).reversed())
+                .limit(5)
+                .toList();
+        if (networkHeavy.isEmpty()) {
+            return;
+        }
+        builder.append("\n## Influence-Network Readout\n\n");
+        builder.append("Network diagnostics summarize modeled funder-to-lobby-to-intermediary-to-official paths. They are synthetic mechanism diagnostics, not observed network estimates.\n\n");
+        builder.append("| Scenario | Opacity | Intermediary | Donor conc. | Procure. | Revolving | Comment load | Venue shift |\n");
+        builder.append("| --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |\n");
+        for (ScenarioReport report : networkHeavy) {
+            builder.append("| ").append(report.scenarioName())
+                    .append(" | ").append(CsvReportWriter.format(report.networkOpacityIndex()))
+                    .append(" | ").append(CsvReportWriter.format(report.intermediaryCentrality()))
+                    .append(" | ").append(CsvReportWriter.format(report.donorNetworkConcentration()))
+                    .append(" | ").append(CsvReportWriter.format(report.procurementNetworkExposure()))
+                    .append(" | ").append(CsvReportWriter.format(report.revolvingDoorBridgeIndex()))
+                    .append(" | ").append(CsvReportWriter.format(report.commentNetworkLoad()))
+                    .append(" | ").append(CsvReportWriter.format(report.venueShiftNetworkLoad()))
                     .append(" |\n");
         }
     }

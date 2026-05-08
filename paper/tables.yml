@@ -197,6 +197,70 @@
       ]
     },
     {
+      "output": "portfolio_snapshot.tex",
+      "source": "lobby-capture-portfolio.csv",
+      "label": "tab:portfolio",
+      "caption": "Portfolio screen under the stressed contest mix. Rows are candidate design bundles; the table reports total distortion, hidden capture, substitution risk, network opacity, and administrative burden so the preferred portfolio is not chosen by visible capture alone.",
+      "size": "scriptsize",
+      "environment": "table*",
+      "width": "\\textwidth",
+      "rows": [
+        "portfolio-meeting-logs",
+        "portfolio-public-interest-funds",
+        "portfolio-randomized-audits",
+        "portfolio-procurement-firewalls",
+        "portfolio-venue-detection",
+        "portfolio-full-bundle",
+        "portfolio-full-bundle-high-evasion"
+      ],
+      "columns": [
+        {
+          "header": "Portfolio",
+          "source": "scenarioName",
+          "format": "label",
+          "labels": {
+            "Portfolio: machine-readable meeting logs": "Meeting logs",
+            "Portfolio: public-interest representation funds": "Public-interest funds",
+            "Portfolio: randomized audits and sanctions": "Random audits",
+            "Portfolio: procurement firewalls": "Procurement firewall",
+            "Portfolio: venue-shifting detection": "Venue detection",
+            "Portfolio: full anti-capture bundle": "Full bundle",
+            "Portfolio: full bundle under high evasion": "Full+evasion"
+          }
+        },
+        {
+          "header": "Capture",
+          "source": "observedCaptureRate",
+          "format": "float3"
+        },
+        {
+          "header": "Dist.",
+          "source": "totalInfluenceDistortion",
+          "format": "float3"
+        },
+        {
+          "header": "Hid. cap.",
+          "source": "hiddenCaptureIndex",
+          "format": "float3"
+        },
+        {
+          "header": "Risk",
+          "source": "substitutionFailureRisk",
+          "format": "float3"
+        },
+        {
+          "header": "Opacity",
+          "source": "networkOpacityIndex",
+          "format": "float3"
+        },
+        {
+          "header": "Admin",
+          "source": "administrativeCost",
+          "format": "float3"
+        }
+      ]
+    },
+    {
       "output": "interaction_snapshot.tex",
       "source": "lobby-capture-interactions.csv",
       "label": "tab:interactions",

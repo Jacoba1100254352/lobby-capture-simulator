@@ -44,6 +44,7 @@ EXPECTED_ZIP_MEMBERS = {
     "supporting-information/source-moments.md",
     "supporting-information/validation-summary.md",
     "supporting-information/substitution-audit.md",
+    "supporting-information/portfolio-screen.md",
     "supporting-information/calibration-queue.md",
 }
 
@@ -124,6 +125,7 @@ def submission_inputs() -> list[Path]:
         ROOT / "reports" / "source-moments.md",
         ROOT / "reports" / "validation-summary.md",
         ROOT / "reports" / "substitution-audit.md",
+        ROOT / "reports" / "lobby-capture-portfolio.md",
         ROOT / "reports" / "calibration-queue.md",
         PAPER / ".wiley-build" / "USG.cls",
         PAPER / ".wiley-build" / "wileyNJD-Chicago.bst",

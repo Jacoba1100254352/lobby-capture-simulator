@@ -10,7 +10,7 @@ TEST_SOURCES := $(shell find src/test/java -name "*.java" | sort)
 MAIN_CLASS := lobbycapture.Main
 TEST_CLASSES := lobbycapture.SmokeTest lobbycapture.AdaptationTest
 
-.PHONY: compile test run campaign sensitivity ablation interactions source-moments calibration-queue validate snapshot-2024-env tables figures paper paper-word-count wiley-template wiley-tex-deps paper-wiley submission-package paper-artifacts paper-artifacts-check clean
+.PHONY: compile test run campaign sensitivity ablation interactions portfolio source-moments calibration-queue validate snapshot-2024-env tables figures paper paper-word-count wiley-template wiley-tex-deps paper-wiley submission-package paper-artifacts paper-artifacts-check clean
 
 compile:
 	@mkdir -p out/classes
@@ -38,6 +38,9 @@ ablation: compile
 
 interactions: compile
 	$(REPORT_ENV) $(JAVA) -cp out/classes $(MAIN_CLASS) --interactions --runs 25 --contests 60 --seed 342
+
+portfolio: compile
+	$(REPORT_ENV) $(JAVA) -cp out/classes $(MAIN_CLASS) --portfolio --runs 35 --contests 70 --seed 442
 
 source-moments:
 	python3 scripts/extract-source-moments.py
@@ -80,7 +83,7 @@ paper-wiley: tables figures wiley-template
 submission-package: paper-wiley paper-word-count
 	./scripts/build-submission-package.sh
 
-paper-artifacts: campaign sensitivity ablation interactions source-moments validate calibration-queue tables figures paper paper-wiley submission-package paper-word-count
+paper-artifacts: campaign sensitivity ablation interactions portfolio source-moments validate calibration-queue tables figures paper paper-wiley submission-package paper-word-count
 
 paper-artifacts-check: paper-artifacts
 	python3 scripts/check-paper-artifacts.py

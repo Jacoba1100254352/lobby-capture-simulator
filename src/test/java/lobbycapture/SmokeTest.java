@@ -4,6 +4,7 @@ import lobbycapture.metrics.ScenarioReport;
 import lobbycapture.reporting.AblationRunner;
 import lobbycapture.reporting.CampaignRunner;
 import lobbycapture.reporting.InteractionRunner;
+import lobbycapture.reporting.PortfolioRunner;
 import lobbycapture.reporting.SensitivityRunner;
 import lobbycapture.simulation.ScenarioCatalog;
 import lobbycapture.simulation.Simulator;
@@ -27,6 +28,7 @@ public final class SmokeTest {
         List<ScenarioReport> sensitivity = new SensitivityRunner().run(1, 10, 15L);
         List<ScenarioReport> interactions = new InteractionRunner().run(1, 10, 16L);
         List<ScenarioReport> ablation = new AblationRunner().run(3, 30, 242L);
+        List<ScenarioReport> portfolio = new PortfolioRunner().run(1, 10, 18L);
 
         require(open.totalContests() == 120, "open scenario should run all contests");
         require(open.lobbySpendPerContest() > 0.0, "lobbying should spend in baseline");
@@ -56,6 +58,11 @@ public final class SmokeTest {
         require(open.captureRateSeedStdDev() >= 0.0, "multi-seed capture robustness should be reported");
         require(open.totalInfluenceDistortionSeedStdDev() >= 0.0, "multi-seed distortion robustness should be reported");
         require(open.netTransparencyGain() >= -1.0 && open.netTransparencyGain() <= 1.0, "net transparency gain should stay bounded");
+        require(open.networkOpacityIndex() >= 0.0 && open.networkOpacityIndex() <= 1.0, "network opacity should stay bounded");
+        require(open.networkLegibilityIndex() >= 0.0 && open.networkLegibilityIndex() <= 1.0, "network legibility should stay bounded");
+        require(open.donorNetworkConcentration() >= 0.0 && open.donorNetworkConcentration() <= 1.0, "network donor concentration should stay bounded");
+        require(open.officialAccessCentrality() >= 0.0 && open.officialAccessCentrality() <= 1.0, "official access centrality should stay bounded");
+        require(intermediary.intermediaryCentrality() > 0.0, "intermediary network centrality should be reported");
         require(reformThreat.defensiveReformSpendShare() > 0.20, "reform threat should trigger defensive spending");
         require(bundle.captureRate() <= reformThreat.captureRate(), "full bundle should reduce capture relative to reform threat case");
         require(evasion.darkMoneySpendShare() >= bundle.darkMoneySpendShare(), "evasion scenario should shift toward dark money");
@@ -65,6 +72,7 @@ public final class SmokeTest {
         require(sensitivity.size() == 20, "sensitivity runner should cover reform and evasion sweeps");
         require(interactions.size() == 24, "interaction runner should cover two-way reform sweeps");
         require(ablation.size() == 7, "ablation runner should cover baseline plus six removals");
+        require(portfolio.size() == 9, "portfolio runner should cover reform portfolio candidates");
         require(ablation.stream().anyMatch(report -> report.scenarioKey().equals("ablation-full-bundle")), "ablation runner should include a baseline");
         require(largestAblationOpening(ablation) > 0.0, "stressed ablation should expose at least one distortion opening");
         require(bundle.directionalScore() >= 0.0 && bundle.directionalScore() <= 1.0, "directional score should stay bounded");
@@ -79,11 +87,13 @@ public final class SmokeTest {
             new SensitivityRunner().write(reports, 1, 5, 92L);
             new AblationRunner().write(reports, 1, 5, 93L);
             new InteractionRunner().write(reports, 1, 5, 94L);
+            new PortfolioRunner().write(reports, 1, 5, 95L);
 
             verifyReport(reports.resolve("lobby-capture-campaign.csv"), reports.resolve("lobby-capture-campaign.md"), reports.resolve("lobby-capture-campaign.manifest.json"));
             verifyReport(reports.resolve("lobby-capture-sensitivity.csv"), reports.resolve("lobby-capture-sensitivity.md"), reports.resolve("lobby-capture-sensitivity.manifest.json"));
             verifyReport(reports.resolve("lobby-capture-ablation.csv"), reports.resolve("lobby-capture-ablation.md"), reports.resolve("lobby-capture-ablation.manifest.json"));
             verifyReport(reports.resolve("lobby-capture-interactions.csv"), reports.resolve("lobby-capture-interactions.md"), reports.resolve("lobby-capture-interactions.manifest.json"));
+            verifyReport(reports.resolve("lobby-capture-portfolio.csv"), reports.resolve("lobby-capture-portfolio.md"), reports.resolve("lobby-capture-portfolio.manifest.json"));
         } finally {
             deleteRecursively(reports);
         }
@@ -98,6 +108,7 @@ public final class SmokeTest {
         require(csvText.contains("observedCaptureRate,hiddenCaptureIndex,totalInfluenceDistortion,substitutionFailureRisk"), csv + " should report capture and distortion splits");
         require(csvText.contains("visibleLobbyingSpendShare,directAccessShare,agendaAccessShare,informationDistortionShare,publicCampaignShare,litigationThreatShare,campaignFinanceShare,darkMoneyShare,revolvingDoorShare,intermediaryShare"), csv + " should report visible and intermediary spend state");
         require(csvText.contains("substitutionPressure,influencePreservationRate,hiddenInfluenceShare,netTransparencyGain,messengerSubstitutionRate,venueSubstitutionRate"), csv + " should report substitution state");
+        require(csvText.contains("networkOpacityIndex,donorNetworkConcentration,intermediaryCentrality,officialAccessCentrality,procurementNetworkExposure,revolvingDoorBridgeIndex,commentNetworkLoad,venueShiftNetworkLoad,networkLegibilityIndex"), csv + " should report influence-network state");
         require(csvText.contains("clientFundingAdaptation,regulatorAttentionIndex,regulatorQueueBacklog,watchdogFocusIndex,watchdogBudgetConcentration,adaptationSpeed,reformDecayPressure"), csv + " should report adaptive state");
         require(csvText.lines().count() > 1, csv + " should contain report rows");
         require(markdownText.contains("Generated"), markdown + " should include provenance");

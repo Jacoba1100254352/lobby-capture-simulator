@@ -1,0 +1,14 @@
+{
+  "report": "lobby-capture-portfolio",
+  "generatedAt": "2026-05-05T00:00:00Z",
+  "seed": 442,
+  "runs": 35,
+  "contestsPerRun": 70,
+  "command": "lobbycapture.Main --portfolio --runs 35 --contests 70 --seed 442",
+  "gitCommit": "tracked-artifact-build",
+  "workingTreeDirty": false,
+  "workingTreeDirtyScope": "tracked status excluding generated reports, paper tables, paper figures, and 2024-env snapshot outputs",
+  "javaVersion": "25",
+  "calibrationChecksum": "eb45fb2de24a30faf4f423e13560161fa727233193db6b1b906fe2b7d9b48d89",
+  "reportFiles": ["lobby-capture-portfolio.csv", "lobby-capture-portfolio.md"]
+}

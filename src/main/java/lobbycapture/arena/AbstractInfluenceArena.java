@@ -100,11 +100,28 @@ abstract class AbstractInfluenceArena implements InfluenceArena {
                 + (campaignFinanceWeight * contest.campaignFinanceInfluence())
                 + (revolvingDoorWeight * contest.revolvingDoorInfluence())
                 + (litigationWeight * contest.litigationThreat());
+        double rulemakingProcessFriction = arenaType == ContestArena.RULEMAKING
+                ? Values.clamp((0.26 * influence.networkSnapshot().commentNetworkLoad())
+                + (0.22 * contest.docket().templateSaturation())
+                + (0.20 * contest.technicalComplexity())
+                + (0.16 * contest.commentRecordDistortion())
+                - (0.18 * reform.antiAstroturfStrength())
+                - (0.12 * reform.blindReviewStrength()), 0.0, 1.0)
+                : 0.0;
+        double procurementPathPressure = arenaType == ContestArena.PROCUREMENT
+                ? Values.clamp((0.42 * influence.networkSnapshot().procurementNetworkExposure())
+                + (0.24 * influence.networkSnapshot().officialAccessCentrality())
+                + (0.18 * influence.networkSnapshot().revolvingDoorBridgeIndex())
+                - (0.24 * reform.blindReviewStrength())
+                - (0.18 * reform.enforcementStrength()), 0.0, 1.0)
+                : 0.0;
         double hiddenSubstitutionPressure = Values.clamp(
                 (0.16 * influence.hiddenInfluenceShare())
                         + (0.11 * influence.influencePreservationRate())
                         + (0.08 * influence.venueSubstitutionRate())
-                        + (0.05 * influence.messengerSubstitutionRate()),
+                        + (0.05 * influence.messengerSubstitutionRate())
+                        + (0.06 * influence.networkSnapshot().networkOpacityIndex())
+                        + (0.05 * influence.networkSnapshot().intermediaryCentrality()),
                 0.0,
                 1.0
         );
@@ -122,7 +139,9 @@ abstract class AbstractInfluenceArena implements InfluenceArena {
                 1.0
                         - (0.22 * influence.hiddenInfluenceShare())
                         - (0.10 * influence.influencePreservationRate())
-                        - (0.08 * influence.venueSubstitutionRate()),
+                        - (0.08 * influence.venueSubstitutionRate())
+                        - (0.07 * influence.networkSnapshot().networkOpacityIndex())
+                        - (0.05 * influence.networkSnapshot().venueShiftNetworkLoad()),
                 0.62,
                 1.0
         );
@@ -131,6 +150,8 @@ abstract class AbstractInfluenceArena implements InfluenceArena {
                 + channelPressure
                 + hiddenSubstitutionPressure
                 + (0.10 * contest.technicalComplexity())
+                + (0.08 * rulemakingProcessFriction)
+                + (0.09 * procurementPathPressure)
                 - (0.35 * reformControl * controlLeakage)
                 - (0.18 * publicBacklash)
                 + randomNoise(world, 0.06);
@@ -143,6 +164,8 @@ abstract class AbstractInfluenceArena implements InfluenceArena {
                         + (0.14 * contest.watchdogPressure())
                         - (0.16 * contest.darkMoneyInfluence())
                         - (0.10 * influence.hiddenInfluenceShare())
+                        - (0.10 * influence.networkSnapshot().networkOpacityIndex())
+                        + (0.08 * influence.networkSnapshot().networkLegibilityIndex())
                         + (0.10 * world.evasionProfile().legalRisk())
                         + (0.10 * world.watchdogFocus(contest.issueDomain()))
                         + (0.07 * world.regulatorAttention(contest.issueDomain()) * (1.0 - (0.35 * world.regulatorQueue(contest.issueDomain()))))
@@ -161,9 +184,13 @@ abstract class AbstractInfluenceArena implements InfluenceArena {
         boolean sanctioned = detected && world.random().nextDouble() < sanctionProbability;
         boolean reversed = sanctioned && world.random().nextDouble() < Values.clamp(reform.sanctionSeverity() * 0.65, 0.0, 1.0);
         boolean captured = capturedBeforeAudit && !reversed;
-        double regulatoryDrift = arenaType == ContestArena.RULEMAKING ? drift(contest, captured, 0.82) : drift(contest, captured, 0.18);
+        double regulatoryDrift = arenaType == ContestArena.RULEMAKING
+                ? Values.clamp(drift(contest, captured, 0.82) + (0.20 * rulemakingProcessFriction), 0.0, 1.0)
+                : drift(contest, captured, 0.18);
         double enforcementForbearance = arenaType == ContestArena.ENFORCEMENT ? drift(contest, captured, 0.95) : drift(contest, captured, 0.10);
-        double procurementBias = arenaType == ContestArena.PROCUREMENT ? drift(contest, captured, 0.92) : drift(contest, captured, 0.08);
+        double procurementBias = arenaType == ContestArena.PROCUREMENT
+                ? Values.clamp(drift(contest, captured, 0.92) + (0.24 * procurementPathPressure), 0.0, 1.0)
+                : drift(contest, captured, 0.08);
         double policyDistortion = Values.clamp(
                 captured
                         ? (0.45 * contest.captureRisk()) + (0.30 * contest.privateGain()) + (0.25 * contest.publicPreferenceDistortion())
@@ -192,7 +219,7 @@ abstract class AbstractInfluenceArena implements InfluenceArena {
                 detectionProbability,
                 sanctioned ? reform.sanctionSeverity() : 0.0,
                 evasionPenalty,
-                reform.administrativeCost() + (detected ? 0.08 : 0.0) + (sanctioned ? 0.06 : 0.0),
+                reform.administrativeCost() + (0.05 * rulemakingProcessFriction) + (0.06 * procurementPathPressure) + (detected ? 0.08 : 0.0) + (sanctioned ? 0.06 : 0.0),
                 captured ? "captured outcome survived process" : "public-interest controls held"
         );
     }

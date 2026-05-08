@@ -67,6 +67,7 @@ Each scenario uses the same core engine and changes the reform regime, channel i
 - Scenarios are comparative stress tests, not calibrated policy forecasts.
 - High-capture rows establish mechanism contrast; low-capture bundle rows show where the current parameterization saturates anti-capture success.
 - Hidden-capture, total-distortion, hidden-influence, preserved-influence, venue-substitution, messenger-substitution, and evasion-shift columns should be read with capture rates. A low capture rate alone is not a model claim that the reform eliminates influence.
+- Influence-network columns should be read as synthetic path diagnostics: network opacity, intermediary centrality, procurement exposure, revolving-door bridges, comment-network load, and venue-shift load identify where influence is moving when a reform changes visible lobbying.
 - The preferred synthetic reform comparison is the lowest total influence distortion, not the highest nominal reform success or lowest visible capture.
 - Source calibration is currently strongest for LDA, FEC committee flows, Federal Register/Regulations.gov schemas, and USAspending award concentration. It remains weakest for dark-money source shares, public-financing source shares, and revolving-door panels.
 
@@ -91,5 +92,19 @@ Sensitivity scenarios use the reform-heavy contest mix so defensive anti-reform 
 - no public advocate or blind review.
 
 The ablation report ranks removals by total-distortion increase and tracks observed capture, hidden capture, substitution risk, comment flooding, donor Gini, and enforcement capacity.
+
+`make portfolio` adds a reform-portfolio screen around the stressed contest mix:
+
+- machine-readable meeting logs;
+- public-interest representation funds;
+- randomized audits and sanctions;
+- comment-authenticity controls;
+- procurement firewalls;
+- venue-shifting detection;
+- hard lobbying budgets;
+- full anti-capture bundle;
+- full anti-capture bundle under high evasion.
+
+The portfolio report ranks candidate bundles by total influence distortion, hidden capture, substitution risk, administrative burden, network opacity, and legitimate-advocacy chill. It is a design screen, not a welfare estimate.
 
 `make validate` also writes `reports/substitution-audit.csv` and `reports/substitution-audit.md`. That audit compares each report row against an open-access or highest-visible-lobbying baseline and flags cases where observed capture falls but hidden influence, hidden capture, total distortion, or substitution-failure risk rises.

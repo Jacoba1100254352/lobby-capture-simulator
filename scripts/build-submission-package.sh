@@ -51,6 +51,7 @@ cp "$ROOT_DIR/docs/validation.md" "$STAGING_DIR/supporting-information/validatio
 cp "$ROOT_DIR/reports/source-moments.md" "$STAGING_DIR/supporting-information/source-moments.md"
 cp "$ROOT_DIR/reports/validation-summary.md" "$STAGING_DIR/supporting-information/validation-summary.md"
 cp "$ROOT_DIR/reports/substitution-audit.md" "$STAGING_DIR/supporting-information/substitution-audit.md"
+cp "$ROOT_DIR/reports/lobby-capture-portfolio.md" "$STAGING_DIR/supporting-information/portfolio-screen.md"
 cp "$ROOT_DIR/reports/calibration-queue.md" "$STAGING_DIR/supporting-information/calibration-queue.md"
 mkdir -p "$STAGING_DIR/figures"
 cp "$PAPER_DIR"/figures/Figure_*.pdf "$STAGING_DIR/figures/"

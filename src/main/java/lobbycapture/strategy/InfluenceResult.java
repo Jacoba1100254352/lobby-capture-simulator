@@ -1,5 +1,6 @@
 package lobbycapture.strategy;
 
+import lobbycapture.network.InfluenceNetworkSnapshot;
 import lobbycapture.policy.PolicyContest;
 
 import java.util.List;
@@ -20,9 +21,13 @@ public record InfluenceResult(
         double netTransparencyGain,
         double messengerSubstitutionRate,
         double venueSubstitutionRate,
+        InfluenceNetworkSnapshot networkSnapshot,
         List<LobbySpendRecord> spendRecords
 ) {
     public InfluenceResult {
+        if (networkSnapshot == null) {
+            throw new IllegalArgumentException("networkSnapshot must not be null.");
+        }
         spendRecords = List.copyOf(spendRecords);
     }
 
@@ -54,6 +59,7 @@ public record InfluenceResult(
                 0.0,
                 0.0,
                 0.0,
+                InfluenceNetworkSnapshot.zero(),
                 spendRecords
         );
     }

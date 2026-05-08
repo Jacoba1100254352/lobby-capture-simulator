@@ -16,7 +16,7 @@ Lobby organizations are the central adaptive actors.
 - Budget state: total budget, channel-specific accounts, donor/client replenishment, defensive reform budget, disclosure lag, traceability.
 - Capability state: direct access capital, technical expertise, public campaign skill, information-bias skill, astroturf skill, litigation skill, revolving-door network strength, disclosure-avoidance skill.
 - Adaptation state: channel return memory, issue-specific funding multipliers, evasion profile, reform-threat sensitivity, defensive spending multiplier.
-- Output state: spend records, money-flow records, observed capture, hidden capture, total influence distortion, hidden influence, influence preservation, messenger substitution, venue substitution, evasion shift, defensive spending, and administrative burden.
+- Output state: spend records, money-flow records, influence-network paths, observed capture, hidden capture, total influence distortion, hidden influence, influence preservation, messenger substitution, venue substitution, evasion shift, defensive spending, and administrative burden.
 
 ### Interest Client and Funding Source
 
@@ -67,17 +67,19 @@ Each simulation tick resolves one selected policy contest. Report runners aggreg
 2. Replenish lobby budgets through client funding when expected private gain, exposure, secrecy needs, or reform threat justify additional money.
 3. For each lobby organization, compute substitution pressure and choose channel allocations subject to channel budgets and reform controls.
 4. Apply channel effects to the contest state: public support, public benefit, private gain, agenda pressure, information distortion, campaign-finance pressure, dark-money influence, litigation threat, revolving-door influence, intermediary-sponsored expertise or association routing, technical comment quality, defensive anti-reform pressure, and hidden influence.
-5. If the contest has a rulemaking docket, generate and triage public comments into unique content, organized technical content, template saturation, and astroturf or misattributed comments.
-6. Resolve the contest in its arena by combining contest vulnerability, arena susceptibility, channel pressure, reform controls, public backlash, and stochastic noise.
-7. Apply enforcement detection and sanctions. Detection can reverse or reduce a capture outcome and imposes evasion penalties.
-8. Update lobby strategy memory, issue-specific funding multipliers, regulator attention, watchdog focus, adaptation speed, and reform-decay pressure.
-9. Record metrics for the scenario report and manifest.
+5. Convert channel allocations into influence-network paths linking funders, lobby organizations, intermediaries, officials, regulators, procurement venues, comment channels, and substitute venues.
+6. If the contest has a rulemaking docket, generate and triage public comments into unique content, organized technical content, template saturation, and astroturf or misattributed comments.
+7. Resolve the contest in its arena by combining contest vulnerability, arena susceptibility, channel pressure, network opacity, rulemaking/procurement friction, reform controls, public backlash, and stochastic noise.
+8. Apply enforcement detection and sanctions. Detection can reverse or reduce a capture outcome and imposes evasion penalties.
+9. Update lobby strategy memory, issue-specific funding multipliers, regulator attention, watchdog focus, adaptation speed, and reform-decay pressure.
+10. Record metrics for the scenario report and manifest.
 
 ## Design Concepts
 
 - Budget scarcity: influence is allocated across channels rather than applied as a scalar.
 - Channel substitution: when one channel becomes costly or visible, actors shift to adjacent routes that preserve messengers, relationships, or objectives.
 - Hidden influence: reforms can reduce observed capture while preserving influence capacity in less visible channels.
+- Network legibility: the model distinguishes visible channel mix from funder-to-lobby-to-intermediary-to-official path opacity, because a disclosure surface can improve while the actual influence path becomes harder to inspect.
 - Failure-aware reform scoring: a reform that lowers observed capture but increases hidden capture, hidden influence, total distortion, or substitution risk is flagged as a possible failure.
 - Defensive reform spending: anti-capture reform threats can mobilize lobbying that targets the reform itself.
 - Information asymmetry: rulemaking and low-salience technical contests are more vulnerable to expertise capture and comment-record distortion.
@@ -95,6 +97,7 @@ Main report targets use fixed run designs. Each run has an independent determini
 - Sensitivity snapshot: 30 runs, 70 contests per run, seed 142.
 - Ablation snapshot: 40 runs, 80 contests per run, seed 242.
 - Interaction snapshot: 25 runs, 60 contests per run, seed 342.
+- Portfolio screen: 35 runs, 70 contests per run, seed 442.
 
 Each report manifest records the command, seed, run count, contest count, Java version, Git state, and calibration checksum.
 
@@ -136,6 +139,12 @@ Current strategy-to-channel templates are deterministic share vectors before bud
 | Intermediary | sponsored expertise, associations, think tanks | dark money, information distortion, public campaign |
 | Defensive reform | anti-reform lobbying | public campaign, litigation, dark money, intermediaries |
 
+### Influence Network
+
+Each channel allocation creates weighted influence-network paths from a lobby organization to the contest domain. Paths are typed by channel and scored for opacity, donor concentration, intermediary dependence, official access, procurement linkage, revolving-door linkage, comment mobilization, and venue shift. Scenario reports aggregate these into `networkOpacityIndex`, `donorNetworkConcentration`, `intermediaryCentrality`, `officialAccessCentrality`, `procurementNetworkExposure`, `revolvingDoorBridgeIndex`, `commentNetworkLoad`, `venueShiftNetworkLoad`, and `networkLegibilityIndex`.
+
+These are synthetic path diagnostics. They do not claim to reconstruct observed social networks. Their purpose is to keep substitution visible when formal lobbying declines but influence moves through sponsored research, trade associations, procurement relationships, dark-money routes, consulting, litigation, or adjacent venues.
+
 ### Rulemaking Comment Triage
 
 Rulemaking contests create dockets. Comment campaigns can produce genuine public comments, sponsored technical comments, templates, synthetic comments, or misattributed comments. The triage model estimates authenticity, duplicate compression, unique-information share, review burden, technical credibility, procedural acknowledgement, and substantive uptake.
@@ -172,13 +181,20 @@ Simplified non-reform resolution:
 
 ```text
 channel_pressure = weighted(information, campaign_finance, revolving_door, litigation)
-hidden_pressure = weighted(hidden_influence, influence_preserved, venue_substitution, messenger_substitution)
+rulemaking_friction = f(comment_network_load, template_saturation, technical_complexity,
+                       comment_distortion, anti_astroturf, blind_review)
+procurement_pressure = f(procurement_network_exposure, official_access, revolving_door_bridge,
+                         blind_review, enforcement)
+hidden_pressure = weighted(hidden_influence, influence_preserved, venue_substitution,
+                           messenger_substitution, network_opacity, intermediary_centrality)
 reform_control = weighted(transparency, enforcement, public_advocate, blind_review,
                           campaign_finance_counterweight, anti_astroturf, cooling_off,
                           regulator_attention, watchdog_focus)
-control_leakage = 1 - weighted(hidden_influence, influence_preserved, venue_substitution)
+control_leakage = 1 - weighted(hidden_influence, influence_preserved, venue_substitution,
+                               network_opacity, venue_shift_load)
 capture_pressure = contest_risk + arena_susceptibility + channel_pressure + hidden_pressure
-                   + technical_complexity - reform_control * control_leakage
+                   + technical_complexity + rulemaking_friction + procurement_pressure
+                   - reform_control * control_leakage
                    - public_backlash + stochastic_noise
 captured_before_audit = capture_pressure >= threshold
 detection_probability = f(audit, enforcement, transparency, watchdogs, attention,
@@ -213,13 +229,14 @@ Scenario reports include:
 - revolving-door influence;
 - technical rulemaking distortion;
 - procurement bias;
+- influence-network opacity, legibility, donor concentration, intermediary centrality, official-access centrality, procurement exposure, revolving-door bridge strength, comment-network load, and venue-shift load;
 - enforcement capacity, detection, sanctions, and backlog;
 - Wilson intervals for binomial capture and reform-success outcomes.
 
 The primary synthetic comparison for reform packages is `totalInfluenceDistortion`, not `captureRate`. If observed capture falls while hidden influence, hidden capture, total distortion, or substitution failure risk rises, the validation audit treats the reform as a possible failure rather than a clean success.
 
-Generated paper tables and figures are derived from committed report CSVs. The full report snapshots, source moments, validation summary, and calibration queue remain in the repository and are included in the Wiley submission support bundle.
+Generated paper tables and figures are derived from committed report CSVs. The full report snapshots, portfolio screen, source moments, validation summary, substitution audit, and calibration queue remain in the repository and are included in the Wiley submission support bundle.
 
 ## Known Boundaries
 
-The current model is strongest as a comparative mechanism prototype. The 2024 EPA/ENV source snapshot is not yet representative for dark-money or public-financing calibration. The revolving-door panel has been expanded for mechanism testing, but it remains a tracked fixture unless a live licensed/exported source is configured. Several strong-reform scenarios can still sit near a saturated observed-capture region, so the paper emphasizes total distortion, substitution diagnostics, and robustness fields rather than definitive reform rankings.
+The current model is strongest as a comparative mechanism prototype. The 2024 EPA/ENV source snapshot is not yet representative for dark-money, public-financing, or intermediary-network calibration. The revolving-door panel has been expanded for mechanism testing, but it remains a tracked fixture unless a live licensed/exported source is configured. Several strong-reform scenarios can still sit near a saturated observed-capture region, so the paper emphasizes total distortion, substitution diagnostics, network-path diagnostics, and robustness fields rather than definitive reform rankings.

@@ -4,6 +4,7 @@ import lobbycapture.metrics.ScenarioReport;
 import lobbycapture.reporting.AblationRunner;
 import lobbycapture.reporting.CampaignRunner;
 import lobbycapture.reporting.InteractionRunner;
+import lobbycapture.reporting.PortfolioRunner;
 import lobbycapture.reporting.SensitivityRunner;
 import lobbycapture.simulation.Scenario;
 import lobbycapture.simulation.ScenarioCatalog;
@@ -53,6 +54,12 @@ public final class Main {
             System.out.println("Wrote reports/lobby-capture-interactions.md");
             return;
         }
+        if (options.portfolio) {
+            new PortfolioRunner().write(Path.of("reports"), options.runs, options.contests, options.seed);
+            System.out.println("Wrote reports/lobby-capture-portfolio.csv");
+            System.out.println("Wrote reports/lobby-capture-portfolio.md");
+            return;
+        }
         Scenario scenario = ScenarioCatalog.require(options.scenarioKey);
         ScenarioReport report = new Simulator().run(scenario, options.runs, options.contests, options.seed);
         printSummary(report);
@@ -85,6 +92,13 @@ public final class Main {
         System.out.println("captureRateSeedStdDev=" + format(report.captureRateSeedStdDev()));
         System.out.println("hiddenInfluenceSeedStdDev=" + format(report.hiddenInfluenceSeedStdDev()));
         System.out.println("totalInfluenceDistortionSeedStdDev=" + format(report.totalInfluenceDistortionSeedStdDev()));
+        System.out.println("networkOpacityIndex=" + format(report.networkOpacityIndex()));
+        System.out.println("donorNetworkConcentration=" + format(report.donorNetworkConcentration()));
+        System.out.println("intermediaryCentrality=" + format(report.intermediaryCentrality()));
+        System.out.println("procurementNetworkExposure=" + format(report.procurementNetworkExposure()));
+        System.out.println("revolvingDoorBridgeIndex=" + format(report.revolvingDoorBridgeIndex()));
+        System.out.println("commentNetworkLoad=" + format(report.commentNetworkLoad()));
+        System.out.println("venueShiftNetworkLoad=" + format(report.venueShiftNetworkLoad()));
         System.out.println("directionalScore=" + format(report.directionalScore()));
     }
 
@@ -99,6 +113,7 @@ public final class Main {
                   make sensitivity
                   make ablation
                   make interactions
+                  make portfolio
 
                 Options:
                   --list                 List scenarios.
@@ -110,6 +125,7 @@ public final class Main {
                   --sensitivity          Sweep reform strengths and evasion freedom.
                   --ablation             Remove each full-bundle reform component in turn.
                   --interactions         Run two-way reform interaction sweeps.
+                  --portfolio            Rank reform portfolios by total distortion and substitution diagnostics.
                   --help                 Show this help.
                 """);
     }
@@ -128,6 +144,7 @@ public final class Main {
             boolean sensitivity,
             boolean ablation,
             boolean interactions,
+            boolean portfolio,
             boolean help
     ) {
         private static Options parse(String[] args) {
@@ -140,6 +157,7 @@ public final class Main {
             boolean sensitivity = false;
             boolean ablation = false;
             boolean interactions = false;
+            boolean portfolio = false;
             boolean help = false;
             List<String> arguments = List.of(args);
             for (int index = 0; index < arguments.size(); index++) {
@@ -154,6 +172,7 @@ public final class Main {
                     case "--sensitivity" -> sensitivity = true;
                     case "--ablation" -> ablation = true;
                     case "--interactions" -> interactions = true;
+                    case "--portfolio" -> portfolio = true;
                     case "--help", "-h" -> help = true;
                     default -> throw new IllegalArgumentException("Unknown argument: " + arg);
                 }
@@ -161,7 +180,7 @@ public final class Main {
             if (runs <= 0 || contests <= 0) {
                 throw new IllegalArgumentException("--runs and --contests must be positive.");
             }
-            return new Options(scenario, runs, contests, seed, list, campaign, sensitivity, ablation, interactions, help);
+            return new Options(scenario, runs, contests, seed, list, campaign, sensitivity, ablation, interactions, portfolio, help);
         }
 
         private static String requireValue(List<String> arguments, int index, String option) {

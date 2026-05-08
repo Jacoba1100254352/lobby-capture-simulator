@@ -14,6 +14,7 @@ make campaign
 make sensitivity
 make ablation
 make interactions
+make portfolio
 make source-moments
 make validate
 make calibration-queue
@@ -49,6 +50,11 @@ make paper-artifacts-check
 
 - `reports/lobby-capture-interactions.csv`
 - `reports/lobby-capture-interactions.md`
+
+`make portfolio` writes:
+
+- `reports/lobby-capture-portfolio.csv`
+- `reports/lobby-capture-portfolio.md`
 
 Each report run also writes a `*.manifest.json` sidecar with seed, runs, contests, command, Java version, source Git state, and calibration checksum. The Git-state field excludes tracked generated reports, paper tables, paper figures, and the pinned 2024-env snapshot outputs so rerunning the report suite does not falsely mark later manifests dirty because earlier generated artifacts changed. `make validate` compares committed report snapshots against benchmark plausibility ranges and writes:
 
@@ -126,7 +132,7 @@ The Wiley-template path is available but intentionally separate from the default
 - `paper/regulation-governance-wiley.tex` is the Regulation & Governance/Wiley wrapper using Wiley's `USG` class.
 - `make paper-wiley` builds the Wiley wrapper after the official bundle and TeX dependencies are available. It writes ignored scratch files under `paper/.wiley-build/` to work around a BibTeX failure in the current Wiley archive's primary Chicago style file while still using the downloaded Wiley class and template assets.
 - `make submission-package` builds the Wiley wrapper and writes `dist/lobby-capture-wiley-submission.zip` with the root LaTeX file, compiled PDF, patched peer-review class copy, bibliography, generated tables, and generated figure files.
-- `make paper-artifacts` is the full paper refresh target. It reruns the committed report sweeps, source moments, validation, calibration queue, tables, figures, local PDF, Wiley PDF, word count, and submission zip.
+- `make paper-artifacts` is the full paper refresh target. It reruns the committed report sweeps, portfolio screen, source moments, validation, calibration queue, tables, figures, local PDF, Wiley PDF, word count, and submission zip.
 - `make paper-artifacts-check` runs the same refresh and then verifies the local PDF, Wiley PDF, and submission zip are present, fresh relative to their inputs, and free of generic Wiley-template placeholder text. CI uses this target so stale paper inputs cannot pass without rebuilding the PDFs and submission package.
 
 Makefile report targets set deterministic `LOBBY_CAPTURE_REPORT_TIMESTAMP` and `LOBBY_CAPTURE_REPORT_GIT_COMMIT` values so committed CSV, Markdown, and manifest artifacts can be regenerated without timestamp/provenance-only diffs. Direct `java -cp out/classes lobbycapture.Main ...` runs still use the live clock and current Git commit unless those variables or `SOURCE_DATE_EPOCH` are set.
@@ -154,6 +160,7 @@ It includes:
 - split validation-facing source metrics for all-flow traceability, dark-money direct visibility, resident voucher participation, and candidate public-financing uptake;
 - evasion profiles with dark-pool, litigation-funding, procurement-consultant, and revolving-door substitution pressure;
 - an influence-substitution engine that reports hidden influence, preserved influence capacity, messenger substitution, venue substitution, and net transparency gain after reforms constrain a channel;
+- an influence-network diagnostic layer that reports modeled path opacity, donor concentration, intermediary centrality, official-access centrality, procurement exposure, revolving-door bridges, comment-network load, venue-shift load, and legibility;
 - arena-specific capture susceptibility;
 - transparency, public financing, democracy vouchers, cooling-off, blind review, public advocates, enforcement, anti-astroturf systems, defensive-spend caps, and dark-money disclosure;
 - raw and composite scenario metrics plus sensitivity, ablation, adaptation-speed, and reform-decay metrics.

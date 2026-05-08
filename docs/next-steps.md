@@ -1,6 +1,6 @@
 # Next Steps
 
-The simulator now has a lobbying-centered MVP with calibration fixtures, source-native live calibration downloaders, source JSON parser fixtures, explicit client funding, rulemaking comment dockets, comment triage, evasion profiles, an influence-substitution engine, adaptive clients/regulators/watchdogs, campaign reports, sensitivity sweeps, ablation sweeps, interaction sweeps, validation summaries, calibration queues, source moments, generated paper tables and figures, a 2024 EPA/ENV snapshot, and a Regulation & Governance-oriented working paper scaffold.
+The simulator now has a lobbying-centered MVP with calibration fixtures, source-native live calibration downloaders, source JSON parser fixtures, explicit client funding, rulemaking comment dockets, comment triage, evasion profiles, an influence-substitution engine, an influence-network diagnostic layer, adaptive clients/regulators/watchdogs, campaign reports, sensitivity sweeps, ablation sweeps, interaction sweeps, reform-portfolio screens, validation summaries, calibration queues, source moments, generated paper tables and figures, a 2024 EPA/ENV snapshot, and a Regulation & Governance-oriented working paper scaffold.
 
 ## Completed in the current slice
 
@@ -19,6 +19,8 @@ The simulator now has a lobbying-centered MVP with calibration fixtures, source-
 - `docs/research/research-synthesis.md` and `data/calibration/parameter-map.csv` translate the Deep Research reports into model and validation targets.
 - Comment triage reports unique-information share, review burden, duplicate compression, procedural acknowledgment, and substantive uptake.
 - Influence substitution reports pressure to switch, preserved influence capacity, hidden influence, messenger substitution, venue substitution, and net transparency gain.
+- Influence-network diagnostics report path opacity, donor concentration, intermediary centrality, official-access centrality, procurement exposure, revolving-door bridges, comment-network load, venue-shift load, and legibility.
+- `make portfolio` screens reform bundles by total distortion, hidden capture, substitution risk, administrative burden, network opacity, and legitimate-advocacy chill.
 - `make snapshot-2024-env` writes a closed-window snapshot manifest and freezes normalized rows for the 2024 environmental validation slice.
 - `scripts/run-2024-env-live-snapshot.sh` executes the pinned 2024 EPA/ENV live run, preserves ignored raw payloads, and records public API rate-limit gaps.
 - The current committed 2024 EPA/ENV snapshot has 121 LDA rows, 600 OpenFEC rows, 200 combined Regulations.gov/Federal Register regulatory rows, and 200 USAspending rows; the remaining empirical gap is the fixture-based revolving-door panel and the lack of dark-money/public-financing rows in the current FEC slice.
@@ -76,4 +78,5 @@ Deliverables:
 
 - tune comment authenticity, comment compression, unique-information weight, detection, and sanction incidence;
 - decide whether high-end Super PAC large-donor dependence should be scenario-specific rather than applied to every report;
-- add scenario coverage where hidden substitution and revolving-door influence are intentionally stressed.
+- add scenario coverage where hidden substitution and revolving-door influence are intentionally stressed;
+- replace synthetic influence-network diagnostics with direct network panels where sources permit.

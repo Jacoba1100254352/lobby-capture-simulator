@@ -82,7 +82,16 @@ public record ScenarioReport(
         double administrativeCostIndex,
         double captureRateSeedStdDev,
         double hiddenInfluenceSeedStdDev,
-        double totalInfluenceDistortionSeedStdDev
+        double totalInfluenceDistortionSeedStdDev,
+        double networkOpacityIndex,
+        double donorNetworkConcentration,
+        double intermediaryCentrality,
+        double officialAccessCentrality,
+        double procurementNetworkExposure,
+        double revolvingDoorBridgeIndex,
+        double commentNetworkLoad,
+        double venueShiftNetworkLoad,
+        double networkLegibilityIndex
 ) {
     public double captureControlScore() {
         return MetricDefinition.average(
@@ -112,6 +121,8 @@ public record ScenarioReport(
                 MetricDefinition.lowerIsBetter(totalInfluenceDistortion),
                 MetricDefinition.lowerIsBetter(substitutionFailureRisk),
                 MetricDefinition.lowerIsBetter(hiddenCaptureIndex),
+                MetricDefinition.lowerIsBetter(networkOpacityIndex),
+                MetricDefinition.lowerIsBetter(venueShiftNetworkLoad),
                 MetricDefinition.lowerIsBetter(administrativeCostIndex)
         );
     }

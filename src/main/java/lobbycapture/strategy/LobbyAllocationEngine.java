@@ -4,6 +4,9 @@ import lobbycapture.actor.LobbyOrganization;
 import lobbycapture.arena.ContestOutcome;
 import lobbycapture.budget.ClientFundingModel;
 import lobbycapture.budget.ClientFundingResult;
+import lobbycapture.network.InfluenceNetworkModel;
+import lobbycapture.network.InfluenceNetworkPath;
+import lobbycapture.network.InfluenceNetworkSnapshot;
 import lobbycapture.policy.CommentCampaign;
 import lobbycapture.policy.CommentTriageModel;
 import lobbycapture.policy.CommentTriageReport;
@@ -59,6 +62,7 @@ public final class LobbyAllocationEngine {
         Docket docket = contest.docket();
         ChannelAllocation totalAllocation = ChannelAllocation.zero();
         List<LobbySpendRecord> records = new ArrayList<>();
+        List<InfluenceNetworkPath> networkPaths = new ArrayList<>();
 
         for (LobbyOrganization group : world.lobbyOrganizations()) {
             double preference = preferenceFor(group, contest);
@@ -100,6 +104,15 @@ public final class LobbyAllocationEngine {
 
             ChannelAllocation allocation = ChannelAllocation.forStrategy(strategy, spend);
             totalAllocation = totalAllocation.plus(allocation);
+            networkPaths.addAll(InfluenceNetworkModel.pathsFor(
+                    group,
+                    contest,
+                    reform,
+                    world,
+                    allocation,
+                    funding.donorInfluenceGini(),
+                    substitution
+            ));
             totalSpend += spend;
             substitutionWeightSum += spend;
             substitutionPressureSum += spend * substitution.substitutionPressure();
@@ -221,6 +234,7 @@ public final class LobbyAllocationEngine {
                 weighted(transparencyGainSum, substitutionWeightSum),
                 weighted(messengerSubstitutionSum, substitutionWeightSum),
                 weighted(venueSubstitutionSum, substitutionWeightSum),
+                InfluenceNetworkSnapshot.fromPaths(networkPaths),
                 records
         );
     }

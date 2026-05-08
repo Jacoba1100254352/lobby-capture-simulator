@@ -79,6 +79,15 @@ public final class MetricsAccumulator {
     private double visibleLobbyingSpendSum;
     private double intermediarySpendSum;
     private double enforcementCapacitySum;
+    private double networkOpacitySum;
+    private double donorNetworkConcentrationSum;
+    private double intermediaryCentralitySum;
+    private double officialAccessCentralitySum;
+    private double procurementNetworkExposureSum;
+    private double revolvingDoorBridgeSum;
+    private double commentNetworkLoadSum;
+    private double venueShiftNetworkLoadSum;
+    private double networkLegibilitySum;
     private ChannelAllocation allocationSum = ChannelAllocation.zero();
     private final List<Double> runCaptureRates = new ArrayList<>();
     private final List<Double> runHiddenInfluenceShares = new ArrayList<>();
@@ -151,17 +160,31 @@ public final class MetricsAccumulator {
         double technicalRulemakingDistortion = technicalRulemakingDistortion(contest, triage);
         double enforcementCapacity = enforcementCapacity(contest, world, reform);
         double hiddenCaptureIndex = hiddenCaptureIndex(outcome, totalSpend);
+        var network = outcome.influenceResult().networkSnapshot();
         commentFloodingSum += commentFloodingIndex;
         technicalRulemakingDistortionSum += technicalRulemakingDistortion;
         enforcementCapacitySum += enforcementCapacity;
+        networkOpacitySum += network.networkOpacityIndex();
+        donorNetworkConcentrationSum += network.donorNetworkConcentration();
+        intermediaryCentralitySum += network.intermediaryCentrality();
+        officialAccessCentralitySum += network.officialAccessCentrality();
+        procurementNetworkExposureSum += network.procurementNetworkExposure();
+        revolvingDoorBridgeSum += network.revolvingDoorBridgeIndex();
+        commentNetworkLoadSum += network.commentNetworkLoad();
+        venueShiftNetworkLoadSum += network.venueShiftNetworkLoad();
+        networkLegibilitySum += network.networkLegibilityIndex();
         hiddenCaptureIndexSum += hiddenCaptureIndex;
         totalInfluenceDistortionSum += totalInfluenceDistortion(
                 outcome,
                 hiddenCaptureIndex,
                 commentFloodingIndex,
-                technicalRulemakingDistortion
+                technicalRulemakingDistortion,
+                network.networkOpacityIndex(),
+                network.intermediaryCentrality(),
+                network.procurementNetworkExposure(),
+                network.venueShiftNetworkLoad()
         );
-        substitutionFailureRiskSum += substitutionFailureRisk(outcome, hiddenCaptureIndex, totalSpend);
+        substitutionFailureRiskSum += substitutionFailureRisk(outcome, hiddenCaptureIndex, totalSpend, network.networkOpacityIndex(), network.venueShiftNetworkLoad());
         channelSwitchSum += outcome.influenceResult().channelSwitches();
         evasionShiftSum += outcome.influenceResult().evasionShifts();
         evasionPenaltySum += outcome.evasionPenalty();
@@ -280,7 +303,16 @@ public final class MetricsAccumulator {
                 administrativeCostSum / total,
                 stdDev(runCaptureRates),
                 stdDev(runHiddenInfluenceShares),
-                stdDev(runTotalInfluenceDistortions)
+                stdDev(runTotalInfluenceDistortions),
+                networkOpacitySum / total,
+                donorNetworkConcentrationSum / total,
+                intermediaryCentralitySum / total,
+                officialAccessCentralitySum / total,
+                procurementNetworkExposureSum / total,
+                revolvingDoorBridgeSum / total,
+                commentNetworkLoadSum / total,
+                venueShiftNetworkLoadSum / total,
+                networkLegibilitySum / total
         );
     }
 
@@ -337,7 +369,11 @@ public final class MetricsAccumulator {
             ContestOutcome outcome,
             double hiddenCaptureIndex,
             double commentFloodingIndex,
-            double technicalRulemakingDistortion
+            double technicalRulemakingDistortion,
+            double networkOpacity,
+            double intermediaryCentrality,
+            double procurementNetworkExposure,
+            double venueShiftNetworkLoad
     ) {
         return Values.clamp(
                 (0.16 * (outcome.captured() ? 1.0 : 0.0))
@@ -350,13 +386,23 @@ public final class MetricsAccumulator {
                         + (0.06 * outcome.enforcementForbearance())
                         + (0.05 * commentFloodingIndex)
                         + (0.04 * technicalRulemakingDistortion)
+                        + (0.04 * networkOpacity)
+                        + (0.03 * intermediaryCentrality)
+                        + (0.03 * procurementNetworkExposure)
+                        + (0.03 * venueShiftNetworkLoad)
                         + (0.02 * outcome.administrativeCost()),
                 0.0,
                 1.0
         );
     }
 
-    private static double substitutionFailureRisk(ContestOutcome outcome, double hiddenCaptureIndex, double totalSpend) {
+    private static double substitutionFailureRisk(
+            ContestOutcome outcome,
+            double hiddenCaptureIndex,
+            double totalSpend,
+            double networkOpacity,
+            double venueShiftNetworkLoad
+    ) {
         double defensiveShare = totalSpend == 0.0 ? 0.0 : outcome.influenceResult().defensiveSpend() / totalSpend;
         return Values.clamp(
                 (0.30 * hiddenCaptureIndex)
@@ -364,7 +410,9 @@ public final class MetricsAccumulator {
                         + (0.18 * outcome.influenceResult().influencePreservationRate())
                         + (0.12 * outcome.influenceResult().venueSubstitutionRate())
                         + (0.10 * outcome.influenceResult().messengerSubstitutionRate())
-                        + (0.08 * defensiveShare),
+                        + (0.08 * defensiveShare)
+                        + (0.06 * networkOpacity)
+                        + (0.05 * venueShiftNetworkLoad),
                 0.0,
                 1.0
         );
