@@ -39,6 +39,7 @@ def extract_scope(scope: str, root: Path, prefix: str) -> list[dict[str, str]]:
     rows.extend(regulatory_moments(scope, root / f"{prefix}regulatory-dockets.csv"))
     rows.extend(usaspending_moments(scope, root / f"{prefix}usaspending-awards.csv"))
     rows.extend(revolving_door_moments(scope, root / f"{prefix}revolving-door.csv"))
+    rows.extend(intermediary_moments(scope, root / f"{prefix}intermediaries.csv"))
     return rows
 
 
@@ -113,6 +114,16 @@ def usaspending_moments(scope: str, path: Path) -> list[dict[str, str]]:
     by_agency = grouped_amount(rows, "agency")
     by_sub_agency = grouped_amount(rows, "subAgency")
     total = sum(number(row.get("amount")) for row in rows)
+    single_bid_rows = [row for row in rows if number(row.get("numberOfOffers")) <= 1.0 and number(row.get("numberOfOffers")) > 0.0]
+    modified_rows = [
+        row
+        for row in rows
+        if flag(row.get("exPostModification")) or row.get("modificationNumber", "").strip() not in {"", "0", "0.0", "none", "None"}
+    ]
+    price_only_rows = [row for row in rows if flag(row.get("priceOnlyAward"))]
+    firewall_rows = [row for row in rows if flag(row.get("firewallCovered"))]
+    uei_rows = [row for row in rows if row.get("uei", "").strip()]
+    piid_rows = [row for row in rows if row.get("piid", "").strip()]
     return [
         moment(scope, "usaspending", "procurementRows", len(rows), "observed", "normalized USAspending award rows"),
         moment(scope, "usaspending", "procurementTotalAwards", total, "observed", "sum of normalized USAspending award amount"),
@@ -123,6 +134,13 @@ def usaspending_moments(scope: str, path: Path) -> list[dict[str, str]]:
         moment(scope, "usaspending", "procurementAgencyHerfindahl", herfindahl(by_agency), "observed", "awarding-agency amount Herfindahl"),
         moment(scope, "usaspending", "procurementSubAgencyTop3Share", top_share(by_sub_agency, 3), "observed", "top three sub-agencies share of normalized award amount"),
         moment(scope, "usaspending", "procurementAwardCount", sum(number(row.get("awardCount")) for row in rows), "observed", "sum of normalized award or transaction counts"),
+        moment(scope, "usaspending", "procurementSingleBidShare", safe_divide(len(single_bid_rows), len(rows)), "observed_proxy", "share of rows with one known offer"),
+        moment(scope, "usaspending", "procurementAmountWeightedSingleBidShare", safe_divide(sum(number(row.get("amount")) for row in single_bid_rows), total), "observed_proxy", "award-amount share with one known offer"),
+        moment(scope, "usaspending", "procurementExPostModificationShare", safe_divide(len(modified_rows), len(rows)), "observed_proxy", "share of rows marked as ex-post modifications or nonzero modifications"),
+        moment(scope, "usaspending", "procurementPriceOnlyAwardShare", safe_divide(len(price_only_rows), len(rows)), "observed_proxy", "share of rows marked as price-only or one-offer awards"),
+        moment(scope, "usaspending", "procurementFirewallCoverageShare", safe_divide(len(firewall_rows), len(rows)), "observed_proxy", "share of rows covered by a procurement-firewall flag"),
+        moment(scope, "usaspending", "procurementKnownUeiShare", safe_divide(len(uei_rows), len(rows)), "diagnostic", "share of rows carrying a recipient UEI"),
+        moment(scope, "usaspending", "procurementKnownPiidShare", safe_divide(len(piid_rows), len(rows)), "diagnostic", "share of rows carrying a procurement instrument identifier"),
     ]
 
 
@@ -143,6 +161,33 @@ def revolving_door_moments(scope: str, path: Path) -> list[dict[str, str]]:
         moment(scope, "revolving-door", "revolvingDoorHighInfluenceShare", safe_divide(sum(1 for row in rows if number(row.get("influenceShare")) >= 0.60), len(rows)), "proxy", "share of rows with high normalized influence"),
         moment(scope, "revolving-door", "revolvingDoorInfluenceWeightedFormerOfficialShare", weighted_indicator(rows, "formerOfficialRole", "influenceShare"), "proxy", "influence-weighted former-official share"),
         moment(scope, "revolving-door", "revolvingDoorInfluenceMean", average([number(row.get("influenceShare")) for row in rows]), "proxy", "mean normalized influence share from source panel"),
+        moment(scope, "revolving-door", "revolvingDoorConfidenceMean", average([number(row.get("confidence")) for row in rows]), "diagnostic", "mean source-match confidence for revolving-door records"),
+    ]
+
+
+def intermediary_moments(scope: str, path: Path) -> list[dict[str, str]]:
+    rows = read_rows(path)
+    if not rows:
+        return [moment(scope, "intermediary", "intermediaryRows", 0.0, "observed", f"{path} missing or empty")]
+    by_org = grouped_amount(rows, "organization", "revenue")
+    total_revenue = sum(number(row.get("revenue")) for row in rows)
+    total_political = sum(number(row.get("politicalSpend")) for row in rows)
+    total_grants = sum(number(row.get("grantmaking")) for row in rows)
+    association_rows = [row for row in rows if "501(c)(6)" in row.get("subsection", "")]
+    c4_rows = [row for row in rows if "501(c)(4)" in row.get("subsection", "")]
+    c3_rows = [row for row in rows if "501(c)(3)" in row.get("subsection", "")]
+    section_527_rows = [row for row in rows if "527" in row.get("subsection", "") or "8872" in row.get("sourceType", "").lower()]
+    return [
+        moment(scope, "intermediary", "intermediaryRows", len(rows), "observed", "normalized nonprofit, 527, association, or think-tank intermediary rows"),
+        moment(scope, "intermediary", "intermediaryTotalRevenue", total_revenue, "observed_proxy", "sum of normalized intermediary revenue"),
+        moment(scope, "intermediary", "intermediaryPoliticalSpendShare", safe_divide(total_political, total_revenue), "observed_proxy", "political spend share of normalized intermediary revenue"),
+        moment(scope, "intermediary", "intermediaryTop3RevenueShare", top_share(by_org, 3), "observed_proxy", "top three intermediary organizations by revenue"),
+        moment(scope, "intermediary", "intermediaryDonorDisclosureMean", average([number(row.get("donorDisclosure")) for row in rows]), "observed_proxy", "mean donor/source disclosure score"),
+        moment(scope, "intermediary", "intermediaryAssociationShare", safe_divide(len(association_rows), len(rows)), "observed_proxy", "share of rows marked 501(c)(6) association"),
+        moment(scope, "intermediary", "intermediaryC4Share", safe_divide(len(c4_rows), len(rows)), "observed_proxy", "share of rows marked 501(c)(4) social welfare"),
+        moment(scope, "intermediary", "intermediaryC3Share", safe_divide(len(c3_rows), len(rows)), "observed_proxy", "share of rows marked 501(c)(3) nonprofit"),
+        moment(scope, "intermediary", "intermediary527PoliticalSpendShare", safe_divide(sum(number(row.get("politicalSpend")) for row in section_527_rows), total_political), "observed_proxy", "527/IRS 8872 share of intermediary political spending"),
+        moment(scope, "intermediary", "intermediaryGrantmakingShare", safe_divide(total_grants, total_revenue), "observed_proxy", "grantmaking share of normalized intermediary revenue"),
     ]
 
 
@@ -232,6 +277,10 @@ def number(value: object) -> float:
         return 0.0
 
 
+def flag(value: object) -> bool:
+    return str(value or "").strip().lower() in {"1", "true", "yes", "y"}
+
+
 def moment(scope: str, source: str, metric: str, value: float | int, evidence_type: str, notes: str) -> dict[str, str]:
     return {
         "scope": scope,
@@ -307,9 +356,23 @@ def representativeness_warnings(rows: list[dict[str, str]]) -> list[str]:
         warnings.append(
             "Snapshot revolving-door rows are tracked fixtures; they support schema and mechanism tests, not empirical calibration."
         )
-    warnings.append(
-        "Think-tank, association, and sponsored-expert intermediary routing is modeled but not yet anchored by a direct public-data panel."
-    )
+    intermediary_rows = metric_value(rows, "snapshot", "intermediary", "intermediaryRows")
+    if intermediary_rows <= 0:
+        warnings.append(
+            "Think-tank, association, and sponsored-expert intermediary routing is modeled but not yet anchored by a direct public-data panel."
+        )
+    elif metric_value(rows, "snapshot", "intermediary", "intermediaryDonorDisclosureMean") < 0.50:
+        warnings.append(
+            "Snapshot intermediary donor/source disclosure is low; hidden-routing claims should remain source-diagnostic rather than causal."
+        )
+    if metric_value(rows, "snapshot", "usaspending", "procurementKnownUeiShare") < 0.50:
+        warnings.append(
+            "Snapshot procurement rows have weak UEI coverage; procurement-network validation should be treated as incomplete."
+        )
+    if metric_value(rows, "snapshot", "usaspending", "procurementKnownPiidShare") < 0.50:
+        warnings.append(
+            "Snapshot procurement rows have weak PIID coverage; SAM/FPDS-style bridge diagnostics remain incomplete."
+        )
     return warnings
 
 

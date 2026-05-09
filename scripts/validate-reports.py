@@ -11,6 +11,7 @@ from pathlib import Path
 BENCHMARKS = Path("data/calibration/empirical-benchmarks.csv")
 PARAMETER_MAP = Path("data/calibration/parameter-map.csv")
 REPORTS = Path("reports")
+SOURCE_MOMENTS = Path("reports/source-moments.csv")
 
 
 def main() -> int:
@@ -18,12 +19,17 @@ def main() -> int:
     parser.add_argument("--benchmarks", type=Path, default=BENCHMARKS)
     parser.add_argument("--parameter-map", type=Path, default=PARAMETER_MAP)
     parser.add_argument("--reports", type=Path, default=REPORTS)
+    parser.add_argument("--source-moments", type=Path, default=SOURCE_MOMENTS)
     parser.add_argument("--output", type=Path, default=REPORTS)
     args = parser.parse_args()
 
     benchmarks = read_benchmarks(args.benchmarks)
     if args.parameter_map.exists():
         benchmarks.extend(read_parameter_map(args.parameter_map))
+    source_moments = read_source_moments(args.source_moments)
+    source_metrics = set(source_moments)
+    source_benchmarks = [benchmark for benchmark in benchmarks if benchmark["metric"] in source_metrics]
+    report_benchmarks = [benchmark for benchmark in benchmarks if benchmark["metric"] not in source_metrics]
     report_paths = sorted(args.reports.glob("lobby-capture-*.csv"))
     report_paths = [path for path in report_paths if path.name != "validation-summary.csv"]
     if not report_paths:
@@ -31,7 +37,8 @@ def main() -> int:
 
     rows = []
     for report in report_paths:
-        rows.extend(validate_report(report, benchmarks))
+        rows.extend(validate_report(report, report_benchmarks))
+    rows.extend(validate_source_moments(args.source_moments, source_benchmarks, source_moments))
     substitution_rows = audit_substitution_failures(report_paths)
     args.output.mkdir(parents=True, exist_ok=True)
     write_csv(args.output / "validation-summary.csv", rows)
@@ -106,6 +113,43 @@ def validate_report(report: Path, benchmarks: list[dict[str, str]]) -> list[dict
             status = "miss"
             note = "scenario range outside benchmark range"
         output.append(summary_row(report, benchmark, f4(observed_min), f4(observed_max), status, note))
+    return output
+
+
+def read_source_moments(path: Path) -> dict[str, float]:
+    if not path.exists():
+        return {}
+    with path.open(newline="", encoding="utf-8") as source:
+        return {
+            row["metric"]: float(row["value"])
+            for row in csv.DictReader(source)
+            if row.get("scope") == "snapshot" and row.get("metric") and row.get("value")
+        }
+
+
+def validate_source_moments(
+        source_path: Path,
+        benchmarks: list[dict[str, str]],
+        source_moments: dict[str, float],
+) -> list[dict[str, str]]:
+    output = []
+    for benchmark in benchmarks:
+        metric = benchmark["metric"]
+        if metric not in source_moments:
+            output.append(summary_row(source_path, benchmark, "", "", "unknown", "source moment not present"))
+            continue
+        value = source_moments[metric]
+        benchmark_min = float(benchmark["min"])
+        benchmark_max = float(benchmark["max"])
+        if benchmark_min <= value <= benchmark_max:
+            status = "fit"
+            note = "source moment inside benchmark range"
+        else:
+            status = "miss"
+            note = "source moment outside benchmark range"
+        source_benchmark = dict(benchmark)
+        source_benchmark["targetKind"] = "source_moment"
+        output.append(summary_row(source_path, source_benchmark, f4(value), f4(value), status, note))
     return output
 
 

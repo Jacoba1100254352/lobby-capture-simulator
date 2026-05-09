@@ -211,7 +211,25 @@ def fetch_usaspending(output: Path) -> int:
             break
     write_rows(
         output,
-        ["awardId", "recipient", "agency", "subAgency", "awardType", "amount", "issueDomain", "awardCount"],
+        [
+            "awardId",
+            "recipient",
+            "agency",
+            "subAgency",
+            "awardType",
+            "amount",
+            "issueDomain",
+            "awardCount",
+            "uei",
+            "piid",
+            "modificationNumber",
+            "actionDate",
+            "competitionType",
+            "numberOfOffers",
+            "priceOnlyAward",
+            "exPostModification",
+            "firewallCovered",
+        ],
         rows,
         "USAspending awards",
     )
@@ -233,6 +251,11 @@ def normalize_usaspending_records(records: list[dict[str, object]]) -> list[dict
         agency = first_text(record, "Awarding Agency", "awarding_agency", default="Unknown agency")
         sub_agency = first_text(record, "Awarding Sub Agency", "awarding_sub_agency", default=agency)
         award_type = first_text(record, "Award Type", "award_type", default="contract")
+        modification_number = first_text(record, "Modification Number", "modification_number", default="0")
+        number_of_offers = first_text(record, "Number of Offers", "number_of_offers_received", default="0")
+        competition_type = first_text(record, "Competition Type", "extent_competed", default="unknown")
+        single_bid = numeric_value(number_of_offers) <= 1.0 and numeric_value(number_of_offers) > 0.0
+        modified = modification_number.strip() not in {"", "0", "0.0", "none", "None"}
         rows.append(
             {
                 "awardId": award_id,
@@ -243,6 +266,15 @@ def normalize_usaspending_records(records: list[dict[str, object]]) -> list[dict
                 "amount": money_millions(first_text(record, "Award Amount", "award_amount", "amount", default="0")),
                 "issueDomain": os.environ.get("USASPENDING_ISSUE_DOMAIN", "procurement"),
                 "awardCount": 1,
+                "uei": first_text(record, "Recipient UEI", "recipient_uei", "UEI", default=""),
+                "piid": first_text(record, "PIID", "piid", default=award_id),
+                "modificationNumber": modification_number,
+                "actionDate": first_text(record, "Action Date", "action_date", default=""),
+                "competitionType": competition_type,
+                "numberOfOffers": number_of_offers,
+                "priceOnlyAward": str(single_bid or "price only" in competition_type.lower()).lower(),
+                "exPostModification": str(modified).lower(),
+                "firewallCovered": str(os.environ.get("USASPENDING_FIREWALL_COVERED", "false").lower() == "true").lower(),
             }
         )
     return rows
@@ -484,6 +516,13 @@ def money_millions(value: str) -> float:
     except ValueError:
         return 0.0
     return round(amount / 1_000_000.0 if amount > 1_000 else amount, 4)
+
+
+def numeric_value(value: str) -> float:
+    try:
+        return float(str(value).replace(",", ""))
+    except ValueError:
+        return 0.0
 
 
 def disclosure_lag_score(value: str) -> float:

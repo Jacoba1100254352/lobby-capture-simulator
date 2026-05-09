@@ -23,16 +23,16 @@ The matching spine should prefer stable source-native identifiers:
 | --- | --- | --- | --- | --- |
 | Senate/LDA bulk and API | Direct observed | visible lobbying spend, issue-domain mix, registrant/client concentration, agencies and covered positions | `LDA_API_KEY`; <https://lda.gov/api/register/> | Implemented source-native fetcher and 2024 ENV snapshot |
 | FEC/OpenFEC | Direct observed | hard-money flows, PAC/party committees, independent expenditures, electioneering communications, lobbyist bundling | `FEC_API_KEY`; <https://api.data.gov/signup/> | Implemented for six national party committees; outside-spending panel still needed |
-| IRS 8871/8872 | Direct observed for 527s | politically active organization identities and reported receipts/disbursements | public bulk/web data | Planned |
-| IRS TEOS and Form 990 XML | Direct observed nonprofit filings, with donor limits | nonprofit intermediaries, association capacity, grantee/contractor links | public bulk; `IRS_TEOS_BULK_BASE`, `IRS_FORM990_BULK_BASE` | Planned |
-| ProPublica Nonprofit Explorer | Convenience layer | nonprofit metadata and 990 lookup by EIN | `PROPUBLICA_NONPROFIT_API_KEY`; <https://projects.propublica.org/nonprofits/api> | Planned optional overlay |
+| IRS 8871/8872 | Direct observed for 527s | politically active organization identities and reported receipts/disbursements | public bulk/web data | Normalized import schema and fixture panel implemented; source-native bulk fetch still planned |
+| IRS TEOS and Form 990 XML | Direct observed nonprofit filings, with donor limits | nonprofit intermediaries, association capacity, grantee/contractor links | public bulk; `IRS_TEOS_BULK_BASE`, `IRS_FORM990_BULK_BASE` | Normalized import schema and fixture panel implemented; source-native bulk fetch still planned |
+| ProPublica Nonprofit Explorer | Convenience layer | nonprofit metadata and 990 lookup by EIN | `PROPUBLICA_NONPROFIT_API_KEY`; <https://projects.propublica.org/nonprofits/api> | Optional overlay; normalized CSV/URL importer implemented |
 | OpenSecrets | Curated proxy overlay | outside spending, dark-money routing, industry classifications, lobbying overlays | `OPENSECRETS_API_KEY`; <https://www.opensecrets.org/api/admin/index.php> | Optional; do not treat as canonical raw source |
 | LegiStorm | Curated/restricted overlay | staff movements, congressional employment, some revolving-door links | `LEGISTORM_API_KEY`; <https://www.legistorm.com/api.html> | Optional/restricted; keep license status explicit |
 | FACA database | Direct/proxy access record | advisory committee membership, sponsored expert access, venue shifting | public web data; `FACA_DATA_BASE` | Planned |
 | House witness disclosures | Direct/proxy access record | sponsored-expert testimony, association/think-tank intermediaries | public committee pages | Planned |
 | OGE disclosures | Direct/proxy personnel record | senior-official financial interests and post-employment context | public web data; `OGE_DISCLOSURE_BASE` | Planned |
-| USAspending | Direct observed procurement | prime awards, recipient/agency concentration, award types | no key currently required; `USASPENDING_API_BASE` | Implemented source-native parser/fetcher |
-| SAM.gov/FPDS | Direct observed procurement | UEI/PIID matching, contract awards, exclusions, modifications | `SAM_API_KEY`; <https://open.gsa.gov/api/> | Planned expansion beyond USAspending |
+| USAspending | Direct observed procurement | prime awards, recipient/agency concentration, award types, PIID fallback, single-bid and modification placeholders | no key currently required; `USASPENDING_API_BASE` | Implemented source-native parser/fetcher plus bridge fields |
+| SAM.gov/FPDS | Direct observed procurement | UEI/PIID matching, contract awards, exclusions, modifications | `SAM_API_KEY`; <https://open.gsa.gov/api/> | Normalized bridge fields implemented; source-native SAM/FPDS fetch still planned |
 | GAO protests | Direct observed dispute outcomes | procurement challenge pressure and sustain rates | public reports/data | Planned |
 | Regulations.gov | Direct observed rulemaking | dockets, documents, comments, comment volume, duplicate/authenticity fields where available | `REGULATIONS_API_KEY`; <https://api.data.gov/signup/> | Implemented source-native fetcher |
 | Federal Register | Direct observed rulemaking | proposed/final rules, dates, agency/topic metadata | no key; `FEDERAL_REGISTER_API_BASE` | Implemented source-native fetcher |
@@ -41,8 +41,8 @@ The matching spine should prefer stable source-native identifiers:
 
 1. Freeze the current 2024 EPA/ENV slice as the baseline paper snapshot.
 2. Add an OpenFEC outside-spending and lobbyist-bundling slice so campaign substitution is not represented only by national party committee flows.
-3. Add IRS 8871/8872 plus TEOS/Form 990 rows for 527, 501(c)(4), 501(c)(6), association, and think-tank intermediaries. Keep donor invisibility as a measured missingness property, not as a filled-in fact.
-4. Add SAM/FPDS identifiers and modification records to the existing USAspending bridge for procurement firewalls, ex-post modifications, and single-bid or price-only risks.
+3. Replace the intermediary fixture with IRS 8871/8872 plus TEOS/Form 990 rows for 527, 501(c)(4), 501(c)(6), association, and think-tank intermediaries. Keep donor invisibility as a measured missingness property, not as a filled-in fact.
+4. Fill the SAM/FPDS bridge fields now present in the USAspending schema with source-native UEIs, PIIDs, modification records, competition type, and firewall coverage for procurement firewalls, ex-post modifications, and single-bid or price-only risks.
 5. Replace the fixture revolving-door panel with a documented source export from LegiStorm, OGE, ProPublica appointee records, FACA, or manually archived public personnel data.
 6. Add FACA and House witness disclosure panels for expert-access and intermediary venue-shifting diagnostics.
 7. Rerun `make snapshot-2024-env source-moments validate calibration-queue paper-artifacts-check` and commit regenerated artifacts.

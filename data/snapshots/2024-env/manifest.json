@@ -1,8 +1,8 @@
 {
   "snapshot": "2024-env",
-  "generatedAt": "2026-05-05T02:16:20.953207+00:00",
-  "gitCommit": "f6ab294",
-  "gitTreeState": "clean",
+  "generatedAt": "2026-05-09T00:54:07.285679+00:00",
+  "gitCommit": "ec24027",
+  "gitTreeState": "dirty",
   "gitTreeStateScope": "working tree status excluding generated 2024-env snapshot, reports, paper tables, and paper figures",
   "scope": {
     "calendarWindow": "2024-01-01/2024-12-31",
@@ -45,11 +45,11 @@
     },
     {
       "source": "usaspending",
-      "description": "EPA fiscal-year 2024 USAspending award panel for procurement concentration moments.",
+      "description": "EPA fiscal-year 2024 USAspending award panel for procurement concentration, SAM/FPDS bridge identifiers, competition, modification, and firewall moments.",
       "requestTemplate": "USASPENDING_FISCAL_YEAR=2024 USASPENDING_AGENCY='Environmental Protection Agency' ./scripts/fetch-usaspending.sh --live",
       "normalizedFile": "data/snapshots/2024-env/normalized/usaspending-awards.csv",
       "rowCount": 200,
-      "sha256": "876be1b456e6dd3a57379ef82efba5e2f6ae78d7be108cb296be313e435911ff",
+      "sha256": "995d191ad32ce08fc6ca519b4f9b55a4fda16a197bada8d84b50816cb4b86672",
       "status": "live",
       "statusNotes": "usaspending: ok (normalized EPA award rows written)"
     },
@@ -59,13 +59,23 @@
       "requestTemplate": "REVOLVING_DOOR_LIVE_CSV=/path/to/export.csv ./scripts/fetch-revolving-door.sh --live",
       "normalizedFile": "data/snapshots/2024-env/normalized/revolving-door.csv",
       "rowCount": 14,
-      "sha256": "d798a8a55b1626c9652e9f71f156ead08ff5d9b2e2a26ed4b17831e0796ae936",
+      "sha256": "20e6a02bdccfbd46af851e309271b259186702ae241f94a1c58db87e9c74a70c",
       "status": "fixture",
-      "statusNotes": "revolving-door: expanded tracked fixture (no licensed/source export configured; fixture copied for schema continuity and broader mechanism testing)"
+      "statusNotes": "revolving-door: fixture (no licensed/source export configured; fixture copied for schema continuity)"
+    },
+    {
+      "source": "intermediary",
+      "description": "Normalized nonprofit, 527, think-tank, and association intermediary panel from IRS, ProPublica, OpenSecrets, or curated source exports.",
+      "requestTemplate": "INTERMEDIARY_LIVE_CSV=/path/to/export.csv ./scripts/fetch-intermediaries.sh --live",
+      "normalizedFile": "data/snapshots/2024-env/normalized/intermediaries.csv",
+      "rowCount": 6,
+      "sha256": "c44735aea744714f6237db67f0eb3ff1bcd56f65af186fc3de760dd304195171",
+      "status": "fixture",
+      "statusNotes": "intermediary: fixture (no nonprofit/association source export configured; fixture copied for schema continuity)"
     }
   ],
   "liveRunStatus": {
     "file": "data/snapshots/2024-env/live-run-status.csv",
-    "sha256": "bbd8e5305ad720fe1000dff52a4f1f7df389b7c1cf60821136abfb2f2292994b"
+    "sha256": "4a57b4e6258664c1bd862354205f90aa2d17a209aec10b086ae96bb6948aeffb"
   }
 }

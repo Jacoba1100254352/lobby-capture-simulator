@@ -35,13 +35,18 @@ SOURCES = {
     },
     "usaspending": {
         "input": RAW / "usaspending-awards.csv",
-        "description": "EPA fiscal-year 2024 USAspending award panel for procurement concentration moments.",
+        "description": "EPA fiscal-year 2024 USAspending award panel for procurement concentration, SAM/FPDS bridge identifiers, competition, modification, and firewall moments.",
         "request": "USASPENDING_FISCAL_YEAR=2024 USASPENDING_AGENCY='Environmental Protection Agency' ./scripts/fetch-usaspending.sh --live",
     },
     "revolving-door": {
         "input": RAW / "revolving-door.csv",
         "description": "Normalized revolving-door source panel from a licensed/exported CSV or tracked fixture.",
         "request": "REVOLVING_DOOR_LIVE_CSV=/path/to/export.csv ./scripts/fetch-revolving-door.sh --live",
+    },
+    "intermediary": {
+        "input": RAW / "intermediaries.csv",
+        "description": "Normalized nonprofit, 527, think-tank, and association intermediary panel from IRS, ProPublica, OpenSecrets, or curated source exports.",
+        "request": "INTERMEDIARY_LIVE_CSV=/path/to/export.csv ./scripts/fetch-intermediaries.sh --live",
     },
 }
 
@@ -155,6 +160,7 @@ def source_status(source: str, live_status: list[dict[str, str]]) -> tuple[str, 
         "regulatory": [row for row in live_status if row["source"] in {"regulations-gov", "federal-register"}],
         "usaspending": [row for row in live_status if row["source"] == "usaspending"],
         "revolving-door": [row for row in live_status if row["source"] == "revolving-door"],
+        "intermediary": [row for row in live_status if row["source"] == "intermediary"],
     }.get(source, [])
     if not names:
         return "copied", "normalized file copied from data/raw"
@@ -212,6 +218,7 @@ def write_readme(root: Path, entries: list[dict[str, object]]) -> None:
         "- FEC cycle: 2024, with the six national party committees as the first electoral-pressure panel.",
         "- USAspending fiscal year: 2024, Environmental Protection Agency awards.",
         "- Revolving-door panel: licensed/source export when available; fixture otherwise.",
+        "- Intermediary panel: nonprofit, 527, association, and think-tank export when available; fixture otherwise.",
         "",
         "The current command freezes whatever normalized files are present under `data/raw/`. Live paper snapshots should first run the request templates in `manifest.json`, preserve raw payloads outside git when too large, normalize into the same schemas, and then rerun `make snapshot-2024-env`.",
         "",

@@ -7,7 +7,7 @@ These are direct moments from normalized calibration tables. They are source dia
 - Snapshot FEC rows contain no DARK_MONEY or SUPER_PAC flow share; dark-money calibration still depends on benchmark and scenario assumptions.
 - Snapshot FEC rows contain no public-match or democracy-voucher flow share; public-financing calibration still depends on external benchmarks.
 - Snapshot revolving-door rows are tracked fixtures; they support schema and mechanism tests, not empirical calibration.
-- Think-tank, association, and sponsored-expert intermediary routing is modeled but not yet anchored by a direct public-data panel.
+- Snapshot procurement rows have weak UEI coverage; procurement-network validation should be treated as incomplete.
 
 | Scope | Source | Metric | Value | Evidence | Notes |
 | --- | --- | --- | ---: | --- | --- |
@@ -47,6 +47,13 @@ These are direct moments from normalized calibration tables. They are source dia
 | snapshot | usaspending | `procurementAgencyHerfindahl` | 1.0000 | observed | awarding-agency amount Herfindahl |
 | snapshot | usaspending | `procurementSubAgencyTop3Share` | 1.0000 | observed | top three sub-agencies share of normalized award amount |
 | snapshot | usaspending | `procurementAwardCount` | 200.0000 | observed | sum of normalized award or transaction counts |
+| snapshot | usaspending | `procurementSingleBidShare` | 0.0000 | observed_proxy | share of rows with one known offer |
+| snapshot | usaspending | `procurementAmountWeightedSingleBidShare` | 0.0000 | observed_proxy | award-amount share with one known offer |
+| snapshot | usaspending | `procurementExPostModificationShare` | 0.0000 | observed_proxy | share of rows marked as ex-post modifications or nonzero modifications |
+| snapshot | usaspending | `procurementPriceOnlyAwardShare` | 0.0000 | observed_proxy | share of rows marked as price-only or one-offer awards |
+| snapshot | usaspending | `procurementFirewallCoverageShare` | 0.0000 | observed_proxy | share of rows covered by a procurement-firewall flag |
+| snapshot | usaspending | `procurementKnownUeiShare` | 0.0000 | diagnostic | share of rows carrying a recipient UEI |
+| snapshot | usaspending | `procurementKnownPiidShare` | 1.0000 | diagnostic | share of rows carrying a procurement instrument identifier |
 | snapshot | revolving-door | `revolvingDoorRows` | 14.0000 | observed | normalized revolving-door rows |
 | snapshot | revolving-door | `revolvingDoorFixtureShare` | 1.0000 | diagnostic | share of rows marked as tracked fixture rather than live/exported source |
 | snapshot | revolving-door | `revolvingDoorFormerOfficialShare` | 0.7857 | observed_proxy | share of rows with former official role |
@@ -56,6 +63,17 @@ These are direct moments from normalized calibration tables. They are source dia
 | snapshot | revolving-door | `revolvingDoorHighInfluenceShare` | 0.4286 | proxy | share of rows with high normalized influence |
 | snapshot | revolving-door | `revolvingDoorInfluenceWeightedFormerOfficialShare` | 0.8781 | proxy | influence-weighted former-official share |
 | snapshot | revolving-door | `revolvingDoorInfluenceMean` | 0.5507 | proxy | mean normalized influence share from source panel |
+| snapshot | revolving-door | `revolvingDoorConfidenceMean` | 0.6000 | diagnostic | mean source-match confidence for revolving-door records |
+| snapshot | intermediary | `intermediaryRows` | 6.0000 | observed | normalized nonprofit, 527, association, or think-tank intermediary rows |
+| snapshot | intermediary | `intermediaryTotalRevenue` | 137.1000 | observed_proxy | sum of normalized intermediary revenue |
+| snapshot | intermediary | `intermediaryPoliticalSpendShare` | 0.1670 | observed_proxy | political spend share of normalized intermediary revenue |
+| snapshot | intermediary | `intermediaryTop3RevenueShare` | 0.7126 | observed_proxy | top three intermediary organizations by revenue |
+| snapshot | intermediary | `intermediaryDonorDisclosureMean` | 0.5300 | observed_proxy | mean donor/source disclosure score |
+| snapshot | intermediary | `intermediaryAssociationShare` | 0.3333 | observed_proxy | share of rows marked 501(c)(6) association |
+| snapshot | intermediary | `intermediaryC4Share` | 0.1667 | observed_proxy | share of rows marked 501(c)(4) social welfare |
+| snapshot | intermediary | `intermediaryC3Share` | 0.3333 | observed_proxy | share of rows marked 501(c)(3) nonprofit |
+| snapshot | intermediary | `intermediary527PoliticalSpendShare` | 0.4192 | observed_proxy | 527/IRS 8872 share of intermediary political spending |
+| snapshot | intermediary | `intermediaryGrantmakingShare` | 0.1751 | observed_proxy | grantmaking share of normalized intermediary revenue |
 | fixture | lda | `ldaRows` | 4.0000 | observed | normalized LDA rows |
 | fixture | lda | `ldaTotalSpend` | 30.5000 | observed | sum of normalized LDA amount |
 | fixture | lda | `lobbyingClientTop1Share` | 0.2984 | observed | largest client share of normalized LDA amount |
@@ -92,6 +110,13 @@ These are direct moments from normalized calibration tables. They are source dia
 | fixture | usaspending | `procurementAgencyHerfindahl` | 1.0000 | observed | awarding-agency amount Herfindahl |
 | fixture | usaspending | `procurementSubAgencyTop3Share` | 0.8143 | observed | top three sub-agencies share of normalized award amount |
 | fixture | usaspending | `procurementAwardCount` | 48.0000 | observed | sum of normalized award or transaction counts |
+| fixture | usaspending | `procurementSingleBidShare` | 0.4000 | observed_proxy | share of rows with one known offer |
+| fixture | usaspending | `procurementAmountWeightedSingleBidShare` | 0.3429 | observed_proxy | award-amount share with one known offer |
+| fixture | usaspending | `procurementExPostModificationShare` | 0.6000 | observed_proxy | share of rows marked as ex-post modifications or nonzero modifications |
+| fixture | usaspending | `procurementPriceOnlyAwardShare` | 0.4000 | observed_proxy | share of rows marked as price-only or one-offer awards |
+| fixture | usaspending | `procurementFirewallCoverageShare` | 0.6000 | observed_proxy | share of rows covered by a procurement-firewall flag |
+| fixture | usaspending | `procurementKnownUeiShare` | 1.0000 | diagnostic | share of rows carrying a recipient UEI |
+| fixture | usaspending | `procurementKnownPiidShare` | 1.0000 | diagnostic | share of rows carrying a procurement instrument identifier |
 | fixture | revolving-door | `revolvingDoorRows` | 14.0000 | observed | normalized revolving-door rows |
 | fixture | revolving-door | `revolvingDoorFixtureShare` | 1.0000 | diagnostic | share of rows marked as tracked fixture rather than live/exported source |
 | fixture | revolving-door | `revolvingDoorFormerOfficialShare` | 0.7857 | observed_proxy | share of rows with former official role |
@@ -101,3 +126,14 @@ These are direct moments from normalized calibration tables. They are source dia
 | fixture | revolving-door | `revolvingDoorHighInfluenceShare` | 0.4286 | proxy | share of rows with high normalized influence |
 | fixture | revolving-door | `revolvingDoorInfluenceWeightedFormerOfficialShare` | 0.8781 | proxy | influence-weighted former-official share |
 | fixture | revolving-door | `revolvingDoorInfluenceMean` | 0.5507 | proxy | mean normalized influence share from source panel |
+| fixture | revolving-door | `revolvingDoorConfidenceMean` | 0.6386 | diagnostic | mean source-match confidence for revolving-door records |
+| fixture | intermediary | `intermediaryRows` | 6.0000 | observed | normalized nonprofit, 527, association, or think-tank intermediary rows |
+| fixture | intermediary | `intermediaryTotalRevenue` | 137.1000 | observed_proxy | sum of normalized intermediary revenue |
+| fixture | intermediary | `intermediaryPoliticalSpendShare` | 0.1670 | observed_proxy | political spend share of normalized intermediary revenue |
+| fixture | intermediary | `intermediaryTop3RevenueShare` | 0.7126 | observed_proxy | top three intermediary organizations by revenue |
+| fixture | intermediary | `intermediaryDonorDisclosureMean` | 0.5300 | observed_proxy | mean donor/source disclosure score |
+| fixture | intermediary | `intermediaryAssociationShare` | 0.3333 | observed_proxy | share of rows marked 501(c)(6) association |
+| fixture | intermediary | `intermediaryC4Share` | 0.1667 | observed_proxy | share of rows marked 501(c)(4) social welfare |
+| fixture | intermediary | `intermediaryC3Share` | 0.3333 | observed_proxy | share of rows marked 501(c)(3) nonprofit |
+| fixture | intermediary | `intermediary527PoliticalSpendShare` | 0.4192 | observed_proxy | 527/IRS 8872 share of intermediary political spending |
+| fixture | intermediary | `intermediaryGrantmakingShare` | 0.1751 | observed_proxy | grantmaking share of normalized intermediary revenue |

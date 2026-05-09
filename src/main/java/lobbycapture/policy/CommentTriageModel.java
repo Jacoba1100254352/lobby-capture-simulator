@@ -33,17 +33,18 @@ public final class CommentTriageModel {
                 1.0
         );
         double dedupeTooling = Values.clamp(
-                0.25
-                        + (0.45 * reform.antiAstroturfStrength())
-                        + (0.20 * reform.blindReviewStrength())
-                        + (0.16 * reform.publicAdvocateStrength())
-                        + (0.14 * reform.enforcementStrength()),
+                0.34
+                        + (0.50 * reform.antiAstroturfStrength())
+                        + (0.22 * reform.blindReviewStrength())
+                        + (0.18 * reform.publicAdvocateStrength())
+                        + (0.16 * reform.enforcementStrength()),
                 0.0,
                 1.0
         );
         double duplicateCompression = Values.clamp(
-                (saturation * (0.82 + (0.52 * dedupeTooling)))
-                        + (astroturfShare * reform.antiAstroturfStrength() * 0.34),
+                (saturation * (0.95 + (0.60 * dedupeTooling)))
+                        + (astroturfShare * reform.antiAstroturfStrength() * 0.46)
+                        + (templateShare * reform.antiAstroturfStrength() * 0.12),
                 0.0,
                 1.0
         );

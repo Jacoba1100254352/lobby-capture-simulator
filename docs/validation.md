@@ -23,7 +23,7 @@ Current calibration links:
 - `normalized-lda-lobbying.csv` constrains issue funding scale, issue mix, and disclosure lag.
 - `normalized-fec-campaign-finance.csv` constrains donor concentration, public-financing share, and traceability.
 - `normalized-regulatory-dockets.csv` constrains docket volume, comment authenticity, template saturation, and technical-claim credibility.
-- `reports/source-moments.csv` records direct top-k concentration, traceability, public-financing, and comment-record moments from the current snapshot and fixture baselines.
+- `reports/source-moments.csv` records direct top-k concentration, traceability, public-financing, comment-record, procurement bridge, intermediary, and revolving-door moments from the current snapshot and fixture baselines.
 
 These files are plausibility inputs. They should not be cited as causal estimates, and paper claims should distinguish three layers: observed distribution, model calibration choice, and simulated mechanism.
 
@@ -48,7 +48,7 @@ The source-native normalizers are distributional bridges. `scripts/test-source-f
 
 The source acquisition roadmap in `docs/source-data-roadmap.md` records the intended identifier spine and distinguishes direct observed sources from proxy and restricted overlays. New source panels should be added there before their moments are promoted into `data/calibration/parameter-map.csv`.
 
-`make source-moments` writes `reports/source-moments.csv` plus `reports/source-moments.md`. It compares the current 2024 EPA/ENV normalized snapshot against the deterministic fixture baseline on source-level moments such as top-client share, top-donor share, amount-weighted traceability, dark-money direct visibility, public-financing source share, and comment-volume concentration.
+`make source-moments` writes `reports/source-moments.csv` plus `reports/source-moments.md`. It compares the current 2024 EPA/ENV normalized snapshot against the deterministic fixture baseline on source-level moments such as top-client share, top-donor share, amount-weighted traceability, dark-money direct visibility, public-financing source share, comment-volume concentration, procurement single-bid and modification proxies, UEI/PIID coverage, intermediary donor disclosure, intermediary political-spend share, and revolving-door source-confidence diagnostics.
 
 `make validate` compares committed report snapshots against both `data/calibration/empirical-benchmarks.csv` and implemented rows in `data/calibration/parameter-map.csv`. It writes `reports/validation-summary.csv` plus `reports/validation-summary.md`, including counts by evidence class. It also writes `reports/substitution-audit.csv` and `reports/substitution-audit.md`, which flag reforms that lower observed capture while increasing hidden influence, hidden capture, total distortion, substitution-failure risk, network opacity, venue-shift load, or channel-network load. Network metrics are included as synthetic path diagnostics: they currently validate bounds and mechanism direction, not observed network reconstruction. Current benchmark rows are deliberately broad plausibility bands; misses should be read as calibration work queues, not model falsification.
 
@@ -74,7 +74,8 @@ The current committed 2024 EPA/ENV snapshot was regenerated from official endpoi
 - Regulations.gov and Federal Register: 200 combined EPA 2024 regulatory rows.
 - USAspending: 200 EPA fiscal-year 2024 award rows.
 - Revolving door: 14 tracked fixture rows because no licensed or exported source panel is configured yet.
+- Intermediaries: 6 tracked fixture rows for nonprofit, 527, association, and think-tank schema continuity because no representative IRS/OpenSecrets/ProPublica panel is configured yet.
 
-The snapshot is stronger than the earlier public/demo run, but it is still not a representative empirical panel. The FEC slice covers national party committee flows rather than dark-money or public-financing sources, and the revolving-door file remains a fixture. `reports/source-moments.md` records these representativeness warnings directly.
+The snapshot is stronger than the earlier public/demo run, but it is still not a representative empirical panel. The FEC slice covers national party committee flows rather than dark-money or public-financing sources, the procurement bridge lacks full SAM/FPDS identifier coverage, and the intermediary and revolving-door files remain fixtures. `reports/source-moments.md` records these representativeness warnings directly.
 
 Run `make snapshot-2024-env` after any subsequent source-native fetches to freeze normalized rows under `data/snapshots/2024-env/` and write a machine-readable manifest with row counts, request templates, hashes, and Git state.

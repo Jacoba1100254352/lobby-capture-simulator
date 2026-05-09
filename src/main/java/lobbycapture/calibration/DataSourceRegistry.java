@@ -16,8 +16,10 @@ public final class DataSourceRegistry {
                 "govinfo Bill Status XML",
                 "Seattle Democracy Voucher data",
                 "NYC Campaign Finance Board data",
-                "USAspending API"
+                "USAspending API",
+                "SAM.gov and FPDS procurement bridge exports",
+                "IRS 8871/8872, TEOS, and Form 990 nonprofit records",
+                "FACA, OGE, LegiStorm, OpenSecrets, and ProPublica-style access or personnel exports"
         );
     }
 }
-

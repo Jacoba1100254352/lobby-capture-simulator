@@ -17,6 +17,7 @@ Current runnable scenarios:
 - `public-interest-representation-funds`
 - `randomized-audit-sanctions`
 - `machine-readable-meeting-logs`
+- `hard-budget-substitution-stress`
 - `enforced-cooling-off`
 - `comment-authenticity-rules`
 - `public-advocate-office`
@@ -53,6 +54,7 @@ Each scenario uses the same core engine and changes the reform regime, channel i
 - `public-interest-representation-funds`: funds countervailing advocates for technically complex rulemaking and legal asymmetry.
 - `randomized-audit-sanctions`: uses randomized audits and strong sanctions to make evasion risk less predictable.
 - `machine-readable-meeting-logs`: stresses real-time structured contact disclosure and meeting-log coverage.
+- `hard-budget-substitution-stress`: makes visible lobbying caps bind while allowing high evasion freedom, so a lower observed-capture rate is treated as suspicious if hidden influence, intermediary routing, procurement exposure, venue shifts, or defensive spending rise.
 - `enforced-cooling-off`: pairs cooling-off periods with audit and sanction capacity.
 - `comment-authenticity-rules`: targets comment flooding, template campaigns, and synthetic salience.
 - `public-advocate-office`: tests public advocate and blind-review capacity as a direct counterweight to one-sided expertise.
@@ -69,7 +71,7 @@ Each scenario uses the same core engine and changes the reform regime, channel i
 - Hidden-capture, total-distortion, hidden-influence, preserved-influence, venue-substitution, messenger-substitution, and evasion-shift columns should be read with capture rates. A low capture rate alone is not a model claim that the reform eliminates influence.
 - Influence-network columns should be read as synthetic path diagnostics: network opacity, intermediary centrality, procurement exposure, revolving-door bridges, comment-network load, and venue-shift load identify where influence is moving when a reform changes visible lobbying.
 - The preferred synthetic reform comparison is the lowest total influence distortion, not the highest nominal reform success or lowest visible capture.
-- Source calibration is currently strongest for LDA, FEC committee flows, Federal Register/Regulations.gov schemas, and USAspending award concentration. It remains weakest for dark-money source shares, public-financing source shares, and revolving-door panels.
+- Source calibration is currently strongest for LDA, FEC committee flows, Federal Register/Regulations.gov schemas, and USAspending award concentration. The current bridge now records procurement identifier/competition diagnostics and an intermediary fixture panel, but it remains weakest for representative dark-money, public-financing, intermediary, and revolving-door source exports.
 
 `make sensitivity` adds temporary sweep scenarios that are not listed by `--list`:
 

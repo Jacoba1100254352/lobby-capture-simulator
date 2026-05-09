@@ -13,3 +13,4 @@ regulations-gov,ok,normalized rows appended
 federal-register,ok,normalized rows appended
 usaspending,ok,normalized EPA award rows written
 revolving-door,fixture,no licensed/source export configured; fixture copied for schema continuity
+intermediary,fixture,no nonprofit/association source export configured; fixture copied for schema continuity

@@ -10,25 +10,25 @@
 
 | Removed component | Total distortion increase | Capture increase | Hidden capture increase | Substitution risk | Comment flooding | Donor Gini | Enforcement capacity |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| No beneficial-owner disclosure | 0.0684 | 0.1644 | 0.0353 | 0.1897 | 0.2351 | 0.1838 | 0.5296 |
-| No enforcement | 0.0641 | 0.2100 | 0.0239 | 0.1618 | 0.2380 | 0.1802 | 0.0445 |
-| No public advocate or blind review | 0.0363 | 0.1325 | -0.0034 | 0.1134 | 0.2755 | 0.1733 | 0.5253 |
-| No public financing or vouchers | 0.0048 | 0.0181 | 0.0002 | 0.1204 | 0.2372 | 0.1972 | 0.5094 |
-| No anti-astroturf authentication | 0.0023 | 0.0150 | -0.0053 | 0.1122 | 0.2651 | 0.1806 | 0.5069 |
-| No cooling-off rules | 0.0020 | 0.0119 | -0.0009 | 0.1190 | 0.2376 | 0.1977 | 0.5073 |
+| No beneficial-owner disclosure | 0.0710 | 0.1766 | 0.0355 | 0.1899 | 0.2194 | 0.1795 | 0.5306 |
+| No enforcement | 0.0667 | 0.2213 | 0.0242 | 0.1623 | 0.2208 | 0.1809 | 0.0461 |
+| No public advocate or blind review | 0.0375 | 0.1384 | -0.0034 | 0.1136 | 0.2548 | 0.1709 | 0.5262 |
+| No public financing or vouchers | 0.0055 | 0.0206 | 0.0003 | 0.1207 | 0.2214 | 0.1980 | 0.5096 |
+| No cooling-off rules | 0.0026 | 0.0144 | -0.0009 | 0.1193 | 0.2217 | 0.1960 | 0.5082 |
+| No anti-astroturf authentication | 0.0025 | 0.0156 | -0.0053 | 0.1124 | 0.2509 | 0.1815 | 0.5074 |
 
 ## Full Snapshot
 
 | Scenario | Total distortion | Observed capture | Hidden capture | Anti-capture success | Comment authenticity | Template saturation | Admin cost |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Ablation baseline full bundle | 0.1284 | 0.0172 | 0.0455 | 1.0000 | 0.6735 | 0.3146 | 0.5008 |
-| No enforcement | 0.1925 | 0.2272 | 0.0694 | 1.0000 | 0.6722 | 0.3189 | 0.3791 |
-| No beneficial-owner disclosure | 0.1968 | 0.1816 | 0.0808 | 0.9978 | 0.6719 | 0.3189 | 0.4541 |
-| No public financing or vouchers | 0.1332 | 0.0353 | 0.0457 | 0.9988 | 0.6720 | 0.3183 | 0.4280 |
-| No cooling-off rules | 0.1304 | 0.0291 | 0.0446 | 1.0000 | 0.6720 | 0.3184 | 0.4557 |
-| No anti-astroturf authentication | 0.1307 | 0.0322 | 0.0402 | 1.0000 | 0.6301 | 0.3266 | 0.4657 |
-| No public advocate or blind review | 0.1647 | 0.1497 | 0.0422 | 0.9923 | 0.6704 | 0.3226 | 0.4327 |
+| Ablation baseline full bundle | 0.1296 | 0.0194 | 0.0455 | 1.0000 | 0.6736 | 0.3142 | 0.5013 |
+| No enforcement | 0.1963 | 0.2406 | 0.0697 | 1.0000 | 0.6722 | 0.3190 | 0.3793 |
+| No beneficial-owner disclosure | 0.2006 | 0.1959 | 0.0811 | 0.9978 | 0.6724 | 0.3178 | 0.4558 |
+| No public financing or vouchers | 0.1351 | 0.0400 | 0.0458 | 0.9988 | 0.6717 | 0.3191 | 0.4288 |
+| No cooling-off rules | 0.1322 | 0.0338 | 0.0447 | 1.0000 | 0.6718 | 0.3189 | 0.4562 |
+| No anti-astroturf authentication | 0.1321 | 0.0350 | 0.0403 | 1.0000 | 0.6305 | 0.3256 | 0.4661 |
+| No public advocate or blind review | 0.1671 | 0.1578 | 0.0422 | 0.9923 | 0.6705 | 0.3225 | 0.4338 |
 
 ## Interpretation Guardrail
 
-The largest modeled distortion opening is `No beneficial-owner disclosure`, with total-distortion change `0.0684`. This is a comparative simulation result, not a causal empirical estimate.
+The largest modeled distortion opening is `No beneficial-owner disclosure`, with total-distortion change `0.0710`. This is a comparative simulation result, not a causal empirical estimate.

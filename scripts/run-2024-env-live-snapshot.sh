@@ -23,7 +23,7 @@ append_csv() {
   fi
 }
 
-rm -f data/raw/lda-lobbying.csv data/raw/fec-campaign-finance.csv data/raw/regulatory-dockets.csv data/raw/usaspending-awards.csv data/raw/revolving-door.csv
+rm -f data/raw/lda-lobbying.csv data/raw/fec-campaign-finance.csv data/raw/regulatory-dockets.csv data/raw/usaspending-awards.csv data/raw/revolving-door.csv data/raw/intermediaries.csv
 
 for period in first_quarter second_quarter third_quarter fourth_quarter; do
   SOURCE_RAW_DIR="$raw_dir/lda-$period" \
@@ -98,6 +98,17 @@ if [ -n "${REVOLVING_DOOR_LIVE_CSV:-}" ] || [ -n "${REVOLVING_DOOR_LIVE_URL:-}" 
 else
   ./scripts/fetch-revolving-door.sh
   printf "revolving-door,fixture,no licensed/source export configured; fixture copied for schema continuity\n" >> "$status_file"
+fi
+
+if [ -n "${INTERMEDIARY_LIVE_CSV:-}" ] || [ -n "${INTERMEDIARY_LIVE_URL:-}" ]; then
+  if ./scripts/fetch-intermediaries.sh --live; then
+    printf "intermediary,ok,normalized configured nonprofit/association source export written\n" >> "$status_file"
+  else
+    printf "intermediary,unavailable,configured intermediary source export could not be normalized\n" >> "$status_file"
+  fi
+else
+  ./scripts/fetch-intermediaries.sh
+  printf "intermediary,fixture,no nonprofit/association source export configured; fixture copied for schema continuity\n" >> "$status_file"
 fi
 
 mkdir -p data/snapshots/2024-env

@@ -108,8 +108,9 @@ External data constrain plausible ranges and schema behavior. They do not identi
 - LDA rows constrain issue funding scale, registrant/client concentration, issue-domain mix, and disclosure lag.
 - FEC rows constrain donor concentration, public-financing share, traceability, and large-donor dependence.
 - Federal Register and Regulations.gov rows constrain docket volume, comment authenticity, template saturation, and technical-claim credibility.
-- USAspending rows constrain procurement-recipient and awarding-agency concentration.
-- Revolving-door rows currently provide a fixture-backed schema continuity check unless a licensed/exported source panel is configured.
+- USAspending rows constrain procurement-recipient and awarding-agency concentration. The normalized schema also carries UEI, PIID, competition type, number of offers, price-only, modification, and firewall flags when SAM/FPDS-style bridge fields are available.
+- Intermediary rows constrain nonprofit, 527, association, and think-tank political-spend pressure and donor/source disclosure where IRS, ProPublica, OpenSecrets, or curated exports are configured.
+- Revolving-door rows constrain former-official headcount, cooling-off intervals, source record IDs, position type, source URL coverage, match confidence, and source-weighted bridge pressure when a licensed/exported source panel is configured.
 - Seattle voucher and public-financing benchmarks constrain participation and candidate uptake ranges.
 
 The file `data/calibration/parameter-map.csv` records the intended low, middle, and high ranges, evidence class, source report, model target, and implementation status for each validation-facing quantity.
@@ -239,4 +240,4 @@ Generated paper tables and figures are derived from committed report CSVs. The f
 
 ## Known Boundaries
 
-The current model is strongest as a comparative mechanism prototype. The 2024 EPA/ENV source snapshot is not yet representative for dark-money, public-financing, or intermediary-network calibration. The revolving-door panel has been expanded for mechanism testing, but it remains a tracked fixture unless a live licensed/exported source is configured. Several strong-reform scenarios can still sit near a saturated observed-capture region, so the paper emphasizes total distortion, substitution diagnostics, network-path diagnostics, and robustness fields rather than definitive reform rankings.
+The current model is strongest as a comparative mechanism prototype. The 2024 EPA/ENV source snapshot is not yet representative for dark-money, public-financing, intermediary-network, full SAM/FPDS procurement, or revolving-door calibration. The intermediary and revolving-door panels have been expanded for mechanism testing, but they remain tracked fixtures unless live documented exports are configured. Several strong-reform scenarios can still sit near a saturated observed-capture region, so the paper emphasizes total distortion, substitution diagnostics, network-path diagnostics, and robustness fields rather than definitive reform rankings.

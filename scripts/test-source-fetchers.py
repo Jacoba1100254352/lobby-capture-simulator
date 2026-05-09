@@ -111,6 +111,15 @@ def assert_usaspending(fetchers) -> None:
         "amount": 145.8637,
         "issueDomain": "procurement",
         "awardCount": 1,
+        "uei": "",
+        "piid": "EPW05049",
+        "modificationNumber": "0",
+        "actionDate": "",
+        "competitionType": "unknown",
+        "numberOfOffers": "0",
+        "priceOnlyAward": "false",
+        "exPostModification": "false",
+        "firewallCovered": "false",
     }, rows[0]
     assert rows[1]["recipient"] == "LOCKHEED MARTIN SERVICES, LLC", rows[1]
 
