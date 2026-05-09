@@ -161,18 +161,18 @@ abstract class AbstractInfluenceArena implements InfluenceArena {
         boolean capturedBeforeAudit = capturePressure >= 0.48;
         double detectionProbability = Values.clamp(
                 0.025
-                        + reform.auditRate()
-                        + (0.34 * reform.enforcementStrength())
-                        + (0.18 * reform.transparencyStrength())
-                        + (0.14 * contest.watchdogPressure())
+                        + (0.45 * reform.auditRate())
+                        + (0.22 * reform.enforcementStrength())
+                        + (0.12 * reform.transparencyStrength())
+                        + (0.10 * contest.watchdogPressure())
                         - (0.16 * contest.darkMoneyInfluence())
                         - (0.10 * influence.hiddenInfluenceShare())
                         - (0.10 * influence.networkSnapshot().networkOpacityIndex())
                         + (0.08 * influence.networkSnapshot().networkLegibilityIndex())
-                        + (0.08 * reform.crossVenueDetectionStrength())
-                        + (0.10 * world.evasionProfile().legalRisk())
-                        + (0.10 * world.watchdogFocus(contest.issueDomain()))
-                        + (0.07 * world.regulatorAttention(contest.issueDomain()) * (1.0 - (0.35 * world.regulatorQueue(contest.issueDomain()))))
+                        + (0.07 * reform.crossVenueDetectionStrength())
+                        + (0.06 * world.evasionProfile().legalRisk())
+                        + (0.07 * world.watchdogFocus(contest.issueDomain()))
+                        + (0.05 * world.regulatorAttention(contest.issueDomain()) * (1.0 - (0.35 * world.regulatorQueue(contest.issueDomain()))))
                         - (0.08 * reform.appealsDelay()),
                 0.0,
                 1.0
@@ -181,7 +181,7 @@ abstract class AbstractInfluenceArena implements InfluenceArena {
         boolean detected = world.random().nextDouble() < processFlagProbability;
         double sanctionProbability = Values.clamp(
                 (capturedBeforeAudit ? 1.0 : 0.18)
-                        * (0.06 + (0.62 * reform.sanctionSeverity() * reform.enforcementStrength())),
+                        * (0.01 + (0.12 * reform.sanctionSeverity() * reform.enforcementStrength())),
                 0.0,
                 1.0
         );

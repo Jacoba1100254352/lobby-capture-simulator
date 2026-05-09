@@ -1,0 +1,163 @@
+#!/usr/bin/env python3
+"""Summarize empirical source-panel coverage and remaining bridge gaps."""
+
+from __future__ import annotations
+
+import argparse
+import csv
+from pathlib import Path
+
+
+SOURCE_MOMENTS = Path("reports/source-moments.csv")
+OUTPUT = Path("reports")
+
+
+PANELS = [
+    {
+        "panel": "Direct dark money",
+        "metric": "darkMoneySourceShare",
+        "minimum": 0.001,
+        "good": 0.05,
+        "missing": "no direct DARK_MONEY rows in the snapshot",
+        "action": "Add explicit 501(c)(4), 501(c)(6), electioneering, or curated dark-money rows; keep Schedule E super PAC rows separate.",
+    },
+    {
+        "panel": "Outside spending",
+        "metric": "outsideSpendingRows",
+        "minimum": 25.0,
+        "good": 250.0,
+        "missing": "outside-spending bridge is too small",
+        "action": "Broaden OpenFEC Schedule E, electioneering communication, independent expenditure, and spender/payee coverage.",
+    },
+    {
+        "panel": "Public financing",
+        "metric": "publicFinancingSourceShare",
+        "minimum": 0.01,
+        "good": 0.10,
+        "missing": "public-financing rows are sparse or absent",
+        "action": "Add Seattle voucher, NYC matching-fund, and federal public-financing panels as direct program rows.",
+    },
+    {
+        "panel": "Intermediaries",
+        "metric": "intermediaryRows",
+        "minimum": 50.0,
+        "good": 500.0,
+        "missing": "intermediary panel is too small for calibration",
+        "action": "Replace fixture-sized intermediary rows with IRS 8871/8872, TEOS, Form 990 XML, association, think-tank, and grantmaking exports.",
+    },
+    {
+        "panel": "Revolving door",
+        "metric": "revolvingDoorRows",
+        "minimum": 100.0,
+        "good": 500.0,
+        "missing": "revolving-door panel is too small",
+        "action": "Supplement LDA covered-position rows with OGE, FACA, witness, LegiStorm/OpenSecrets, or archived personnel movement exports.",
+    },
+    {
+        "panel": "Procurement identifiers",
+        "metric": "procurementKnownPiidShare",
+        "minimum": 0.50,
+        "good": 0.90,
+        "missing": "PIID coverage is too weak for procurement-network matching",
+        "action": "Broaden SAM/FPDS and USAspending enrichment with PIID, UEI, action-date, modification, competition, exclusion, and protest fields.",
+    },
+    {
+        "panel": "Procurement modification risk",
+        "metric": "procurementExPostModificationShare",
+        "minimum": 0.0,
+        "good": 0.05,
+        "maximum": 0.40,
+        "missing": "modification proxy appears saturated or missing",
+        "action": "Separate initial awards from post-award modifications and validate nonzero modification numbers against FPDS transactions.",
+    },
+]
+
+
+def main() -> int:
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--source-moments", type=Path, default=SOURCE_MOMENTS)
+    parser.add_argument("--output", type=Path, default=OUTPUT)
+    args = parser.parse_args()
+
+    moments = read_moments(args.source_moments)
+    rows = [panel_row(panel, moments) for panel in PANELS]
+    args.output.mkdir(parents=True, exist_ok=True)
+    write_csv(args.output / "source-panel-inventory.csv", rows)
+    write_markdown(args.output / "source-panel-inventory.md", rows)
+    print(f"Wrote {args.output / 'source-panel-inventory.csv'}")
+    print(f"Wrote {args.output / 'source-panel-inventory.md'}")
+    return 0
+
+
+def read_moments(path: Path) -> dict[str, float]:
+    if not path.exists():
+        return {}
+    with path.open(newline="", encoding="utf-8") as source:
+        return {
+            row["metric"]: float(row["value"])
+            for row in csv.DictReader(source)
+            if row.get("scope") == "snapshot" and row.get("metric") and row.get("value")
+        }
+
+
+def panel_row(panel: dict[str, object], moments: dict[str, float]) -> dict[str, str]:
+    metric = str(panel["metric"])
+    value = moments.get(metric)
+    if value is None:
+        status = "missing"
+        note = "source moment not present"
+    elif value < float(panel["minimum"]):
+        status = "missing"
+        note = str(panel["missing"])
+    elif "maximum" in panel and value > float(panel["maximum"]):
+        status = "warning"
+        note = str(panel["missing"])
+    elif value >= float(panel["good"]):
+        status = "usable"
+        note = "coverage is usable for mechanism diagnostics, subject to source-scope limits"
+    else:
+        status = "thin"
+        note = "coverage is present but thin for article-level calibration"
+    return {
+        "panel": str(panel["panel"]),
+        "metric": metric,
+        "value": "" if value is None else f"{value:.4f}",
+        "status": status,
+        "note": note,
+        "nextAction": str(panel["action"]),
+    }
+
+
+def write_csv(path: Path, rows: list[dict[str, str]]) -> None:
+    fieldnames = ["panel", "metric", "value", "status", "note", "nextAction"]
+    with path.open("w", newline="", encoding="utf-8") as destination:
+        writer = csv.DictWriter(destination, fieldnames=fieldnames, lineterminator="\n")
+        writer.writeheader()
+        writer.writerows(rows)
+
+
+def write_markdown(path: Path, rows: list[dict[str, str]]) -> None:
+    counts = {status: sum(1 for row in rows if row["status"] == status) for status in ("usable", "thin", "warning", "missing")}
+    lines = [
+        "# Source Panel Inventory",
+        "",
+        "This inventory separates source coverage from simulated outcomes. A missing or thin panel is a validation gap, not evidence that the underlying form of influence is absent.",
+        "",
+        f"- Usable: `{counts['usable']}`",
+        f"- Thin: `{counts['thin']}`",
+        f"- Warning: `{counts['warning']}`",
+        f"- Missing: `{counts['missing']}`",
+        "",
+        "| Panel | Moment | Value | Status | Note | Next action |",
+        "| --- | --- | ---: | --- | --- | --- |",
+    ]
+    for row in rows:
+        lines.append(
+            f"| {row['panel']} | `{row['metric']}` | {row['value'] or 'n/a'} | {row['status']} | {row['note']} | {row['nextAction']} |"
+        )
+    lines.append("")
+    path.write_text("\n".join(lines), encoding="utf-8")
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())

@@ -48,6 +48,8 @@ The matching spine should prefer stable source-native identifiers:
 7. Add FACA and House witness disclosure panels for expert-access and intermediary venue-shifting diagnostics.
 8. Rerun `make snapshot-2024-env source-moments validate calibration-queue paper-artifacts-check` and commit regenerated artifacts.
 
+`make source-panel-inventory` should be run after each source refresh. It classifies direct dark-money, outside-spending, public-financing, intermediary, revolving-door, procurement-identifier, and procurement-modification panels as usable, thin, warning-level, or missing so model claims cannot silently outrun source coverage.
+
 ## Claim Discipline
 
 - LDA, FEC, Regulations.gov, Federal Register, USAspending, SAM/FPDS, IRS 8871/8872, and filed Form 990 data can support observed distribution claims within their coverage limits.

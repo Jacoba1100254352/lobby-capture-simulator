@@ -51,6 +51,7 @@ def render_configured_table(
         environment=str(table_config.get("environment", "table")),
         placement=str(table_config.get("placement", "tbp")),
         width=str(table_config.get("width", "\\linewidth")),
+        tabcolsep=str(table_config.get("tabcolsep", "3pt")),
         provenance=provenance_comment(selected, source_path, config_path),
     )
 
@@ -76,31 +77,67 @@ def select_rows(
         sort_source = str(table_config.get("sortSource", "captureRate"))
         selected.sort(key=lambda row: float(row[sort_source]) - float(baseline[sort_source]), reverse=True)
         return selected, baseline
+    if row_mode == "substitution-failure-top":
+        statuses = set(table_config.get("statuses", ["possible_failure", "worse_total_distortion"]))
+        selected = [row for row in rows if row.get("status") in statuses]
+        sort_source = str(table_config.get("sortSource", "failureSeverity"))
+        selected.sort(key=lambda row: (status_rank(row.get("status", "")), float(row.get(sort_source, "0") or "0")), reverse=True)
+        limit = int(table_config.get("limit", len(selected)))
+        return selected[:limit], None
     raise SystemExit(f"Unknown rowMode for {table_config['output']}: {row_mode}")
 
 
 def render_cell(column: dict[str, object], row: dict[str, str], baseline: dict[str, str] | None) -> str:
     source = str(column["source"])
+    raw_value = value_for(row, source)
     cell_format = str(column.get("format", "text"))
     if cell_format == "label":
-        return dict(column.get("labels", {})).get(row[source], row[source])
+        return dict(column.get("labels", {})).get(raw_value, raw_value)
     if cell_format == "float4":
-        return f4(row[source])
+        return f4(raw_value)
     if cell_format == "float3":
-        return f"{float(row[source]):.3f}"
+        return f"{float(raw_value):.3f}"
     if cell_format == "float3ci":
         lower = str(column["lowerSource"])
         upper = str(column["upperSource"])
         return f"{float(row[source]):.3f} [{float(row[lower]):.3f}, {float(row[upper]):.3f}]"
     if cell_format == "count-ratio":
         denominator_source = str(column["denominatorSource"])
-        return f"{int(float(row[source]))}/{int(float(row[denominator_source]))}"
+        return f"{int(float(raw_value))}/{int(float(row[denominator_source]))}"
     if cell_format == "delta4":
         if baseline is None:
             raise SystemExit(f"Column {column['header']} requires a baseline row.")
         baseline_source = str(column.get("baselineSource", source))
         return f"{float(row[source]) - float(baseline[baseline_source]):.4f}"
-    return row[source]
+    if cell_format == "signed4":
+        value = float(raw_value)
+        return f"{value:+.4f}"
+    return raw_value
+
+
+def value_for(row: dict[str, str], source: str) -> str:
+    if source in row:
+        return row[source]
+    if source == "failureSeverity":
+        values = [
+            max(0.0, -float(row.get("observedCaptureDelta", "0") or "0")),
+            max(0.0, float(row.get("hiddenInfluenceDelta", "0") or "0")),
+            max(0.0, float(row.get("hiddenCaptureDelta", "0") or "0")),
+            max(0.0, float(row.get("totalInfluenceDistortionDelta", "0") or "0")),
+            max(0.0, float(row.get("substitutionFailureRiskDelta", "0") or "0")),
+        ]
+        return f"{sum(values):.4f}"
+    if source == "designLoss":
+        return "0.0000"
+    return ""
+
+
+def status_rank(status: str) -> int:
+    return {
+        "possible_failure": 3,
+        "worse_total_distortion": 2,
+        "substitution_tradeoff": 1,
+    }.get(status, 0)
 
 
 def table(
@@ -112,6 +149,7 @@ def table(
         environment: str,
         placement: str,
         width: str,
+        tabcolsep: str,
         provenance: str,
 ) -> str:
     if environment not in {"table", "table*"}:
@@ -122,7 +160,7 @@ def table(
         f"\\begin{{{environment}}}[{placement}]",
         "\\centering",
         f"\\{size}",
-        "\\setlength{\\tabcolsep}{3pt}",
+        f"\\setlength{{\\tabcolsep}}{{{tabcolsep}}}",
         f"\\begin{{tabular*}}{{{width}}}{{@{{\\extracolsep{{\\fill}}}}{spec}@{{}}}}",
         "\\toprule",
         " & ".join(escape(header) for header in headers) + " \\\\",

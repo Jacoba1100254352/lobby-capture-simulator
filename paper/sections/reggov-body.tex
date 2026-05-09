@@ -80,7 +80,7 @@ C_t = R_t + A_a + I_t + H_t - K_t(1 - L_t) - B_t + \epsilon_t,
 
 where \(R_t\) is contest-level capture risk, \(A_a\) is arena susceptibility, \(I_t\) is weighted information, campaign-finance, revolving-door, and litigation pressure, \(H_t\) is hidden substitution pressure, \(K_t\) is the active reform-control bundle, \(L_t\) is control leakage from hidden and preserved influence, \(B_t\) is public backlash under transparency, and \(\epsilon_t\) is bounded run noise. Capture is recorded only if the pre-audit score crosses the arena threshold and is not reversed by detection and sanctions. Anti-capture contests are resolved separately by comparing the public case for reform against defensive lobbying, litigation delay, and constitutional challenge risk.
 
-The model is initialized from a fixed scenario catalog, a calibration profile, and deterministic source fixtures or normalized public-data snapshots. Randomness enters through contest sampling, channel-allocation variation, process detection, sanctions, and final contest resolution. Every report is generated with fixed seeds and records run counts, contests per run, Java version, source Git state, and calibration checksum. Report CSVs include Wilson intervals for binomial capture and reform-success outcomes plus multi-seed sample standard deviations for capture, hidden influence, and total influence distortion. Tables in the article report selected interval and robustness columns while the full report snapshots remain in the repository. The ODD-style model description in \texttt{docs/odd-model.md}, scenario catalog in \texttt{docs/scenario-catalog.md}, validation plan, source moments, portfolio screen, substitution audit, validation summary, and calibration queue are bundled as supporting information with the submission package.
+The model is initialized from a fixed scenario catalog, a calibration profile, and deterministic source fixtures or normalized public-data snapshots. Randomness enters through contest sampling, channel-allocation variation, process detection, sanctions, and final contest resolution. Every report is generated with fixed seeds and records run counts, contests per run, Java version, source Git state, and calibration checksum. Report CSVs include Wilson intervals for binomial capture and reform-success outcomes plus multi-seed sample standard deviations for capture, hidden influence, and total influence distortion. Tables in the article report selected interval and robustness columns while the full report snapshots remain in the repository. The ODD-style model description in \texttt{docs/odd-model.md}, scenario catalog in \texttt{docs/scenario-catalog.md}, validation plan, source moments, portfolio screen, substitution audit, validation summary, source-panel inventory, layout audit, and calibration queue are bundled as supporting information with the submission package.
 
 \section{First Campaign Snapshot}
 
@@ -91,6 +91,14 @@ Table~\ref{tab:first-campaign} reports selected results from the current campaig
 The synthetic result is directionally useful but limited. Reform threats trigger substantial defensive spending, and evasion or intermediary scenarios preserve influence even when observed capture is low. Low-salience technical rulemaking remains a weak surface in the prototype, which is consistent with the model's emphasis on information asymmetry and weak public attention. The relevant result is therefore not only the observed capture column; it is the joint pattern across visible capture, hidden capture, total distortion, preserved influence, administrative burden, and channel allocation.
 
 \input{figures/channel_mix}
+
+\section{Substitution-Failure Ranking}
+
+The central evaluation rule is intentionally stricter than measured capture reduction. A row is flagged when observed capture or visible lobbying falls but hidden influence, hidden capture, total distortion, or substitution-failure risk rises against the comparison row. Table~\ref{tab:substitution-failures} ranks the strongest current flags by failure severity, and Figure~\ref{fig:substitution-failure-map} maps the apparent-success quadrant directly: lower observed capture on the horizontal axis and higher total distortion on the vertical axis. These are synthetic diagnostics. They do not estimate real-world failure rates, but they define the criterion that prevents the model from calling a reform successful merely because the visible channel was suppressed.
+
+\input{tables/substitution_failure_ranking.tex}
+
+\input{figures/substitution_failure_map}
 
 \section{Sensitivity Snapshot}
 

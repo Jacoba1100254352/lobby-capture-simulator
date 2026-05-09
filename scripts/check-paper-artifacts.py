@@ -18,11 +18,14 @@ DIST = ROOT / "dist"
 
 LOCAL_PDF = PAPER / "main.pdf"
 WILEY_PDF = PAPER / "regulation-governance-wiley.pdf"
+SUPPLEMENT_PDF = PAPER / "supplement.pdf"
 SUBMISSION_ZIP = DIST / "lobby-capture-wiley-submission.zip"
 
 EXPECTED_ZIP_MEMBERS = {
     "main.tex",
     "main.pdf",
+    "supplement.tex",
+    "supplement.pdf",
     "references.bib",
     "USG.cls",
     "lettersp.sty",
@@ -31,28 +34,34 @@ EXPECTED_ZIP_MEMBERS = {
     "sections/reggov-body.tex",
     "sections/submission-declarations.tex",
     "tables/campaign_snapshot.tex",
+    "tables/substitution_failure_ranking.tex",
     "tables/sensitivity_snapshot.tex",
     "tables/ablation_snapshot.tex",
     "tables/interaction_snapshot.tex",
+    "tables/portfolio_snapshot.tex",
     "figures/Figure_1_channel_mix.pdf",
     "figures/Figure_2_evasion_sensitivity.pdf",
     "figures/Figure_3_interaction_tradeoffs.pdf",
     "figures/Figure_4_scenario_tradeoffs.pdf",
+    "figures/Figure_5_substitution_failure_map.pdf",
+    "figures/substitution_failure_map.tex",
     "supporting-information/ODD-model.md",
     "supporting-information/scenario-catalog.md",
     "supporting-information/validation-plan.md",
     "supporting-information/source-data-roadmap.md",
     "supporting-information/source-moments.md",
+    "supporting-information/source-panel-inventory.md",
     "supporting-information/validation-summary.md",
     "supporting-information/substitution-audit.md",
     "supporting-information/portfolio-screen.md",
     "supporting-information/calibration-queue.md",
+    "supporting-information/paper-layout-audit.md",
 }
 
 
 def main() -> int:
     failures: list[str] = []
-    failures.extend(check_exists([LOCAL_PDF, WILEY_PDF, SUBMISSION_ZIP]))
+    failures.extend(check_exists([LOCAL_PDF, WILEY_PDF, SUPPLEMENT_PDF, SUBMISSION_ZIP]))
     failures.extend(check_freshness())
     failures.extend(check_wiley_text())
     failures.extend(check_submission_zip())
@@ -78,6 +87,7 @@ def check_freshness() -> list[str]:
     checks = [
         (LOCAL_PDF, local_pdf_inputs()),
         (WILEY_PDF, wiley_pdf_inputs()),
+        (SUPPLEMENT_PDF, supplement_pdf_inputs()),
         (SUBMISSION_ZIP, submission_inputs()),
     ]
     for artifact, inputs in checks:
@@ -114,10 +124,23 @@ def wiley_pdf_inputs() -> list[Path]:
     ]
 
 
+def supplement_pdf_inputs() -> list[Path]:
+    return [
+        PAPER / "supplement.tex",
+        PAPER / "references.bib",
+        PAPER / "sections" / "supplement-body.tex",
+        *sorted((PAPER / "tables").glob("*.tex")),
+        *sorted((PAPER / "figures").glob("*.tex")),
+        *sorted((PAPER / "figures").glob("Figure_*.pdf")),
+    ]
+
+
 def submission_inputs() -> list[Path]:
     return [
         WILEY_PDF,
+        SUPPLEMENT_PDF,
         PAPER / "regulation-governance-wiley.tex",
+        PAPER / "supplement.tex",
         PAPER / "references.bib",
         ROOT / "scripts" / "build-submission-package.sh",
         ROOT / "docs" / "odd-model.md",
@@ -125,10 +148,12 @@ def submission_inputs() -> list[Path]:
         ROOT / "docs" / "validation.md",
         ROOT / "docs" / "source-data-roadmap.md",
         ROOT / "reports" / "source-moments.md",
+        ROOT / "reports" / "source-panel-inventory.md",
         ROOT / "reports" / "validation-summary.md",
         ROOT / "reports" / "substitution-audit.md",
         ROOT / "reports" / "lobby-capture-portfolio.md",
         ROOT / "reports" / "calibration-queue.md",
+        ROOT / "reports" / "paper-layout-audit.md",
         PAPER / ".wiley-build" / "USG.cls",
         PAPER / ".wiley-build" / "wileyNJD-Chicago.bst",
         PAPER / ".wiley-template" / "Optimal-Design-layout" / "LETTERSP.STY",
@@ -175,6 +200,9 @@ def check_submission_zip() -> list[str]:
             with WILEY_PDF.open("rb") as pdf:
                 if archive.read("main.pdf") != pdf.read():
                     failures.append("submission zip main.pdf differs from paper/regulation-governance-wiley.pdf")
+            with SUPPLEMENT_PDF.open("rb") as pdf:
+                if archive.read("supplement.pdf") != pdf.read():
+                    failures.append("submission zip supplement.pdf differs from paper/supplement.pdf")
             return failures
     except (OSError, KeyError, zipfile.BadZipFile) as error:
         return [f"could not inspect submission zip: {error}"]
@@ -240,11 +268,43 @@ def check_submission_zip_compiles() -> list[str]:
                 "submission zip compile ended with unresolved LaTeX state: "
                 + ", ".join(failures)
             ]
+        supplement_failures = compile_supplement(temp, env)
+        if supplement_failures:
+            return supplement_failures
+    return []
+
+
+def compile_supplement(temp: Path, env: dict[str, str]) -> list[str]:
+    if not (temp / "supplement.tex").exists():
+        return ["submission zip compile check did not find supplement.tex"]
+    commands = [
+        ["pdflatex", "-interaction=nonstopmode", "supplement.tex"],
+        ["bibtex", "supplement"],
+        ["pdflatex", "-interaction=nonstopmode", "supplement.tex"],
+        ["pdflatex", "-interaction=nonstopmode", "supplement.tex"],
+    ]
+    for command in commands:
+        result = subprocess.run(
+            command,
+            cwd=temp,
+            env=env,
+            text=True,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.STDOUT,
+        )
+        if command[0] == "pdflatex" and is_nonfatal_latex_pass(result.stdout, temp / "supplement.pdf"):
+            continue
+        if result.returncode != 0:
+            tail = "\n".join(result.stdout.splitlines()[-20:])
+            return [
+                "submission supplement does not compile from extracted root with "
+                f"`{' '.join(command)}`:\n{tail}"
+            ]
     return []
 
 
 def is_nonfatal_latex_pass(output: str, pdf_path: Path) -> bool:
-    if "Output written on main.pdf" not in output or not pdf_path.exists():
+    if f"Output written on {pdf_path.name}" not in output or not pdf_path.exists():
         return False
     fatal_markers = [
         "! LaTeX Error:",

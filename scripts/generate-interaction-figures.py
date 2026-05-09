@@ -14,6 +14,7 @@ from pathlib import Path
 CAMPAIGN_REPORT = Path("reports/lobby-capture-campaign.csv")
 INTERACTION_REPORT = Path("reports/lobby-capture-interactions.csv")
 SENSITIVITY_REPORT = Path("reports/lobby-capture-sensitivity.csv")
+SUBSTITUTION_REPORT = Path("reports/substitution-audit.csv")
 FIGURE_DIR = Path("paper/figures")
 
 WIDTH = 1800
@@ -75,6 +76,7 @@ FIGURES = (
     "evasion_sensitivity.tex",
     "interaction_tradeoffs.tex",
     "scenario_tradeoffs.tex",
+    "substitution_failure_map.tex",
 )
 
 
@@ -83,6 +85,7 @@ def main() -> int:
     parser.add_argument("--campaign-report", type=Path, default=CAMPAIGN_REPORT)
     parser.add_argument("--interaction-report", type=Path, default=INTERACTION_REPORT)
     parser.add_argument("--sensitivity-report", type=Path, default=SENSITIVITY_REPORT)
+    parser.add_argument("--substitution-report", type=Path, default=SUBSTITUTION_REPORT)
     parser.add_argument("--figure-dir", type=Path, default=FIGURE_DIR)
     parser.add_argument(
         "--output",
@@ -98,11 +101,13 @@ def main() -> int:
     campaign_rows = index_rows(read_rows(args.campaign_report))
     interaction_rows = index_rows(read_rows(args.interaction_report))
     sensitivity_rows = index_rows(read_rows(args.sensitivity_report))
+    substitution_rows = read_rows(args.substitution_report)
 
     write_channel_mix(campaign_rows, args.campaign_report, args.figure_dir)
     write_evasion_sensitivity(sensitivity_rows, args.sensitivity_report, args.figure_dir)
     write_interaction_tradeoffs(interaction_rows, args.interaction_report, args.figure_dir)
     write_scenario_tradeoffs(campaign_rows, args.campaign_report, args.figure_dir)
+    write_substitution_failure_map(substitution_rows, args.substitution_report, args.figure_dir)
 
     for name in FIGURES:
         print(f"Wrote {args.figure_dir / name}")
@@ -313,6 +318,92 @@ def write_scenario_tradeoffs(indexed: dict[str, dict[str, str]], report: Path, f
         "fig:scenario-tradeoffs",
         extra="x=capture rate; y=Total influence distortion",
     )
+
+
+def write_substitution_failure_map(rows: list[dict[str, str]], report: Path, figure_dir: Path) -> None:
+    flagged = [
+        row for row in rows
+        if row.get("status") in {"possible_failure", "worse_total_distortion"}
+    ]
+    flagged.sort(key=lambda row: float(row.get("failureSeverity", "0") or "0"), reverse=True)
+    selected = flagged[:10]
+    if not selected:
+        selected = rows[:1]
+    points = [
+        ScatterPoint(
+            label=substitution_label(row),
+            x=as_float(row["observedCaptureDelta"]),
+            y=as_float(row["totalInfluenceDistortionDelta"]),
+            emphasis=row.get("status") == "possible_failure",
+        )
+        for row in selected
+    ]
+    plot = Plot(left=260, top=170, width=1230, height=720)
+    body: list[str] = []
+    body.extend(title_block("Apparent success versus substitution failure", "Capture change against total-distortion change"))
+    draw_axes(
+        body,
+        plot,
+        x_ticks=(-1.0, -0.75, -0.5, -0.25, 0.0, 0.25),
+        y_ticks=(-0.2, -0.1, 0.0, 0.1, 0.2, 0.3),
+        x_max=0.25,
+        y_max=0.30,
+        x_label="Observed capture delta",
+        y_label="Total distortion delta",
+        x_min=-1.0,
+        y_min=-0.20,
+    )
+    zero_x = plot.left + scale_range(0.0, -1.0, 0.25) * plot.width
+    zero_y = plot.bottom - scale_range(0.0, -0.20, 0.30) * plot.height
+    body.append(line(zero_x, plot.top, zero_x, plot.bottom, "threshold"))
+    body.append(line(plot.left, zero_y, plot.left + plot.width, zero_y, "threshold"))
+    body.append(text(zero_x - 22, plot.top + 40, "visible capture lower", anchor="end", css_class="small"))
+    body.append(text(zero_x + 22, zero_y - 20, "distortion higher", anchor="start", css_class="small"))
+    label_targets: list[LabelTarget] = []
+    for point in points:
+        x, y = plot.point(point.x, point.y, 0.25, 0.30, x_min=-1.0, y_min=-0.20)
+        size = 32 if point.emphasis else 24
+        color = "#555555" if point.emphasis else "#111111"
+        body.append(rect(x - size / 2, y - size / 2, size, size, color, "point"))
+        label_targets.append(LabelTarget(point.label, x, y))
+    draw_label_callouts(body, layout_labels(plot, label_targets))
+    write_svg_and_pdf(
+        figure_dir,
+        "Figure_5_substitution_failure_map",
+        "Apparent success versus substitution failure",
+        "Scatter plot comparing observed capture deltas with total influence distortion deltas for flagged audit rows.",
+        body,
+    )
+    write_wrapper(
+        figure_dir / "substitution_failure_map.tex",
+        "Figure_5_substitution_failure_map.pdf",
+        report,
+        "Substitution-failure map. Points in the upper-left combine lower observed capture with higher total influence distortion, the region where visible reform success can mask hidden failure.",
+        "fig:substitution-failure-map",
+        extra="x=observed capture delta; y=total distortion delta",
+    )
+
+
+def substitution_label(row: dict[str, str]) -> str:
+    labels = {
+        "lobby-capture-campaign.csv": "Camp.",
+        "lobby-capture-sensitivity.csv": "Sens.",
+        "lobby-capture-ablation.csv": "Abl.",
+        "lobby-capture-interactions.csv": "Int.",
+        "lobby-capture-portfolio.csv": "Port.",
+    }
+    scenario = row.get("scenarioName", row.get("scenarioKey", "scenario"))
+    short = {
+        "Anti-capture bundle with evasion": "Bundle+evasion",
+        "Shadow lobbying maximum stress": "Shadow max",
+        "Hard-budget substitution stress": "Budget stress",
+        "Think-tank and association intermediaries": "Intermediaries",
+        "Outside-spending disclosure evasion": "Outside evasion",
+        "Procurement venue-shift stress": "Proc. shift",
+        "Sensitivity evasion 0.90": "Evasion .90",
+        "Portfolio: full anti-substitution under high evasion": "Full+evasion",
+    }.get(scenario, scenario[:18])
+    return f"{labels.get(row.get('report', ''), 'Rpt.')} {short}"
 
 
 def scatter_body(
@@ -597,6 +688,7 @@ def svg_document(title: str, description: str, body: list[str]) -> str:
             ".segment, .point, .legend-swatch { stroke: #111; stroke-width: 2; }",
             ".label-box { fill: #fff; stroke: #111; stroke-width: 2; }",
             ".leader { stroke: #333; stroke-width: 2; fill: none; stroke-dasharray: 8 8; }",
+            ".threshold { stroke: #999; stroke-width: 4; fill: none; stroke-dasharray: 12 12; }",
             ".series-primary { stroke: #111; stroke-width: 8; fill: none; }",
             ".series-secondary { stroke: #777; stroke-width: 8; fill: none; stroke-dasharray: 24 18; }",
             "</style>",

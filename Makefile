@@ -10,7 +10,7 @@ TEST_SOURCES := $(shell find src/test/java -name "*.java" | sort)
 MAIN_CLASS := lobbycapture.Main
 TEST_CLASSES := lobbycapture.SmokeTest lobbycapture.AdaptationTest
 
-.PHONY: compile test run campaign sensitivity ablation interactions portfolio source-moments calibration-queue validate snapshot-2024-env tables figures paper paper-build paper-word-count wiley-template wiley-tex-deps paper-wiley paper-wiley-build submission-package submission-package-build paper-artifacts paper-artifacts-check clean
+.PHONY: compile test run campaign sensitivity ablation interactions portfolio source-moments source-panel-inventory calibration-queue validate snapshot-2024-env tables figures paper paper-build paper-supplement-build paper-supplement paper-word-count wiley-template wiley-tex-deps paper-wiley paper-wiley-build submission-package submission-package-build paper-layout-audit paper-artifacts paper-artifacts-check clean
 
 compile:
 	@mkdir -p out/classes
@@ -45,19 +45,22 @@ portfolio: compile
 source-moments:
 	python3 scripts/extract-source-moments.py
 
+source-panel-inventory: source-moments
+	python3 scripts/audit-source-panels.py
+
 calibration-queue: validate
 	python3 scripts/classify-validation-misses.py
 
-validate: source-moments
+validate: source-moments source-panel-inventory
 	python3 scripts/validate-reports.py
 
 snapshot-2024-env:
 	python3 scripts/create-2024-env-snapshot.py
 
-tables:
+tables: validate
 	python3 scripts/generate-paper-tables.py
 
-figures:
+figures: validate
 	python3 scripts/generate-interaction-figures.py
 
 paper-build:
@@ -68,7 +71,16 @@ paper-build:
 	cd paper && pdflatex -interaction=nonstopmode main.tex
 	cd paper && pdflatex -interaction=nonstopmode main.tex
 
-paper: tables figures paper-build
+paper-supplement-build:
+	rm -f paper/supplement.aux paper/supplement.bbl paper/supplement.blg
+	cd paper && pdflatex -interaction=nonstopmode supplement.tex
+	cd paper && bibtex supplement
+	cd paper && pdflatex -interaction=nonstopmode supplement.tex
+	cd paper && pdflatex -interaction=nonstopmode supplement.tex
+
+paper-supplement: tables figures paper-supplement-build
+
+paper: tables figures paper-build paper-supplement-build
 
 paper-word-count:
 	python3 scripts/check-paper-word-count.py
@@ -87,16 +99,20 @@ paper-wiley: tables figures paper-wiley-build
 submission-package-build:
 	./scripts/build-submission-package.sh
 
-submission-package: paper-wiley paper-word-count submission-package-build
+submission-package: paper-wiley paper-supplement paper-word-count submission-package-build
 
-paper-artifacts: campaign sensitivity ablation interactions portfolio source-moments validate calibration-queue tables figures paper-build paper-wiley-build paper-word-count submission-package-build
+paper-layout-audit: paper-build paper-wiley-build paper-supplement-build
+	python3 scripts/audit-paper-layout.py
+
+paper-artifacts: campaign sensitivity ablation interactions portfolio source-moments source-panel-inventory validate calibration-queue tables figures paper-build paper-wiley-build paper-supplement-build paper-word-count paper-layout-audit submission-package-build
 
 paper-artifacts-check: paper-artifacts
 	python3 scripts/check-paper-artifacts.py
+	python3 scripts/audit-paper-layout.py
 
 clean:
 	rm -rf out
 	rm -f paper/*.aux paper/*.bbl paper/*.blg paper/*.log paper/*.out paper/*.pdf paper/*.pag paper/*.synctex.gz
 	rm -f reports/validation-summary.csv reports/validation-summary.md reports/substitution-audit.csv reports/substitution-audit.md
-	rm -f reports/source-moments.csv reports/source-moments.md reports/calibration-queue.csv reports/calibration-queue.md
+	rm -f reports/source-moments.csv reports/source-moments.md reports/source-panel-inventory.csv reports/source-panel-inventory.md reports/paper-layout-audit.md reports/calibration-queue.csv reports/calibration-queue.md
 	rm -rf dist

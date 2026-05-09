@@ -16,9 +16,11 @@ import sys
 root = Path(sys.argv[1])
 paper = root / "paper"
 pdf = paper / "regulation-governance-wiley.pdf"
+supplement_pdf = paper / "supplement.pdf"
 build_class = paper / ".wiley-build" / "USG.cls"
 inputs = [
     paper / "regulation-governance-wiley.tex",
+    paper / "supplement.tex",
     paper / "references.bib",
     root / "scripts" / "build-wiley-paper.sh",
     *sorted((paper / "sections").glob("*.tex")),
@@ -26,7 +28,7 @@ inputs = [
     *sorted((paper / "figures").glob("*.tex")),
     *sorted((paper / "figures").glob("Figure_*.pdf")),
 ]
-if not pdf.exists() or not build_class.exists():
+if not pdf.exists() or not supplement_pdf.exists() or not build_class.exists():
     raise SystemExit(1)
 pdf_mtime = pdf.stat().st_mtime
 if any(path.exists() and path.stat().st_mtime > pdf_mtime + 1 for path in inputs):
@@ -36,11 +38,17 @@ then
   "$ROOT_DIR/scripts/build-wiley-paper.sh"
 fi
 
+if [ ! -f "$PAPER_DIR/supplement.pdf" ]; then
+  (cd "$PAPER_DIR" && pdflatex -interaction=nonstopmode supplement.tex && bibtex supplement && pdflatex -interaction=nonstopmode supplement.tex && pdflatex -interaction=nonstopmode supplement.tex)
+fi
+
 rm -rf "$STAGING_DIR" "$ZIP_PATH"
 mkdir -p "$STAGING_DIR"
 
 cp "$PAPER_DIR/regulation-governance-wiley.tex" "$STAGING_DIR/main.tex"
 cp "$PAPER_DIR/regulation-governance-wiley.pdf" "$STAGING_DIR/main.pdf"
+cp "$PAPER_DIR/supplement.tex" "$STAGING_DIR/supplement.tex"
+cp "$PAPER_DIR/supplement.pdf" "$STAGING_DIR/supplement.pdf"
 cp "$PAPER_DIR/references.bib" "$STAGING_DIR/references.bib"
 cp -R "$PAPER_DIR/sections" "$STAGING_DIR/sections"
 cp -R "$PAPER_DIR/tables" "$STAGING_DIR/tables"
@@ -50,10 +58,12 @@ cp "$ROOT_DIR/docs/scenario-catalog.md" "$STAGING_DIR/supporting-information/sce
 cp "$ROOT_DIR/docs/validation.md" "$STAGING_DIR/supporting-information/validation-plan.md"
 cp "$ROOT_DIR/docs/source-data-roadmap.md" "$STAGING_DIR/supporting-information/source-data-roadmap.md"
 cp "$ROOT_DIR/reports/source-moments.md" "$STAGING_DIR/supporting-information/source-moments.md"
+cp "$ROOT_DIR/reports/source-panel-inventory.md" "$STAGING_DIR/supporting-information/source-panel-inventory.md"
 cp "$ROOT_DIR/reports/validation-summary.md" "$STAGING_DIR/supporting-information/validation-summary.md"
 cp "$ROOT_DIR/reports/substitution-audit.md" "$STAGING_DIR/supporting-information/substitution-audit.md"
 cp "$ROOT_DIR/reports/lobby-capture-portfolio.md" "$STAGING_DIR/supporting-information/portfolio-screen.md"
 cp "$ROOT_DIR/reports/calibration-queue.md" "$STAGING_DIR/supporting-information/calibration-queue.md"
+cp "$ROOT_DIR/reports/paper-layout-audit.md" "$STAGING_DIR/supporting-information/paper-layout-audit.md"
 mkdir -p "$STAGING_DIR/figures"
 cp "$PAPER_DIR"/figures/Figure_*.pdf "$STAGING_DIR/figures/"
 cp "$PAPER_DIR"/figures/*.tex "$STAGING_DIR/figures/"
@@ -79,6 +89,7 @@ Lobby Capture Simulator Wiley LaTeX submission package
 
 Root manuscript: main.tex
 Compiled PDF: main.pdf
+Supplement: supplement.tex and supplement.pdf
 
 The included USG.cls is a generated copy of Wiley's USG class with template sample journal art and the generic Open Access badge removed for neutral peer-review rendering. The downloaded Wiley template remains unmodified in the repository.
 

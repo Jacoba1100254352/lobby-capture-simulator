@@ -236,7 +236,7 @@ Scenario reports include:
 
 The primary synthetic comparison for reform packages is `totalInfluenceDistortion`, not `captureRate`. If observed capture falls while hidden influence, hidden capture, total distortion, or substitution failure risk rises, the validation audit treats the reform as a possible failure rather than a clean success. Network opacity, venue shifting, and channel-network load are still reported, but rows with channel movement and no higher distortion are classified as substitution tradeoffs.
 
-Generated paper tables and figures are derived from committed report CSVs. The full report snapshots, portfolio screen, source moments, validation summary, substitution audit, and calibration queue remain in the repository and are included in the Wiley submission support bundle.
+Generated paper tables and figures are derived from committed report CSVs. The full report snapshots, portfolio screen, source moments, source-panel inventory, validation summary, substitution audit, paper-layout audit, and calibration queue remain in the repository and are included in the Wiley submission support bundle.
 
 ## Known Boundaries
 

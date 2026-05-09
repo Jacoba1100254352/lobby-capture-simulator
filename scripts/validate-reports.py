@@ -95,9 +95,10 @@ def validate_report(report: Path, benchmarks: list[dict[str, str]]) -> list[dict
         if metric not in rows[0]:
             output.append(summary_row(report, benchmark, "", "", "unknown", "metric not present in report"))
             continue
-        values = [float(row[metric]) for row in rows if row.get(metric, "") != ""]
+        scoped_rows, scope = benchmark_scope(rows, benchmark)
+        values = [float(row[metric]) for row in scoped_rows if row.get(metric, "") != ""]
         if not values:
-            output.append(summary_row(report, benchmark, "", "", "unknown", "metric has no values"))
+            output.append(summary_row(report, benchmark, "", "", "unknown", f"metric has no values in {scope}"))
             continue
         observed_min = min(values)
         observed_max = max(values)
@@ -112,8 +113,81 @@ def validate_report(report: Path, benchmarks: list[dict[str, str]]) -> list[dict
         else:
             status = "miss"
             note = "scenario range outside benchmark range"
-        output.append(summary_row(report, benchmark, f4(observed_min), f4(observed_max), status, note))
+        output.append(summary_row(
+            report,
+            benchmark,
+            f4(observed_min),
+            f4(observed_max),
+            status,
+            f"{note}; scope={scope}; rows={len(scoped_rows)}",
+            scope,
+            str(len(scoped_rows)),
+        ))
     return output
+
+
+def benchmark_scope(rows: list[dict[str, str]], benchmark: dict[str, str]) -> tuple[list[dict[str, str]], str]:
+    key = benchmark.get("key", "")
+    metric_name = benchmark.get("metric", "")
+    if key == "public_financing_candidate_uptake":
+        return filter_rows(rows, lambda row: metric(row, "publicFinancingShare") >= 0.45), "public-financing scenarios"
+    if key == "voucher_participation":
+        return filter_rows(rows, lambda row: metric(row, "voucherParticipation") >= 0.45), "voucher scenarios"
+    if key == "super_pac_large_donor_dependence":
+        return filter_rows(rows, campaign_finance_scope), "campaign-finance and outside-spending scenarios"
+    if key == "dark_money_super_pac_routing":
+        return filter_rows(rows, hidden_substitution_scope), "hidden-substitution stress scenarios"
+    if key == "shadow_lobbying_share":
+        return filter_rows(rows, shadow_lobbying_scope), "shadow-lobbying stress scenarios"
+    if key == "cooling_off_shadow_lobbying":
+        return filter_rows(rows, cooling_or_venue_scope), "cooling-off and venue-shift scenarios"
+    if metric_name in {"procurementNetworkExposure", "procurementBias"}:
+        return filter_rows(rows, procurement_scope), "procurement scenarios"
+    return rows, "all scenarios"
+
+
+def filter_rows(rows: list[dict[str, str]], predicate) -> list[dict[str, str]]:
+    filtered = [row for row in rows if predicate(row)]
+    return filtered if filtered else rows
+
+
+def campaign_finance_scope(row: dict[str, str]) -> bool:
+    text = row_text(row)
+    return (
+        "campaign" in text
+        or "election" in text
+        or "dark-money" in text
+        or "outside" in text
+        or "electoral" in text
+        or metric(row, "campaignFinanceShare") + metric(row, "darkMoneyShare") >= 0.24
+    )
+
+
+def hidden_substitution_scope(row: dict[str, str]) -> bool:
+    text = row_text(row)
+    markers = ("evasion", "dark-money", "shadow", "intermediary", "substitution", "venue", "hard-budget", "outside")
+    return any(marker in text for marker in markers) or metric(row, "hiddenInfluenceShare") >= 0.30
+
+
+def shadow_lobbying_scope(row: dict[str, str]) -> bool:
+    text = row_text(row)
+    markers = ("shadow", "hard-budget", "advisory", "venue", "bundle-with-evasion", "intermediary", "outside")
+    return any(marker in text for marker in markers) or metric(row, "hiddenInfluenceShare") >= 0.30
+
+
+def cooling_or_venue_scope(row: dict[str, str]) -> bool:
+    text = row_text(row)
+    markers = ("cooling", "revolving", "door", "advisory", "venue", "procurement-venue", "hard-budget")
+    return any(marker in text for marker in markers) or metric(row, "venueSubstitutionRate") >= 0.10
+
+
+def procurement_scope(row: dict[str, str]) -> bool:
+    text = row_text(row)
+    return "procurement" in text or metric(row, "procurementNetworkExposure") >= 0.10
+
+
+def row_text(row: dict[str, str]) -> str:
+    return " ".join([row.get("scenarioKey", ""), row.get("scenarioName", "")]).lower()
 
 
 def read_source_moments(path: Path) -> dict[str, float]:
@@ -215,12 +289,28 @@ def substitution_status(row: dict[str, str], baseline: dict[str, str]) -> str:
 
 
 def substitution_row(report: Path, row: dict[str, str], baseline: dict[str, str], status: str) -> dict[str, str]:
+    capture_delta = metric(row, "observedCaptureRate") - metric(baseline, "observedCaptureRate")
+    hidden_delta = metric(row, "hiddenInfluenceShare") - metric(baseline, "hiddenInfluenceShare")
+    hidden_capture_delta = metric(row, "hiddenCaptureIndex") - metric(baseline, "hiddenCaptureIndex")
+    distortion_delta = metric(row, "totalInfluenceDistortion") - metric(baseline, "totalInfluenceDistortion")
+    risk_delta = metric(row, "substitutionFailureRisk") - metric(baseline, "substitutionFailureRisk")
+    failure_severity = max(0.0, -capture_delta) + max(0.0, hidden_delta) + max(0.0, hidden_capture_delta) + max(0.0, distortion_delta) + max(0.0, risk_delta)
+    design_loss = (
+        (0.34 * metric(row, "totalInfluenceDistortion"))
+        + (0.22 * metric(row, "hiddenCaptureIndex"))
+        + (0.18 * metric(row, "substitutionFailureRisk"))
+        + (0.10 * metric(row, "administrativeCost"))
+        + (0.08 * metric(row, "networkOpacityIndex"))
+        + (0.08 * metric(row, "venueShiftNetworkLoad"))
+    )
     return {
         "report": report.name,
         "scenarioKey": row.get("scenarioKey", ""),
         "scenarioName": row.get("scenarioName", ""),
         "baselineScenarioKey": baseline.get("scenarioKey", ""),
         "status": status,
+        "failureSeverity": f4(failure_severity),
+        "designLoss": f4(design_loss),
         "observedCaptureDelta": delta(row, baseline, "observedCaptureRate"),
         "hiddenInfluenceDelta": delta(row, baseline, "hiddenInfluenceShare"),
         "hiddenCaptureDelta": delta(row, baseline, "hiddenCaptureIndex"),
@@ -262,6 +352,8 @@ def summary_row(
         observed_max: str,
         status: str,
         validation_note: str,
+        validation_scope: str = "all scenarios",
+        validated_rows: str = "",
 ) -> dict[str, str]:
     return {
         "report": report.name,
@@ -276,6 +368,8 @@ def summary_row(
         "observable": benchmark["observable"],
         "evidenceType": benchmark.get("evidenceType", "benchmark"),
         "targetKind": benchmark.get("targetKind", "report_metric"),
+        "validationScope": validation_scope,
+        "validatedRows": validated_rows,
         "notes": benchmark["notes"],
         "validationNote": validation_note,
     }
@@ -295,6 +389,8 @@ def write_csv(path: Path, rows: list[dict[str, str]]) -> None:
         "observable",
         "evidenceType",
         "targetKind",
+        "validationScope",
+        "validatedRows",
         "notes",
         "validationNote",
     ]
@@ -311,6 +407,8 @@ def write_substitution_csv(path: Path, rows: list[dict[str, str]]) -> None:
         "scenarioName",
         "baselineScenarioKey",
         "status",
+        "failureSeverity",
+        "designLoss",
         "observedCaptureDelta",
         "hiddenInfluenceDelta",
         "hiddenCaptureDelta",
@@ -389,8 +487,8 @@ def write_substitution_markdown(path: Path, rows: list[dict[str, str]]) -> None:
         "",
         "## Flagged Rows",
         "",
-        "| Report | Scenario | Status | Capture delta | Hidden delta | Hidden capture delta | Total distortion delta | Risk delta | Visible spend delta | Network opacity delta | Venue delta | Interm. load delta | Procurement delta | Revolving delta | Comment delta | Intermediary | Dark money | Defensive | Admin |",
-        "| --- | --- | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |",
+        "| Report | Scenario | Status | Failure severity | Design loss | Capture delta | Hidden delta | Hidden capture delta | Total distortion delta | Risk delta | Visible spend delta | Network opacity delta | Venue delta | Interm. load delta | Procurement delta | Revolving delta | Comment delta | Intermediary | Dark money | Defensive | Admin |",
+        "| --- | --- | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |",
     ]
     flagged = [
         row for row in rows
@@ -399,6 +497,7 @@ def write_substitution_markdown(path: Path, rows: list[dict[str, str]]) -> None:
     for row in flagged:
         lines.append(
             f"| {row['report']} | {row['scenarioName']} | {row['status']} | "
+            f"{row['failureSeverity']} | {row['designLoss']} | "
             f"{row['observedCaptureDelta']} | {row['hiddenInfluenceDelta']} | "
             f"{row['hiddenCaptureDelta']} | {row['totalInfluenceDistortionDelta']} | "
             f"{row['substitutionFailureRiskDelta']} | {row['visibleLobbyingSpendShareDelta']} | "
@@ -409,7 +508,7 @@ def write_substitution_markdown(path: Path, rows: list[dict[str, str]]) -> None:
             f"{row['defensiveReformSpendShare']} | {row['administrativeCost']} |"
         )
     if not flagged:
-        lines.append("| n/a | n/a | no flagged rows |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |")
+        lines.append("| n/a | n/a | no flagged rows |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |")
     lines.append("")
     path.write_text("\n".join(lines), encoding="utf-8")
 

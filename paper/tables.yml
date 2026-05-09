@@ -149,6 +149,94 @@
       ]
     },
     {
+      "output": "substitution_failure_ranking.tex",
+      "source": "substitution-audit.csv",
+      "label": "tab:substitution-failures",
+      "caption": "Substitution-failure ranking from the validation audit. Rows are flagged when visible or observed capture improves relative to the comparison row while hidden influence, hidden capture, total distortion, or substitution risk worsens. Failure severity is a diagnostic sum of apparent visible improvement and adverse hidden/distortion deltas; design loss is a synthetic lower-is-better portfolio criterion.",
+      "size": "scriptsize",
+      "environment": "table*",
+      "width": "\\textwidth",
+      "tabcolsep": "1.5pt",
+      "rowMode": "substitution-failure-top",
+      "statuses": [
+        "possible_failure",
+        "worse_total_distortion"
+      ],
+      "sortSource": "failureSeverity",
+      "limit": 8,
+      "columns": [
+        {
+          "header": "Report",
+          "source": "report",
+          "format": "label",
+          "labels": {
+            "lobby-capture-campaign.csv": "Campaign",
+            "lobby-capture-sensitivity.csv": "Sensitivity",
+            "lobby-capture-ablation.csv": "Ablation",
+            "lobby-capture-interactions.csv": "Interaction",
+            "lobby-capture-portfolio.csv": "Portfolio"
+          }
+        },
+        {
+          "header": "Scenario",
+          "source": "scenarioName",
+          "format": "label",
+          "labels": {
+            "Anti-capture bundle with evasion": "Bundle+evasion",
+            "Shadow lobbying maximum stress": "Shadow max",
+            "Hard-budget substitution stress": "Budget cap stress",
+            "Think-tank and association intermediaries": "Intermediaries",
+            "Outside-spending disclosure evasion": "Outside evasion",
+            "Procurement venue-shift stress": "Procurement shift",
+            "Portfolio: full anti-substitution under high evasion": "Full portfolio+evasion",
+            "Sensitivity evasion 0.90": "Evasion 0.90",
+            "Full anti-capture bundle": "Full bundle",
+            "Advisory lobbying substitution": "Advisory subst.",
+            "Venue-shifting detection": "Venue detection"
+          }
+        },
+        {
+          "header": "Status",
+          "source": "status",
+          "format": "label",
+          "labels": {
+            "possible_failure": "possible fail",
+            "worse_total_distortion": "worse dist."
+          }
+        },
+        {
+          "header": "Severity",
+          "source": "failureSeverity",
+          "format": "float3"
+        },
+        {
+          "header": "Loss",
+          "source": "designLoss",
+          "format": "float3"
+        },
+        {
+          "header": "Cap. delta",
+          "source": "observedCaptureDelta",
+          "format": "signed4"
+        },
+        {
+          "header": "Hid. delta",
+          "source": "hiddenInfluenceDelta",
+          "format": "signed4"
+        },
+        {
+          "header": "Dist. delta",
+          "source": "totalInfluenceDistortionDelta",
+          "format": "signed4"
+        },
+        {
+          "header": "Risk delta",
+          "source": "substitutionFailureRiskDelta",
+          "format": "signed4"
+        }
+      ]
+    },
+    {
       "output": "ablation_snapshot.tex",
       "source": "lobby-capture-ablation.csv",
       "label": "tab:ablation",

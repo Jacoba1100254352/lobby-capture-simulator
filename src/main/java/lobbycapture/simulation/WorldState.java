@@ -71,7 +71,7 @@ public final class WorldState {
         for (String domain : domains) {
             regulatorAttentionByDomain.putIfAbsent(domain, 0.35);
             regulatorProcessingCapacityByDomain.putIfAbsent(domain, 0.32);
-            regulatorQueueByDomain.put(domain, Values.clamp(0.18 * (1.0 - regulatorProcessingCapacity(domain)), 0.0, 1.0));
+            regulatorQueueByDomain.put(domain, Values.clamp(0.08 + (0.24 * (1.0 - regulatorProcessingCapacity(domain))), 0.0, 1.0));
         }
         double watchdogBase = spec.watchdogs().stream()
                 .mapToDouble(watchdog -> (0.42 * watchdog.investigativeCapacity())
