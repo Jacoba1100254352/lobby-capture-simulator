@@ -25,11 +25,11 @@ The simulator now has a lobbying-centered MVP with calibration fixtures, source-
 - `docs/source-data-roadmap.md` records the direct/proxy/restricted public-data roadmap for LDA, FEC, IRS, nonprofit, procurement, rulemaking, witness, advisory-committee, OGE, OpenSecrets, LegiStorm, and ProPublica-style panels.
 - `make snapshot-2024-env` writes a closed-window snapshot manifest and freezes normalized rows for the 2024 environmental validation slice.
 - `scripts/run-2024-env-live-snapshot.sh` executes the pinned 2024 EPA/ENV live run, preserves ignored raw payloads, and records public API rate-limit gaps.
-- The current committed 2024 EPA/ENV snapshot has 121 LDA rows, 600 OpenFEC rows, 200 combined Regulations.gov/Federal Register regulatory rows, and 200 USAspending rows; the remaining empirical gap is the fixture-based revolving-door panel and the lack of dark-money/public-financing rows in the current FEC slice.
+- The current committed 2024 EPA/ENV snapshot has 121 LDA rows, 1003 OpenFEC and bridge campaign-finance rows, 200 combined Regulations.gov/Federal Register regulatory rows, 200 USAspending rows, and 284 LDA-derived covered-position revolving-door rows; the remaining empirical gaps are direct dark-money rows, representative public-financing rows, a broad SAM/FPDS procurement panel, and a non-fixture intermediary panel.
 - `--live` fetch modes can normalize caller-provided CSVs or query LDA, OpenFEC, Regulations.gov, and Federal Register APIs directly.
-- Source-native parser fixtures exercise LDA, OpenFEC, Regulations.gov, and Federal Register JSON without network access.
+- Source-native parser fixtures exercise LDA, OpenFEC, Regulations.gov, Federal Register, and USAspending JSON without network access.
 - Live source fetches retry transient `429` and `5xx` responses and redact API keys from error URLs.
-- `make source-moments` records direct source-level top-k concentration, traceability, and comment-record moments.
+- `make source-moments` records direct source-level top-k concentration, traceability, Schedule E outside-spending, direct dark-money visibility, public-financing, procurement bridge, revolving-door, and comment-record moments.
 - `make calibration-queue` classifies validation misses and partial overlaps into actionable work categories.
 - `make tables` regenerates paper table inputs from report CSV snapshots using `paper/tables.yml`.
 - `make figures` regenerates the paper's numbered SVG/PDF figure assets and LaTeX wrappers.
@@ -48,31 +48,31 @@ Deliverables:
 - use `paper/regulation-governance-wiley.tex` with `make paper-wiley` for the Wiley-template reproducibility check;
 - prepare a separate anonymized package only if the paper is retargeted to a double-blind venue.
 
-## 2. Expand the empirical source panels beyond the first 2024 EPA/ENV live snapshot
+## 2. Expand the empirical source panels beyond the current 2024 EPA/ENV snapshot
 
-The first key-backed live run now completes the LDA, six-committee OpenFEC, Regulations.gov, Federal Register, and USAspending requests. The remaining problem is representativeness, not request failure.
+The latest key-backed live run now completes the LDA, six-committee OpenFEC, Schedule E outside-spending, Regulations.gov, Federal Register, USAspending enrichment, public-financing bridge, and LDA-derived revolving-door requests. The remaining problem is representativeness, not request failure.
 
 Deliverables:
 
-- add a dark-money/outside-spending FEC or OpenSecrets-style panel rather than relying on national party committee flows;
-- add a public-financing/voucher source panel rather than relying only on external benchmarks;
+- add direct dark-money identifiers and electioneering/lobbyist-bundling rows rather than treating Schedule E super PAC spending as dark money;
+- replace the public-financing bridge with representative voucher and matching-fund source panels;
 - add IRS 8871/8872, TEOS, and Form 990 XML rows for 527s, 501(c)(4)s, 501(c)(6)s, think tanks, associations, and nonprofit intermediaries;
 - add FACA, House witness disclosure, and OGE panels for sponsored-expert, advisory-committee, and official-access bridges;
-- replace the revolving-door fixture with a documented licensed/exported source panel;
+- expand the LDA-derived revolving-door bridge with documented post-employment movement, advisory-committee, witness, OGE, or licensed personnel panels;
 - preserve raw source payloads outside git if they are too large;
 - archive updated row counts and filter settings in `docs/validation.md`;
 - compare normalized live distributions against the current snapshot and deterministic fixtures;
 - rerun `make snapshot-2024-env source-moments validate calibration-queue paper` and commit the refreshed artifacts.
 
-## 3. Add SAM/FPDS and revolving-door source panels
+## 3. Broaden SAM/FPDS, revolving-door, and intermediary source panels
 
-The source-moment layer now covers LDA, OpenFEC, regulatory dockets, and USAspending. Procurement and revolving-door validation still need richer direct data rather than proxy report metrics.
+The source-moment layer now covers LDA, OpenFEC party/Schedule E rows, regulatory dockets, USAspending bridge fields, public-financing bridge rows, and LDA-derived covered-position rows. Procurement, revolving-door, and intermediary validation still need richer direct data rather than narrow or fixture-backed panels.
 
 Deliverables:
 
-- expand the USAspending bridge with SAM/FPDS UEI, PIID, modification, exclusion, and award-action fields;
+- expand the USAspending bridge into broader SAM/FPDS UEI, PIID, modification, exclusion, award-action, and protest fields;
 - add source moments for single-bid exposure, ex-post modification risk, price-only awards, award concentration, and procurement firewall coverage;
-- add a revolving-door source panel or import path and keep headcount share separate from influence intensity;
+- expand the revolving-door import path beyond covered-position indicators and keep headcount share separate from influence intensity;
 - update `data/calibration/parameter-map.csv` so procurement and revolving-door rows point at direct source moments where possible.
 
 ## 4. Work down the P1 calibration queue

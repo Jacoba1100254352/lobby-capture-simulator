@@ -78,6 +78,7 @@ The fetch scripts seed normalized local calibration data from tracked fixtures:
 ./scripts/fetch-regulatory.sh
 ./scripts/fetch-usaspending.sh
 ./scripts/fetch-revolving-door.sh
+./scripts/fetch-public-financing.sh
 ./scripts/fetch-intermediaries.sh
 ```
 
@@ -105,13 +106,16 @@ FEC_LIVE_URL=https://example.org/fec.csv ./scripts/fetch-fec.sh --live
 REGULATORY_LIVE_CSV=/path/to/dockets.csv ./scripts/fetch-regulatory.sh --live
 USASPENDING_LIVE_CSV=/path/to/awards.csv ./scripts/fetch-usaspending.sh --live
 REVOLVING_DOOR_LIVE_CSV=/path/to/revolving-door.csv ./scripts/fetch-revolving-door.sh --live
+PUBLIC_FINANCING_LIVE_CSV=/path/to/public-financing.csv ./scripts/fetch-public-financing.sh --live
 INTERMEDIARY_LIVE_CSV=/path/to/nonprofit-association-panel.csv ./scripts/fetch-intermediaries.sh --live
 
 LDA_API_KEY=... ./scripts/fetch-lda.sh --live
 FEC_API_KEY=... ./scripts/fetch-fec.sh --live
+FEC_API_KEY=... FEC_ONLY_SCHEDULE_E=1 ./scripts/fetch-fec.sh --live
 REGULATIONS_API_KEY=... ./scripts/fetch-regulatory.sh --live
 REGULATORY_SOURCE=federal-register ./scripts/fetch-regulatory.sh --live
 ./scripts/fetch-usaspending.sh --live
+REVOLVING_DOOR_SOURCE_NATIVE=1 python3 scripts/fetch-source-data.py revolving-door --output data/raw/revolving-door.csv
 ```
 
 The pinned 2024 EPA/ENV live runner is:
@@ -124,7 +128,7 @@ It preserves raw public API payloads under ignored `data/raw/source-payloads/202
 
 `docs/source-data-roadmap.md` records the next source panels and matching identifiers: LDA registrant/client IDs, FEC committee/candidate IDs, IRS EINs, SAM UEIs, PIIDs, docket/document/comment IDs, and official/person records. The project keeps direct observed source rows separate from proxy overlays and synthetic design metrics.
 
-`make snapshot-2024-env` freezes the current normalized source rows under `data/snapshots/2024-env/` and writes a manifest for the first closed-window paper snapshot: 2024 LDA `ENV`, EPA Regulations.gov/Federal Register activity, the 2024 FEC cycle, EPA fiscal-year 2024 USAspending awards with procurement bridge fields, the configured revolving-door panel, and the configured nonprofit/527/association intermediary panel. Live paper snapshots should run the source-native fetchers with those fixed filters before freezing.
+`make snapshot-2024-env` freezes the current normalized source rows under `data/snapshots/2024-env/` and writes a manifest for the first closed-window paper snapshot: 2024 LDA `ENV`, EPA Regulations.gov/Federal Register activity, 2024 OpenFEC national party committee and Schedule E independent-expenditure rows, configured public-financing bridge rows, EPA fiscal-year 2024 USAspending awards with procurement bridge fields, an LDA-derived covered-position revolving-door panel, and the configured nonprofit/527/association intermediary panel. Live paper snapshots should run the source-native fetchers with those fixed filters before freezing.
 
 `make tables` regenerates LaTeX table files under `paper/tables/` from the committed report CSV snapshots. `make figures` regenerates paper interaction figures under `paper/figures/`. `make paper` runs both generators before building the local PDF. Table selection lives in `paper/tables.yml`, so paper row/column/caption edits do not require changing the generator.
 
@@ -164,7 +168,7 @@ It includes:
 - direct access, agenda access, information distortion, public campaigns, litigation threats, campaign finance, dark money, revolving-door access, and defensive reform spending;
 - first-class rulemaking dockets, comment campaigns, authenticity, template saturation, and technical-claim credibility;
 - comment-record triage with unique-information share, duplicate compression, review burden, procedural acknowledgment, and substantive uptake;
-- split validation-facing source metrics for all-flow traceability, dark-money direct visibility, resident voucher participation, candidate public-financing uptake, procurement bridge coverage, intermediary donor disclosure, and revolving-door source confidence;
+- split validation-facing source metrics for all-flow traceability, direct dark-money visibility, Schedule E outside-spending pressure, resident voucher participation, candidate public-financing uptake, procurement bridge coverage, intermediary donor disclosure, and revolving-door source confidence;
 - evasion profiles with dark-pool, litigation-funding, procurement-consultant, and revolving-door substitution pressure;
 - an influence-substitution engine that reports hidden influence, preserved influence capacity, messenger substitution, venue substitution, and net transparency gain after reforms constrain a channel;
 - an influence-network diagnostic layer that reports modeled path opacity, donor concentration, intermediary centrality, official-access centrality, procurement exposure, revolving-door bridges, comment-network load, venue-shift load, legibility, cross-venue detection, participation protection, and speech-restriction risk;

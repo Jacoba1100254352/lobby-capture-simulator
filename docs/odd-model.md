@@ -106,11 +106,11 @@ Each report manifest records the command, seed, run count, contest count, Java v
 External data constrain plausible ranges and schema behavior. They do not identify causal reform effects.
 
 - LDA rows constrain issue funding scale, registrant/client concentration, issue-domain mix, and disclosure lag.
-- FEC rows constrain donor concentration, public-financing share, traceability, and large-donor dependence.
+- FEC rows constrain donor concentration, Schedule E outside-spending pressure, public-financing share, traceability, and large-donor dependence. Direct dark-money rows are split from super PAC/outside-spending rows when the source identifies them.
 - Federal Register and Regulations.gov rows constrain docket volume, comment authenticity, template saturation, and technical-claim credibility.
 - USAspending rows constrain procurement-recipient and awarding-agency concentration. The normalized schema also carries UEI, PIID, competition type, number of offers, price-only, modification, and firewall flags when SAM/FPDS-style bridge fields are available.
 - Intermediary rows constrain nonprofit, 527, association, and think-tank political-spend pressure and donor/source disclosure where IRS, ProPublica, OpenSecrets, or curated exports are configured.
-- Revolving-door rows constrain former-official headcount, cooling-off intervals, source record IDs, position type, source URL coverage, match confidence, and source-weighted bridge pressure when a licensed/exported source panel is configured.
+- Revolving-door rows constrain former-official headcount, covered-position indicators, cooling-off intervals, source record IDs, position type, source URL coverage, match confidence, and source-weighted bridge pressure. The committed snapshot uses LDA-derived covered-position rows; a richer post-employment panel should replace or supplement it when a licensed/exported source is configured.
 - Seattle voucher and public-financing benchmarks constrain participation and candidate uptake ranges.
 
 The file `data/calibration/parameter-map.csv` records the intended low, middle, and high ranges, evidence class, source report, model target, and implementation status for each validation-facing quantity.
@@ -234,10 +234,10 @@ Scenario reports include:
 - enforcement capacity, detection, sanctions, and backlog;
 - Wilson intervals for binomial capture and reform-success outcomes.
 
-The primary synthetic comparison for reform packages is `totalInfluenceDistortion`, not `captureRate`. If observed capture falls while hidden influence, hidden capture, total distortion, substitution failure risk, network opacity, venue shifting, or channel-network load rises, the validation audit treats the reform as a possible failure rather than a clean success.
+The primary synthetic comparison for reform packages is `totalInfluenceDistortion`, not `captureRate`. If observed capture falls while hidden influence, hidden capture, total distortion, or substitution failure risk rises, the validation audit treats the reform as a possible failure rather than a clean success. Network opacity, venue shifting, and channel-network load are still reported, but rows with channel movement and no higher distortion are classified as substitution tradeoffs.
 
 Generated paper tables and figures are derived from committed report CSVs. The full report snapshots, portfolio screen, source moments, validation summary, substitution audit, and calibration queue remain in the repository and are included in the Wiley submission support bundle.
 
 ## Known Boundaries
 
-The current model is strongest as a comparative mechanism prototype. The 2024 EPA/ENV source snapshot is not yet representative for dark-money, public-financing, intermediary-network, full SAM/FPDS procurement, or revolving-door calibration. The intermediary and revolving-door panels have been expanded for mechanism testing, but they remain tracked fixtures unless live documented exports are configured. Several strong-reform scenarios can still sit near a saturated observed-capture region, so the paper emphasizes total distortion, substitution diagnostics, network-path diagnostics, and robustness fields rather than definitive reform rankings.
+The current model is strongest as a comparative mechanism prototype. The 2024 EPA/ENV source snapshot is not yet representative for direct dark-money rows, public-financing panels, intermediary networks, or broad SAM/FPDS procurement calibration. The revolving-door bridge now uses LDA-derived covered-position rows, but that is narrower than a true post-employment movement panel. The intermediary panel remains a tracked fixture unless live documented exports are configured. Several strong-reform scenarios can still sit near a saturated observed-capture region, so the paper emphasizes total distortion, substitution diagnostics, network-path diagnostics, and robustness fields rather than definitive reform rankings.

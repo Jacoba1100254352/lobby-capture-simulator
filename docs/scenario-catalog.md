@@ -18,6 +18,10 @@ Current runnable scenarios:
 - `randomized-audit-sanctions`
 - `machine-readable-meeting-logs`
 - `hard-budget-substitution-stress`
+- `advisory-lobbying-substitution`
+- `procurement-venue-shift-stress`
+- `outside-spending-disclosure-evasion`
+- `shadow-lobbying-maximum-stress`
 - `enforced-cooling-off`
 - `comment-authenticity-rules`
 - `public-advocate-office`
@@ -55,6 +59,10 @@ Each scenario uses the same core engine and changes the reform regime, channel i
 - `randomized-audit-sanctions`: uses randomized audits and strong sanctions to make evasion risk less predictable.
 - `machine-readable-meeting-logs`: stresses real-time structured contact disclosure and meeting-log coverage.
 - `hard-budget-substitution-stress`: makes visible lobbying caps bind while allowing high evasion freedom, so a lower observed-capture rate is treated as suspicious if hidden influence, intermediary routing, procurement exposure, venue shifts, or defensive spending rise.
+- `advisory-lobbying-substitution`: constrains formal contacts while leaving advisory, expert, association, and technical-consulting routes attractive.
+- `procurement-venue-shift-stress`: tests whether influence migrates into vendor relationships, award design, and procurement-specific access when visible advocacy is constrained.
+- `outside-spending-disclosure-evasion`: stresses campaign-finance substitution from disclosed channels into outside spending and delayed or less traceable electoral pressure.
+- `shadow-lobbying-maximum-stress`: combines hard visible restrictions with high evasion freedom and weak channel legibility to expose failure modes hidden by low measured capture.
 - `enforced-cooling-off`: pairs cooling-off periods with audit and sanction capacity.
 - `comment-authenticity-rules`: targets comment flooding, template campaigns, and synthetic salience.
 - `public-advocate-office`: tests public advocate and blind-review capacity as a direct counterweight to one-sided expertise.
@@ -71,7 +79,7 @@ Each scenario uses the same core engine and changes the reform regime, channel i
 - Hidden-capture, total-distortion, hidden-influence, preserved-influence, venue-substitution, messenger-substitution, and evasion-shift columns should be read with capture rates. A low capture rate alone is not a model claim that the reform eliminates influence.
 - Influence-network columns should be read as synthetic path diagnostics: network opacity, intermediary centrality, procurement exposure, revolving-door bridges, comment-network load, and venue-shift load identify where influence is moving when a reform changes visible lobbying.
 - The preferred synthetic reform comparison is the lowest total influence distortion, not the highest nominal reform success or lowest visible capture.
-- Source calibration is currently strongest for LDA, FEC committee flows, Federal Register/Regulations.gov schemas, and USAspending award concentration. The current bridge now records procurement identifier/competition diagnostics and an intermediary fixture panel, but it remains weakest for representative dark-money, public-financing, intermediary, and revolving-door source exports.
+- Source calibration is currently strongest for LDA, OpenFEC party-committee and Schedule E rows, Federal Register/Regulations.gov schemas, USAspending award concentration, USAspending procurement bridge fields, and LDA-derived covered-position revolving-door rows. It remains weakest for direct dark-money rows, representative public-financing panels, broad SAM/FPDS procurement panels, and representative intermediary exports.
 
 `make sensitivity` adds temporary sweep scenarios that are not listed by `--list`:
 
@@ -110,4 +118,4 @@ The ablation report ranks removals by total-distortion increase and tracks obser
 
 The portfolio report ranks candidate bundles by total influence distortion, hidden capture, substitution risk, administrative burden, network opacity, legitimate-advocacy chill, and speech-restriction risk, while rewarding cross-venue detection and participation protection. It is a design screen, not a welfare estimate.
 
-`make validate` also writes `reports/substitution-audit.csv` and `reports/substitution-audit.md`. That audit compares each report row against an open-access or highest-visible-lobbying baseline and flags cases where observed capture falls but hidden influence, hidden capture, total distortion, substitution-failure risk, network opacity, venue-shift load, or channel-network load rises.
+`make validate` also writes `reports/substitution-audit.csv` and `reports/substitution-audit.md`. That audit compares each report row against an open-access or highest-visible-lobbying baseline and flags possible reform failures when observed capture falls while hidden influence, hidden capture, total distortion, or substitution-failure risk rises. Rows with visible capture reductions and only channel movement are classified separately as substitution tradeoffs.

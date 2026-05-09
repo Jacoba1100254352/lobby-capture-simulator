@@ -9,16 +9,16 @@
 
 | Scenario | Total distortion | Observed capture | Capture 95% CI | Hidden capture | Substitution risk | Hidden influence | Intermediary share | Defensive spend | Comment flood | Enforcement capacity | Admin cost |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Portfolio: full anti-substitution portfolio | 0.1204 | 0.0037 | [0.0019, 0.0070] | 0.0418 | 0.1129 | 0.0302 | 0.0935 | 0.5298 | 0.2176 | 0.5579 | 0.5590 |
-| Portfolio: civil-liberties-constrained portfolio | 0.1572 | 0.0980 | [0.0868, 0.1104] | 0.0561 | 0.1388 | 0.0744 | 0.0939 | 0.5068 | 0.2252 | 0.4732 | 0.4272 |
-| Portfolio: procurement hardening stack | 0.1657 | 0.1216 | [0.1093, 0.1352] | 0.0548 | 0.1383 | 0.0716 | 0.0943 | 0.5161 | 0.2372 | 0.5321 | 0.5498 |
-| Portfolio: high-deterrence enforcement stack | 0.1813 | 0.1376 | [0.1245, 0.1518] | 0.0664 | 0.1576 | 0.1149 | 0.0975 | 0.4879 | 0.2326 | 0.6472 | 0.5973 |
-| Portfolio: full anti-substitution under high evasion | 0.1925 | 0.1245 | [0.1120, 0.1382] | 0.1062 | 0.2174 | 0.2529 | 0.0964 | 0.5014 | 0.2161 | 0.5772 | 0.5724 |
-| Portfolio: balanced compliance core | 0.2015 | 0.2547 | [0.2378, 0.2723] | 0.0583 | 0.1428 | 0.0739 | 0.0855 | 0.4881 | 0.2447 | 0.4965 | 0.4233 |
-| Portfolio: rulemaking integrity stack | 0.2147 | 0.2629 | [0.2458, 0.2806] | 0.0789 | 0.1785 | 0.1338 | 0.0970 | 0.4757 | 0.2147 | 0.4383 | 0.4952 |
-| Portfolio: countervailing representation stack | 0.2213 | 0.3078 | [0.2898, 0.3263] | 0.0726 | 0.1721 | 0.1089 | 0.0987 | 0.4503 | 0.2227 | 0.3571 | 0.4059 |
-| Portfolio: electoral substitution shield | 0.2477 | 0.4016 | [0.3824, 0.4212] | 0.0735 | 0.1684 | 0.1133 | 0.0886 | 0.4557 | 0.2578 | 0.4472 | 0.4720 |
-| Portfolio: transparency-first baseline | 0.2648 | 0.5302 | [0.5104, 0.5499] | 0.0637 | 0.1460 | 0.0692 | 0.0849 | 0.4485 | 0.2681 | 0.2918 | 0.2834 |
+| Portfolio: full anti-substitution portfolio | 0.1530 | 0.0535 | [0.0452, 0.0631] | 0.0749 | 0.1648 | 0.1502 | 0.0963 | 0.5121 | 0.2169 | 0.5680 | 0.5663 |
+| Portfolio: civil-liberties-constrained portfolio | 0.2060 | 0.2249 | [0.2088, 0.2419] | 0.0912 | 0.1892 | 0.1875 | 0.0959 | 0.4806 | 0.2235 | 0.4902 | 0.4391 |
+| Portfolio: procurement hardening stack | 0.2266 | 0.2902 | [0.2726, 0.3085] | 0.0931 | 0.1924 | 0.1907 | 0.0992 | 0.4773 | 0.2352 | 0.5508 | 0.5684 |
+| Portfolio: high-deterrence enforcement stack | 0.2403 | 0.3033 | [0.2854, 0.3218] | 0.1123 | 0.2224 | 0.2552 | 0.0980 | 0.4882 | 0.2311 | 0.6625 | 0.6195 |
+| Portfolio: balanced compliance core | 0.2589 | 0.4204 | [0.4010, 0.4401] | 0.0963 | 0.1958 | 0.1881 | 0.0905 | 0.4629 | 0.2432 | 0.5078 | 0.4378 |
+| Portfolio: countervailing representation stack | 0.2667 | 0.4469 | [0.4274, 0.4667] | 0.1016 | 0.2103 | 0.1922 | 0.1020 | 0.4352 | 0.2226 | 0.3640 | 0.4149 |
+| Portfolio: rulemaking integrity stack | 0.2767 | 0.4498 | [0.4302, 0.4696] | 0.1192 | 0.2304 | 0.2499 | 0.0999 | 0.4361 | 0.2136 | 0.4514 | 0.5105 |
+| Portfolio: full anti-substitution under high evasion | 0.2921 | 0.4127 | [0.3933, 0.4323] | 0.1835 | 0.3187 | 0.4705 | 0.0956 | 0.4748 | 0.2139 | 0.6052 | 0.6048 |
+| Portfolio: electoral substitution shield | 0.2951 | 0.5339 | [0.5141, 0.5536] | 0.1121 | 0.2212 | 0.2247 | 0.0908 | 0.4585 | 0.2580 | 0.4531 | 0.4850 |
+| Portfolio: transparency-first baseline | 0.3038 | 0.6257 | [0.6064, 0.6447] | 0.0986 | 0.1913 | 0.1720 | 0.0887 | 0.4372 | 0.2674 | 0.2962 | 0.2891 |
 
 ## Influence-Network Readout
 
@@ -26,11 +26,11 @@ Network diagnostics summarize modeled funder-to-lobby-to-intermediary-to-officia
 
 | Scenario | Opacity | Intermediary | Donor conc. | Procure. | Revolving | Comment load | Venue shift |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Portfolio: countervailing representation stack | 0.4446 | 0.3411 | 0.3920 | 0.1578 | 0.4069 | 0.1462 | 0.1773 |
-| Portfolio: electoral substitution shield | 0.4284 | 0.3595 | 0.4209 | 0.2570 | 0.3629 | 0.1747 | 0.1969 |
-| Portfolio: rulemaking integrity stack | 0.4098 | 0.3489 | 0.3962 | 0.1606 | 0.3854 | 0.1127 | 0.1865 |
-| Portfolio: high-deterrence enforcement stack | 0.3806 | 0.3578 | 0.4019 | 0.1631 | 0.1584 | 0.1507 | 0.1695 |
-| Portfolio: balanced compliance core | 0.3548 | 0.3426 | 0.4150 | 0.2216 | 0.2289 | 0.1652 | 0.1504 |
+| Portfolio: countervailing representation stack | 0.4545 | 0.3493 | 0.3911 | 0.1647 | 0.3796 | 0.1473 | 0.2045 |
+| Portfolio: electoral substitution shield | 0.4486 | 0.3663 | 0.4191 | 0.2610 | 0.3369 | 0.1829 | 0.2387 |
+| Portfolio: rulemaking integrity stack | 0.4173 | 0.3552 | 0.3943 | 0.1714 | 0.3620 | 0.1097 | 0.2198 |
+| Portfolio: balanced compliance core | 0.3772 | 0.3579 | 0.4168 | 0.2225 | 0.1968 | 0.1710 | 0.1930 |
+| Portfolio: high-deterrence enforcement stack | 0.3765 | 0.3547 | 0.3957 | 0.1739 | 0.1381 | 0.1531 | 0.2142 |
 
 ## Interpretation Guardrail
 
@@ -42,13 +42,13 @@ The design loss below minimizes total influence distortion first, then hidden ca
 
 | Rank | Portfolio | Design loss | Total dist. | Hidden cap. | Risk | Admin | Network opacity | Venue det. | Participation | Speech risk |
 | ---: | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| 1 | Portfolio: full anti-substitution portfolio | 0.0989 | 0.1204 | 0.0418 | 0.1129 | 0.5590 | 0.2244 | 0.8216 | 0.7184 | 0.2179 |
-| 2 | Portfolio: civil-liberties-constrained portfolio | 0.1075 | 0.1572 | 0.0561 | 0.1388 | 0.4272 | 0.2934 | 0.7050 | 0.5862 | 0.0910 |
-| 3 | Portfolio: procurement hardening stack | 0.1420 | 0.1657 | 0.0548 | 0.1383 | 0.5498 | 0.3384 | 0.6786 | 0.3884 | 0.1615 |
-| 4 | Portfolio: balanced compliance core | 0.1483 | 0.2015 | 0.0583 | 0.1428 | 0.4233 | 0.3548 | 0.6430 | 0.2984 | 0.1747 |
-| 5 | Portfolio: transparency-first baseline | 0.1493 | 0.2648 | 0.0637 | 0.1460 | 0.2834 | 0.3283 | 0.5790 | 0.1930 | 0.0851 |
-| 6 | Portfolio: countervailing representation stack | 0.1540 | 0.2213 | 0.0726 | 0.1721 | 0.4059 | 0.4446 | 0.4210 | 0.6876 | 0.0660 |
-| 7 | Portfolio: full anti-substitution under high evasion | 0.1606 | 0.1925 | 0.1062 | 0.2174 | 0.5724 | 0.3243 | 0.8216 | 0.7184 | 0.2179 |
-| 8 | Portfolio: electoral substitution shield | 0.1690 | 0.2477 | 0.0735 | 0.1684 | 0.4720 | 0.4284 | 0.6164 | 0.5112 | 0.1282 |
-| 9 | Portfolio: high-deterrence enforcement stack | 0.1721 | 0.1813 | 0.0664 | 0.1576 | 0.5973 | 0.3806 | 0.7314 | 0.3228 | 0.2696 |
-| 10 | Portfolio: rulemaking integrity stack | 0.1748 | 0.2147 | 0.0789 | 0.1785 | 0.4952 | 0.4098 | 0.5620 | 0.4850 | 0.1740 |
+| 1 | Portfolio: full anti-substitution portfolio | 0.1249 | 0.1530 | 0.0749 | 0.1648 | 0.5663 | 0.2299 | 0.8216 | 0.7184 | 0.2179 |
+| 2 | Portfolio: civil-liberties-constrained portfolio | 0.1390 | 0.2060 | 0.0912 | 0.1892 | 0.4391 | 0.2976 | 0.7050 | 0.5862 | 0.0910 |
+| 3 | Portfolio: transparency-first baseline | 0.1774 | 0.3038 | 0.0986 | 0.1913 | 0.2891 | 0.3455 | 0.5790 | 0.1930 | 0.0851 |
+| 4 | Portfolio: procurement hardening stack | 0.1803 | 0.2266 | 0.0931 | 0.1924 | 0.5684 | 0.3556 | 0.6786 | 0.3884 | 0.1615 |
+| 5 | Portfolio: countervailing representation stack | 0.1815 | 0.2667 | 0.1016 | 0.2103 | 0.4149 | 0.4545 | 0.4210 | 0.6876 | 0.0660 |
+| 6 | Portfolio: balanced compliance core | 0.1853 | 0.2589 | 0.0963 | 0.1958 | 0.4378 | 0.3772 | 0.6430 | 0.2984 | 0.1747 |
+| 7 | Portfolio: electoral substitution shield | 0.2027 | 0.2951 | 0.1121 | 0.2212 | 0.4850 | 0.4486 | 0.6164 | 0.5112 | 0.1282 |
+| 8 | Portfolio: high-deterrence enforcement stack | 0.2115 | 0.2403 | 0.1123 | 0.2224 | 0.6195 | 0.3765 | 0.7314 | 0.3228 | 0.2696 |
+| 9 | Portfolio: rulemaking integrity stack | 0.2123 | 0.2767 | 0.1192 | 0.2304 | 0.5105 | 0.4173 | 0.5620 | 0.4850 | 0.1740 |
+| 10 | Portfolio: full anti-substitution under high evasion | 0.2256 | 0.2921 | 0.1835 | 0.3187 | 0.6048 | 0.3210 | 0.8216 | 0.7184 | 0.2179 |

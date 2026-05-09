@@ -44,6 +44,7 @@ for committee in C00010603 C00042366 C00000935 C00003418 C00027466 C00075820; do
     FEC_CYCLE="${FEC_CYCLE:-2024}" \
     FEC_COMMITTEE_ID="$committee" \
     FEC_PAGE_SIZE="${FEC_PAGE_SIZE:-100}" \
+    FEC_INCLUDE_SCHEDULE_E=0 \
       python3 scripts/fetch-source-data.py fec --output "$tmpdir/fec-$committee.csv"; then
     append_csv "$tmpdir/fec-$committee.csv" data/raw/fec-campaign-finance.csv
     printf "fec-%s,ok,normalized rows appended\n" "$committee" >> "$status_file"
@@ -51,6 +52,34 @@ for committee in C00010603 C00042366 C00000935 C00003418 C00027466 C00075820; do
     printf "fec-%s,unavailable,OpenFEC public demo key or upstream rate limit blocked this committee\n" "$committee" >> "$status_file"
   fi
 done
+
+if SOURCE_RAW_DIR="$raw_dir/fec-schedule-e" \
+  FEC_API_KEY="${FEC_API_KEY:-DEMO_KEY}" \
+  FEC_CYCLE="${FEC_CYCLE:-2024}" \
+  FEC_ONLY_SCHEDULE_E=1 \
+  FEC_INCLUDE_SCHEDULE_E=1 \
+  FEC_SCHEDULE_E_MIN_AMOUNT="${FEC_SCHEDULE_E_MIN_AMOUNT:-1000}" \
+  FEC_SCHEDULE_E_PAGE_SIZE="${FEC_SCHEDULE_E_PAGE_SIZE:-100}" \
+  FEC_SCHEDULE_E_MAX_PAGES="${FEC_SCHEDULE_E_MAX_PAGES:-4}" \
+    python3 scripts/fetch-source-data.py fec --output "$tmpdir/fec-schedule-e.csv"; then
+  append_csv "$tmpdir/fec-schedule-e.csv" data/raw/fec-campaign-finance.csv
+  printf "fec-schedule-e,ok,normalized independent-expenditure rows appended\n" >> "$status_file"
+else
+  printf "fec-schedule-e,unavailable,OpenFEC Schedule E request failed or returned no rows\n" >> "$status_file"
+fi
+
+if [ -n "${PUBLIC_FINANCING_LIVE_CSV:-}" ] || [ -n "${PUBLIC_FINANCING_LIVE_URL:-}" ]; then
+  if ./scripts/fetch-public-financing.sh --live; then
+    append_csv data/raw/public-financing.csv data/raw/fec-campaign-finance.csv
+    printf "public-financing,ok,normalized configured public-financing bridge appended\n" >> "$status_file"
+  else
+    printf "public-financing,unavailable,configured public-financing source could not be normalized\n" >> "$status_file"
+  fi
+else
+  ./scripts/fetch-public-financing.sh
+  append_csv data/raw/public-financing.csv data/raw/fec-campaign-finance.csv
+  printf "public-financing,fixture,public-financing bridge fixture appended for source-moment coverage\n" >> "$status_file"
+fi
 
 if SOURCE_RAW_DIR="$raw_dir/regulations-gov" \
   REGULATIONS_API_KEY="${REGULATIONS_API_KEY:-DEMO_KEY}" \
@@ -94,6 +123,18 @@ if [ -n "${REVOLVING_DOOR_LIVE_CSV:-}" ] || [ -n "${REVOLVING_DOOR_LIVE_URL:-}" 
     printf "revolving-door,ok,normalized configured source export written\n" >> "$status_file"
   else
     printf "revolving-door,unavailable,configured source export could not be normalized\n" >> "$status_file"
+  fi
+elif [ "${REVOLVING_DOOR_SOURCE_NATIVE:-1}" = "1" ]; then
+  if SOURCE_RAW_DIR="$raw_dir/lda-revolving-door" \
+    LDA_YEAR="${LDA_YEAR:-2024}" \
+    LDA_ISSUE_CODE= \
+    REVOLVING_DOOR_LDA_PAGE_SIZE="${REVOLVING_DOOR_LDA_PAGE_SIZE:-100}" \
+    REVOLVING_DOOR_LDA_MAX_PAGES="${REVOLVING_DOOR_LDA_MAX_PAGES:-10}" \
+      python3 scripts/fetch-source-data.py revolving-door; then
+    printf "revolving-door,ok,derived normalized covered-position rows from LDA source\n" >> "$status_file"
+  else
+    ./scripts/fetch-revolving-door.sh
+    printf "revolving-door,fixture,LDA covered-position request failed; fixture copied for schema continuity\n" >> "$status_file"
   fi
 else
   ./scripts/fetch-revolving-door.sh

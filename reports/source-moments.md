@@ -4,10 +4,7 @@ These are direct moments from normalized calibration tables. They are source dia
 
 ## Representativeness Warnings
 
-- Snapshot FEC rows contain no DARK_MONEY or SUPER_PAC flow share; dark-money calibration still depends on benchmark and scenario assumptions.
-- Snapshot FEC rows contain no public-match or democracy-voucher flow share; public-financing calibration still depends on external benchmarks.
-- Snapshot revolving-door rows are tracked fixtures; they support schema and mechanism tests, not empirical calibration.
-- Snapshot procurement rows have weak UEI coverage; procurement-network validation should be treated as incomplete.
+- Snapshot campaign-finance rows contain no direct DARK_MONEY flow share; dark-money calibration still depends on benchmark and scenario assumptions even though Schedule E outside-spending rows are present.
 
 | Scope | Source | Metric | Value | Evidence | Notes |
 | --- | --- | --- | ---: | --- | --- |
@@ -17,20 +14,26 @@ These are direct moments from normalized calibration tables. They are source dia
 | snapshot | lda | `lobbyingClientTop3Share` | 0.8898 | observed | top three clients share of normalized LDA amount |
 | snapshot | lda | `lobbyingRegistrantTop3Share` | 0.8898 | observed | top three registrants share of normalized LDA amount |
 | snapshot | lda | `lobbyingSectorTopShare` | 0.5551 | observed | largest issue-domain share of normalized LDA amount |
-| snapshot | lda | `lobbyingDisclosureLagMean` | 1.0000 | observed | mean normalized LDA disclosure lag |
+| snapshot | lda | `lobbyingDisclosureLagMean` | 0.1000 | observed | mean normalized LDA disclosure lag |
 | snapshot | lda | `coveredOfficialShareMean` | 0.2000 | observed_proxy | mean share of covered-official contact visibility |
 | snapshot | lda | `lobbyingClientHerfindahl` | 0.2885 | observed | client concentration Herfindahl over normalized LDA amount |
-| snapshot | fec | `fecRows` | 600.0000 | observed | normalized OpenFEC rows |
-| snapshot | fec | `fecTotalReceipts` | 926.7037 | observed | sum of normalized FEC amount |
-| snapshot | fec | `fecDonorTop1Share` | 0.1467 | observed | largest donor share of normalized FEC amount |
-| snapshot | fec | `fecDonorTop3Share` | 0.3747 | observed | top three donor share of normalized FEC amount |
-| snapshot | fec | `fecDonorGini` | 0.6180 | observed | donor amount Gini across normalized FEC rows |
-| snapshot | fec | `fecRecipientTop3Share` | 0.7665 | observed | top three recipient share of normalized FEC amount |
-| snapshot | fec | `fecLargeDonorWeightedShare` | 0.9492 | observed_proxy | amount-weighted normalized large donor share |
-| snapshot | fec | `moneyFlowTraceability` | 0.6200 | observed_proxy | amount-weighted traceability across all normalized FEC rows |
-| snapshot | fec | `darkMoneyDirectVisibility` | 0.0000 | inferred | amount-weighted traceability among DARK_MONEY and SUPER_PAC rows |
-| snapshot | fec | `darkMoneySourceShare` | 0.0000 | observed_proxy | DARK_MONEY and SUPER_PAC share of normalized FEC amount |
-| snapshot | fec | `publicFinancingSourceShare` | 0.0000 | observed_proxy | public-match or voucher share of normalized FEC amount |
+| snapshot | fec | `fecRows` | 1003.0000 | observed | normalized OpenFEC rows |
+| snapshot | fec | `fecTotalReceipts` | 7947.5945 | observed | sum of normalized FEC amount |
+| snapshot | fec | `fecDonorTop1Share` | 0.2517 | observed | largest donor share of normalized FEC amount |
+| snapshot | fec | `fecDonorTop3Share` | 0.6296 | observed | top three donor share of normalized FEC amount |
+| snapshot | fec | `fecDonorGini` | 0.9637 | observed | donor amount Gini across normalized FEC rows |
+| snapshot | fec | `fecRecipientTop3Share` | 0.7555 | observed | top three recipient share of normalized FEC amount |
+| snapshot | fec | `fecLargeDonorWeightedShare` | 0.8692 | observed_proxy | amount-weighted normalized large donor share |
+| snapshot | fec | `moneyFlowTraceability` | 0.5853 | observed_proxy | amount-weighted traceability across all normalized FEC rows |
+| snapshot | fec | `darkMoneyDirectVisibility` | 0.0000 | inferred | amount-weighted traceability among DARK_MONEY rows only |
+| snapshot | fec | `darkMoneySourceShare` | 0.0000 | observed_proxy | DARK_MONEY share of normalized campaign-finance amount |
+| snapshot | fec | `superPacSourceShare` | 0.8818 | observed_proxy | SUPER_PAC share of normalized campaign-finance amount |
+| snapshot | fec | `opaqueElectoralSourceShare` | 0.8818 | observed_proxy | DARK_MONEY plus SUPER_PAC share of normalized campaign-finance amount |
+| snapshot | fec | `outsideSpendingRows` | 400.0000 | observed | normalized independent expenditure, super PAC, dark-money, or association rows |
+| snapshot | fec | `outsideSpendingSourceShare` | 0.8818 | observed_proxy | outside-spending bridge share of normalized campaign-finance amount |
+| snapshot | fec | `outsideSpendingTop3SourceShare` | 0.7140 | observed_proxy | top three outside spenders by normalized amount |
+| snapshot | fec | `outsideSpendingDisclosureLagMean` | 0.5362 | observed_proxy | amount-weighted reporting lag among outside-spending rows |
+| snapshot | fec | `publicFinancingSourceShare` | 0.0016 | observed_proxy | public-match or voucher share of normalized FEC amount |
 | snapshot | regulatory | `regulatoryRows` | 200.0000 | observed | normalized regulatory rows |
 | snapshot | regulatory | `commentVolumeMean` | 119.7000 | observed_proxy | mean normalized comment volume |
 | snapshot | regulatory | `commentVolumeTop1DocketShare` | 0.0752 | observed_proxy | largest docket share of normalized comments |
@@ -47,23 +50,23 @@ These are direct moments from normalized calibration tables. They are source dia
 | snapshot | usaspending | `procurementAgencyHerfindahl` | 1.0000 | observed | awarding-agency amount Herfindahl |
 | snapshot | usaspending | `procurementSubAgencyTop3Share` | 1.0000 | observed | top three sub-agencies share of normalized award amount |
 | snapshot | usaspending | `procurementAwardCount` | 200.0000 | observed | sum of normalized award or transaction counts |
-| snapshot | usaspending | `procurementSingleBidShare` | 0.0000 | observed_proxy | share of rows with one known offer |
-| snapshot | usaspending | `procurementAmountWeightedSingleBidShare` | 0.0000 | observed_proxy | award-amount share with one known offer |
-| snapshot | usaspending | `procurementExPostModificationShare` | 0.0000 | observed_proxy | share of rows marked as ex-post modifications or nonzero modifications |
-| snapshot | usaspending | `procurementPriceOnlyAwardShare` | 0.0000 | observed_proxy | share of rows marked as price-only or one-offer awards |
+| snapshot | usaspending | `procurementSingleBidShare` | 0.2350 | observed_proxy | share of rows with one known offer |
+| snapshot | usaspending | `procurementAmountWeightedSingleBidShare` | 0.2132 | observed_proxy | award-amount share with one known offer |
+| snapshot | usaspending | `procurementExPostModificationShare` | 1.0000 | observed_proxy | share of rows marked as ex-post modifications or nonzero modifications |
+| snapshot | usaspending | `procurementPriceOnlyAwardShare` | 0.6050 | observed_proxy | share of rows marked as price-only or one-offer awards |
 | snapshot | usaspending | `procurementFirewallCoverageShare` | 0.0000 | observed_proxy | share of rows covered by a procurement-firewall flag |
-| snapshot | usaspending | `procurementKnownUeiShare` | 0.0000 | diagnostic | share of rows carrying a recipient UEI |
+| snapshot | usaspending | `procurementKnownUeiShare` | 1.0000 | diagnostic | share of rows carrying a recipient UEI |
 | snapshot | usaspending | `procurementKnownPiidShare` | 1.0000 | diagnostic | share of rows carrying a procurement instrument identifier |
-| snapshot | revolving-door | `revolvingDoorRows` | 14.0000 | observed | normalized revolving-door rows |
-| snapshot | revolving-door | `revolvingDoorFixtureShare` | 1.0000 | diagnostic | share of rows marked as tracked fixture rather than live/exported source |
-| snapshot | revolving-door | `revolvingDoorFormerOfficialShare` | 0.7857 | observed_proxy | share of rows with former official role |
-| snapshot | revolving-door | `revolvingDoorAgencyTop1Share` | 0.4286 | observed_proxy | largest agency share of normalized revolving-door rows |
-| snapshot | revolving-door | `revolvingDoorCoolingOffUnderOneYearShare` | 0.5000 | observed_proxy | share of rows with cooling-off interval below one year |
-| snapshot | revolving-door | `revolvingDoorCoolingOffMeanMonths` | 15.5714 | observed_proxy | mean cooling-off interval in months |
-| snapshot | revolving-door | `revolvingDoorHighInfluenceShare` | 0.4286 | proxy | share of rows with high normalized influence |
-| snapshot | revolving-door | `revolvingDoorInfluenceWeightedFormerOfficialShare` | 0.8781 | proxy | influence-weighted former-official share |
-| snapshot | revolving-door | `revolvingDoorInfluenceMean` | 0.5507 | proxy | mean normalized influence share from source panel |
-| snapshot | revolving-door | `revolvingDoorConfidenceMean` | 0.6000 | diagnostic | mean source-match confidence for revolving-door records |
+| snapshot | revolving-door | `revolvingDoorRows` | 284.0000 | observed | normalized revolving-door rows |
+| snapshot | revolving-door | `revolvingDoorFixtureShare` | 0.0000 | diagnostic | share of rows marked as tracked fixture rather than live/exported source |
+| snapshot | revolving-door | `revolvingDoorFormerOfficialShare` | 1.0000 | observed_proxy | share of rows with former official role |
+| snapshot | revolving-door | `revolvingDoorAgencyTop1Share` | 0.4754 | observed_proxy | largest agency share of normalized revolving-door rows |
+| snapshot | revolving-door | `revolvingDoorCoolingOffUnderOneYearShare` | 0.0000 | observed_proxy | share of rows with cooling-off interval below one year |
+| snapshot | revolving-door | `revolvingDoorCoolingOffMeanMonths` | 12.0000 | observed_proxy | mean cooling-off interval in months |
+| snapshot | revolving-door | `revolvingDoorHighInfluenceShare` | 0.0000 | proxy | share of rows with high normalized influence |
+| snapshot | revolving-door | `revolvingDoorInfluenceWeightedFormerOfficialShare` | 1.0000 | proxy | influence-weighted former-official share |
+| snapshot | revolving-door | `revolvingDoorInfluenceMean` | 0.3400 | proxy | mean normalized influence share from source panel |
+| snapshot | revolving-door | `revolvingDoorConfidenceMean` | 0.7400 | diagnostic | mean source-match confidence for revolving-door records |
 | snapshot | intermediary | `intermediaryRows` | 6.0000 | observed | normalized nonprofit, 527, association, or think-tank intermediary rows |
 | snapshot | intermediary | `intermediaryTotalRevenue` | 137.1000 | observed_proxy | sum of normalized intermediary revenue |
 | snapshot | intermediary | `intermediaryPoliticalSpendShare` | 0.1670 | observed_proxy | political spend share of normalized intermediary revenue |
@@ -91,8 +94,14 @@ These are direct moments from normalized calibration tables. They are source dia
 | fixture | fec | `fecRecipientTop3Share` | 1.0000 | observed | top three recipient share of normalized FEC amount |
 | fixture | fec | `fecLargeDonorWeightedShare` | 0.6081 | observed_proxy | amount-weighted normalized large donor share |
 | fixture | fec | `moneyFlowTraceability` | 0.6648 | observed_proxy | amount-weighted traceability across all normalized FEC rows |
-| fixture | fec | `darkMoneyDirectVisibility` | 0.4240 | inferred | amount-weighted traceability among DARK_MONEY and SUPER_PAC rows |
-| fixture | fec | `darkMoneySourceShare` | 0.4087 | observed_proxy | DARK_MONEY and SUPER_PAC share of normalized FEC amount |
+| fixture | fec | `darkMoneyDirectVisibility` | 0.2400 | inferred | amount-weighted traceability among DARK_MONEY rows only |
+| fixture | fec | `darkMoneySourceShare` | 0.1875 | observed_proxy | DARK_MONEY share of normalized campaign-finance amount |
+| fixture | fec | `superPacSourceShare` | 0.2212 | observed_proxy | SUPER_PAC share of normalized campaign-finance amount |
+| fixture | fec | `opaqueElectoralSourceShare` | 0.4087 | observed_proxy | DARK_MONEY plus SUPER_PAC share of normalized campaign-finance amount |
+| fixture | fec | `outsideSpendingRows` | 2.0000 | observed | normalized independent expenditure, super PAC, dark-money, or association rows |
+| fixture | fec | `outsideSpendingSourceShare` | 0.4087 | observed_proxy | outside-spending bridge share of normalized campaign-finance amount |
+| fixture | fec | `outsideSpendingTop3SourceShare` | 1.0000 | observed_proxy | top three outside spenders by normalized amount |
+| fixture | fec | `outsideSpendingDisclosureLagMean` | 0.2800 | observed_proxy | amount-weighted reporting lag among outside-spending rows |
 | fixture | fec | `publicFinancingSourceShare` | 0.2644 | observed_proxy | public-match or voucher share of normalized FEC amount |
 | fixture | regulatory | `regulatoryRows` | 4.0000 | observed | normalized regulatory rows |
 | fixture | regulatory | `commentVolumeMean` | 1147.5000 | observed_proxy | mean normalized comment volume |

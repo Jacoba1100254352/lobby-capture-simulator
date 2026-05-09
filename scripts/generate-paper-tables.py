@@ -122,7 +122,7 @@ def table(
         f"\\begin{{{environment}}}[{placement}]",
         "\\centering",
         f"\\{size}",
-        "\\setlength{\\tabcolsep}{4pt}",
+        "\\setlength{\\tabcolsep}{3pt}",
         f"\\begin{{tabular*}}{{{width}}}{{@{{\\extracolsep{{\\fill}}}}{spec}@{{}}}}",
         "\\toprule",
         " & ".join(escape(header) for header in headers) + " \\\\",

@@ -197,20 +197,15 @@ def substitution_status(row: dict[str, str], baseline: dict[str, str]) -> str:
         hidden_capture_delta,
         distortion_delta,
         risk_delta,
+    )
+    channel_shift = any_moved(
         network_delta,
         venue_shift_delta,
         channel_movement_delta,
     )
     if capture_delta < -0.02 and hidden_or_distorted:
         return "possible_failure"
-    if visible_delta < -0.02 and any_moved(
-        hidden_delta,
-        hidden_capture_delta,
-        risk_delta,
-        network_delta,
-        venue_shift_delta,
-        channel_movement_delta,
-    ):
+    if visible_delta < -0.02 and (hidden_or_distorted or channel_shift):
         return "substitution_tradeoff"
     if capture_delta < -0.02 and distortion_delta <= 0.02 and risk_delta <= 0.02:
         return "improved"
@@ -384,7 +379,7 @@ def write_substitution_markdown(path: Path, rows: list[dict[str, str]]) -> None:
     lines = [
         "# Substitution Audit",
         "",
-        "This audit treats lower observed capture as insufficient when hidden influence, hidden capture, total distortion, substitution failure risk, network opacity, venue shifting, or channel-network load rises. It is a diagnostic over synthetic simulation reports, not an empirical causal claim.",
+        "This audit treats lower observed capture as insufficient when hidden influence, hidden capture, total distortion, or substitution failure risk rises. Network opacity, venue shifting, and channel-network load remain diagnostic columns, but pure movement across channels without higher hidden influence or distortion is classified as a substitution tradeoff. It is a diagnostic over synthetic simulation reports, not an empirical causal claim.",
         "",
         f"- Possible failure: `{counts['possible_failure']}`",
         f"- Substitution tradeoff: `{counts['substitution_tradeoff']}`",

@@ -5,6 +5,7 @@ from __future__ import annotations
 
 import importlib.util
 import json
+import os
 from pathlib import Path
 
 
@@ -35,6 +36,7 @@ def load_fetcher_module():
 
 
 def assert_lda(fetchers) -> None:
+    os.environ["LDA_DISCLOSURE_VISIBILITY_LAG"] = "0.32"
     payload = read_json("lda-filings.json")
     rows = fetchers.normalize_lda_records(payload["results"])
     assert rows == [
@@ -43,7 +45,7 @@ def assert_lda(fetchers) -> None:
             "registrant": "Example Advocacy LLC",
             "issueDomain": "technology",
             "amount": 3.0,
-            "disclosureLag": 0.45,
+            "disclosureLag": 0.32,
             "coveredOfficialShare": 0.30,
         }
     ], rows
@@ -51,7 +53,7 @@ def assert_lda(fetchers) -> None:
 
 def assert_fec(fetchers) -> None:
     payload = read_json("fec-schedule-a.json")
-    rows = fetchers.normalize_fec_records(payload["results"])
+    rows = fetchers.normalize_fec_contribution_records(payload["results"])
     assert rows[0] == {
         "source": "Clean Energy Executive",
         "recipient": "Clean Energy PAC",
@@ -60,6 +62,12 @@ def assert_fec(fetchers) -> None:
         "flowType": "PAC",
         "traceability": 0.78,
         "largeDonorShare": 0.38,
+        "sourceRecordId": "",
+        "sourceUrl": "",
+        "committeeType": "recipient committee",
+        "spendingPurpose": "contribution",
+        "supportOppose": "",
+        "disclosureLag": 0.28,
     }, rows[0]
     assert rows[1]["flowType"] == "SUPER_PAC", rows[1]
     assert rows[1]["issueDomain"] == "technology", rows[1]
@@ -101,7 +109,9 @@ def assert_federal_register(fetchers) -> None:
 
 def assert_usaspending(fetchers) -> None:
     payload = read_json("usaspending-awards.json")
-    rows = fetchers.normalize_usaspending_records(payload["results"])
+    os.environ["USASPENDING_ENRICH_AWARD_DETAILS"] = "0"
+    os.environ["USASPENDING_ENRICH_TRANSACTIONS"] = "0"
+    rows = fetchers.normalize_usaspending_records("", payload["results"])
     assert rows[0] == {
         "awardId": "EPW05049",
         "recipient": "CDM FEDERAL PROGRAMS CORPORATION",

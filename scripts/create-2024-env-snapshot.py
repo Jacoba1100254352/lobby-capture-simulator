@@ -25,8 +25,8 @@ SOURCES = {
     },
     "fec": {
         "input": RAW / "fec-campaign-finance.csv",
-        "description": "FEC 2024 cycle six national party committee receipts/disbursements, plus optional lobbyist bundled contributions.",
-        "request": "FEC_CYCLE=2024 FEC_COMMITTEE_ID in C00010603,C00042366,C00000935,C00003418,C00027466,C00075820 ./scripts/fetch-fec.sh --live",
+        "description": "FEC 2024 cycle party committee contributions, OpenFEC Schedule E independent expenditures, and a public-financing bridge when configured.",
+        "request": "FEC_CYCLE=2024 FEC_COMMITTEE_ID in C00010603,C00042366,C00000935,C00003418,C00027466,C00075820 plus FEC_ONLY_SCHEDULE_E=1 ./scripts/fetch-fec.sh --live",
     },
     "regulatory": {
         "input": RAW / "regulatory-dockets.csv",
@@ -40,8 +40,8 @@ SOURCES = {
     },
     "revolving-door": {
         "input": RAW / "revolving-door.csv",
-        "description": "Normalized revolving-door source panel from a licensed/exported CSV or tracked fixture.",
-        "request": "REVOLVING_DOOR_LIVE_CSV=/path/to/export.csv ./scripts/fetch-revolving-door.sh --live",
+        "description": "Normalized revolving-door source panel from a licensed/exported CSV or LDA covered-position derivation, with fixture fallback.",
+        "request": "REVOLVING_DOOR_LIVE_CSV=/path/to/export.csv ./scripts/fetch-revolving-door.sh --live or REVOLVING_DOOR_SOURCE_NATIVE=1 python3 scripts/fetch-source-data.py revolving-door",
     },
     "intermediary": {
         "input": RAW / "intermediaries.csv",
@@ -156,7 +156,7 @@ def source_status(source: str, live_status: list[dict[str, str]]) -> tuple[str, 
         return "copied", "normalized file copied from data/raw"
     names = {
         "lda": [row for row in live_status if row["source"].startswith("lda-")],
-        "fec": [row for row in live_status if row["source"].startswith("fec-")],
+        "fec": [row for row in live_status if row["source"].startswith("fec-") or row["source"] == "public-financing"],
         "regulatory": [row for row in live_status if row["source"] in {"regulations-gov", "federal-register"}],
         "usaspending": [row for row in live_status if row["source"] == "usaspending"],
         "revolving-door": [row for row in live_status if row["source"] == "revolving-door"],
@@ -216,8 +216,10 @@ def write_readme(root: Path, entries: list[dict[str, object]]) -> None:
         "- LDA issue code: ENV.",
         "- Agency: EPA.",
         "- FEC cycle: 2024, with the six national party committees as the first electoral-pressure panel.",
+        "- Outside-spending bridge: OpenFEC Schedule E independent expenditures when available.",
+        "- Public-financing bridge: configured public-financing source or fixture rows appended to the campaign-finance panel.",
         "- USAspending fiscal year: 2024, Environmental Protection Agency awards.",
-        "- Revolving-door panel: licensed/source export when available; fixture otherwise.",
+        "- Revolving-door panel: licensed/source export or LDA covered-position derivation when available; fixture otherwise.",
         "- Intermediary panel: nonprofit, 527, association, and think-tank export when available; fixture otherwise.",
         "",
         "The current command freezes whatever normalized files are present under `data/raw/`. Live paper snapshots should first run the request templates in `manifest.json`, preserve raw payloads outside git when too large, normalize into the same schemas, and then rerun `make snapshot-2024-env`.",

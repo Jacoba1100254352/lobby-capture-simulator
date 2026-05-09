@@ -1,7 +1,7 @@
 {
   "snapshot": "2024-env",
-  "generatedAt": "2026-05-09T00:54:07.285679+00:00",
-  "gitCommit": "ec24027",
+  "generatedAt": "2026-05-09T03:09:29.908767+00:00",
+  "gitCommit": "27a1f6b",
   "gitTreeState": "dirty",
   "gitTreeStateScope": "working tree status excluding generated 2024-env snapshot, reports, paper tables, and paper figures",
   "scope": {
@@ -19,19 +19,19 @@
       "requestTemplate": "LDA_YEAR=2024 LDA_PERIOD={first_quarter,second_quarter,third_quarter,fourth_quarter} ./scripts/fetch-lda.sh --live",
       "normalizedFile": "data/snapshots/2024-env/normalized/lda-lobbying.csv",
       "rowCount": 121,
-      "sha256": "30ea8984607fbd8ff79c951194046dc478e77ec5b45ba45fb8c160e5176a7b6f",
+      "sha256": "fced0548f22df640db7bb0d2e8dcad66fa364e65d91c26872755347332729e16",
       "status": "live",
       "statusNotes": "lda-first_quarter: ok (normalized rows appended); lda-second_quarter: ok (normalized rows appended); lda-third_quarter: ok (normalized rows appended); lda-fourth_quarter: ok (normalized rows appended)"
     },
     {
       "source": "fec",
-      "description": "FEC 2024 cycle six national party committee receipts/disbursements, plus optional lobbyist bundled contributions.",
-      "requestTemplate": "FEC_CYCLE=2024 FEC_COMMITTEE_ID in C00010603,C00042366,C00000935,C00003418,C00027466,C00075820 ./scripts/fetch-fec.sh --live",
+      "description": "FEC 2024 cycle party committee contributions, OpenFEC Schedule E independent expenditures, and a public-financing bridge when configured.",
+      "requestTemplate": "FEC_CYCLE=2024 FEC_COMMITTEE_ID in C00010603,C00042366,C00000935,C00003418,C00027466,C00075820 plus FEC_ONLY_SCHEDULE_E=1 ./scripts/fetch-fec.sh --live",
       "normalizedFile": "data/snapshots/2024-env/normalized/fec-campaign-finance.csv",
-      "rowCount": 600,
-      "sha256": "26f55e5ea2af8bcdfd644e65d0441811cb993e73657a8515fd9a353c4baec083",
-      "status": "live",
-      "statusNotes": "fec-C00010603: ok (normalized rows appended); fec-C00042366: ok (normalized rows appended); fec-C00000935: ok (normalized rows appended); fec-C00003418: ok (normalized rows appended); fec-C00027466: ok (normalized rows appended); fec-C00075820: ok (normalized rows appended)"
+      "rowCount": 1003,
+      "sha256": "128e5d588f6b7bdbf000e7fc0a93fb41b9a814535e36ca4c86521dab5d2476df",
+      "status": "fixture",
+      "statusNotes": "fec-C00010603: ok (normalized rows appended); fec-C00042366: ok (normalized rows appended); fec-C00000935: ok (normalized rows appended); fec-C00003418: ok (normalized rows appended); fec-C00027466: ok (normalized rows appended); fec-C00075820: ok (normalized rows appended); fec-schedule-e: ok (normalized independent-expenditure rows appended); public-financing: fixture (public-financing bridge fixture appended for source-moment coverage)"
     },
     {
       "source": "regulatory",
@@ -49,19 +49,19 @@
       "requestTemplate": "USASPENDING_FISCAL_YEAR=2024 USASPENDING_AGENCY='Environmental Protection Agency' ./scripts/fetch-usaspending.sh --live",
       "normalizedFile": "data/snapshots/2024-env/normalized/usaspending-awards.csv",
       "rowCount": 200,
-      "sha256": "995d191ad32ce08fc6ca519b4f9b55a4fda16a197bada8d84b50816cb4b86672",
+      "sha256": "8e29105088257bee7744db1ac517ee31faf85da35a290302cc2aca5a8b46daf7",
       "status": "live",
       "statusNotes": "usaspending: ok (normalized EPA award rows written)"
     },
     {
       "source": "revolving-door",
-      "description": "Normalized revolving-door source panel from a licensed/exported CSV or tracked fixture.",
-      "requestTemplate": "REVOLVING_DOOR_LIVE_CSV=/path/to/export.csv ./scripts/fetch-revolving-door.sh --live",
+      "description": "Normalized revolving-door source panel from a licensed/exported CSV or LDA covered-position derivation, with fixture fallback.",
+      "requestTemplate": "REVOLVING_DOOR_LIVE_CSV=/path/to/export.csv ./scripts/fetch-revolving-door.sh --live or REVOLVING_DOOR_SOURCE_NATIVE=1 python3 scripts/fetch-source-data.py revolving-door",
       "normalizedFile": "data/snapshots/2024-env/normalized/revolving-door.csv",
-      "rowCount": 14,
-      "sha256": "20e6a02bdccfbd46af851e309271b259186702ae241f94a1c58db87e9c74a70c",
-      "status": "fixture",
-      "statusNotes": "revolving-door: fixture (no licensed/source export configured; fixture copied for schema continuity)"
+      "rowCount": 284,
+      "sha256": "656829170696bee9657ea63d4b9d789e09063a73bae172e19cf2db1bee4d4c0e",
+      "status": "live",
+      "statusNotes": "revolving-door: ok (derived normalized covered-position rows from LDA source after nested activity parse)"
     },
     {
       "source": "intermediary",
@@ -76,6 +76,6 @@
   ],
   "liveRunStatus": {
     "file": "data/snapshots/2024-env/live-run-status.csv",
-    "sha256": "4a57b4e6258664c1bd862354205f90aa2d17a209aec10b086ae96bb6948aeffb"
+    "sha256": "cc60baaea49f459d0867bedb64c2cdaeef5c3fe037ee9ee6ae9efb1d6dd5b3f8"
   }
 }

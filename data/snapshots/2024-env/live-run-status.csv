@@ -9,8 +9,10 @@ fec-C00000935,ok,normalized rows appended
 fec-C00003418,ok,normalized rows appended
 fec-C00027466,ok,normalized rows appended
 fec-C00075820,ok,normalized rows appended
+fec-schedule-e,ok,normalized independent-expenditure rows appended
+public-financing,fixture,public-financing bridge fixture appended for source-moment coverage
 regulations-gov,ok,normalized rows appended
 federal-register,ok,normalized rows appended
 usaspending,ok,normalized EPA award rows written
-revolving-door,fixture,no licensed/source export configured; fixture copied for schema continuity
+revolving-door,ok,derived normalized covered-position rows from LDA source after nested activity parse
 intermediary,fixture,no nonprofit/association source export configured; fixture copied for schema continuity

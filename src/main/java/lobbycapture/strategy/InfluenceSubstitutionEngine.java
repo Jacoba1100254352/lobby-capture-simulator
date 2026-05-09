@@ -42,10 +42,28 @@ public final class InfluenceSubstitutionEngine {
                 1.0
         );
         double crossVenueDetection = reform.crossVenueDetectionStrength();
+        double visibleRestriction = Values.clamp(
+                (0.38 * reform.lobbyingBanStrength())
+                        + (0.24 * reform.contactLogCoverage())
+                        + (0.18 * (1.0 - reform.defensiveCapShare()))
+                        + (0.12 * reform.coolingOffStrength())
+                        + (0.08 * reform.contributionLimitStrength()),
+                0.0,
+                1.0
+        );
         double legalVenuePressure = Values.clamp(
                 (0.55 * contest.legalVulnerability())
                         + (0.30 * contest.delayValue())
                         + (0.15 * world.evasionProfile().litigationFundingShift()),
+                0.0,
+                1.0
+        );
+        double procurementVenueValue = Values.clamp(
+                ((contest.arena() == ContestArena.PROCUREMENT || contest.issueDomain().equals("procurement")) ? 0.38 : 0.0)
+                        + (0.24 * world.evasionProfile().procurementConsultantShift())
+                        + (0.18 * group.preferenceFor("procurement"))
+                        + (0.12 * group.revolvingDoorNetworkStrength())
+                        + (0.08 * group.accessCapital()),
                 0.0,
                 1.0
         );
@@ -108,6 +126,8 @@ public final class InfluenceSubstitutionEngine {
                         + (0.12 * vendorOverlap)
                         + (0.08 * intermediaryFit)
                         + (0.10 * world.evasionFreedom())
+                        + (0.12 * visibleRestriction)
+                        + (0.08 * procurementVenueValue)
                         - (0.18 * legalCost)
                         - (0.10 * crossVenueDetection)
                         - (0.10 * setupTime),
@@ -124,14 +144,16 @@ public final class InfluenceSubstitutionEngine {
         );
         double hiddenShare = Values.clamp(
                 activated * (
-                        0.36
-                                + (0.58 * anonymityValue)
-                                + (0.28 * world.evasionProfile().opacity())
-                                + (0.22 * world.evasionFreedom())
-                                + (0.16 * intermediaryFit)
+                        0.42
+                                + (0.66 * anonymityValue)
+                                + (0.32 * world.evasionProfile().opacity())
+                                + (0.28 * world.evasionFreedom())
+                                + (0.20 * intermediaryFit)
+                                + (0.30 * visibleRestriction)
+                                + (0.20 * procurementVenueValue)
                 )
-                        - (0.10 * Math.max(0.0, reform.transparencyStrength() - world.evasionFreedom()))
-                        - (0.12 * crossVenueDetection),
+                        - (0.07 * Math.max(0.0, reform.transparencyStrength() - world.evasionFreedom()))
+                        - (0.10 * crossVenueDetection),
                 0.0,
                 1.0
         );
@@ -151,8 +173,16 @@ public final class InfluenceSubstitutionEngine {
                 1.0
         );
         double venue = Values.clamp(
-                activated * (0.22 + (0.35 * legalVenuePressure) + (0.22 * accessPressure) + (0.14 * campaignPressure))
-                        - (0.18 * crossVenueDetection),
+                activated * (
+                        0.24
+                                + (0.32 * legalVenuePressure)
+                                + (0.24 * accessPressure)
+                                + (0.18 * campaignPressure)
+                                + (0.24 * procurementVenueValue)
+                                + (0.18 * visibleRestriction)
+                                + (0.15 * reform.coolingOffStrength())
+                )
+                        - (0.16 * crossVenueDetection),
                 0.0,
                 1.0
         );
@@ -211,6 +241,9 @@ public final class InfluenceSubstitutionEngine {
     ) {
         if (current == InfluenceStrategy.INTERMEDIARY && opacityPressure > 0.70) {
             return legalVenuePressure > 0.45 ? InfluenceStrategy.LITIGATION_THREAT : InfluenceStrategy.PUBLIC_CAMPAIGN;
+        }
+        if (contest.arena() == ContestArena.PROCUREMENT && accessPressure >= 0.42) {
+            return opacityPressure > 0.45 ? InfluenceStrategy.INTERMEDIARY : InfluenceStrategy.REVOLVING_DOOR;
         }
         if (commentPressure >= 0.50 && (accessPressure >= 0.35 || opacityPressure >= 0.35)) {
             return InfluenceStrategy.INTERMEDIARY;

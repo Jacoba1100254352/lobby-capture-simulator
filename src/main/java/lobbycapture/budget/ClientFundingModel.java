@@ -46,8 +46,9 @@ public final class ClientFundingModel {
                 double traceability = traceabilityFor(source, calibration, contest.issueDomain(), world);
                 double largeDonorDependence = largeDonorDependenceFor(source, calibration, contest.issueDomain(), world);
                 double disclosureLag = Values.clamp(
-                        (0.55 * calibration.disclosureLag(contest.issueDomain()))
-                                + (0.45 * world.evasionProfile().disclosureLag()),
+                        (0.70 * calibration.disclosureLag(contest.issueDomain()))
+                                + (0.30 * world.evasionProfile().disclosureLag())
+                                - (0.10 * world.reformRegime().realTimeDisclosure()),
                         0.0,
                         1.0
                 );

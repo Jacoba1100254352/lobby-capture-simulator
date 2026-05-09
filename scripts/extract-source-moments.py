@@ -73,8 +73,12 @@ def fec_moments(scope: str, path: Path) -> list[dict[str, str]]:
     by_recipient = grouped_amount(rows, "recipient")
     amounts = [number(row.get("amount")) for row in rows]
     total = sum(amounts)
-    dark_rows = [row for row in rows if row.get("flowType", "").upper() in {"DARK_MONEY", "SUPER_PAC"}]
+    dark_money_rows = [row for row in rows if row.get("flowType", "").upper() == "DARK_MONEY"]
+    super_pac_rows = [row for row in rows if row.get("flowType", "").upper() == "SUPER_PAC"]
+    opaque_electoral_rows = dark_money_rows + super_pac_rows
+    outside_rows = [row for row in rows if row.get("flowType", "").upper() in {"DARK_MONEY", "SUPER_PAC", "TRADE_ASSOCIATION"}]
     public_rows = [row for row in rows if row.get("flowType", "").upper() in {"PUBLIC_MATCH", "DEMOCRACY_VOUCHER"}]
+    by_outside_source = grouped_amount(outside_rows, "source")
     return [
         moment(scope, "fec", "fecRows", len(rows), "observed", "normalized OpenFEC rows"),
         moment(scope, "fec", "fecTotalReceipts", total, "observed", "sum of normalized FEC amount"),
@@ -84,8 +88,14 @@ def fec_moments(scope: str, path: Path) -> list[dict[str, str]]:
         moment(scope, "fec", "fecRecipientTop3Share", top_share(by_recipient, 3), "observed", "top three recipient share of normalized FEC amount"),
         moment(scope, "fec", "fecLargeDonorWeightedShare", weighted(rows, "largeDonorShare", "amount"), "observed_proxy", "amount-weighted normalized large donor share"),
         moment(scope, "fec", "moneyFlowTraceability", weighted(rows, "traceability", "amount"), "observed_proxy", "amount-weighted traceability across all normalized FEC rows"),
-        moment(scope, "fec", "darkMoneyDirectVisibility", weighted(dark_rows, "traceability", "amount"), "inferred", "amount-weighted traceability among DARK_MONEY and SUPER_PAC rows"),
-        moment(scope, "fec", "darkMoneySourceShare", safe_divide(sum(number(row.get("amount")) for row in dark_rows), total), "observed_proxy", "DARK_MONEY and SUPER_PAC share of normalized FEC amount"),
+        moment(scope, "fec", "darkMoneyDirectVisibility", weighted(dark_money_rows, "traceability", "amount"), "inferred", "amount-weighted traceability among DARK_MONEY rows only"),
+        moment(scope, "fec", "darkMoneySourceShare", safe_divide(sum(number(row.get("amount")) for row in dark_money_rows), total), "observed_proxy", "DARK_MONEY share of normalized campaign-finance amount"),
+        moment(scope, "fec", "superPacSourceShare", safe_divide(sum(number(row.get("amount")) for row in super_pac_rows), total), "observed_proxy", "SUPER_PAC share of normalized campaign-finance amount"),
+        moment(scope, "fec", "opaqueElectoralSourceShare", safe_divide(sum(number(row.get("amount")) for row in opaque_electoral_rows), total), "observed_proxy", "DARK_MONEY plus SUPER_PAC share of normalized campaign-finance amount"),
+        moment(scope, "fec", "outsideSpendingRows", len(outside_rows), "observed", "normalized independent expenditure, super PAC, dark-money, or association rows"),
+        moment(scope, "fec", "outsideSpendingSourceShare", safe_divide(sum(number(row.get("amount")) for row in outside_rows), total), "observed_proxy", "outside-spending bridge share of normalized campaign-finance amount"),
+        moment(scope, "fec", "outsideSpendingTop3SourceShare", top_share(by_outside_source, 3), "observed_proxy", "top three outside spenders by normalized amount"),
+        moment(scope, "fec", "outsideSpendingDisclosureLagMean", weighted(outside_rows, "disclosureLag", "amount"), "observed_proxy", "amount-weighted reporting lag among outside-spending rows"),
         moment(scope, "fec", "publicFinancingSourceShare", safe_divide(sum(number(row.get("amount")) for row in public_rows), total), "observed_proxy", "public-match or voucher share of normalized FEC amount"),
     ]
 
@@ -344,7 +354,9 @@ def representativeness_warnings(rows: list[dict[str, str]]) -> list[str]:
             f"Snapshot FEC row count is {fec_rows:.0f}; use FEC moments as panel diagnostics rather than representative election-cycle estimates."
         )
     if metric_value(rows, "snapshot", "fec", "darkMoneySourceShare") == 0.0:
-        warnings.append("Snapshot FEC rows contain no DARK_MONEY or SUPER_PAC flow share; dark-money calibration still depends on benchmark and scenario assumptions.")
+        warnings.append("Snapshot campaign-finance rows contain no direct DARK_MONEY flow share; dark-money calibration still depends on benchmark and scenario assumptions even though Schedule E outside-spending rows are present.")
+    if metric_value(rows, "snapshot", "fec", "outsideSpendingRows") == 0.0:
+        warnings.append("Snapshot campaign-finance rows contain no Schedule E or outside-spending bridge rows; substitution through outside spending remains weakly anchored.")
     if metric_value(rows, "snapshot", "fec", "publicFinancingSourceShare") == 0.0:
         warnings.append("Snapshot FEC rows contain no public-match or democracy-voucher flow share; public-financing calibration still depends on external benchmarks.")
     revolving_rows = metric_value(rows, "snapshot", "revolving-door", "revolvingDoorRows")
