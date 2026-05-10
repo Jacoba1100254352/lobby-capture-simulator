@@ -62,6 +62,13 @@ def select_rows(
 ) -> tuple[list[dict[str, str]], dict[str, str] | None]:
     indexed = {row["scenarioKey"]: row for row in rows}
     row_mode = table_config.get("rowMode", "listed")
+    if row_mode == "all":
+        selected = rows
+        sort_source = table_config.get("sortSource")
+        if sort_source:
+            selected = sorted(selected, key=lambda row: row.get(str(sort_source), ""))
+        limit = int(table_config.get("limit", len(selected)))
+        return selected[:limit], None
     if row_mode == "listed":
         keys = list(table_config["rows"])
         missing = [key for key in keys if key not in indexed]

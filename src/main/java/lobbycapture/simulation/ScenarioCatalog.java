@@ -45,9 +45,12 @@ public final class ScenarioCatalog {
                 scenario("machine-readable-meeting-logs", "Machine-readable meeting logs", "Real-time structured meeting logs improve visibility of direct and indirect contacts.", ReformRegime.machineReadableMeetingLogs(), InfluenceStrategy.DIRECT_ACCESS, 0.45, true, agencyContests()),
                 scenario("hard-budget-substitution-stress", "Hard-budget substitution stress", "Tight visible lobbying budgets with high evasion test whether influence moves through dark, intermediary, procurement, and legal channels.", ReformRegime.hardLobbyingBudgets(), InfluenceStrategy.INTERMEDIARY, 0.88, true, ablationStressContests()),
                 scenario("shadow-lobbying-maximum-stress", "Shadow lobbying maximum stress", "Extreme visible-channel constraints test the upper tail of dark-money, association, advisory, and procurement-consultant substitution.", ReformRegime.hardLobbyingBudgets(), InfluenceStrategy.DARK_MONEY, 0.98, true, shadowLobbyingMaxStressContests()),
+                scenario("opaque-network-substitution-frontier", "Opaque network substitution frontier", "Machine-readable disclosure tests whether influence moves into nonprofit, association, advisory, and venue-shift paths that remain hard to connect.", ReformRegime.machineReadableMeetingLogs(), InfluenceStrategy.INTERMEDIARY, 0.96, true, opaqueNetworkSubstitutionContests()),
                 scenario("advisory-lobbying-substitution", "Advisory lobbying substitution", "Cooling-off and access limits test whether activity moves into advisory, expert, and behind-the-scenes messenger channels.", ReformRegime.enforcedCoolingOff(), InfluenceStrategy.REVOLVING_DOOR, 0.84, true, advisorySubstitutionContests()),
                 scenario("procurement-venue-shift-stress", "Procurement venue-shift stress", "Procurement firewalls test whether vendor influence moves through consultants, associations, bid specifications, and litigation threats.", ReformRegime.procurementFirewall(), InfluenceStrategy.INTERMEDIARY, 0.86, true, procurementSubstitutionContests()),
+                scenario("procurement-modification-capture-frontier", "Procurement modification capture frontier", "Procurement firewalls are stressed against post-award modifications, exclusion language, bid protests, consultants, and subcontract eligibility pressure.", ReformRegime.procurementFirewall(), InfluenceStrategy.INTERMEDIARY, 0.92, true, procurementModificationContests()),
                 scenario("outside-spending-disclosure-evasion", "Outside-spending disclosure evasion", "Dark-money disclosure and public financing test whether electoral influence moves into independent expenditures and nonprofit messengers.", ReformRegime.electoralSubstitutionShield(), InfluenceStrategy.DARK_MONEY, 0.90, true, outsideSpendingStressContests()),
+                scenario("public-finance-dark-money-frontier", "Public-finance dark-money frontier", "Public financing and vouchers are stressed against independent expenditure, nonprofit issue-ad, and donor-network substitution.", ReformRegime.democracyVouchers(), InfluenceStrategy.DARK_MONEY, 0.94, true, publicFinanceDarkMoneyContests()),
                 scenario("enforced-cooling-off", "Enforced cooling-off periods", "Cooling-off rules are paired with audit and sanction capacity.", ReformRegime.enforcedCoolingOff(), InfluenceStrategy.REVOLVING_DOOR, 0.40, true, agencyContests()),
                 scenario("comment-authenticity-rules", "Comment-authenticity rules", "Authentication and deduplication target comment flooding and synthetic salience.", ReformRegime.commentAuthenticityRules(), InfluenceStrategy.INTERMEDIARY, 0.50, true, commentFloodingContests()),
                 scenario("public-advocate-office", "Public advocate office", "Dedicated public advocates and blind review counter one-sided technical submissions.", ReformRegime.publicAdvocateOffice(), InfluenceStrategy.INFORMATION_DISTORTION, 0.35, true, technicalRulemakingContests()),
@@ -357,6 +360,18 @@ public final class ScenarioCatalog {
         );
     }
 
+    private static List<PolicyContest> opaqueNetworkSubstitutionContests() {
+        return List.of(
+                contest("opaque-nonprofit-research-network", "Opaque nonprofit research network", "technology", ContestArena.PUBLIC_INFORMATION, false, 0.42, 0.28, 0.54, 0.94, 0.76, 0.92, 0.32),
+                contest("association-advisory-meeting-gap", "Association advisory meeting gap", "rulemaking", ContestArena.RULEMAKING, false, 0.44, 0.30, 0.52, 0.92, 0.74, 0.88, 0.26),
+                contest("funded-expert-venue-shift", "Funded expert venue shift", "public-information", ContestArena.PUBLIC_INFORMATION, false, 0.40, 0.28, 0.50, 0.90, 0.72, 0.94, 0.30),
+                contest("machine-log-side-channel", "Machine-log side-channel pressure", "enforcement", ContestArena.ENFORCEMENT, false, 0.42, 0.30, 0.50, 0.88, 0.70, 0.76, 0.24),
+                antiDarkMoneyDisclosure(),
+                antiAstroturfAuth(),
+                antiCaptureDisclosure()
+        );
+    }
+
     private static List<PolicyContest> outsideSpendingStressContests() {
         return List.of(
                 contest("super-pac-independent-expenditure", "Super PAC independent expenditure push", "election", ContestArena.ELECTION, false, 0.42, 0.30, 0.52, 0.94, 0.72, 0.42, 0.80),
@@ -364,6 +379,28 @@ public final class ScenarioCatalog {
                 contest("nonprofit-issue-ad-blitz", "Nonprofit issue-ad blitz", "democracy", ContestArena.ELECTION, false, 0.46, 0.32, 0.54, 0.90, 0.70, 0.48, 0.82),
                 antiDarkMoneyDisclosure(),
                 antiCaptureVouchers()
+        );
+    }
+
+    private static List<PolicyContest> publicFinanceDarkMoneyContests() {
+        return List.of(
+                contest("voucher-independent-expenditure-offset", "Voucher independent-expenditure offset", "election", ContestArena.ELECTION, false, 0.46, 0.34, 0.56, 0.92, 0.72, 0.42, 0.82),
+                contest("public-match-donor-network-pressure", "Public-match donor-network pressure", "finance", ContestArena.ELECTION, false, 0.44, 0.34, 0.54, 0.90, 0.70, 0.48, 0.78),
+                contest("voucher-nonprofit-issue-ad-routing", "Voucher nonprofit issue-ad routing", "democracy", ContestArena.PUBLIC_INFORMATION, false, 0.48, 0.36, 0.58, 0.88, 0.70, 0.58, 0.84),
+                antiCaptureVouchers(),
+                antiDarkMoneyDisclosure(),
+                antiCaptureDisclosure()
+        );
+    }
+
+    private static List<PolicyContest> procurementModificationContests() {
+        return List.of(
+                contest("post-award-modification-pressure", "Post-award modification pressure", "procurement", ContestArena.PROCUREMENT, false, 0.40, 0.28, 0.50, 0.98, 0.84, 0.78, 0.20),
+                contest("exclusion-language-specification", "Exclusion-language specification", "procurement", ContestArena.PROCUREMENT, false, 0.38, 0.26, 0.48, 0.96, 0.82, 0.86, 0.18),
+                contest("bid-protest-settlement-leverage", "Bid-protest settlement leverage", "procurement", ContestArena.LITIGATION, false, 0.36, 0.24, 0.46, 0.94, 0.80, 0.66, 0.20),
+                contest("subcontract-eligibility-after-award", "Subcontract eligibility after award", "procurement", ContestArena.PROCUREMENT, false, 0.38, 0.28, 0.46, 0.92, 0.76, 0.70, 0.18),
+                antiCoolingOff(),
+                antiCaptureDisclosure()
         );
     }
 

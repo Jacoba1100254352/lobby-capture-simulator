@@ -19,6 +19,9 @@
         "procurement-firewalls",
         "hard-budget-substitution-stress",
         "shadow-lobbying-maximum-stress",
+        "opaque-network-substitution-frontier",
+        "procurement-modification-capture-frontier",
+        "public-finance-dark-money-frontier",
         "venue-shifting-detection",
         "reform-threat-mobilization",
         "full-anti-capture-bundle",
@@ -41,6 +44,9 @@
             "Procurement firewalls": "Procurement firewall",
             "Hard-budget substitution stress": "Budget cap stress",
             "Shadow lobbying maximum stress": "Shadow max stress",
+            "Opaque network substitution frontier": "Opaque network",
+            "Procurement modification capture frontier": "Procurement mods",
+            "Public-finance dark-money frontier": "Public finance/DM",
             "Venue-shifting detection": "Venue detection",
             "Reform threat mobilization": "Reform threat",
             "Full anti-capture bundle": "Full bundle",
@@ -233,6 +239,57 @@
           "header": "Risk delta",
           "source": "substitutionFailureRiskDelta",
           "format": "signed4"
+        }
+      ]
+    },
+    {
+      "output": "validation_gap_snapshot.tex",
+      "source": "source-panel-inventory.csv",
+      "label": "tab:validation-gaps",
+      "caption": "Current source-panel coverage. Snapshot values come from the committed normalized 2024 EPA/ENV panel; fixture values are schema and mechanism scaffolds only. Thin, warning, fixture-only, or missing rows are validation gaps rather than negative empirical findings.",
+      "size": "scriptsize",
+      "environment": "table*",
+      "width": "\\textwidth",
+      "tabcolsep": "2pt",
+      "rowMode": "all",
+      "columns": [
+        {
+          "header": "Panel",
+          "source": "panel",
+          "format": "label",
+          "labels": {
+            "Direct dark money": "Direct dark money",
+            "Outside spending": "Outside spending",
+            "Public financing": "Public financing",
+            "Intermediaries": "Intermediaries",
+            "Revolving door": "Revolving door",
+            "Procurement identifiers": "Proc. IDs",
+            "Procurement modification risk": "Proc. mods"
+          }
+        },
+        {
+          "header": "Moment",
+          "source": "metric"
+        },
+        {
+          "header": "Snapshot",
+          "source": "value"
+        },
+        {
+          "header": "Fixture",
+          "source": "fixtureValue"
+        },
+        {
+          "header": "Status",
+          "source": "status",
+          "format": "label",
+          "labels": {
+            "usable": "usable",
+            "thin": "thin",
+            "warning": "warning",
+            "fixture-only": "fixture-only",
+            "missing": "missing"
+          }
         }
       ]
     },

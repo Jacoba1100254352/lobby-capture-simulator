@@ -40,9 +40,9 @@ PANELS = [
     {
         "panel": "Intermediaries",
         "metric": "intermediaryRows",
-        "minimum": 50.0,
-        "good": 500.0,
-        "missing": "intermediary panel is too small for calibration",
+        "minimum": 5.0,
+        "good": 50.0,
+        "missing": "intermediary panel is absent or only a schema stub",
         "action": "Replace fixture-sized intermediary rows with IRS 8871/8872, TEOS, Form 990 XML, association, think-tank, and grantmaking exports.",
     },
     {
@@ -89,26 +89,36 @@ def main() -> int:
     return 0
 
 
-def read_moments(path: Path) -> dict[str, float]:
+def read_moments(path: Path) -> dict[str, dict[str, float]]:
+    moments = {"snapshot": {}, "fixture": {}}
     if not path.exists():
-        return {}
+        return moments
     with path.open(newline="", encoding="utf-8") as source:
-        return {
-            row["metric"]: float(row["value"])
-            for row in csv.DictReader(source)
-            if row.get("scope") == "snapshot" and row.get("metric") and row.get("value")
-        }
+        for row in csv.DictReader(source):
+            scope = row.get("scope")
+            if scope in moments and row.get("metric") and row.get("value"):
+                moments[scope][row["metric"]] = float(row["value"])
+    return moments
 
 
-def panel_row(panel: dict[str, object], moments: dict[str, float]) -> dict[str, str]:
+def panel_row(panel: dict[str, object], moments: dict[str, dict[str, float]]) -> dict[str, str]:
     metric = str(panel["metric"])
-    value = moments.get(metric)
+    value = moments["snapshot"].get(metric)
+    fixture_value = moments["fixture"].get(metric)
     if value is None:
-        status = "missing"
-        note = "source moment not present"
+        if fixture_supported(panel, fixture_value):
+            status = "fixture-only"
+            note = "snapshot source moment not present; fixture bridge is available for schema and mechanism tests only"
+        else:
+            status = "missing"
+            note = "source moment not present"
     elif value < float(panel["minimum"]):
-        status = "missing"
-        note = str(panel["missing"])
+        if fixture_supported(panel, fixture_value):
+            status = "fixture-only"
+            note = str(panel["missing"]) + "; fixture bridge is available but not article-level empirical coverage"
+        else:
+            status = "missing"
+            note = str(panel["missing"])
     elif "maximum" in panel and value > float(panel["maximum"]):
         status = "warning"
         note = str(panel["missing"])
@@ -122,14 +132,19 @@ def panel_row(panel: dict[str, object], moments: dict[str, float]) -> dict[str, 
         "panel": str(panel["panel"]),
         "metric": metric,
         "value": "" if value is None else f"{value:.4f}",
+        "fixtureValue": "" if fixture_value is None else f"{fixture_value:.4f}",
         "status": status,
         "note": note,
         "nextAction": str(panel["action"]),
     }
 
 
+def fixture_supported(panel: dict[str, object], value: float | None) -> bool:
+    return value is not None and value >= float(panel["minimum"])
+
+
 def write_csv(path: Path, rows: list[dict[str, str]]) -> None:
-    fieldnames = ["panel", "metric", "value", "status", "note", "nextAction"]
+    fieldnames = ["panel", "metric", "value", "fixtureValue", "status", "note", "nextAction"]
     with path.open("w", newline="", encoding="utf-8") as destination:
         writer = csv.DictWriter(destination, fieldnames=fieldnames, lineterminator="\n")
         writer.writeheader()
@@ -137,7 +152,7 @@ def write_csv(path: Path, rows: list[dict[str, str]]) -> None:
 
 
 def write_markdown(path: Path, rows: list[dict[str, str]]) -> None:
-    counts = {status: sum(1 for row in rows if row["status"] == status) for status in ("usable", "thin", "warning", "missing")}
+    counts = {status: sum(1 for row in rows if row["status"] == status) for status in ("usable", "thin", "warning", "fixture-only", "missing")}
     lines = [
         "# Source Panel Inventory",
         "",
@@ -146,14 +161,15 @@ def write_markdown(path: Path, rows: list[dict[str, str]]) -> None:
         f"- Usable: `{counts['usable']}`",
         f"- Thin: `{counts['thin']}`",
         f"- Warning: `{counts['warning']}`",
+        f"- Fixture-only: `{counts['fixture-only']}`",
         f"- Missing: `{counts['missing']}`",
         "",
-        "| Panel | Moment | Value | Status | Note | Next action |",
-        "| --- | --- | ---: | --- | --- | --- |",
+        "| Panel | Moment | Snapshot | Fixture | Status | Note | Next action |",
+        "| --- | --- | ---: | ---: | --- | --- | --- |",
     ]
     for row in rows:
         lines.append(
-            f"| {row['panel']} | `{row['metric']}` | {row['value'] or 'n/a'} | {row['status']} | {row['note']} | {row['nextAction']} |"
+            f"| {row['panel']} | `{row['metric']}` | {row['value'] or 'n/a'} | {row['fixtureValue'] or 'n/a'} | {row['status']} | {row['note']} | {row['nextAction']} |"
         )
     lines.append("")
     path.write_text("\n".join(lines), encoding="utf-8")

@@ -64,6 +64,8 @@ cp "$ROOT_DIR/reports/substitution-audit.md" "$STAGING_DIR/supporting-informatio
 cp "$ROOT_DIR/reports/lobby-capture-portfolio.md" "$STAGING_DIR/supporting-information/portfolio-screen.md"
 cp "$ROOT_DIR/reports/calibration-queue.md" "$STAGING_DIR/supporting-information/calibration-queue.md"
 cp "$ROOT_DIR/reports/paper-layout-audit.md" "$STAGING_DIR/supporting-information/paper-layout-audit.md"
+cp "$ROOT_DIR/reports/manual-visual-audit.md" "$STAGING_DIR/supporting-information/manual-visual-audit.md"
+cp "$ROOT_DIR/docs/submission-release-checklist.md" "$STAGING_DIR/supporting-information/submission-release-checklist.md"
 mkdir -p "$STAGING_DIR/figures"
 cp "$PAPER_DIR"/figures/Figure_*.pdf "$STAGING_DIR/figures/"
 cp "$PAPER_DIR"/figures/*.tex "$STAGING_DIR/figures/"

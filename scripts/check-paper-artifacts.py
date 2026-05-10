@@ -35,6 +35,7 @@ EXPECTED_ZIP_MEMBERS = {
     "sections/submission-declarations.tex",
     "tables/campaign_snapshot.tex",
     "tables/substitution_failure_ranking.tex",
+    "tables/validation_gap_snapshot.tex",
     "tables/sensitivity_snapshot.tex",
     "tables/ablation_snapshot.tex",
     "tables/interaction_snapshot.tex",
@@ -56,6 +57,8 @@ EXPECTED_ZIP_MEMBERS = {
     "supporting-information/portfolio-screen.md",
     "supporting-information/calibration-queue.md",
     "supporting-information/paper-layout-audit.md",
+    "supporting-information/manual-visual-audit.md",
+    "supporting-information/submission-release-checklist.md",
 }
 
 
@@ -154,6 +157,8 @@ def submission_inputs() -> list[Path]:
         ROOT / "reports" / "lobby-capture-portfolio.md",
         ROOT / "reports" / "calibration-queue.md",
         ROOT / "reports" / "paper-layout-audit.md",
+        ROOT / "reports" / "manual-visual-audit.md",
+        ROOT / "docs" / "submission-release-checklist.md",
         PAPER / ".wiley-build" / "USG.cls",
         PAPER / ".wiley-build" / "wileyNJD-Chicago.bst",
         PAPER / ".wiley-template" / "Optimal-Design-layout" / "LETTERSP.STY",

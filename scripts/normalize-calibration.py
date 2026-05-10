@@ -101,6 +101,8 @@ SCHEMAS = {
             "numberOfOffers",
             "priceOnlyAward",
             "exPostModification",
+            "protestFiled",
+            "exclusionFlag",
             "firewallCovered",
         ],
         "aliases": {
@@ -125,6 +127,8 @@ SCHEMAS = {
             "numberOfOffers": ["numberOfOffers", "number_of_offers_received", "Number of Offers"],
             "priceOnlyAward": ["priceOnlyAward", "price_only_award", "Price Only Award"],
             "exPostModification": ["exPostModification", "ex_post_modification", "is_modification"],
+            "protestFiled": ["protestFiled", "protest_filed", "bid_protest", "Bid Protest"],
+            "exclusionFlag": ["exclusionFlag", "exclusion_flag", "after_exclusion", "Exclusion Flag"],
             "firewallCovered": ["firewallCovered", "firewall_covered", "covered_by_firewall"],
         },
         "optional": {
@@ -136,6 +140,8 @@ SCHEMAS = {
             "numberOfOffers": "0",
             "priceOnlyAward": "false",
             "exPostModification": "false",
+            "protestFiled": "false",
+            "exclusionFlag": "false",
             "firewallCovered": "false",
         },
     },
@@ -207,6 +213,9 @@ SCHEMAS = {
         },
     },
 }
+
+SCHEMAS["public-financing"] = SCHEMAS["fec"]
+SCHEMAS["dark-money"] = SCHEMAS["fec"]
 
 
 def main() -> int:

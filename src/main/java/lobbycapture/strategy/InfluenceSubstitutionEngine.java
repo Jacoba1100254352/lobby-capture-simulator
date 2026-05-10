@@ -134,7 +134,7 @@ public final class InfluenceSubstitutionEngine {
                 0.0,
                 1.0
         );
-        InfluenceStrategy selected = switchScore > 0.34
+        InfluenceStrategy selected = switchScore > 0.31
                 ? nearestSubstitute(currentStrategy, contest, accessPressure, campaignPressure, opacityPressure, commentPressure, legalVenuePressure)
                 : currentStrategy;
         double activated = Values.clamp(
@@ -148,12 +148,13 @@ public final class InfluenceSubstitutionEngine {
                                 + (0.66 * anonymityValue)
                                 + (0.32 * world.evasionProfile().opacity())
                                 + (0.28 * world.evasionFreedom())
-                                + (0.20 * intermediaryFit)
-                                + (0.30 * visibleRestriction)
-                                + (0.20 * procurementVenueValue)
+                                + (0.24 * intermediaryFit)
+                                + (0.34 * visibleRestriction)
+                                + (0.24 * procurementVenueValue)
+                                + (0.18 * legalVenuePressure)
                 )
                         - (0.07 * Math.max(0.0, reform.transparencyStrength() - world.evasionFreedom()))
-                        - (0.10 * crossVenueDetection),
+                        - (0.12 * crossVenueDetection),
                 0.0,
                 1.0
         );

@@ -41,7 +41,7 @@ public record ChannelAllocation(
             case CAMPAIGN_FINANCE -> new double[]{0.07, 0.09, 0.04, 0.07, 0.02, 0.48, 0.10, 0.05, 0.08, 0.00};
             case DARK_MONEY -> new double[]{0.04, 0.07, 0.11, 0.13, 0.04, 0.07, 0.40, 0.04, 0.10, 0.00};
             case REVOLVING_DOOR -> new double[]{0.12, 0.10, 0.07, 0.02, 0.05, 0.04, 0.04, 0.45, 0.11, 0.00};
-            case INTERMEDIARY -> new double[]{0.05, 0.10, 0.20, 0.18, 0.04, 0.04, 0.22, 0.05, 0.12, 0.00};
+            case INTERMEDIARY -> new double[]{0.04, 0.07, 0.18, 0.16, 0.05, 0.04, 0.20, 0.04, 0.22, 0.00};
             case DEFENSIVE_REFORM -> new double[]{0.07, 0.09, 0.11, 0.18, 0.15, 0.06, 0.11, 0.05, 0.08, 0.10};
             case BALANCED -> new double[]{0.15, 0.13, 0.13, 0.12, 0.09, 0.10, 0.09, 0.11, 0.08, 0.00};
         };

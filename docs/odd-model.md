@@ -106,9 +106,9 @@ Each report manifest records the command, seed, run count, contest count, Java v
 External data constrain plausible ranges and schema behavior. They do not identify causal reform effects.
 
 - LDA rows constrain issue funding scale, registrant/client concentration, issue-domain mix, and disclosure lag.
-- FEC rows constrain donor concentration, Schedule E outside-spending pressure, public-financing share, traceability, and large-donor dependence. Direct dark-money rows are split from super PAC/outside-spending rows when the source identifies them.
+- FEC rows constrain donor concentration, Schedule E outside-spending pressure, traceability, and large-donor dependence. Public-financing and direct dark-money bridge panels are loaded separately when present, so voucher or matching-fund rows and direct dark-money rows do not disappear into ordinary campaign receipts. Direct dark-money rows remain separate from super PAC/outside-spending rows when the source identifies them.
 - Federal Register and Regulations.gov rows constrain docket volume, comment authenticity, template saturation, and technical-claim credibility.
-- USAspending rows constrain procurement-recipient and awarding-agency concentration. The normalized schema also carries UEI, PIID, competition type, number of offers, price-only, modification, and firewall flags when SAM/FPDS-style bridge fields are available.
+- USAspending rows constrain procurement-recipient and awarding-agency concentration. The normalized schema also carries UEI, PIID, action date, competition type, number of offers, initial-award versus modification status, price-only, protest, exclusion, and firewall flags when SAM/FPDS-style bridge fields are available.
 - Intermediary rows constrain nonprofit, 527, association, and think-tank political-spend pressure and donor/source disclosure where IRS, ProPublica, OpenSecrets, or curated exports are configured.
 - Revolving-door rows constrain former-official headcount, covered-position indicators, cooling-off intervals, source record IDs, position type, source URL coverage, match confidence, and source-weighted bridge pressure. The committed snapshot uses LDA-derived covered-position rows; a richer post-employment panel should replace or supplement it when a licensed/exported source is configured.
 - Seattle voucher and public-financing benchmarks constrain participation and candidate uptake ranges.
@@ -119,7 +119,7 @@ The file `data/calibration/parameter-map.csv` records the intended low, middle, 
 
 ### Client Funding
 
-Client funding is proportional to lobby issue preference, client exposure, issue scale, private gain, and reform-threat pressure, then clipped to the scenario maximum. Funding flows retain source type, traceability, lag, legal risk, reputational risk, and contest linkage.
+Client funding is proportional to lobby issue preference, client exposure, issue scale, private gain, and reform-threat pressure, then clipped to the scenario maximum. Funding flows retain source type, traceability, lag, legal risk, reputational risk, and contest linkage. Large-donor dependence now blends the source panel's large-donor share with a donor-concentration index derived from top donor/client share and Herfindahl concentration.
 
 ### Channel Allocation
 
@@ -145,6 +145,10 @@ Current strategy-to-channel templates are deterministic share vectors before bud
 Each channel allocation creates weighted influence-network paths from a lobby organization to the contest domain. Paths are typed by channel and scored for opacity, donor concentration, intermediary dependence, official access, procurement linkage, revolving-door linkage, comment mobilization, and venue shift. Scenario reports aggregate these into `networkOpacityIndex`, `donorNetworkConcentration`, `intermediaryCentrality`, `officialAccessCentrality`, `procurementNetworkExposure`, `revolvingDoorBridgeIndex`, `commentNetworkLoad`, `venueShiftNetworkLoad`, `networkLegibilityIndex`, `crossVenueDetectionIndex`, `participationProtectionIndex`, and `speechRestrictionRisk`.
 
 These are synthetic path diagnostics. They do not claim to reconstruct observed social networks. Their purpose is to keep substitution visible when formal lobbying declines but influence moves through sponsored research, trade associations, procurement relationships, dark-money routes, consulting, litigation, or adjacent venues.
+
+### Procurement Bridge
+
+Procurement contests use both simulated channel pressure and source-panel procurement risk. The bridge risk is computed from recipient concentration, single-bid or limited-competition share, post-award modification share, price-only awards, protest flags, exclusion flags, and missing firewall coverage. Initial awards and post-award modifications are reported separately in source moments because a panel made only of transaction modifications should not be interpreted as a representative award universe.
 
 ### Rulemaking Comment Triage
 

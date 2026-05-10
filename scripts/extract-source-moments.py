@@ -5,6 +5,7 @@ from __future__ import annotations
 
 import argparse
 import csv
+import re
 from collections import defaultdict
 from pathlib import Path
 
@@ -35,7 +36,12 @@ def main() -> int:
 def extract_scope(scope: str, root: Path, prefix: str) -> list[dict[str, str]]:
     rows = []
     rows.extend(lda_moments(scope, root / f"{prefix}lda-lobbying.csv"))
-    rows.extend(fec_moments(scope, root / f"{prefix}fec-campaign-finance.csv"))
+    rows.extend(fec_moments(
+        scope,
+        root / f"{prefix}fec-campaign-finance.csv",
+        root / f"{prefix}public-financing.csv",
+        root / f"{prefix}dark-money.csv",
+    ))
     rows.extend(regulatory_moments(scope, root / f"{prefix}regulatory-dockets.csv"))
     rows.extend(usaspending_moments(scope, root / f"{prefix}usaspending-awards.csv"))
     rows.extend(revolving_door_moments(scope, root / f"{prefix}revolving-door.csv"))
@@ -65,20 +71,27 @@ def lda_moments(scope: str, path: Path) -> list[dict[str, str]]:
     ]
 
 
-def fec_moments(scope: str, path: Path) -> list[dict[str, str]]:
+def fec_moments(scope: str, path: Path, public_financing_path: Path, dark_money_path: Path) -> list[dict[str, str]]:
     rows = read_rows(path)
-    if not rows:
+    public_bridge_rows = read_rows(public_financing_path)
+    dark_money_bridge_rows = read_rows(dark_money_path)
+    if not rows and not public_bridge_rows and not dark_money_bridge_rows:
         return [moment(scope, "fec", "fecRows", 0.0, "observed", f"{path} missing or empty")]
     by_source = grouped_amount(rows, "source")
     by_recipient = grouped_amount(rows, "recipient")
     amounts = [number(row.get("amount")) for row in rows]
     total = sum(amounts)
     dark_money_rows = [row for row in rows if row.get("flowType", "").upper() == "DARK_MONEY"]
+    all_dark_money_rows = dark_money_rows + dark_money_bridge_rows
+    all_dark_money_total = sum(number(row.get("amount")) for row in all_dark_money_rows)
     super_pac_rows = [row for row in rows if row.get("flowType", "").upper() == "SUPER_PAC"]
-    opaque_electoral_rows = dark_money_rows + super_pac_rows
-    outside_rows = [row for row in rows if row.get("flowType", "").upper() in {"DARK_MONEY", "SUPER_PAC", "TRADE_ASSOCIATION"}]
     public_rows = [row for row in rows if row.get("flowType", "").upper() in {"PUBLIC_MATCH", "DEMOCRACY_VOUCHER"}]
+    all_public_rows = public_rows + public_bridge_rows
+    all_public_total = sum(number(row.get("amount")) for row in all_public_rows)
+    opaque_electoral_rows = all_dark_money_rows + super_pac_rows
+    outside_rows = [row for row in rows if row.get("flowType", "").upper() in {"DARK_MONEY", "SUPER_PAC", "TRADE_ASSOCIATION"}] + dark_money_bridge_rows
     by_outside_source = grouped_amount(outside_rows, "source")
+    campaign_total = total + all_public_total + all_dark_money_total
     return [
         moment(scope, "fec", "fecRows", len(rows), "observed", "normalized OpenFEC rows"),
         moment(scope, "fec", "fecTotalReceipts", total, "observed", "sum of normalized FEC amount"),
@@ -88,15 +101,20 @@ def fec_moments(scope: str, path: Path) -> list[dict[str, str]]:
         moment(scope, "fec", "fecRecipientTop3Share", top_share(by_recipient, 3), "observed", "top three recipient share of normalized FEC amount"),
         moment(scope, "fec", "fecLargeDonorWeightedShare", weighted(rows, "largeDonorShare", "amount"), "observed_proxy", "amount-weighted normalized large donor share"),
         moment(scope, "fec", "moneyFlowTraceability", weighted(rows, "traceability", "amount"), "observed_proxy", "amount-weighted traceability across all normalized FEC rows"),
-        moment(scope, "fec", "darkMoneyDirectVisibility", weighted(dark_money_rows, "traceability", "amount"), "inferred", "amount-weighted traceability among DARK_MONEY rows only"),
-        moment(scope, "fec", "darkMoneySourceShare", safe_divide(sum(number(row.get("amount")) for row in dark_money_rows), total), "observed_proxy", "DARK_MONEY share of normalized campaign-finance amount"),
-        moment(scope, "fec", "superPacSourceShare", safe_divide(sum(number(row.get("amount")) for row in super_pac_rows), total), "observed_proxy", "SUPER_PAC share of normalized campaign-finance amount"),
-        moment(scope, "fec", "opaqueElectoralSourceShare", safe_divide(sum(number(row.get("amount")) for row in opaque_electoral_rows), total), "observed_proxy", "DARK_MONEY plus SUPER_PAC share of normalized campaign-finance amount"),
+        moment(scope, "fec", "darkMoneyRows", len(all_dark_money_rows), "observed_proxy", "direct DARK_MONEY rows from FEC or an explicit dark-money bridge panel"),
+        moment(scope, "fec", "darkMoneyDirectVisibility", weighted(all_dark_money_rows, "traceability", "amount"), "inferred", "amount-weighted traceability among direct DARK_MONEY rows only"),
+        moment(scope, "fec", "darkMoneySourceShare", safe_divide(all_dark_money_total, campaign_total), "observed_proxy", "direct DARK_MONEY share of normalized campaign-finance plus bridge amount"),
+        moment(scope, "fec", "superPacSourceShare", safe_divide(sum(number(row.get("amount")) for row in super_pac_rows), campaign_total), "observed_proxy", "SUPER_PAC share of normalized campaign-finance plus bridge amount"),
+        moment(scope, "fec", "opaqueElectoralSourceShare", safe_divide(sum(number(row.get("amount")) for row in opaque_electoral_rows), campaign_total), "observed_proxy", "DARK_MONEY plus SUPER_PAC share of normalized campaign-finance plus bridge amount"),
         moment(scope, "fec", "outsideSpendingRows", len(outside_rows), "observed", "normalized independent expenditure, super PAC, dark-money, or association rows"),
-        moment(scope, "fec", "outsideSpendingSourceShare", safe_divide(sum(number(row.get("amount")) for row in outside_rows), total), "observed_proxy", "outside-spending bridge share of normalized campaign-finance amount"),
+        moment(scope, "fec", "outsideSpendingSourceShare", safe_divide(sum(number(row.get("amount")) for row in outside_rows), campaign_total), "observed_proxy", "outside-spending bridge share of normalized campaign-finance plus bridge amount"),
         moment(scope, "fec", "outsideSpendingTop3SourceShare", top_share(by_outside_source, 3), "observed_proxy", "top three outside spenders by normalized amount"),
         moment(scope, "fec", "outsideSpendingDisclosureLagMean", weighted(outside_rows, "disclosureLag", "amount"), "observed_proxy", "amount-weighted reporting lag among outside-spending rows"),
-        moment(scope, "fec", "publicFinancingSourceShare", safe_divide(sum(number(row.get("amount")) for row in public_rows), total), "observed_proxy", "public-match or voucher share of normalized FEC amount"),
+        moment(scope, "fec", "publicFinancingRows", len(all_public_rows), "observed_proxy", "public-match or voucher rows from FEC or explicit public-financing panel"),
+        moment(scope, "fec", "publicFinancingProgramAmount", all_public_total, "observed_proxy", "sum of public-match and voucher bridge amount"),
+        moment(scope, "fec", "publicFinancingSourceShare", safe_divide(all_public_total, campaign_total), "observed_proxy", "public-match or voucher share of normalized campaign-finance plus bridge amount"),
+        moment(scope, "fec", "publicFinancingTraceabilityMean", weighted(all_public_rows, "traceability", "amount"), "observed_proxy", "amount-weighted traceability among public-financing rows"),
+        moment(scope, "fec", "publicFinancingLargeDonorWeightedShare", weighted(all_public_rows, "largeDonorShare", "amount"), "observed_proxy", "amount-weighted large-donor share among public-financing rows"),
     ]
 
 
@@ -125,13 +143,17 @@ def usaspending_moments(scope: str, path: Path) -> list[dict[str, str]]:
     by_sub_agency = grouped_amount(rows, "subAgency")
     total = sum(number(row.get("amount")) for row in rows)
     single_bid_rows = [row for row in rows if number(row.get("numberOfOffers")) <= 1.0 and number(row.get("numberOfOffers")) > 0.0]
-    modified_rows = [
-        row
-        for row in rows
-        if flag(row.get("exPostModification")) or row.get("modificationNumber", "").strip() not in {"", "0", "0.0", "none", "None"}
-    ]
+    modified_rows = [row for row in rows if flag(row.get("exPostModification")) or modification_sequence(row.get("modificationNumber")) > 0]
+    initial_rows = [row for row in rows if not flag(row.get("exPostModification")) and modification_sequence(row.get("modificationNumber")) == 0]
     price_only_rows = [row for row in rows if flag(row.get("priceOnlyAward"))]
     firewall_rows = [row for row in rows if flag(row.get("firewallCovered"))]
+    protest_rows = [row for row in rows if flag(row.get("protestFiled"))]
+    exclusion_rows = [row for row in rows if flag(row.get("exclusionFlag")) or "EXCLUSION" in row.get("competitionType", "").upper()]
+    limited_competition_rows = [
+        row
+        for row in rows
+        if competition_limited(row.get("competitionType", "")) or (number(row.get("numberOfOffers")) <= 1.0 and number(row.get("numberOfOffers")) > 0.0)
+    ]
     uei_rows = [row for row in rows if row.get("uei", "").strip()]
     piid_rows = [row for row in rows if row.get("piid", "").strip()]
     return [
@@ -146,8 +168,13 @@ def usaspending_moments(scope: str, path: Path) -> list[dict[str, str]]:
         moment(scope, "usaspending", "procurementAwardCount", sum(number(row.get("awardCount")) for row in rows), "observed", "sum of normalized award or transaction counts"),
         moment(scope, "usaspending", "procurementSingleBidShare", safe_divide(len(single_bid_rows), len(rows)), "observed_proxy", "share of rows with one known offer"),
         moment(scope, "usaspending", "procurementAmountWeightedSingleBidShare", safe_divide(sum(number(row.get("amount")) for row in single_bid_rows), total), "observed_proxy", "award-amount share with one known offer"),
-        moment(scope, "usaspending", "procurementExPostModificationShare", safe_divide(len(modified_rows), len(rows)), "observed_proxy", "share of rows marked as ex-post modifications or nonzero modifications"),
+        moment(scope, "usaspending", "procurementInitialAwardShare", safe_divide(len(initial_rows), len(rows)), "observed_proxy", "share of rows that appear to be initial awards rather than modifications"),
+        moment(scope, "usaspending", "procurementExPostModificationShare", safe_divide(len(modified_rows), len(rows)), "observed_proxy", "share of rows marked as ex-post modifications or nonzero modification sequence"),
+        moment(scope, "usaspending", "procurementAmountWeightedModificationShare", safe_divide(sum(number(row.get("amount")) for row in modified_rows), total), "observed_proxy", "award-amount share marked as ex-post modifications"),
         moment(scope, "usaspending", "procurementPriceOnlyAwardShare", safe_divide(len(price_only_rows), len(rows)), "observed_proxy", "share of rows marked as price-only or one-offer awards"),
+        moment(scope, "usaspending", "procurementLimitedCompetitionShare", safe_divide(len(limited_competition_rows), len(rows)), "observed_proxy", "share of rows with limited competition, exclusions, or one known offer"),
+        moment(scope, "usaspending", "procurementProtestShare", safe_divide(len(protest_rows), len(rows)), "observed_proxy", "share of rows marked with a protest flag"),
+        moment(scope, "usaspending", "procurementExclusionShare", safe_divide(len(exclusion_rows), len(rows)), "observed_proxy", "share of rows marked as exclusions or after-exclusion competition"),
         moment(scope, "usaspending", "procurementFirewallCoverageShare", safe_divide(len(firewall_rows), len(rows)), "observed_proxy", "share of rows covered by a procurement-firewall flag"),
         moment(scope, "usaspending", "procurementKnownUeiShare", safe_divide(len(uei_rows), len(rows)), "diagnostic", "share of rows carrying a recipient UEI"),
         moment(scope, "usaspending", "procurementKnownPiidShare", safe_divide(len(piid_rows), len(rows)), "diagnostic", "share of rows carrying a procurement instrument identifier"),
@@ -291,6 +318,21 @@ def flag(value: object) -> bool:
     return str(value or "").strip().lower() in {"1", "true", "yes", "y"}
 
 
+def modification_sequence(value: object) -> int:
+    text = str(value or "").strip()
+    if not text or text.lower() in {"nan", "none", "null"}:
+        return 0
+    match = re.search(r"(\d+)$", text)
+    if match:
+        return int(match.group(1))
+    return int(number(text))
+
+
+def competition_limited(value: object) -> bool:
+    text = str(value or "").upper()
+    return any(marker in text for marker in ("NOT COMPETED", "LIMITED", "SOLE SOURCE", "EXCLUSION"))
+
+
 def moment(scope: str, source: str, metric: str, value: float | int, evidence_type: str, notes: str) -> dict[str, str]:
     return {
         "scope": scope,
@@ -353,12 +395,12 @@ def representativeness_warnings(rows: list[dict[str, str]]) -> list[str]:
         warnings.append(
             f"Snapshot FEC row count is {fec_rows:.0f}; use FEC moments as panel diagnostics rather than representative election-cycle estimates."
         )
-    if metric_value(rows, "snapshot", "fec", "darkMoneySourceShare") == 0.0:
+    if metric_value(rows, "snapshot", "fec", "darkMoneyRows") == 0.0:
         warnings.append("Snapshot campaign-finance rows contain no direct DARK_MONEY flow share; dark-money calibration still depends on benchmark and scenario assumptions even though Schedule E outside-spending rows are present.")
     if metric_value(rows, "snapshot", "fec", "outsideSpendingRows") == 0.0:
         warnings.append("Snapshot campaign-finance rows contain no Schedule E or outside-spending bridge rows; substitution through outside spending remains weakly anchored.")
-    if metric_value(rows, "snapshot", "fec", "publicFinancingSourceShare") == 0.0:
-        warnings.append("Snapshot FEC rows contain no public-match or democracy-voucher flow share; public-financing calibration still depends on external benchmarks.")
+    if metric_value(rows, "snapshot", "fec", "publicFinancingRows") == 0.0:
+        warnings.append("Snapshot campaign-finance rows contain no public-match or democracy-voucher bridge rows; public-financing calibration still depends on external benchmarks.")
     revolving_rows = metric_value(rows, "snapshot", "revolving-door", "revolvingDoorRows")
     if revolving_rows <= 10:
         warnings.append(
@@ -384,6 +426,10 @@ def representativeness_warnings(rows: list[dict[str, str]]) -> list[str]:
     if metric_value(rows, "snapshot", "usaspending", "procurementKnownPiidShare") < 0.50:
         warnings.append(
             "Snapshot procurement rows have weak PIID coverage; SAM/FPDS-style bridge diagnostics remain incomplete."
+        )
+    if metric_value(rows, "snapshot", "usaspending", "procurementExPostModificationShare") >= 0.95 and metric_value(rows, "snapshot", "usaspending", "procurementInitialAwardShare") <= 0.05:
+        warnings.append(
+            "Snapshot procurement rows are dominated by post-award modification transactions; award and modification effects should be reported separately."
         )
     return warnings
 

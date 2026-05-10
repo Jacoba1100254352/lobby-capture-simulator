@@ -124,7 +124,12 @@ public final class MetricsAccumulator {
         double totalSpend = outcome.influenceResult().totalSpend();
         totalSpendSum += totalSpend;
         clientFundingSum += outcome.influenceResult().clientFunding();
-        donorInfluenceGiniSum += outcome.influenceResult().donorInfluenceGini();
+        donorInfluenceGiniSum += Values.clamp(
+                (0.45 * outcome.influenceResult().donorInfluenceGini())
+                        + (0.55 * world.calibrationProfile().donorConcentrationIndex(contest.issueDomain())),
+                0.0,
+                1.0
+        );
         disclosureLagSum += outcome.influenceResult().averageDisclosureLag();
         defensiveSpendSum += outcome.influenceResult().defensiveSpend();
         captureIndexSum += outcome.captureIndex();
@@ -147,7 +152,12 @@ public final class MetricsAccumulator {
                 : ledgerLargeDonorDependence;
         voucherParticipationSum += reform.democracyVoucherStrength();
         voucherResidentParticipationSum += voucherResidentParticipation(reform, world.contributionLedger().publicFinancingSourceShare());
-        publicFinancingShareSum += reform.publicFinancingStrength();
+        publicFinancingShareSum += Values.clamp(
+                (0.72 * reform.publicFinancingStrength())
+                        + (0.28 * world.calibrationProfile().publicFinancingSourceShare(contest.issueDomain())),
+                0.0,
+                1.0
+        );
         publicFinancingCandidateUptakeSum += publicFinancingCandidateUptake(reform, ledgerLargeDonorDependence);
         revolvingDoorInfluenceSum += contest.revolvingDoorInfluence();
         commentRecordDistortionSum += contest.commentRecordDistortion();

@@ -10,7 +10,7 @@ TEST_SOURCES := $(shell find src/test/java -name "*.java" | sort)
 MAIN_CLASS := lobbycapture.Main
 TEST_CLASSES := lobbycapture.SmokeTest lobbycapture.AdaptationTest
 
-.PHONY: compile test run campaign sensitivity ablation interactions portfolio source-moments source-panel-inventory calibration-queue validate snapshot-2024-env tables figures paper paper-build paper-supplement-build paper-supplement paper-word-count wiley-template wiley-tex-deps paper-wiley paper-wiley-build submission-package submission-package-build paper-layout-audit paper-artifacts paper-artifacts-check clean
+.PHONY: compile test run campaign sensitivity ablation interactions portfolio source-moments source-panel-inventory calibration-queue validate snapshot-2024-env tables figures paper paper-build paper-supplement-build paper-supplement paper-word-count wiley-template wiley-tex-deps paper-wiley paper-wiley-build submission-package submission-package-build paper-layout-audit visual-review-checklist paper-artifacts paper-artifacts-check clean
 
 compile:
 	@mkdir -p out/classes
@@ -99,20 +99,25 @@ paper-wiley: tables figures paper-wiley-build
 submission-package-build:
 	./scripts/build-submission-package.sh
 
-submission-package: paper-wiley paper-supplement paper-word-count submission-package-build
+submission-package: paper-wiley paper-supplement paper-word-count visual-review-checklist submission-package-build
 
 paper-layout-audit: paper-build paper-wiley-build paper-supplement-build
 	python3 scripts/audit-paper-layout.py
 
-paper-artifacts: campaign sensitivity ablation interactions portfolio source-moments source-panel-inventory validate calibration-queue tables figures paper-build paper-wiley-build paper-supplement-build paper-word-count paper-layout-audit submission-package-build
+visual-review-checklist: paper-layout-audit
+	python3 scripts/write-visual-review-checklist.py
+
+paper-artifacts: campaign sensitivity ablation interactions portfolio source-moments source-panel-inventory validate calibration-queue tables figures paper-build paper-wiley-build paper-supplement-build paper-word-count paper-layout-audit visual-review-checklist submission-package-build
 
 paper-artifacts-check: paper-artifacts
 	python3 scripts/check-paper-artifacts.py
 	python3 scripts/audit-paper-layout.py
+	python3 scripts/write-visual-review-checklist.py
 
 clean:
 	rm -rf out
 	rm -f paper/*.aux paper/*.bbl paper/*.blg paper/*.log paper/*.out paper/*.pdf paper/*.pag paper/*.synctex.gz
 	rm -f reports/validation-summary.csv reports/validation-summary.md reports/substitution-audit.csv reports/substitution-audit.md
 	rm -f reports/source-moments.csv reports/source-moments.md reports/source-panel-inventory.csv reports/source-panel-inventory.md reports/paper-layout-audit.md reports/calibration-queue.csv reports/calibration-queue.md
+	rm -f reports/manual-visual-audit.md
 	rm -rf dist

@@ -119,7 +119,12 @@ public final class ClientFundingModel {
             String issueDomain,
             WorldState world
     ) {
-        double baseline = calibration.largeDonorShare(issueDomain);
+        double baseline = Values.clamp(
+                (0.62 * calibration.largeDonorShare(issueDomain))
+                        + (0.38 * calibration.donorConcentrationIndex(issueDomain)),
+                0.0,
+                1.0
+        );
         if (source == FundingSource.PUBLIC_MATCH || source == FundingSource.DEMOCRACY_VOUCHER) {
             return Values.clamp((0.35 * baseline) - (0.18 * world.reformRegime().campaignFinanceCounterweight()), 0.0, 1.0);
         }

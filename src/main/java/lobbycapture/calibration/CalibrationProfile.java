@@ -47,11 +47,11 @@ public record CalibrationProfile(
                         new RegulatoryDocketRecord("PROC-2026-003", "procurement", "market-agency", 410, 0.46, 0.38, 0.56, 0.40)
                 ),
                 List.of(
-                        new ProcurementAwardRecord("EPA-ENV-001", "CDM Federal Programs Corporation", "procurement", 240.0, 4.0, false, false, true, true, true),
-                        new ProcurementAwardRecord("EPA-ENV-002", "Environmental Systems Research Institute", "procurement", 180.0, 1.0, true, true, false, true, true),
-                        new ProcurementAwardRecord("EPA-ENV-003", "Clean Water Engineering Partners", "procurement", 150.0, 3.0, false, true, true, true, true),
-                        new ProcurementAwardRecord("EPA-ENV-004", "Regional Remediation Services", "procurement", 70.0, 2.0, false, false, true, true, true),
-                        new ProcurementAwardRecord("EPA-ENV-005", "Public Comment Technology Cooperative", "procurement", 60.0, 1.0, true, true, false, true, true)
+                        new ProcurementAwardRecord("EPA-ENV-001", "CDM Federal Programs Corporation", "Environmental Protection Agency", "Office of Water", "procurement", 240.0, 4.0, false, false, "2024-03-12", "FULL AND OPEN COMPETITION", false, false, true, true, true),
+                        new ProcurementAwardRecord("EPA-ENV-002", "Environmental Systems Research Institute", "Environmental Protection Agency", "Office of Mission Support", "procurement", 180.0, 1.0, true, true, "2024-05-20", "FULL AND OPEN COMPETITION AFTER EXCLUSION OF SOURCES", false, true, false, true, true),
+                        new ProcurementAwardRecord("EPA-ENV-003", "Clean Water Engineering Partners", "Environmental Protection Agency", "Office of Water", "procurement", 150.0, 3.0, false, true, "2024-07-02", "FULL AND OPEN COMPETITION", true, false, true, true, true),
+                        new ProcurementAwardRecord("EPA-ENV-004", "Regional Remediation Services", "Environmental Protection Agency", "Region 4", "procurement", 70.0, 2.0, false, false, "2024-08-15", "FULL AND OPEN COMPETITION", false, false, true, true, true),
+                        new ProcurementAwardRecord("EPA-ENV-005", "Public Comment Technology Cooperative", "Environmental Protection Agency", "Office of Mission Support", "procurement", 60.0, 1.0, true, true, "2024-10-03", "LIMITED SOURCES", false, true, false, true, true)
                 ),
                 List.of(
                         new IntermediaryRecord("Clean Energy Policy Institute", "501(c)(3)", "energy", 18.5, 0.0, 4.2, 0.82),
@@ -93,6 +93,37 @@ public record CalibrationProfile(
                 .mapToDouble(FecRecord::largeDonorShare)
                 .average()
                 .orElse(0.50);
+    }
+
+    public double donorConcentrationIndex(String issueDomain) {
+        List<FecRecord> records = fecRecordsFor(issueDomain);
+        if (records.isEmpty()) {
+            return 0.50;
+        }
+        double total = records.stream().mapToDouble(FecRecord::amount).sum();
+        Map<String, Double> bySource = records.stream().collect(Collectors.groupingBy(
+                FecRecord::source,
+                Collectors.summingDouble(FecRecord::amount)
+        ));
+        double top3Share = topShare(bySource, total, 3);
+        double herfindahl = herfindahl(bySource, total);
+        double largeDonor = records.stream()
+                .mapToDouble(record -> record.largeDonorShare() * record.amount())
+                .sum() / Math.max(0.01, total);
+        return Values.clamp((0.46 * top3Share) + (0.26 * Math.sqrt(herfindahl)) + (0.28 * largeDonor), 0.0, 1.0);
+    }
+
+    public double publicFinancingSourceShare(String issueDomain) {
+        List<FecRecord> records = fecRecordsFor(issueDomain);
+        double total = records.stream().mapToDouble(FecRecord::amount).sum();
+        if (total <= 0.0) {
+            return 0.0;
+        }
+        double publicTotal = records.stream()
+                .filter(record -> record.flowType() == FundingSource.PUBLIC_MATCH || record.flowType() == FundingSource.DEMOCRACY_VOUCHER)
+                .mapToDouble(FecRecord::amount)
+                .sum();
+        return Values.clamp(publicTotal / total, 0.0, 1.0);
     }
 
     public double averageTraceability(String issueDomain) {
@@ -145,15 +176,23 @@ public record CalibrationProfile(
         double total = records.stream().mapToDouble(ProcurementAwardRecord::amount).sum();
         double top3Share = topShareByRecipient(records, total, 3);
         double singleBidShare = amountShare(records, total, record -> record.numberOfOffers() > 0.0 && record.numberOfOffers() <= 1.0);
+        double initialAwardShare = amountShare(records, total, ProcurementAwardRecord::initialAward);
         double modificationShare = amountShare(records, total, ProcurementAwardRecord::exPostModification);
         double priceOnlyShare = amountShare(records, total, ProcurementAwardRecord::priceOnlyAward);
+        double limitedCompetitionShare = amountShare(records, total, ProcurementAwardRecord::limitedCompetition);
+        double protestShare = amountShare(records, total, ProcurementAwardRecord::protestFiled);
+        double exclusionShare = amountShare(records, total, ProcurementAwardRecord::exclusionFlag);
         double firewallCoverage = amountShare(records, total, ProcurementAwardRecord::firewallCovered);
         return Values.clamp(
-                (0.30 * top3Share)
-                        + (0.24 * singleBidShare)
-                        + (0.20 * modificationShare)
-                        + (0.16 * priceOnlyShare)
-                        + (0.10 * (1.0 - firewallCoverage)),
+                (0.24 * top3Share)
+                        + (0.18 * singleBidShare)
+                        + (0.17 * modificationShare)
+                        + (0.12 * priceOnlyShare)
+                        + (0.10 * limitedCompetitionShare)
+                        + (0.07 * protestShare)
+                        + (0.06 * exclusionShare)
+                        + (0.10 * (1.0 - firewallCoverage))
+                        - (0.04 * initialAwardShare),
                 0.0,
                 1.0
         );
@@ -201,6 +240,13 @@ public record CalibrationProfile(
         return filtered.isEmpty() && issueDomain.equals("procurement") ? procurementRecords : filtered;
     }
 
+    private List<FecRecord> fecRecordsFor(String issueDomain) {
+        List<FecRecord> filtered = fecRecords.stream()
+                .filter(record -> record.issueDomain().equals(issueDomain) || record.issueDomain().equals("democracy"))
+                .toList();
+        return filtered.isEmpty() ? fecRecords : filtered;
+    }
+
     private List<IntermediaryRecord> intermediaryRecordsFor(String issueDomain) {
         List<IntermediaryRecord> filtered = intermediaryRecords.stream()
                 .filter(record -> record.issueDomain().equals(issueDomain))
@@ -223,11 +269,27 @@ public record CalibrationProfile(
                 ProcurementAwardRecord::recipient,
                 Collectors.summingDouble(ProcurementAwardRecord::amount)
         ));
-        return byRecipient.values().stream()
+        return topShare(byRecipient, total, count);
+    }
+
+    private static double topShare(Map<String, Double> amounts, double total, int count) {
+        if (total <= 0.0) {
+            return 0.0;
+        }
+        return amounts.values().stream()
                 .sorted((left, right) -> Double.compare(right, left))
                 .limit(count)
                 .mapToDouble(Double::doubleValue)
                 .sum() / total;
+    }
+
+    private static double herfindahl(Map<String, Double> amounts, double total) {
+        if (total <= 0.0) {
+            return 0.0;
+        }
+        return amounts.values().stream()
+                .mapToDouble(amount -> Math.pow(amount / total, 2.0))
+                .sum();
     }
 
     private static double amountShare(List<ProcurementAwardRecord> records, double total, ProcurementPredicate predicate) {
