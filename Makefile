@@ -74,8 +74,6 @@ paper-build:
 paper-supplement-build:
 	rm -f paper/supplement.aux paper/supplement.bbl paper/supplement.blg
 	cd paper && pdflatex -interaction=nonstopmode supplement.tex
-	cd paper && bibtex supplement
-	cd paper && pdflatex -interaction=nonstopmode supplement.tex
 	cd paper && pdflatex -interaction=nonstopmode supplement.tex
 
 paper-supplement: tables figures paper-supplement-build

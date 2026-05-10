@@ -39,7 +39,7 @@ then
 fi
 
 if [ ! -f "$PAPER_DIR/supplement.pdf" ]; then
-  (cd "$PAPER_DIR" && pdflatex -interaction=nonstopmode supplement.tex && bibtex supplement && pdflatex -interaction=nonstopmode supplement.tex && pdflatex -interaction=nonstopmode supplement.tex)
+  (cd "$PAPER_DIR" && pdflatex -interaction=nonstopmode supplement.tex && pdflatex -interaction=nonstopmode supplement.tex)
 fi
 
 rm -rf "$STAGING_DIR" "$ZIP_PATH"

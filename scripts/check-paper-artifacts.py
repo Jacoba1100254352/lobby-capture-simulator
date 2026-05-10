@@ -284,8 +284,6 @@ def compile_supplement(temp: Path, env: dict[str, str]) -> list[str]:
         return ["submission zip compile check did not find supplement.tex"]
     commands = [
         ["pdflatex", "-interaction=nonstopmode", "supplement.tex"],
-        ["bibtex", "supplement"],
-        ["pdflatex", "-interaction=nonstopmode", "supplement.tex"],
         ["pdflatex", "-interaction=nonstopmode", "supplement.tex"],
     ]
     for command in commands:
