@@ -16,15 +16,20 @@ snapshot,fec,fecDonorGini,0.9637,observed,donor amount Gini across normalized FE
 snapshot,fec,fecRecipientTop3Share,0.7555,observed,top three recipient share of normalized FEC amount
 snapshot,fec,fecLargeDonorWeightedShare,0.8692,observed_proxy,amount-weighted normalized large donor share
 snapshot,fec,moneyFlowTraceability,0.5853,observed_proxy,amount-weighted traceability across all normalized FEC rows
-snapshot,fec,darkMoneyDirectVisibility,0.0000,inferred,amount-weighted traceability among DARK_MONEY rows only
-snapshot,fec,darkMoneySourceShare,0.0000,observed_proxy,DARK_MONEY share of normalized campaign-finance amount
-snapshot,fec,superPacSourceShare,0.8818,observed_proxy,SUPER_PAC share of normalized campaign-finance amount
-snapshot,fec,opaqueElectoralSourceShare,0.8818,observed_proxy,DARK_MONEY plus SUPER_PAC share of normalized campaign-finance amount
+snapshot,fec,darkMoneyRows,0.0000,observed_proxy,direct DARK_MONEY rows from FEC or an explicit dark-money bridge panel
+snapshot,fec,darkMoneyDirectVisibility,0.0000,inferred,amount-weighted traceability among direct DARK_MONEY rows only
+snapshot,fec,darkMoneySourceShare,0.0000,observed_proxy,direct DARK_MONEY share of normalized campaign-finance plus bridge amount
+snapshot,fec,superPacSourceShare,0.8789,observed_proxy,SUPER_PAC share of normalized campaign-finance plus bridge amount
+snapshot,fec,opaqueElectoralSourceShare,0.8789,observed_proxy,DARK_MONEY plus SUPER_PAC share of normalized campaign-finance plus bridge amount
 snapshot,fec,outsideSpendingRows,400.0000,observed,"normalized independent expenditure, super PAC, dark-money, or association rows"
-snapshot,fec,outsideSpendingSourceShare,0.8818,observed_proxy,outside-spending bridge share of normalized campaign-finance amount
+snapshot,fec,outsideSpendingSourceShare,0.8789,observed_proxy,outside-spending bridge share of normalized campaign-finance plus bridge amount
 snapshot,fec,outsideSpendingTop3SourceShare,0.7140,observed_proxy,top three outside spenders by normalized amount
 snapshot,fec,outsideSpendingDisclosureLagMean,0.5362,observed_proxy,amount-weighted reporting lag among outside-spending rows
-snapshot,fec,publicFinancingSourceShare,0.0016,observed_proxy,public-match or voucher share of normalized FEC amount
+snapshot,fec,publicFinancingRows,6.0000,observed_proxy,public-match or voucher rows from FEC or explicit public-financing panel
+snapshot,fec,publicFinancingProgramAmount,25.8000,observed_proxy,sum of public-match and voucher bridge amount
+snapshot,fec,publicFinancingSourceShare,0.0032,observed_proxy,public-match or voucher share of normalized campaign-finance plus bridge amount
+snapshot,fec,publicFinancingTraceabilityMean,0.9617,observed_proxy,amount-weighted traceability among public-financing rows
+snapshot,fec,publicFinancingLargeDonorWeightedShare,0.1101,observed_proxy,amount-weighted large-donor share among public-financing rows
 snapshot,regulatory,regulatoryRows,200.0000,observed,normalized regulatory rows
 snapshot,regulatory,commentVolumeMean,119.7000,observed_proxy,mean normalized comment volume
 snapshot,regulatory,commentVolumeTop1DocketShare,0.0752,observed_proxy,largest docket share of normalized comments
@@ -43,8 +48,13 @@ snapshot,usaspending,procurementSubAgencyTop3Share,1.0000,observed,top three sub
 snapshot,usaspending,procurementAwardCount,200.0000,observed,sum of normalized award or transaction counts
 snapshot,usaspending,procurementSingleBidShare,0.2350,observed_proxy,share of rows with one known offer
 snapshot,usaspending,procurementAmountWeightedSingleBidShare,0.2132,observed_proxy,award-amount share with one known offer
-snapshot,usaspending,procurementExPostModificationShare,1.0000,observed_proxy,share of rows marked as ex-post modifications or nonzero modifications
+snapshot,usaspending,procurementInitialAwardShare,0.0000,observed_proxy,share of rows that appear to be initial awards rather than modifications
+snapshot,usaspending,procurementExPostModificationShare,1.0000,observed_proxy,share of rows marked as ex-post modifications or nonzero modification sequence
+snapshot,usaspending,procurementAmountWeightedModificationShare,1.0000,observed_proxy,award-amount share marked as ex-post modifications
 snapshot,usaspending,procurementPriceOnlyAwardShare,0.6050,observed_proxy,share of rows marked as price-only or one-offer awards
+snapshot,usaspending,procurementLimitedCompetitionShare,0.4600,observed_proxy,"share of rows with limited competition, exclusions, or one known offer"
+snapshot,usaspending,procurementProtestShare,0.0000,observed_proxy,share of rows marked with a protest flag
+snapshot,usaspending,procurementExclusionShare,0.2500,observed_proxy,share of rows marked as exclusions or after-exclusion competition
 snapshot,usaspending,procurementFirewallCoverageShare,0.0000,observed_proxy,share of rows covered by a procurement-firewall flag
 snapshot,usaspending,procurementKnownUeiShare,1.0000,diagnostic,share of rows carrying a recipient UEI
 snapshot,usaspending,procurementKnownPiidShare,1.0000,diagnostic,share of rows carrying a procurement instrument identifier
@@ -85,15 +95,20 @@ fixture,fec,fecDonorGini,0.1981,observed,donor amount Gini across normalized FEC
 fixture,fec,fecRecipientTop3Share,1.0000,observed,top three recipient share of normalized FEC amount
 fixture,fec,fecLargeDonorWeightedShare,0.6081,observed_proxy,amount-weighted normalized large donor share
 fixture,fec,moneyFlowTraceability,0.6648,observed_proxy,amount-weighted traceability across all normalized FEC rows
-fixture,fec,darkMoneyDirectVisibility,0.2400,inferred,amount-weighted traceability among DARK_MONEY rows only
-fixture,fec,darkMoneySourceShare,0.1875,observed_proxy,DARK_MONEY share of normalized campaign-finance amount
-fixture,fec,superPacSourceShare,0.2212,observed_proxy,SUPER_PAC share of normalized campaign-finance amount
-fixture,fec,opaqueElectoralSourceShare,0.4087,observed_proxy,DARK_MONEY plus SUPER_PAC share of normalized campaign-finance amount
+fixture,fec,darkMoneyRows,1.0000,observed_proxy,direct DARK_MONEY rows from FEC or an explicit dark-money bridge panel
+fixture,fec,darkMoneyDirectVisibility,0.2400,inferred,amount-weighted traceability among direct DARK_MONEY rows only
+fixture,fec,darkMoneySourceShare,0.0905,observed_proxy,direct DARK_MONEY share of normalized campaign-finance plus bridge amount
+fixture,fec,superPacSourceShare,0.1067,observed_proxy,SUPER_PAC share of normalized campaign-finance plus bridge amount
+fixture,fec,opaqueElectoralSourceShare,0.1972,observed_proxy,DARK_MONEY plus SUPER_PAC share of normalized campaign-finance plus bridge amount
 fixture,fec,outsideSpendingRows,2.0000,observed,"normalized independent expenditure, super PAC, dark-money, or association rows"
-fixture,fec,outsideSpendingSourceShare,0.4087,observed_proxy,outside-spending bridge share of normalized campaign-finance amount
+fixture,fec,outsideSpendingSourceShare,0.1972,observed_proxy,outside-spending bridge share of normalized campaign-finance plus bridge amount
 fixture,fec,outsideSpendingTop3SourceShare,1.0000,observed_proxy,top three outside spenders by normalized amount
 fixture,fec,outsideSpendingDisclosureLagMean,0.2800,observed_proxy,amount-weighted reporting lag among outside-spending rows
-fixture,fec,publicFinancingSourceShare,0.2644,observed_proxy,public-match or voucher share of normalized FEC amount
+fixture,fec,publicFinancingRows,5.0000,observed_proxy,public-match or voucher rows from FEC or explicit public-financing panel
+fixture,fec,publicFinancingProgramAmount,18.4000,observed_proxy,sum of public-match and voucher bridge amount
+fixture,fec,publicFinancingSourceShare,0.4269,observed_proxy,public-match or voucher share of normalized campaign-finance plus bridge amount
+fixture,fec,publicFinancingTraceabilityMean,0.9638,observed_proxy,amount-weighted traceability among public-financing rows
+fixture,fec,publicFinancingLargeDonorWeightedShare,0.1179,observed_proxy,amount-weighted large-donor share among public-financing rows
 fixture,regulatory,regulatoryRows,4.0000,observed,normalized regulatory rows
 fixture,regulatory,commentVolumeMean,1147.5000,observed_proxy,mean normalized comment volume
 fixture,regulatory,commentVolumeTop1DocketShare,0.3922,observed_proxy,largest docket share of normalized comments
@@ -112,8 +127,13 @@ fixture,usaspending,procurementSubAgencyTop3Share,0.8143,observed,top three sub-
 fixture,usaspending,procurementAwardCount,48.0000,observed,sum of normalized award or transaction counts
 fixture,usaspending,procurementSingleBidShare,0.4000,observed_proxy,share of rows with one known offer
 fixture,usaspending,procurementAmountWeightedSingleBidShare,0.3429,observed_proxy,award-amount share with one known offer
-fixture,usaspending,procurementExPostModificationShare,0.6000,observed_proxy,share of rows marked as ex-post modifications or nonzero modifications
+fixture,usaspending,procurementInitialAwardShare,0.4000,observed_proxy,share of rows that appear to be initial awards rather than modifications
+fixture,usaspending,procurementExPostModificationShare,0.6000,observed_proxy,share of rows marked as ex-post modifications or nonzero modification sequence
+fixture,usaspending,procurementAmountWeightedModificationShare,0.5571,observed_proxy,award-amount share marked as ex-post modifications
 fixture,usaspending,procurementPriceOnlyAwardShare,0.4000,observed_proxy,share of rows marked as price-only or one-offer awards
+fixture,usaspending,procurementLimitedCompetitionShare,0.4000,observed_proxy,"share of rows with limited competition, exclusions, or one known offer"
+fixture,usaspending,procurementProtestShare,0.0000,observed_proxy,share of rows marked with a protest flag
+fixture,usaspending,procurementExclusionShare,0.0000,observed_proxy,share of rows marked as exclusions or after-exclusion competition
 fixture,usaspending,procurementFirewallCoverageShare,0.6000,observed_proxy,share of rows covered by a procurement-firewall flag
 fixture,usaspending,procurementKnownUeiShare,1.0000,diagnostic,share of rows carrying a recipient UEI
 fixture,usaspending,procurementKnownPiidShare,1.0000,diagnostic,share of rows carrying a procurement instrument identifier

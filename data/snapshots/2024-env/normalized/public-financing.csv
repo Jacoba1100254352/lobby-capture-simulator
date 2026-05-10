@@ -1,0 +1,4 @@
+source,recipient,issueDomain,amount,flowType,traceability,largeDonorShare,sourceRecordId,sourceUrl,committeeType,spendingPurpose,supportOppose,disclosureLag
+Seattle Democracy Voucher Program,participating-candidates,democracy,4.2000,DEMOCRACY_VOUCHER,0.98,0.06,public-financing-fixture-001,https://www.seattle.gov/democracyvoucher,municipal public financing,democracy voucher allocations,,0.18
+New York City Matching Funds Program,participating-candidates,democracy,5.6000,PUBLIC_MATCH,0.96,0.12,public-financing-fixture-002,https://www.nyccfb.info/program/how-it-works/,municipal public financing,small-donor public matching funds,,0.22
+Public Campaign Financing Benchmark,participating-candidates,democracy,3.1000,PUBLIC_MATCH,0.94,0.16,public-financing-fixture-003,https://www.fec.gov/help-candidates-and-committees/public-funding-presidential-elections/,public funding benchmark,presidential public funding benchmark,,0.26

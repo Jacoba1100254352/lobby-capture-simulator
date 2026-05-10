@@ -9,40 +9,43 @@
 
 | Scenario | Total distortion | Observed capture | Capture 95% CI | Hidden capture | Substitution risk | Hidden influence | Intermediary share | Defensive spend | Comment flood | Enforcement capacity | Admin cost |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Full anti-capture bundle | 0.1353 | 0.0253 | [0.0204, 0.0314] | 0.0712 | 0.1659 | 0.1433 | 0.0934 | 0.5966 | 0.2253 | 0.4780 | 0.4920 |
-| Democracy vouchers | 0.1766 | 0.2647 | [0.2497, 0.2802] | 0.0638 | 0.1684 | 0.0836 | 0.0864 | 0.6713 | 0.3016 | 0.1768 | 0.2519 |
-| Budgeted disclosed lobbying | 0.2499 | 0.4903 | [0.4730, 0.5076] | 0.0534 | 0.1271 | 0.0496 | 0.0871 | 0.2924 | 0.2636 | 0.2766 | 0.2519 |
-| Venue-shifting detection | 0.2670 | 0.4219 | [0.4049, 0.4391] | 0.1237 | 0.2292 | 0.2752 | 0.0960 | 0.4144 | 0.2272 | 0.5354 | 0.4954 |
-| Reform threat mobilization | 0.2670 | 0.5403 | [0.5230, 0.5575] | 0.0911 | 0.1876 | 0.1605 | 0.0871 | 0.5702 | 0.2765 | 0.2480 | 0.2412 |
-| Anti-capture bundle with evasion | 0.2864 | 0.4938 | [0.4764, 0.5111] | 0.1686 | 0.2995 | 0.4147 | 0.0926 | 0.5476 | 0.2214 | 0.5177 | 0.5118 |
-| Randomized audit and sanctions | 0.2880 | 0.5322 | [0.5149, 0.5494] | 0.0915 | 0.1915 | 0.1903 | 0.0906 | 0.2999 | 0.2513 | 0.6230 | 0.4292 |
-| Audit and sanctions | 0.2956 | 0.6009 | [0.5839, 0.6178] | 0.0773 | 0.1691 | 0.1381 | 0.0881 | 0.2782 | 0.2587 | 0.5510 | 0.3815 |
-| Outside-spending disclosure evasion | 0.3202 | 0.5891 | [0.5719, 0.6060] | 0.1680 | 0.2921 | 0.3658 | 0.0925 | 0.3728 | 0.2499 | 0.4417 | 0.4426 |
-| Real-time transparency | 0.3229 | 0.7063 | [0.6902, 0.7218] | 0.0966 | 0.1910 | 0.1779 | 0.0904 | 0.2588 | 0.2632 | 0.2880 | 0.2570 |
-| Machine-readable meeting logs | 0.3281 | 0.6791 | [0.6627, 0.6950] | 0.1101 | 0.2094 | 0.2338 | 0.0926 | 0.0000 | 0.2539 | 0.3387 | 0.3281 |
-| Public-interest representation funds | 0.3343 | 0.6878 | [0.6715, 0.7036] | 0.1104 | 0.2231 | 0.2147 | 0.0876 | 0.3005 | 0.2428 | 0.3343 | 0.3493 |
-| Comment-authenticity rules | 0.3375 | 0.6459 | [0.6292, 0.6623] | 0.1301 | 0.2421 | 0.2620 | 0.1034 | 0.3422 | 0.2308 | 0.4080 | 0.4485 |
-| Public advocate office | 0.3396 | 0.7050 | [0.6890, 0.7205] | 0.1185 | 0.2302 | 0.2364 | 0.0936 | 0.2857 | 0.2377 | 0.3514 | 0.3880 |
-| Shadow lobbying maximum stress | 0.3485 | 0.5678 | [0.5506, 0.5849] | 0.2028 | 0.3222 | 0.4221 | 0.0989 | 0.4306 | 0.2480 | 0.4089 | 0.4213 |
-| Open access lobbying | 0.3586 | 0.8881 | [0.8767, 0.8986] | 0.0727 | 0.1701 | 0.0832 | 0.0800 | 0.4458 | 0.2941 | 0.1407 | 0.0745 |
-| Procurement firewalls | 0.3741 | 0.7153 | [0.6994, 0.7307] | 0.1290 | 0.2195 | 0.2289 | 0.1056 | 0.1292 | 0.2475 | 0.5106 | 0.4989 |
-| Advisory lobbying substitution | 0.3747 | 0.6603 | [0.6437, 0.6765] | 0.1837 | 0.3067 | 0.3895 | 0.0915 | 0.6874 | 0.2766 | 0.4465 | 0.3918 |
-| Hard lobbying budgets | 0.3780 | 0.8050 | [0.7909, 0.8184] | 0.1547 | 0.2779 | 0.3470 | 0.1052 | 0.2479 | 0.2540 | 0.4355 | 0.4435 |
-| Hard-budget substitution stress | 0.3845 | 0.7175 | [0.7016, 0.7328] | 0.2069 | 0.3426 | 0.4818 | 0.0953 | 0.5348 | 0.2587 | 0.4135 | 0.4327 |
-| Procurement venue-shift stress | 0.3866 | 0.6556 | [0.6390, 0.6719] | 0.2016 | 0.3156 | 0.4188 | 0.1050 | 0.1507 | 0.2517 | 0.4974 | 0.4830 |
-| Campaign finance dominant | 0.3893 | 0.9997 | [0.9982, 0.9999] | 0.1017 | 0.2115 | 0.1591 | 0.0800 | 0.0000 | 0.2842 | 0.1446 | 0.0670 |
-| Enforced cooling-off periods | 0.3973 | 0.9094 | [0.8989, 0.9188] | 0.1391 | 0.2545 | 0.2969 | 0.1200 | 0.0000 | 0.2593 | 0.4823 | 0.4165 |
-| Think-tank and association intermediaries | 0.4060 | 0.8588 | [0.8463, 0.8704] | 0.1723 | 0.2925 | 0.3953 | 0.0864 | 0.4251 | 0.2779 | 0.2723 | 0.2618 |
-| Low-salience technical rulemaking | 0.4075 | 1.0000 | [0.9988, 1.0000] | 0.0945 | 0.2065 | 0.1451 | 0.1000 | 0.0000 | 0.3230 | 0.1213 | 0.0863 |
-| Revolving-door dominant | 0.4093 | 1.0000 | [0.9988, 1.0000] | 0.0970 | 0.2102 | 0.1479 | 0.1045 | 0.0000 | 0.2945 | 0.1219 | 0.0738 |
-| Cooling-off ban | 0.4169 | 0.9944 | [0.9911, 0.9964] | 0.1369 | 0.2537 | 0.2717 | 0.1200 | 0.0000 | 0.2703 | 0.3047 | 0.3372 |
-| Dark money dominant | 0.4341 | 0.8869 | [0.8754, 0.8974] | 0.1904 | 0.3444 | 0.4288 | 0.0876 | 0.4724 | 0.2991 | 0.1346 | 0.0721 |
+| Full anti-capture bundle | 0.1395 | 0.0394 | [0.0332, 0.0467] | 0.0722 | 0.1680 | 0.1467 | 0.1258 | 0.6027 | 0.2254 | 0.4767 | 0.4905 |
+| Democracy vouchers | 0.1774 | 0.2684 | [0.2534, 0.2841] | 0.0647 | 0.1693 | 0.0869 | 0.0865 | 0.6749 | 0.3022 | 0.1756 | 0.2516 |
+| Budgeted disclosed lobbying | 0.2610 | 0.5250 | [0.5077, 0.5423] | 0.0564 | 0.1340 | 0.0581 | 0.0905 | 0.2888 | 0.2638 | 0.2790 | 0.2528 |
+| Reform threat mobilization | 0.2647 | 0.5334 | [0.5161, 0.5507] | 0.0922 | 0.1892 | 0.1665 | 0.0871 | 0.5664 | 0.2773 | 0.2465 | 0.2410 |
+| Venue-shifting detection | 0.2755 | 0.4438 | [0.4266, 0.4610] | 0.1275 | 0.2342 | 0.2874 | 0.1362 | 0.4150 | 0.2267 | 0.5367 | 0.4957 |
+| Randomized audit and sanctions | 0.2943 | 0.5509 | [0.5337, 0.5681] | 0.0945 | 0.1956 | 0.2004 | 0.0908 | 0.2917 | 0.2509 | 0.6245 | 0.4300 |
+| Anti-capture bundle with evasion | 0.2982 | 0.5241 | [0.5067, 0.5413] | 0.1767 | 0.3096 | 0.4414 | 0.1252 | 0.5317 | 0.2211 | 0.5201 | 0.5133 |
+| Public-finance dark-money frontier | 0.3012 | 0.5069 | [0.4896, 0.5242] | 0.1614 | 0.2987 | 0.3420 | 0.0921 | 0.3939 | 0.2629 | 0.2428 | 0.2552 |
+| Audit and sanctions | 0.3045 | 0.6278 | [0.6109, 0.6444] | 0.0808 | 0.1746 | 0.1481 | 0.0910 | 0.2851 | 0.2588 | 0.5521 | 0.3825 |
+| Outside-spending disclosure evasion | 0.3162 | 0.5741 | [0.5569, 0.5911] | 0.1692 | 0.2928 | 0.3734 | 0.0922 | 0.3910 | 0.2491 | 0.4418 | 0.4417 |
+| Opaque network substitution frontier | 0.3221 | 0.5644 | [0.5471, 0.5815] | 0.1737 | 0.2839 | 0.3723 | 0.0877 | 0.4230 | 0.2742 | 0.2884 | 0.3002 |
+| Real-time transparency | 0.3267 | 0.7172 | [0.7013, 0.7325] | 0.0992 | 0.1940 | 0.1870 | 0.0908 | 0.2560 | 0.2633 | 0.2882 | 0.2570 |
+| Machine-readable meeting logs | 0.3335 | 0.6975 | [0.6814, 0.7132] | 0.1134 | 0.2128 | 0.2454 | 0.0923 | 0.0000 | 0.2543 | 0.3389 | 0.3289 |
+| Public-interest representation funds | 0.3385 | 0.7003 | [0.6842, 0.7159] | 0.1139 | 0.2271 | 0.2271 | 0.0880 | 0.2972 | 0.2430 | 0.3344 | 0.3493 |
+| Comment-authenticity rules | 0.3409 | 0.6484 | [0.6317, 0.6648] | 0.1331 | 0.2472 | 0.2723 | 0.1671 | 0.3549 | 0.2314 | 0.4069 | 0.4465 |
+| Public advocate office | 0.3416 | 0.7066 | [0.6905, 0.7221] | 0.1216 | 0.2335 | 0.2483 | 0.0937 | 0.2956 | 0.2378 | 0.3516 | 0.3882 |
+| Shadow lobbying maximum stress | 0.3528 | 0.5672 | [0.5500, 0.5843] | 0.2100 | 0.3306 | 0.4460 | 0.1368 | 0.4280 | 0.2482 | 0.4091 | 0.4208 |
+| Open access lobbying | 0.3616 | 0.8875 | [0.8761, 0.8980] | 0.0746 | 0.1745 | 0.0903 | 0.0828 | 0.4472 | 0.2946 | 0.1405 | 0.0744 |
+| Procurement firewalls | 0.3802 | 0.7259 | [0.7102, 0.7411] | 0.1352 | 0.2261 | 0.2486 | 0.1063 | 0.1149 | 0.2473 | 0.5122 | 0.4986 |
+| Advisory lobbying substitution | 0.3826 | 0.6688 | [0.6522, 0.6848] | 0.1916 | 0.3173 | 0.4149 | 0.1263 | 0.6690 | 0.2771 | 0.4470 | 0.3898 |
+| Hard lobbying budgets | 0.3853 | 0.8184 | [0.8047, 0.8314] | 0.1600 | 0.2849 | 0.3653 | 0.1540 | 0.2484 | 0.2544 | 0.4353 | 0.4427 |
+| Hard-budget substitution stress | 0.3872 | 0.7119 | [0.6959, 0.7273] | 0.2127 | 0.3502 | 0.5047 | 0.1249 | 0.5418 | 0.2592 | 0.4124 | 0.4319 |
+| Procurement venue-shift stress | 0.3907 | 0.6553 | [0.6387, 0.6716] | 0.2098 | 0.3249 | 0.4469 | 0.1243 | 0.1425 | 0.2518 | 0.4978 | 0.4830 |
+| Procurement modification capture frontier | 0.3989 | 0.6541 | [0.6374, 0.6703] | 0.2251 | 0.3418 | 0.4785 | 0.1239 | 0.1558 | 0.2513 | 0.4971 | 0.4823 |
+| Campaign finance dominant | 0.4001 | 1.0000 | [0.9988, 1.0000] | 0.1060 | 0.2236 | 0.1738 | 0.0896 | 0.0000 | 0.3071 | 0.1361 | 0.0663 |
+| Think-tank and association intermediaries | 0.4087 | 0.8591 | [0.8466, 0.8707] | 0.1777 | 0.2986 | 0.4154 | 0.0863 | 0.4250 | 0.2779 | 0.2724 | 0.2618 |
+| Low-salience technical rulemaking | 0.4101 | 0.9997 | [0.9982, 0.9999] | 0.0972 | 0.2122 | 0.1560 | 0.0926 | 0.0000 | 0.3232 | 0.1213 | 0.0866 |
+| Revolving-door dominant | 0.4104 | 1.0000 | [0.9988, 1.0000] | 0.0998 | 0.2137 | 0.1593 | 0.0971 | 0.0000 | 0.3018 | 0.1213 | 0.0746 |
+| Enforced cooling-off periods | 0.4120 | 0.9459 | [0.9376, 0.9533] | 0.1449 | 0.2629 | 0.3145 | 0.2200 | 0.0000 | 0.2616 | 0.4823 | 0.4161 |
+| Cooling-off ban | 0.4236 | 0.9956 | [0.9927, 0.9974] | 0.1418 | 0.2620 | 0.2900 | 0.2200 | 0.0000 | 0.2719 | 0.3045 | 0.3371 |
+| Dark money dominant | 0.4371 | 0.8863 | [0.8748, 0.8968] | 0.1970 | 0.3518 | 0.4536 | 0.0877 | 0.4723 | 0.2993 | 0.1345 | 0.0718 |
 
 ## Defensive Reform Blocking
 
-- `reform-threat-mobilization` defensive spend share: `0.5702`, anti-capture success: `0.9239`, channel switch rate: `2.3597`, hidden influence: `0.1605`, substitution failure risk: `0.1876`.
-- `full-anti-capture-bundle` anti-capture success: `1.0000`, detection rate: `0.1216`, total distortion: `0.1353`.
-- `bundle-with-evasion` dark-money share: `0.1459`, evasion shift rate: `1.5616`, evasion penalty: `0.0000`, influence preserved: `0.2827`, substitution failure risk: `0.2995`.
+- `reform-threat-mobilization` defensive spend share: `0.5664`, anti-capture success: `0.9351`, channel switch rate: `2.3647`, hidden influence: `0.1665`, substitution failure risk: `0.1892`.
+- `full-anti-capture-bundle` anti-capture success: `1.0000`, detection rate: `0.1113`, total distortion: `0.1395`.
+- `bundle-with-evasion` dark-money share: `0.1405`, evasion shift rate: `1.5941`, evasion penalty: `0.0000`, influence preserved: `0.2866`, substitution failure risk: `0.3096`.
 
 ## Substitution-Failure Readout
 
@@ -50,11 +53,11 @@ Lower observed capture is flagged as a possible failure when hidden influence, t
 
 | Scenario | Capture change | Hidden change | Distortion change | Substitution risk |
 | --- | ---: | ---: | ---: | ---: |
-| Dark money dominant | -0.0013 | 0.3456 | 0.0755 | 0.3444 |
-| Hard-budget substitution stress | -0.1706 | 0.3985 | 0.0259 | 0.3426 |
-| Shadow lobbying maximum stress | -0.3203 | 0.3389 | -0.0101 | 0.3222 |
-| Procurement venue-shift stress | -0.2325 | 0.3356 | 0.0280 | 0.3156 |
-| Advisory lobbying substitution | -0.2278 | 0.3063 | 0.0161 | 0.3067 |
+| Dark money dominant | -0.0012 | 0.3633 | 0.0755 | 0.3518 |
+| Hard-budget substitution stress | -0.1756 | 0.4144 | 0.0256 | 0.3502 |
+| Procurement modification capture frontier | -0.2334 | 0.3882 | 0.0374 | 0.3418 |
+| Shadow lobbying maximum stress | -0.3203 | 0.3557 | -0.0088 | 0.3306 |
+| Procurement venue-shift stress | -0.2322 | 0.3565 | 0.0292 | 0.3249 |
 
 ## Influence-Network Readout
 
@@ -62,11 +65,11 @@ Network diagnostics summarize modeled funder-to-lobby-to-intermediary-to-officia
 
 | Scenario | Opacity | Intermediary | Donor conc. | Procure. | Revolving | Comment load | Venue shift |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Dark money dominant | 0.7245 | 0.3565 | 0.4542 | 0.3015 | 0.4400 | 0.2353 | 0.3809 |
-| Revolving-door dominant | 0.6235 | 0.2584 | 0.3360 | 0.3572 | 0.6090 | 0.2074 | 0.2302 |
-| Low-salience technical rulemaking | 0.5993 | 0.3674 | 0.3664 | 0.2260 | 0.3654 | 0.5219 | 0.1903 |
-| Campaign finance dominant | 0.5853 | 0.2663 | 0.3766 | 0.1830 | 0.3916 | 0.0000 | 0.1857 |
-| Democracy vouchers | 0.5374 | 0.3299 | 0.4747 | 0.2036 | 0.3779 | 0.0000 | 0.1989 |
+| Dark money dominant | 0.7254 | 0.3573 | 0.4551 | 0.3003 | 0.4396 | 0.2343 | 0.3813 |
+| Public-finance dark-money frontier | 0.6692 | 0.3388 | 0.4719 | 0.1941 | 0.3968 | 0.0760 | 0.3631 |
+| Campaign finance dominant | 0.6600 | 0.3951 | 0.3404 | 0.1789 | 0.3799 | 0.0000 | 0.2348 |
+| Revolving-door dominant | 0.6242 | 0.3154 | 0.3777 | 0.3051 | 0.4770 | 0.2403 | 0.2323 |
+| Low-salience technical rulemaking | 0.6216 | 0.3785 | 0.4137 | 0.2202 | 0.3544 | 0.5517 | 0.2137 |
 
 ## Interpretation Guardrail
 

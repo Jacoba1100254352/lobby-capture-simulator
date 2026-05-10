@@ -1,7 +1,7 @@
 {
   "snapshot": "2024-env",
-  "generatedAt": "2026-05-09T03:32:20.420131+00:00",
-  "gitCommit": "797d94f",
+  "generatedAt": "2026-05-10T01:36:39.139985+00:00",
+  "gitCommit": "9eb1869",
   "gitTreeState": "clean",
   "gitTreeStateScope": "working tree status excluding generated 2024-env snapshot, reports, paper tables, and paper figures",
   "scope": {
@@ -32,6 +32,26 @@
       "sha256": "128e5d588f6b7bdbf000e7fc0a93fb41b9a814535e36ca4c86521dab5d2476df",
       "status": "fixture",
       "statusNotes": "fec-C00010603: ok (normalized rows appended); fec-C00042366: ok (normalized rows appended); fec-C00000935: ok (normalized rows appended); fec-C00003418: ok (normalized rows appended); fec-C00027466: ok (normalized rows appended); fec-C00075820: ok (normalized rows appended); fec-schedule-e: ok (normalized independent-expenditure rows appended); public-financing: fixture (public-financing bridge fixture appended for source-moment coverage)"
+    },
+    {
+      "source": "public-financing",
+      "description": "Public financing and voucher bridge rows for direct program participation and public-fund share diagnostics.",
+      "requestTemplate": "PUBLIC_FINANCING_LIVE_CSV=/path/to/program-export.csv python3 scripts/normalize-calibration.py public-financing \"$PUBLIC_FINANCING_LIVE_CSV\" data/raw/public-financing.csv",
+      "normalizedFile": "data/snapshots/2024-env/normalized/public-financing.csv",
+      "rowCount": 3,
+      "sha256": "d884e54e579b4b01f2a25d195b1868a9d4f9d9d7cf576e21971af67e50737a32",
+      "status": "fixture",
+      "statusNotes": "public-financing: fixture (public-financing bridge fixture appended for source-moment coverage)"
+    },
+    {
+      "source": "dark-money",
+      "description": "Explicit direct dark-money bridge rows when a documented 501(c)(4), 501(c)(6), electioneering, or source-export panel is configured.",
+      "requestTemplate": "DARK_MONEY_LIVE_CSV=/path/to/export.csv python3 scripts/normalize-calibration.py dark-money \"$DARK_MONEY_LIVE_CSV\" data/raw/dark-money.csv",
+      "normalizedFile": "data/snapshots/2024-env/normalized/dark-money.csv",
+      "rowCount": 0,
+      "sha256": "missing",
+      "status": "missing",
+      "statusNotes": "normalized source file missing"
     },
     {
       "source": "regulatory",
