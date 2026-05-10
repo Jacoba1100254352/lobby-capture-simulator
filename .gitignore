@@ -29,6 +29,7 @@ reports/*.md
 !reports/calibration-queue.csv
 !reports/calibration-queue.md
 !reports/paper-layout-audit.md
+!reports/manual-visual-audit.md
 paper/*.aux
 paper/*.bbl
 paper/*.blg

@@ -95,7 +95,7 @@ The source-facing parameters and benchmark ranges are maintained in \texttt{data
 
 \section{Figure and Layout Audit}
 
-Paper figures are generated as SVGs and converted to Wiley-preferred PDF graphics. The script \texttt{scripts/generate-interaction-figures.py} uses simple label-placement logic with visible callout lines so point labels remain distinct and connected to the corresponding point. The script \texttt{scripts/audit-paper-layout.py} checks the generated PDFs for sparse float pages, excessive vertical whitespace, and figure or table pages with too little surrounding readable text. Its report is written to \texttt{reports/paper-layout-audit.md}. A separate pre-submission human checklist is written to \texttt{reports/manual-visual-audit.md}; it tracks whether each figure label and each table float has been visually reviewed after regenerated artifacts.
+Paper figures are generated as SVGs and converted to Wiley-preferred PDF graphics. The script \texttt{scripts/generate-interaction-figures.py} uses simple label-placement logic with visible callout lines so point labels remain distinct and connected to the corresponding point. The script \texttt{scripts/audit-paper-layout.py} checks the generated PDFs for sparse float pages, excessive vertical whitespace, and figure or table pages with too little surrounding readable text. Its report is written to \texttt{reports/paper-layout-audit.md}. A separate visual checklist is written to \texttt{reports/manual-visual-audit.md}; it checks generated SVG label boxes for overlap, bounds, and leader-line coverage where callout labels exist and records table-float layout status.
 
 \section{Remaining Calibration Priorities}
 

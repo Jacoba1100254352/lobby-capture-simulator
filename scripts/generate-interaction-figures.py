@@ -510,17 +510,22 @@ def layout_labels(plot: Plot, targets: list[LabelTarget]) -> list[LabelPlacement
 def label_candidates(target: LabelTarget, width: float, height: float) -> list[tuple[float, float]]:
     x = target.point_x
     y = target.point_y
-    gap = 42
-    return [
-        (x + gap, y - height - 16),
-        (x + gap, y + 16),
-        (x - width - gap, y - height - 16),
-        (x - width - gap, y + 16),
-        (x + gap, y - height / 2),
-        (x - width - gap, y - height / 2),
-        (x - width / 2, y - height - gap),
-        (x - width / 2, y + gap),
-    ]
+    candidates: list[tuple[float, float]] = []
+    for gap in (42, 90, 150, 220):
+        candidates.extend([
+            (x + gap, y - height - 16),
+            (x + gap, y + 16),
+            (x - width - gap, y - height - 16),
+            (x - width - gap, y + 16),
+            (x + gap, y - height / 2),
+            (x - width - gap, y - height / 2),
+            (x - width / 2, y - height - gap),
+            (x - width / 2, y + gap),
+        ])
+    for x_shift in (-width - 260, -width - 160, -width - 70, 70, 160, 260):
+        for y_shift in (-170, -95, -20, 55, 130):
+            candidates.append((x + x_shift, y + y_shift))
+    return candidates
 
 
 def best_label_candidate(
@@ -536,7 +541,11 @@ def best_label_candidate(
         max_y: float,
 ) -> LabelPlacement:
     best: tuple[float, LabelPlacement] | None = None
-    for raw_x, raw_y in candidates:
+    candidate_positions = list(candidates)
+    for grid_x in range(int(min_x), int(max_x - width) + 1, 90):
+        for grid_y in range(int(min_y), int(max_y - height) + 1, 62):
+            candidate_positions.append((float(grid_x), float(grid_y)))
+    for raw_x, raw_y in candidate_positions:
         x = min(max(raw_x, min_x), max_x - width)
         y = min(max(raw_y, min_y), max_y - height)
         candidate = LabelPlacement(target, x, y, width, height)

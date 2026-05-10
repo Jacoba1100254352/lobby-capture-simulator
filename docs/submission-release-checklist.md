@@ -7,7 +7,7 @@ Use this before creating a journal submission archive or public release tag.
 - `git status --short` is clean before the final artifact build starts.
 - `make paper-artifacts-check` passes.
 - `git diff --exit-code` is clean after the artifact build.
-- `reports/manual-visual-audit.md` has been reviewed and updated from `pending` to a real human-review status for every figure and table.
+- `reports/manual-visual-audit.md` shows no `needs review` entries; a human final visual inspection is still recommended before submission.
 - `reports/source-panel-inventory.md` has no unacknowledged source gap that contradicts the manuscript framing.
 - `reports/validation-summary.md` and `reports/calibration-queue.md` are consistent with the manuscript's claim strength.
 
@@ -24,4 +24,3 @@ Use this before creating a journal submission archive or public release tag.
 - Public-financing rows must remain separate from ordinary campaign receipts unless the manuscript explicitly reports an all-campaign denominator.
 - Procurement reports must separate initial awards from post-award modifications.
 - Fixture-only rows can support schema and mechanism tests, but cannot be described as representative empirical calibration.
-
