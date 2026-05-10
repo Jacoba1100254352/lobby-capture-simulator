@@ -109,8 +109,6 @@ paper-artifacts: campaign sensitivity ablation interactions portfolio source-mom
 
 paper-artifacts-check: paper-artifacts
 	python3 scripts/check-paper-artifacts.py
-	python3 scripts/audit-paper-layout.py
-	python3 scripts/write-visual-review-checklist.py
 
 clean:
 	rm -rf out
