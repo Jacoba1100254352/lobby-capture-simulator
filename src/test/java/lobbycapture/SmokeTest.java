@@ -17,7 +17,7 @@ public final class SmokeTest
 	private SmokeTest() {
 	}
 	
-	static void main(String[] args) throws IOException {
+	public static void run() throws IOException {
 		Simulator simulator = new Simulator();
 		ScenarioReport open = simulator.run(ScenarioCatalog.require("open-access-lobbying"), 4, 30, 11L);
 		ScenarioReport reformThreat = simulator.run(ScenarioCatalog.require("reform-threat-mobilization"), 4, 30, 12L);

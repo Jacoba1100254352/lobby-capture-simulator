@@ -378,7 +378,7 @@ public final class WorldState
 		return Values.clamp((0.42 * defensiveShare) + (0.22 * evasion) + (0.18 * litigation) + (0.18 * reformBlocked), 0.0, 1.0);
 	}
 	
-
+	
 	private static final class MetricAverage
 	{
 		private MetricAverage() {

@@ -8,7 +8,7 @@ REPORT_ENV := LOBBY_CAPTURE_REPORT_TIMESTAMP=$(REPORT_GENERATED_AT) LOBBY_CAPTUR
 MAIN_SOURCES := $(shell find src/main/java -name "*.java" | sort)
 TEST_SOURCES := $(shell find src/test/java -name "*.java" | sort)
 MAIN_CLASS := lobbycapture.Main
-TEST_CLASSES := lobbycapture.SmokeTest lobbycapture.AdaptationTest
+TEST_CLASSES := lobbycapture.SimulatorTests
 
 .PHONY: compile test run campaign sensitivity ablation interactions portfolio source-moments source-panel-inventory calibration-queue validate snapshot-2024-env tables figures paper paper-build paper-supplement-build paper-supplement paper-word-count wiley-template wiley-tex-deps paper-wiley paper-wiley-build submission-package submission-package-build paper-layout-audit visual-review-checklist paper-artifacts paper-artifacts-check clean
 

@@ -19,7 +19,7 @@ public final class AdaptationTest
 	private AdaptationTest() {
 	}
 	
-	static void main(String[] args) {
+	public static void run() {
 		verifiesClientFundingMemoryByDomain();
 		verifiesRegulatorQueuePressure();
 		verifiesWatchdogBudgetReallocation();
