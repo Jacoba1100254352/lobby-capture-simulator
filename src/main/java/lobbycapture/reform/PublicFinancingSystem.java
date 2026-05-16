@@ -1,5 +1,7 @@
 package lobbycapture.reform;
 
-public record PublicFinancingSystem(double strength) {
+
+public record PublicFinancingSystem(double strength)
+{
 }
 

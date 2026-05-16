@@ -1,5 +1,7 @@
 package lobbycapture.reform;
 
-public record DarkMoneyDisclosureRule(double strength) {
+
+public record DarkMoneyDisclosureRule(double strength)
+{
 }
 

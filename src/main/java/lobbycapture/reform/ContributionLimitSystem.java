@@ -1,5 +1,7 @@
 package lobbycapture.reform;
 
-public record ContributionLimitSystem(double strength) {
+
+public record ContributionLimitSystem(double strength)
+{
 }
 

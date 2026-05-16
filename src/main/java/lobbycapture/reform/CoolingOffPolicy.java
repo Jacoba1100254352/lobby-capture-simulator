@@ -1,5 +1,7 @@
 package lobbycapture.reform;
 
-public record CoolingOffPolicy(double strength) {
+
+public record CoolingOffPolicy(double strength)
+{
 }
 
