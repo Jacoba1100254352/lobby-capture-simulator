@@ -10,6 +10,7 @@ import json
 import os
 import sys
 import time
+from http.client import RemoteDisconnected
 from datetime import date, datetime
 from pathlib import Path
 from urllib.error import HTTPError, URLError
@@ -458,6 +459,8 @@ def fetch_usaspending(output: Path) -> int:
             "numberOfOffers",
             "priceOnlyAward",
             "exPostModification",
+            "protestFiled",
+            "exclusionFlag",
             "firewallCovered",
         ],
         rows,
@@ -499,6 +502,7 @@ def normalize_usaspending_records(base: str, records: list[dict[str, object]]) -
         pricing_type = first_text(contract_data, "type_of_contract_pricing_description", "type_of_contract_pricing", default="")
         single_bid = numeric_value(number_of_offers) <= 1.0 and numeric_value(number_of_offers) > 0.0
         modified = modification_number.strip() not in {"", "0", "0.0", "none", "None"}
+        exclusion_flag = "exclusion" in competition_type.lower()
         rows.append(
             {
                 "awardId": award_id,
@@ -517,6 +521,8 @@ def normalize_usaspending_records(base: str, records: list[dict[str, object]]) -
                 "numberOfOffers": number_of_offers,
                 "priceOnlyAward": str(single_bid or "price" in pricing_type.lower() or "sole source" in competition_type.lower()).lower(),
                 "exPostModification": str(modified).lower(),
+                "protestFiled": "false",
+                "exclusionFlag": str(exclusion_flag).lower(),
                 "firewallCovered": str(os.environ.get("USASPENDING_FIREWALL_COVERED", "false").lower() == "true").lower(),
             }
         )
@@ -811,11 +817,12 @@ def request_json(
             detail = error.read().decode("utf-8", errors="replace")[:500]
             hint = auth_hint(error.code)
             raise SystemExit(f"{method} {redact_url(url)} failed with HTTP {error.code}: {detail}{hint}") from error
-        except URLError as error:
+        except (URLError, RemoteDisconnected, TimeoutError, ConnectionError, OSError) as error:
             if attempt < attempts:
                 sleep_before_retry(None, attempt, backoff)
                 continue
-            raise SystemExit(f"{method} {redact_url(url)} failed after {attempts} attempts: {error.reason}") from error
+            reason = getattr(error, "reason", str(error))
+            raise SystemExit(f"{method} {redact_url(url)} failed after {attempts} attempts: {reason}") from error
     raise AssertionError("unreachable")
 
 

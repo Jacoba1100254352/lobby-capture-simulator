@@ -50,7 +50,7 @@ Deliverables:
 
 ## 2. Expand the empirical source panels beyond the current 2024 EPA/ENV snapshot
 
-The latest key-backed live run now completes the LDA, six-committee OpenFEC, Schedule E outside-spending, Regulations.gov, Federal Register, USAspending enrichment, public-financing bridge, and LDA-derived revolving-door requests. The remaining problem is representativeness, not request failure.
+The latest key-backed live run now completes the LDA, six-committee OpenFEC, Schedule E outside-spending, Regulations.gov, Federal Register, USAspending enrichment, and LDA-derived revolving-door requests. Public financing and intermediary panels still fall back to fixtures because no source CSV/URL export is configured. The remaining problem is mostly representativeness, with those two bridge panels still needing direct source inputs.
 
 Deliverables:
 

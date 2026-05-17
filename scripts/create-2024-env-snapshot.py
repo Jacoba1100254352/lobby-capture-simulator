@@ -180,10 +180,10 @@ def source_status(source: str, live_status: list[dict[str, str]]) -> tuple[str, 
     notes = "; ".join(f"{row['source']}: {row['status']} ({row['notes']})" for row in names)
     if statuses == {"ok"}:
         return "live", notes
-    if "fixture" in statuses:
-        return "fixture", notes
     if "ok" in statuses:
         return "partial-live", notes
+    if "fixture" in statuses:
+        return "fixture", notes
     return "unavailable", notes
 
 

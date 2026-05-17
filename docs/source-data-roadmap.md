@@ -27,6 +27,7 @@ The matching spine should prefer stable source-native identifiers:
 | IRS TEOS and Form 990 XML | Direct observed nonprofit filings, with donor limits | nonprofit intermediaries, association capacity, grantee/contractor links | public bulk; `IRS_TEOS_BULK_BASE`, `IRS_FORM990_BULK_BASE` | Normalized import schema and fixture panel implemented; source-native bulk fetch still planned |
 | ProPublica Nonprofit Explorer | Convenience layer | nonprofit metadata and 990 lookup by EIN | `PROPUBLICA_NONPROFIT_API_KEY`; <https://projects.propublica.org/nonprofits/api> | Optional overlay; normalized CSV/URL importer implemented |
 | OpenSecrets | Curated proxy overlay | outside spending, dark-money routing, industry classifications, lobbying overlays | `OPENSECRETS_API_KEY`; <https://www.opensecrets.org/api/admin/index.php> | Optional; do not treat as canonical raw source |
+| FollowTheMoney / National Institute on Money in Politics | Curated state/local overlay | state campaign finance, ballot-measure spending, state public-financing programs, and cross-jurisdiction donor-network checks | `FOLLOWTHEMONEY_API_KEY` | Optional overlay; source-native importer still planned |
 | LegiStorm | Curated/restricted overlay | staff movements, congressional employment, some revolving-door links | `LEGISTORM_API_KEY`; <https://www.legistorm.com/api.html> | Optional/restricted; keep license status explicit |
 | FACA database | Direct/proxy access record | advisory committee membership, sponsored expert access, venue shifting | public web data; `FACA_DATA_BASE` | Planned |
 | House witness disclosures | Direct/proxy access record | sponsored-expert testimony, association/think-tank intermediaries | public committee pages | Planned |
@@ -40,7 +41,7 @@ The matching spine should prefer stable source-native identifiers:
 ## Acquisition Sequence
 
 1. Freeze the current 2024 EPA/ENV slice as the baseline paper snapshot.
-2. Extend the OpenFEC bridge beyond Schedule E by adding direct dark-money identifiers, lobbyist-bundling records, and electioneering-communication rows where available.
+2. Extend the OpenFEC bridge beyond Schedule E by adding direct dark-money identifiers, lobbyist-bundling records, electioneering-communication rows, and optional FollowTheMoney state/local overlays where available.
 3. Replace the public-financing bridge with representative Seattle voucher, NYC matching-fund, and federal public-financing panels where source files can be archived.
 4. Replace the intermediary fixture with IRS 8871/8872 plus TEOS/Form 990 rows for 527, 501(c)(4), 501(c)(6), association, and think-tank intermediaries. Keep donor invisibility as a measured missingness property, not as a filled-in fact.
 5. Broaden the procurement bridge from the EPA/USAspending slice into SAM/FPDS coverage with exclusions, action-level modifications, award-action dates, protest links, and firewall coverage for procurement firewalls, ex-post modifications, and single-bid or price-only risks.

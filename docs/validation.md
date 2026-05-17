@@ -37,7 +37,7 @@ Expected live-mode environment variables are `LDA_LIVE_CSV` or `LDA_LIVE_URL`, `
 
 Source-native live variables:
 
-- LDA: `LDA_API_BASE`, `LDA_API_KEY`, `LDA_YEAR`, `LDA_PERIOD`, `LDA_MAX_PAGES`.
+- LDA: `LDA_API_BASE`, `LDA_API_KEY`, `LDA_YEAR`, `LDA_PERIOD`, `LDA_MAX_PAGES`, `LDA_DISCLOSURE_VISIBILITY_LAG`.
 - FEC: `FEC_API_KEY`, `FEC_API_BASE`, `FEC_CYCLE`, `FEC_COMMITTEE_ID`, `FEC_INCLUDE_SCHEDULE_E`, `FEC_ONLY_SCHEDULE_E`, `FEC_SCHEDULE_E_MAX_PAGES`.
 - Regulations.gov: `REGULATIONS_API_KEY`, `REGULATIONS_API_BASE`, `REGULATORY_AGENCY`, `REGULATORY_SEARCH_TERM`, `REGULATORY_DATE_FROM`, `REGULATORY_DATE_TO`.
 - Federal Register: `REGULATORY_SOURCE=federal-register`, `FEDERAL_REGISTER_API_BASE`, `FEDERAL_REGISTER_TYPE`, `REGULATORY_SEARCH_TERM`, `REGULATORY_DATE_FROM`, `REGULATORY_DATE_TO`.
@@ -46,6 +46,7 @@ Source-native live variables:
 - USAspending enrichment: `USASPENDING_ENRICH_AWARD_DETAILS`, `USASPENDING_ENRICH_TRANSACTIONS`, `USASPENDING_ENRICH_LIMIT`, `USASPENDING_TRANSACTION_LIMIT`.
 - Public-financing bridge: `PUBLIC_FINANCING_LIVE_CSV` or `PUBLIC_FINANCING_LIVE_URL`.
 - Revolving-door bridge: `REVOLVING_DOOR_SOURCE_NATIVE`, `REVOLVING_DOOR_LDA_PAGE_SIZE`, `REVOLVING_DOOR_LDA_MAX_PAGES`.
+- Optional curated overlays: `OPENSECRETS_API_KEY`, `FOLLOWTHEMONEY_API_KEY`, `PROPUBLICA_NONPROFIT_API_KEY`, and `LEGISTORM_API_KEY` are documented for richer source panels, but the current paper snapshot promotes only implemented source-native fetchers or explicitly configured normalized CSV/URL bridges.
 
 The source-native normalizers are distributional bridges. `scripts/test-source-fetchers.py` verifies representative LDA, OpenFEC, Regulations.gov, Federal Register, and USAspending JSON payloads against exact normalized rows before any live API output is used as a paper snapshot.
 

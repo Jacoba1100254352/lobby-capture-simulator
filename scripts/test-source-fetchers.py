@@ -129,6 +129,8 @@ def assert_usaspending(fetchers) -> None:
         "numberOfOffers": "0",
         "priceOnlyAward": "false",
         "exPostModification": "false",
+        "protestFiled": "false",
+        "exclusionFlag": "false",
         "firewallCovered": "false",
     }, rows[0]
     assert rows[1]["recipient"] == "LOCKHEED MARTIN SERVICES, LLC", rows[1]
