@@ -9,6 +9,6 @@
   "workingTreeDirty": false,
   "workingTreeDirtyScope": "tracked status excluding generated reports, paper tables, paper figures, and 2024-env snapshot outputs",
   "javaVersion": "25",
-  "calibrationChecksum": "680e4feef0d93bf3a5fa17673e84d18f8a8a6fa7ebb384e669674a36d0cc5635",
+  "calibrationChecksum": "1b8d6d1d7ff7580b3c982b59ca39249122a2770b99257da34c0728f2a36ae27f",
   "reportFiles": ["lobby-capture-interactions.csv", "lobby-capture-interactions.md"]
 }

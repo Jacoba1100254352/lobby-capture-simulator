@@ -23,7 +23,7 @@ append_csv() {
   fi
 }
 
-rm -f data/raw/lda-lobbying.csv data/raw/fec-campaign-finance.csv data/raw/regulatory-dockets.csv data/raw/usaspending-awards.csv data/raw/revolving-door.csv data/raw/intermediaries.csv
+rm -f data/raw/lda-lobbying.csv data/raw/fec-campaign-finance.csv data/raw/public-financing.csv data/raw/dark-money.csv data/raw/regulatory-dockets.csv data/raw/usaspending-awards.csv data/raw/revolving-door.csv data/raw/intermediaries.csv
 
 for period in first_quarter second_quarter third_quarter fourth_quarter; do
   SOURCE_RAW_DIR="$raw_dir/lda-$period" \
@@ -70,15 +70,50 @@ fi
 
 if [ -n "${PUBLIC_FINANCING_LIVE_CSV:-}" ] || [ -n "${PUBLIC_FINANCING_LIVE_URL:-}" ]; then
   if ./scripts/fetch-public-financing.sh --live; then
-    append_csv data/raw/public-financing.csv data/raw/fec-campaign-finance.csv
-    printf "public-financing,ok,normalized configured public-financing bridge appended\n" >> "$status_file"
+    printf "public-financing,ok,normalized configured public-financing bridge written\n" >> "$status_file"
   else
     printf "public-financing,unavailable,configured public-financing source could not be normalized\n" >> "$status_file"
   fi
+elif [ "${PUBLIC_FINANCING_SOURCE_NATIVE:-1}" = "1" ]; then
+  if SOURCE_RAW_DIR="$raw_dir/nyc-cfb-public-financing" \
+    NYC_CFB_ELECTION="${NYC_CFB_ELECTION:-2025}" \
+    NYC_CFB_PUBLIC_PAYMENTS_MAX_ROWS="${NYC_CFB_PUBLIC_PAYMENTS_MAX_ROWS:-5000}" \
+    NYC_CFB_FINANCIAL_ANALYSIS_MAX_ROWS="${NYC_CFB_FINANCIAL_ANALYSIS_MAX_ROWS:-5000}" \
+      python3 scripts/fetch-source-data.py nyc-public-financing --output data/raw/public-financing.csv; then
+    printf "public-financing,ok,normalized NYC CFB public-financing rows written\n" >> "$status_file"
+  else
+    ./scripts/fetch-public-financing.sh
+    printf "public-financing,fixture,NYC CFB source-native public-financing request failed; fixture copied for schema continuity\n" >> "$status_file"
+  fi
 else
   ./scripts/fetch-public-financing.sh
-  append_csv data/raw/public-financing.csv data/raw/fec-campaign-finance.csv
-  printf "public-financing,fixture,public-financing bridge fixture appended for source-moment coverage\n" >> "$status_file"
+  printf "public-financing,fixture,public-financing bridge fixture copied for source-moment coverage\n" >> "$status_file"
+fi
+
+if [ -n "${DARK_MONEY_LIVE_CSV:-}" ] || [ -n "${DARK_MONEY_LIVE_URL:-}" ]; then
+  source_file="$tmpdir/dark-money-source.csv"
+  if [ -n "${DARK_MONEY_LIVE_CSV:-}" ]; then
+    cp "$DARK_MONEY_LIVE_CSV" "$source_file"
+  else
+    curl -fsSL "$DARK_MONEY_LIVE_URL" -o "$source_file"
+  fi
+  if python3 scripts/normalize-calibration.py dark-money "$source_file" data/raw/dark-money.csv; then
+    printf "dark-money,ok,normalized configured dark-money bridge rows written\n" >> "$status_file"
+  else
+    printf "dark-money,unavailable,configured dark-money source could not be normalized\n" >> "$status_file"
+  fi
+elif [ "${DARK_MONEY_SOURCE_NATIVE:-1}" = "1" ]; then
+  if SOURCE_RAW_DIR="$raw_dir/irs-dark-money-capacity" \
+    IRS_DARK_MONEY_BMF_STATES="${IRS_DARK_MONEY_BMF_STATES:-${IRS_EO_BMF_STATES:-DC}}" \
+    IRS_DARK_MONEY_CAPACITY_MAX_ROWS="${IRS_DARK_MONEY_CAPACITY_MAX_ROWS:-800}" \
+    IRS_DARK_MONEY_CAPACITY_OUTPUT_ROWS="${IRS_DARK_MONEY_CAPACITY_OUTPUT_ROWS:-250}" \
+      python3 scripts/fetch-source-data.py irs-dark-money-capacity --output data/raw/dark-money.csv; then
+    printf "dark-money,ok,normalized IRS EO BMF opaque-capacity proxy rows written\n" >> "$status_file"
+  else
+    printf "dark-money,unavailable,IRS EO BMF opaque-capacity request failed; no dark-money bridge rows written\n" >> "$status_file"
+  fi
+else
+  printf "dark-money,missing,no configured direct dark-money or opaque-capacity source\n" >> "$status_file"
 fi
 
 if SOURCE_RAW_DIR="$raw_dir/regulations-gov" \
@@ -148,8 +183,37 @@ if [ -n "${INTERMEDIARY_LIVE_CSV:-}" ] || [ -n "${INTERMEDIARY_LIVE_URL:-}" ]; t
     printf "intermediary,unavailable,configured intermediary source export could not be normalized\n" >> "$status_file"
   fi
 else
-  ./scripts/fetch-intermediaries.sh
-  printf "intermediary,fixture,no nonprofit/association source export configured; fixture copied for schema continuity\n" >> "$status_file"
+  if [ "${INTERMEDIARY_SOURCE_NATIVE:-1}" = "1" ]; then
+    intermediary_notes=""
+    intermediary_sources=0
+    rm -f data/raw/intermediaries.csv
+    if SOURCE_RAW_DIR="$raw_dir/nyc-cfb-intermediaries" \
+      NYC_CFB_ELECTION="${NYC_CFB_ELECTION:-2025}" \
+      NYC_CFB_INTERMEDIARY_MAX_ROWS="${NYC_CFB_INTERMEDIARY_MAX_ROWS:-2500}" \
+        python3 scripts/fetch-source-data.py nyc-intermediaries --output "$tmpdir/nyc-intermediaries.csv"; then
+      append_csv "$tmpdir/nyc-intermediaries.csv" data/raw/intermediaries.csv
+      intermediary_sources=$((intermediary_sources + 1))
+      intermediary_notes="${intermediary_notes}NYC CFB intermediary rows; "
+    fi
+    if SOURCE_RAW_DIR="$raw_dir/irs-eo-bmf" \
+      IRS_EO_BMF_STATES="${IRS_EO_BMF_STATES:-DC}" \
+      IRS_EO_BMF_MAX_ROWS="${IRS_EO_BMF_MAX_ROWS:-800}" \
+      IRS_EO_BMF_FILTERED_MAX_ROWS="${IRS_EO_BMF_FILTERED_MAX_ROWS:-500}" \
+        python3 scripts/fetch-source-data.py irs-eo-bmf --output "$tmpdir/irs-eo-bmf.csv"; then
+      append_csv "$tmpdir/irs-eo-bmf.csv" data/raw/intermediaries.csv
+      intermediary_sources=$((intermediary_sources + 1))
+      intermediary_notes="${intermediary_notes}IRS EO BMF nonprofit/association capacity rows; "
+    fi
+    if [ "$intermediary_sources" -gt 0 ]; then
+      printf "intermediary,ok,%s\n" "$intermediary_notes" >> "$status_file"
+    else
+      ./scripts/fetch-intermediaries.sh
+      printf "intermediary,fixture,source-native intermediary requests failed; fixture copied for schema continuity\n" >> "$status_file"
+    fi
+  else
+    ./scripts/fetch-intermediaries.sh
+    printf "intermediary,fixture,no nonprofit/association source export configured; fixture copied for schema continuity\n" >> "$status_file"
+  fi
 fi
 
 mkdir -p data/snapshots/2024-env

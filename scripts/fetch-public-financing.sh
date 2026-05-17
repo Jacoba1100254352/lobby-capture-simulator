@@ -11,8 +11,8 @@ if [ "${1:-}" = "--live" ]; then
   elif [ -n "${PUBLIC_FINANCING_LIVE_URL:-}" ]; then
     curl -fsSL "$PUBLIC_FINANCING_LIVE_URL" -o "$source_file"
   else
-    echo "Set PUBLIC_FINANCING_LIVE_CSV or PUBLIC_FINANCING_LIVE_URL before running ./scripts/fetch-public-financing.sh --live." >&2
-    exit 2
+    python3 scripts/fetch-source-data.py nyc-public-financing --output data/raw/public-financing.csv
+    exit 0
   fi
   python3 scripts/normalize-calibration.py fec "$source_file" data/raw/public-financing.csv
 else

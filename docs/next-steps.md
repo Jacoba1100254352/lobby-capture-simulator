@@ -25,7 +25,7 @@ The simulator now has a lobbying-centered MVP with calibration fixtures, source-
 - `docs/source-data-roadmap.md` records the direct/proxy/restricted public-data roadmap for LDA, FEC, IRS, nonprofit, procurement, rulemaking, witness, advisory-committee, OGE, OpenSecrets, LegiStorm, and ProPublica-style panels.
 - `make snapshot-2024-env` writes a closed-window snapshot manifest and freezes normalized rows for the 2024 environmental validation slice.
 - `scripts/run-2024-env-live-snapshot.sh` executes the pinned 2024 EPA/ENV live run, preserves ignored raw payloads, and records public API rate-limit gaps.
-- The current committed 2024 EPA/ENV snapshot has 121 LDA rows, 1003 OpenFEC and bridge campaign-finance rows, 200 combined Regulations.gov/Federal Register regulatory rows, 200 USAspending rows, and 284 LDA-derived covered-position revolving-door rows; the remaining empirical gaps are direct dark-money rows, representative public-financing rows, a broad SAM/FPDS procurement panel, and a non-fixture intermediary panel.
+- The current live-run pipeline now uses source-native no-key NYC CFB public-financing rows, NYC CFB intermediary rows, IRS EO BMF nonprofit/association capacity rows, and IRS EO BMF 501(c)(4)/(c)(6) opaque-capacity proxy rows when configured. These replace fixture fallback for the default refresh path, but the dark-money bridge remains a capacity proxy rather than direct observed hidden donor/expenditure data.
 - `--live` fetch modes can normalize caller-provided CSVs or query LDA, OpenFEC, Regulations.gov, and Federal Register APIs directly.
 - Source-native parser fixtures exercise LDA, OpenFEC, Regulations.gov, Federal Register, and USAspending JSON without network access.
 - Live source fetches retry transient `429` and `5xx` responses and redact API keys from error URLs.
@@ -70,7 +70,7 @@ The source-moment layer now covers LDA, OpenFEC party/Schedule E rows, regulator
 
 Deliverables:
 
-- expand the USAspending bridge into broader SAM/FPDS UEI, PIID, modification, exclusion, award-action, and protest fields;
+- expand the USAspending bridge into broader SAM/FPDS UEI, PIID, action-level modification, exclusion, award-action, and protest fields;
 - add source moments for single-bid exposure, ex-post modification risk, price-only awards, award concentration, and procurement firewall coverage;
 - expand the revolving-door import path beyond covered-position indicators and keep headcount share separate from influence intensity;
 - update `data/calibration/parameter-map.csv` so procurement and revolving-door rows point at direct source moments where possible.
@@ -82,7 +82,7 @@ Deliverables:
 Deliverables:
 
 - tune comment authenticity, comment compression, unique-information weight, detection, and sanction incidence;
-- decide whether high-end Super PAC large-donor dependence should be scenario-specific rather than applied to every report;
-- add scenario coverage where hidden substitution and revolving-door influence are intentionally stressed;
+- decide whether high-end Super PAC and opaque-capacity large-donor dependence should be scenario-specific rather than applied to every report;
+- add scenario coverage where hidden substitution and revolving-door influence are intentionally stressed; the current catalog now includes visible-ban dark-money leakage, meeting-log intermediary leakage, public-finance outside-spending leakage, and comment-authenticity technical-substitution stress cases;
 - replace synthetic influence-network diagnostics with direct network panels where sources permit.
 - split speech-restriction risk, legitimate-advocacy chill, false-positive costs, and participation protection in the paper's portfolio interpretation.

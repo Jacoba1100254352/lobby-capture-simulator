@@ -25,18 +25,18 @@ SOURCES = {
     },
     "fec": {
         "input": RAW / "fec-campaign-finance.csv",
-        "description": "FEC 2024 cycle party committee contributions, OpenFEC Schedule E independent expenditures, and a public-financing bridge when configured.",
+        "description": "FEC 2024 cycle party committee contributions and OpenFEC Schedule E independent expenditures. Public-financing and opaque-capacity bridge rows are stored in separate panels.",
         "request": "FEC_CYCLE=2024 FEC_COMMITTEE_ID in C00010603,C00042366,C00000935,C00003418,C00027466,C00075820 plus FEC_ONLY_SCHEDULE_E=1 ./scripts/fetch-fec.sh --live",
     },
     "public-financing": {
         "input": RAW / "public-financing.csv",
         "description": "Public financing and voucher bridge rows for direct program participation and public-fund share diagnostics.",
-        "request": "PUBLIC_FINANCING_LIVE_CSV=/path/to/program-export.csv python3 scripts/normalize-calibration.py public-financing \"$PUBLIC_FINANCING_LIVE_CSV\" data/raw/public-financing.csv",
+        "request": "PUBLIC_FINANCING_SOURCE_NATIVE=1 python3 scripts/fetch-source-data.py nyc-public-financing --output data/raw/public-financing.csv or PUBLIC_FINANCING_LIVE_CSV=/path/to/program-export.csv ./scripts/fetch-public-financing.sh --live",
     },
     "dark-money": {
         "input": RAW / "dark-money.csv",
-        "description": "Explicit direct dark-money bridge rows when a documented 501(c)(4), 501(c)(6), electioneering, or source-export panel is configured.",
-        "request": "DARK_MONEY_LIVE_CSV=/path/to/export.csv python3 scripts/normalize-calibration.py dark-money \"$DARK_MONEY_LIVE_CSV\" data/raw/dark-money.csv",
+        "description": "Explicit dark-money rows from a configured source export or IRS EO BMF 501(c)(4)/(c)(6) opaque-capacity proxy rows; donor identities remain unobserved.",
+        "request": "DARK_MONEY_SOURCE_NATIVE=1 python3 scripts/fetch-source-data.py irs-dark-money-capacity --output data/raw/dark-money.csv or DARK_MONEY_LIVE_CSV=/path/to/export.csv ./scripts/fetch-dark-money.sh --live",
     },
     "regulatory": {
         "input": RAW / "regulatory-dockets.csv",
@@ -55,8 +55,8 @@ SOURCES = {
     },
     "intermediary": {
         "input": RAW / "intermediaries.csv",
-        "description": "Normalized nonprofit, 527, think-tank, and association intermediary panel from IRS, ProPublica, OpenSecrets, or curated source exports.",
-        "request": "INTERMEDIARY_LIVE_CSV=/path/to/export.csv ./scripts/fetch-intermediaries.sh --live",
+        "description": "Normalized nonprofit, 527, think-tank, campaign-intermediary, and association panel from NYC CFB, IRS EO BMF, ProPublica, OpenSecrets, or curated source exports.",
+        "request": "INTERMEDIARY_SOURCE_NATIVE=1 ./scripts/fetch-intermediaries.sh --live or INTERMEDIARY_LIVE_CSV=/path/to/export.csv ./scripts/fetch-intermediaries.sh --live",
     },
 }
 
@@ -166,7 +166,7 @@ def source_status(source: str, live_status: list[dict[str, str]]) -> tuple[str, 
         return "copied", "normalized file copied from data/raw"
     names = {
         "lda": [row for row in live_status if row["source"].startswith("lda-")],
-        "fec": [row for row in live_status if row["source"].startswith("fec-") or row["source"] == "public-financing"],
+        "fec": [row for row in live_status if row["source"].startswith("fec-")],
         "public-financing": [row for row in live_status if row["source"] == "public-financing"],
         "dark-money": [row for row in live_status if row["source"] == "dark-money"],
         "regulatory": [row for row in live_status if row["source"] in {"regulations-gov", "federal-register"}],
@@ -229,11 +229,11 @@ def write_readme(root: Path, entries: list[dict[str, object]]) -> None:
         "- Agency: EPA.",
         "- FEC cycle: 2024, with the six national party committees as the first electoral-pressure panel.",
         "- Outside-spending bridge: OpenFEC Schedule E independent expenditures when available.",
-        "- Public-financing bridge: configured public-financing source or fixture rows carried as a separate bridge panel.",
-        "- Direct dark-money bridge: documented 501(c)(4), 501(c)(6), electioneering, or source-export rows when available; super PAC rows remain separate.",
+        "- Public-financing bridge: NYC CFB public-funds payments or configured program export rows carried as a separate bridge panel.",
+        "- Dark-money bridge: configured source export rows or IRS EO BMF 501(c)(4)/(c)(6) opaque-capacity proxy rows; super PAC rows remain separate.",
         "- USAspending fiscal year: 2024, Environmental Protection Agency awards.",
         "- Revolving-door panel: licensed/source export or LDA covered-position derivation when available; fixture otherwise.",
-        "- Intermediary panel: nonprofit, 527, association, and think-tank export when available; fixture otherwise.",
+        "- Intermediary panel: NYC CFB intermediary rows, IRS EO BMF nonprofit/association capacity rows, or configured nonprofit, 527, association, and think-tank export when available; fixture otherwise.",
         "",
         "The current command freezes whatever normalized files are present under `data/raw/`. Live paper snapshots should first run the request templates in `manifest.json`, preserve raw payloads outside git when too large, normalize into the same schemas, and then rerun `make snapshot-2024-env`.",
         "",

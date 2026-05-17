@@ -18,8 +18,8 @@ PANELS = [
         "metric": "darkMoneySourceShare",
         "minimum": 0.001,
         "good": 0.05,
-        "missing": "no direct DARK_MONEY rows in the snapshot",
-        "action": "Add explicit 501(c)(4), 501(c)(6), electioneering, or curated dark-money rows; keep Schedule E super PAC rows separate.",
+        "missing": "no direct DARK_MONEY rows or opaque-capacity bridge rows in the snapshot",
+        "action": "Add explicit electioneering/curated dark-money rows where available; use IRS 501(c)(4)/(c)(6) rows only as opaque-capacity proxies and keep Schedule E super PAC rows separate.",
     },
     {
         "panel": "Outside spending",
@@ -35,7 +35,7 @@ PANELS = [
         "minimum": 0.01,
         "good": 0.10,
         "missing": "public-financing rows are sparse or absent",
-        "action": "Add Seattle voucher, NYC matching-fund, and federal public-financing panels as direct program rows.",
+        "action": "Add NYC matching-fund, Seattle voucher, and federal public-financing panels as direct program rows.",
     },
     {
         "panel": "Intermediaries",
@@ -43,7 +43,7 @@ PANELS = [
         "minimum": 5.0,
         "good": 50.0,
         "missing": "intermediary panel is absent or only a schema stub",
-        "action": "Replace fixture-sized intermediary rows with IRS 8871/8872, TEOS, Form 990 XML, association, think-tank, and grantmaking exports.",
+        "action": "Expand NYC CFB intermediary and IRS EO BMF rows with IRS 8871/8872, Form 990 XML, association, think-tank, and grantmaking exports.",
     },
     {
         "panel": "Revolving door",

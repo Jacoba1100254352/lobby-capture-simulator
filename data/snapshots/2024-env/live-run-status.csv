@@ -10,9 +10,10 @@ fec-C00003418,ok,normalized rows appended
 fec-C00027466,ok,normalized rows appended
 fec-C00075820,ok,normalized rows appended
 fec-schedule-e,ok,normalized independent-expenditure rows appended
-public-financing,fixture,public-financing bridge fixture appended for source-moment coverage
+public-financing,ok,normalized NYC CFB public-financing rows written
+dark-money,ok,normalized IRS EO BMF opaque-capacity proxy rows written
 regulations-gov,ok,normalized rows appended
 federal-register,ok,normalized rows appended
 usaspending,ok,normalized EPA award rows written
 revolving-door,ok,derived normalized covered-position rows from LDA source
-intermediary,fixture,no nonprofit/association source export configured; fixture copied for schema continuity
+intermediary,ok,NYC CFB intermediary rows; IRS EO BMF nonprofit/association capacity rows; 

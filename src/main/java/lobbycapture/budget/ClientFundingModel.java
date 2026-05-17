@@ -62,8 +62,8 @@ public final class ClientFundingModel
 		if (source == FundingSource.PUBLIC_MATCH || source == FundingSource.DEMOCRACY_VOUCHER) {
 			return Values.clamp((0.35 * baseline) - (0.18 * world.reformRegime().campaignFinanceCounterweight()), 0.0, 1.0);
 		}
-		double opacityPressure = source == FundingSource.DARK_MONEY ? 0.12 + (0.08 * world.evasionProfile().opacity()) : 0.04;
-		return Values.clamp((0.68 * baseline) + opacityPressure, 0.0, 1.0);
+		double opacityPressure = source == FundingSource.DARK_MONEY ? 0.16 + (0.10 * world.evasionProfile().opacity()) : 0.06;
+		return Values.clamp((0.70 * baseline) + opacityPressure, 0.0, 1.0);
 	}
 	
 	public ClientFundingResult fund(PolicyContest contest, WorldState world) {

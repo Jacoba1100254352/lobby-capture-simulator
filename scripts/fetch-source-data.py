@@ -6,6 +6,7 @@ from __future__ import annotations
 import argparse
 import csv
 import hashlib
+from io import StringIO
 import json
 import os
 import sys
@@ -41,6 +42,18 @@ def main() -> int:
     usaspending = subparsers.add_parser("usaspending", help="Fetch USAspending award records.")
     usaspending.add_argument("--output", type=Path, default=Path("data/raw/usaspending-awards.csv"))
 
+    nyc_public_financing = subparsers.add_parser("nyc-public-financing", help="Fetch NYC CFB public-funds payments.")
+    nyc_public_financing.add_argument("--output", type=Path, default=Path("data/raw/public-financing.csv"))
+
+    nyc_intermediaries = subparsers.add_parser("nyc-intermediaries", help="Fetch NYC CFB intermediary fundraising rows.")
+    nyc_intermediaries.add_argument("--output", type=Path, default=Path("data/raw/intermediaries.csv"))
+
+    irs_eo_bmf = subparsers.add_parser("irs-eo-bmf", help="Fetch IRS EO BMF nonprofit and association capacity rows.")
+    irs_eo_bmf.add_argument("--output", type=Path, default=Path("data/raw/intermediaries.csv"))
+
+    irs_dark_money_capacity = subparsers.add_parser("irs-dark-money-capacity", help="Fetch IRS EO BMF 501(c)(4)/(c)(6) opaque-capacity proxy rows.")
+    irs_dark_money_capacity.add_argument("--output", type=Path, default=Path("data/raw/dark-money.csv"))
+
     args = parser.parse_args()
     if args.kind == "lda":
         return fetch_lda(args.output)
@@ -52,6 +65,14 @@ def main() -> int:
         return fetch_regulatory(args.output)
     if args.kind == "usaspending":
         return fetch_usaspending(args.output)
+    if args.kind == "nyc-public-financing":
+        return fetch_nyc_public_financing(args.output)
+    if args.kind == "nyc-intermediaries":
+        return fetch_nyc_intermediaries(args.output)
+    if args.kind == "irs-eo-bmf":
+        return fetch_irs_eo_bmf(args.output)
+    if args.kind == "irs-dark-money-capacity":
+        return fetch_irs_dark_money_capacity(args.output)
     raise AssertionError(args.kind)
 
 
@@ -490,7 +511,11 @@ def normalize_usaspending_records(base: str, records: list[dict[str, object]]) -
         transaction = usaspending_transaction_summary(base, piid) if index < enrich_limit else {}
         contract_data = detail.get("latest_transaction_contract_data") if isinstance(detail, dict) else {}
         contract_data = contract_data if isinstance(contract_data, dict) else {}
-        modification_number = first_text(transaction, "modificationNumber", default=first_text(record, "Modification Number", "modification_number", default="0"))
+        record_modification_number = first_text(record, "Modification Number", "modification_number", default="0")
+        latest_transaction_modification_number = first_text(transaction, "modificationNumber", default="")
+        modification_number = record_modification_number
+        if os.environ.get("USASPENDING_TREAT_LATEST_TRANSACTION_AS_MODIFICATION", "0") == "1" and modification_sequence(latest_transaction_modification_number) > 0:
+            modification_number = latest_transaction_modification_number
         number_of_offers = first_text(contract_data, "number_of_offers_received", default=first_text(record, "Number of Offers", "number_of_offers_received", default="0"))
         competition_type = first_text(
             contract_data,
@@ -501,7 +526,7 @@ def normalize_usaspending_records(base: str, records: list[dict[str, object]]) -
         )
         pricing_type = first_text(contract_data, "type_of_contract_pricing_description", "type_of_contract_pricing", default="")
         single_bid = numeric_value(number_of_offers) <= 1.0 and numeric_value(number_of_offers) > 0.0
-        modified = modification_number.strip() not in {"", "0", "0.0", "none", "None"}
+        modified = modification_sequence(modification_number) > 0
         exclusion_flag = "exclusion" in competition_type.lower()
         rows.append(
             {
@@ -516,7 +541,7 @@ def normalize_usaspending_records(base: str, records: list[dict[str, object]]) -
                 "uei": first_text(detail, "recipient.recipient_uei", default=first_text(record, "Recipient UEI", "recipient_uei", "UEI", default="")),
                 "piid": piid,
                 "modificationNumber": modification_number,
-                "actionDate": first_text(transaction, "actionDate", default=first_text(detail, "date_signed", default=first_text(record, "Action Date", "action_date", default=""))),
+                "actionDate": first_text(detail, "date_signed", default=first_text(record, "Action Date", "action_date", default=first_text(transaction, "actionDate", default=""))),
                 "competitionType": competition_type,
                 "numberOfOffers": number_of_offers,
                 "priceOnlyAward": str(single_bid or "price" in pricing_type.lower() or "sole source" in competition_type.lower()).lower(),
@@ -526,6 +551,342 @@ def normalize_usaspending_records(base: str, records: list[dict[str, object]]) -
                 "firewallCovered": str(os.environ.get("USASPENDING_FIREWALL_COVERED", "false").lower() == "true").lower(),
             }
         )
+    return rows
+
+
+NYC_PUBLIC_FINANCING_SOURCE = "NYC Campaign Finance Board"
+INTERMEDIARY_FIELDS = [
+    "organization",
+    "ein",
+    "sourceType",
+    "subsection",
+    "issueDomain",
+    "revenue",
+    "politicalSpend",
+    "grantmaking",
+    "donorDisclosure",
+    "recipient",
+    "sourceUrl",
+]
+
+
+def fetch_nyc_public_financing(output: Path) -> int:
+    election = os.environ.get("NYC_CFB_ELECTION", "2025")
+    payments_url = os.environ.get("NYC_CFB_PUBLIC_PAYMENTS_URL") or nyc_cfb_data_url(f"{election}_Payments.csv")
+    analysis_url = os.environ.get("NYC_CFB_FINANCIAL_ANALYSIS_URL") or nyc_cfb_data_url(f"EC{election}_FinancialAnalysis.csv")
+    payments = csv_rows_from_url(payments_url, int_env("NYC_CFB_PUBLIC_PAYMENTS_MAX_ROWS", 5000, 1, 50000))
+    try:
+        analysis = csv_rows_from_url(analysis_url, int_env("NYC_CFB_FINANCIAL_ANALYSIS_MAX_ROWS", 5000, 1, 50000))
+    except SystemExit:
+        if os.environ.get("NYC_CFB_STRICT_ANALYSIS", "0") == "1":
+            raise
+        analysis = []
+    rows = normalize_nyc_public_financing_records(payments, analysis, payments_url, election)
+    write_rows(output, FEC_FIELDS, rows, "NYC CFB public-funds payment rows")
+    return 0
+
+
+def normalize_nyc_public_financing_records(
+        payments: list[dict[str, str]],
+        analysis: list[dict[str, str]] | None = None,
+        source_url: str = "",
+        election: str = ""
+) -> list[dict[str, object]]:
+    analysis_by_candidate = {
+        first_text(row, "CANDID", "candid", "candidate_id", default=""): row
+        for row in (analysis or [])
+        if first_text(row, "CANDID", "candid", "candidate_id", default="")
+    }
+    rows: list[dict[str, object]] = []
+    minimum_payment = float_env("NYC_CFB_MIN_PUBLIC_PAYMENT", 1.0, 0.0, 1_000_000_000.0)
+    for record in payments:
+        candidate_id = first_text(record, "CANDID", "candid", "candidate_id", default="").strip()
+        candidate = first_text(record, "CANDNAME", "candname", "candidate_name", default=f"NYC candidate {candidate_id or 'unknown'}").strip()
+        total_payment_raw = raw_money(first_text(record, "TOTALPAY", "totalpay", "TOTAL_PAYMENT", "amount", default="0"))
+        if total_payment_raw <= minimum_payment:
+            continue
+        analysis_row = analysis_by_candidate.get(candidate_id, {})
+        rows.append(
+            {
+                "source": NYC_PUBLIC_FINANCING_SOURCE,
+                "recipient": candidate,
+                "issueDomain": "democracy",
+                "amount": money_millions(str(total_payment_raw)),
+                "flowType": "PUBLIC_MATCH",
+                "traceability": 0.96,
+                "largeDonorShare": nyc_large_donor_share(analysis_row, total_payment_raw),
+                "sourceRecordId": "-".join(part for part in ["nyc-cfb", election, candidate_id] if part),
+                "sourceUrl": source_url,
+                "committeeType": "municipal public matching funds",
+                "spendingPurpose": "public funds payment",
+                "supportOppose": "",
+                "disclosureLag": 0.04,
+            }
+        )
+    return rows
+
+
+def fetch_nyc_intermediaries(output: Path) -> int:
+    election = os.environ.get("NYC_CFB_ELECTION", "2025")
+    url = os.environ.get("NYC_CFB_INTERMEDIARIES_URL") or nyc_cfb_data_url(f"{election}_Intermediaries.csv")
+    source_rows = csv_rows_from_url(url, int_env("NYC_CFB_INTERMEDIARY_MAX_ROWS", 2500, 1, 50000))
+    rows = normalize_nyc_intermediary_records(source_rows, url)
+    write_rows(output, INTERMEDIARY_FIELDS, rows, "NYC CFB intermediary rows")
+    return 0
+
+
+def normalize_nyc_intermediary_records(records: list[dict[str, str]], source_url: str = "") -> list[dict[str, object]]:
+    grouped: dict[tuple[str, str], dict[str, object]] = {}
+    for record in records:
+        organization = first_text(record, "NAME", "name", "intermediary_name", default="").strip()
+        if not organization:
+            continue
+        amount = money_millions(first_text(record, "AMNT", "amount", "total", default="0"))
+        if amount <= 0.0:
+            continue
+        recipient = candidate_name_from_nyc_row(record)
+        key = (organization, recipient)
+        existing = grouped.setdefault(
+            key,
+            {
+                "organization": organization,
+                "ein": "",
+                "sourceType": "nyc-cfb-intermediary",
+                "subsection": "campaign-intermediary",
+                "issueDomain": "democracy",
+                "revenue": 0.0,
+                "politicalSpend": 0.0,
+                "grantmaking": 0.0,
+                "donorDisclosure": donor_disclosure_for_nyc_intermediary(record),
+                "recipient": recipient,
+                "sourceUrl": source_url,
+            },
+        )
+        existing["revenue"] = float(existing["revenue"]) + amount
+        existing["politicalSpend"] = float(existing["politicalSpend"]) + amount
+        existing["donorDisclosure"] = max(float(existing["donorDisclosure"]), donor_disclosure_for_nyc_intermediary(record))
+    return [grouped[key] for key in sorted(grouped)]
+
+
+def fetch_irs_eo_bmf(output: Path) -> int:
+    source_rows = irs_eo_bmf_source_rows()
+    rows = normalize_irs_eo_bmf_records(source_rows)
+    write_rows(output, INTERMEDIARY_FIELDS, rows, "IRS EO BMF nonprofit/intermediary capacity rows")
+    return 0
+
+
+def normalize_irs_eo_bmf_records(source_rows: list[dict[str, str]]) -> list[dict[str, object]]:
+    rows: list[dict[str, object]] = []
+    for record in filtered_irs_eo_bmf_records(source_rows, split_csv_env("IRS_EO_BMF_SUBSECTIONS", "03,04,06")):
+        revenue = money_millions(first_text(record, "REVENUE_AMT", "INCOME_AMT", "ASSET_AMT", default="0"))
+        subsection = first_text(record, "SUBSECTION", default="")
+        name = first_text(record, "NAME", default="Unknown exempt organization")
+        rows.append(
+            {
+                "organization": name,
+                "ein": first_text(record, "EIN", default=""),
+                "sourceType": "irs-eo-bmf-capacity",
+                "subsection": irs_subsection_label(subsection),
+                "issueDomain": classify_domain(" ".join([name, first_text(record, "NTEE_CD", "ACTIVITY", default="")])),
+                "revenue": revenue,
+                "politicalSpend": political_capacity_proxy(revenue, subsection),
+                "grantmaking": grantmaking_capacity_proxy(revenue, record),
+                "donorDisclosure": donor_disclosure_for_irs_subsection(subsection),
+                "recipient": "",
+                "sourceUrl": first_text(record, "_sourceUrl", default=""),
+            }
+        )
+    return rows
+
+
+def fetch_irs_dark_money_capacity(output: Path) -> int:
+    source_rows = irs_eo_bmf_source_rows(
+        states_env="IRS_DARK_MONEY_BMF_STATES",
+        urls_env="IRS_DARK_MONEY_BMF_URLS",
+        max_rows_env="IRS_DARK_MONEY_CAPACITY_MAX_ROWS",
+    )
+    rows = normalize_irs_dark_money_capacity_records(source_rows)
+    write_rows(output, FEC_FIELDS, rows, "IRS EO BMF opaque nonprofit capacity rows")
+    return 0
+
+
+def normalize_irs_dark_money_capacity_records(source_rows: list[dict[str, str]]) -> list[dict[str, object]]:
+    rows: list[dict[str, object]] = []
+    for record in filtered_irs_eo_bmf_records(source_rows, split_csv_env("IRS_DARK_MONEY_BMF_SUBSECTIONS", "04,06")):
+        subsection = first_text(record, "SUBSECTION", default="")
+        revenue = money_millions(first_text(record, "REVENUE_AMT", "INCOME_AMT", "ASSET_AMT", default="0"))
+        capacity = dark_money_capacity_proxy(revenue, subsection)
+        if capacity <= 0.0:
+            continue
+        name = first_text(record, "NAME", default="Unknown exempt organization")
+        rows.append(
+            {
+                "source": name,
+                "recipient": "Opaque issue-advocacy capacity",
+                "issueDomain": classify_domain(" ".join([name, first_text(record, "NTEE_CD", "ACTIVITY", default="")])),
+                "amount": capacity,
+                "flowType": "DARK_MONEY",
+                "traceability": 0.12 if normalize_subsection(subsection) == "04" else 0.24,
+                "largeDonorShare": 0.74 if normalize_subsection(subsection) == "04" else 0.64,
+                "sourceRecordId": first_text(record, "EIN", default=""),
+                "sourceUrl": first_text(record, "_sourceUrl", default=""),
+                "committeeType": f"{irs_subsection_label(subsection)} capacity proxy",
+                "spendingPurpose": "opaque nonprofit advocacy capacity proxy",
+                "supportOppose": "",
+                "disclosureLag": 0.55,
+            }
+        )
+    rows.sort(key=lambda row: float(row["amount"]), reverse=True)
+    return rows[: int_env("IRS_DARK_MONEY_CAPACITY_OUTPUT_ROWS", 250, 1, 5000)]
+
+
+def nyc_cfb_data_url(filename: str) -> str:
+    return f"{os.environ.get('NYC_CFB_DATA_BASE', 'https://nyccfb.info/DataLibrary').rstrip('/')}/{filename}"
+
+
+def nyc_large_donor_share(analysis_row: dict[str, str], public_payment_raw: float) -> float:
+    if not analysis_row:
+        return 0.10
+    max_amount = raw_money(first_text(analysis_row, "max_amt", "MAX_AMT", default="0"))
+    private_contributions = raw_money(first_text(analysis_row, "net_cntns", "NET_CNTNS", default="0"))
+    public_funds = raw_money(first_text(analysis_row, "pubfnd_pmt", "PUBFND_PMT", default=str(public_payment_raw)))
+    denominator = max(1.0, private_contributions + public_funds)
+    return round(ValuesProxy.clamp(0.05 + (0.55 * (max_amount / denominator)), 0.03, 0.45), 4)
+
+
+def candidate_name_from_nyc_row(record: dict[str, str]) -> str:
+    first = first_text(record, "CANDFIRST", "candfirst", default="").strip()
+    last = first_text(record, "CANDLAST", "candlast", default="").strip()
+    combined = " ".join(part for part in [first, last] if part).strip()
+    return combined or first_text(record, "CANDNAME", "candname", "CANDID", default="unknown candidate")
+
+
+def donor_disclosure_for_nyc_intermediary(record: dict[str, str]) -> float:
+    code = first_text(record, "C_CODE", "c_code", default="").upper()
+    if code == "IND":
+        return 0.72
+    if code:
+        return 0.62
+    return 0.58
+
+
+def irs_eo_bmf_source_rows(
+        states_env: str = "IRS_EO_BMF_STATES",
+        urls_env: str = "IRS_EO_BMF_URLS",
+        max_rows_env: str = "IRS_EO_BMF_MAX_ROWS"
+) -> list[dict[str, str]]:
+    urls = split_csv_env(urls_env, "")
+    if not urls:
+        states = split_csv_env(states_env, "DC")
+        urls = [irs_eo_bmf_url(state) for state in states]
+    max_rows = int_env(max_rows_env, 500, 1, 50000)
+    collected: list[dict[str, str]] = []
+    for url in urls:
+        remaining = max_rows - len(collected)
+        if remaining <= 0:
+            break
+        for row in csv_rows_from_url(url, max(max_rows * 8, remaining)):
+            row["_sourceUrl"] = url
+            collected.append(row)
+            if len(collected) >= max_rows * 8:
+                break
+    return collected
+
+
+def filtered_irs_eo_bmf_records(source_rows: list[dict[str, str]], subsections: list[str]) -> list[dict[str, str]]:
+    allowed = {normalize_subsection(subsection) for subsection in subsections}
+    keywords = [keyword.lower() for keyword in split_csv_env("IRS_EO_BMF_KEYWORDS", "association,council,institute,policy,advocacy,action,coalition,chamber,forum,center,foundation,committee,project,alliance,network")]
+    max_rows = int_env("IRS_EO_BMF_FILTERED_MAX_ROWS", 500, 1, 50000)
+    filtered = []
+    seen: set[str] = set()
+    for record in source_rows:
+        subsection = normalize_subsection(first_text(record, "SUBSECTION", default=""))
+        if allowed and subsection not in allowed:
+            continue
+        name = first_text(record, "NAME", default="")
+        identity = first_text(record, "EIN", default=name)
+        if identity in seen:
+            continue
+        seen.add(identity)
+        haystack = " ".join([name, first_text(record, "NTEE_CD", "ACTIVITY", "SORT_NAME", default="")]).lower()
+        if keywords and not any(keyword in haystack for keyword in keywords):
+            continue
+        if money_millions(first_text(record, "REVENUE_AMT", "INCOME_AMT", "ASSET_AMT", default="0")) <= 0.0:
+            continue
+        filtered.append(record)
+        if len(filtered) >= max_rows:
+            break
+    return filtered
+
+
+def irs_eo_bmf_url(state: str) -> str:
+    state_code = state.strip().lower()
+    return f"{os.environ.get('IRS_EO_BMF_CSV_BASE', 'https://www.irs.gov/pub/irs-soi').rstrip('/')}/eo_{state_code}.csv"
+
+
+def normalize_subsection(value: str) -> str:
+    text = value.strip().lower().replace("501(c)(", "").replace(")", "").replace("c", "")
+    digits = "".join(character for character in text if character.isdigit())
+    return digits.zfill(2) if digits else text
+
+
+def irs_subsection_label(value: str) -> str:
+    code = normalize_subsection(value)
+    if code in {"03", "04", "05", "06", "07"}:
+        return f"501(c)({int(code)})"
+    if code == "527":
+        return "527"
+    return f"501(c)({code})" if code else "unknown-exempt"
+
+
+def donor_disclosure_for_irs_subsection(value: str) -> float:
+    return {
+        "03": 0.74,
+        "04": 0.20,
+        "05": 0.36,
+        "06": 0.32,
+        "07": 0.40,
+        "527": 0.68,
+    }.get(normalize_subsection(value), 0.42)
+
+
+def political_capacity_proxy(revenue: float, subsection: str) -> float:
+    rates = {
+        "03": float_env("IRS_EO_BMF_POLITICAL_CAPACITY_RATE_C3", 0.003, 0.0, 1.0),
+        "04": float_env("IRS_EO_BMF_POLITICAL_CAPACITY_RATE_C4", 0.025, 0.0, 1.0),
+        "05": float_env("IRS_EO_BMF_POLITICAL_CAPACITY_RATE_C5", 0.012, 0.0, 1.0),
+        "06": float_env("IRS_EO_BMF_POLITICAL_CAPACITY_RATE_C6", 0.018, 0.0, 1.0),
+        "07": float_env("IRS_EO_BMF_POLITICAL_CAPACITY_RATE_C7", 0.006, 0.0, 1.0),
+    }
+    return round(revenue * rates.get(normalize_subsection(subsection), 0.006), 4)
+
+
+def dark_money_capacity_proxy(revenue: float, subsection: str) -> float:
+    code = normalize_subsection(subsection)
+    rate = float_env("IRS_DARK_MONEY_CAPACITY_RATE_C4", 0.012, 0.0, 1.0) if code == "04" else float_env("IRS_DARK_MONEY_CAPACITY_RATE_C6", 0.006, 0.0, 1.0)
+    cap = float_env("IRS_DARK_MONEY_CAPACITY_AMOUNT_CAP_MILLIONS", 8.0, 0.0, 1_000_000.0)
+    return round(min(cap, revenue * rate), 4)
+
+
+def grantmaking_capacity_proxy(revenue: float, record: dict[str, str]) -> float:
+    ntee = first_text(record, "NTEE_CD", default="").upper()
+    foundation = first_text(record, "FOUNDATION", default="")
+    rate = 0.012 if ntee.startswith("T") or foundation not in {"", "0"} else 0.004
+    return round(revenue * rate, 4)
+
+
+def csv_rows_from_url(url: str, max_rows: int) -> list[dict[str, str]]:
+    text = get_text(url)
+    reader = csv.DictReader(StringIO(text.lstrip("\ufeff")))
+    if reader.fieldnames is None:
+        raise SystemExit(f"{redact_url(url)} returned CSV data without a header row.")
+    rows = []
+    for row in reader:
+        rows.append(row)
+        if len(rows) >= max_rows:
+            break
+    if not rows:
+        raise SystemExit(f"{redact_url(url)} returned no CSV rows.")
     return rows
 
 
@@ -777,6 +1138,10 @@ def get_json(url: str, headers: dict[str, str] | None = None) -> dict[str, objec
     return request_json("GET", url, headers)
 
 
+def get_text(url: str, headers: dict[str, str] | None = None) -> str:
+    return request_text("GET", url, headers)
+
+
 def post_json(
         url: str,
         payload: dict[str, object],
@@ -798,6 +1163,16 @@ def request_json(
         headers: dict[str, str] | None = None,
         body: bytes | None = None
 ) -> dict[str, object] | list[object]:
+    text = request_text(method, url, headers, body)
+    return json.loads(text)
+
+
+def request_text(
+        method: str,
+        url: str,
+        headers: dict[str, str] | None = None,
+        body: bytes | None = None
+) -> str:
     request_headers = {"User-Agent": "lobby-capture-simulator/0.1"}
     if headers:
         request_headers.update(headers)
@@ -809,7 +1184,7 @@ def request_json(
             with urlopen(request, timeout=30) as response:
                 text = response.read().decode("utf-8")
                 write_raw_payload(url, text, method, body)
-                return json.loads(text)
+                return text
         except HTTPError as error:
             if should_retry(error.code, attempt, attempts):
                 sleep_before_retry(error, attempt, backoff)
@@ -848,11 +1223,15 @@ def nested(record: dict[str, object], path: str) -> object | None:
 
 
 def money_millions(value: str) -> float:
+    amount = raw_money(value)
+    return round(amount / 1_000_000.0, 4)
+
+
+def raw_money(value: str) -> float:
     try:
-        amount = float(value.replace("$", "").replace(",", ""))
+        return float(str(value).replace("$", "").replace(",", "").strip())
     except ValueError:
         return 0.0
-    return round(amount / 1_000_000.0 if amount > 1_000 else amount, 4)
 
 
 def numeric_value(value: str) -> float:
@@ -909,6 +1288,22 @@ def int_or_zero(value: str) -> int:
         return int(float(value))
     except ValueError:
         return 0
+
+
+def modification_sequence(value: str) -> int:
+    if value is None:
+        return 0
+    text = str(value).strip()
+    if text.lower() in {"", "0", "0.0", "none", "null"}:
+        return 0
+    if text.isdigit():
+        return int(text)
+    index = len(text) - 1
+    while index >= 0 and text[index].isdigit():
+        index -= 1
+    if index == len(text) - 1:
+        return 0
+    return int(text[index + 1:])
 
 
 def bounded_int_env(name: str, default: int, minimum: int, maximum: int) -> str:

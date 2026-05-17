@@ -18,12 +18,19 @@ Current runnable scenarios:
 - `randomized-audit-sanctions`
 - `machine-readable-meeting-logs`
 - `hard-budget-substitution-stress`
+- `visible-ban-dark-money-leakage`
+- `opaque-network-substitution-frontier`
+- `meeting-log-intermediary-leakage`
 - `advisory-lobbying-substitution`
 - `procurement-venue-shift-stress`
+- `procurement-modification-capture-frontier`
 - `outside-spending-disclosure-evasion`
+- `public-finance-dark-money-frontier`
+- `public-finance-outside-spending-leakage`
 - `shadow-lobbying-maximum-stress`
 - `enforced-cooling-off`
 - `comment-authenticity-rules`
+- `comment-authenticity-technical-substitution`
 - `public-advocate-office`
 - `procurement-firewalls`
 - `venue-shifting-detection`
@@ -59,12 +66,19 @@ Each scenario uses the same core engine and changes the reform regime, channel i
 - `randomized-audit-sanctions`: uses randomized audits and strong sanctions to make evasion risk less predictable.
 - `machine-readable-meeting-logs`: stresses real-time structured contact disclosure and meeting-log coverage.
 - `hard-budget-substitution-stress`: makes visible lobbying caps bind while allowing high evasion freedom, so a lower observed-capture rate is treated as suspicious if hidden influence, intermediary routing, procurement exposure, venue shifts, or defensive spending rise.
+- `visible-ban-dark-money-leakage`: treats a hard visible-lobbying cap as a failure candidate when influence moves to nonprofit issue ads, independent expenditures, association research, or litigation threats.
+- `opaque-network-substitution-frontier`: uses machine-readable disclosure while stressing nonprofit, association, advisory, and venue-shift routes that remain difficult to connect.
+- `meeting-log-intermediary-leakage`: tests whether structured meeting logs displace influence into association messengers, sponsored experts, advisory-committee gaps, and procurement side channels.
 - `advisory-lobbying-substitution`: constrains formal contacts while leaving advisory, expert, association, and technical-consulting routes attractive.
 - `procurement-venue-shift-stress`: tests whether influence migrates into vendor relationships, award design, and procurement-specific access when visible advocacy is constrained.
+- `procurement-modification-capture-frontier`: targets post-award modifications, exclusion language, bid-protest leverage, and subaward eligibility after nominal procurement controls bind.
 - `outside-spending-disclosure-evasion`: stresses campaign-finance substitution from disclosed channels into outside spending and delayed or less traceable electoral pressure.
+- `public-finance-dark-money-frontier`: tests whether public financing and vouchers are offset by donor-network, nonprofit issue-ad, and independent-expenditure substitution.
+- `public-finance-outside-spending-leakage`: separates candidate-side public-financing gains from independent expenditure and nonprofit messaging leakage.
 - `shadow-lobbying-maximum-stress`: combines hard visible restrictions with high evasion freedom and weak channel legibility to expose failure modes hidden by low measured capture.
 - `enforced-cooling-off`: pairs cooling-off periods with audit and sanction capacity.
 - `comment-authenticity-rules`: targets comment flooding, template campaigns, and synthetic salience.
+- `comment-authenticity-technical-substitution`: tests whether authenticity rules displace mass comments into sponsored expert filings, technical attachments, and consultant-written unique comments.
 - `public-advocate-office`: tests public advocate and blind-review capacity as a direct counterweight to one-sided expertise.
 - `procurement-firewalls`: targets vendor capture through contact controls, blind specification review, and procurement-specific sanctions.
 - `venue-shifting-detection`: explicitly tracks movement across channels, messengers, and venues.
@@ -79,7 +93,7 @@ Each scenario uses the same core engine and changes the reform regime, channel i
 - Hidden-capture, total-distortion, hidden-influence, preserved-influence, venue-substitution, messenger-substitution, and evasion-shift columns should be read with capture rates. A low capture rate alone is not a model claim that the reform eliminates influence.
 - Influence-network columns should be read as synthetic path diagnostics: network opacity, intermediary centrality, procurement exposure, revolving-door bridges, comment-network load, and venue-shift load identify where influence is moving when a reform changes visible lobbying.
 - The preferred synthetic reform comparison is the lowest total influence distortion, not the highest nominal reform success or lowest visible capture.
-- Source calibration is currently strongest for LDA, OpenFEC party-committee and Schedule E rows, Federal Register/Regulations.gov schemas, USAspending award concentration, USAspending procurement bridge fields, and LDA-derived covered-position revolving-door rows. It remains weakest for direct dark-money rows, representative public-financing panels, broad SAM/FPDS procurement panels, and representative intermediary exports.
+- Source calibration is currently strongest for LDA, OpenFEC party-committee and Schedule E rows, NYC CFB public-financing/intermediary rows, IRS EO BMF nonprofit-capacity rows, Federal Register/Regulations.gov schemas, USAspending award concentration, USAspending procurement bridge fields, and LDA-derived covered-position revolving-door rows. It remains weakest for observed dark-money transactions, broad SAM/FPDS action-level procurement panels, full 527/Form 990 intermediary records, and representative personnel-movement revolving-door exports.
 
 `make sensitivity` adds temporary sweep scenarios that are not listed by `--list`:
 

@@ -1,8 +1,8 @@
 {
   "snapshot": "2024-env",
-  "generatedAt": "2026-05-17T15:19:40.430046+00:00",
-  "gitCommit": "c6802af",
-  "gitTreeState": "clean",
+  "generatedAt": "2026-05-17T20:32:30.151514+00:00",
+  "gitCommit": "d6d49a0",
+  "gitTreeState": "dirty",
   "gitTreeStateScope": "working tree status excluding generated 2024-env snapshot, reports, paper tables, and paper figures",
   "scope": {
     "calendarWindow": "2024-01-01/2024-12-31",
@@ -25,33 +25,33 @@
     },
     {
       "source": "fec",
-      "description": "FEC 2024 cycle party committee contributions, OpenFEC Schedule E independent expenditures, and a public-financing bridge when configured.",
+      "description": "FEC 2024 cycle party committee contributions and OpenFEC Schedule E independent expenditures. Public-financing and opaque-capacity bridge rows are stored in separate panels.",
       "requestTemplate": "FEC_CYCLE=2024 FEC_COMMITTEE_ID in C00010603,C00042366,C00000935,C00003418,C00027466,C00075820 plus FEC_ONLY_SCHEDULE_E=1 ./scripts/fetch-fec.sh --live",
       "normalizedFile": "data/snapshots/2024-env/normalized/fec-campaign-finance.csv",
-      "rowCount": 1003,
-      "sha256": "128e5d588f6b7bdbf000e7fc0a93fb41b9a814535e36ca4c86521dab5d2476df",
-      "status": "partial-live",
-      "statusNotes": "fec-C00010603: ok (normalized rows appended); fec-C00042366: ok (normalized rows appended); fec-C00000935: ok (normalized rows appended); fec-C00003418: ok (normalized rows appended); fec-C00027466: ok (normalized rows appended); fec-C00075820: ok (normalized rows appended); fec-schedule-e: ok (normalized independent-expenditure rows appended); public-financing: fixture (public-financing bridge fixture appended for source-moment coverage)"
+      "rowCount": 1000,
+      "sha256": "b9adf86801a34484ad196f691e211eb9301dcbc5c138769c5ea8ddc109e05a99",
+      "status": "live",
+      "statusNotes": "fec-C00010603: ok (normalized rows appended); fec-C00042366: ok (normalized rows appended); fec-C00000935: ok (normalized rows appended); fec-C00003418: ok (normalized rows appended); fec-C00027466: ok (normalized rows appended); fec-C00075820: ok (normalized rows appended); fec-schedule-e: ok (normalized independent-expenditure rows appended)"
     },
     {
       "source": "public-financing",
       "description": "Public financing and voucher bridge rows for direct program participation and public-fund share diagnostics.",
-      "requestTemplate": "PUBLIC_FINANCING_LIVE_CSV=/path/to/program-export.csv python3 scripts/normalize-calibration.py public-financing \"$PUBLIC_FINANCING_LIVE_CSV\" data/raw/public-financing.csv",
+      "requestTemplate": "PUBLIC_FINANCING_SOURCE_NATIVE=1 python3 scripts/fetch-source-data.py nyc-public-financing --output data/raw/public-financing.csv or PUBLIC_FINANCING_LIVE_CSV=/path/to/program-export.csv ./scripts/fetch-public-financing.sh --live",
       "normalizedFile": "data/snapshots/2024-env/normalized/public-financing.csv",
-      "rowCount": 3,
-      "sha256": "d884e54e579b4b01f2a25d195b1868a9d4f9d9d7cf576e21971af67e50737a32",
-      "status": "fixture",
-      "statusNotes": "public-financing: fixture (public-financing bridge fixture appended for source-moment coverage)"
+      "rowCount": 132,
+      "sha256": "f1300218a9044e39c9ce9243f1baf474a6c623b4ac172f3245eb121c547f4165",
+      "status": "live",
+      "statusNotes": "public-financing: ok (normalized NYC CFB public-financing rows written)"
     },
     {
       "source": "dark-money",
-      "description": "Explicit direct dark-money bridge rows when a documented 501(c)(4), 501(c)(6), electioneering, or source-export panel is configured.",
-      "requestTemplate": "DARK_MONEY_LIVE_CSV=/path/to/export.csv python3 scripts/normalize-calibration.py dark-money \"$DARK_MONEY_LIVE_CSV\" data/raw/dark-money.csv",
+      "description": "Explicit dark-money rows from a configured source export or IRS EO BMF 501(c)(4)/(c)(6) opaque-capacity proxy rows; donor identities remain unobserved.",
+      "requestTemplate": "DARK_MONEY_SOURCE_NATIVE=1 python3 scripts/fetch-source-data.py irs-dark-money-capacity --output data/raw/dark-money.csv or DARK_MONEY_LIVE_CSV=/path/to/export.csv ./scripts/fetch-dark-money.sh --live",
       "normalizedFile": "data/snapshots/2024-env/normalized/dark-money.csv",
-      "rowCount": 0,
-      "sha256": "missing",
-      "status": "missing",
-      "statusNotes": "normalized source file missing"
+      "rowCount": 250,
+      "sha256": "25c1877c3e2e11eb55bb6e6310104d558b98b73d86e0285045b36e78a378f797",
+      "status": "live",
+      "statusNotes": "dark-money: ok (normalized IRS EO BMF opaque-capacity proxy rows written)"
     },
     {
       "source": "regulatory",
@@ -69,7 +69,7 @@
       "requestTemplate": "USASPENDING_FISCAL_YEAR=2024 USASPENDING_AGENCY='Environmental Protection Agency' ./scripts/fetch-usaspending.sh --live",
       "normalizedFile": "data/snapshots/2024-env/normalized/usaspending-awards.csv",
       "rowCount": 200,
-      "sha256": "ec2cd0a45f3555f9220e1efaeead118f23f13aff5ff05c7905fa0536fe4851db",
+      "sha256": "95f50d8163ed6391f1213167fab55dbd2c7471cc934a7bb5f9f00eac24a59da8",
       "status": "live",
       "statusNotes": "usaspending: ok (normalized EPA award rows written)"
     },
@@ -85,17 +85,17 @@
     },
     {
       "source": "intermediary",
-      "description": "Normalized nonprofit, 527, think-tank, and association intermediary panel from IRS, ProPublica, OpenSecrets, or curated source exports.",
-      "requestTemplate": "INTERMEDIARY_LIVE_CSV=/path/to/export.csv ./scripts/fetch-intermediaries.sh --live",
+      "description": "Normalized nonprofit, 527, think-tank, campaign-intermediary, and association panel from NYC CFB, IRS EO BMF, ProPublica, OpenSecrets, or curated source exports.",
+      "requestTemplate": "INTERMEDIARY_SOURCE_NATIVE=1 ./scripts/fetch-intermediaries.sh --live or INTERMEDIARY_LIVE_CSV=/path/to/export.csv ./scripts/fetch-intermediaries.sh --live",
       "normalizedFile": "data/snapshots/2024-env/normalized/intermediaries.csv",
-      "rowCount": 6,
-      "sha256": "c44735aea744714f6237db67f0eb3ff1bcd56f65af186fc3de760dd304195171",
-      "status": "fixture",
-      "statusNotes": "intermediary: fixture (no nonprofit/association source export configured; fixture copied for schema continuity)"
+      "rowCount": 853,
+      "sha256": "b630dbda920b20752cf2f20aade98f80fd7475eada1e3b6b347fa4f4a08b2f0b",
+      "status": "live",
+      "statusNotes": "intermediary: ok (NYC CFB intermediary rows; IRS EO BMF nonprofit/association capacity rows; )"
     }
   ],
   "liveRunStatus": {
     "file": "data/snapshots/2024-env/live-run-status.csv",
-    "sha256": "972caa0c179cfdd350702df6fcc50f74210f77f7745c4b6f9cd147a69c8d6b0f"
+    "sha256": "ba0c6c4d1550125fa6d0cdb2fd9cc56b8b98bf0c3a7a11b7086d05addc010593"
   }
 }

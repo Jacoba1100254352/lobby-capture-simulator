@@ -11,8 +11,15 @@ if [ "${1:-}" = "--live" ]; then
   elif [ -n "${INTERMEDIARY_LIVE_URL:-}" ]; then
     curl -fsSL "$INTERMEDIARY_LIVE_URL" -o "$source_file"
   else
-    echo "Set INTERMEDIARY_LIVE_CSV or INTERMEDIARY_LIVE_URL before running ./scripts/fetch-intermediaries.sh --live. IRS_TEOS_BULK_BASE, IRS_FORM990_BULK_BASE, and PROPUBLICA_NONPROFIT_API_KEY are documented in .env for source-native nonprofit and 527 work, but this importer currently expects a normalized export CSV." >&2
-    exit 2
+    tmpdir="$(mktemp -d)"
+    cleanup() { rm -rf "$tmpdir"; }
+    trap cleanup EXIT
+    python3 scripts/fetch-source-data.py nyc-intermediaries --output "$tmpdir/nyc-intermediaries.csv"
+    python3 scripts/fetch-source-data.py irs-eo-bmf --output "$tmpdir/irs-eo-bmf.csv"
+    cp "$tmpdir/nyc-intermediaries.csv" data/raw/intermediaries.csv
+    tail -n +2 "$tmpdir/irs-eo-bmf.csv" >> data/raw/intermediaries.csv
+    echo "Wrote data/raw/intermediaries.csv from NYC CFB and IRS EO BMF source-native rows."
+    exit 0
   fi
   python3 scripts/normalize-calibration.py intermediary "$source_file" data/raw/intermediaries.csv
 else
