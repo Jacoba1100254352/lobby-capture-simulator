@@ -48,7 +48,7 @@ These are direct moments from normalized calibration tables. They are source dia
 | snapshot | regulatory | `commentFloodingIndex` | 0.3072 | proxy | combined top-docket concentration, template share, and low-authentication pressure |
 | snapshot | regulatory | `technicalClaimCredibilityMean` | 0.5000 | proxy | mean normalized technical claim credibility |
 | snapshot | usaspending | `procurementRows` | 200.0000 | observed | normalized USAspending award rows |
-| snapshot | usaspending | `procurementTotalAwards` | 4872.5023 | observed | sum of normalized USAspending award amount |
+| snapshot | usaspending | `procurementTotalAwards` | 4873.5621 | observed | sum of normalized USAspending award amount |
 | snapshot | usaspending | `procurementRecipientTop1Share` | 0.0677 | observed | largest recipient share of normalized award amount |
 | snapshot | usaspending | `procurementRecipientTop3Share` | 0.1723 | observed | top three recipients share of normalized award amount |
 | snapshot | usaspending | `procurementRecipientHerfindahl` | 0.0250 | observed | recipient award-amount Herfindahl |
@@ -57,7 +57,7 @@ These are direct moments from normalized calibration tables. They are source dia
 | snapshot | usaspending | `procurementSubAgencyTop3Share` | 1.0000 | observed | top three sub-agencies share of normalized award amount |
 | snapshot | usaspending | `procurementAwardCount` | 200.0000 | observed | sum of normalized award or transaction counts |
 | snapshot | usaspending | `procurementSingleBidShare` | 0.2350 | observed_proxy | share of rows with one known offer |
-| snapshot | usaspending | `procurementAmountWeightedSingleBidShare` | 0.2132 | observed_proxy | award-amount share with one known offer |
+| snapshot | usaspending | `procurementAmountWeightedSingleBidShare` | 0.2131 | observed_proxy | award-amount share with one known offer |
 | snapshot | usaspending | `procurementInitialAwardShare` | 0.0000 | observed_proxy | share of rows that appear to be initial awards rather than modifications |
 | snapshot | usaspending | `procurementExPostModificationShare` | 1.0000 | observed_proxy | share of rows marked as ex-post modifications or nonzero modification sequence |
 | snapshot | usaspending | `procurementAmountWeightedModificationShare` | 1.0000 | observed_proxy | award-amount share marked as ex-post modifications |

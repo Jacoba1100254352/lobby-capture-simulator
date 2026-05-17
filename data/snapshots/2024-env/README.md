@@ -20,7 +20,7 @@ The current command freezes whatever normalized files are present under `data/ra
 | Source | Rows | Status | Normalized file |
 | --- | ---: | --- | --- |
 | lda | 121 | live | `data/snapshots/2024-env/normalized/lda-lobbying.csv` |
-| fec | 1003 | fixture | `data/snapshots/2024-env/normalized/fec-campaign-finance.csv` |
+| fec | 1003 | partial-live | `data/snapshots/2024-env/normalized/fec-campaign-finance.csv` |
 | public-financing | 3 | fixture | `data/snapshots/2024-env/normalized/public-financing.csv` |
 | dark-money | 0 | missing | `data/snapshots/2024-env/normalized/dark-money.csv` |
 | regulatory | 200 | live | `data/snapshots/2024-env/normalized/regulatory-dockets.csv` |

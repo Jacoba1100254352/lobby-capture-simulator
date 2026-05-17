@@ -1,7 +1,7 @@
 {
   "snapshot": "2024-env",
-  "generatedAt": "2026-05-10T01:40:49.545335+00:00",
-  "gitCommit": "cc4bc36",
+  "generatedAt": "2026-05-17T15:19:40.430046+00:00",
+  "gitCommit": "c6802af",
   "gitTreeState": "clean",
   "gitTreeStateScope": "working tree status excluding generated 2024-env snapshot, reports, paper tables, and paper figures",
   "scope": {
@@ -30,7 +30,7 @@
       "normalizedFile": "data/snapshots/2024-env/normalized/fec-campaign-finance.csv",
       "rowCount": 1003,
       "sha256": "128e5d588f6b7bdbf000e7fc0a93fb41b9a814535e36ca4c86521dab5d2476df",
-      "status": "fixture",
+      "status": "partial-live",
       "statusNotes": "fec-C00010603: ok (normalized rows appended); fec-C00042366: ok (normalized rows appended); fec-C00000935: ok (normalized rows appended); fec-C00003418: ok (normalized rows appended); fec-C00027466: ok (normalized rows appended); fec-C00075820: ok (normalized rows appended); fec-schedule-e: ok (normalized independent-expenditure rows appended); public-financing: fixture (public-financing bridge fixture appended for source-moment coverage)"
     },
     {
@@ -69,7 +69,7 @@
       "requestTemplate": "USASPENDING_FISCAL_YEAR=2024 USASPENDING_AGENCY='Environmental Protection Agency' ./scripts/fetch-usaspending.sh --live",
       "normalizedFile": "data/snapshots/2024-env/normalized/usaspending-awards.csv",
       "rowCount": 200,
-      "sha256": "8e29105088257bee7744db1ac517ee31faf85da35a290302cc2aca5a8b46daf7",
+      "sha256": "ec2cd0a45f3555f9220e1efaeead118f23f13aff5ff05c7905fa0536fe4851db",
       "status": "live",
       "statusNotes": "usaspending: ok (normalized EPA award rows written)"
     },
@@ -81,7 +81,7 @@
       "rowCount": 284,
       "sha256": "656829170696bee9657ea63d4b9d789e09063a73bae172e19cf2db1bee4d4c0e",
       "status": "live",
-      "statusNotes": "revolving-door: ok (derived normalized covered-position rows from LDA source after nested activity parse)"
+      "statusNotes": "revolving-door: ok (derived normalized covered-position rows from LDA source)"
     },
     {
       "source": "intermediary",
@@ -96,6 +96,6 @@
   ],
   "liveRunStatus": {
     "file": "data/snapshots/2024-env/live-run-status.csv",
-    "sha256": "cc60baaea49f459d0867bedb64c2cdaeef5c3fe037ee9ee6ae9efb1d6dd5b3f8"
+    "sha256": "972caa0c179cfdd350702df6fcc50f74210f77f7745c4b6f9cd147a69c8d6b0f"
   }
 }

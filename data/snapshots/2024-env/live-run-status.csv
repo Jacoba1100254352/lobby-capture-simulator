@@ -14,5 +14,5 @@ public-financing,fixture,public-financing bridge fixture appended for source-mom
 regulations-gov,ok,normalized rows appended
 federal-register,ok,normalized rows appended
 usaspending,ok,normalized EPA award rows written
-revolving-door,ok,derived normalized covered-position rows from LDA source after nested activity parse
+revolving-door,ok,derived normalized covered-position rows from LDA source
 intermediary,fixture,no nonprofit/association source export configured; fixture copied for schema continuity
