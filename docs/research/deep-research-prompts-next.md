@@ -4,7 +4,7 @@ Use these prompts with ChatGPT Deep Research. The desired output is source-backe
 
 ## Prompt 1: Public Data Source Inventory for Influence Networks
 
-I am building an agent-based simulator of lobbying, money in politics, regulatory capture, and anti-capture reforms. The model now tracks visible capture, hidden capture, total influence distortion, substitution failure risk, and synthetic influence-network diagnostics such as network opacity, donor concentration, intermediary centrality, official-access centrality, procurement exposure, revolving-door bridge strength, comment-network load, venue-shift load, and network legibility.
+I am building an agent-based simulator of lobbying, money in politics, regulatory capture, and anti-capture reforms. The model now tracks visible capture, hidden capture, total influence distortion, substitution risk, and synthetic influence-network diagnostics such as network opacity, donor concentration, intermediary centrality, official-access centrality, procurement exposure, revolving-door bridge strength, comment-network load, venue-shift load, and network legibility.
 
 Please produce a source-backed inventory of public or obtainable datasets that could empirically anchor these network diagnostics in the United States. Focus on:
 
@@ -20,7 +20,7 @@ For each dataset, identify URL/access path, required keys or licenses, fields av
 
 ## Prompt 2: Empirical Parameter Ranges for Substitution and Capture
 
-I need empirical ranges, not generic theory, for calibrating a lobbying/regulatory-capture simulator. The current model separates observed capture, hidden capture, total influence distortion, substitution failure risk, defensive reform spending, administrative burden, and influence-network opacity. Please review political science, public administration, law, economics, and empirical watchdog literature to identify plausible ranges or source-backed proxies for:
+I need empirical ranges, not generic theory, for calibrating a lobbying/regulatory-capture simulator. The current model separates observed capture, hidden capture, total influence distortion, substitution risk, defensive reform spending, administrative burden, and influence-network opacity. Please review political science, public administration, law, economics, and empirical watchdog literature to identify plausible ranges or source-backed proxies for:
 
 - Substitution from registered lobbying to dark money, outside spending, advisory work, trade associations, think tanks, sponsored expertise, litigation, procurement routes, or public-information campaigns.
 - Effects of transparency systems, real-time disclosure, meeting logs, beneficial-owner disclosure, and machine-readable records on visibility and enforcement.

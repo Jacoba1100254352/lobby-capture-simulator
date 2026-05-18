@@ -7,7 +7,7 @@
 
 ## Scenario Summary
 
-| Scenario | Total distortion | Observed capture | Capture 95% CI | Hidden capture | Substitution risk | Hidden influence | Intermediary share | Defensive spend | Comment flood | Enforcement capacity | Admin cost |
+| Scenario | Total distortion | Observed capture | Capture Wilson diag. | Hidden capture | Substitution risk | Hidden influence | Intermediary share | Defensive spend | Comment flood | Enforcement capacity | Admin cost |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
 | Portfolio: full anti-substitution portfolio | 0.1563 | 0.0637 | [0.0547, 0.0740] | 0.0761 | 0.1676 | 0.1550 | 0.1354 | 0.5212 | 0.2159 | 0.5472 | 0.5592 |
 | Portfolio: civil-liberties-constrained portfolio | 0.2168 | 0.2637 | [0.2466, 0.2815] | 0.0942 | 0.1932 | 0.1952 | 0.1365 | 0.4576 | 0.2222 | 0.4694 | 0.4241 |

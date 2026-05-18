@@ -80,7 +80,7 @@ Each simulation tick resolves one selected policy contest. Report runners aggreg
 - Channel substitution: when one channel becomes costly or visible, actors shift to adjacent routes that preserve messengers, relationships, or objectives.
 - Hidden influence: reforms can reduce observed capture while preserving influence capacity in less visible channels.
 - Network legibility: the model distinguishes visible channel mix from funder-to-lobby-to-intermediary-to-official path opacity, because a disclosure surface can improve while the actual influence path becomes harder to inspect.
-- Failure-aware reform scoring: a reform that lowers observed capture but increases hidden capture, hidden influence, total distortion, or substitution risk is flagged as a possible failure.
+- Warning-aware reform scoring: a reform that lowers observed capture while increasing total distortion is flagged as a distortion failure; a reform that lowers observed capture while increasing hidden capture, hidden influence, or substitution risk is flagged as a substitution warning.
 - Defensive reform spending: anti-capture reform threats can mobilize lobbying that targets the reform itself.
 - Information asymmetry: rulemaking and low-salience technical contests are more vulnerable to expertise capture and comment-record distortion.
 - Public backlash: transparency and public salience can reduce capture pressure when visible influence generates backlash.
@@ -94,6 +94,7 @@ Scenarios define lobby organizations, interest clients, contest mixes, reform re
 Main report targets use fixed run designs. Each run has an independent deterministic seed offset, and reports include sample standard deviations for capture, hidden influence, and total influence distortion across runs.
 
 - Campaign snapshot: 40 runs, 80 contests per run, seed 42.
+- Mechanism comparison: 40 runs, 80 contests per run, seed 542.
 - Sensitivity snapshot: 30 runs, 70 contests per run, seed 142.
 - Ablation snapshot: 40 runs, 80 contests per run, seed 242.
 - Interaction snapshot: 25 runs, 60 contests per run, seed 342.
@@ -178,6 +179,14 @@ else:
 
 Nearest-substitute routing intentionally favors intermediaries when visible access or comment routes bind but messenger credibility remains useful. This represents sponsored research, trade associations, expert coalitions, and issue institutes without treating them as direct registered lobbying.
 
+The report suite includes an explicit mechanism comparison with three modes:
+
+| Mode | Purpose |
+| --- | --- |
+| Single-channel visible lobbying | Conventional visible-access baseline with substitution disabled. |
+| Multi-channel without substitution | Tests whether channel breadth alone changes outcomes without reform-triggered switching. |
+| Multi-channel with substitution | Tests the main mechanism under high evasion freedom and adaptive substitution. |
+
 ### Contest Resolution
 
 Non-reform contests combine baseline capture risk, arena susceptibility, channel pressure, hidden substitution pressure, reform controls, public backlash, and bounded stochastic noise. Hidden influence partially leaks through reform controls, so a strong formal rule can still fail when influence preserves messenger credibility or moves venues. Anti-capture contests compare public reform pressure against defensive lobbying, litigation delay, and constitutional challenge risk.
@@ -218,7 +227,7 @@ Scenario reports include:
 - observed capture rate and captured-contest counts;
 - hidden capture index;
 - total influence distortion;
-- substitution failure risk;
+- substitution risk;
 - multi-seed robustness standard deviations for capture, hidden influence, and total distortion;
 - anti-capture reform success;
 - channel spend shares;
@@ -238,7 +247,7 @@ Scenario reports include:
 - enforcement capacity, detection, sanctions, and backlog;
 - Wilson intervals for binomial capture and reform-success outcomes.
 
-The primary synthetic comparison for reform packages is `totalInfluenceDistortion`, not `captureRate`. If observed capture falls while hidden influence, hidden capture, total distortion, or substitution failure risk rises, the validation audit treats the reform as a possible failure rather than a clean success. Network opacity, venue shifting, and channel-network load are still reported, but rows with channel movement and no higher distortion are classified as substitution tradeoffs.
+The primary synthetic comparison for reform packages is `totalInfluenceDistortion`, not `captureRate`. If observed capture falls while total distortion rises, the validation audit treats the row as a distortion failure. If observed capture falls while hidden influence, hidden capture, or substitution risk rises, the row is reported as a substitution warning. Network opacity, venue shifting, and channel-network load are still reported, but rows with channel movement and no higher distortion are classified as channel-shift tradeoffs.
 
 Generated paper tables and figures are derived from committed report CSVs. The full report snapshots, portfolio screen, source moments, source-panel inventory, validation summary, substitution audit, paper-layout audit, and calibration queue remain in the repository and are included in the Wiley submission support bundle.
 

@@ -18,11 +18,12 @@ Working article frame:
 
 Wiley's figure-preparation guidance treats graphs, flowcharts, diagrams, scatter plots, and other text-based figures as line art and lists EPS/PDF as preferred formats. Wiley's LaTeX guidance also asks authors to provide electronic graphics files and not create figures using LaTeX code. The current manuscript therefore uses separate generated PDF figure files, with SVG sources retained for reproducibility:
 
+- `paper/figures/Figure_1_model_architecture.pdf` and `.svg`: conceptual model diagram for funders, lobby organizations, channels, arenas, metrics, and reform feedback.
 - `paper/figures/Figure_1_channel_mix.pdf` and `.svg`: stacked channel-allocation bars for selected scenarios.
 - `paper/figures/Figure_2_evasion_sensitivity.pdf` and `.svg`: line chart showing hidden influence rising as evasion freedom increases.
 - `paper/figures/Figure_3_interaction_tradeoffs.pdf` and `.svg`: hidden-influence versus net-transparency interaction scatter.
 - `paper/figures/Figure_4_scenario_tradeoffs.pdf` and `.svg`: capture-rate versus hidden-influence scenario scatter.
-- `paper/figures/channel_mix.tex`, `evasion_sensitivity.tex`, `interaction_tradeoffs.tex`, and `scenario_tradeoffs.tex`: thin LaTeX wrappers that include the PDF graphics and keep captions/labels in the manuscript.
+- `paper/figures/model_architecture.tex`, `channel_mix.tex`, `evasion_sensitivity.tex`, `interaction_tradeoffs.tex`, and `scenario_tradeoffs.tex`: thin LaTeX wrappers that include the PDF graphics and keep captions/labels in the manuscript.
 
 These are intentionally analytical figures, not illustrative decoration. They make the paper's mechanism legible while keeping the source reproducible from committed report CSVs.
 

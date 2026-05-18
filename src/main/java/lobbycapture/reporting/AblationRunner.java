@@ -94,7 +94,7 @@ public final class AblationRunner
 			       .append(" | ").append(format(report.totalInfluenceDistortion() - baseline.totalInfluenceDistortion()))
 			       .append(" | ").append(format(report.observedCaptureRate() - baseline.observedCaptureRate()))
 			       .append(" | ").append(format(report.hiddenCaptureIndex() - baseline.hiddenCaptureIndex()))
-			       .append(" | ").append(format(report.substitutionFailureRisk()))
+			       .append(" | ").append(format(report.substitutionRisk()))
 			       .append(" | ").append(format(report.commentFloodingIndex()))
 			       .append(" | ").append(format(report.donorInfluenceGini()))
 			       .append(" | ").append(format(report.enforcementCapacityIndex()))

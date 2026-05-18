@@ -7,7 +7,7 @@
 
 ## Scenario Summary
 
-| Scenario | Total distortion | Observed capture | Capture 95% CI | Hidden capture | Substitution risk | Hidden influence | Intermediary share | Defensive spend | Comment flood | Enforcement capacity | Admin cost |
+| Scenario | Total distortion | Observed capture | Capture Wilson diag. | Hidden capture | Substitution risk | Hidden influence | Intermediary share | Defensive spend | Comment flood | Enforcement capacity | Admin cost |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
 | Full anti-capture bundle | 0.1381 | 0.0266 | [0.0215, 0.0327] | 0.0728 | 0.1693 | 0.1503 | 0.1268 | 0.5982 | 0.2216 | 0.4764 | 0.4910 |
 | Democracy vouchers | 0.1764 | 0.2600 | [0.2451, 0.2755] | 0.0647 | 0.1696 | 0.0876 | 0.0865 | 0.6745 | 0.2946 | 0.1760 | 0.2516 |
@@ -47,13 +47,13 @@
 
 ## Defensive Reform Blocking
 
-- `reform-threat-mobilization` defensive spend share: `0.5559`, anti-capture success: `0.9308`, channel switch rate: `2.3347`, hidden influence: `0.1706`, substitution failure risk: `0.1909`.
+- `reform-threat-mobilization` defensive spend share: `0.5559`, anti-capture success: `0.9308`, channel switch rate: `2.3347`, hidden influence: `0.1706`, substitution risk: `0.1909`.
 - `full-anti-capture-bundle` anti-capture success: `1.0000`, detection rate: `0.1131`, total distortion: `0.1381`.
-- `bundle-with-evasion` dark-money share: `0.1407`, evasion shift rate: `1.5947`, evasion penalty: `0.0000`, influence preserved: `0.2867`, substitution failure risk: `0.3096`.
+- `bundle-with-evasion` dark-money share: `0.1407`, evasion shift rate: `1.5947`, evasion penalty: `0.0000`, influence preserved: `0.2867`, substitution risk: `0.3096`.
 
-## Substitution-Failure Readout
+## Substitution-Warning Readout
 
-Lower observed capture is flagged as a possible failure when hidden influence, total distortion, or substitution risk rises relative to open access.
+Lower observed capture is flagged as a warning when hidden influence, total distortion, or substitution risk rises relative to open access. It is classified as a distortion failure only when total modeled distortion rises.
 
 | Scenario | Capture change | Hidden change | Distortion change | Substitution risk |
 | --- | ---: | ---: | ---: | ---: |

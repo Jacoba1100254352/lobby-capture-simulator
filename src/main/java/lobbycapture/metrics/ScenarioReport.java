@@ -13,7 +13,7 @@ public record ScenarioReport(
 		double observedCaptureRate,
 		double hiddenCaptureIndex,
 		double totalInfluenceDistortion,
-		double substitutionFailureRisk,
+		double substitutionRisk,
 		double averageCaptureIndex,
 		double averagePublicInterestScore,
 		double publicPreferenceDistortion,
@@ -104,7 +104,7 @@ public record ScenarioReport(
 				MetricDefinition.lowerIsBetter(averageCaptureIndex),
 				MetricDefinition.lowerIsBetter(hiddenCaptureIndex),
 				MetricDefinition.lowerIsBetter(totalInfluenceDistortion),
-				MetricDefinition.lowerIsBetter(substitutionFailureRisk),
+				MetricDefinition.lowerIsBetter(substitutionRisk),
 				MetricDefinition.lowerIsBetter(privateGainRatio / 5.0),
 				MetricDefinition.lowerIsBetter(publicPreferenceDistortion),
 				MetricDefinition.lowerIsBetter(enforcementForbearanceRate),
@@ -118,14 +118,14 @@ public record ScenarioReport(
 				regulatorAttentionIndex,
 				watchdogFocusIndex,
 				enforcementCapacityIndex,
-				antiCaptureSuccessRate * MetricDefinition.lowerIsBetter(substitutionFailureRisk)
+				antiCaptureSuccessRate * MetricDefinition.lowerIsBetter(substitutionRisk)
 		);
 	}
 	
 	public double distortionMinimizationScore() {
 		return MetricDefinition.average(
 				MetricDefinition.lowerIsBetter(totalInfluenceDistortion),
-				MetricDefinition.lowerIsBetter(substitutionFailureRisk),
+				MetricDefinition.lowerIsBetter(substitutionRisk),
 				MetricDefinition.lowerIsBetter(hiddenCaptureIndex),
 				MetricDefinition.lowerIsBetter(networkOpacityIndex),
 				MetricDefinition.lowerIsBetter(venueShiftNetworkLoad),

@@ -39,7 +39,7 @@ def main() -> int:
     for report in report_paths:
         rows.extend(validate_report(report, report_benchmarks))
     rows.extend(validate_source_moments(args.source_moments, source_benchmarks, source_moments))
-    substitution_rows = audit_substitution_failures(report_paths)
+    substitution_rows = audit_substitution_warnings(report_paths)
     args.output.mkdir(parents=True, exist_ok=True)
     write_csv(args.output / "validation-summary.csv", rows)
     write_markdown(args.output / "validation-summary.md", rows)
@@ -227,7 +227,7 @@ def validate_source_moments(
     return output
 
 
-def audit_substitution_failures(report_paths: list[Path]) -> list[dict[str, str]]:
+def audit_substitution_warnings(report_paths: list[Path]) -> list[dict[str, str]]:
     output: list[dict[str, str]] = []
     for report in report_paths:
         with report.open(newline="", encoding="utf-8") as source:
@@ -256,7 +256,7 @@ def substitution_status(row: dict[str, str], baseline: dict[str, str]) -> str:
     hidden_delta = metric(row, "hiddenInfluenceShare") - metric(baseline, "hiddenInfluenceShare")
     hidden_capture_delta = metric(row, "hiddenCaptureIndex") - metric(baseline, "hiddenCaptureIndex")
     distortion_delta = metric(row, "totalInfluenceDistortion") - metric(baseline, "totalInfluenceDistortion")
-    risk_delta = metric(row, "substitutionFailureRisk") - metric(baseline, "substitutionFailureRisk")
+    risk_delta = metric(row, "substitutionRisk") - metric(baseline, "substitutionRisk")
     visible_delta = metric(row, "visibleLobbyingSpendShare") - metric(baseline, "visibleLobbyingSpendShare")
     network_delta = metric(row, "networkOpacityIndex") - metric(baseline, "networkOpacityIndex")
     venue_shift_delta = metric(row, "venueShiftNetworkLoad") - metric(baseline, "venueShiftNetworkLoad")
@@ -266,25 +266,26 @@ def substitution_status(row: dict[str, str], baseline: dict[str, str]) -> str:
         metric(row, "revolvingDoorBridgeIndex") - metric(baseline, "revolvingDoorBridgeIndex"),
         metric(row, "commentNetworkLoad") - metric(baseline, "commentNetworkLoad"),
     )
-    hidden_or_distorted = any_moved(
-        hidden_delta,
-        hidden_capture_delta,
-        distortion_delta,
-        risk_delta,
-    )
+    apparent_success = capture_delta < -0.02 or visible_delta < -0.02
     channel_shift = any_moved(
         network_delta,
         venue_shift_delta,
         channel_movement_delta,
     )
-    if capture_delta < -0.02 and hidden_or_distorted:
-        return "possible_failure"
-    if visible_delta < -0.02 and (hidden_or_distorted or channel_shift):
-        return "substitution_tradeoff"
-    if capture_delta < -0.02 and distortion_delta <= 0.02 and risk_delta <= 0.02:
-        return "improved"
+    if apparent_success and distortion_delta > 0.02:
+        return "distortion_failure"
     if distortion_delta > 0.02:
         return "worse_total_distortion"
+    if apparent_success and hidden_capture_delta > 0.02:
+        return "hidden_capture_warning"
+    if apparent_success and hidden_delta > 0.02:
+        return "hidden_influence_warning"
+    if apparent_success and risk_delta > 0.02:
+        return "substitution_warning"
+    if apparent_success and channel_shift:
+        return "channel_shift_tradeoff"
+    if capture_delta < -0.02 and distortion_delta <= 0.02 and risk_delta <= 0.02:
+        return "improved"
     return "no_material_tradeoff"
 
 
@@ -293,12 +294,12 @@ def substitution_row(report: Path, row: dict[str, str], baseline: dict[str, str]
     hidden_delta = metric(row, "hiddenInfluenceShare") - metric(baseline, "hiddenInfluenceShare")
     hidden_capture_delta = metric(row, "hiddenCaptureIndex") - metric(baseline, "hiddenCaptureIndex")
     distortion_delta = metric(row, "totalInfluenceDistortion") - metric(baseline, "totalInfluenceDistortion")
-    risk_delta = metric(row, "substitutionFailureRisk") - metric(baseline, "substitutionFailureRisk")
-    failure_severity = max(0.0, -capture_delta) + max(0.0, hidden_delta) + max(0.0, hidden_capture_delta) + max(0.0, distortion_delta) + max(0.0, risk_delta)
+    risk_delta = metric(row, "substitutionRisk") - metric(baseline, "substitutionRisk")
+    warning_score = max(0.0, -capture_delta) + max(0.0, hidden_delta) + max(0.0, hidden_capture_delta) + max(0.0, distortion_delta) + max(0.0, risk_delta)
     design_loss = (
         (0.34 * metric(row, "totalInfluenceDistortion"))
         + (0.22 * metric(row, "hiddenCaptureIndex"))
-        + (0.18 * metric(row, "substitutionFailureRisk"))
+        + (0.18 * metric(row, "substitutionRisk"))
         + (0.10 * metric(row, "administrativeCost"))
         + (0.08 * metric(row, "networkOpacityIndex"))
         + (0.08 * metric(row, "venueShiftNetworkLoad"))
@@ -309,13 +310,13 @@ def substitution_row(report: Path, row: dict[str, str], baseline: dict[str, str]
         "scenarioName": row.get("scenarioName", ""),
         "baselineScenarioKey": baseline.get("scenarioKey", ""),
         "status": status,
-        "failureSeverity": f4(failure_severity),
+        "warningScore": f4(warning_score),
         "designLoss": f4(design_loss),
         "observedCaptureDelta": delta(row, baseline, "observedCaptureRate"),
         "hiddenInfluenceDelta": delta(row, baseline, "hiddenInfluenceShare"),
         "hiddenCaptureDelta": delta(row, baseline, "hiddenCaptureIndex"),
         "totalInfluenceDistortionDelta": delta(row, baseline, "totalInfluenceDistortion"),
-        "substitutionFailureRiskDelta": delta(row, baseline, "substitutionFailureRisk"),
+        "substitutionRiskDelta": delta(row, baseline, "substitutionRisk"),
         "visibleLobbyingSpendShareDelta": delta(row, baseline, "visibleLobbyingSpendShare"),
         "networkOpacityDelta": delta(row, baseline, "networkOpacityIndex"),
         "venueShiftNetworkLoadDelta": delta(row, baseline, "venueShiftNetworkLoad"),
@@ -407,13 +408,13 @@ def write_substitution_csv(path: Path, rows: list[dict[str, str]]) -> None:
         "scenarioName",
         "baselineScenarioKey",
         "status",
-        "failureSeverity",
+        "warningScore",
         "designLoss",
         "observedCaptureDelta",
         "hiddenInfluenceDelta",
         "hiddenCaptureDelta",
         "totalInfluenceDistortionDelta",
-        "substitutionFailureRiskDelta",
+        "substitutionRiskDelta",
         "visibleLobbyingSpendShareDelta",
         "networkOpacityDelta",
         "venueShiftNetworkLoadDelta",
@@ -472,35 +473,56 @@ def write_markdown(path: Path, rows: list[dict[str, str]]) -> None:
 def write_substitution_markdown(path: Path, rows: list[dict[str, str]]) -> None:
     counts = {
         status: sum(1 for row in rows if row["status"] == status)
-        for status in ("possible_failure", "substitution_tradeoff", "worse_total_distortion", "improved", "no_material_tradeoff", "baseline")
+        for status in (
+            "distortion_failure",
+            "worse_total_distortion",
+            "hidden_capture_warning",
+            "hidden_influence_warning",
+            "substitution_warning",
+            "channel_shift_tradeoff",
+            "improved",
+            "no_material_tradeoff",
+            "baseline",
+        )
     }
     lines = [
         "# Substitution Audit",
         "",
-        "This audit treats lower observed capture as insufficient when hidden influence, hidden capture, total distortion, or substitution failure risk rises. Network opacity, venue shifting, and channel-network load remain diagnostic columns, but pure movement across channels without higher hidden influence or distortion is classified as a substitution tradeoff. It is a diagnostic over synthetic simulation reports, not an empirical causal claim.",
+        "This audit treats lower observed capture as insufficient when hidden influence, hidden capture, total distortion, or substitution risk rises. It distinguishes total-distortion failures from hidden-influence warnings and channel-shift tradeoffs, so reforms are not called failures merely because one hidden metric rises while total modeled distortion falls. It is a diagnostic over synthetic simulation reports, not an empirical causal claim.",
         "",
-        f"- Possible failure: `{counts['possible_failure']}`",
-        f"- Substitution tradeoff: `{counts['substitution_tradeoff']}`",
+        f"- Distortion failure: `{counts['distortion_failure']}`",
         f"- Worse total distortion: `{counts['worse_total_distortion']}`",
+        f"- Hidden-capture warning: `{counts['hidden_capture_warning']}`",
+        f"- Hidden-influence warning: `{counts['hidden_influence_warning']}`",
+        f"- Substitution warning: `{counts['substitution_warning']}`",
+        f"- Channel-shift tradeoff: `{counts['channel_shift_tradeoff']}`",
         f"- Improved: `{counts['improved']}`",
         f"- No material tradeoff: `{counts['no_material_tradeoff']}`",
+        f"- Baseline rows: `{counts['baseline']}`",
         "",
         "## Flagged Rows",
         "",
-        "| Report | Scenario | Status | Failure severity | Design loss | Capture delta | Hidden delta | Hidden capture delta | Total distortion delta | Risk delta | Visible spend delta | Network opacity delta | Venue delta | Interm. load delta | Procurement delta | Revolving delta | Comment delta | Intermediary | Dark money | Defensive | Admin |",
+        "| Report | Scenario | Status | Warning score | Design loss | Capture delta | Hidden delta | Hidden capture delta | Total distortion delta | Risk delta | Visible spend delta | Network opacity delta | Venue delta | Interm. load delta | Procurement delta | Revolving delta | Comment delta | Intermediary | Dark money | Defensive | Admin |",
         "| --- | --- | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |",
     ]
     flagged = [
         row for row in rows
-        if row["status"] in {"possible_failure", "substitution_tradeoff", "worse_total_distortion"}
+        if row["status"] in {
+            "distortion_failure",
+            "worse_total_distortion",
+            "hidden_capture_warning",
+            "hidden_influence_warning",
+            "substitution_warning",
+            "channel_shift_tradeoff",
+        }
     ]
     for row in flagged:
         lines.append(
             f"| {row['report']} | {row['scenarioName']} | {row['status']} | "
-            f"{row['failureSeverity']} | {row['designLoss']} | "
+            f"{row['warningScore']} | {row['designLoss']} | "
             f"{row['observedCaptureDelta']} | {row['hiddenInfluenceDelta']} | "
             f"{row['hiddenCaptureDelta']} | {row['totalInfluenceDistortionDelta']} | "
-            f"{row['substitutionFailureRiskDelta']} | {row['visibleLobbyingSpendShareDelta']} | "
+            f"{row['substitutionRiskDelta']} | {row['visibleLobbyingSpendShareDelta']} | "
             f"{row['networkOpacityDelta']} | {row['venueShiftNetworkLoadDelta']} | "
             f"{row['intermediaryCentralityDelta']} | {row['procurementNetworkExposureDelta']} | "
             f"{row['revolvingDoorBridgeDelta']} | {row['commentNetworkLoadDelta']} | "

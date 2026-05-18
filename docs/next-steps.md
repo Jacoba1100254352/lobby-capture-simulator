@@ -1,6 +1,6 @@
 # Next Steps
 
-The simulator now has a lobbying-centered MVP with calibration fixtures, source-native live calibration downloaders, source JSON parser fixtures, explicit client funding, rulemaking comment dockets, comment triage, evasion profiles, an influence-substitution engine, an influence-network diagnostic layer, adaptive clients/regulators/watchdogs, campaign reports, sensitivity sweeps, ablation sweeps, interaction sweeps, reform-portfolio screens, validation summaries, calibration queues, source moments, generated paper tables and figures, a 2024 EPA/ENV snapshot, and a Regulation & Governance-oriented working paper scaffold.
+The simulator now has a lobbying-centered MVP with calibration fixtures, source-native live calibration downloaders, source JSON parser fixtures, explicit client funding, rulemaking comment dockets, comment triage, evasion profiles, an influence-substitution engine, an influence-network diagnostic layer, adaptive clients/regulators/watchdogs, campaign reports, a mechanism-comparison report, sensitivity sweeps, ablation sweeps, interaction sweeps, reform-portfolio screens, validation summaries, calibration queues, source moments, generated paper tables and figures, a 2024 EPA/ENV snapshot, and a Regulation & Governance-oriented working paper scaffold.
 
 ## Completed in the current slice
 
@@ -12,6 +12,7 @@ The simulator now has a lobbying-centered MVP with calibration fixtures, source-
 - Scenario reports include client funding, donor concentration, disclosure lag, comment authenticity, template saturation, technical credibility, and evasion penalties.
 - Scenario reports also include client-funding adaptation, regulator attention, and watchdog focus.
 - `make sensitivity` sweeps enforcement, disclosure, public financing, cooling-off, and evasion freedom.
+- `make mechanism-comparison` compares the visible single-channel baseline, multi-channel/no-substitution model, and substitution-enabled model for the same reform-heavy contest family.
 - `make ablation` removes each full-bundle reform component and ranks capture openings.
 - `make interactions` runs two-way sweeps for enforcement/disclosure, public financing/evasion, and cooling-off/revolving-door strategy.
 - `make validate` compares report metrics against benchmark plausibility bands and writes CSV/Markdown summaries.
@@ -21,7 +22,7 @@ The simulator now has a lobbying-centered MVP with calibration fixtures, source-
 - Influence substitution reports pressure to switch, preserved influence capacity, hidden influence, messenger substitution, venue substitution, and net transparency gain.
 - Influence-network diagnostics report path opacity, donor concentration, intermediary centrality, official-access centrality, procurement exposure, revolving-door bridges, comment-network load, venue-shift load, and legibility.
 - `make portfolio` screens research-backed reform portfolio families by total distortion, hidden capture, substitution risk, administrative burden, network opacity, legitimate-advocacy chill, speech-restriction risk, cross-venue detection, and participation protection.
-- The substitution audit now treats lower observed capture with higher hidden influence, hidden capture, total distortion, substitution risk, network opacity, venue-shift load, or channel-network load as a possible reform failure.
+- The substitution audit now distinguishes distortion failures, hidden-capture warnings, hidden-influence warnings, substitution warnings, and channel-shift tradeoffs instead of treating every hidden-metric increase as a failure.
 - `docs/source-data-roadmap.md` records the direct/proxy/restricted public-data roadmap for LDA, FEC, IRS, nonprofit, procurement, rulemaking, witness, advisory-committee, OGE, OpenSecrets, LegiStorm, and ProPublica-style panels.
 - `make snapshot-2024-env` writes a closed-window snapshot manifest and freezes normalized rows for the 2024 environmental validation slice.
 - `scripts/run-2024-env-live-snapshot.sh` executes the pinned 2024 EPA/ENV live run, preserves ignored raw payloads, and records public API rate-limit gaps.

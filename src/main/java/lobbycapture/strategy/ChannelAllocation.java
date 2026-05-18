@@ -33,6 +33,10 @@ public record ChannelAllocation(
 	public static ChannelAllocation zero() {
 		return new ChannelAllocation(0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0);
 	}
+
+	public static ChannelAllocation visibleAccessOnly(double spend) {
+		return new ChannelAllocation(spend * 0.72, spend * 0.28, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0);
+	}
 	
 	public static ChannelAllocation forStrategy(InfluenceStrategy strategy, double spend) {
 		double[] shares = switch (strategy) {

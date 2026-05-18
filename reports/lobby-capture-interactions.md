@@ -7,7 +7,7 @@
 
 ## Scenario Summary
 
-| Scenario | Total distortion | Observed capture | Capture 95% CI | Hidden capture | Substitution risk | Hidden influence | Intermediary share | Defensive spend | Comment flood | Enforcement capacity | Admin cost |
+| Scenario | Total distortion | Observed capture | Capture Wilson diag. | Hidden capture | Substitution risk | Hidden influence | Intermediary share | Defensive spend | Comment flood | Enforcement capacity | Admin cost |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
 | Interaction public financing 1.25 evasion 0.00 | 0.1269 | 0.0173 | [0.0119, 0.0253] | 0.0411 | 0.1118 | 0.0304 | 0.1321 | 0.5476 | 0.2197 | 0.4933 | 0.6092 |
 | Interaction public financing 0.80 evasion 0.00 | 0.1281 | 0.0240 | [0.0174, 0.0330] | 0.0406 | 0.1102 | 0.0290 | 0.1379 | 0.5148 | 0.2191 | 0.4984 | 0.4961 |

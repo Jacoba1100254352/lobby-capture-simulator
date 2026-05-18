@@ -38,7 +38,7 @@ public final class MetricsAccumulator
 	private double policyDistortionSum;
 	private double hiddenCaptureIndexSum;
 	private double totalInfluenceDistortionSum;
-	private double substitutionFailureRiskSum;
+	private double substitutionRiskSum;
 	private double regulatoryDriftSum;
 	private double enforcementForbearanceSum;
 	private double procurementBiasSum;
@@ -168,7 +168,7 @@ public final class MetricsAccumulator
 		);
 	}
 	
-	private static double substitutionFailureRisk(
+	private static double substitutionRisk(
 			ContestOutcome outcome,
 			double hiddenCaptureIndex,
 			double totalSpend,
@@ -307,7 +307,7 @@ public final class MetricsAccumulator
 		clientFundingSum += outcome.influenceResult().clientFunding();
 		donorInfluenceGiniSum += Values.clamp(
 				(0.45 * outcome.influenceResult().donorInfluenceGini())
-						+ (0.55 * world.calibrationProfile().donorConcentrationIndex(contest.issueDomain())),
+						+ (0.55 * world.calibratedDonorConcentrationIndex(contest.issueDomain())),
 				0.0,
 				1.0
 		);
@@ -335,7 +335,7 @@ public final class MetricsAccumulator
 		voucherResidentParticipationSum += voucherResidentParticipation(reform, world.contributionLedger().publicFinancingSourceShare());
 		publicFinancingShareSum += Values.clamp(
 				(0.72 * reform.publicFinancingStrength())
-						+ (0.28 * world.calibrationProfile().publicFinancingSourceShare(contest.issueDomain())),
+						+ (0.28 * world.calibratedPublicFinancingSourceShare(contest.issueDomain())),
 				0.0,
 				1.0
 		);
@@ -379,7 +379,7 @@ public final class MetricsAccumulator
 				network.procurementNetworkExposure(),
 				network.venueShiftNetworkLoad()
 		);
-		substitutionFailureRiskSum += substitutionFailureRisk(outcome, hiddenCaptureIndex, totalSpend, network.networkOpacityIndex(), network.venueShiftNetworkLoad());
+		substitutionRiskSum += substitutionRisk(outcome, hiddenCaptureIndex, totalSpend, network.networkOpacityIndex(), network.venueShiftNetworkLoad());
 		channelSwitchSum += outcome.influenceResult().channelSwitches();
 		evasionShiftSum += outcome.influenceResult().evasionShifts();
 		evasionPenaltySum += outcome.evasionPenalty();
@@ -432,7 +432,7 @@ public final class MetricsAccumulator
 				ratio(capturedContests, totalContests),
 				hiddenCaptureIndexSum / total,
 				totalInfluenceDistortionSum / total,
-				substitutionFailureRiskSum / total,
+				substitutionRiskSum / total,
 				captureIndexSum / total,
 				publicInterestSum / total,
 				publicPreferenceDistortionSum / total,

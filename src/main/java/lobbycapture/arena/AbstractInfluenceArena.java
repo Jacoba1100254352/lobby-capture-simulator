@@ -126,7 +126,7 @@ abstract class AbstractInfluenceArena implements InfluenceArena
 				? Values.clamp((0.42 * influence.networkSnapshot().procurementNetworkExposure())
 				               + (0.24 * influence.networkSnapshot().officialAccessCentrality())
 				               + (0.18 * influence.networkSnapshot().revolvingDoorBridgeIndex())
-				               + (0.16 * world.calibrationProfile().procurementBridgeRisk(contest.issueDomain()))
+				               + (0.16 * world.calibratedProcurementBridgeRisk(contest.issueDomain()))
 				               - (0.24 * reform.blindReviewStrength())
 				               - (0.18 * reform.enforcementStrength()), 0.0, 1.0)
 				: 0.0;

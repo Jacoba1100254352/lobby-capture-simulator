@@ -6,9 +6,11 @@ text { font-family: Helvetica, Arial, sans-serif; font-size: 34px; fill: #111; }
 .title { font-size: 46px; font-weight: 700; }
 .subtitle { font-size: 30px; fill: #444; }
 .small, .tick, .label { font-size: 28px; }
+.arch-title { font-size: 30px; font-weight: 700; }
 .axis { stroke: #111; stroke-width: 5; fill: none; }
 .grid { stroke: #d8d8d8; stroke-width: 3; fill: none; }
-.segment, .point, .legend-swatch { stroke: #111; stroke-width: 2; }
+.segment, .point, .legend-swatch, .arch-box { stroke: #111; stroke-width: 2; }
+.warning-zone { stroke: none; }
 .label-box { fill: #fff; stroke: #111; stroke-width: 2; }
 .leader { stroke: #333; stroke-width: 2; fill: none; stroke-dasharray: 8 8; }
 .threshold { stroke: #999; stroke-width: 4; fill: none; stroke-dasharray: 12 12; }
@@ -112,7 +114,7 @@ text { font-family: Helvetica, Arial, sans-serif; font-size: 34px; fill: #111; }
 <rect x="70" y="206" width="42" height="28" fill="#333333" class="legend-swatch"/>
 <text x="126" y="230" text-anchor="start" class="small">Dark</text>
 <rect x="475" y="206" width="42" height="28" fill="#1f4e79" class="legend-swatch"/>
-<text x="531" y="230" text-anchor="start" class="small">Door</text>
+<text x="531" y="230" text-anchor="start" class="small">Revolving door</text>
 <rect x="880" y="206" width="42" height="28" fill="#8c564b" class="legend-swatch"/>
 <text x="936" y="230" text-anchor="start" class="small">Intermediary</text>
 <rect x="1285" y="206" width="42" height="28" fill="#000000" class="legend-swatch"/>

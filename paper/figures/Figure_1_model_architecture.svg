@@ -1,0 +1,63 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1800px" height="1100px" viewBox="0 0 1800 1100" role="img">
+<title>Model architecture</title>
+<desc>Conceptual diagram showing funders and lobby organizations allocating budgets through influence channels into institutional arenas, with metrics and reform feedback.</desc>
+<style>
+text { font-family: Helvetica, Arial, sans-serif; font-size: 34px; fill: #111; }
+.title { font-size: 46px; font-weight: 700; }
+.subtitle { font-size: 30px; fill: #444; }
+.small, .tick, .label { font-size: 28px; }
+.arch-title { font-size: 30px; font-weight: 700; }
+.axis { stroke: #111; stroke-width: 5; fill: none; }
+.grid { stroke: #d8d8d8; stroke-width: 3; fill: none; }
+.segment, .point, .legend-swatch, .arch-box { stroke: #111; stroke-width: 2; }
+.warning-zone { stroke: none; }
+.label-box { fill: #fff; stroke: #111; stroke-width: 2; }
+.leader { stroke: #333; stroke-width: 2; fill: none; stroke-dasharray: 8 8; }
+.threshold { stroke: #999; stroke-width: 4; fill: none; stroke-dasharray: 12 12; }
+.series-primary { stroke: #111; stroke-width: 8; fill: none; }
+.series-secondary { stroke: #777; stroke-width: 8; fill: none; stroke-dasharray: 24 18; }
+</style>
+<rect width="100%" height="100%" fill="#fff"/>
+<text x="70" y="72" text-anchor="start" class="title">Model architecture</text>
+<text x="70" y="122" text-anchor="start" class="subtitle">Influence budgets, substitution, arena outcomes, and reform feedback</text>
+<rect x="90" y="250" width="260" height="155" fill="#f7f7f7" class="arch-box"/>
+<text x="220" y="298" text-anchor="middle" class="arch-title">Funders and clients</text>
+<text x="220" y="341" text-anchor="middle" class="small">Private gain, exposure,</text>
+<text x="220" y="375" text-anchor="middle" class="small">secrecy need</text>
+<rect x="430" y="250" width="260" height="155" fill="#f7f7f7" class="arch-box"/>
+<text x="560" y="298" text-anchor="middle" class="arch-title">Lobby organizations</text>
+<text x="560" y="341" text-anchor="middle" class="small">Budgets, skills,</text>
+<text x="560" y="375" text-anchor="middle" class="small">strategy memory</text>
+<rect x="770" y="250" width="260" height="155" fill="#f7f7f7" class="arch-box"/>
+<text x="900" y="298" text-anchor="middle" class="arch-title">Influence channels</text>
+<text x="900" y="341" text-anchor="middle" class="small">Access, finance, comments,</text>
+<text x="900" y="375" text-anchor="middle" class="small">intermediaries, litigation</text>
+<rect x="1110" y="250" width="260" height="155" fill="#f7f7f7" class="arch-box"/>
+<text x="1240" y="298" text-anchor="middle" class="arch-title">Institutional arenas</text>
+<text x="1240" y="341" text-anchor="middle" class="small">Elections, rulemaking,</text>
+<text x="1240" y="375" text-anchor="middle" class="small">procurement, enforcement</text>
+<rect x="1450" y="250" width="260" height="155" fill="#f7f7f7" class="arch-box"/>
+<text x="1580" y="298" text-anchor="middle" class="arch-title">Outcomes and metrics</text>
+<text x="1580" y="341" text-anchor="middle" class="small">Observed capture,</text>
+<text x="1580" y="375" text-anchor="middle" class="small">hidden capture,</text>
+<text x="1580" y="409" text-anchor="middle" class="small">total distortion</text>
+<line x1="350" y1="328" x2="430" y2="328" class="axis"/>
+<line x1="412" y1="314" x2="430" y2="328" class="axis"/>
+<line x1="412" y1="342" x2="430" y2="328" class="axis"/>
+<line x1="690" y1="328" x2="770" y2="328" class="axis"/>
+<line x1="752" y1="314" x2="770" y2="328" class="axis"/>
+<line x1="752" y1="342" x2="770" y2="328" class="axis"/>
+<line x1="1030" y1="328" x2="1110" y2="328" class="axis"/>
+<line x1="1092" y1="314" x2="1110" y2="328" class="axis"/>
+<line x1="1092" y1="342" x2="1110" y2="328" class="axis"/>
+<line x1="1370" y1="328" x2="1450" y2="328" class="axis"/>
+<line x1="1432" y1="314" x2="1450" y2="328" class="axis"/>
+<line x1="1432" y1="342" x2="1450" y2="328" class="axis"/>
+<rect x="380" y="590" width="1040" height="130" fill="#ffffff" class="arch-box"/>
+<text x="900" y="640" text-anchor="middle" class="arch-title">Reforms alter channel costs, visibility, enforcement, and participation capacity</text>
+<text x="900" y="687" text-anchor="middle" class="small">Substitution moves influence across messengers, venues, financing routes, and technical records</text>
+<line x1="1360" y1="405" x2="1360" y2="590" class="threshold"/>
+<line x1="1360" y1="590" x2="1420" y2="590" class="threshold"/>
+<line x1="550" y1="590" x2="550" y2="405" class="threshold"/>
+<line x1="550" y1="405" x2="690" y2="405" class="threshold"/>
+</svg>

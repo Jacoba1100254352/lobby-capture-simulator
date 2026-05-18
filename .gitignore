@@ -18,6 +18,8 @@ reports/*.md
 !reports/lobby-capture-interactions.md
 !reports/lobby-capture-portfolio.csv
 !reports/lobby-capture-portfolio.md
+!reports/lobby-capture-mechanism-comparison.csv
+!reports/lobby-capture-mechanism-comparison.md
 !reports/validation-summary.csv
 !reports/validation-summary.md
 !reports/substitution-audit.csv

@@ -80,6 +80,21 @@ public final class ScenarioCatalog
 			boolean adaptive,
 			List<PolicyContest> contests
 	) {
+		return scenario(key, name, description, reform, initialStrategy, evasionFreedom, adaptive, contests, true, false);
+	}
+
+	private static Scenario scenario(
+			String key,
+			String name,
+			String description,
+			ReformRegime reform,
+			InfluenceStrategy initialStrategy,
+			double evasionFreedom,
+			boolean adaptive,
+			List<PolicyContest> contests,
+			boolean substitutionEnabled,
+			boolean singleChannelVisibleLobbying
+	) {
 		CalibrationProfile calibration = calibration();
 		return new Scenario(
 				key,
@@ -102,7 +117,50 @@ public final class ScenarioCatalog
 						0.42,
 						0.34,
 						evasionFreedom,
-						adaptive
+						adaptive,
+						substitutionEnabled,
+						singleChannelVisibleLobbying
+				)
+		);
+	}
+
+	public static List<Scenario> mechanismComparison() {
+		return List.of(
+				scenario(
+						"comparison-visible-scalar",
+						"Single-channel visible lobbying",
+						"Conventional visible-channel baseline: direct and agenda access only, with substitution disabled.",
+						ReformRegime.fullBundle(),
+						InfluenceStrategy.DIRECT_ACCESS,
+						0.0,
+						false,
+						reformHeavyContests(),
+						false,
+						true
+				),
+				scenario(
+						"comparison-multichannel-no-substitution",
+						"Multi-channel without substitution",
+						"Multiple influence channels are available, but reform-triggered substitution and evasion switching are disabled.",
+						ReformRegime.fullBundle(),
+						InfluenceStrategy.BALANCED,
+						0.90,
+						false,
+						reformHeavyContests(),
+						false,
+						false
+				),
+				scenario(
+						"comparison-multichannel-substitution",
+						"Multi-channel with substitution",
+						"Multiple influence channels are available and reform-triggered substitution is enabled under high evasion freedom.",
+						ReformRegime.fullBundle(),
+						InfluenceStrategy.BALANCED,
+						0.90,
+						true,
+						reformHeavyContests(),
+						true,
+						false
 				)
 		);
 	}

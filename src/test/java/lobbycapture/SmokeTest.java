@@ -50,7 +50,7 @@ public final class SmokeTest
 		require(open.observedCaptureRate() == open.captureRate(), "observed capture should mirror binomial capture rate");
 		require(open.hiddenCaptureIndex() >= 0.0 && open.hiddenCaptureIndex() <= 1.0, "hidden capture should stay bounded");
 		require(open.totalInfluenceDistortion() >= 0.0 && open.totalInfluenceDistortion() <= 1.0, "total influence distortion should stay bounded");
-		require(open.substitutionFailureRisk() >= 0.0 && open.substitutionFailureRisk() <= 1.0, "substitution failure risk should stay bounded");
+		require(open.substitutionRisk() >= 0.0 && open.substitutionRisk() <= 1.0, "substitution risk should stay bounded");
 		require(open.enforcementCapacityIndex() >= 0.0 && open.enforcementCapacityIndex() <= 1.0, "enforcement capacity should stay bounded");
 		require(open.commentFloodingIndex() >= 0.0 && open.commentFloodingIndex() <= 1.0, "comment flooding should stay bounded");
 		require(open.technicalRulemakingDistortion() >= 0.0 && open.technicalRulemakingDistortion() <= 1.0, "technical rulemaking distortion should stay bounded");
@@ -70,7 +70,7 @@ public final class SmokeTest
 		require(evasion.darkMoneySpendShare() >= bundle.darkMoneySpendShare(), "evasion scenario should shift toward dark money");
 		require(evasion.evasionPenaltyRate() >= 0.0, "evasion penalty should stay non-negative");
 		require(intermediary.intermediarySpendShare() > 0.0, "intermediary scenario should route influence through intermediaries");
-		require(intermediary.substitutionFailureRisk() >= 0.0, "intermediary substitution risk should be reported");
+		require(intermediary.substitutionRisk() >= 0.0, "intermediary substitution risk should be reported");
 		require(sensitivity.size() == 20, "sensitivity runner should cover reform and evasion sweeps");
 		require(interactions.size() == 24, "interaction runner should cover two-way reform sweeps");
 		require(ablation.size() == 7, "ablation runner should cover baseline plus six removals");
@@ -107,7 +107,7 @@ public final class SmokeTest
 		String manifestText = Files.readString(manifest);
 		require(csvText.contains("commentUniqueInformationShare,commentReviewBurden,commentProceduralAckRate,commentSubstantiveUptake,commentCompressionRate,commentFloodingIndex"), csv + " should report comment triage state");
 		require(csvText.contains("darkMoneyTraceability,darkMoneyDirectVisibility,largeDonorDependence,voucherParticipation,voucherResidentParticipation,publicFinancingShare,publicFinancingCandidateUptake"), csv + " should report split source-state metrics");
-		require(csvText.contains("observedCaptureRate,hiddenCaptureIndex,totalInfluenceDistortion,substitutionFailureRisk"), csv + " should report capture and distortion splits");
+		require(csvText.contains("observedCaptureRate,hiddenCaptureIndex,totalInfluenceDistortion,substitutionRisk"), csv + " should report capture and distortion splits");
 		require(csvText.contains("visibleLobbyingSpendShare,directAccessShare,agendaAccessShare,informationDistortionShare,publicCampaignShare,litigationThreatShare,campaignFinanceShare,darkMoneyShare,revolvingDoorShare,intermediaryShare"), csv + " should report visible and intermediary spend state");
 		require(csvText.contains("substitutionPressure,influencePreservationRate,hiddenInfluenceShare,netTransparencyGain,messengerSubstitutionRate,venueSubstitutionRate"), csv + " should report substitution state");
 		require(csvText.contains("networkOpacityIndex,donorNetworkConcentration,intermediaryCentrality,officialAccessCentrality,procurementNetworkExposure,revolvingDoorBridgeIndex,commentNetworkLoad,venueShiftNetworkLoad,networkLegibilityIndex,crossVenueDetectionIndex,participationProtectionIndex,speechRestrictionRisk"), csv + " should report influence-network and civil-liberties state");

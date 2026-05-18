@@ -53,7 +53,7 @@ public final class PortfolioRunner
 			       .append(" | ").append(CsvReportWriter.format(designLoss(report)))
 			       .append(" | ").append(CsvReportWriter.format(report.totalInfluenceDistortion()))
 			       .append(" | ").append(CsvReportWriter.format(report.hiddenCaptureIndex()))
-			       .append(" | ").append(CsvReportWriter.format(report.substitutionFailureRisk()))
+			       .append(" | ").append(CsvReportWriter.format(report.substitutionRisk()))
 			       .append(" | ").append(CsvReportWriter.format(report.administrativeCostIndex()))
 			       .append(" | ").append(CsvReportWriter.format(report.networkOpacityIndex()))
 			       .append(" | ").append(CsvReportWriter.format(report.crossVenueDetectionIndex()))
@@ -68,7 +68,7 @@ public final class PortfolioRunner
 		return Math.max(0.0,
 		                (0.30 * report.totalInfluenceDistortion())
 				                + (0.20 * report.hiddenCaptureIndex())
-				                + (0.16 * report.substitutionFailureRisk())
+				                + (0.16 * report.substitutionRisk())
 				                + (0.10 * report.administrativeCostIndex())
 				                + (0.09 * report.networkOpacityIndex())
 				                + (0.07 * report.legitimateAdvocacyChillRate())

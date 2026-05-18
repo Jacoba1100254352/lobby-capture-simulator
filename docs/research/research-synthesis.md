@@ -36,7 +36,7 @@ The source-data plan should use direct observed sources where possible and keep 
 4. Add substitution metrics to every report: pressure to switch, hidden influence, influence preserved, messenger substitution, venue substitution, and net transparency change.
 5. Use a closed 2024 EPA/ENV snapshot as the first paper-grade validation slice before adding health, transportation, or multi-agency panels.
 6. Reframe the paper around stages and channels: capture theory, influence mechanisms, institutional arenas, reforms/enforcement, simulation, calibration, and institutional design.
-7. Treat any reform that lowers observed capture while raising hidden influence, hidden capture, total distortion, or substitution-failure risk as a possible failure; classify pure channel movement without higher distortion as a substitution tradeoff.
+7. Treat any reform that lowers observed capture while raising total distortion as a distortion failure; classify hidden-influence, hidden-capture, or substitution-risk increases as warnings, and pure channel movement without higher distortion as a channel-shift tradeoff.
 8. Add portfolio metrics for cross-venue detection, participation protection, speech-restriction risk, legitimate-advocacy chill, and administrative burden.
 9. Build the next validation bridge from outside spending, nonprofit/intermediary records, SAM/FPDS procurement records, FACA/witness access records, and a documented revolving-door source panel.
 

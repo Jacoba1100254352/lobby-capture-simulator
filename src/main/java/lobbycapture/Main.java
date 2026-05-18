@@ -59,6 +59,12 @@ public final class Main
 			System.out.println("Wrote reports/lobby-capture-portfolio.md");
 			return;
 		}
+		if (options.mechanismComparison) {
+			new MechanismComparisonRunner().write(Path.of("reports"), options.runs, options.contests, options.seed);
+			System.out.println("Wrote reports/lobby-capture-mechanism-comparison.csv");
+			System.out.println("Wrote reports/lobby-capture-mechanism-comparison.md");
+			return;
+		}
 		Scenario scenario = ScenarioCatalog.require(options.scenarioKey);
 		ScenarioReport report = new Simulator().run(scenario, options.runs, options.contests, options.seed);
 		printSummary(report);
@@ -72,7 +78,7 @@ public final class Main
 		System.out.println("observedCaptureRate=" + format(report.observedCaptureRate()));
 		System.out.println("hiddenCaptureIndex=" + format(report.hiddenCaptureIndex()));
 		System.out.println("totalInfluenceDistortion=" + format(report.totalInfluenceDistortion()));
-		System.out.println("substitutionFailureRisk=" + format(report.substitutionFailureRisk()));
+		System.out.println("substitutionRisk=" + format(report.substitutionRisk()));
 		System.out.println("antiCaptureSuccessRate=" + format(report.antiCaptureSuccessRate()));
 		System.out.println("visibleLobbyingSpendShare=" + format(report.visibleLobbyingSpendShare()));
 		System.out.println("intermediarySpendShare=" + format(report.intermediarySpendShare()));
@@ -113,6 +119,7 @@ public final class Main
 				                     make ablation
 				                     make interactions
 				                     make portfolio
+				                     make mechanism-comparison
 				                   
 				                   Options:
 				                     --list                 List scenarios.
@@ -125,6 +132,7 @@ public final class Main
 				                     --ablation             Remove each full-bundle reform component in turn.
 				                     --interactions         Run two-way reform interaction sweeps.
 				                     --portfolio            Rank reform portfolios by total distortion and substitution diagnostics.
+				                     --mechanism-comparison Compare single-channel, multi-channel, and substitution-enabled model modes.
 				                     --help                 Show this help.
 				                   """);
 	}
@@ -144,6 +152,7 @@ public final class Main
 			boolean ablation,
 			boolean interactions,
 			boolean portfolio,
+			boolean mechanismComparison,
 			boolean help
 	)
 	{
@@ -158,6 +167,7 @@ public final class Main
 			boolean ablation = false;
 			boolean interactions = false;
 			boolean portfolio = false;
+			boolean mechanismComparison = false;
 			boolean help = false;
 			List<String> arguments = List.of(args);
 			for (int index = 0; index < arguments.size(); index++) {
@@ -173,6 +183,7 @@ public final class Main
 					case "--ablation" -> ablation = true;
 					case "--interactions" -> interactions = true;
 					case "--portfolio" -> portfolio = true;
+					case "--mechanism-comparison" -> mechanismComparison = true;
 					case "--help", "-h" -> help = true;
 					default -> throw new IllegalArgumentException("Unknown argument: " + arg);
 				}
@@ -180,7 +191,7 @@ public final class Main
 			if (runs <= 0 || contests <= 0) {
 				throw new IllegalArgumentException("--runs and --contests must be positive.");
 			}
-			return new Options(scenario, runs, contests, seed, list, campaign, sensitivity, ablation, interactions, portfolio, help);
+			return new Options(scenario, runs, contests, seed, list, campaign, sensitivity, ablation, interactions, portfolio, mechanismComparison, help);
 		}
 		
 		private static String requireValue(List<String> arguments, int index, String option) {

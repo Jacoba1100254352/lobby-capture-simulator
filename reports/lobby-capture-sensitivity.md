@@ -7,7 +7,7 @@
 
 ## Scenario Summary
 
-| Scenario | Total distortion | Observed capture | Capture 95% CI | Hidden capture | Substitution risk | Hidden influence | Intermediary share | Defensive spend | Comment flood | Enforcement capacity | Admin cost |
+| Scenario | Total distortion | Observed capture | Capture Wilson diag. | Hidden capture | Substitution risk | Hidden influence | Intermediary share | Defensive spend | Comment flood | Enforcement capacity | Admin cost |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
 | Sensitivity evasion 0.00 | 0.1285 | 0.0295 | [0.0231, 0.0377] | 0.0410 | 0.1109 | 0.0296 | 0.1360 | 0.5198 | 0.2193 | 0.4921 | 0.4948 |
 | Sensitivity disclosure 1.25 | 0.1539 | 0.0571 | [0.0480, 0.0679] | 0.0736 | 0.1599 | 0.1474 | 0.1362 | 0.5109 | 0.2181 | 0.4943 | 0.6157 |
@@ -46,7 +46,7 @@ Network diagnostics summarize modeled funder-to-lobby-to-intermediary-to-officia
 
 - Lowest total distortion: `Sensitivity evasion 0.00` at `0.1285`.
 - Highest capture rate: `Sensitivity disclosure 0.10` at `0.6381`.
-- Highest substitution failure risk: `Sensitivity evasion 0.90` at `0.3436`.
+- Highest substitution risk: `Sensitivity evasion 0.90` at `0.3436`.
 
 ## Interpretation Guardrail
 

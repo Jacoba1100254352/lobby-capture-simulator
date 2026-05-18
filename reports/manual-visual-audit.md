@@ -4,7 +4,7 @@ This report complements the scripted layout audit. Figure rows check generated S
 
 ## Current Automated Layout Summary
 
-- Pages checked: `33`
+- Pages checked: `36`
 - Failures: `0`
 
 ## Figure Checks
@@ -14,8 +14,9 @@ This report complements the scripted layout audit. Figure rows check generated S
 | `channel_mix.tex` | n/a | n/a | n/a | scripted pass | layout pass | no point-callout labels in this figure |
 | `evasion_sensitivity.tex` | scripted pass | scripted pass | scripted pass | scripted pass | layout pass | 2 label boxes; 2 leader lines |
 | `interaction_tradeoffs.tex` | scripted pass | scripted pass | scripted pass | scripted pass | layout pass | 4 label boxes; 4 leader lines |
+| `model_architecture.tex` | n/a | n/a | n/a | scripted pass | layout pass | no point-callout labels in this figure |
 | `scenario_tradeoffs.tex` | scripted pass | scripted pass | scripted pass | scripted pass | layout pass | 12 label boxes; 12 leader lines |
-| `substitution_failure_map.tex` | scripted pass | scripted pass | scripted pass | scripted pass | layout pass | 10 label boxes; 10 leader lines |
+| `substitution_warning_map.tex` | scripted pass | scripted pass | scripted pass | scripted pass | layout pass | 10 label boxes; 10 leader lines |
 
 ## Table Checks
 
@@ -24,9 +25,10 @@ This report complements the scripted layout audit. Figure rows check generated S
 | `ablation_snapshot.tex` | layout pass | layout pass | layout pass | layout pass |  |
 | `campaign_snapshot.tex` | layout pass | layout pass | layout pass | layout pass |  |
 | `interaction_snapshot.tex` | layout pass | layout pass | layout pass | layout pass |  |
+| `mechanism_comparison.tex` | layout pass | layout pass | layout pass | layout pass |  |
 | `portfolio_snapshot.tex` | layout pass | layout pass | layout pass | layout pass |  |
 | `sensitivity_snapshot.tex` | layout pass | layout pass | layout pass | layout pass |  |
-| `substitution_failure_ranking.tex` | layout pass | layout pass | layout pass | layout pass |  |
+| `substitution_warning_ranking.tex` | layout pass | layout pass | layout pass | layout pass |  |
 | `validation_gap_snapshot.tex` | layout pass | layout pass | layout pass | layout pass |  |
 
 ## Review Standard

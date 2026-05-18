@@ -96,7 +96,7 @@ public final class InfluenceNetworkModel
 				base
 						+ (0.22 * group.disclosureAvoidanceSkill())
 						+ (0.18 * world.evasionFreedom())
-						+ (channel == InfluenceChannel.INTERMEDIARY ? 0.12 * world.calibrationProfile().intermediaryOpacity(contest.issueDomain()) : 0.0)
+						+ (channel == InfluenceChannel.INTERMEDIARY ? 0.12 * world.calibratedIntermediaryOpacity(contest.issueDomain()) : 0.0)
 						- (0.28 * reform.transparencyStrength())
 						- (0.10 * reform.contactLogCoverage())
 						- (0.08 * reform.darkMoneyDisclosureStrength())
@@ -131,7 +131,7 @@ public final class InfluenceNetworkModel
 		return Values.clamp(
 				channelPressure
 						+ (0.16 * group.researchBudget() / Math.max(1.0, group.totalBudget()))
-						+ (0.14 * world.calibrationProfile().intermediaryPoliticalPressure(contest.issueDomain())),
+						+ (0.14 * world.calibratedIntermediaryPoliticalPressure(contest.issueDomain())),
 				0.0,
 				1.0
 		);
@@ -168,7 +168,7 @@ public final class InfluenceNetworkModel
 				domainPressure
 						+ channelPressure
 						+ (0.18 * group.preferenceFor("procurement"))
-						+ (0.16 * world.calibrationProfile().procurementBridgeRisk(contest.issueDomain()))
+						+ (0.16 * world.calibratedProcurementBridgeRisk(contest.issueDomain()))
 						- (0.24 * reform.blindReviewStrength()),
 				0.0,
 				1.0
@@ -186,7 +186,7 @@ public final class InfluenceNetworkModel
 		return Values.clamp(
 				channelPressure
 						+ (0.36 * group.revolvingDoorNetworkStrength())
-						+ (0.14 * world.calibrationProfile().revolvingDoorSourcePressure(group.sector()))
+						+ (0.14 * world.calibratedRevolvingDoorSourcePressure(group.sector()))
 						+ (0.12 * world.evasionProfile().revolvingDoorPlacementShift())
 						- (0.34 * reform.coolingOffStrength()),
 				0.0,

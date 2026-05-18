@@ -3,7 +3,6 @@ package lobbycapture.budget;
 
 import lobbycapture.actor.InterestClient;
 import lobbycapture.actor.LobbyOrganization;
-import lobbycapture.calibration.CalibrationProfile;
 import lobbycapture.policy.PolicyContest;
 import lobbycapture.simulation.WorldState;
 import lobbycapture.util.Values;
@@ -35,11 +34,10 @@ public final class ClientFundingModel
 	
 	private static double traceabilityFor(
 			FundingSource source,
-			CalibrationProfile calibration,
 			String issueDomain,
 			WorldState world
 	) {
-		double baseline = calibration.averageTraceability(issueDomain);
+		double baseline = world.calibratedAverageTraceability(issueDomain);
 		if (source == FundingSource.DARK_MONEY) {
 			return Values.clamp((0.45 * baseline) + (0.55 * world.reformRegime().darkMoneyDisclosureStrength())
 					                    - (0.35 * world.evasionProfile().opacity()), 0.0, 1.0);
@@ -49,13 +47,12 @@ public final class ClientFundingModel
 	
 	private static double largeDonorDependenceFor(
 			FundingSource source,
-			CalibrationProfile calibration,
 			String issueDomain,
 			WorldState world
 	) {
 		double baseline = Values.clamp(
-				(0.62 * calibration.largeDonorShare(issueDomain))
-						+ (0.38 * calibration.donorConcentrationIndex(issueDomain)),
+				(0.62 * world.calibratedLargeDonorShare(issueDomain))
+						+ (0.38 * world.calibratedDonorConcentrationIndex(issueDomain)),
 				0.0,
 				1.0
 		);
@@ -82,8 +79,7 @@ public final class ClientFundingModel
 				if (preference <= 0.000001 || !client.sector().equals(lobby.sector())) {
 					continue;
 				}
-				CalibrationProfile calibration = world.calibrationProfile();
-				double issueScale = calibration.issueFundingScale(contest.issueDomain());
+				double issueScale = world.calibratedIssueFundingScale(contest.issueDomain());
 				double reformThreat = contest.antiCaptureReform()
 						? 0.45 + (0.55 * lobby.reformThreatSensitivity())
 						: 0.0;
@@ -101,10 +97,10 @@ public final class ClientFundingModel
 					continue;
 				}
 				FundingSource source = fundingSource(client, world);
-				double traceability = traceabilityFor(source, calibration, contest.issueDomain(), world);
-				double largeDonorDependence = largeDonorDependenceFor(source, calibration, contest.issueDomain(), world);
+				double traceability = traceabilityFor(source, contest.issueDomain(), world);
+				double largeDonorDependence = largeDonorDependenceFor(source, contest.issueDomain(), world);
 				double disclosureLag = Values.clamp(
-						(0.70 * calibration.disclosureLag(contest.issueDomain()))
+						(0.70 * world.calibratedDisclosureLag(contest.issueDomain()))
 								+ (0.30 * world.evasionProfile().disclosureLag())
 								- (0.10 * world.reformRegime().realTimeDisclosure()),
 						0.0,

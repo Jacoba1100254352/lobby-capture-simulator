@@ -1,32 +1,87 @@
 {
   "tables": [
     {
+      "output": "mechanism_comparison.tex",
+      "source": "lobby-capture-mechanism-comparison.csv",
+      "label": "tab:mechanism-comparison",
+      "caption": "Model-mode comparison for the same reform family. The comparison separates a visible single-channel baseline, a multi-channel model with substitution disabled, and the substitution-enabled model so the mechanism demonstration is not presented as an empirical treatment-effect estimate.",
+      "size": "scriptsize",
+      "environment": "table*",
+      "width": "\\textwidth",
+      "tabcolsep": "1.5pt",
+      "rows": [
+        "comparison-visible-scalar",
+        "comparison-multichannel-no-substitution",
+        "comparison-multichannel-substitution"
+      ],
+      "columns": [
+        {
+          "header": "Model",
+          "source": "scenarioName",
+          "format": "label",
+          "labels": {
+            "Single-channel visible lobbying": "Visible scalar",
+            "Multi-channel without substitution": "Multi-channel/no substitution",
+            "Multi-channel with substitution": "Multi-channel/substitution"
+          }
+        },
+        {
+          "header": "Cap.",
+          "source": "observedCaptureRate",
+          "format": "float3"
+        },
+        {
+          "header": "C SD",
+          "source": "captureRateSeedStdDev",
+          "format": "float3"
+        },
+        {
+          "header": "Hidden",
+          "source": "hiddenInfluenceShare",
+          "format": "float3"
+        },
+        {
+          "header": "H SD",
+          "source": "hiddenInfluenceSeedStdDev",
+          "format": "float3"
+        },
+        {
+          "header": "H cap.",
+          "source": "hiddenCaptureIndex",
+          "format": "float3"
+        },
+        {
+          "header": "Dist.",
+          "source": "totalInfluenceDistortion",
+          "format": "float3"
+        },
+        {
+          "header": "D SD",
+          "source": "totalInfluenceDistortionSeedStdDev",
+          "format": "float3"
+        },
+        {
+          "header": "Subst. risk",
+          "source": "substitutionRisk",
+          "format": "float3"
+        }
+      ]
+    },
+    {
       "output": "campaign_snapshot.tex",
       "source": "lobby-capture-campaign.csv",
       "label": "tab:first-campaign",
-      "caption": "Current simulation snapshot. Metrics are comparative model outputs, not calibrated empirical estimates. Observed capture is reported with hidden capture, total distortion, and substitution risk so lower measured capture is not treated as sufficient reform success.",
+      "caption": "Selected campaign snapshot. Metrics are comparative model outputs, not calibrated empirical estimates. The full generated campaign report remains in the repository; the main table keeps representative baseline, dark-money, intermediary, public-finance, venue-detection, and reform-bundle rows.",
       "size": "footnotesize",
       "environment": "table*",
       "width": "\\textwidth",
       "rows": [
         "open-access-lobbying",
         "budgeted-disclosed-lobbying",
-        "campaign-finance-dominant",
         "dark-money-dominant",
-        "revolving-door-dominant",
         "intermediary-substitution",
-        "comment-authenticity-rules",
-        "procurement-firewalls",
-        "hard-budget-substitution-stress",
-        "shadow-lobbying-maximum-stress",
-        "visible-ban-dark-money-leakage",
-        "opaque-network-substitution-frontier",
-        "meeting-log-intermediary-leakage",
-        "procurement-modification-capture-frontier",
         "public-finance-dark-money-frontier",
-        "public-finance-outside-spending-leakage",
         "venue-shifting-detection",
-        "reform-threat-mobilization",
         "full-anti-capture-bundle",
         "bundle-with-evasion"
       ],
@@ -60,42 +115,39 @@
           }
         },
         {
-          "header": "Captured",
-          "source": "capturedContests",
-          "denominatorSource": "totalContests",
-          "format": "count-ratio"
+          "header": "Capture",
+          "source": "observedCaptureRate",
+          "format": "float3"
         },
         {
-          "header": "Capture (95% CI)",
-          "source": "captureRate",
-          "lowerSource": "captureRateLower95",
-          "upperSource": "captureRateUpper95",
-          "format": "float3ci"
+          "header": "Cap. SD",
+          "source": "captureRateSeedStdDev",
+          "format": "float3"
         },
         {
           "header": "Hidden cap.",
           "source": "hiddenCaptureIndex",
-          "format": "float4"
+          "format": "float3"
         },
         {
           "header": "Total dist.",
           "source": "totalInfluenceDistortion",
-          "format": "float4"
+          "format": "float3"
+        },
+        {
+          "header": "Dist. SD",
+          "source": "totalInfluenceDistortionSeedStdDev",
+          "format": "float3"
         },
         {
           "header": "Subst. risk",
-          "source": "substitutionFailureRisk",
-          "format": "float4"
+          "source": "substitutionRisk",
+          "format": "float3"
         },
         {
-          "header": "Intermed.",
-          "source": "intermediaryShare",
-          "format": "float4"
-        },
-        {
-          "header": "Defensive",
-          "source": "defensiveReformSpendShare",
-          "format": "float4"
+          "header": "Hidden infl.",
+          "source": "hiddenInfluenceShare",
+          "format": "float3"
         }
       ]
     },
@@ -132,11 +184,14 @@
           }
         },
         {
-          "header": "Capture (95% CI)",
-          "source": "captureRate",
-          "lowerSource": "captureRateLower95",
-          "upperSource": "captureRateUpper95",
-          "format": "float3ci"
+          "header": "Capture",
+          "source": "observedCaptureRate",
+          "format": "float3"
+        },
+        {
+          "header": "Cap. SD",
+          "source": "captureRateSeedStdDev",
+          "format": "float3"
         },
         {
           "header": "Total dist.",
@@ -150,7 +205,7 @@
         },
         {
           "header": "Subst. risk",
-          "source": "substitutionFailureRisk",
+          "source": "substitutionRisk",
           "format": "float4"
         },
         {
@@ -161,20 +216,23 @@
       ]
     },
     {
-      "output": "substitution_failure_ranking.tex",
+      "output": "substitution_warning_ranking.tex",
       "source": "substitution-audit.csv",
-      "label": "tab:substitution-failures",
-      "caption": "Substitution-failure ranking from the validation audit. Rows are flagged when visible or observed capture improves relative to the comparison row while hidden influence, hidden capture, total distortion, or substitution risk worsens. Failure severity is a diagnostic sum of apparent visible improvement and adverse hidden/distortion deltas; design loss is a synthetic lower-is-better portfolio criterion.",
+      "label": "tab:substitution-warnings",
+      "caption": "Substitution-warning ranking from the validation audit. Rows are flagged when observed capture falls or visible lobbying falls relative to the comparison row while total distortion, hidden capture, hidden influence, or substitution risk worsens. Warning score is a diagnostic sum of apparent visible improvement and adverse hidden/distortion deltas; design loss is an illustrative lower-is-better criterion.",
       "size": "scriptsize",
       "environment": "table*",
       "width": "\\textwidth",
       "tabcolsep": "1.5pt",
-      "rowMode": "substitution-failure-top",
+      "rowMode": "substitution-warning-top",
       "statuses": [
-        "possible_failure",
-        "worse_total_distortion"
+        "distortion_failure",
+        "worse_total_distortion",
+        "hidden_capture_warning",
+        "hidden_influence_warning",
+        "substitution_warning"
       ],
-      "sortSource": "failureSeverity",
+      "sortSource": "warningScore",
       "limit": 8,
       "columns": [
         {
@@ -186,7 +244,8 @@
             "lobby-capture-sensitivity.csv": "Sensitivity",
             "lobby-capture-ablation.csv": "Ablation",
             "lobby-capture-interactions.csv": "Interaction",
-            "lobby-capture-portfolio.csv": "Portfolio"
+            "lobby-capture-portfolio.csv": "Portfolio",
+            "lobby-capture-mechanism-comparison.csv": "Mechanism"
           }
         },
         {
@@ -198,6 +257,7 @@
             "Shadow lobbying maximum stress": "Shadow max",
             "Hard-budget substitution stress": "Budget cap stress",
             "Visible lobbying ban with dark-money leakage": "Ban+DM leakage",
+            "Procurement modification capture frontier": "Proc. mods",
             "Meeting-log intermediary leakage": "Meeting-log leak",
             "Public-finance outside-spending leakage": "Public finance/IE",
             "Comment-authenticity technical substitution": "Comment tech subst.",
@@ -208,7 +268,9 @@
             "Sensitivity evasion 0.90": "Evasion 0.90",
             "Full anti-capture bundle": "Full bundle",
             "Advisory lobbying substitution": "Advisory subst.",
-            "Venue-shifting detection": "Venue detection"
+            "Venue-shifting detection": "Venue detection",
+            "Multi-channel with substitution": "Multi-channel/substitution",
+            "Multi-channel without substitution": "Multi-channel/no substitution"
           }
         },
         {
@@ -216,13 +278,16 @@
           "source": "status",
           "format": "label",
           "labels": {
-            "possible_failure": "possible fail",
-            "worse_total_distortion": "worse dist."
+            "distortion_failure": "distortion fail",
+            "worse_total_distortion": "worse dist.",
+            "hidden_capture_warning": "hidden cap.",
+            "hidden_influence_warning": "hidden infl.",
+            "substitution_warning": "subst. warn."
           }
         },
         {
-          "header": "Severity",
-          "source": "failureSeverity",
+          "header": "Warn. score",
+          "source": "warningScore",
           "format": "float3"
         },
         {
@@ -247,7 +312,7 @@
         },
         {
           "header": "Risk delta",
-          "source": "substitutionFailureRiskDelta",
+          "source": "substitutionRiskDelta",
           "format": "signed4"
         }
       ]
@@ -278,8 +343,44 @@
           }
         },
         {
+          "header": "Mechanism",
+          "source": "mechanism",
+          "format": "label",
+          "labels": {
+            "Opaque donor routing and hidden electoral influence": "Opaque donor routing",
+            "Independent expenditure pressure outside candidate finance": "Independent expenditures",
+            "Countervailing campaign finance and voucher/matching funds": "Public financing",
+            "Association, nonprofit, think-tank, and campaign-intermediary capacity": "Intermediaries",
+            "Post-government access, covered-position links, and cooling-off exposure": "Revolving door",
+            "Vendor and award-path matching for procurement influence": "Procurement matching",
+            "Post-award modification and specification-change pressure": "Post-award pressure"
+          }
+        },
+        {
+          "header": "Evidence",
+          "source": "evidenceClass",
+          "format": "label",
+          "labels": {
+            "proxy/thin": "proxy/thin",
+            "direct": "direct",
+            "direct when present": "direct if present",
+            "proxy": "proxy",
+            "direct identifier coverage": "direct IDs"
+          }
+        },
+        {
           "header": "Moment",
-          "source": "metric"
+          "source": "metric",
+          "format": "label",
+          "labels": {
+            "darkMoneySourceShare": "DM source share",
+            "outsideSpendingRows": "IE rows",
+            "publicFinancingSourceShare": "PF source share",
+            "intermediaryRows": "Intermediary rows",
+            "revolvingDoorRows": "RD rows",
+            "procurementKnownPiidShare": "Known PIID share",
+            "procurementExPostModificationShare": "Ex-post mod. share"
+          }
         },
         {
           "header": "Snapshot",
@@ -329,12 +430,12 @@
           }
         },
         {
-          "header": "Dist. increase",
+          "header": "Total-dist. change",
           "source": "totalInfluenceDistortion",
           "format": "delta4"
         },
         {
-          "header": "Cap. inc.",
+          "header": "Capture change",
           "source": "observedCaptureRate",
           "format": "delta4"
         },
@@ -345,7 +446,7 @@
         },
         {
           "header": "Subst. risk",
-          "source": "substitutionFailureRisk",
+          "source": "substitutionRisk",
           "format": "float4"
         },
         {
@@ -408,7 +509,7 @@
         },
         {
           "header": "Subst.",
-          "source": "substitutionFailureRisk",
+          "source": "substitutionRisk",
           "format": "float3"
         },
         {
@@ -437,7 +538,7 @@
       "output": "interaction_snapshot.tex",
       "source": "lobby-capture-interactions.csv",
       "label": "tab:interactions",
-      "caption": "Selected reform-interaction rows under the stressed contest mix. The table reports capture with Wilson intervals alongside total-distortion and substitution diagnostics.",
+      "caption": "Selected reform-interaction rows under the stressed contest mix. The table reports run-level capture and total-distortion diagnostics instead of treating contest-level binomial intervals as empirical precision.",
       "size": "scriptsize",
       "environment": "table*",
       "width": "\\textwidth",
@@ -460,11 +561,14 @@
           }
         },
         {
-          "header": "Cap. (95% CI)",
-          "source": "captureRate",
-          "lowerSource": "captureRateLower95",
-          "upperSource": "captureRateUpper95",
-          "format": "float3ci"
+          "header": "Capture",
+          "source": "observedCaptureRate",
+          "format": "float3"
+        },
+        {
+          "header": "Cap. SD",
+          "source": "captureRateSeedStdDev",
+          "format": "float3"
         },
         {
           "header": "Dist.",
@@ -478,7 +582,7 @@
         },
         {
           "header": "Risk",
-          "source": "substitutionFailureRisk",
+          "source": "substitutionRisk",
           "format": "float3"
         },
         {

@@ -28,7 +28,9 @@ public record WorldSpec(
 		double pressurePerSpend,
 		double publicCampaignEffect,
 		double evasionFreedom,
-		boolean adaptiveStrategies
+		boolean adaptiveStrategies,
+		boolean substitutionEnabled,
+		boolean singleChannelVisibleLobbying
 )
 {
 	public WorldSpec {

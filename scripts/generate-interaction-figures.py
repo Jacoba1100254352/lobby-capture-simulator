@@ -59,7 +59,7 @@ CHANNELS = [
     ("publicCampaignShare", "Public", "#808080"),
     ("campaignFinanceShare", "Campaign", "#595959"),
     ("darkMoneyShare", "Dark", "#333333"),
-    ("revolvingDoorShare", "Door", "#1f4e79"),
+    ("revolvingDoorShare", "Revolving door", "#1f4e79"),
     ("intermediaryShare", "Intermediary", "#8c564b"),
     ("defensiveChannelShare", "Defense", "#000000"),
 ]
@@ -72,11 +72,12 @@ EVASION_ROWS = [
 ]
 
 FIGURES = (
+    "model_architecture.tex",
     "channel_mix.tex",
     "evasion_sensitivity.tex",
     "interaction_tradeoffs.tex",
     "scenario_tradeoffs.tex",
-    "substitution_failure_map.tex",
+    "substitution_warning_map.tex",
 )
 
 
@@ -103,11 +104,12 @@ def main() -> int:
     sensitivity_rows = index_rows(read_rows(args.sensitivity_report))
     substitution_rows = read_rows(args.substitution_report)
 
+    write_model_architecture(args.figure_dir)
     write_channel_mix(campaign_rows, args.campaign_report, args.figure_dir)
     write_evasion_sensitivity(sensitivity_rows, args.sensitivity_report, args.figure_dir)
     write_interaction_tradeoffs(interaction_rows, args.interaction_report, args.figure_dir)
     write_scenario_tradeoffs(campaign_rows, args.campaign_report, args.figure_dir)
-    write_substitution_failure_map(substitution_rows, args.substitution_report, args.figure_dir)
+    write_substitution_warning_map(substitution_rows, args.substitution_report, args.figure_dir)
 
     for name in FIGURES:
         print(f"Wrote {args.figure_dir / name}")
@@ -127,6 +129,55 @@ def require_rows(indexed: dict[str, dict[str, str]], keys: list[str]) -> None:
     missing = [key for key in keys if key not in indexed]
     if missing:
         raise SystemExit("Missing figure rows: " + ", ".join(missing))
+
+
+def write_model_architecture(figure_dir: Path) -> None:
+    body: list[str] = []
+    body.extend(title_block("Model architecture", "Influence budgets, substitution, arena outcomes, and reform feedback"))
+    boxes = [
+        ("Funders and clients", 90, 250, "Private gain, exposure,\nsecrecy need"),
+        ("Lobby organizations", 430, 250, "Budgets, skills,\nstrategy memory"),
+        ("Influence channels", 770, 250, "Access, finance, comments,\nintermediaries, litigation"),
+        ("Institutional arenas", 1110, 250, "Elections, rulemaking,\nprocurement, enforcement"),
+        ("Outcomes and metrics", 1450, 250, "Observed capture,\nhidden capture,\ntotal distortion"),
+    ]
+    for title, x, y, detail in boxes:
+        body.append(rect(x, y, 260, 155, "#f7f7f7", "arch-box"))
+        body.append(text(x + 130, y + 48, title, anchor="middle", css_class="arch-title"))
+        for line_index, line_text in enumerate(detail.split("\n")):
+            body.append(text(x + 130, y + 91 + line_index * 34, line_text, anchor="middle", css_class="small"))
+    for x1, y1, x2, y2 in [
+        (350, 328, 430, 328),
+        (690, 328, 770, 328),
+        (1030, 328, 1110, 328),
+        (1370, 328, 1450, 328),
+    ]:
+        body.append(line(x1, y1, x2, y2, "axis"))
+        body.append(line(x2 - 18, y2 - 14, x2, y2, "axis"))
+        body.append(line(x2 - 18, y2 + 14, x2, y2, "axis"))
+
+    body.append(rect(380, 590, 1040, 130, "#ffffff", "arch-box"))
+    body.append(text(900, 640, "Reforms alter channel costs, visibility, enforcement, and participation capacity", anchor="middle", css_class="arch-title"))
+    body.append(text(900, 687, "Substitution moves influence across messengers, venues, financing routes, and technical records", anchor="middle", css_class="small"))
+    body.append(line(1360, 405, 1360, 590, "threshold"))
+    body.append(line(1360, 590, 1420, 590, "threshold"))
+    body.append(line(550, 590, 550, 405, "threshold"))
+    body.append(line(550, 405, 690, 405, "threshold"))
+
+    write_svg_and_pdf(
+        figure_dir,
+        "Figure_1_model_architecture",
+        "Model architecture",
+        "Conceptual diagram showing funders and lobby organizations allocating budgets through influence channels into institutional arenas, with metrics and reform feedback.",
+        body,
+    )
+    write_wrapper(
+        figure_dir / "model_architecture.tex",
+        "Figure_1_model_architecture.pdf",
+        Path("src/main/java/lobbycapture"),
+        "Model architecture. Funders replenish lobby budgets, lobby organizations allocate spending across visible and hidden channels, arenas resolve contests, and outcome metrics plus enforcement feed back into later strategy.",
+        "fig:model-architecture",
+    )
 
 
 def write_channel_mix(indexed: dict[str, dict[str, str]], report: Path, figure_dir: Path) -> None:
@@ -320,12 +371,18 @@ def write_scenario_tradeoffs(indexed: dict[str, dict[str, str]], report: Path, f
     )
 
 
-def write_substitution_failure_map(rows: list[dict[str, str]], report: Path, figure_dir: Path) -> None:
+def write_substitution_warning_map(rows: list[dict[str, str]], report: Path, figure_dir: Path) -> None:
     flagged = [
         row for row in rows
-        if row.get("status") in {"possible_failure", "worse_total_distortion"}
+        if row.get("status") in {
+            "distortion_failure",
+            "worse_total_distortion",
+            "hidden_capture_warning",
+            "hidden_influence_warning",
+            "substitution_warning",
+        }
     ]
-    flagged.sort(key=lambda row: float(row.get("failureSeverity", "0") or "0"), reverse=True)
+    flagged.sort(key=lambda row: float(row.get("warningScore", "0") or "0"), reverse=True)
     selected = flagged[:10]
     if not selected:
         selected = rows[:1]
@@ -334,13 +391,16 @@ def write_substitution_failure_map(rows: list[dict[str, str]], report: Path, fig
             label=substitution_label(row),
             x=as_float(row["observedCaptureDelta"]),
             y=as_float(row["totalInfluenceDistortionDelta"]),
-            emphasis=row.get("status") == "possible_failure",
+            emphasis=row.get("status") in {"distortion_failure", "worse_total_distortion"},
         )
         for row in selected
     ]
     plot = Plot(left=260, top=170, width=1230, height=720)
     body: list[str] = []
-    body.extend(title_block("Apparent success versus substitution failure", "Capture change against total-distortion change"))
+    body.extend(title_block("Apparent success and substitution warnings", "Observed capture change versus total-distortion change"))
+    zero_x = plot.left + scale_range(0.0, -1.0, 0.25) * plot.width
+    zero_y = plot.bottom - scale_range(0.0, -0.20, 0.30) * plot.height
+    body.append(rect(plot.left, plot.top, zero_x - plot.left, zero_y - plot.top, "#f2f2f2", "warning-zone"))
     draw_axes(
         body,
         plot,
@@ -348,16 +408,14 @@ def write_substitution_failure_map(rows: list[dict[str, str]], report: Path, fig
         y_ticks=(-0.2, -0.1, 0.0, 0.1, 0.2, 0.3),
         x_max=0.25,
         y_max=0.30,
-        x_label="Observed capture delta",
-        y_label="Total distortion delta",
+        x_label="Observed capture change vs. comparison",
+        y_label="Total distortion change vs. comparison",
         x_min=-1.0,
         y_min=-0.20,
     )
-    zero_x = plot.left + scale_range(0.0, -1.0, 0.25) * plot.width
-    zero_y = plot.bottom - scale_range(0.0, -0.20, 0.30) * plot.height
     body.append(line(zero_x, plot.top, zero_x, plot.bottom, "threshold"))
     body.append(line(plot.left, zero_y, plot.left + plot.width, zero_y, "threshold"))
-    body.append(text(zero_x - 22, plot.top + 40, "visible capture lower", anchor="end", css_class="small"))
+    body.append(text(zero_x - 22, plot.top + 40, "capture lower, distortion higher", anchor="end", css_class="small"))
     body.append(text(zero_x + 22, zero_y - 20, "distortion higher", anchor="start", css_class="small"))
     label_targets: list[LabelTarget] = []
     for point in points:
@@ -369,18 +427,18 @@ def write_substitution_failure_map(rows: list[dict[str, str]], report: Path, fig
     draw_label_callouts(body, layout_labels(plot, label_targets))
     write_svg_and_pdf(
         figure_dir,
-        "Figure_5_substitution_failure_map",
-        "Apparent success versus substitution failure",
-        "Scatter plot comparing observed capture deltas with total influence distortion deltas for flagged audit rows.",
+        "Figure_5_substitution_warning_map",
+        "Apparent success and substitution warnings",
+        "Scatter plot comparing observed capture deltas with total influence distortion deltas for flagged substitution-audit rows.",
         body,
     )
     write_wrapper(
-        figure_dir / "substitution_failure_map.tex",
-        "Figure_5_substitution_failure_map.pdf",
+        figure_dir / "substitution_warning_map.tex",
+        "Figure_5_substitution_warning_map.pdf",
         report,
-        "Substitution-failure map. Points in the upper-left combine lower observed capture with higher total influence distortion, the region where visible reform success can mask hidden failure.",
-        "fig:substitution-failure-map",
-        extra="x=observed capture delta; y=total distortion delta",
+        "Substitution-warning map. The shaded upper-left quadrant combines lower observed capture with higher total influence distortion. Other points are warnings where hidden influence, hidden capture, or substitution risk rises even if total distortion does not.",
+        "fig:substitution-warning-map",
+        extra="x=observed capture change versus comparison; y=total distortion change versus comparison",
     )
 
 
@@ -656,9 +714,9 @@ def write_wrapper(
         "\n".join(
             [
                 f"% Generated by scripts/generate-interaction-figures.py; source={report}; graphic={pdf_name}{details}",
-                "\\begin{figure}[h]",
+                "\\begin{figure}[tbp]",
                 "\\centering",
-                f"\\includegraphics[width=\\linewidth]{{figures/{pdf_name}}}",
+                f"\\includegraphics[width=0.82\\linewidth]{{figures/{pdf_name}}}",
                 f"\\caption{{{caption}}}",
                 f"\\label{{{label}}}",
                 "\\end{figure}",
@@ -692,9 +750,11 @@ def svg_document(title: str, description: str, body: list[str]) -> str:
             ".title { font-size: 46px; font-weight: 700; }",
             ".subtitle { font-size: 30px; fill: #444; }",
             ".small, .tick, .label { font-size: 28px; }",
+            ".arch-title { font-size: 30px; font-weight: 700; }",
             ".axis { stroke: #111; stroke-width: 5; fill: none; }",
             ".grid { stroke: #d8d8d8; stroke-width: 3; fill: none; }",
-            ".segment, .point, .legend-swatch { stroke: #111; stroke-width: 2; }",
+            ".segment, .point, .legend-swatch, .arch-box { stroke: #111; stroke-width: 2; }",
+            ".warning-zone { stroke: none; }",
             ".label-box { fill: #fff; stroke: #111; stroke-width: 2; }",
             ".leader { stroke: #333; stroke-width: 2; fill: none; stroke-dasharray: 8 8; }",
             ".threshold { stroke: #999; stroke-width: 4; fill: none; stroke-dasharray: 12 12; }",

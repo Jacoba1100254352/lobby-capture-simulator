@@ -28,6 +28,7 @@ public final class WorldState
 	private final Map<String, Double> regulatorQueueByDomain = new HashMap<>();
 	private final Map<String, Double> regulatorProcessingCapacityByDomain = new HashMap<>();
 	private final Map<String, Double> watchdogFocusByDomain = new HashMap<>();
+	private final Map<String, Double> calibrationCache = new HashMap<>();
 	private final double watchdogBudgetTotal;
 	private double lastAdaptationSpeed;
 	private double lastReformDecayPressure;
@@ -109,6 +110,50 @@ public final class WorldState
 	public CalibrationProfile calibrationProfile() {
 		return spec.calibrationProfile();
 	}
+
+	private double cachedCalibration(String metric, String issueDomain, java.util.function.Function<String, Double> calculator) {
+		return calibrationCache.computeIfAbsent(metric + "::" + issueDomain, ignored -> calculator.apply(issueDomain));
+	}
+
+	public double calibratedIssueFundingScale(String issueDomain) {
+		return cachedCalibration("issueFundingScale", issueDomain, spec.calibrationProfile()::issueFundingScale);
+	}
+
+	public double calibratedDisclosureLag(String issueDomain) {
+		return cachedCalibration("disclosureLag", issueDomain, spec.calibrationProfile()::disclosureLag);
+	}
+
+	public double calibratedAverageTraceability(String issueDomain) {
+		return cachedCalibration("averageTraceability", issueDomain, spec.calibrationProfile()::averageTraceability);
+	}
+
+	public double calibratedLargeDonorShare(String issueDomain) {
+		return cachedCalibration("largeDonorShare", issueDomain, spec.calibrationProfile()::largeDonorShare);
+	}
+
+	public double calibratedDonorConcentrationIndex(String issueDomain) {
+		return cachedCalibration("donorConcentrationIndex", issueDomain, spec.calibrationProfile()::donorConcentrationIndex);
+	}
+
+	public double calibratedPublicFinancingSourceShare(String issueDomain) {
+		return cachedCalibration("publicFinancingSourceShare", issueDomain, spec.calibrationProfile()::publicFinancingSourceShare);
+	}
+
+	public double calibratedProcurementBridgeRisk(String issueDomain) {
+		return cachedCalibration("procurementBridgeRisk", issueDomain, spec.calibrationProfile()::procurementBridgeRisk);
+	}
+
+	public double calibratedIntermediaryOpacity(String issueDomain) {
+		return cachedCalibration("intermediaryOpacity", issueDomain, spec.calibrationProfile()::intermediaryOpacity);
+	}
+
+	public double calibratedIntermediaryPoliticalPressure(String issueDomain) {
+		return cachedCalibration("intermediaryPoliticalPressure", issueDomain, spec.calibrationProfile()::intermediaryPoliticalPressure);
+	}
+
+	public double calibratedRevolvingDoorSourcePressure(String issueDomain) {
+		return cachedCalibration("revolvingDoorSourcePressure", issueDomain, spec.calibrationProfile()::revolvingDoorSourcePressure);
+	}
 	
 	public EvasionProfile evasionProfile() {
 		return spec.evasionProfile();
@@ -132,6 +177,14 @@ public final class WorldState
 	
 	public boolean adaptiveStrategies() {
 		return spec.adaptiveStrategies();
+	}
+
+	public boolean substitutionEnabled() {
+		return spec.substitutionEnabled();
+	}
+
+	public boolean singleChannelVisibleLobbying() {
+		return spec.singleChannelVisibleLobbying();
 	}
 	
 	public List<LobbyOrganization> lobbyOrganizations() {

@@ -84,10 +84,16 @@ def select_rows(
         sort_source = str(table_config.get("sortSource", "captureRate"))
         selected.sort(key=lambda row: float(row[sort_source]) - float(baseline[sort_source]), reverse=True)
         return selected, baseline
-    if row_mode == "substitution-failure-top":
-        statuses = set(table_config.get("statuses", ["possible_failure", "worse_total_distortion"]))
+    if row_mode == "substitution-warning-top":
+        statuses = set(table_config.get("statuses", [
+            "distortion_failure",
+            "worse_total_distortion",
+            "hidden_capture_warning",
+            "hidden_influence_warning",
+            "substitution_warning",
+        ]))
         selected = [row for row in rows if row.get("status") in statuses]
-        sort_source = str(table_config.get("sortSource", "failureSeverity"))
+        sort_source = str(table_config.get("sortSource", "warningScore"))
         selected.sort(key=lambda row: (status_rank(row.get("status", "")), float(row.get(sort_source, "0") or "0")), reverse=True)
         limit = int(table_config.get("limit", len(selected)))
         return selected[:limit], None
@@ -125,13 +131,13 @@ def render_cell(column: dict[str, object], row: dict[str, str], baseline: dict[s
 def value_for(row: dict[str, str], source: str) -> str:
     if source in row:
         return row[source]
-    if source == "failureSeverity":
+    if source == "warningScore":
         values = [
             max(0.0, -float(row.get("observedCaptureDelta", "0") or "0")),
             max(0.0, float(row.get("hiddenInfluenceDelta", "0") or "0")),
             max(0.0, float(row.get("hiddenCaptureDelta", "0") or "0")),
             max(0.0, float(row.get("totalInfluenceDistortionDelta", "0") or "0")),
-            max(0.0, float(row.get("substitutionFailureRiskDelta", "0") or "0")),
+            max(0.0, float(row.get("substitutionRiskDelta", "0") or "0")),
         ]
         return f"{sum(values):.4f}"
     if source == "designLoss":
@@ -141,9 +147,14 @@ def value_for(row: dict[str, str], source: str) -> str:
 
 def status_rank(status: str) -> int:
     return {
-        "possible_failure": 3,
-        "worse_total_distortion": 2,
-        "substitution_tradeoff": 1,
+        "distortion_failure": 6,
+        "worse_total_distortion": 5,
+        "hidden_capture_warning": 4,
+        "possible_failure": 4,
+        "hidden_influence_warning": 3,
+        "substitution_warning": 3,
+        "channel_shift_tradeoff": 2,
+        "substitution_tradeoff": 2,
     }.get(status, 0)
 
 

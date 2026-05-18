@@ -16,6 +16,8 @@ PANELS = [
     {
         "panel": "Direct dark money",
         "metric": "darkMoneySourceShare",
+        "mechanism": "Opaque donor routing and hidden electoral influence",
+        "evidenceClass": "proxy/thin",
         "minimum": 0.001,
         "good": 0.05,
         "missing": "no direct DARK_MONEY rows or opaque-capacity bridge rows in the snapshot",
@@ -24,6 +26,8 @@ PANELS = [
     {
         "panel": "Outside spending",
         "metric": "outsideSpendingRows",
+        "mechanism": "Independent expenditure pressure outside candidate finance",
+        "evidenceClass": "direct",
         "minimum": 25.0,
         "good": 250.0,
         "missing": "outside-spending bridge is too small",
@@ -32,6 +36,8 @@ PANELS = [
     {
         "panel": "Public financing",
         "metric": "publicFinancingSourceShare",
+        "mechanism": "Countervailing campaign finance and voucher/matching funds",
+        "evidenceClass": "direct when present",
         "minimum": 0.01,
         "good": 0.10,
         "missing": "public-financing rows are sparse or absent",
@@ -40,6 +46,8 @@ PANELS = [
     {
         "panel": "Intermediaries",
         "metric": "intermediaryRows",
+        "mechanism": "Association, nonprofit, think-tank, and campaign-intermediary capacity",
+        "evidenceClass": "proxy",
         "minimum": 5.0,
         "good": 50.0,
         "missing": "intermediary panel is absent or only a schema stub",
@@ -48,6 +56,8 @@ PANELS = [
     {
         "panel": "Revolving door",
         "metric": "revolvingDoorRows",
+        "mechanism": "Post-government access, covered-position links, and cooling-off exposure",
+        "evidenceClass": "proxy/thin",
         "minimum": 100.0,
         "good": 500.0,
         "missing": "revolving-door panel is too small",
@@ -56,6 +66,8 @@ PANELS = [
     {
         "panel": "Procurement identifiers",
         "metric": "procurementKnownPiidShare",
+        "mechanism": "Vendor and award-path matching for procurement influence",
+        "evidenceClass": "direct identifier coverage",
         "minimum": 0.50,
         "good": 0.90,
         "missing": "PIID coverage is too weak for procurement-network matching",
@@ -64,6 +76,8 @@ PANELS = [
     {
         "panel": "Procurement modification risk",
         "metric": "procurementExPostModificationShare",
+        "mechanism": "Post-award modification and specification-change pressure",
+        "evidenceClass": "proxy/thin",
         "minimum": 0.0,
         "good": 0.05,
         "maximum": 0.40,
@@ -130,6 +144,8 @@ def panel_row(panel: dict[str, object], moments: dict[str, dict[str, float]]) ->
         note = "coverage is present but thin for article-level calibration"
     return {
         "panel": str(panel["panel"]),
+        "mechanism": str(panel["mechanism"]),
+        "evidenceClass": str(panel["evidenceClass"]),
         "metric": metric,
         "value": "" if value is None else f"{value:.4f}",
         "fixtureValue": "" if fixture_value is None else f"{fixture_value:.4f}",
@@ -144,7 +160,7 @@ def fixture_supported(panel: dict[str, object], value: float | None) -> bool:
 
 
 def write_csv(path: Path, rows: list[dict[str, str]]) -> None:
-    fieldnames = ["panel", "metric", "value", "fixtureValue", "status", "note", "nextAction"]
+    fieldnames = ["panel", "mechanism", "evidenceClass", "metric", "value", "fixtureValue", "status", "note", "nextAction"]
     with path.open("w", newline="", encoding="utf-8") as destination:
         writer = csv.DictWriter(destination, fieldnames=fieldnames, lineterminator="\n")
         writer.writeheader()
@@ -164,12 +180,12 @@ def write_markdown(path: Path, rows: list[dict[str, str]]) -> None:
         f"- Fixture-only: `{counts['fixture-only']}`",
         f"- Missing: `{counts['missing']}`",
         "",
-        "| Panel | Moment | Snapshot | Fixture | Status | Note | Next action |",
-        "| --- | --- | ---: | ---: | --- | --- | --- |",
+        "| Panel | Mechanism constrained | Evidence | Moment | Snapshot | Fixture | Status | Note | Next action |",
+        "| --- | --- | --- | --- | ---: | ---: | --- | --- | --- |",
     ]
     for row in rows:
         lines.append(
-            f"| {row['panel']} | `{row['metric']}` | {row['value'] or 'n/a'} | {row['fixtureValue'] or 'n/a'} | {row['status']} | {row['note']} | {row['nextAction']} |"
+            f"| {row['panel']} | {row['mechanism']} | {row['evidenceClass']} | `{row['metric']}` | {row['value'] or 'n/a'} | {row['fixtureValue'] or 'n/a'} | {row['status']} | {row['note']} | {row['nextAction']} |"
         )
     lines.append("")
     path.write_text("\n".join(lines), encoding="utf-8")

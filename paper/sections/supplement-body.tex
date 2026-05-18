@@ -42,7 +42,7 @@ The generated scenario catalog in \texttt{docs/scenario-catalog.md} remains the 
 
 \section{Primary Evaluation Rule}
 
-The primary reform criterion is total influence distortion, not observed capture alone. A reform is treated as a possible failure when observed capture falls but one or more hidden diagnostics rises:
+The primary reform criterion is total influence distortion, not observed capture alone. A reform is treated as a distortion failure when observed capture falls and total modeled distortion rises. It is treated as a substitution warning when observed capture falls but one or more hidden diagnostics rises:
 
 \begin{align*}
 \Delta observedCapture &< 0,\\
@@ -52,18 +52,18 @@ The primary reform criterion is total influence distortion, not observed capture
 \Delta substitutionRisk &> 0.
 \end{align*}
 
-This diagnostic is implemented in \texttt{scripts/validate-reports.py}. The generated outputs are \texttt{reports/substitution-audit.csv}, \texttt{reports/substitution-audit.md}, plus the substitution-failure table and map in the main manuscript.
+This diagnostic is implemented in \texttt{scripts/validate-reports.py}. The generated outputs are \texttt{reports/substitution-audit.csv}, \texttt{reports/substitution-audit.md}, plus the substitution-warning table and map in the main manuscript.
 
 \section{Generated Report Artifacts}
 
 The reproducible report pipeline writes:
 
 \begin{itemize}
-  \item campaign, sensitivity, ablation, interaction, and portfolio CSV and Markdown reports;
+  \item campaign, mechanism-comparison, sensitivity, ablation, interaction, and portfolio CSV and Markdown reports;
   \item source moments from normalized public-data panels;
   \item source-panel inventory diagnostics;
   \item validation summary and classified calibration queue;
-  \item substitution audit with possible-failure and tradeoff labels;
+  \item substitution audit with distortion-failure, warning, and channel-shift tradeoff labels;
   \item generated paper tables, figures, local PDF, Wiley PDF, supplement PDF, and Wiley submission archive.
 \end{itemize}
 
@@ -88,7 +88,7 @@ The implementation exposes mechanism-facing parameters rather than estimated coe
   \item Donor concentration in reports now blends the simulated contribution ledger with source-derived top-donor concentration, Herfindahl concentration, and large-donor shares from the campaign-finance bridge. This avoids treating a report-level donor-Gini proxy as the only donor-network anchor.
   \item Procurement bridge risk now separates initial awards from post-award modifications and uses recipient concentration, single-bid or limited-competition indicators, modification share, price-only awards, protest flags, exclusion flags, and firewall coverage.
   \item Substitution activates when visible-channel pressure, anonymity value, messenger credibility, intermediary fit, venue overlap, and evasion freedom exceed legal cost, disclosure cost, cross-venue detection, and setup time. The current threshold is deliberately low enough for stress scenarios to reveal channel migration.
-  \item A possible reform failure requires more than channel movement. The audit flags a row when observed or visible capture falls while hidden influence, hidden capture, total distortion, or substitution risk rises.
+  \item A distortion failure requires more than channel movement. The audit flags a row as a failure when observed or visible capture falls while total distortion rises, and as a warning when hidden influence, hidden capture, or substitution risk rises.
 \end{itemize}
 
 The source-facing parameters and benchmark ranges are maintained in \path{data/calibration/parameter-map.csv}. Report-level bounded diagnostics remain synthetic unless the validation summary classifies the target as a source moment.
@@ -111,3 +111,9 @@ The main paper should not claim calibrated policy estimates until the following 
 \end{itemize}
 
 The calibration queue in \texttt{reports/calibration-queue.md} records the current classified work list.
+
+\section{How to Read the Bundle}
+
+The supporting files are organized to make the boundary between model assumptions and evidence visible. The source moments and source-panel inventory should be read first when assessing empirical scope. They state which panels are direct, proxy, thin, fixture-supported, or missing. The mechanism-comparison report should be read next because it shows the consequence of enabling substitution relative to simpler model modes. The campaign, sensitivity, ablation, interaction, and portfolio reports are then best interpreted as stress tests under those model assumptions rather than as ranked policy estimates. A low observed-capture value is not, by itself, a success criterion; it must be checked against hidden influence, hidden capture, total distortion, administrative burden, and network opacity.
+
+For replication, the Makefile targets regenerate the committed reports, tables, figures, local PDF, Wiley PDF, supplement, layout audit, visual checklist, and submission ZIP from the same checked-in sources. Credentials and ignored raw API payloads are not needed for this default rebuild because the submission path uses normalized committed snapshots. Live-source refreshes are intentionally separate so exploratory API output cannot silently alter the review bundle.

@@ -34,6 +34,12 @@ public final class LobbyAllocationEngine
 		if (contest.antiCaptureReform()) {
 			return InfluenceStrategy.DEFENSIVE_REFORM;
 		}
+		if (world.singleChannelVisibleLobbying()) {
+			return InfluenceStrategy.DIRECT_ACCESS;
+		}
+		if (!world.substitutionEnabled()) {
+			return memory.currentStrategy();
+		}
 		if (substitution.selectedStrategy() != memory.currentStrategy()) {
 			return substitution.selectedStrategy();
 		}
@@ -195,7 +201,9 @@ public final class LobbyAllocationEngine
 				continue;
 			}
 			StrategyMemory memory = world.memoryFor(group.id(), group.initialStrategy());
-			SubstitutionProfile substitution = substitutionEngine.evaluate(group, contest, reform, world, memory.currentStrategy());
+			SubstitutionProfile substitution = world.substitutionEnabled() && !world.singleChannelVisibleLobbying()
+					? substitutionEngine.evaluate(group, contest, reform, world, memory.currentStrategy())
+					: SubstitutionProfile.none(memory.currentStrategy());
 			InfluenceStrategy strategy = selectStrategy(group, contest, reform, world, memory, substitution);
 			double spendIntent = contest.antiCaptureReform()
 					? DefensiveReformStrategy.spendIntent(group, contest) * memory.reformThreat()
@@ -227,7 +235,9 @@ public final class LobbyAllocationEngine
 				evasionShifts++;
 			}
 			
-			ChannelAllocation allocation = ChannelAllocation.forStrategy(strategy, spend);
+			ChannelAllocation allocation = world.singleChannelVisibleLobbying() && !contest.antiCaptureReform()
+					? ChannelAllocation.visibleAccessOnly(spend)
+					: ChannelAllocation.forStrategy(strategy, spend);
 			totalAllocation = totalAllocation.plus(allocation);
 			networkPaths.addAll(InfluenceNetworkModel.pathsFor(
 					group,

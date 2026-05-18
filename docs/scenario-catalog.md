@@ -132,4 +132,6 @@ The ablation report ranks removals by total-distortion increase and tracks obser
 
 The portfolio report ranks candidate bundles by total influence distortion, hidden capture, substitution risk, administrative burden, network opacity, legitimate-advocacy chill, and speech-restriction risk, while rewarding cross-venue detection and participation protection. It is a design screen, not a welfare estimate.
 
-`make validate` also writes `reports/substitution-audit.csv` and `reports/substitution-audit.md`. That audit compares each report row against an open-access or highest-visible-lobbying baseline and flags possible reform failures when observed capture falls while hidden influence, hidden capture, total distortion, or substitution-failure risk rises. Rows with visible capture reductions and only channel movement are classified separately as substitution tradeoffs.
+`make mechanism-comparison` writes a three-row report comparing a visible single-channel baseline, a multi-channel model with substitution disabled, and the substitution-enabled model. This is the core mechanism comparison used by the paper.
+
+`make validate` also writes `reports/substitution-audit.csv` and `reports/substitution-audit.md`. That audit compares each report row against an open-access or highest-visible-lobbying baseline and distinguishes distortion failures, hidden-capture warnings, hidden-influence warnings, substitution warnings, and channel-shift tradeoffs. Rows with visible capture reductions and only channel movement are classified separately as channel-shift tradeoffs.
