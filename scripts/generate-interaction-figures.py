@@ -286,7 +286,7 @@ def write_evasion_sensitivity(indexed: dict[str, dict[str, str]], report: Path, 
         figure_dir / "evasion_sensitivity.tex",
         "Figure_2_evasion_sensitivity.pdf",
         report,
-        "Sensitivity to evasion freedom. Hidden influence and total influence distortion are tracked together, illustrating why reform assessment should track substitution rather than visible capture alone.",
+        "Sensitivity to evasion freedom. The figure plots hidden influence and total influence distortion across evasion-freedom settings.",
         "fig:evasion-sensitivity",
     )
 
@@ -324,7 +324,7 @@ def write_interaction_tradeoffs(indexed: dict[str, dict[str, str]], report: Path
         figure_dir / "interaction_tradeoffs.tex",
         "Figure_3_interaction_tradeoffs.pdf",
         report,
-        "Interaction tradeoff view. Points compare hidden influence against total influence distortion after reforms bind; the desirable direction is lower-left.",
+        "Interaction tradeoff view. Points compare hidden influence against total influence distortion after reforms bind.",
         "fig:interaction-tradeoffs",
         extra="x=hidden influence; y=Total influence distortion",
     )
@@ -365,7 +365,7 @@ def write_scenario_tradeoffs(indexed: dict[str, dict[str, str]], report: Path, f
         figure_dir / "scenario_tradeoffs.tex",
         "Figure_4_scenario_tradeoffs.pdf",
         report,
-        "Scenario tradeoff between observed capture and total influence distortion. Low-capture cases remain substantively different when evasion or intermediaries preserve influence capacity.",
+        "Scenario tradeoff between observed capture and total influence distortion across selected campaign scenarios.",
         "fig:scenario-tradeoffs",
         extra="x=capture rate; y=Total influence distortion",
     )
@@ -436,7 +436,7 @@ def write_substitution_warning_map(rows: list[dict[str, str]], report: Path, fig
         figure_dir / "substitution_warning_map.tex",
         "Figure_5_substitution_warning_map.pdf",
         report,
-        "Substitution-warning map. The shaded upper-left quadrant combines lower observed capture with higher total influence distortion. Other points are warnings where hidden influence, hidden capture, or substitution risk rises even if total distortion does not.",
+        "Substitution-warning map. Points compare observed-capture deltas with total-distortion deltas for flagged rows; the shaded quadrant marks lower observed capture with higher total distortion.",
         "fig:substitution-warning-map",
         extra="x=observed capture change versus comparison; y=total distortion change versus comparison",
     )

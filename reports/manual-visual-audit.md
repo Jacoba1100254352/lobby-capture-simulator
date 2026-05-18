@@ -4,7 +4,7 @@ This report complements the scripted layout audit. Figure rows check generated S
 
 ## Current Automated Layout Summary
 
-- Pages checked: `36`
+- Pages checked: `35`
 - Failures: `0`
 
 ## Figure Checks
@@ -24,6 +24,7 @@ This report complements the scripted layout audit. Figure rows check generated S
 | --- | --- | --- | --- | --- | --- |
 | `ablation_snapshot.tex` | layout pass | layout pass | layout pass | layout pass |  |
 | `campaign_snapshot.tex` | layout pass | layout pass | layout pass | layout pass |  |
+| `experiment_design.tex` | layout pass | layout pass | layout pass | layout pass |  |
 | `interaction_snapshot.tex` | layout pass | layout pass | layout pass | layout pass |  |
 | `mechanism_comparison.tex` | layout pass | layout pass | layout pass | layout pass |  |
 | `portfolio_snapshot.tex` | layout pass | layout pass | layout pass | layout pass |  |

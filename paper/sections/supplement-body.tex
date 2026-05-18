@@ -1,6 +1,6 @@
 \section{Purpose of the Supporting Information}
 
-This supplement records the implementation details that should not carry the main article's narrative burden. The main manuscript separates three claim types: empirical source diagnostics, synthetic simulation findings, and speculative design recommendations. This supplement preserves that separation while making the model schedule, scenario catalog, validation artifacts, and source-panel gaps easy to inspect.
+This supplement records implementation details that should not carry the main article's narrative burden. It makes the model schedule, scenario catalog, validation artifacts, and source-panel gaps easy to inspect.
 
 \section{Model Schedule and State}
 
@@ -23,7 +23,7 @@ The full ODD-style description is maintained in \texttt{docs/odd-model.md} and i
 
 \section{Scenario Families}
 
-The scenario catalog is organized around mechanism families rather than institutional venues alone. The current families are:
+The scenario catalog is organized around mechanism families rather than institutional venues alone. The families are:
 
 \begin{itemize}
   \item baseline and disclosed lobbying;
@@ -42,7 +42,7 @@ The generated scenario catalog in \texttt{docs/scenario-catalog.md} remains the 
 
 \section{Primary Evaluation Rule}
 
-The primary reform criterion is total influence distortion, not observed capture alone. A reform is treated as a distortion failure when observed capture falls and total modeled distortion rises. It is treated as a substitution warning when observed capture falls but one or more hidden diagnostics rises:
+The primary reform criterion is total influence distortion. A reform is treated as a distortion failure when observed capture falls and total modeled distortion rises. It is treated as a substitution warning when observed capture falls but one or more hidden diagnostics rises:
 
 \begin{align*}
 \Delta observedCapture &< 0,\\
@@ -73,9 +73,15 @@ The canonical local check is:
 make paper-artifacts-check
 \end{verbatim}
 
+\section{Validation Layers}
+
+Validation proceeds in four layers. Parser and fixture tests enforce source schemas before normalized source rows enter calibration. The source-moments target extracts direct and proxy distributional moments for lobbying, campaign finance, rulemaking, procurement, intermediaries, public financing, and revolving-door panels. The report-validation target compares model outputs against broad benchmark ranges and the parameter map, while the substitution audit distinguishes clean improvements, distortion failures, and substitution warnings. Channel movement without higher hidden influence or distortion is treated as a tradeoff rather than a failure.
+
+The portfolio target ranks candidate reform bundles by total distortion, hidden capture, substitution risk, administrative burden, network opacity, legitimate-advocacy chill, speech-restriction risk, cross-venue detection, and participation protection. The calibration-queue target classifies misses into model tuning, metric splits, direct source moments, scenario coverage, scale alignment, and benchmark review. Future snapshots can add health, transportation, broader SAM/FPDS procurement panels, DIME, LobbyView, IRS 527 and Form 990 rows, FACA and witness records, Seattle voucher rows, direct electioneering or dark-money source exports, and richer revolving-door source exports once the environmental slice is stable.
+
 \section{Source-Panel Coverage}
 
-The current 2024 EPA/ENV snapshot is a reproducibility scaffold, not a representative empirical panel. It is strongest for LDA, OpenFEC Schedule E, Regulations.gov, Federal Register, and USAspending schema checks. Public financing and direct dark money are now separate bridge panels. This prevents a public-financing fixture or future dark-money export from being mistaken for ordinary FEC receipts, and it keeps direct dark money separate from super PAC outside spending. The current source bridge remains incomplete for direct dark-money source rows, representative public-financing program data, broad SAM/FPDS procurement panels, representative nonprofit/intermediary routing, and post-employment movement beyond LDA-derived covered-position records.
+The current 2024 EPA/ENV snapshot is a reproducibility scaffold, not a representative empirical panel. It is strongest for LDA, OpenFEC Schedule E, Regulations.gov, Federal Register, and USAspending schema checks. Public financing and direct dark money are separate bridge panels. This prevents a public-financing fixture or future dark-money export from being mistaken for ordinary FEC receipts, and it keeps direct dark money separate from super PAC outside spending. The source bridge remains incomplete for direct dark-money source rows, representative public-financing program data, broad SAM/FPDS procurement panels, representative nonprofit/intermediary routing, and post-employment movement beyond LDA-derived covered-position records.
 
 The source-panel inventory in \texttt{reports/source-panel-inventory.md} is included in the submission bundle. It should be read before using any model output as more than a mechanism diagnostic.
 
@@ -87,7 +93,7 @@ The implementation exposes mechanism-facing parameters rather than estimated coe
   \item Client funding increases with issue preference, exposure, private gain, calibration issue scale, secrecy incentives, and reform-threat pressure. Public-match and voucher sources lower large-donor dependence; dark-money sources increase opacity and legal-risk exposure.
   \item Donor concentration in reports now blends the simulated contribution ledger with source-derived top-donor concentration, Herfindahl concentration, and large-donor shares from the campaign-finance bridge. This avoids treating a report-level donor-Gini proxy as the only donor-network anchor.
   \item Procurement bridge risk now separates initial awards from post-award modifications and uses recipient concentration, single-bid or limited-competition indicators, modification share, price-only awards, protest flags, exclusion flags, and firewall coverage.
-  \item Substitution activates when visible-channel pressure, anonymity value, messenger credibility, intermediary fit, venue overlap, and evasion freedom exceed legal cost, disclosure cost, cross-venue detection, and setup time. The current threshold is deliberately low enough for stress scenarios to reveal channel migration.
+  \item Substitution activates when visible-channel pressure, anonymity value, messenger credibility, intermediary fit, venue overlap, and evasion freedom exceed legal cost, disclosure cost, cross-venue detection, and setup time. The threshold is deliberately low enough for stress scenarios to reveal channel migration.
   \item A distortion failure requires more than channel movement. The audit flags a row as a failure when observed or visible capture falls while total distortion rises, and as a warning when hidden influence, hidden capture, or substitution risk rises.
 \end{itemize}
 
@@ -110,10 +116,10 @@ The main paper should not claim calibrated policy estimates until the following 
   \item scenario-specific benchmarks for high-end outside spending, hidden substitution, and cooling-off evasion.
 \end{itemize}
 
-The calibration queue in \texttt{reports/calibration-queue.md} records the current classified work list.
+The calibration queue in \texttt{reports/calibration-queue.md} records the classified work list.
 
 \section{How to Read the Bundle}
 
-The supporting files are organized to make the boundary between model assumptions and evidence visible. The source moments and source-panel inventory should be read first when assessing empirical scope. They state which panels are direct, proxy, thin, fixture-supported, or missing. The mechanism-comparison report should be read next because it shows the consequence of enabling substitution relative to simpler model modes. The campaign, sensitivity, ablation, interaction, and portfolio reports are then best interpreted as stress tests under those model assumptions rather than as ranked policy estimates. A low observed-capture value is not, by itself, a success criterion; it must be checked against hidden influence, hidden capture, total distortion, administrative burden, and network opacity.
+The supporting files are organized to make the boundary between model assumptions and evidence visible. The source moments and source-panel inventory should be read first when assessing empirical scope. They state which panels are direct, proxy, thin, fixture-supported, or missing. The mechanism-comparison report should be read next because it shows the consequence of enabling substitution relative to simpler model modes. The campaign, sensitivity, ablation, interaction, and portfolio reports are then best interpreted as stress tests under those model assumptions.
 
 For replication, the Makefile targets regenerate the committed reports, tables, figures, local PDF, Wiley PDF, supplement, layout audit, visual checklist, and submission ZIP from the same checked-in sources. Credentials and ignored raw API payloads are not needed for this default rebuild because the submission path uses normalized committed snapshots. Live-source refreshes are intentionally separate so exploratory API output cannot silently alter the review bundle.
