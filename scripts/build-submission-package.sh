@@ -8,6 +8,7 @@ STAGING_DIR="$DIST_DIR/lobby-capture-wiley-submission"
 ZIP_PATH="$DIST_DIR/lobby-capture-wiley-submission.zip"
 TEMPLATE_DIR="$PAPER_DIR/.wiley-template/Optimal-Design-layout"
 BUILD_DIR="$PAPER_DIR/.wiley-build"
+SUBMISSION_BASENAME="strategic-channel-substitution-regulatory-capture"
 
 if ! python3 - "$ROOT_DIR" <<'PY'
 from pathlib import Path
@@ -45,8 +46,8 @@ fi
 rm -rf "$STAGING_DIR" "$ZIP_PATH"
 mkdir -p "$STAGING_DIR"
 
-cp "$PAPER_DIR/regulation-governance-wiley.tex" "$STAGING_DIR/main.tex"
-cp "$PAPER_DIR/regulation-governance-wiley.pdf" "$STAGING_DIR/main.pdf"
+cp "$PAPER_DIR/regulation-governance-wiley.tex" "$STAGING_DIR/$SUBMISSION_BASENAME.tex"
+cp "$PAPER_DIR/regulation-governance-wiley.pdf" "$STAGING_DIR/$SUBMISSION_BASENAME.pdf"
 cp "$PAPER_DIR/supplement.tex" "$STAGING_DIR/supplement.tex"
 cp "$PAPER_DIR/supplement.pdf" "$STAGING_DIR/supplement.pdf"
 cp "$PAPER_DIR/references.bib" "$STAGING_DIR/references.bib"
@@ -89,8 +90,8 @@ cp "$TEMPLATE_DIR/images/Wiley_logo.eps" "$STAGING_DIR/images/"
 cat > "$STAGING_DIR/SUBMISSION_README.txt" <<'EOF'
 Lobby Capture Simulator Wiley LaTeX submission package
 
-Root manuscript: main.tex
-Compiled PDF: main.pdf
+Root manuscript: strategic-channel-substitution-regulatory-capture.tex
+Compiled PDF: strategic-channel-substitution-regulatory-capture.pdf
 Supplement: supplement.tex and supplement.pdf
 
 The included USG.cls is a generated copy of Wiley's USG class with template sample journal art and the generic Open Access badge removed for neutral peer-review rendering. The downloaded Wiley template remains unmodified in the repository.
@@ -98,12 +99,12 @@ The included USG.cls is a generated copy of Wiley's USG class with template samp
 Supporting information: supporting-information/
 
 Compile from this directory with:
-pdflatex -interaction=nonstopmode main.tex
-bibtex main
-pdflatex -interaction=nonstopmode main.tex
-pdflatex -interaction=nonstopmode main.tex
-pdflatex -interaction=nonstopmode main.tex
-pdflatex -interaction=nonstopmode main.tex
+pdflatex -interaction=nonstopmode strategic-channel-substitution-regulatory-capture.tex
+bibtex strategic-channel-substitution-regulatory-capture
+pdflatex -interaction=nonstopmode strategic-channel-substitution-regulatory-capture.tex
+pdflatex -interaction=nonstopmode strategic-channel-substitution-regulatory-capture.tex
+pdflatex -interaction=nonstopmode strategic-channel-substitution-regulatory-capture.tex
+pdflatex -interaction=nonstopmode strategic-channel-substitution-regulatory-capture.tex
 EOF
 
 (cd "$STAGING_DIR" && zip -qr "$ZIP_PATH" .)

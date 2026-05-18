@@ -8,6 +8,7 @@ import sys
 ROOT = Path(__file__).resolve().parents[1]
 PAPER_DIR = ROOT / "paper"
 LIMIT = 11000
+LOCAL_MANUSCRIPT = PAPER_DIR / "strategic-channel-substitution-regulatory-capture.tex"
 
 
 def expand_inputs(path: Path, seen: set[Path] | None = None) -> str:
@@ -43,8 +44,8 @@ def count_words(text: str) -> int:
 
 
 def main() -> int:
-    manuscript = expand_inputs(PAPER_DIR / "main.tex")
-    bbl_path = PAPER_DIR / "main.bbl"
+    manuscript = expand_inputs(LOCAL_MANUSCRIPT)
+    bbl_path = LOCAL_MANUSCRIPT.with_suffix(".bbl")
     if bbl_path.exists():
         manuscript += "\n" + bbl_path.read_text(encoding="utf-8", errors="ignore")
     words = count_words(manuscript)

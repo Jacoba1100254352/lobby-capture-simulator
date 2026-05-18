@@ -31,7 +31,7 @@ These are intentionally analytical figures, not illustrative decoration. They ma
 
 Wiley provides a generic LaTeX authoring template for Wiley journals. This repo now supports that path without making it the default local build:
 
-- `paper/main.tex` is the compile-stable local manuscript used by `make paper`.
+- `paper/strategic-channel-substitution-regulatory-capture.tex` is the compile-stable local manuscript used by `make paper`.
 - `paper/regulation-governance-wiley.tex` is the Regulation & Governance/Wiley wrapper that uses Wiley's `USG` class.
 - `make wiley-template` downloads the official `WileyDesign.zip` bundle into ignored `paper/.wiley-template/`.
 - `make wiley-tex-deps` installs the extra Wiley-template packages into the user TeX tree through `tlmgr --usermode`.

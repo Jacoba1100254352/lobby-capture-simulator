@@ -140,7 +140,7 @@ It preserves raw public API payloads under ignored `data/raw/source-payloads/202
 
 ## Paper and Submission Target
 
-The primary paper target is now **Regulation & Governance**. The default build, `make paper`, produces a compile-stable local manuscript from `paper/main.tex`. `make paper-word-count` estimates the manuscript against the reported 11,000-word Regulation & Governance cap, including generated references when `paper/main.bbl` exists.
+The primary paper target is now **Regulation & Governance**. The default build, `make paper`, produces a compile-stable local manuscript from `paper/strategic-channel-substitution-regulatory-capture.tex`. `make paper-word-count` estimates the manuscript against the reported 11,000-word Regulation & Governance cap, including generated references when `paper/strategic-channel-substitution-regulatory-capture.bbl` exists.
 
 The Wiley-template path is available but intentionally separate from the default build:
 

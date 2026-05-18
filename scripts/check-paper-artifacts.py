@@ -16,14 +16,24 @@ ROOT = Path(__file__).resolve().parents[1]
 PAPER = ROOT / "paper"
 DIST = ROOT / "dist"
 
-LOCAL_PDF = PAPER / "main.pdf"
+LOCAL_BASENAME = "strategic-channel-substitution-regulatory-capture"
+LOCAL_TEX = PAPER / f"{LOCAL_BASENAME}.tex"
+LOCAL_PDF = PAPER / f"{LOCAL_BASENAME}.pdf"
 WILEY_PDF = PAPER / "regulation-governance-wiley.pdf"
 SUPPLEMENT_PDF = PAPER / "supplement.pdf"
 SUBMISSION_ZIP = DIST / "lobby-capture-wiley-submission.zip"
-
-EXPECTED_ZIP_MEMBERS = {
+FORBIDDEN_LOCAL_ARTIFACTS = [
+    PAPER / "main.tex",
+    PAPER / "main.pdf",
+]
+FORBIDDEN_ZIP_MEMBERS = {
     "main.tex",
     "main.pdf",
+}
+
+EXPECTED_ZIP_MEMBERS = {
+    f"{LOCAL_BASENAME}.tex",
+    f"{LOCAL_BASENAME}.pdf",
     "supplement.tex",
     "supplement.pdf",
     "references.bib",
@@ -68,6 +78,7 @@ EXPECTED_ZIP_MEMBERS = {
 def main() -> int:
     failures: list[str] = []
     failures.extend(check_exists([LOCAL_PDF, WILEY_PDF, SUPPLEMENT_PDF, SUBMISSION_ZIP]))
+    failures.extend(check_forbidden_local_artifacts())
     failures.extend(check_freshness())
     failures.extend(check_wiley_text())
     failures.extend(check_submission_zip())
@@ -86,6 +97,14 @@ def main() -> int:
 
 def check_exists(paths: list[Path]) -> list[str]:
     return [f"missing required artifact: {path.relative_to(ROOT)}" for path in paths if not path.exists()]
+
+
+def check_forbidden_local_artifacts() -> list[str]:
+    return [
+        f"stale generic paper artifact remains: {path.relative_to(ROOT)}"
+        for path in FORBIDDEN_LOCAL_ARTIFACTS
+        if path.exists()
+    ]
 
 
 def check_freshness() -> list[str]:
@@ -109,7 +128,7 @@ def check_freshness() -> list[str]:
 
 def local_pdf_inputs() -> list[Path]:
     return [
-        PAPER / "main.tex",
+        LOCAL_TEX,
         PAPER / "references.bib",
         *sorted((PAPER / "sections").glob("*.tex")),
         *sorted((PAPER / "tables").glob("*.tex")),
@@ -205,9 +224,15 @@ def check_submission_zip() -> list[str]:
                 f"submission zip missing {member}"
                 for member in sorted(EXPECTED_ZIP_MEMBERS - names)
             ]
+            failures.extend(
+                f"submission zip should not contain generic {member}"
+                for member in sorted(FORBIDDEN_ZIP_MEMBERS & names)
+            )
             with WILEY_PDF.open("rb") as pdf:
-                if archive.read("main.pdf") != pdf.read():
-                    failures.append("submission zip main.pdf differs from paper/regulation-governance-wiley.pdf")
+                if archive.read(f"{LOCAL_BASENAME}.pdf") != pdf.read():
+                    failures.append(
+                        f"submission zip {LOCAL_BASENAME}.pdf differs from paper/regulation-governance-wiley.pdf"
+                    )
             with SUPPLEMENT_PDF.open("rb") as pdf:
                 if archive.read("supplement.pdf") != pdf.read():
                     failures.append("submission zip supplement.pdf differs from paper/supplement.pdf")
@@ -236,12 +261,12 @@ def check_submission_zip_compiles() -> list[str]:
         for key in ("TEXINPUTS", "BIBINPUTS", "BSTINPUTS"):
             env.pop(key, None)
         commands = [
-            ["pdflatex", "-interaction=nonstopmode", "main.tex"],
-            ["bibtex", "main"],
-            ["pdflatex", "-interaction=nonstopmode", "main.tex"],
-            ["pdflatex", "-interaction=nonstopmode", "main.tex"],
-            ["pdflatex", "-interaction=nonstopmode", "main.tex"],
-            ["pdflatex", "-interaction=nonstopmode", "main.tex"],
+            ["pdflatex", "-interaction=nonstopmode", f"{LOCAL_BASENAME}.tex"],
+            ["bibtex", LOCAL_BASENAME],
+            ["pdflatex", "-interaction=nonstopmode", f"{LOCAL_BASENAME}.tex"],
+            ["pdflatex", "-interaction=nonstopmode", f"{LOCAL_BASENAME}.tex"],
+            ["pdflatex", "-interaction=nonstopmode", f"{LOCAL_BASENAME}.tex"],
+            ["pdflatex", "-interaction=nonstopmode", f"{LOCAL_BASENAME}.tex"],
         ]
         for command in commands:
             result = subprocess.run(
@@ -252,7 +277,7 @@ def check_submission_zip_compiles() -> list[str]:
                 stdout=subprocess.PIPE,
                 stderr=subprocess.STDOUT,
             )
-            if command[0] == "pdflatex" and is_nonfatal_latex_pass(result.stdout, temp / "main.pdf"):
+            if command[0] == "pdflatex" and is_nonfatal_latex_pass(result.stdout, temp / f"{LOCAL_BASENAME}.pdf"):
                 continue
             if result.returncode != 0:
                 tail = "\n".join(result.stdout.splitlines()[-20:])
@@ -260,9 +285,9 @@ def check_submission_zip_compiles() -> list[str]:
                     "submission zip does not compile from extracted root with "
                     f"`{' '.join(command)}`:\n{tail}"
                 ]
-        final_log = temp / "main.log"
+        final_log = temp / f"{LOCAL_BASENAME}.log"
         if not final_log.exists():
-            return ["submission zip compile check did not produce main.log"]
+            return [f"submission zip compile check did not produce {LOCAL_BASENAME}.log"]
         log_text = final_log.read_text(encoding="utf-8", errors="replace")
         unresolved_markers = [
             "There were undefined citations",

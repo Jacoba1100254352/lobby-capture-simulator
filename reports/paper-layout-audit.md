@@ -7,23 +7,23 @@ This audit checks generated PDFs for sparse float pages, large whitespace gaps, 
 
 | PDF | Page | Blocks | Chars | Coverage | Largest gap | Float label | Status | Note |
 | --- | ---: | ---: | ---: | ---: | ---: | --- | --- | --- |
-| paper/main.pdf | 1 | 41 | 2645 | 0.805 | 0.105 | no | pass | title/front-matter page |
-| paper/main.pdf | 2 | 42 | 3062 | 0.854 | 0.055 | no | pass | layout density acceptable |
-| paper/main.pdf | 3 | 57 | 2673 | 0.848 | 0.130 | yes | pass | layout density acceptable |
-| paper/main.pdf | 4 | 133 | 1931 | 0.674 | 0.235 | yes | pass | layout density acceptable |
-| paper/main.pdf | 5 | 173 | 3570 | 0.857 | 0.053 | no | pass | layout density acceptable |
-| paper/main.pdf | 6 | 100 | 3442 | 0.854 | 0.097 | no | pass | layout density acceptable |
-| paper/main.pdf | 7 | 50 | 3875 | 0.857 | 0.053 | yes | pass | layout density acceptable |
-| paper/main.pdf | 8 | 194 | 3074 | 0.852 | 0.058 | yes | pass | layout density acceptable |
-| paper/main.pdf | 9 | 52 | 2055 | 0.848 | 0.061 | yes | pass | layout density acceptable |
-| paper/main.pdf | 10 | 186 | 2475 | 0.846 | 0.064 | yes | pass | layout density acceptable |
-| paper/main.pdf | 11 | 84 | 1616 | 0.848 | 0.061 | yes | pass | layout density acceptable |
-| paper/main.pdf | 12 | 99 | 2135 | 0.852 | 0.058 | yes | pass | layout density acceptable |
-| paper/main.pdf | 13 | 126 | 3453 | 0.852 | 0.058 | yes | pass | layout density acceptable |
-| paper/main.pdf | 14 | 60 | 2457 | 0.848 | 0.061 | yes | pass | layout density acceptable |
-| paper/main.pdf | 15 | 56 | 2646 | 0.854 | 0.055 | no | pass | layout density acceptable |
-| paper/main.pdf | 16 | 91 | 2471 | 0.854 | 0.055 | no | pass | references/declarations page |
-| paper/main.pdf | 17 | 100 | 2354 | 0.854 | 0.100 | no | pass | references/declarations page |
+| paper/strategic-channel-substitution-regulatory-capture.pdf | 1 | 41 | 2645 | 0.805 | 0.105 | no | pass | title/front-matter page |
+| paper/strategic-channel-substitution-regulatory-capture.pdf | 2 | 42 | 3062 | 0.854 | 0.055 | no | pass | layout density acceptable |
+| paper/strategic-channel-substitution-regulatory-capture.pdf | 3 | 57 | 2673 | 0.848 | 0.130 | yes | pass | layout density acceptable |
+| paper/strategic-channel-substitution-regulatory-capture.pdf | 4 | 133 | 1931 | 0.674 | 0.235 | yes | pass | layout density acceptable |
+| paper/strategic-channel-substitution-regulatory-capture.pdf | 5 | 173 | 3570 | 0.857 | 0.053 | no | pass | layout density acceptable |
+| paper/strategic-channel-substitution-regulatory-capture.pdf | 6 | 100 | 3442 | 0.854 | 0.097 | no | pass | layout density acceptable |
+| paper/strategic-channel-substitution-regulatory-capture.pdf | 7 | 50 | 3875 | 0.857 | 0.053 | yes | pass | layout density acceptable |
+| paper/strategic-channel-substitution-regulatory-capture.pdf | 8 | 194 | 3074 | 0.852 | 0.058 | yes | pass | layout density acceptable |
+| paper/strategic-channel-substitution-regulatory-capture.pdf | 9 | 52 | 2055 | 0.848 | 0.061 | yes | pass | layout density acceptable |
+| paper/strategic-channel-substitution-regulatory-capture.pdf | 10 | 186 | 2475 | 0.846 | 0.064 | yes | pass | layout density acceptable |
+| paper/strategic-channel-substitution-regulatory-capture.pdf | 11 | 84 | 1616 | 0.848 | 0.061 | yes | pass | layout density acceptable |
+| paper/strategic-channel-substitution-regulatory-capture.pdf | 12 | 99 | 2135 | 0.852 | 0.058 | yes | pass | layout density acceptable |
+| paper/strategic-channel-substitution-regulatory-capture.pdf | 13 | 126 | 3453 | 0.852 | 0.058 | yes | pass | layout density acceptable |
+| paper/strategic-channel-substitution-regulatory-capture.pdf | 14 | 60 | 2457 | 0.848 | 0.061 | yes | pass | layout density acceptable |
+| paper/strategic-channel-substitution-regulatory-capture.pdf | 15 | 56 | 2646 | 0.854 | 0.055 | no | pass | layout density acceptable |
+| paper/strategic-channel-substitution-regulatory-capture.pdf | 16 | 91 | 2471 | 0.854 | 0.055 | no | pass | references/declarations page |
+| paper/strategic-channel-substitution-regulatory-capture.pdf | 17 | 100 | 2354 | 0.854 | 0.100 | no | pass | references/declarations page |
 | paper/regulation-governance-wiley.pdf | 1 | 25 | 1265 | 0.876 | 0.385 | no | pass | title/front-matter page |
 | paper/regulation-governance-wiley.pdf | 2 | 54 | 4722 | 0.943 | 0.051 | no | pass | layout density acceptable |
 | paper/regulation-governance-wiley.pdf | 3 | 100 | 3198 | 0.934 | 0.129 | no | pass | layout density acceptable |

@@ -9,6 +9,7 @@ MAIN_SOURCES := $(shell find src/main/java -name "*.java" | sort)
 TEST_SOURCES := $(shell find src/test/java -name "*.java" | sort)
 MAIN_CLASS := lobbycapture.Main
 TEST_CLASSES := lobbycapture.SimulatorTests
+PAPER_BASENAME := strategic-channel-substitution-regulatory-capture
 
 .PHONY: compile test run campaign mechanism-comparison sensitivity ablation interactions portfolio source-moments source-panel-inventory calibration-queue validate snapshot-2024-env tables figures paper paper-build paper-supplement-build paper-supplement paper-word-count wiley-template wiley-tex-deps paper-wiley paper-wiley-build submission-package submission-package-build paper-layout-audit visual-review-checklist paper-artifacts paper-artifacts-check clean
 
@@ -67,12 +68,12 @@ figures: validate
 	python3 scripts/generate-interaction-figures.py
 
 paper-build:
-	rm -f paper/main.aux paper/main.bbl paper/main.blg
-	cd paper && pdflatex -interaction=nonstopmode main.tex
-	cd paper && bibtex main
-	cd paper && pdflatex -interaction=nonstopmode main.tex
-	cd paper && pdflatex -interaction=nonstopmode main.tex
-	cd paper && pdflatex -interaction=nonstopmode main.tex
+	rm -f paper/$(PAPER_BASENAME).aux paper/$(PAPER_BASENAME).bbl paper/$(PAPER_BASENAME).blg
+	cd paper && pdflatex -interaction=nonstopmode $(PAPER_BASENAME).tex
+	cd paper && bibtex $(PAPER_BASENAME)
+	cd paper && pdflatex -interaction=nonstopmode $(PAPER_BASENAME).tex
+	cd paper && pdflatex -interaction=nonstopmode $(PAPER_BASENAME).tex
+	cd paper && pdflatex -interaction=nonstopmode $(PAPER_BASENAME).tex
 
 paper-supplement-build:
 	rm -f paper/supplement.aux paper/supplement.bbl paper/supplement.blg

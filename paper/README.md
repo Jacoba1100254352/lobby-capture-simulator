@@ -8,7 +8,7 @@ make paper
 
 The paper is a submission-oriented draft under active validation. It should stay tied to reproducible report snapshots under `reports/` and should distinguish simulation calibration from causal empirical claims.
 
-The primary submission target is **Regulation & Governance**. The local article entrypoint is `paper/main.tex`; the Wiley-template entrypoint is `paper/regulation-governance-wiley.tex`; the supporting-information entrypoint is `paper/supplement.tex`.
+The primary submission target is **Regulation & Governance**. The local article entrypoint is `paper/strategic-channel-substitution-regulatory-capture.tex`; the Wiley-template entrypoint is `paper/regulation-governance-wiley.tex`; the supporting-information entrypoint is `paper/supplement.tex`.
 
 Useful paper commands:
 
