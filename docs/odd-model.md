@@ -247,7 +247,7 @@ Scenario reports include:
 - enforcement capacity, detection, sanctions, and backlog;
 - Wilson intervals for binomial capture and reform-success outcomes.
 
-The primary synthetic comparison for reform packages is `totalInfluenceDistortion`, not `captureRate`. If observed capture falls while total distortion rises, the validation audit treats the row as a distortion failure. If observed capture falls while hidden influence, hidden capture, or substitution risk rises, the row is reported as a substitution warning. Network opacity, venue shifting, and channel-network load are still reported, but rows with channel movement and no higher distortion are classified as channel-shift tradeoffs.
+The primary synthetic comparison for reform packages is `totalInfluenceDistortion`, not `captureRate`. If observed capture falls while total distortion rises, the validation audit treats the row as an apparent-success distortion failure. If observed capture falls while hidden influence, hidden capture, or substitution risk rises, the row is reported as a substitution warning. If visible lobbying falls while hidden diagnostics or channel movement worsen without lower observed capture, the row is reported as a visible-channel warning. Network opacity, venue shifting, and channel-network load are still reported, but rows with channel movement and no higher distortion are classified as channel-shift tradeoffs.
 
 Generated paper tables and figures are derived from committed report CSVs. The full report snapshots, portfolio screen, source moments, source-panel inventory, validation summary, substitution audit, paper-layout audit, and calibration queue remain in the repository and are included in the Wiley submission support bundle.
 

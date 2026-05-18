@@ -134,6 +134,21 @@ public record ScenarioReport(
 				crossVenueDetectionIndex
 		);
 	}
+
+	public double designLoss() {
+		return Math.max(
+				0.0,
+				(0.30 * totalInfluenceDistortion)
+						+ (0.20 * hiddenCaptureIndex)
+						+ (0.16 * substitutionRisk)
+						+ (0.10 * administrativeCostIndex)
+						+ (0.09 * networkOpacityIndex)
+						+ (0.07 * legitimateAdvocacyChillRate)
+						+ (0.06 * speechRestrictionRisk)
+						- (0.05 * crossVenueDetectionIndex)
+						- (0.03 * participationProtectionIndex)
+		);
+	}
 	
 	public double representationScore() {
 		return MetricDefinition.average(

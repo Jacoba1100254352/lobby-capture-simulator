@@ -4,25 +4,53 @@
       "output": "mechanism_comparison.tex",
       "source": "lobby-capture-mechanism-comparison.csv",
       "label": "tab:mechanism-comparison",
-      "caption": "Model-mode comparison for the same reform family. The rows separate a visible single-channel baseline, a multi-channel model with substitution disabled, and the substitution-enabled model.",
+      "caption": "Model-mode comparison across low-, moderate-, and strong-reform families. The rows separate a visible single-channel baseline, a multi-channel model with substitution disabled, and the substitution-enabled model.",
       "size": "scriptsize",
       "environment": "table*",
       "width": "\\textwidth",
       "tabcolsep": "1.5pt",
       "rows": [
-        "comparison-visible-scalar",
-        "comparison-multichannel-no-substitution",
-        "comparison-multichannel-substitution"
+        "comparison-low-visible-scalar",
+        "comparison-low-multichannel-no-substitution",
+        "comparison-low-multichannel-substitution",
+        "comparison-moderate-visible-scalar",
+        "comparison-moderate-multichannel-no-substitution",
+        "comparison-moderate-multichannel-substitution",
+        "comparison-strong-visible-scalar",
+        "comparison-strong-multichannel-no-substitution",
+        "comparison-strong-multichannel-substitution"
       ],
       "columns": [
         {
-          "header": "Model",
-          "source": "scenarioName",
+          "header": "Family",
+          "source": "scenarioKey",
           "format": "label",
           "labels": {
-            "Single-channel visible lobbying": "Visible scalar",
-            "Multi-channel without substitution": "Multi-channel/no substitution",
-            "Multi-channel with substitution": "Multi-channel/substitution"
+            "comparison-low-visible-scalar": "Low",
+            "comparison-low-multichannel-no-substitution": "Low",
+            "comparison-low-multichannel-substitution": "Low",
+            "comparison-moderate-visible-scalar": "Moderate",
+            "comparison-moderate-multichannel-no-substitution": "Moderate",
+            "comparison-moderate-multichannel-substitution": "Moderate",
+            "comparison-strong-visible-scalar": "Strong",
+            "comparison-strong-multichannel-no-substitution": "Strong",
+            "comparison-strong-multichannel-substitution": "Strong"
+          }
+        },
+        {
+          "header": "Model",
+          "source": "scenarioKey",
+          "format": "label",
+          "labels": {
+            "comparison-low-visible-scalar": "Visible scalar",
+            "comparison-low-multichannel-no-substitution": "Multi/no subst.",
+            "comparison-low-multichannel-substitution": "Multi/subst.",
+            "comparison-moderate-visible-scalar": "Visible scalar",
+            "comparison-moderate-multichannel-no-substitution": "Multi/no subst.",
+            "comparison-moderate-multichannel-substitution": "Multi/subst.",
+            "comparison-strong-visible-scalar": "Visible scalar",
+            "comparison-strong-multichannel-no-substitution": "Multi/no subst.",
+            "comparison-strong-multichannel-substitution": "Multi/subst."
           }
         },
         {
@@ -31,18 +59,8 @@
           "format": "float3"
         },
         {
-          "header": "C SD",
-          "source": "captureRateSeedStdDev",
-          "format": "float3"
-        },
-        {
           "header": "Hidden",
           "source": "hiddenInfluenceShare",
-          "format": "float3"
-        },
-        {
-          "header": "H SD",
-          "source": "hiddenInfluenceSeedStdDev",
           "format": "float3"
         },
         {
@@ -56,11 +74,6 @@
           "format": "float3"
         },
         {
-          "header": "D SD",
-          "source": "totalInfluenceDistortionSeedStdDev",
-          "format": "float3"
-        },
-        {
           "header": "Subst. risk",
           "source": "substitutionRisk",
           "format": "float3"
@@ -71,7 +84,7 @@
       "output": "campaign_snapshot.tex",
       "source": "lobby-capture-campaign.csv",
       "label": "tab:first-campaign",
-      "caption": "Selected campaign snapshot. The main table keeps representative baseline, dark-money, intermediary, public-finance, venue-detection, and reform-bundle rows.",
+      "caption": "Selected campaign snapshot. The main table keeps representative baseline, dark-money, intermediary, public-finance, venue-detection, and reform-bundle rows from the full scenario table in the supporting information.",
       "size": "footnotesize",
       "environment": "table*",
       "width": "\\textwidth",
@@ -152,6 +165,71 @@
       ]
     },
     {
+      "output": "full_campaign_appendix.tex",
+      "source": "lobby-capture-campaign.csv",
+      "label": "tab:full-campaign-appendix",
+      "caption": "Full campaign scenario table. Rows are all campaign scenarios from the generated report snapshot.",
+      "size": "scriptsize",
+      "environment": "longtable",
+      "rowMode": "all",
+      "sortSource": "scenarioKey",
+      "columns": [
+        {
+          "header": "Scenario",
+          "source": "scenarioName",
+          "format": "label",
+          "labels": {
+            "Low-salience technical rulemaking": "Low-salience rulemaking",
+            "Open access lobbying": "Open access",
+            "Budgeted disclosed lobbying": "Budgeted/disclosed",
+            "Campaign finance dominant": "Campaign finance",
+            "Dark money dominant": "Dark money",
+            "Revolving-door dominant": "Revolving door",
+            "Think-tank and association intermediaries": "Intermediaries",
+            "Comment-authenticity rules": "Comment auth.",
+            "Procurement firewalls": "Procurement firewall",
+            "Hard-budget substitution stress": "Budget cap stress",
+            "Shadow lobbying maximum stress": "Shadow max stress",
+            "Visible lobbying ban with dark-money leakage": "Ban+DM leakage",
+            "Opaque network substitution frontier": "Opaque network",
+            "Meeting-log intermediary leakage": "Meeting-log leak",
+            "Procurement modification capture frontier": "Procurement mods",
+            "Public-finance dark-money frontier": "Public finance/DM",
+            "Public-finance outside-spending leakage": "Public finance/IE",
+            "Venue-shifting detection": "Venue detection",
+            "Reform threat mobilization": "Reform threat",
+            "Full anti-capture bundle": "Full bundle",
+            "Anti-capture bundle with evasion": "Bundle+evasion"
+          }
+        },
+        {
+          "header": "Capture",
+          "source": "observedCaptureRate",
+          "format": "float3"
+        },
+        {
+          "header": "Hidden cap.",
+          "source": "hiddenCaptureIndex",
+          "format": "float3"
+        },
+        {
+          "header": "Total dist.",
+          "source": "totalInfluenceDistortion",
+          "format": "float3"
+        },
+        {
+          "header": "Subst. risk",
+          "source": "substitutionRisk",
+          "format": "float3"
+        },
+        {
+          "header": "Hidden infl.",
+          "source": "hiddenInfluenceShare",
+          "format": "float3"
+        }
+      ]
+    },
+    {
       "output": "sensitivity_snapshot.tex",
       "source": "lobby-capture-sensitivity.csv",
       "label": "tab:sensitivity",
@@ -216,24 +294,24 @@
       ]
     },
     {
-      "output": "substitution_warning_ranking.tex",
+      "output": "apparent_failure_ranking.tex",
       "source": "substitution-audit.csv",
-      "label": "tab:substitution-warnings",
-      "caption": "Substitution-warning ranking. Warning score sums apparent visible improvement and adverse hidden-influence, hidden-capture, total-distortion, or substitution-risk deltas; design loss is an illustrative lower-is-better criterion.",
+      "label": "tab:apparent-failures",
+      "caption": "Apparent-success distortion failures. Rows have lower observed capture and higher total modeled distortion relative to the comparison row.",
       "size": "scriptsize",
       "environment": "table*",
       "width": "\\textwidth",
       "tabcolsep": "1.5pt",
       "rowMode": "substitution-warning-top",
       "statuses": [
-        "distortion_failure",
-        "worse_total_distortion",
-        "hidden_capture_warning",
-        "hidden_influence_warning",
-        "substitution_warning"
+        "distortion_failure"
       ],
+      "excludeReports": [
+        "lobby-capture-mechanism-comparison.csv"
+      ],
+      "requireObservedImprovement": true,
       "sortSource": "warningScore",
-      "limit": 8,
+      "limit": 6,
       "columns": [
         {
           "header": "Report",
@@ -318,10 +396,106 @@
       ]
     },
     {
+      "output": "substitution_warning_ranking.tex",
+      "source": "substitution-audit.csv",
+      "label": "tab:substitution-warnings",
+      "caption": "Substitution-risk warnings. Rows are not apparent-success distortion failures but show higher hidden influence, substitution risk, or visible-channel movement relative to the comparison row.",
+      "size": "scriptsize",
+      "environment": "table*",
+      "width": "\\textwidth",
+      "tabcolsep": "1.5pt",
+      "rowMode": "substitution-warning-top",
+      "statuses": [
+        "substitution_warning",
+        "visible_channel_warning"
+      ],
+      "excludeReports": [
+        "lobby-capture-mechanism-comparison.csv"
+      ],
+      "sortSource": "warningScore",
+      "limit": 8,
+      "columns": [
+        {
+          "header": "Report",
+          "source": "report",
+          "format": "label",
+          "labels": {
+            "lobby-capture-campaign.csv": "Campaign",
+            "lobby-capture-sensitivity.csv": "Sensitivity",
+            "lobby-capture-ablation.csv": "Ablation",
+            "lobby-capture-interactions.csv": "Interaction",
+            "lobby-capture-portfolio.csv": "Portfolio"
+          }
+        },
+        {
+          "header": "Scenario",
+          "source": "scenarioName",
+          "format": "label",
+          "labels": {
+            "Anti-capture bundle with evasion": "Bundle+evasion",
+            "Shadow lobbying maximum stress": "Shadow max",
+            "Hard-budget substitution stress": "Budget cap stress",
+            "Visible lobbying ban with dark-money leakage": "Ban+DM leakage",
+            "Procurement modification capture frontier": "Proc. mods",
+            "Meeting-log intermediary leakage": "Meeting-log leak",
+            "Public-finance outside-spending leakage": "Public finance/IE",
+            "Comment-authenticity technical substitution": "Comment tech subst.",
+            "Think-tank and association intermediaries": "Intermediaries",
+            "Outside-spending disclosure evasion": "Outside evasion",
+            "Procurement venue-shift stress": "Procurement shift",
+            "Portfolio: full anti-substitution under high evasion": "Full portfolio+evasion",
+            "Sensitivity evasion 0.90": "Evasion 0.90",
+            "Full anti-capture bundle": "Full bundle",
+            "Advisory lobbying substitution": "Advisory subst.",
+            "Venue-shifting detection": "Venue detection"
+          }
+        },
+        {
+          "header": "Status",
+          "source": "status",
+          "format": "label",
+          "labels": {
+            "substitution_warning": "subst. warn.",
+            "visible_channel_warning": "visible warn."
+          }
+        },
+        {
+          "header": "Warn. score",
+          "source": "warningScore",
+          "format": "float3"
+        },
+        {
+          "header": "Loss",
+          "source": "designLoss",
+          "format": "float3"
+        },
+        {
+          "header": "Cap. delta",
+          "source": "observedCaptureDelta",
+          "format": "signed4"
+        },
+        {
+          "header": "Hid. delta",
+          "source": "hiddenInfluenceDelta",
+          "format": "signed4"
+        },
+        {
+          "header": "Dist. delta",
+          "source": "totalInfluenceDistortionDelta",
+          "format": "signed4"
+        },
+        {
+          "header": "Risk delta",
+          "source": "substitutionRiskDelta",
+          "format": "signed4"
+        }
+      ]
+    },
+    {
       "output": "validation_gap_snapshot.tex",
       "source": "source-panel-inventory.csv",
       "label": "tab:validation-gaps",
-      "caption": "Source-panel coverage for the 2024 EPA/ENV validation snapshot. Fixture values are schema and mechanism scaffolds; thin, warning, fixture-only, or missing rows are validation gaps.",
+      "caption": "Source-panel coverage for the 2024 EPA/ENV validation snapshot. Fixture/scaffold indicates whether a schema bridge exists outside representative source coverage; thin, warning, fixture-only, or missing rows are validation gaps.",
       "size": "scriptsize",
       "environment": "table*",
       "width": "\\textwidth",
@@ -387,8 +561,8 @@
           "source": "value"
         },
         {
-          "header": "Fixture",
-          "source": "fixtureValue"
+          "header": "Fixture?",
+          "source": "fixtureSupported"
         },
         {
           "header": "Status",
@@ -460,7 +634,7 @@
       "output": "portfolio_snapshot.tex",
       "source": "lobby-capture-portfolio.csv",
       "label": "tab:portfolio",
-      "caption": "Portfolio screen. Rows are candidate design bundles; columns report capture, total distortion, hidden capture, substitution risk, cross-venue detection, network opacity, legitimate-advocacy chill, and administrative burden.",
+      "caption": "Portfolio screen. Rows are candidate design bundles; columns report design loss, capture, total distortion, hidden capture, substitution risk, cross-venue detection, network opacity, legitimate-advocacy chill, and administrative burden.",
       "size": "scriptsize",
       "environment": "table*",
       "width": "\\textwidth",
@@ -495,6 +669,11 @@
         {
           "header": "Capture",
           "source": "observedCaptureRate",
+          "format": "float3"
+        },
+        {
+          "header": "Loss",
+          "source": "designLoss",
           "format": "float3"
         },
         {

@@ -47,10 +47,10 @@ public final class PortfolioRunner
 		builder.append("| Rank | Portfolio | Design loss | Total dist. | Hidden cap. | Risk | Admin | Network opacity | Venue det. | Participation | Speech risk |\n");
 		builder.append("| ---: | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |\n");
 		int rank = 1;
-		for (ScenarioReport report : reports.stream().sorted(Comparator.comparing(PortfolioRunner::designLoss)).toList()) {
+		for (ScenarioReport report : reports.stream().sorted(Comparator.comparing(ScenarioReport::designLoss)).toList()) {
 			builder.append("| ").append(rank++)
 			       .append(" | ").append(report.scenarioName())
-			       .append(" | ").append(CsvReportWriter.format(designLoss(report)))
+			       .append(" | ").append(CsvReportWriter.format(report.designLoss()))
 			       .append(" | ").append(CsvReportWriter.format(report.totalInfluenceDistortion()))
 			       .append(" | ").append(CsvReportWriter.format(report.hiddenCaptureIndex()))
 			       .append(" | ").append(CsvReportWriter.format(report.substitutionRisk()))
@@ -62,20 +62,6 @@ public final class PortfolioRunner
 			       .append(" |\n");
 		}
 		return builder.toString();
-	}
-	
-	private static double designLoss(ScenarioReport report) {
-		return Math.max(0.0,
-		                (0.30 * report.totalInfluenceDistortion())
-				                + (0.20 * report.hiddenCaptureIndex())
-				                + (0.16 * report.substitutionRisk())
-				                + (0.10 * report.administrativeCostIndex())
-				                + (0.09 * report.networkOpacityIndex())
-				                + (0.07 * report.legitimateAdvocacyChillRate())
-				                + (0.06 * report.speechRestrictionRisk())
-				                - (0.05 * report.crossVenueDetectionIndex())
-				                - (0.03 * report.participationProtectionIndex())
-		);
 	}
 	
 	public List<ScenarioReport> run(int runs, int contestsPerRun, long seed) {

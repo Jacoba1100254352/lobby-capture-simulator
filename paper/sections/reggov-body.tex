@@ -14,6 +14,8 @@ The central behavioral assumption is channel substitution. When a reform raises 
 
 The model contains lobby organizations, public officials, regulators, candidates, enforcement agencies, reform regimes, policy contests, influence arenas, and scenario reports. A policy contest may represent a statute, agency rule, enforcement priority, procurement decision, litigation posture, election pressure point, or anti-capture reform.
 
+The model is agent-based primarily on the influence-supply side: lobby organizations and funders adapt budgets, channel allocations, substitution choices, and defensive spending. Institutional actors are represented through arena susceptibility, reform controls, enforcement probabilities, queue pressure, attention, and backlash parameters.
+
 Each tick follows six steps:
 
 \begin{enumerate}
@@ -45,12 +47,16 @@ Substitution risk & Probability-like diagnostic that a reform suppresses a visib
 \(E[I]\) & Expected influence from a substitute route. & 0--1 & Learned return memory and scenario profile. & Switch score \\
 \(C_m,A_n,V_o\) & Messenger credibility, anonymity value, and vendor or venue overlap. & 0--1 & Scenario and reform profile. & Switch score \\
 \(L_c,D_c,T_s\) & Legal cost, disclosure cost, and setup time. & 0--1 & Reform controls and channel profile. & Switch score \\
-Design loss & Illustrative lower-is-better portfolio objective combining total distortion, hidden capture, substitution risk, administrative cost, opacity, and venue-shift load. & 0--1 & Normative screen for stress testing, not a policy welfare estimate. & Portfolio screen \\
+Design loss & Illustrative lower-is-better portfolio objective combining total distortion, hidden capture, substitution risk, administrative cost, opacity, chill, speech risk, detection, and participation protection. & 0--1 & Normative screen for stress testing, not a policy welfare estimate. & Portfolio screen \\
 \bottomrule
 \end{tabular}
 \caption{Core model diagnostics and substitution-score terms. All quantities are normalized model variables unless noted otherwise.}
 \label{tab:model-specification}
 \end{table*}
+
+Table~\ref{tab:composite-weights} gives the implemented composite weights for total influence distortion and design loss. These are transparent model choices rather than estimated welfare weights; the stress tests therefore evaluate how rankings change under the chosen diagnostic, while supporting materials record sensitivity variants that discount hidden influence or put heavier weight on administrative burden.
+
+\input{tables/composite_weights.tex}
 
 \section{Actors and Channels}
 
@@ -91,6 +97,8 @@ E[I] + C_m + A_n + V_o - L_c - D_c - T_s,
 
 where \(E[I]\) is expected influence under the substitute route, \(C_m\) is messenger credibility, \(A_n\) is anonymity value, \(V_o\) is vendor and relationship overlap, \(L_c\) is legal cost, \(D_c\) is disclosure cost, and \(T_s\) is setup time. The result is not a one-for-one channel replacement. Reports summarize substitution pressure, influence preserved, hidden influence, messenger substitution, venue substitution, and net transparency gain.
 
+The additive switch score is a transparent baseline rather than an estimated behavioral law. All terms are normalized to \([0,1]\), and substitution activates when the score exceeds the scenario threshold. The supporting information specifies equal-weight, anonymity-heavy, and enforcement-cost-heavy variants used for robustness checks.
+
 Reform success is evaluated with a warning-aware diagnostic. Observed capture is the resolved contest outcome. Hidden capture combines hidden influence, preserved influence, messenger and venue substitution, defensive spending, private gain, policy distortion, procurement bias, and enforcement forbearance. Total influence distortion combines observed capture, hidden capture, policy distortion, procurement bias, comment flooding, technical rulemaking distortion, administrative burden, preserved hidden influence, network opacity, intermediary centrality, procurement exposure, and venue-shift load. A reform that lowers observed capture while increasing total distortion is treated as a distortion failure. A reform that lowers observed capture while increasing hidden influence, hidden capture, or substitution risk is reported as a substitution warning rather than a clean success.
 
 Enforcement applies after contest resolution. Detection probability increases with audit rate, enforcement budget, sanctions, public visibility, and evasion legal risk. When detected, sanctions reduce capture effects and add an evasion penalty. This makes evasion valuable only when opacity gains exceed expected enforcement and disclosure costs.
@@ -121,15 +129,17 @@ Table~\ref{tab:validation-gaps} reports the source-panel inventory that constrai
 
 \input{tables/validation_gap_snapshot.tex}
 
+The bridge is strongest for observable disclosure surfaces and weakest for the hidden substitution mechanisms that motivate the model. Its value here is architectural and diagnostic rather than validation of hidden-channel magnitudes.
+
 \section{Mechanism Comparison}
 
-The central mechanism is tested with an explicit model-mode comparison. Table~\ref{tab:mechanism-comparison} runs the same reform-heavy contest family three ways: a single-channel visible-lobbying baseline, a multi-channel model with substitution disabled, and a multi-channel model with substitution enabled. This comparison isolates the effect of enabling substitution while holding the reform family constant across model modes.
+The central mechanism is tested with an explicit model-mode comparison. Table~\ref{tab:mechanism-comparison} runs low-, moderate-, and strong-reform families three ways: a single-channel visible-lobbying baseline, a multi-channel model with substitution disabled, and a multi-channel model with substitution enabled. Within each reform family, the comparison isolates the effect of enabling substitution while holding the contest mix and reform setting constant.
 
 \input{tables/mechanism_comparison.tex}
 
 \section{First Campaign Snapshot}
 
-Table~\ref{tab:first-campaign} reports representative baseline, budgeted/disclosed, dark-money, intermediary, public-finance, venue-detection, full-bundle, and evasion-bundle scenarios. The columns separate observed capture from hidden capture, total distortion, substitution risk, and hidden influence.
+Table~\ref{tab:first-campaign} reports representative baseline, budgeted/disclosed, dark-money, intermediary, public-finance, venue-detection, full-bundle, and evasion-bundle scenarios from the full campaign scenario table in the supporting information. The columns separate observed capture from hidden capture, total distortion, substitution risk, and hidden influence.
 
 \input{tables/campaign_snapshot.tex}
 
@@ -137,9 +147,15 @@ Reform threats trigger substantial defensive spending, and evasion or intermedia
 
 \input{figures/channel_mix}
 
+Figure~\ref{fig:scenario-tradeoffs} plots the same result surface as observed capture against total distortion for selected campaign scenarios.
+
+\input{figures/scenario_tradeoffs}
+
 \section{Substitution Warning Ranking}
 
-Table~\ref{tab:substitution-warnings} ranks rows flagged by the warning rule defined above. Figure~\ref{fig:substitution-warning-map} maps observed-capture change against total-distortion change relative to the comparison row, with the upper-left quadrant marking cases where observed capture falls while total distortion rises.
+Table~\ref{tab:apparent-failures} reports apparent-success distortion failures: cases where observed capture falls while total distortion rises. Table~\ref{tab:substitution-warnings} separately reports substitution-risk warnings, where hidden influence, substitution risk, or visible-channel movement worsens without meeting the stricter distortion-failure criterion. Figure~\ref{fig:substitution-warning-map} maps observed-capture change against total-distortion change relative to the comparison row.
+
+\input{tables/apparent_failure_ranking.tex}
 
 \input{tables/substitution_warning_ranking.tex}
 
@@ -161,6 +177,8 @@ Ablation reporting removes one reform component from the full anti-capture bundl
 
 \input{tables/ablation_snapshot.tex}
 
+Negative ablation deltas should not be read as evidence that the removed reform is harmful in general. They indicate that, under this contest mix and weighting scheme, the administrative or substitution costs of that component can exceed its modeled reduction in distortion.
+
 \section{Interaction Snapshot}
 
 The interaction sweep varies enforcement, disclosure, public financing, evasion freedom, cooling-off rules, and revolving-door strategy. Table~\ref{tab:interactions} shows selected combinations that separate nominal reform strength from substitution response. A reform can lower visible pressure while preserving influence through hidden messengers, intermediaries, or alternate venues.
@@ -177,6 +195,8 @@ The portfolio screen compares candidate reform bundles under the stress-test des
 
 \input{tables/portfolio_snapshot.tex}
 
+The comparison between the civil-liberties-constrained portfolio and the full anti-substitution portfolio illustrates the governance tradeoff. Full anti-substitution controls can reduce capture and distortion more strongly, while the civil-liberties design accepts higher modeled distortion in exchange for lower administrative burden, chill, or speech-restriction risk.
+
 \section{Validation Plan}
 
 Validation is organized as schema verification, source-moment checks, scenario diagnostics, and calibration-gap tracking. The article relies on these checks to verify implementation consistency and identify empirical gaps; it does not treat them as validation of reform effects. Detailed validation targets, report artifacts, and calibration queues are documented in the supporting information \citep{ldaData,fecData,federalRegisterApi,regulationsGovApi,nycCfbData,irsEoBmf,seattleVouchers,usaspending}.
@@ -185,7 +205,7 @@ Validation is organized as schema verification, source-moment checks, scenario d
 
 The model-mode comparison shows what the single-channel baseline misses: reform diagnostics change once organized interests can move through alternative messengers, venues, financing routes, and intermediaries. The most robust reform features in the stress tests are not isolated disclosure rules, but combinations that pair visibility with enforcement capacity, countervailing representation, procurement safeguards, and cross-venue detection. The most important failure modes are evasion freedom, opaque intermediary paths, defensive mobilization against reform, and administrative burden that can weaken legitimate participation. Some strong-reform rows still sit in a near-saturated observed-capture region, so the clearest result is the substitution pattern conditional on that stress-test design.
 
-\input{figures/scenario_tradeoffs}
+\textbf{Implications for regulatory-governance design.} Channel-specific reforms can mislead when evaluation follows only the closed channel. Anti-capture systems need cross-venue detection because influence can move through adjacent institutional surfaces: campaign finance, dark money, intermediaries, procurement, comments, litigation, and revolving-door access. Countervailing participation and enforcement capacity matter because transparency can improve legibility without reducing total influence distortion when organized interests retain resources to substitute or delay.
 
 This framing fits a regulatory-governance audience because the unit of analysis is not a single vote or donation, but a design problem across institutional venues. Transparency systems, countervailing participation, procedural-integrity rules, enforcement budgets, procurement firewalls, and revolving-door controls are modeled as interacting features of a governance architecture. The policy-relevant output is a map of where influence moves when a rule binds.
 

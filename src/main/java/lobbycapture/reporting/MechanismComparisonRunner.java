@@ -45,15 +45,16 @@ public final class MechanismComparisonRunner
 	private static String markdown(List<ScenarioReport> reports, ReportProvenance provenance) {
 		StringBuilder builder = new StringBuilder();
 		builder.append("# Mechanism Comparison\n\n");
-		builder.append("This report compares the same reform family under three model modes: a visible single-channel baseline, a multi-channel model with substitution disabled, and the current multi-channel substitution model. It is a mechanism check, not an empirical policy estimate.\n\n");
+		builder.append("This report compares low-, moderate-, and strong-reform families under three model modes: a visible single-channel baseline, a multi-channel model with substitution disabled, and a multi-channel substitution model.\n\n");
 		builder.append("- Generated at: `").append(provenance.generatedAt()).append("`\n");
 		builder.append("- Seed: `").append(provenance.seed()).append("`\n");
 		builder.append("- Runs: `").append(provenance.runs()).append("`\n");
 		builder.append("- Contests per run: `").append(provenance.contestsPerRun()).append("`\n\n");
-		builder.append("| Model mode | Capture | Capture SD | Hidden influence | Hidden SD | Hidden capture | Total distortion | Distortion SD | Substitution risk |\n");
-		builder.append("| --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |\n");
+		builder.append("| Family | Model mode | Capture | Capture SD | Hidden influence | Hidden SD | Hidden capture | Total distortion | Distortion SD | Substitution risk |\n");
+		builder.append("| --- | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |\n");
 		for (ScenarioReport report : reports) {
-			builder.append("| ").append(report.scenarioName())
+			builder.append("| ").append(family(report))
+			       .append(" | ").append(mode(report))
 			       .append(" | ").append(CsvReportWriter.format(report.observedCaptureRate()))
 			       .append(" | ").append(CsvReportWriter.format(report.captureRateSeedStdDev()))
 			       .append(" | ").append(CsvReportWriter.format(report.hiddenInfluenceShare()))
@@ -65,5 +66,25 @@ public final class MechanismComparisonRunner
 			       .append(" |\n");
 		}
 		return builder.toString();
+	}
+
+	private static String family(ScenarioReport report) {
+		if (report.scenarioKey().contains("-low-")) {
+			return "Low";
+		}
+		if (report.scenarioKey().contains("-moderate-")) {
+			return "Moderate";
+		}
+		return "Strong";
+	}
+
+	private static String mode(ScenarioReport report) {
+		if (report.scenarioKey().contains("visible-scalar")) {
+			return "Visible scalar";
+		}
+		if (report.scenarioKey().contains("no-substitution")) {
+			return "Multi-channel/no substitution";
+		}
+		return "Multi-channel/substitution";
 	}
 }

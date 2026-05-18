@@ -119,15 +119,16 @@ def panel_row(panel: dict[str, object], moments: dict[str, dict[str, float]]) ->
     metric = str(panel["metric"])
     value = moments["snapshot"].get(metric)
     fixture_value = moments["fixture"].get(metric)
+    fixture_available = fixture_supported(panel, fixture_value)
     if value is None:
-        if fixture_supported(panel, fixture_value):
+        if fixture_available:
             status = "fixture-only"
             note = "snapshot source moment not present; fixture bridge is available for schema and mechanism tests only"
         else:
             status = "missing"
             note = "source moment not present"
     elif value < float(panel["minimum"]):
-        if fixture_supported(panel, fixture_value):
+        if fixture_available:
             status = "fixture-only"
             note = str(panel["missing"]) + "; fixture bridge is available but not article-level empirical coverage"
         else:
@@ -149,6 +150,7 @@ def panel_row(panel: dict[str, object], moments: dict[str, dict[str, float]]) ->
         "metric": metric,
         "value": "" if value is None else f"{value:.4f}",
         "fixtureValue": "" if fixture_value is None else f"{fixture_value:.4f}",
+        "fixtureSupported": "yes" if fixture_available else "no",
         "status": status,
         "note": note,
         "nextAction": str(panel["action"]),
@@ -160,7 +162,7 @@ def fixture_supported(panel: dict[str, object], value: float | None) -> bool:
 
 
 def write_csv(path: Path, rows: list[dict[str, str]]) -> None:
-    fieldnames = ["panel", "mechanism", "evidenceClass", "metric", "value", "fixtureValue", "status", "note", "nextAction"]
+    fieldnames = ["panel", "mechanism", "evidenceClass", "metric", "value", "fixtureValue", "fixtureSupported", "status", "note", "nextAction"]
     with path.open("w", newline="", encoding="utf-8") as destination:
         writer = csv.DictWriter(destination, fieldnames=fieldnames, lineterminator="\n")
         writer.writeheader()

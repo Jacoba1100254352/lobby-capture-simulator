@@ -62,7 +62,7 @@ def select_rows(
 ) -> tuple[list[dict[str, str]], dict[str, str] | None]:
     row_mode = table_config.get("rowMode", "listed")
     if row_mode == "all":
-        selected = rows
+        selected = filter_selected_rows(rows, table_config)
         sort_source = table_config.get("sortSource")
         if sort_source:
             selected = sorted(selected, key=lambda row: row.get(str(sort_source), ""))
@@ -92,12 +92,22 @@ def select_rows(
             "hidden_influence_warning",
             "substitution_warning",
         ]))
-        selected = [row for row in rows if row.get("status") in statuses]
+        selected = [row for row in filter_selected_rows(rows, table_config) if row.get("status") in statuses]
         sort_source = str(table_config.get("sortSource", "warningScore"))
         selected.sort(key=lambda row: (status_rank(row.get("status", "")), float(row.get(sort_source, "0") or "0")), reverse=True)
         limit = int(table_config.get("limit", len(selected)))
         return selected[:limit], None
     raise SystemExit(f"Unknown rowMode for {table_config['output']}: {row_mode}")
+
+
+def filter_selected_rows(rows: list[dict[str, str]], table_config: dict[str, object]) -> list[dict[str, str]]:
+    selected = rows
+    exclude_reports = set(str(item) for item in table_config.get("excludeReports", []))
+    if exclude_reports:
+        selected = [row for row in selected if row.get("report") not in exclude_reports]
+    if bool(table_config.get("requireObservedImprovement", False)):
+        selected = [row for row in selected if float(row.get("observedCaptureDelta", "0") or "0") < -0.02]
+    return selected
 
 
 def render_cell(column: dict[str, object], row: dict[str, str], baseline: dict[str, str] | None) -> str:
@@ -141,7 +151,18 @@ def value_for(row: dict[str, str], source: str) -> str:
         ]
         return f"{sum(values):.4f}"
     if source == "designLoss":
-        return "0.0000"
+        values = [
+            0.30 * float(row.get("totalInfluenceDistortion", "0") or "0"),
+            0.20 * float(row.get("hiddenCaptureIndex", "0") or "0"),
+            0.16 * float(row.get("substitutionRisk", "0") or "0"),
+            0.10 * float(row.get("administrativeCost", "0") or "0"),
+            0.09 * float(row.get("networkOpacityIndex", "0") or "0"),
+            0.07 * float(row.get("legitimateAdvocacyChill", "0") or "0"),
+            0.06 * float(row.get("speechRestrictionRisk", "0") or "0"),
+            -0.05 * float(row.get("crossVenueDetectionIndex", "0") or "0"),
+            -0.03 * float(row.get("participationProtectionIndex", "0") or "0"),
+        ]
+        return f"{max(0.0, sum(values)):.4f}"
     return ""
 
 
@@ -153,6 +174,7 @@ def status_rank(status: str) -> int:
         "possible_failure": 4,
         "hidden_influence_warning": 3,
         "substitution_warning": 3,
+        "visible_channel_warning": 3,
         "channel_shift_tradeoff": 2,
         "substitution_tradeoff": 2,
     }.get(status, 0)
@@ -170,9 +192,11 @@ def table(
         tabcolsep: str,
         provenance: str,
 ) -> str:
-    if environment not in {"table", "table*"}:
+    if environment not in {"table", "table*", "longtable"}:
         raise SystemExit(f"Unsupported table environment: {environment}")
     spec = "l" + ("r" * (len(headers) - 1))
+    if environment == "longtable":
+        return longtable(label, caption, headers, rows, size, tabcolsep, provenance, spec)
     lines = [
         provenance,
         f"\\begin{{{environment}}}[{placement}]",
@@ -193,6 +217,46 @@ def table(
             f"\\caption{{{escape(caption)}}}",
             f"\\label{{{label}}}",
             f"\\end{{{environment}}}",
+            "",
+        ]
+    )
+    return "\n".join(lines)
+
+
+def longtable(
+        label: str,
+        caption: str,
+        headers: list[str],
+        rows: list[list[str]],
+        size: str,
+        tabcolsep: str,
+        provenance: str,
+        spec: str,
+) -> str:
+    header = " & ".join(escape(header) for header in headers) + " \\\\"
+    lines = [
+        provenance,
+        "\\begingroup",
+        f"\\{size}",
+        f"\\setlength{{\\tabcolsep}}{{{tabcolsep}}}",
+        f"\\begin{{longtable}}{{{spec}}}",
+        f"\\caption{{{escape(caption)}}}\\label{{{label}}}\\\\",
+        "\\toprule",
+        header,
+        "\\midrule",
+        "\\endfirsthead",
+        "\\toprule",
+        header,
+        "\\midrule",
+        "\\endhead",
+    ]
+    for row in rows:
+        lines.append(" & ".join(escape(cell) for cell in row) + " \\\\")
+    lines.extend(
+        [
+            "\\bottomrule",
+            "\\end{longtable}",
+            "\\endgroup",
             "",
         ]
     )

@@ -127,9 +127,81 @@ public final class ScenarioCatalog
 	public static List<Scenario> mechanismComparison() {
 		return List.of(
 				scenario(
-						"comparison-visible-scalar",
-						"Single-channel visible lobbying",
-						"Conventional visible-channel baseline: direct and agenda access only, with substitution disabled.",
+						"comparison-low-visible-scalar",
+						"Low reform: single-channel visible lobbying",
+						"Low-reform visible-channel baseline: direct and agenda access only, with substitution disabled.",
+						ReformRegime.minimalDisclosure(),
+						InfluenceStrategy.DIRECT_ACCESS,
+						0.0,
+						false,
+						standardContests(),
+						false,
+						true
+				),
+				scenario(
+						"comparison-low-multichannel-no-substitution",
+						"Low reform: multi-channel without substitution",
+						"Low-reform multi-channel model with reform-triggered substitution and evasion switching disabled.",
+						ReformRegime.minimalDisclosure(),
+						InfluenceStrategy.BALANCED,
+						0.20,
+						false,
+						standardContests(),
+						false,
+						false
+				),
+				scenario(
+						"comparison-low-multichannel-substitution",
+						"Low reform: multi-channel with substitution",
+						"Low-reform multi-channel model with substitution enabled under moderate evasion freedom.",
+						ReformRegime.minimalDisclosure(),
+						InfluenceStrategy.BALANCED,
+						0.35,
+						true,
+						standardContests(),
+						true,
+						false
+				),
+				scenario(
+						"comparison-moderate-visible-scalar",
+						"Moderate reform: single-channel visible lobbying",
+						"Moderate-reform visible-channel baseline: direct and agenda access only, with substitution disabled.",
+						ReformRegime.realTimeTransparency(),
+						InfluenceStrategy.DIRECT_ACCESS,
+						0.0,
+						false,
+						standardContests(),
+						false,
+						true
+				),
+				scenario(
+						"comparison-moderate-multichannel-no-substitution",
+						"Moderate reform: multi-channel without substitution",
+						"Moderate-reform multi-channel model with reform-triggered substitution and evasion switching disabled.",
+						ReformRegime.realTimeTransparency(),
+						InfluenceStrategy.BALANCED,
+						0.45,
+						false,
+						standardContests(),
+						false,
+						false
+				),
+				scenario(
+						"comparison-moderate-multichannel-substitution",
+						"Moderate reform: multi-channel with substitution",
+						"Moderate-reform multi-channel model with substitution enabled.",
+						ReformRegime.realTimeTransparency(),
+						InfluenceStrategy.BALANCED,
+						0.60,
+						true,
+						standardContests(),
+						true,
+						false
+				),
+				scenario(
+						"comparison-strong-visible-scalar",
+						"Strong reform: single-channel visible lobbying",
+						"Strong-reform stress baseline: direct and agenda access only, with substitution disabled.",
 						ReformRegime.fullBundle(),
 						InfluenceStrategy.DIRECT_ACCESS,
 						0.0,
@@ -139,9 +211,9 @@ public final class ScenarioCatalog
 						true
 				),
 				scenario(
-						"comparison-multichannel-no-substitution",
-						"Multi-channel without substitution",
-						"Multiple influence channels are available, but reform-triggered substitution and evasion switching are disabled.",
+						"comparison-strong-multichannel-no-substitution",
+						"Strong reform: multi-channel without substitution",
+						"Strong-reform stress model with multiple influence channels available but reform-triggered substitution and evasion switching disabled.",
 						ReformRegime.fullBundle(),
 						InfluenceStrategy.BALANCED,
 						0.90,
@@ -151,9 +223,9 @@ public final class ScenarioCatalog
 						false
 				),
 				scenario(
-						"comparison-multichannel-substitution",
-						"Multi-channel with substitution",
-						"Multiple influence channels are available and reform-triggered substitution is enabled under high evasion freedom.",
+						"comparison-strong-multichannel-substitution",
+						"Strong reform: multi-channel with substitution",
+						"Strong-reform stress model with multiple influence channels and reform-triggered substitution enabled under high evasion freedom.",
 						ReformRegime.fullBundle(),
 						InfluenceStrategy.BALANCED,
 						0.90,

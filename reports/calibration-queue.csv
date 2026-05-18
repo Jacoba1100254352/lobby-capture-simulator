@@ -7,54 +7,57 @@ P2,benchmark-review,source-moments.csv,darkMoneyDirectVisibility,miss,inferred,0
 P2,scenario-coverage,lobby-capture-ablation.csv,hiddenInfluenceShare,miss,inferred,0.1452-0.3182,0.60-0.80,,,add stress cases where reforms bind enough to force hidden substitution
 P2,scenario-coverage,lobby-capture-campaign.csv,hiddenInfluenceShare,miss,inferred,0.0578-0.5301,0.60-0.80,,,add stress cases where reforms bind enough to force hidden substitution
 P2,scenario-coverage,lobby-capture-interactions.csv,hiddenInfluenceShare,miss,inferred,0.0261-0.5159,0.60-0.80,,,add stress cases where reforms bind enough to force hidden substitution
-P2,scenario-coverage,lobby-capture-mechanism-comparison.csv,hiddenInfluenceShare,miss,inferred,0.0000-0.4359,0.60-0.80,,,add stress cases where reforms bind enough to force hidden substitution
+P2,scenario-coverage,lobby-capture-mechanism-comparison.csv,hiddenInfluenceShare,miss,inferred,0.0000-0.4361,0.60-0.80,,,add stress cases where reforms bind enough to force hidden substitution
 P2,scenario-coverage,lobby-capture-portfolio.csv,hiddenInfluenceShare,miss,inferred,0.1550-0.5031,0.60-0.80,,,add stress cases where reforms bind enough to force hidden substitution
 P2,scenario-coverage,lobby-capture-sensitivity.csv,hiddenInfluenceShare,miss,inferred,0.0296-0.5143,0.60-0.80,,,add stress cases where reforms bind enough to force hidden substitution
 P3,scale-alignment,lobby-capture-campaign.csv,averageDisclosureLag,partial,observed,0.2315-0.4850,0.20-0.45,,,separate current-public-visibility lag from historical age of archived filings
 P3,model-tuning,lobby-capture-campaign.csv,commentCompressionRate,partial,judgmental,0.3110-0.8329,0.50-0.99,commentTemplateShareMean,0.4600,raise compression under anti-astroturf and duplicate-detection tooling
+P3,model-tuning,lobby-capture-mechanism-comparison.csv,commentCompressionRate,partial,judgmental,0.4524-0.5888,0.50-0.99,commentTemplateShareMean,0.4600,raise compression under anti-astroturf and duplicate-detection tooling
 P3,benchmark-review,lobby-capture-interactions.csv,crossVenueDetectionIndex,partial,synthetic,0.0754-0.9403,0.00-0.90,,,treat as a synthetic portfolio capability until linked source coverage is measured
 P3,model-tuning,lobby-capture-ablation.csv,detectionRate,partial,observed,0.1259-0.3556,0.05-0.21,,,increase detection response under enforcement-heavy regimes
 P3,model-tuning,lobby-capture-campaign.csv,detectionRate,partial,observed,0.0722-0.5709,0.05-0.21,,,increase detection response under enforcement-heavy regimes
 P3,model-tuning,lobby-capture-interactions.csv,detectionRate,partial,observed,0.0480-0.4613,0.05-0.21,,,increase detection response under enforcement-heavy regimes
-P3,model-tuning,lobby-capture-mechanism-comparison.csv,detectionRate,partial,observed,0.0991-0.3606,0.05-0.21,,,increase detection response under enforcement-heavy regimes
+P3,model-tuning,lobby-capture-mechanism-comparison.csv,detectionRate,partial,observed,0.1016-0.3709,0.05-0.21,,,increase detection response under enforcement-heavy regimes
 P3,model-tuning,lobby-capture-portfolio.csv,detectionRate,partial,observed,0.1657-0.4420,0.05-0.21,,,increase detection response under enforcement-heavy regimes
 P3,model-tuning,lobby-capture-sensitivity.csv,detectionRate,partial,observed,0.1248-0.4205,0.05-0.21,,,increase detection response under enforcement-heavy regimes
 P3,scenario-coverage,lobby-capture-ablation.csv,hiddenInfluenceShare,partial,proxy,0.1452-0.3182,0.30-0.60,,,add stress cases where reforms bind enough to force hidden substitution
 P3,scenario-coverage,lobby-capture-campaign.csv,hiddenInfluenceShare,partial,proxy,0.0578-0.5301,0.30-0.60,,,add stress cases where reforms bind enough to force hidden substitution
 P3,scenario-coverage,lobby-capture-interactions.csv,hiddenInfluenceShare,partial,proxy,0.0261-0.5159,0.30-0.60,,,add stress cases where reforms bind enough to force hidden substitution
-P3,scenario-coverage,lobby-capture-mechanism-comparison.csv,hiddenInfluenceShare,partial,proxy,0.0000-0.4359,0.30-0.60,,,add stress cases where reforms bind enough to force hidden substitution
+P3,scenario-coverage,lobby-capture-mechanism-comparison.csv,hiddenInfluenceShare,partial,proxy,0.0000-0.4361,0.30-0.60,,,add stress cases where reforms bind enough to force hidden substitution
 P3,scenario-coverage,lobby-capture-portfolio.csv,hiddenInfluenceShare,partial,proxy,0.1550-0.5031,0.30-0.60,,,add stress cases where reforms bind enough to force hidden substitution
 P3,scenario-coverage,lobby-capture-sensitivity.csv,hiddenInfluenceShare,partial,proxy,0.0296-0.5143,0.30-0.60,,,add stress cases where reforms bind enough to force hidden substitution
 P3,benchmark-review,lobby-capture-campaign.csv,influencePreservationRate,partial,proxy,0.1682-0.4756,0.20-1.50,,,decide whether the benchmark applies to this scenario family
-P3,benchmark-review,lobby-capture-mechanism-comparison.csv,influencePreservationRate,partial,proxy,0.0000-0.2829,0.20-1.50,,,decide whether the benchmark applies to this scenario family
+P3,benchmark-review,lobby-capture-mechanism-comparison.csv,influencePreservationRate,partial,proxy,0.0000-0.4277,0.20-1.50,,,decide whether the benchmark applies to this scenario family
 P3,model-tuning,lobby-capture-campaign.csv,largeDonorDependence,partial,observed,0.5358-0.6416,0.60-0.80,fecLargeDonorWeightedShare,0.9485,use source large-donor moments and scale campaign finance influence into report state
 P3,model-tuning,lobby-capture-interactions.csv,largeDonorDependence,partial,observed,0.5361-0.6270,0.60-0.80,fecLargeDonorWeightedShare,0.9485,use source large-donor moments and scale campaign finance influence into report state
-P3,model-tuning,lobby-capture-mechanism-comparison.csv,largeDonorDependence,partial,observed,0.5360-0.6236,0.60-0.80,fecLargeDonorWeightedShare,0.9485,use source large-donor moments and scale campaign finance influence into report state
+P3,model-tuning,lobby-capture-mechanism-comparison.csv,largeDonorDependence,partial,observed,0.5360-0.6228,0.60-0.80,fecLargeDonorWeightedShare,0.9485,use source large-donor moments and scale campaign finance influence into report state
 P3,model-tuning,lobby-capture-portfolio.csv,largeDonorDependence,partial,observed,0.5362-0.6234,0.60-0.80,fecLargeDonorWeightedShare,0.9485,use source large-donor moments and scale campaign finance influence into report state
 P3,model-tuning,lobby-capture-sensitivity.csv,largeDonorDependence,partial,observed,0.5362-0.6280,0.60-0.80,fecLargeDonorWeightedShare,0.9485,use source large-donor moments and scale campaign finance influence into report state
 P3,benchmark-review,lobby-capture-campaign.csv,observedCaptureRate,partial,synthetic,0.0266-1.0000,0.00-0.80,,,decide whether the benchmark applies to this scenario family
+P3,benchmark-review,lobby-capture-mechanism-comparison.csv,observedCaptureRate,partial,synthetic,0.0000-0.8916,0.00-0.80,,,decide whether the benchmark applies to this scenario family
 P3,benchmark-review,lobby-capture-ablation.csv,publicFinancingCandidateUptake,partial,observed,0.0942-0.5798,0.57-0.86,,,decide whether the benchmark applies to this scenario family
 P3,benchmark-review,lobby-capture-campaign.csv,publicFinancingCandidateUptake,partial,observed,0.0791-0.6878,0.57-0.86,,,decide whether the benchmark applies to this scenario family
 P3,benchmark-review,lobby-capture-interactions.csv,publicFinancingCandidateUptake,partial,observed,0.2499-0.7012,0.57-0.86,,,decide whether the benchmark applies to this scenario family
-P3,benchmark-review,lobby-capture-mechanism-comparison.csv,publicFinancingCandidateUptake,partial,observed,0.5658-0.5798,0.57-0.86,,,decide whether the benchmark applies to this scenario family
+P3,benchmark-review,lobby-capture-mechanism-comparison.csv,publicFinancingCandidateUptake,partial,observed,0.0942-0.5798,0.57-0.86,,,decide whether the benchmark applies to this scenario family
 P3,benchmark-review,lobby-capture-portfolio.csv,publicFinancingCandidateUptake,partial,observed,0.1234-0.7006,0.57-0.86,,,decide whether the benchmark applies to this scenario family
 P3,benchmark-review,lobby-capture-sensitivity.csv,publicFinancingCandidateUptake,partial,observed,0.1428-0.7012,0.57-0.86,,,decide whether the benchmark applies to this scenario family
 P3,benchmark-review,lobby-capture-campaign.csv,regulatorQueueBacklog,partial,observed,0.2361-0.6678,0.50-0.75,,,decide whether the benchmark applies to this scenario family
-P3,benchmark-review,lobby-capture-mechanism-comparison.csv,regulatorQueueBacklog,partial,observed,0.2361-0.5983,0.50-0.75,,,decide whether the benchmark applies to this scenario family
+P3,benchmark-review,lobby-capture-mechanism-comparison.csv,regulatorQueueBacklog,partial,observed,0.2361-0.6686,0.50-0.75,,,decide whether the benchmark applies to this scenario family
 P3,model-tuning,lobby-capture-ablation.csv,sanctionRate,partial,proxy,0.0013-0.0238,0.003-0.015,,,raise sanction incidence after detection or narrow benchmark to campaign filer cases
 P3,model-tuning,lobby-capture-campaign.csv,sanctionRate,partial,proxy,0.0003-0.0444,0.003-0.015,,,raise sanction incidence after detection or narrow benchmark to campaign filer cases
 P3,model-tuning,lobby-capture-interactions.csv,sanctionRate,partial,proxy,0.0007-0.0340,0.003-0.015,,,raise sanction incidence after detection or narrow benchmark to campaign filer cases
-P3,model-tuning,lobby-capture-mechanism-comparison.csv,sanctionRate,partial,proxy,0.0016-0.0266,0.003-0.015,,,raise sanction incidence after detection or narrow benchmark to campaign filer cases
+P3,model-tuning,lobby-capture-mechanism-comparison.csv,sanctionRate,partial,proxy,0.0006-0.0259,0.003-0.015,,,raise sanction incidence after detection or narrow benchmark to campaign filer cases
 P3,model-tuning,lobby-capture-portfolio.csv,sanctionRate,partial,proxy,0.0061-0.0408,0.003-0.015,,,raise sanction incidence after detection or narrow benchmark to campaign filer cases
 P3,model-tuning,lobby-capture-sensitivity.csv,sanctionRate,partial,proxy,0.0005-0.0290,0.003-0.015,,,raise sanction incidence after detection or narrow benchmark to campaign filer cases
 P3,scenario-coverage,lobby-capture-ablation.csv,venueSubstitutionRate,partial,proxy,0.0395-0.1555,0.10-0.70,,,add cooling-off and advisory-lobbying stress cases
 P3,scenario-coverage,lobby-capture-campaign.csv,venueSubstitutionRate,partial,proxy,0.0064-0.1926,0.10-0.70,,,add cooling-off and advisory-lobbying stress cases
 P3,scenario-coverage,lobby-capture-interactions.csv,venueSubstitutionRate,partial,proxy,0.0055-0.2114,0.10-0.70,,,add cooling-off and advisory-lobbying stress cases
-P3,scenario-coverage,lobby-capture-mechanism-comparison.csv,venueSubstitutionRate,partial,proxy,0.0000-0.1725,0.10-0.70,,,add cooling-off and advisory-lobbying stress cases
+P3,scenario-coverage,lobby-capture-mechanism-comparison.csv,venueSubstitutionRate,partial,proxy,0.0000-0.1724,0.10-0.70,,,add cooling-off and advisory-lobbying stress cases
 P3,scenario-coverage,lobby-capture-portfolio.csv,venueSubstitutionRate,partial,proxy,0.0384-0.1994,0.10-0.70,,,add cooling-off and advisory-lobbying stress cases
 P3,scenario-coverage,lobby-capture-sensitivity.csv,venueSubstitutionRate,partial,proxy,0.0145-0.2028,0.10-0.70,,,add cooling-off and advisory-lobbying stress cases
 P3,benchmark-review,lobby-capture-ablation.csv,voucherResidentParticipation,partial,observed,0.0080-0.0528,0.03-0.08,,,decide whether the benchmark applies to this scenario family
 P3,benchmark-review,lobby-capture-campaign.csv,voucherResidentParticipation,partial,observed,0.0080-0.0612,0.03-0.08,,,decide whether the benchmark applies to this scenario family
 P3,benchmark-review,lobby-capture-interactions.csv,voucherResidentParticipation,partial,observed,0.0237-0.0640,0.03-0.08,,,decide whether the benchmark applies to this scenario family
+P3,benchmark-review,lobby-capture-mechanism-comparison.csv,voucherResidentParticipation,partial,observed,0.0080-0.0528,0.03-0.08,,,decide whether the benchmark applies to this scenario family
 P3,benchmark-review,lobby-capture-portfolio.csv,voucherResidentParticipation,partial,observed,0.0094-0.0612,0.03-0.08,,,decide whether the benchmark applies to this scenario family
 P3,benchmark-review,lobby-capture-sensitivity.csv,voucherResidentParticipation,partial,observed,0.0125-0.0640,0.03-0.08,,,decide whether the benchmark applies to this scenario family

@@ -19,7 +19,23 @@ Each simulation tick selects one policy contest and resolves it through the acti
   \item Update lobby strategy memory, issue-specific funding multipliers, regulator queue pressure, watchdog focus, adaptation speed, and reform-decay pressure.
 \end{enumerate}
 
-The full ODD-style description is maintained in \texttt{docs/odd-model.md} and is included with the submission bundle as supporting information.
+The repository copy of the ODD-style description is maintained in \texttt{docs/odd-model.md} and is included with the submission bundle as supporting information.
+
+\section{ODD Summary}
+
+\textbf{Purpose.} The model is designed to stress-test anti-capture reforms when organized interests can substitute across influence channels, messengers, venues, and financing routes. It is a mechanism model for diagnostic comparison, not an estimated policy-effect model.
+
+\textbf{Entities and state variables.} Lobby organizations hold budgets, channel skills, issue preferences, reform-threat sensitivity, evasion skill, strategy memory, and defensive spending rules. Clients and funders hold exposure, private-gain, secrecy, and public-financing attributes. Institutional actors are represented through officials, regulators, candidates, watchdogs, enforcement agencies, reform regimes, arenas, and policy contests. Contests store arena type, issue domain, capture risk, public benefit, private gain, technical complexity, procurement exposure, comment docket structure, and reform status.
+
+\textbf{Scheduling.} A run is a sequence of contest ticks. Each tick samples a contest, replenishes funding, evaluates substitution pressure, allocates spending, updates influence-network paths and rulemaking-comment records, resolves the institutional arena, applies enforcement, and updates strategy memory and institutional pressure indices.
+
+\textbf{Inputs and initialization.} Scenarios combine a reform regime, initial influence strategy, evasion profile, contest mix, and calibration profile. The default build uses committed normalized source snapshots and fixtures; live API refreshes are separate from the review bundle.
+
+\textbf{Submodels.} The main submodels are client funding, channel allocation, substitution switching, comment triage, influence-network construction, arena resolution, enforcement, strategy adaptation, source-moment extraction, validation diagnostics, and portfolio scoring.
+
+\textbf{Stochasticity.} Randomness enters through contest sampling, channel-allocation variation, process detection, sanctions, and final contest resolution. Reported campaign, sensitivity, ablation, interaction, portfolio, and mechanism-comparison runs use fixed seeds and multi-run summaries.
+
+\textbf{Outputs.} Reports separate observed capture, hidden influence, hidden capture, total influence distortion, substitution risk, defensive spending, administrative burden, channel shares, source-panel diagnostics, and multi-seed standard deviations.
 
 \section{Scenario Families}
 
@@ -40,9 +56,13 @@ The scenario catalog is organized around mechanism families rather than institut
 
 The generated scenario catalog in \texttt{docs/scenario-catalog.md} remains the authoritative scenario reference.
 
+\section{Full Campaign Scenario Table}
+
+\input{tables/full_campaign_appendix.tex}
+
 \section{Primary Evaluation Rule}
 
-The primary reform criterion is total influence distortion. A reform is treated as a distortion failure when observed capture falls and total modeled distortion rises. It is treated as a substitution warning when observed capture falls but one or more hidden diagnostics rises:
+The primary reform criterion is total influence distortion. A reform is treated as a distortion failure when observed capture falls by at least 0.02 and total modeled distortion rises by at least 0.02. It is treated as a substitution warning when observed capture falls but one or more hidden diagnostics rises:
 
 \begin{align*}
 \Delta observedCapture &< 0,\\
@@ -52,7 +72,19 @@ The primary reform criterion is total influence distortion. A reform is treated 
 \Delta substitutionRisk &> 0.
 \end{align*}
 
-This diagnostic is implemented in \texttt{scripts/validate-reports.py}. The generated outputs are \texttt{reports/substitution-audit.csv}, \texttt{reports/substitution-audit.md}, plus the substitution-warning table and map in the main manuscript.
+If visible lobbying spend falls while hidden diagnostics or channel movement worsen, but observed capture does not fall, the row is labeled as a visible-channel warning rather than a distortion failure. General worsening rows are kept separate. This diagnostic is implemented in \texttt{scripts/validate-reports.py}. The generated outputs are \texttt{reports/substitution-audit.csv}, \texttt{reports/substitution-audit.md}, plus the apparent-failure table, substitution-warning table, and warning map in the main manuscript.
+
+\section{Composite Diagnostic Weights}
+
+The main article's composite-weight table lists the implemented weights for total influence distortion and design loss. Total influence distortion is a clamped additive diagnostic over contest outcomes, hidden-channel diagnostics, information distortion, procurement pressure, comment flooding, opacity, venue shifting, and administrative burden. Design loss is used only for the portfolio screen and weights total distortion, hidden capture, substitution risk, administrative burden, opacity, legitimate-advocacy chill, and speech-restriction risk while rewarding cross-venue detection and participation protection.
+
+Robustness variants for follow-up runs are:
+
+\begin{itemize}
+  \item equal-weight diagnostic: average observed capture, hidden capture, policy distortion, procurement bias, comment flooding, technical distortion, opacity, venue-shift load, and administrative burden;
+  \item hidden-influence-discounted diagnostic: halve hidden influence, preserved influence, hidden capture, and substitution-risk terms before clamping;
+  \item burden-heavy diagnostic: double administrative burden and chill weights, then report portfolio rankings separately from the main design loss.
+\end{itemize}
 
 \section{Generated Report Artifacts}
 
@@ -94,7 +126,7 @@ The implementation exposes mechanism-facing parameters rather than estimated coe
   \item Donor concentration in reports now blends the simulated contribution ledger with source-derived top-donor concentration, Herfindahl concentration, and large-donor shares from the campaign-finance bridge. This avoids treating a report-level donor-Gini proxy as the only donor-network anchor.
   \item Procurement bridge risk now separates initial awards from post-award modifications and uses recipient concentration, single-bid or limited-competition indicators, modification share, price-only awards, protest flags, exclusion flags, and firewall coverage.
   \item Substitution activates when visible-channel pressure, anonymity value, messenger credibility, intermediary fit, venue overlap, and evasion freedom exceed legal cost, disclosure cost, cross-venue detection, and setup time. The threshold is deliberately low enough for stress scenarios to reveal channel migration.
-  \item A distortion failure requires more than channel movement. The audit flags a row as a failure when observed or visible capture falls while total distortion rises, and as a warning when hidden influence, hidden capture, or substitution risk rises.
+  \item A distortion failure requires more than channel movement. The audit flags a row as a failure when observed capture falls while total distortion rises, as a substitution warning when hidden influence, hidden capture, or substitution risk rises after observed capture falls, and as a visible-channel warning when visible lobbying falls while hidden diagnostics worsen.
 \end{itemize}
 
 The source-facing parameters and benchmark ranges are maintained in \path{data/calibration/parameter-map.csv}. Report-level bounded diagnostics remain synthetic unless the validation summary classifies the target as a source moment.

@@ -4,7 +4,7 @@ This report complements the scripted layout audit. Figure rows check generated S
 
 ## Current Automated Layout Summary
 
-- Pages checked: `35`
+- Pages checked: `39`
 - Failures: `0`
 
 ## Figure Checks
@@ -16,15 +16,18 @@ This report complements the scripted layout audit. Figure rows check generated S
 | `interaction_tradeoffs.tex` | scripted pass | scripted pass | scripted pass | scripted pass | layout pass | 4 label boxes; 4 leader lines |
 | `model_architecture.tex` | n/a | n/a | n/a | scripted pass | layout pass | no point-callout labels in this figure |
 | `scenario_tradeoffs.tex` | scripted pass | scripted pass | scripted pass | scripted pass | layout pass | 12 label boxes; 12 leader lines |
-| `substitution_warning_map.tex` | scripted pass | scripted pass | scripted pass | scripted pass | layout pass | 10 label boxes; 10 leader lines |
+| `substitution_warning_map.tex` | scripted pass | scripted pass | scripted pass | scripted pass | layout pass | 5 label boxes; 5 leader lines |
 
 ## Table Checks
 
 | Table source | Fits page/column | Text readable | Caption close to table | No excessive white space | Notes |
 | --- | --- | --- | --- | --- | --- |
 | `ablation_snapshot.tex` | layout pass | layout pass | layout pass | layout pass |  |
+| `apparent_failure_ranking.tex` | layout pass | layout pass | layout pass | layout pass |  |
 | `campaign_snapshot.tex` | layout pass | layout pass | layout pass | layout pass |  |
+| `composite_weights.tex` | layout pass | layout pass | layout pass | layout pass |  |
 | `experiment_design.tex` | layout pass | layout pass | layout pass | layout pass |  |
+| `full_campaign_appendix.tex` | layout pass | layout pass | layout pass | layout pass |  |
 | `interaction_snapshot.tex` | layout pass | layout pass | layout pass | layout pass |  |
 | `mechanism_comparison.tex` | layout pass | layout pass | layout pass | layout pass |  |
 | `portfolio_snapshot.tex` | layout pass | layout pass | layout pass | layout pass |  |

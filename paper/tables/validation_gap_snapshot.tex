@@ -5,17 +5,17 @@
 \setlength{\tabcolsep}{2pt}
 \begin{tabular*}{\textwidth}{@{\extracolsep{\fill}}lrrrrrr@{}}
 \toprule
-Panel & Mechanism & Evidence & Moment & Snapshot & Fixture & Status \\
+Panel & Mechanism & Evidence & Moment & Snapshot & Fixture? & Status \\
 \midrule
-Direct dark money & Opaque donor routing & proxy/thin & DM source share & 0.0249 & 0.0905 & thin \\
-Outside spending & Independent expenditures & direct & IE rows & 650.0000 & 2.0000 & usable \\
-Public financing & Public financing & direct if present & PF source share & 0.0830 & 0.4269 & thin \\
-Intermediaries & Intermediaries & proxy & Intermediary rows & 853.0000 & 6.0000 & usable \\
-Revolving door & Revolving door & proxy/thin & RD rows & 284.0000 & 14.0000 & thin \\
-Proc. IDs & Procurement matching & direct IDs & Known PIID share & 1.0000 & 1.0000 & usable \\
-Proc. mods & Post-award pressure & proxy/thin & Ex-post mod. share & 0.0000 & 0.6000 & thin \\
+Direct dark money & Opaque donor routing & proxy/thin & DM source share & 0.0249 & yes & thin \\
+Outside spending & Independent expenditures & direct & IE rows & 650.0000 & no & usable \\
+Public financing & Public financing & direct if present & PF source share & 0.0830 & yes & thin \\
+Intermediaries & Intermediaries & proxy & Intermediary rows & 853.0000 & yes & usable \\
+Revolving door & Revolving door & proxy/thin & RD rows & 284.0000 & no & thin \\
+Proc. IDs & Procurement matching & direct IDs & Known PIID share & 1.0000 & yes & usable \\
+Proc. mods & Post-award pressure & proxy/thin & Ex-post mod. share & 0.0000 & yes & thin \\
 \bottomrule
 \end{tabular*}
-\caption{Source-panel coverage for the 2024 EPA/ENV validation snapshot. Fixture values are schema and mechanism scaffolds; thin, warning, fixture-only, or missing rows are validation gaps.}
+\caption{Source-panel coverage for the 2024 EPA/ENV validation snapshot. Fixture/scaffold indicates whether a schema bridge exists outside representative source coverage; thin, warning, fixture-only, or missing rows are validation gaps.}
 \label{tab:validation-gaps}
 \end{table*}

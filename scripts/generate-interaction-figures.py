@@ -29,14 +29,14 @@ INTERACTION_ROWS = {
 
 SCENARIO_TRADEOFF_ROWS = {
     "open-access-lobbying": "Open",
-    "low-salience-technical-rulemaking": "Rule",
-    "campaign-finance-dominant": "Camp",
-    "dark-money-dominant": "Dark",
-    "revolving-door-dominant": "Door",
-    "intermediary-substitution": "Inter",
-    "real-time-transparency": "RTD",
-    "comment-authenticity-rules": "Auth",
-    "procurement-firewalls": "Proc",
+    "low-salience-technical-rulemaking": "Rulemaking",
+    "campaign-finance-dominant": "Campaign",
+    "dark-money-dominant": "Dark money",
+    "revolving-door-dominant": "Revolving door",
+    "intermediary-substitution": "Intermediaries",
+    "real-time-transparency": "Real-time disclosure",
+    "comment-authenticity-rules": "Comment auth.",
+    "procurement-firewalls": "Procurement",
     "venue-shifting-detection": "Venue",
     "full-anti-capture-bundle": "Bundle",
     "bundle-with-evasion": "Evasion",
@@ -53,15 +53,12 @@ CHANNEL_ROWS = [
     ("bundle-with-evasion", "Bundle+evasion"),
 ]
 
-CHANNELS = [
-    ("directAccessShare", "Access", "#d0d0d0"),
-    ("informationDistortionShare", "Info", "#ababab"),
-    ("publicCampaignShare", "Public", "#808080"),
-    ("campaignFinanceShare", "Campaign", "#595959"),
-    ("darkMoneyShare", "Dark", "#333333"),
-    ("revolvingDoorShare", "Revolving door", "#1f4e79"),
-    ("intermediaryShare", "Intermediary", "#8c564b"),
-    ("defensiveChannelShare", "Defense", "#000000"),
+CHANNEL_GROUPS = [
+    (("directAccessShare", "agendaAccessShare"), "Visible access", "#d0d0d0"),
+    (("informationDistortionShare", "publicCampaignShare"), "Public/technical information", "#9e9e9e"),
+    (("campaignFinanceShare", "darkMoneyShare"), "Money channels", "#595959"),
+    (("litigationThreatShare", "revolvingDoorShare", "intermediaryShare"), "Intermediary/venue channels", "#1f4e79"),
+    (("defensiveChannelShare",), "Defense/evasion", "#000000"),
 ]
 
 EVASION_ROWS = [
@@ -201,8 +198,8 @@ def write_channel_mix(indexed: dict[str, dict[str, str]], report: Path, figure_d
         y = chart_top + index * row_gap
         body.append(text(70, y + 29, label, anchor="start"))
         x = chart_left
-        for field, _legend, color in CHANNELS:
-            width = max(0.0, min(chart_width, as_float(row[field]) * chart_width))
+        for fields, _legend, color in CHANNEL_GROUPS:
+            width = max(0.0, min(chart_width, sum(as_float(row[field]) for field in fields) * chart_width))
             if width > 0.5:
                 body.append(rect(x, y, width, bar_height, color, "segment"))
             x += width
@@ -213,9 +210,9 @@ def write_channel_mix(indexed: dict[str, dict[str, str]], report: Path, figure_d
 
     legend_x = 70
     legend_y = 180
-    for index, (_field, label, color) in enumerate(CHANNELS):
-        x = legend_x + (index % 4) * 405
-        y = legend_y + (index // 4) * 50
+    for index, (_fields, label, color) in enumerate(CHANNEL_GROUPS):
+        x = legend_x + (index % 3) * 530
+        y = legend_y + (index // 3) * 50
         body.append(rect(x, y - 24, 42, 28, color, "legend-swatch"))
         body.append(text(x + 56, y, label, anchor="start", css_class="small"))
 
@@ -230,7 +227,7 @@ def write_channel_mix(indexed: dict[str, dict[str, str]], report: Path, figure_d
         figure_dir / "channel_mix.tex",
         "Figure_1_channel_mix.pdf",
         report,
-        "Channel allocation mix for selected scenarios. The stacked bars show how the model routes lobbying budgets across access, information, public campaigns, campaign finance, dark money, revolving-door pressure, and defensive reform spending.",
+        "Grouped channel allocation mix for selected scenarios. The stacked bars aggregate detailed report channels into visible access, public or technical information, money channels, intermediary or venue channels, and defense or evasion.",
         "fig:channel-mix",
     )
 
@@ -377,24 +374,15 @@ def write_substitution_warning_map(rows: list[dict[str, str]], report: Path, fig
         if row.get("status") in {
             "distortion_failure",
             "worse_total_distortion",
-            "hidden_capture_warning",
-            "hidden_influence_warning",
             "substitution_warning",
+            "visible_channel_warning",
         }
+        and row.get("report") != "lobby-capture-mechanism-comparison.csv"
     ]
     flagged.sort(key=lambda row: float(row.get("warningScore", "0") or "0"), reverse=True)
     selected = flagged[:10]
     if not selected:
         selected = rows[:1]
-    points = [
-        ScatterPoint(
-            label=substitution_label(row),
-            x=as_float(row["observedCaptureDelta"]),
-            y=as_float(row["totalInfluenceDistortionDelta"]),
-            emphasis=row.get("status") in {"distortion_failure", "worse_total_distortion"},
-        )
-        for row in selected
-    ]
     plot = Plot(left=260, top=170, width=1230, height=720)
     body: list[str] = []
     body.extend(title_block("Apparent success and substitution warnings", "Observed capture change versus total-distortion change"))
@@ -418,12 +406,25 @@ def write_substitution_warning_map(rows: list[dict[str, str]], report: Path, fig
     body.append(text(zero_x - 22, plot.top + 40, "capture lower, distortion higher", anchor="end", css_class="small"))
     body.append(text(zero_x + 22, zero_y - 20, "distortion higher", anchor="start", css_class="small"))
     label_targets: list[LabelTarget] = []
-    for point in points:
-        x, y = plot.point(point.x, point.y, 0.25, 0.30, x_min=-1.0, y_min=-0.20)
-        size = 32 if point.emphasis else 24
-        color = "#555555" if point.emphasis else "#111111"
+    for index, row in enumerate(selected, start=1):
+        x, y = plot.point(
+            as_float(row["observedCaptureDelta"]),
+            as_float(row["totalInfluenceDistortionDelta"]),
+            0.25,
+            0.30,
+            x_min=-1.0,
+            y_min=-0.20,
+        )
+        emphasis = row.get("status") in {"distortion_failure", "worse_total_distortion"}
+        size = 32 if emphasis else 24
+        color = "#555555" if emphasis else "#111111"
         body.append(rect(x - size / 2, y - size / 2, size, size, color, "point"))
-        label_targets.append(LabelTarget(point.label, x, y))
+        if index <= 5:
+            label_targets.append(LabelTarget(substitution_label(row), x, y))
+        else:
+            body.append(text(x, y + 10, str(index), anchor="middle", css_class="point-number"))
+    if len(selected) > 5:
+        body.append(text(plot.left + plot.width - 8, plot.top + 48, "Numbered markers are ranks 6-10", anchor="end", css_class="small"))
     draw_label_callouts(body, layout_labels(plot, label_targets))
     write_svg_and_pdf(
         figure_dir,
@@ -436,7 +437,7 @@ def write_substitution_warning_map(rows: list[dict[str, str]], report: Path, fig
         figure_dir / "substitution_warning_map.tex",
         "Figure_5_substitution_warning_map.pdf",
         report,
-        "Substitution-warning map. Points compare observed-capture deltas with total-distortion deltas for flagged rows; the shaded quadrant marks lower observed capture with higher total distortion.",
+        "Substitution-warning map. Points compare observed-capture deltas with total-distortion deltas for flagged report rows; the shaded quadrant marks lower observed capture with higher total distortion.",
         "fig:substitution-warning-map",
         extra="x=observed capture change versus comparison; y=total distortion change versus comparison",
     )
@@ -455,6 +456,10 @@ def substitution_label(row: dict[str, str]) -> str:
         "Anti-capture bundle with evasion": "Bundle+evasion",
         "Shadow lobbying maximum stress": "Shadow max",
         "Hard-budget substitution stress": "Budget stress",
+        "Visible lobbying ban with dark-money leakage": "Ban+DM leakage",
+        "Procurement modification capture frontier": "Proc. mods",
+        "Comment-authenticity technical substitution": "Comment tech",
+        "Meeting-log intermediary leakage": "Meeting-log leak",
         "Think-tank and association intermediaries": "Intermediaries",
         "Outside-spending disclosure evasion": "Outside evasion",
         "Procurement venue-shift stress": "Proc. shift",
@@ -750,6 +755,7 @@ def svg_document(title: str, description: str, body: list[str]) -> str:
             ".title { font-size: 46px; font-weight: 700; }",
             ".subtitle { font-size: 30px; fill: #444; }",
             ".small, .tick, .label { font-size: 28px; }",
+            ".point-number { font-size: 22px; fill: #fff; font-weight: 700; }",
             ".arch-title { font-size: 30px; font-weight: 700; }",
             ".axis { stroke: #111; stroke-width: 5; fill: none; }",
             ".grid { stroke: #d8d8d8; stroke-width: 3; fill: none; }",

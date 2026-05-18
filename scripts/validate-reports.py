@@ -266,24 +266,24 @@ def substitution_status(row: dict[str, str], baseline: dict[str, str]) -> str:
         metric(row, "revolvingDoorBridgeIndex") - metric(baseline, "revolvingDoorBridgeIndex"),
         metric(row, "commentNetworkLoad") - metric(baseline, "commentNetworkLoad"),
     )
-    apparent_success = capture_delta < -0.02 or visible_delta < -0.02
+    observed_improvement = capture_delta < -0.02
+    visible_suppression = visible_delta < -0.02
+    hidden_worsening = any_moved(hidden_delta, hidden_capture_delta, risk_delta)
     channel_shift = any_moved(
         network_delta,
         venue_shift_delta,
         channel_movement_delta,
     )
-    if apparent_success and distortion_delta > 0.02:
+    if observed_improvement and distortion_delta > 0.02:
         return "distortion_failure"
     if distortion_delta > 0.02:
         return "worse_total_distortion"
-    if apparent_success and hidden_capture_delta > 0.02:
-        return "hidden_capture_warning"
-    if apparent_success and hidden_delta > 0.02:
-        return "hidden_influence_warning"
-    if apparent_success and risk_delta > 0.02:
+    if observed_improvement and hidden_worsening:
         return "substitution_warning"
-    if apparent_success and channel_shift:
+    if observed_improvement and channel_shift:
         return "channel_shift_tradeoff"
+    if visible_suppression and (hidden_worsening or channel_shift):
+        return "visible_channel_warning"
     if capture_delta < -0.02 and distortion_delta <= 0.02 and risk_delta <= 0.02:
         return "improved"
     return "no_material_tradeoff"
@@ -296,13 +296,16 @@ def substitution_row(report: Path, row: dict[str, str], baseline: dict[str, str]
     distortion_delta = metric(row, "totalInfluenceDistortion") - metric(baseline, "totalInfluenceDistortion")
     risk_delta = metric(row, "substitutionRisk") - metric(baseline, "substitutionRisk")
     warning_score = max(0.0, -capture_delta) + max(0.0, hidden_delta) + max(0.0, hidden_capture_delta) + max(0.0, distortion_delta) + max(0.0, risk_delta)
-    design_loss = (
-        (0.34 * metric(row, "totalInfluenceDistortion"))
-        + (0.22 * metric(row, "hiddenCaptureIndex"))
-        + (0.18 * metric(row, "substitutionRisk"))
+    design_loss = metric(row, "designLoss") if row.get("designLoss") else (
+        (0.30 * metric(row, "totalInfluenceDistortion"))
+        + (0.20 * metric(row, "hiddenCaptureIndex"))
+        + (0.16 * metric(row, "substitutionRisk"))
         + (0.10 * metric(row, "administrativeCost"))
-        + (0.08 * metric(row, "networkOpacityIndex"))
-        + (0.08 * metric(row, "venueShiftNetworkLoad"))
+        + (0.09 * metric(row, "networkOpacityIndex"))
+        + (0.07 * metric(row, "legitimateAdvocacyChill"))
+        + (0.06 * metric(row, "speechRestrictionRisk"))
+        - (0.05 * metric(row, "crossVenueDetectionIndex"))
+        - (0.03 * metric(row, "participationProtectionIndex"))
     )
     return {
         "report": report.name,
@@ -479,6 +482,7 @@ def write_substitution_markdown(path: Path, rows: list[dict[str, str]]) -> None:
             "hidden_capture_warning",
             "hidden_influence_warning",
             "substitution_warning",
+            "visible_channel_warning",
             "channel_shift_tradeoff",
             "improved",
             "no_material_tradeoff",
@@ -495,6 +499,7 @@ def write_substitution_markdown(path: Path, rows: list[dict[str, str]]) -> None:
         f"- Hidden-capture warning: `{counts['hidden_capture_warning']}`",
         f"- Hidden-influence warning: `{counts['hidden_influence_warning']}`",
         f"- Substitution warning: `{counts['substitution_warning']}`",
+        f"- Visible-channel warning: `{counts['visible_channel_warning']}`",
         f"- Channel-shift tradeoff: `{counts['channel_shift_tradeoff']}`",
         f"- Improved: `{counts['improved']}`",
         f"- No material tradeoff: `{counts['no_material_tradeoff']}`",
@@ -513,6 +518,7 @@ def write_substitution_markdown(path: Path, rows: list[dict[str, str]]) -> None:
             "hidden_capture_warning",
             "hidden_influence_warning",
             "substitution_warning",
+            "visible_channel_warning",
             "channel_shift_tradeoff",
         }
     ]
