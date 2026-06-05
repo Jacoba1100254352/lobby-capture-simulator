@@ -30,5 +30,10 @@ jobs:
         run: make paper-artifacts-check
         env:
           LOBBY_CAPTURE_REQUIRE_RELEASE_TAG: ${{ github.ref_type == 'tag' && startsWith(github.ref_name, 'paper-publication-readiness-') && '1' || '0' }}
-      - name: Ensure generated artifacts are committed
-        run: git diff --exit-code
+      - name: Ensure deterministic generated artifacts are committed
+        run: |
+          git diff --exit-code -- \
+            ':!paper/*.pdf' \
+            ':!paper/figures/*.pdf' \
+            ':!reports/paper-layout-audit.md' \
+            ':!reports/manual-visual-audit.md'

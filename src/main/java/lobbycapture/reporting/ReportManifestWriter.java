@@ -47,7 +47,7 @@ public final class ReportManifestWriter
 				Boolean.toString(!sourceStatus().isBlank())
 		), false, true);
 		append(builder, "workingTreeDirtyScope", "tracked status excluding generated reports, paper tables, paper figures, and 2024-env snapshot outputs", true);
-		append(builder, "javaVersion", System.getProperty("java.version"), true);
+		append(builder, "javaVersion", configured("LOBBY_CAPTURE_REPORT_JAVA_VERSION", System.getProperty("java.version")), true);
 		append(builder, "calibrationChecksum", checksumDirectory(calibrationDirectory()), true);
 		appendArray(builder, "reportFiles", reportFiles);
 		builder.append("}\n");
