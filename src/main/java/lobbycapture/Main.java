@@ -17,7 +17,7 @@ public final class Main
 	private Main() {
 	}
 	
-	static void main(String[] args) throws Exception {
+	public static void main(String[] args) throws Exception {
 		Options options = Options.parse(args);
 		if (options.help) {
 			printHelp();
