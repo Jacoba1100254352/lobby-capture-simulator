@@ -29,6 +29,6 @@ jobs:
       - name: Build and verify paper PDFs and submission package
         run: make paper-artifacts-check
         env:
-          LOBBY_CAPTURE_REQUIRE_RELEASE_TAG: "1"
+          LOBBY_CAPTURE_REQUIRE_RELEASE_TAG: ${{ github.ref_type == 'tag' && startsWith(github.ref_name, 'paper-publication-readiness-') && '1' || '0' }}
       - name: Ensure generated artifacts are committed
         run: git diff --exit-code
