@@ -23,7 +23,7 @@ WILEY_PDF = PAPER / "regulation-governance-wiley.pdf"
 SUPPLEMENT_PDF = PAPER / "supplement.pdf"
 SUBMISSION_ZIP = DIST / "lobby-capture-wiley-submission.zip"
 SUBMISSION_DECLARATIONS = PAPER / "sections" / "submission-declarations.tex"
-RELEASE_TAG = "paper-publication-readiness-2026-06-05-r8"
+RELEASE_TAG = "paper-publication-readiness-2026-06-05-r9"
 FORBIDDEN_LOCAL_ARTIFACTS = [
     PAPER / "main.tex",
     PAPER / "main.pdf",
@@ -47,10 +47,10 @@ EXPECTED_ZIP_MEMBERS = {
     "sections/reggov-body.tex",
     "sections/submission-declarations.tex",
     "tables/mechanism_comparison.tex",
-	"tables/campaign_snapshot.tex",
-	"tables/full_campaign_appendix.tex",
-	"tables/distortion_decomposition.tex",
-	"tables/apparent_failure_ranking.tex",
+    "tables/campaign_snapshot.tex",
+    "tables/full_campaign_appendix.tex",
+    "tables/distortion_decomposition.tex",
+    "tables/apparent_failure_ranking.tex",
     "tables/substitution_warning_ranking.tex",
     "tables/composite_weights.tex",
     "tables/validation_gap_snapshot.tex",

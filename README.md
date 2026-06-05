@@ -2,7 +2,7 @@
 
 Standalone Java simulation focused on lobbying, money in politics, regulatory capture, and anti-capture reforms.
 
-The current implementation is the first runnable slice of `PROJECT_PLAN.md`. It treats lobby organizations as strategic budget allocators across influence channels, then resolves outcomes in legislative, rulemaking, election, procurement, litigation, enforcement, and public-information arenas.
+This repository implements the Lobby Capture Simulator described in `PROJECT_PLAN.md`. It treats lobby organizations as strategic budget allocators across influence channels, then resolves outcomes in legislative, rulemaking, election, procurement, litigation, enforcement, and public-information arenas.
 
 ## Run
 
@@ -62,7 +62,7 @@ make paper-artifacts-check
 - `reports/lobby-capture-portfolio.csv`
 - `reports/lobby-capture-portfolio.md`
 
-Each report run also writes a `*.manifest.json` sidecar with seed, runs, contests, command, Java version, source Git state, and calibration checksum. The Git-state field excludes tracked generated reports, paper tables, paper figures, and the pinned 2024-env snapshot outputs so rerunning the report suite does not falsely mark later manifests dirty because earlier generated artifacts changed. `make validate` compares committed report snapshots against benchmark plausibility ranges and writes:
+Each report run also writes a `*.manifest.json` sidecar with seed, runs, contests, command, runtime provenance, source Git state, and calibration checksum. The committed review artifacts use a stable runtime-provenance label so Java 21 CI and local Java runtimes do not rewrite otherwise identical report snapshots. The Git-state field excludes tracked generated reports, paper tables, paper figures, and the pinned 2024-env snapshot outputs so rerunning the report suite does not falsely mark later manifests dirty because earlier generated artifacts changed. `make validate` compares committed report snapshots against benchmark plausibility ranges and writes:
 
 - `reports/validation-summary.csv`
 - `reports/validation-summary.md`

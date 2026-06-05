@@ -1,6 +1,6 @@
 # Next Steps
 
-The simulator now has a lobbying-centered MVP with calibration fixtures, source-native live calibration downloaders, source JSON parser fixtures, explicit client funding, rulemaking comment dockets, comment triage, evasion profiles, an influence-substitution engine, an influence-network diagnostic layer, adaptive clients/regulators/watchdogs, campaign reports, a mechanism-comparison report, sensitivity sweeps, ablation sweeps, interaction sweeps, reform-portfolio screens, validation summaries, calibration queues, source moments, generated paper tables and figures, a 2024 EPA/ENV snapshot, and a Regulation & Governance-oriented working paper scaffold.
+The simulator now has a lobbying-centered model core with calibration fixtures, source-native live calibration downloaders, source JSON parser fixtures, explicit client funding, rulemaking comment dockets, comment triage, evasion profiles, an influence-substitution engine, an influence-network diagnostic layer, adaptive clients/regulators/watchdogs, campaign reports, a mechanism-comparison report, sensitivity sweeps, ablation sweeps, interaction sweeps, reform-portfolio screens, validation summaries, calibration queues, source moments, generated paper tables and figures, a 2024 EPA/ENV snapshot, and a Regulation & Governance-oriented review manuscript with a reproducible Wiley submission bundle.
 
 ## Completed in the current slice
 
@@ -26,7 +26,7 @@ The simulator now has a lobbying-centered MVP with calibration fixtures, source-
 - `docs/source-data-roadmap.md` records the direct/proxy/restricted public-data roadmap for LDA, FEC, IRS, nonprofit, procurement, rulemaking, witness, advisory-committee, OGE, OpenSecrets, LegiStorm, and ProPublica-style panels.
 - `make snapshot-2024-env` writes a closed-window snapshot manifest and freezes normalized rows for the 2024 environmental validation slice.
 - `scripts/run-2024-env-live-snapshot.sh` executes the pinned 2024 EPA/ENV live run, preserves ignored raw payloads, and records public API rate-limit gaps.
-- The current live-run pipeline now uses source-native no-key NYC CFB public-financing rows, NYC CFB intermediary rows, IRS EO BMF nonprofit/association capacity rows, and IRS EO BMF 501(c)(4)/(c)(6) opaque-capacity proxy rows when configured. These replace fixture fallback for the default refresh path, but the dark-money bridge remains a capacity proxy rather than direct observed hidden donor/expenditure data.
+- The default live-run pipeline uses source-native no-key NYC CFB public-financing rows, NYC CFB intermediary rows, IRS EO BMF nonprofit/association capacity rows, and IRS EO BMF 501(c)(4)/(c)(6) opaque-capacity proxy rows when configured. These replace fixture fallback for the default refresh path, but the dark-money bridge remains a capacity proxy rather than direct observed hidden donor/expenditure data.
 - `--live` fetch modes can normalize caller-provided CSVs or query LDA, OpenFEC, Regulations.gov, and Federal Register APIs directly.
 - Source-native parser fixtures exercise LDA, OpenFEC, Regulations.gov, Federal Register, and USAspending JSON without network access.
 - Live source fetches retry transient `429` and `5xx` responses and redact API keys from error URLs.
@@ -35,18 +35,18 @@ The simulator now has a lobbying-centered MVP with calibration fixtures, source-
 - `make tables` regenerates paper table inputs from report CSV snapshots using `paper/tables.yml`.
 - `make figures` regenerates the paper's numbered SVG/PDF figure assets and LaTeX wrappers.
 - Adaptive institutions now include per-client/per-domain funding memory, regulator queue pressure, watchdog monitoring budget allocation, adaptation speed, and reform-decay pressure.
-- The paper now has a Regulation & Governance framing, a Wiley-template wrapper, a word-count check, and a separate submission strategy note.
+- The paper now has a Regulation & Governance framing, a Wiley-template wrapper, a word-count check, a standalone submission-package check, a release-tag exactness gate, and a separate submission strategy note.
 
-## 1. Compress the paper into a Regulation & Governance submission package
+## 1. Maintain the Regulation & Governance submission package
 
-The paper is now pointed at Regulation & Governance, but it still reads like a compact working paper plus reproducibility artifact. Before submission, it should become a tighter article with a supplement.
+The main manuscript, supplement, Wiley wrapper, generated figures/tables, and submission ZIP are now built through the review pipeline. Future edits should preserve that separation rather than moving implementation inventory back into the main article.
 
 Deliverables:
 
-- keep one flagship reform-bundle comparison in the main article;
-- move full scenario catalogs, sensitivity matrices, ablation matrices, implementation details, and parser details to supplementary material;
-- run `make paper-word-count` after each major edit and keep the full manuscript under the reported 11,000-word cap;
-- use `paper/regulation-governance-wiley.tex` with `make paper-wiley` for the Wiley-template reproducibility check;
+- keep the main article focused on the model mechanism, empirical bridge, curated result tables, and governance implication;
+- keep full scenario catalogs, sensitivity matrices, ablation matrices, implementation details, and parser details in the supplement or repository reports;
+- run `make paper-artifacts-check` after any manuscript, report, table, figure, or submission-bundle change;
+- advance the release tag in `scripts/check-paper-artifacts.py` and `paper/sections/submission-declarations.tex` whenever the review bundle changes;
 - prepare a separate anonymized package only if the paper is retargeted to a double-blind venue.
 
 ## 2. Expand the empirical source panels beyond the current 2024 EPA/ENV snapshot
