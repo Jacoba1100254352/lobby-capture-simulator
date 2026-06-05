@@ -14,9 +14,11 @@ Use this before creating a journal submission archive or public release tag.
 ## Archive Metadata
 
 - Create a release tag for the exact commit used by the submission package.
-- Create a Zenodo, OSF, or institutional archive for the release and record the DOI in `paper/sections/submission-declarations.tex`.
+- Create a GitHub release for the tag and attach the Wiley submission ZIP, Wiley PDF, and supplement PDF.
+- If a Zenodo, OSF, or institutional archive DOI is created, record it in `paper/sections/submission-declarations.tex`; otherwise, the data availability statement should cite the GitHub release URL without saying that the archive is unfinished.
 - Confirm the release archive includes normalized snapshots, report CSVs, generated tables, generated figure sources, generated PDF figures, the manuscript PDF, supplement PDF, and the Wiley submission archive.
 - Do not archive private credentials or raw API payloads that cannot be redistributed.
+- `make paper-artifacts-check` should fail if the submission declarations contain self-invalidating archive language such as `No external DOI` or `should be minted`.
 
 ## Source-Panel Guardrails
 

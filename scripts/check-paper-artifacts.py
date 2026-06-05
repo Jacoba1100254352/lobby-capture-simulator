@@ -22,6 +22,8 @@ LOCAL_PDF = PAPER / f"{LOCAL_BASENAME}.pdf"
 WILEY_PDF = PAPER / "regulation-governance-wiley.pdf"
 SUPPLEMENT_PDF = PAPER / "supplement.pdf"
 SUBMISSION_ZIP = DIST / "lobby-capture-wiley-submission.zip"
+SUBMISSION_DECLARATIONS = PAPER / "sections" / "submission-declarations.tex"
+RELEASE_TAG = "paper-publication-readiness-2026-06-05"
 FORBIDDEN_LOCAL_ARTIFACTS = [
     PAPER / "main.tex",
     PAPER / "main.pdf",
@@ -85,6 +87,7 @@ def main() -> int:
     failures.extend(check_forbidden_local_artifacts())
     failures.extend(check_freshness())
     failures.extend(check_wiley_text())
+    failures.extend(check_submission_statements())
     failures.extend(check_submission_zip())
     failures.extend(check_submission_zip_compiles())
 
@@ -216,6 +219,36 @@ def check_wiley_text() -> list[str]:
         return [f"could not inspect Wiley PDF text with pdftotext: {error}"]
     forbidden = ["Allergy", "OPEN ACCESS", "Received:", "Revised:", "Accepted:", "Published on:"]
     return [f"Wiley PDF still contains template placeholder text: {term}" for term in forbidden if term in text]
+
+
+def check_submission_statements() -> list[str]:
+    if not SUBMISSION_DECLARATIONS.exists():
+        return [f"missing submission declarations: {SUBMISSION_DECLARATIONS.relative_to(ROOT)}"]
+    text = SUBMISSION_DECLARATIONS.read_text(encoding="utf-8")
+    failures: list[str] = []
+    forbidden = [
+        "No external DOI",
+        "should be minted",
+        "before external journal submission",
+        "working draft",
+    ]
+    failures.extend(
+        f"submission declarations contain pre-submission archive language: {phrase}"
+        for phrase in forbidden
+        if phrase in text
+    )
+    required = [
+        RELEASE_TAG,
+        f"/releases/tag/{RELEASE_TAG}",
+        "MIT License",
+        "Private credentials and raw API payload archives are intentionally excluded",
+    ]
+    failures.extend(
+        f"submission declarations missing required availability detail: {phrase}"
+        for phrase in required
+        if phrase not in text
+    )
+    return failures
 
 
 def check_submission_zip() -> list[str]:
