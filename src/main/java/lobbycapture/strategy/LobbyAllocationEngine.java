@@ -169,6 +169,10 @@ public final class LobbyAllocationEngine
 		double transparencyGainSum = 0.0;
 		double messengerSubstitutionSum = 0.0;
 		double venueSubstitutionSum = 0.0;
+		double switchScoreEqualWeightSum = 0.0;
+		double switchScoreAnonymityHeavySum = 0.0;
+		double switchScoreEnforcementCostHeavySum = 0.0;
+		double switchDisclosureCostSum = 0.0;
 		double lobbyPressure = contest.lobbyPressure();
 		double perceivedSupport = contest.perceivedPublicSupport();
 		double publicBenefit = contest.truePublicBenefit();
@@ -256,6 +260,10 @@ public final class LobbyAllocationEngine
 			transparencyGainSum += spend * substitution.netTransparencyGain();
 			messengerSubstitutionSum += spend * substitution.messengerSubstitutionRate();
 			venueSubstitutionSum += spend * substitution.venueSubstitutionRate();
+			switchScoreEqualWeightSum += spend * substitution.switchScoreEqualWeight();
+			switchScoreAnonymityHeavySum += spend * substitution.switchScoreAnonymityHeavy();
+			switchScoreEnforcementCostHeavySum += spend * substitution.switchScoreEnforcementCostHeavy();
+			switchDisclosureCostSum += spend * substitution.switchDisclosureCost();
 			if (contest.antiCaptureReform()) {
 				defensiveSpend += spend;
 			}
@@ -374,6 +382,10 @@ public final class LobbyAllocationEngine
 				weighted(transparencyGainSum, substitutionWeightSum),
 				weighted(messengerSubstitutionSum, substitutionWeightSum),
 				weighted(venueSubstitutionSum, substitutionWeightSum),
+				weighted(switchScoreEqualWeightSum, substitutionWeightSum),
+				weighted(switchScoreAnonymityHeavySum, substitutionWeightSum),
+				weighted(switchScoreEnforcementCostHeavySum, substitutionWeightSum),
+				weighted(switchDisclosureCostSum, substitutionWeightSum),
 				InfluenceNetworkSnapshot.fromPaths(networkPaths),
 				records
 		);

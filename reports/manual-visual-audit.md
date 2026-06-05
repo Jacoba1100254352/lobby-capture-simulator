@@ -34,6 +34,7 @@ This report complements the scripted layout audit. Figure rows check generated S
 | `portfolio_snapshot.tex` | layout pass | layout pass | layout pass | layout pass |  |
 | `sensitivity_snapshot.tex` | layout pass | layout pass | layout pass | layout pass |  |
 | `substitution_warning_ranking.tex` | layout pass | layout pass | layout pass | layout pass |  |
+| `switch_rule_snapshot.tex` | layout pass | layout pass | layout pass | layout pass |  |
 | `validation_gap_snapshot.tex` | layout pass | layout pass | layout pass | layout pass |  |
 
 ## Review Standard

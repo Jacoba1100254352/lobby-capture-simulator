@@ -46,6 +46,10 @@ public final class SmokeTest
 		require(open.voucherResidentParticipation() >= 0.0 && open.voucherResidentParticipation() <= 1.0, "voucher participation should stay bounded");
 		require(open.publicFinancingCandidateUptake() >= 0.0 && open.publicFinancingCandidateUptake() <= 1.0, "public financing uptake should stay bounded");
 		require(open.substitutionPressure() >= 0.0 && open.substitutionPressure() <= 1.0, "substitution pressure should stay bounded");
+		require(open.switchScoreEqualWeight() >= 0.0 && open.switchScoreEqualWeight() <= 1.0, "equal-weight switch score should stay bounded");
+		require(open.switchScoreAnonymityHeavy() >= 0.0 && open.switchScoreAnonymityHeavy() <= 1.0, "anonymity-heavy switch score should stay bounded");
+		require(open.switchScoreEnforcementCostHeavy() >= 0.0 && open.switchScoreEnforcementCostHeavy() <= 1.0, "enforcement-heavy switch score should stay bounded");
+		require(open.switchDisclosureCost() >= 0.0 && open.switchDisclosureCost() <= 1.0, "switch disclosure cost should stay bounded");
 		require(open.hiddenInfluenceShare() >= 0.0 && open.hiddenInfluenceShare() <= 1.0, "hidden influence should stay bounded");
 			require(open.observedCaptureRate() == open.captureRate(), "observed capture should mirror binomial capture rate");
 			require(open.hiddenCaptureIndex() >= 0.0 && open.hiddenCaptureIndex() <= 1.0, "hidden capture should stay bounded");
@@ -117,6 +121,7 @@ public final class SmokeTest
 			require(csvText.contains("designLoss,distortionObservedComponent,distortionHiddenSubstitutionComponent,distortionInformationProcurementComponent,distortionNetworkVenueComponent,distortionProcessBurdenComponent,distortionRawComponentSum"), csv + " should report distortion decomposition");
 		require(csvText.contains("visibleLobbyingSpendShare,directAccessShare,agendaAccessShare,informationDistortionShare,publicCampaignShare,litigationThreatShare,campaignFinanceShare,darkMoneyShare,revolvingDoorShare,intermediaryShare"), csv + " should report visible and intermediary spend state");
 		require(csvText.contains("substitutionPressure,influencePreservationRate,hiddenInfluenceShare,netTransparencyGain,messengerSubstitutionRate,venueSubstitutionRate"), csv + " should report substitution state");
+		require(csvText.contains("switchScoreEqualWeight,switchScoreAnonymityHeavy,switchScoreEnforcementCostHeavy,switchDisclosureCost"), csv + " should report switch-rule robustness state");
 		require(csvText.contains("networkOpacityIndex,donorNetworkConcentration,intermediaryCentrality,officialAccessCentrality,procurementNetworkExposure,revolvingDoorBridgeIndex,commentNetworkLoad,venueShiftNetworkLoad,networkLegibilityIndex,crossVenueDetectionIndex,participationProtectionIndex,speechRestrictionRisk"), csv + " should report influence-network and civil-liberties state");
 		require(csvText.contains("clientFundingAdaptation,regulatorAttentionIndex,regulatorQueueBacklog,watchdogFocusIndex,watchdogBudgetConcentration,adaptationSpeed,reformDecayPressure"), csv + " should report adaptive state");
 		require(csvText.lines().count() > 1, csv + " should contain report rows");

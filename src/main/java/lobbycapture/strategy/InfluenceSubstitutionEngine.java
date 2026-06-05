@@ -11,6 +11,17 @@ import lobbycapture.util.Values;
 
 public final class InfluenceSubstitutionEngine
 {
+	private static double average(double... values) {
+		if (values.length == 0) {
+			return 0.0;
+		}
+		double sum = 0.0;
+		for (double value : values) {
+			sum += value;
+		}
+		return sum / values.length;
+	}
+
 	private static double pressureFor(
 			InfluenceStrategy strategy,
 			PolicyContest contest,
@@ -190,8 +201,56 @@ public final class InfluenceSubstitutionEngine
 						+ (0.12 * visibleRestriction)
 						+ (0.08 * procurementVenueValue)
 						- (0.18 * legalCost)
+						- (0.08 * disclosureCost)
 						- (0.10 * crossVenueDetection)
 						- (0.10 * setupTime),
+				0.0,
+				1.0
+		);
+		double equalWeightSwitchScore = Values.clamp(
+				average(
+						channelPressure,
+						anonymityValue,
+						messengerCredibility,
+						vendorOverlap,
+						intermediaryFit,
+						world.evasionFreedom(),
+						visibleRestriction,
+						procurementVenueValue
+				)
+						- (0.55 * average(legalCost, disclosureCost, crossVenueDetection, setupTime)),
+				0.0,
+				1.0
+		);
+		double anonymityHeavySwitchScore = Values.clamp(
+				(0.26 * channelPressure)
+						+ (0.34 * anonymityValue)
+						+ (0.18 * messengerCredibility)
+						+ (0.12 * vendorOverlap)
+						+ (0.08 * intermediaryFit)
+						+ (0.14 * world.evasionFreedom())
+						+ (0.10 * visibleRestriction)
+						+ (0.06 * procurementVenueValue)
+						- (0.14 * legalCost)
+						- (0.12 * disclosureCost)
+						- (0.10 * crossVenueDetection)
+						- (0.08 * setupTime),
+				0.0,
+				1.0
+		);
+		double enforcementCostHeavySwitchScore = Values.clamp(
+				(0.30 * channelPressure)
+						+ (0.18 * anonymityValue)
+						+ (0.16 * messengerCredibility)
+						+ (0.12 * vendorOverlap)
+						+ (0.06 * intermediaryFit)
+						+ (0.08 * world.evasionFreedom())
+						+ (0.10 * visibleRestriction)
+						+ (0.06 * procurementVenueValue)
+						- (0.26 * legalCost)
+						- (0.14 * disclosureCost)
+						- (0.16 * crossVenueDetection)
+						- (0.12 * setupTime),
 				0.0,
 				1.0
 		);
@@ -266,7 +325,11 @@ public final class InfluenceSubstitutionEngine
 				hiddenShare,
 				transparencyGain,
 				messenger,
-				venue
+				venue,
+				equalWeightSwitchScore,
+				anonymityHeavySwitchScore,
+				enforcementCostHeavySwitchScore,
+				disclosureCost
 		);
 	}
 }

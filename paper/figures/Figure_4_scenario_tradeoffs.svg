@@ -47,52 +47,52 @@ text { font-family: Helvetica, Arial, sans-serif; font-size: 34px; fill: #111; }
 <line x1="260" y1="170" x2="260" y2="890" class="axis"/>
 <text x="875" y="994" text-anchor="middle">Capture rate</text>
 <text x="80" y="530" text-anchor="middle" transform="rotate(-90 80 530)">Total influence distortion</text>
-<rect x="1339.0" y="407.9" width="24" height="24" fill="#111111" class="point"/>
-<rect x="1477.6" y="344.7" width="24" height="24" fill="#111111" class="point"/>
-<rect x="1478" y="357.6" width="24" height="24" fill="#111111" class="point"/>
-<rect x="1341.3" y="308.0" width="24" height="24" fill="#111111" class="point"/>
-<rect x="1478" y="342.7" width="24" height="24" fill="#111111" class="point"/>
-<rect x="1308.1" y="345.3" width="24" height="24" fill="#111111" class="point"/>
-<rect x="1126.4" y="455.3" width="24" height="24" fill="#111111" class="point"/>
-<rect x="1061.6" y="428.5" width="24" height="24" fill="#111111" class="point"/>
-<rect x="1138.9" y="386.2" width="24" height="24" fill="#111111" class="point"/>
-<rect x="807.6" y="517.0" width="24" height="24" fill="#111111" class="point"/>
-<rect x="300.2" y="693.2" width="32" height="32" fill="#555555" class="point"/>
-<rect x="887.2" y="487.0" width="32" height="32" fill="#555555" class="point"/>
-<line x1="1353.3" y1="320.0" x2="1353.3" y2="278.0" class="leader"/>
-<line x1="1490" y1="354.7" x2="1490" y2="396.7" class="leader"/>
-<line x1="1489.6" y1="356.7" x2="1531.6" y2="340.7" class="leader"/>
-<line x1="1320.1" y1="357.3" x2="1320.1" y2="207.3" class="leader"/>
-<line x1="1490" y1="369.6" x2="1490" y2="519.6" class="leader"/>
-<line x1="1150.9" y1="398.2" x2="1150.9" y2="377" class="leader"/>
-<line x1="1351.0" y1="419.9" x2="1281.0" y2="419.9" class="leader"/>
-<line x1="1073.6" y1="440.5" x2="1073.6" y2="530.5" class="leader"/>
-<line x1="1138.4" y1="467.3" x2="1138.4" y2="617.3" class="leader"/>
-<line x1="903.2" y1="503.0" x2="903.2" y2="461.0" class="leader"/>
-<line x1="819.6" y1="529.0" x2="819.6" y2="571.0" class="leader"/>
-<line x1="316.2" y1="709.2" x2="316.2" y2="667.2" class="leader"/>
-<rect x="1263.3" y="232.0" width="180" height="46" fill="#ffffff" class="label-box"/>
-<text x="1278.3" y="263.0" text-anchor="start" class="label">Dark money</text>
-<rect x="1370" y="396.7" width="240" height="46" fill="#ffffff" class="label-box"/>
-<text x="1385" y="427.7" text-anchor="start" class="label">Revolving door</text>
-<rect x="1531.6" y="294.7" width="180" height="46" fill="#ffffff" class="label-box"/>
-<text x="1546.6" y="325.7" text-anchor="start" class="label">Rulemaking</text>
-<rect x="1200.1" y="161.3" width="240" height="46" fill="#ffffff" class="label-box"/>
-<text x="1215.1" y="192.3" text-anchor="start" class="label">Intermediaries</text>
-<rect x="1415" y="519.6" width="150" height="46" fill="#ffffff" class="label-box"/>
-<text x="1430" y="550.6" text-anchor="start" class="label">Campaign</text>
-<rect x="1065" y="331" width="195" height="46" fill="#ffffff" class="label-box"/>
-<text x="1080" y="362" text-anchor="start" class="label">Procurement</text>
-<rect x="1191.0" y="399.9" width="90" height="46" fill="#ffffff" class="label-box"/>
-<text x="1206.0" y="430.9" text-anchor="start" class="label">Open</text>
-<rect x="961.1" y="530.5" width="225" height="46" fill="#ffffff" class="label-box"/>
-<text x="976.1" y="561.5" text-anchor="start" class="label">Comment auth.</text>
-<rect x="973.4" y="617.3" width="330" height="46" fill="#ffffff" class="label-box"/>
-<text x="988.4" y="648.3" text-anchor="start" class="label">Real-time disclosure</text>
-<rect x="835.7" y="415.0" width="135" height="46" fill="#ffffff" class="label-box"/>
-<text x="850.7" y="446.0" text-anchor="start" class="label">Evasion</text>
-<rect x="767.1" y="571.0" width="105" height="46" fill="#ffffff" class="label-box"/>
-<text x="782.1" y="602.0" text-anchor="start" class="label">Venue</text>
-<rect x="256.2" y="621.2" width="120" height="46" fill="#ffffff" class="label-box"/>
-<text x="271.2" y="652.2" text-anchor="start" class="label">Bundle</text>
+<rect x="1340.0" y="411.2" width="24" height="24" fill="#111111" class="point"/>
+<rect x="1478" y="345.7" width="24" height="24" fill="#111111" class="point"/>
+<rect x="1478" y="358.7" width="24" height="24" fill="#111111" class="point"/>
+<rect x="1340.9" y="309.9" width="24" height="24" fill="#111111" class="point"/>
+<rect x="1478" y="343.4" width="24" height="24" fill="#111111" class="point"/>
+<rect x="1297.8" y="361.3" width="24" height="24" fill="#111111" class="point"/>
+<rect x="1032.5" y="489.3" width="24" height="24" fill="#111111" class="point"/>
+<rect x="1023.9" y="444.2" width="24" height="24" fill="#111111" class="point"/>
+<rect x="1129.9" y="397.0" width="24" height="24" fill="#111111" class="point"/>
+<rect x="693.5" y="556.9" width="24" height="24" fill="#111111" class="point"/>
+<rect x="279.5" y="705.5" width="32" height="32" fill="#555555" class="point"/>
+<rect x="793.0" y="520.2" width="32" height="32" fill="#555555" class="point"/>
+<line x1="1352.9" y1="321.9" x2="1352.9" y2="279.9" class="leader"/>
+<line x1="1490" y1="355.4" x2="1490" y2="445.4" class="leader"/>
+<line x1="1490" y1="357.7" x2="1515" y2="357.7" class="leader"/>
+<line x1="1490" y1="370.7" x2="1490" y2="520.7" class="leader"/>
+<line x1="1309.8" y1="373.3" x2="1267.8" y2="357.3" class="leader"/>
+<line x1="1141.9" y1="409.0" x2="1141.9" y2="455" class="leader"/>
+<line x1="1352.0" y1="423.2" x2="1335" y2="579" class="leader"/>
+<line x1="1035.9" y1="456.2" x2="1035.9" y2="546.2" class="leader"/>
+<line x1="1044.5" y1="501.3" x2="1044.5" y2="641" class="leader"/>
+<line x1="809.0" y1="536.2" x2="809.0" y2="494.2" class="leader"/>
+<line x1="705.5" y1="568.9" x2="705.5" y2="610.9" class="leader"/>
+<line x1="295.5" y1="721.5" x2="337.5" y2="721.5" class="leader"/>
+<rect x="1262.9" y="233.9" width="180" height="46" fill="#ffffff" class="label-box"/>
+<text x="1277.9" y="264.9" text-anchor="start" class="label">Dark money</text>
+<rect x="1370" y="445.4" width="240" height="46" fill="#ffffff" class="label-box"/>
+<text x="1385" y="476.4" text-anchor="start" class="label">Revolving door</text>
+<rect x="1515" y="331" width="180" height="46" fill="#ffffff" class="label-box"/>
+<text x="1530" y="362" text-anchor="start" class="label">Rulemaking</text>
+<rect x="1415" y="520.7" width="150" height="46" fill="#ffffff" class="label-box"/>
+<text x="1430" y="551.7" text-anchor="start" class="label">Campaign</text>
+<rect x="1027.8" y="311.3" width="240" height="46" fill="#ffffff" class="label-box"/>
+<text x="1042.8" y="342.3" text-anchor="start" class="label">Intermediaries</text>
+<rect x="1065" y="455" width="195" height="46" fill="#ffffff" class="label-box"/>
+<text x="1080" y="486" text-anchor="start" class="label">Procurement</text>
+<rect x="1245" y="579" width="90" height="46" fill="#ffffff" class="label-box"/>
+<text x="1260" y="610" text-anchor="start" class="label">Open</text>
+<rect x="923.4" y="546.2" width="225" height="46" fill="#ffffff" class="label-box"/>
+<text x="938.4" y="577.2" text-anchor="start" class="label">Comment auth.</text>
+<rect x="885" y="641" width="330" height="46" fill="#ffffff" class="label-box"/>
+<text x="900" y="672" text-anchor="start" class="label">Real-time disclosure</text>
+<rect x="741.5" y="448.2" width="135" height="46" fill="#ffffff" class="label-box"/>
+<text x="756.5" y="479.2" text-anchor="start" class="label">Evasion</text>
+<rect x="653.0" y="610.9" width="105" height="46" fill="#ffffff" class="label-box"/>
+<text x="668.0" y="641.9" text-anchor="start" class="label">Venue</text>
+<rect x="337.5" y="698.5" width="120" height="46" fill="#ffffff" class="label-box"/>
+<text x="352.5" y="729.5" text-anchor="start" class="label">Bundle</text>
 </svg>

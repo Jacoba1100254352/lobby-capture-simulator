@@ -95,7 +95,11 @@ public record ScenarioReport(
 		double networkLegibilityIndex,
 		double crossVenueDetectionIndex,
 		double participationProtectionIndex,
-		double speechRestrictionRisk
+		double speechRestrictionRisk,
+		double switchScoreEqualWeight,
+		double switchScoreAnonymityHeavy,
+		double switchScoreEnforcementCostHeavy,
+		double switchDisclosureCost
 )
 {
 	public double captureControlScore() {

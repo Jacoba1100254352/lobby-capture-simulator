@@ -46,6 +46,7 @@ Total influence distortion & Composite of observed capture, hidden capture, poli
 Substitution risk & Probability-like diagnostic that a reform suppresses a visible channel while preserving influence elsewhere. & 0--1 & Substitution engine and channel movement. & Warning audit \\
 \(E[I]\) & Expected influence from a substitute route. & 0--1 & Learned return memory and scenario profile. & Switch score \\
 \(C_m,A_n,V_o\) & Messenger credibility, anonymity value, and vendor or venue overlap. & 0--1 & Scenario and reform profile. & Switch score \\
+\(I_m,E_f,R_v,P_v,X_v\) & Intermediary fit, evasion freedom, visible-route restriction, procurement venue value, and cross-venue detection. & 0--1 & Scenario, arena, evasion, procurement, and reform profile. & Switch score \\
 \(L_c,D_c,T_s\) & Legal cost, disclosure cost, and setup time. & 0--1 & Reform controls and channel profile. & Switch score \\
 Design loss & Illustrative lower-is-better portfolio objective combining total distortion, hidden capture, substitution risk, administrative cost, opacity, chill, speech risk, detection, and participation protection. & 0--1 & Normative screen for stress testing, not a policy welfare estimate. & Portfolio screen \\
 \bottomrule
@@ -91,13 +92,16 @@ Comment records are triaged before reporting. A docket is divided into a unique-
 The substitution engine calculates a switch score:
 
 \[
-S_{l,t} =
-E[I] + C_m + A_n + V_o - L_c - D_c - T_s,
+\begin{aligned}
+S_{l,t} = \operatorname{clip}\bigl(&0.34E[I] + 0.22A_n + 0.18C_m + 0.12V_o\\
+&+ 0.08I_m + 0.10E_f + 0.12R_v + 0.08P_v\\
+&- 0.18L_c - 0.08D_c - 0.10X_v - 0.10T_s,\ 0,\ 1\bigr).
+\end{aligned}
 \]
 
-where \(E[I]\) is expected influence under the substitute route, \(C_m\) is messenger credibility, \(A_n\) is anonymity value, \(V_o\) is vendor and relationship overlap, \(L_c\) is legal cost, \(D_c\) is disclosure cost, and \(T_s\) is setup time. The result is not a one-for-one channel replacement. Reports summarize substitution pressure, influence preserved, hidden influence, messenger substitution, venue substitution, and net transparency gain.
+where \(E[I]\) is expected influence under the substitute route, \(A_n\) is anonymity value, \(C_m\) is messenger credibility, \(V_o\) is vendor and relationship overlap, \(I_m\) is intermediary fit, \(E_f\) is evasion freedom, \(R_v\) is visible-route restriction, \(P_v\) is procurement venue value, \(L_c\) is legal cost, \(D_c\) is disclosure cost, \(X_v\) is cross-venue detection, and \(T_s\) is setup time. The result is not a one-for-one channel replacement. Reports summarize substitution pressure, influence preserved, hidden influence, messenger substitution, venue substitution, and net transparency gain.
 
-The additive switch score is a transparent baseline rather than an estimated behavioral law. All terms are normalized to \([0,1]\), and substitution activates when the score exceeds the scenario threshold. The supporting information specifies equal-weight, anonymity-heavy, and enforcement-cost-heavy variants used for robustness checks.
+The weighted switch score is a transparent baseline rather than an estimated behavioral law. All terms are normalized to \([0,1]\), and substitution activates when the score exceeds the scenario threshold. Report CSVs also include equal-weight, anonymity-heavy, and enforcement-cost-heavy alternative switch scores, which are summarized in the supporting information as switch-rule diagnostics.
 
 Reform success is evaluated with a warning-aware diagnostic. Observed capture is the resolved contest outcome. Hidden capture combines hidden influence, preserved influence, messenger and venue substitution, defensive spending, private gain, policy distortion, procurement bias, and enforcement forbearance. Total influence distortion combines observed capture, hidden capture, policy distortion, procurement bias, comment flooding, technical rulemaking distortion, administrative burden, preserved hidden influence, network opacity, intermediary centrality, procurement exposure, and venue-shift load. A reform that lowers observed capture while increasing total distortion is treated as a distortion failure. A reform that lowers observed capture while increasing hidden influence, hidden capture, or substitution risk is reported as a substitution warning rather than a clean success.
 

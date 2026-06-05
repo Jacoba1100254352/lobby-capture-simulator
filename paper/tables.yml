@@ -300,6 +300,64 @@
       ]
     },
     {
+      "output": "switch_rule_snapshot.tex",
+      "source": "lobby-capture-campaign.csv",
+      "label": "tab:switch-rule-diagnostics",
+      "caption": "Switch-rule diagnostics for selected campaign scenarios. Baseline is the behavioral switch score used in the main runs; the remaining columns are alternative scores reported for rule-sensitivity inspection.",
+      "size": "scriptsize",
+      "environment": "longtable",
+      "width": "\\linewidth",
+      "tabcolsep": "2pt",
+      "rows": [
+        "open-access-lobbying",
+        "budgeted-disclosed-lobbying",
+        "dark-money-dominant",
+        "intermediary-substitution",
+        "full-anti-capture-bundle",
+        "bundle-with-evasion"
+      ],
+      "columns": [
+        {
+          "header": "Scenario",
+          "source": "scenarioName",
+          "format": "label",
+          "labels": {
+            "Open access lobbying": "Open access",
+            "Budgeted disclosed lobbying": "Budgeted/disclosed",
+            "Dark money dominant": "Dark money",
+            "Think-tank and association intermediaries": "Intermediaries",
+            "Full anti-capture bundle": "Full bundle",
+            "Anti-capture bundle with evasion": "Bundle+evasion"
+          }
+        },
+        {
+          "header": "Baseline",
+          "source": "substitutionPressure",
+          "format": "float3"
+        },
+        {
+          "header": "Equal",
+          "source": "switchScoreEqualWeight",
+          "format": "float3"
+        },
+        {
+          "header": "Anon.",
+          "source": "switchScoreAnonymityHeavy",
+          "format": "float3"
+        },
+        {
+          "header": "Enf.-cost",
+          "source": "switchScoreEnforcementCostHeavy",
+          "format": "float3"
+        },
+        {
+          "header": "Disc. cost",
+          "source": "switchDisclosureCost",
+          "format": "float3"
+        }
+      ]
+    },
+    {
       "output": "sensitivity_snapshot.tex",
       "source": "lobby-capture-sensitivity.csv",
       "label": "tab:sensitivity",

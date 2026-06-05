@@ -54,34 +54,34 @@ text { font-family: Helvetica, Arial, sans-serif; font-size: 34px; fill: #111; }
 <line x1="260" y1="602" x2="1490" y2="602" class="threshold"/>
 <text x="1222" y="210" text-anchor="end" class="small">capture lower, distortion higher</text>
 <text x="1266" y="582" text-anchor="start" class="small">distortion higher</text>
-<rect x="1017.3" y="547.4" width="32" height="32" fill="#555555" class="point"/>
-<rect x="1017.6" y="518.0" width="32" height="32" fill="#555555" class="point"/>
-<rect x="919.0" y="599.1" width="24" height="24" fill="#111111" class="point"/>
-<rect x="866.6" y="681.4" width="24" height="24" fill="#111111" class="point"/>
-<rect x="990.3" y="578.0" width="24" height="24" fill="#111111" class="point"/>
-<rect x="1058.3" y="547.0" width="32" height="32" fill="#555555" class="point"/>
-<text x="1074.3" y="573.0" text-anchor="middle" class="point-number">6</text>
-<rect x="387.6" y="878" width="24" height="24" fill="#111111" class="point"/>
-<text x="399.6" y="900" text-anchor="middle" class="point-number">7</text>
-<rect x="984.7" y="562.4" width="24" height="24" fill="#111111" class="point"/>
-<text x="996.7" y="584.4" text-anchor="middle" class="point-number">8</text>
-<rect x="1008.4" y="571.7" width="24" height="24" fill="#111111" class="point"/>
-<text x="1020.4" y="593.7" text-anchor="middle" class="point-number">9</text>
-<rect x="848.2" y="679.7" width="24" height="24" fill="#111111" class="point"/>
-<text x="860.2" y="701.7" text-anchor="middle" class="point-number">10</text>
-<line x1="1033.6" y1="534.0" x2="1033.6" y2="492.0" class="leader"/>
-<line x1="1033.3" y1="563.4" x2="1033.3" y2="413.4" class="leader"/>
-<line x1="1002.3" y1="590.0" x2="1002.3" y2="740.0" class="leader"/>
-<line x1="931.0" y1="611.1" x2="931.0" y2="563" class="leader"/>
-<line x1="878.6" y1="693.4" x2="878.6" y2="826" class="leader"/>
-<rect x="898.6" y="446.0" width="270" height="46" fill="#ffffff" class="label-box"/>
-<text x="913.6" y="477.0" text-anchor="start" class="label">Camp. Proc. mods</text>
-<rect x="868.3" y="367.4" width="330" height="46" fill="#ffffff" class="label-box"/>
-<text x="883.3" y="398.4" text-anchor="start" class="label">Camp. Ban+DM leakage</text>
-<rect x="852.3" y="740.0" width="300" height="46" fill="#ffffff" class="label-box"/>
-<text x="867.3" y="771.0" text-anchor="start" class="label">Camp. Comment tech</text>
-<rect x="705" y="517" width="270" height="46" fill="#ffffff" class="label-box"/>
-<text x="720" y="548" text-anchor="start" class="label">Camp. Shadow max</text>
-<rect x="713.6" y="826" width="330" height="46" fill="#ffffff" class="label-box"/>
-<text x="728.6" y="857" text-anchor="start" class="label">Camp. Bundle+evasion</text>
+<rect x="788.9" y="714.3" width="24" height="24" fill="#111111" class="point"/>
+<rect x="1016.1" y="557.2" width="32" height="32" fill="#555555" class="point"/>
+<rect x="369.8" y="878" width="24" height="24" fill="#111111" class="point"/>
+<rect x="1015.0" y="528.3" width="32" height="32" fill="#555555" class="point"/>
+<rect x="916.5" y="608" width="24" height="24" fill="#111111" class="point"/>
+<rect x="987.0" y="584.4" width="24" height="24" fill="#111111" class="point"/>
+<text x="999.0" y="606.4" text-anchor="middle" class="point-number">6</text>
+<rect x="1057.4" y="555.0" width="32" height="32" fill="#555555" class="point"/>
+<text x="1073.4" y="581.0" text-anchor="middle" class="point-number">7</text>
+<rect x="1008.8" y="573.7" width="24" height="24" fill="#111111" class="point"/>
+<text x="1020.8" y="595.7" text-anchor="middle" class="point-number">8</text>
+<rect x="848.5" y="680.1" width="24" height="24" fill="#111111" class="point"/>
+<text x="860.5" y="702.1" text-anchor="middle" class="point-number">9</text>
+<rect x="983.5" y="570.6" width="24" height="24" fill="#111111" class="point"/>
+<text x="995.5" y="592.6" text-anchor="middle" class="point-number">10</text>
+<line x1="1031.0" y1="544.3" x2="1031.0" y2="502.3" class="leader"/>
+<line x1="1032.1" y1="573.2" x2="1032.1" y2="641" class="leader"/>
+<line x1="928.5" y1="620" x2="928.5" y2="765" class="leader"/>
+<line x1="800.9" y1="726.3" x2="800.9" y2="576.3" class="leader"/>
+<line x1="381.8" y1="890" x2="381.8" y2="848" class="leader"/>
+<rect x="896.0" y="456.3" width="270" height="46" fill="#ffffff" class="label-box"/>
+<text x="911.0" y="487.3" text-anchor="start" class="label">Camp. Proc. mods</text>
+<rect x="885" y="641" width="330" height="46" fill="#ffffff" class="label-box"/>
+<text x="900" y="672" text-anchor="start" class="label">Camp. Ban+DM leakage</text>
+<rect x="795" y="765" width="270" height="46" fill="#ffffff" class="label-box"/>
+<text x="810" y="796" text-anchor="start" class="label">Camp. Shadow max</text>
+<rect x="635.9" y="530.3" width="330" height="46" fill="#ffffff" class="label-box"/>
+<text x="650.9" y="561.3" text-anchor="start" class="label">Camp. Bundle+evasion</text>
+<rect x="255" y="802" width="390" height="46" fill="#ffffff" class="label-box"/>
+<text x="270" y="833" text-anchor="start" class="label">Camp. Full anti-capture </text>
 </svg>

@@ -13,7 +13,11 @@ public record SubstitutionProfile(
 		double hiddenInfluenceShare,
 		double netTransparencyGain,
 		double messengerSubstitutionRate,
-		double venueSubstitutionRate
+		double venueSubstitutionRate,
+		double switchScoreEqualWeight,
+		double switchScoreAnonymityHeavy,
+		double switchScoreEnforcementCostHeavy,
+		double switchDisclosureCost
 )
 {
 	public SubstitutionProfile {
@@ -28,9 +32,13 @@ public record SubstitutionProfile(
 		Values.requireRange("netTransparencyGain", netTransparencyGain, -1.0, 1.0);
 		Values.requireRange("messengerSubstitutionRate", messengerSubstitutionRate, 0.0, 1.0);
 		Values.requireRange("venueSubstitutionRate", venueSubstitutionRate, 0.0, 1.0);
+		Values.requireRange("switchScoreEqualWeight", switchScoreEqualWeight, 0.0, 1.0);
+		Values.requireRange("switchScoreAnonymityHeavy", switchScoreAnonymityHeavy, 0.0, 1.0);
+		Values.requireRange("switchScoreEnforcementCostHeavy", switchScoreEnforcementCostHeavy, 0.0, 1.0);
+		Values.requireRange("switchDisclosureCost", switchDisclosureCost, 0.0, 1.0);
 	}
 	
 	public static SubstitutionProfile none(InfluenceStrategy strategy) {
-		return new SubstitutionProfile(strategy, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0);
+		return new SubstitutionProfile(strategy, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0);
 	}
 }

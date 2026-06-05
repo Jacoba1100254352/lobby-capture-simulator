@@ -23,6 +23,10 @@ public record InfluenceResult(
 		double netTransparencyGain,
 		double messengerSubstitutionRate,
 		double venueSubstitutionRate,
+		double switchScoreEqualWeight,
+		double switchScoreAnonymityHeavy,
+		double switchScoreEnforcementCostHeavy,
+		double switchDisclosureCost,
 		InfluenceNetworkSnapshot networkSnapshot,
 		List<LobbySpendRecord> spendRecords
 )
@@ -56,6 +60,10 @@ public record InfluenceResult(
 				averageDisclosureLag,
 				channelSwitches,
 				evasionShifts,
+				0.0,
+				0.0,
+				0.0,
+				0.0,
 				0.0,
 				0.0,
 				0.0,

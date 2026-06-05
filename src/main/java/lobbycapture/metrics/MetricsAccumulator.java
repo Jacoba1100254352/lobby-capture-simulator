@@ -70,6 +70,10 @@ public final class MetricsAccumulator
 	private double transparencyGainSum;
 	private double messengerSubstitutionSum;
 	private double venueSubstitutionSum;
+	private double switchScoreEqualWeightSum;
+	private double switchScoreAnonymityHeavySum;
+	private double switchScoreEnforcementCostHeavySum;
+	private double switchDisclosureCostSum;
 	private double clientFundingAdaptationSum;
 	private double regulatorAttentionSum;
 	private double regulatorQueueSum;
@@ -389,6 +393,10 @@ public final class MetricsAccumulator
 		transparencyGainSum += outcome.influenceResult().netTransparencyGain();
 		messengerSubstitutionSum += outcome.influenceResult().messengerSubstitutionRate();
 		venueSubstitutionSum += outcome.influenceResult().venueSubstitutionRate();
+		switchScoreEqualWeightSum += outcome.influenceResult().switchScoreEqualWeight();
+		switchScoreAnonymityHeavySum += outcome.influenceResult().switchScoreAnonymityHeavy();
+		switchScoreEnforcementCostHeavySum += outcome.influenceResult().switchScoreEnforcementCostHeavy();
+		switchDisclosureCostSum += outcome.influenceResult().switchDisclosureCost();
 		clientFundingAdaptationSum += world.averageClientFundingMultiplier();
 		regulatorAttentionSum += world.averageRegulatorAttention();
 		regulatorQueueSum += world.averageRegulatorQueue();
@@ -514,7 +522,11 @@ public final class MetricsAccumulator
 				networkLegibilitySum / total,
 				crossVenueDetectionSum / total,
 				participationProtectionSum / total,
-				speechRestrictionRiskSum / total
+				speechRestrictionRiskSum / total,
+				switchScoreEqualWeightSum / total,
+				switchScoreAnonymityHeavySum / total,
+				switchScoreEnforcementCostHeavySum / total,
+				switchDisclosureCostSum / total
 		);
 	}
 	
