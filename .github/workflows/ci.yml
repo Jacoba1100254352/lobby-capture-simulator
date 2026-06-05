@@ -25,7 +25,7 @@ jobs:
       - name: Install paper build dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install -y texlive-latex-recommended texlive-latex-extra texlive-fonts-recommended texlive-fonts-extra texlive-bibtex-extra texlive-pictures inkscape poppler-utils zip unzip
+          sudo apt-get install -y texlive-latex-recommended texlive-latex-extra texlive-fonts-recommended texlive-fonts-extra texlive-bibtex-extra texlive-pictures texlive-science inkscape poppler-utils zip unzip
       - name: Build and verify paper PDFs and submission package
         run: make paper-artifacts-check
         env:
