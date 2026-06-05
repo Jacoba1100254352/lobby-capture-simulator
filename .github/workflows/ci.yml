@@ -9,6 +9,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
       - uses: actions/setup-java@v4
         with:
           distribution: temurin
@@ -26,5 +28,7 @@ jobs:
           sudo apt-get install -y texlive-latex-recommended texlive-latex-extra texlive-fonts-recommended texlive-fonts-extra texlive-bibtex-extra texlive-pictures inkscape poppler-utils zip unzip
       - name: Build and verify paper PDFs and submission package
         run: make paper-artifacts-check
+        env:
+          LOBBY_CAPTURE_REQUIRE_RELEASE_TAG: "1"
       - name: Ensure generated artifacts are committed
         run: git diff --exit-code

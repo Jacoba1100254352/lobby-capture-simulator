@@ -23,7 +23,7 @@ WILEY_PDF = PAPER / "regulation-governance-wiley.pdf"
 SUPPLEMENT_PDF = PAPER / "supplement.pdf"
 SUBMISSION_ZIP = DIST / "lobby-capture-wiley-submission.zip"
 SUBMISSION_DECLARATIONS = PAPER / "sections" / "submission-declarations.tex"
-RELEASE_TAG = "paper-publication-readiness-2026-06-05-r2"
+RELEASE_TAG = "paper-publication-readiness-2026-06-05-r3"
 FORBIDDEN_LOCAL_ARTIFACTS = [
     PAPER / "main.tex",
     PAPER / "main.pdf",
@@ -90,6 +90,7 @@ def main() -> int:
     failures.extend(check_freshness())
     failures.extend(check_wiley_text())
     failures.extend(check_submission_statements())
+    failures.extend(check_release_tag_exactness())
     failures.extend(check_submission_zip())
     failures.extend(check_submission_zip_compiles())
 
@@ -250,6 +251,35 @@ def check_submission_statements() -> list[str]:
         if phrase not in text
     )
     return failures
+
+
+def check_release_tag_exactness() -> list[str]:
+    if os.environ.get("LOBBY_CAPTURE_REQUIRE_RELEASE_TAG") != "1":
+        return []
+    try:
+        head = subprocess.check_output(
+            ["git", "rev-parse", "HEAD"],
+            cwd=ROOT,
+            text=True,
+            stderr=subprocess.STDOUT,
+        ).strip()
+        tagged = subprocess.check_output(
+            ["git", "rev-parse", f"{RELEASE_TAG}^{{commit}}"],
+            cwd=ROOT,
+            text=True,
+            stderr=subprocess.STDOUT,
+        ).strip()
+    except (subprocess.CalledProcessError, FileNotFoundError) as error:
+        return [
+            "could not verify review-bundle release tag; "
+            f"fetch or create {RELEASE_TAG}: {error}"
+        ]
+    if tagged != head:
+        return [
+            f"review-bundle release tag {RELEASE_TAG} points at {tagged[:12]}, "
+            f"but HEAD is {head[:12]}"
+        ]
+    return []
 
 
 def check_submission_zip() -> list[str]:
