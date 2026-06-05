@@ -182,13 +182,13 @@ def write_markdown(path: Path, rows: list[dict[str, str]]) -> None:
         f"- Fixture-only: `{counts['fixture-only']}`",
         f"- Missing: `{counts['missing']}`",
         "",
-        "| Panel | Mechanism constrained | Evidence | Moment | Snapshot | Fixture | Status | Note | Next action |",
-        "| --- | --- | --- | --- | ---: | ---: | --- | --- | --- |",
+        "| Panel | Mechanism constrained | Evidence | Moment | Snapshot | Fixture scaffold? | Status | Note | Next action |",
+        "| --- | --- | --- | --- | ---: | --- | --- | --- | --- |",
     ]
     for row in rows:
         lines.append(
-            f"| {row['panel']} | {row['mechanism']} | {row['evidenceClass']} | `{row['metric']}` | {row['value'] or 'n/a'} | {row['fixtureValue'] or 'n/a'} | {row['status']} | {row['note']} | {row['nextAction']} |"
-        )
+            f"| {row['panel']} | {row['mechanism']} | {row['evidenceClass']} | `{row['metric']}` | {row['value'] or 'n/a'} | {row['fixtureSupported']} | {row['status']} | {row['note']} | {row['nextAction']} |"
+		)
     lines.append("")
     path.write_text("\n".join(lines), encoding="utf-8")
 

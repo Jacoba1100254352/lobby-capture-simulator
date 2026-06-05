@@ -230,6 +230,76 @@
       ]
     },
     {
+      "output": "distortion_decomposition.tex",
+      "source": "lobby-capture-campaign.csv",
+      "label": "tab:distortion-decomposition",
+      "caption": "Grouped total-distortion components for selected campaign scenarios. Component columns are raw weighted contributions before final clamping; the total-distortion column is the reported clamped index.",
+      "size": "scriptsize",
+      "environment": "table*",
+      "width": "\\textwidth",
+      "tabcolsep": "2pt",
+      "rows": [
+        "open-access-lobbying",
+        "dark-money-dominant",
+        "intermediary-substitution",
+        "visible-ban-dark-money-leakage",
+        "procurement-modification-capture-frontier",
+        "full-anti-capture-bundle",
+        "bundle-with-evasion"
+      ],
+      "columns": [
+        {
+          "header": "Scenario",
+          "source": "scenarioName",
+          "format": "label",
+          "labels": {
+            "Open access lobbying": "Open access",
+            "Dark money dominant": "Dark money",
+            "Think-tank and association intermediaries": "Intermediaries",
+            "Visible lobbying ban with dark-money leakage": "Ban+DM leakage",
+            "Procurement modification capture frontier": "Procurement mods",
+            "Full anti-capture bundle": "Full bundle",
+            "Anti-capture bundle with evasion": "Bundle+evasion"
+          }
+        },
+        {
+          "header": "Total dist.",
+          "source": "totalInfluenceDistortion",
+          "format": "float3"
+        },
+        {
+          "header": "Observed",
+          "source": "distortionObservedComponent",
+          "format": "float3"
+        },
+        {
+          "header": "Hidden/subst.",
+          "source": "distortionHiddenSubstitutionComponent",
+          "format": "float3"
+        },
+        {
+          "header": "Info/proc.",
+          "source": "distortionInformationProcurementComponent",
+          "format": "float3"
+        },
+        {
+          "header": "Network/venue",
+          "source": "distortionNetworkVenueComponent",
+          "format": "float3"
+        },
+        {
+          "header": "Process",
+          "source": "distortionProcessBurdenComponent",
+          "format": "float3"
+        },
+        {
+          "header": "Raw sum",
+          "source": "distortionRawComponentSum",
+          "format": "float3"
+        }
+      ]
+    },
+    {
       "output": "sensitivity_snapshot.tex",
       "source": "lobby-capture-sensitivity.csv",
       "label": "tab:sensitivity",

@@ -69,7 +69,6 @@ text { font-family: Helvetica, Arial, sans-serif; font-size: 34px; fill: #111; }
 <text x="1020.4" y="593.7" text-anchor="middle" class="point-number">9</text>
 <rect x="848.2" y="679.7" width="24" height="24" fill="#111111" class="point"/>
 <text x="860.2" y="701.7" text-anchor="middle" class="point-number">10</text>
-<text x="1482" y="218" text-anchor="end" class="small">Numbered markers are ranks 6-10</text>
 <line x1="1033.6" y1="534.0" x2="1033.6" y2="492.0" class="leader"/>
 <line x1="1033.3" y1="563.4" x2="1033.3" y2="413.4" class="leader"/>
 <line x1="1002.3" y1="590.0" x2="1002.3" y2="740.0" class="leader"/>

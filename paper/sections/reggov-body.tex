@@ -54,7 +54,7 @@ Design loss & Illustrative lower-is-better portfolio objective combining total d
 \label{tab:model-specification}
 \end{table*}
 
-Table~\ref{tab:composite-weights} gives the implemented composite weights for total influence distortion and design loss. These are transparent model choices rather than estimated welfare weights; the stress tests therefore evaluate how rankings change under the chosen diagnostic, while supporting materials record sensitivity variants that discount hidden influence or put heavier weight on administrative burden.
+Table~\ref{tab:composite-weights} gives the implemented composite weights for total influence distortion and design loss. These are transparent model choices rather than estimated welfare weights. Several components are correlated, so the index should be read as a grouped diagnostic screen, not as a decomposition of independent causal effects. The stress tests evaluate how rankings change under the chosen diagnostic, while supporting materials record sensitivity variants that discount hidden influence or put heavier weight on administrative burden.
 
 \input{tables/composite_weights.tex}
 
@@ -125,7 +125,7 @@ Normalized source rows constrain only distributional inputs and warning diagnost
 
 The committed snapshot is a closed-window reproducibility scaffold for the 2024 EPA/ENV slice, not a representative empirical panel. Report builds default to the committed snapshot directory, \path{data/snapshots/2024-env/normalized/}. Exploratory runs can redirect calibration with \path{LOBBY_CAPTURE_CALIBRATION_DIR}. The current snapshot adds Schedule E outside spending, NYC CFB public-financing and intermediary rows, IRS EO BMF nonprofit and association capacity rows, IRS EO BMF opaque-capacity proxy rows, USAspending competition fields, UEI and PIID coverage, and LDA rows that identify covered positions in lobbying reports. It still lacks direct hidden-donor/source-routing observations, representative national public-financing panels, full SAM/FPDS multi-agency procurement action data, full IRS 527/Form 990 intermediary records, and representative post-employment personnel-movement exports.
 
-Table~\ref{tab:validation-gaps} reports the source-panel inventory that constrains the article's empirical scope. Snapshot values are the empirical bridge used by the default reports. Fixture values show where schemas and mechanisms are exercised but not yet supported by representative public-data coverage. A fixture-only, thin, warning, or missing status is a validation gap; it should not be interpreted as evidence that the mechanism is unimportant in the real world.
+Table~\ref{tab:validation-gaps} reports the source-panel inventory that constrains the article's empirical scope. Snapshot values are the empirical bridge used by the default reports. The fixture/scaffold column shows where schemas and mechanisms are exercised but not yet supported by representative public-data coverage. A fixture-only, thin, warning, or missing status is a validation gap; it should not be interpreted as evidence that the mechanism is unimportant in the real world.
 
 \input{tables/validation_gap_snapshot.tex}
 
@@ -144,6 +144,10 @@ Table~\ref{tab:first-campaign} reports representative baseline, budgeted/disclos
 \input{tables/campaign_snapshot.tex}
 
 Reform threats trigger substantial defensive spending, and evasion or intermediary scenarios preserve influence even when observed capture is low. Low-salience technical rulemaking remains a weak surface, consistent with the model's emphasis on information asymmetry and weak public attention. The contrast across hidden capture, total distortion, preserved influence, administrative burden, and channel allocation shows where influence remains available after the visible channel changes.
+
+Table~\ref{tab:distortion-decomposition} groups the total-distortion inputs for selected scenarios. The components are raw weighted contributions before the final clamp; they are reported to show which diagnostic families drive each row, not to claim separable causal shares.
+
+\input{tables/distortion_decomposition.tex}
 
 \input{figures/channel_mix}
 

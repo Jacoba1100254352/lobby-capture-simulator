@@ -8,6 +8,8 @@ import csv
 import html
 import shutil
 import subprocess
+import sys
+import time
 from pathlib import Path
 
 
@@ -16,6 +18,7 @@ INTERACTION_REPORT = Path("reports/lobby-capture-interactions.csv")
 SENSITIVITY_REPORT = Path("reports/lobby-capture-sensitivity.csv")
 SUBSTITUTION_REPORT = Path("reports/substitution-audit.csv")
 FIGURE_DIR = Path("paper/figures")
+SKIP_PDF_CONVERSION = False
 
 WIDTH = 1800
 HEIGHT = 1100
@@ -90,7 +93,14 @@ def main() -> int:
         type=Path,
         help="Compatibility path for the interaction wrapper; all figure assets are written to its parent directory.",
     )
+    parser.add_argument(
+        "--skip-pdf-conversion",
+        action="store_true",
+        help="Write SVGs and LaTeX wrappers without invoking Inkscape. Intended for unit-style tests only.",
+    )
     args = parser.parse_args()
+    global SKIP_PDF_CONVERSION
+    SKIP_PDF_CONVERSION = args.skip_pdf_conversion
 
     if args.output is not None:
         args.figure_dir = args.output.parent
@@ -423,8 +433,6 @@ def write_substitution_warning_map(rows: list[dict[str, str]], report: Path, fig
             label_targets.append(LabelTarget(substitution_label(row), x, y))
         else:
             body.append(text(x, y + 10, str(index), anchor="middle", css_class="point-number"))
-    if len(selected) > 5:
-        body.append(text(plot.left + plot.width - 8, plot.top + 48, "Numbered markers are ranks 6-10", anchor="end", css_class="small"))
     draw_label_callouts(body, layout_labels(plot, label_targets))
     write_svg_and_pdf(
         figure_dir,
@@ -697,11 +705,14 @@ def write_svg_and_pdf(
     title: str,
     description: str,
     body: list[str],
-) -> None:
+    ) -> None:
     svg_path = figure_dir / f"{base_name}.svg"
     pdf_path = figure_dir / f"{base_name}.pdf"
     changed = write_if_changed(svg_path, svg_document(title, description, body))
-    if changed or not pdf_path.exists():
+    if SKIP_PDF_CONVERSION:
+        return
+    pdf_stale = (not pdf_path.exists()) or (svg_path.stat().st_mtime > pdf_path.stat().st_mtime)
+    if changed or pdf_stale:
         convert_to_pdf(svg_path, pdf_path)
 
 
@@ -738,10 +749,25 @@ def convert_to_pdf(svg_path: Path, pdf_path: Path) -> None:
             "Inkscape is required to convert generated SVG figures to Wiley-preferred PDF files. "
             "Install Inkscape or add it to PATH before running make figures."
         )
-    subprocess.run(
-        [inkscape, str(svg_path), "--export-type=pdf", f"--export-filename={pdf_path}"],
-        check=True,
-    )
+    command = [inkscape, str(svg_path), "--export-type=pdf", f"--export-filename={pdf_path}"]
+    last_result: subprocess.CompletedProcess[str] | None = None
+    for attempt in range(1, 4):
+        last_result = subprocess.run(
+            command,
+            text=True,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+        )
+        if last_result.returncode == 0:
+            return
+        time.sleep(0.4 * attempt)
+    if last_result is not None:
+        sys.stderr.write(f"Inkscape failed after 3 attempts converting {svg_path} to {pdf_path}\n")
+        if last_result.stdout:
+            sys.stderr.write(last_result.stdout)
+        if last_result.stderr:
+            sys.stderr.write(last_result.stderr)
+    raise subprocess.CalledProcessError(last_result.returncode if last_result else 1, command)
 
 
 def svg_document(title: str, description: str, body: list[str]) -> str:

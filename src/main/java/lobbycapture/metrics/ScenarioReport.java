@@ -146,10 +146,46 @@ public record ScenarioReport(
 						+ (0.07 * legitimateAdvocacyChillRate)
 						+ (0.06 * speechRestrictionRisk)
 						- (0.05 * crossVenueDetectionIndex)
-						- (0.03 * participationProtectionIndex)
+							- (0.03 * participationProtectionIndex)
 		);
 	}
-	
+
+	public double distortionObservedComponent() {
+		return (0.16 * observedCaptureRate) + (0.16 * averageCaptureIndex);
+	}
+
+	public double distortionHiddenSubstitutionComponent() {
+		return (0.15 * hiddenCaptureIndex)
+				+ (0.09 * hiddenInfluenceShare)
+				+ (0.08 * influencePreservationRate);
+	}
+
+	public double distortionInformationProcurementComponent() {
+		return (0.12 * averagePolicyDistortion)
+				+ (0.07 * procurementBiasIndex)
+				+ (0.05 * commentFloodingIndex)
+				+ (0.04 * technicalRulemakingDistortion);
+	}
+
+	public double distortionNetworkVenueComponent() {
+		return (0.04 * networkOpacityIndex)
+				+ (0.03 * intermediaryCentrality)
+				+ (0.03 * procurementNetworkExposure)
+				+ (0.03 * venueShiftNetworkLoad);
+	}
+
+	public double distortionProcessBurdenComponent() {
+		return (0.06 * enforcementForbearanceRate) + (0.02 * administrativeCostIndex);
+	}
+
+	public double distortionRawComponentSum() {
+		return distortionObservedComponent()
+				+ distortionHiddenSubstitutionComponent()
+				+ distortionInformationProcurementComponent()
+				+ distortionNetworkVenueComponent()
+				+ distortionProcessBurdenComponent();
+	}
+
 	public double representationScore() {
 		return MetricDefinition.average(
 				averagePublicInterestScore,
