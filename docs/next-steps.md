@@ -16,7 +16,7 @@ The simulator now has a lobbying-centered MVP with calibration fixtures, source-
 - `make ablation` removes each full-bundle reform component and ranks capture openings.
 - `make interactions` runs two-way sweeps for enforcement/disclosure, public financing/evasion, and cooling-off/revolving-door strategy.
 - `make validate` compares report metrics against benchmark plausibility bands and writes CSV/Markdown summaries.
-- Report manifests record command, source Git state, Java version, seed/runs/contests, and calibration checksum.
+- Report manifests record command, source Git state, runtime provenance, seed/runs/contests, and calibration checksum. The committed review artifacts use a stable runtime-provenance label so Java 21 CI and local Java runtimes do not rewrite otherwise identical report snapshots.
 - `docs/research/research-synthesis.md` and `data/calibration/parameter-map.csv` translate the Deep Research reports into model and validation targets.
 - Comment triage reports unique-information share, review burden, duplicate compression, procedural acknowledgment, and substantive uptake.
 - Influence substitution reports pressure to switch, preserved influence capacity, hidden influence, messenger substitution, venue substitution, and net transparency gain.

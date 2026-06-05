@@ -686,7 +686,7 @@
       "output": "validation_gap_snapshot.tex",
       "source": "source-panel-inventory.csv",
       "label": "tab:validation-gaps",
-      "caption": "Source-panel coverage for the 2024 EPA/ENV validation snapshot. Fixture/scaffold indicates whether a schema bridge exists outside representative source coverage; thin, warning, fixture-only, or missing rows are validation gaps.",
+      "caption": "Source-panel coverage for the 2024 EPA/ENV validation snapshot. Snapshot support is categorical in the main article; numeric source moments remain in the source-panel inventory report. Schema scaffold indicates whether a mechanism bridge exists outside representative source coverage. Thin, warning, fixture-only, or missing rows are validation gaps.",
       "size": "scriptsize",
       "environment": "table*",
       "width": "\\textwidth",
@@ -710,6 +710,7 @@
         {
           "header": "Mechanism",
           "source": "mechanism",
+          "align": "l",
           "format": "label",
           "labels": {
             "Opaque donor routing and hidden electoral influence": "Opaque donor routing",
@@ -724,6 +725,7 @@
         {
           "header": "Evidence",
           "source": "evidenceClass",
+          "align": "l",
           "format": "label",
           "labels": {
             "proxy/thin": "proxy/thin",
@@ -734,30 +736,34 @@
           }
         },
         {
-          "header": "Moment",
-          "source": "metric",
+          "header": "Snapshot support",
+          "source": "panel",
+          "align": "l",
           "format": "label",
           "labels": {
-            "darkMoneySourceShare": "DM source share",
-            "outsideSpendingRows": "IE rows",
-            "publicFinancingSourceShare": "PF source share",
-            "intermediaryRows": "Intermediary rows",
-            "revolvingDoorRows": "RD rows",
-            "procurementKnownPiidShare": "Known PIID share",
-            "procurementExPostModificationShare": "Ex-post mod. share"
+            "Direct dark money": "thin proxy bridge",
+            "Outside spending": "direct rows",
+            "Public financing": "thin program rows",
+            "Intermediaries": "proxy rows",
+            "Revolving door": "thin proxy rows",
+            "Procurement identifiers": "direct ID coverage",
+            "Procurement modification risk": "no mod rows"
           }
         },
         {
-          "header": "Snapshot",
-          "source": "value"
-        },
-        {
-          "header": "Fixture?",
-          "source": "fixtureSupported"
+          "header": "Schema scaffold",
+          "source": "fixtureSupported",
+          "align": "l",
+          "format": "label",
+          "labels": {
+            "yes": "yes",
+            "no": "no"
+          }
         },
         {
           "header": "Status",
           "source": "status",
+          "align": "l",
           "format": "label",
           "labels": {
             "usable": "usable",

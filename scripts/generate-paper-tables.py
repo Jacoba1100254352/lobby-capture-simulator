@@ -47,6 +47,7 @@ def render_configured_table(
         caption=str(table_config["caption"]),
         headers=[str(column["header"]) for column in table_config["columns"]],
         rows=body,
+        alignments=column_alignments(table_config),
         size=str(table_config.get("size", "small")),
         environment=str(table_config.get("environment", "table")),
         placement=str(table_config.get("placement", "tbp")),
@@ -54,6 +55,16 @@ def render_configured_table(
         tabcolsep=str(table_config.get("tabcolsep", "3pt")),
         provenance=provenance_comment(selected, source_path, config_path),
     )
+
+
+def column_alignments(table_config: dict[str, object]) -> list[str]:
+    alignments = []
+    for index, column in enumerate(table_config["columns"]):
+        alignment = str(column.get("align", "l" if index == 0 else "r"))
+        if alignment not in {"l", "c", "r"}:
+            raise SystemExit(f"Unsupported column alignment for {table_config['output']}: {alignment}")
+        alignments.append(alignment)
+    return alignments
 
 
 def select_rows(
@@ -185,6 +196,7 @@ def table(
         caption: str,
         headers: list[str],
         rows: list[list[str]],
+        alignments: list[str],
         size: str,
         environment: str,
         placement: str,
@@ -194,7 +206,7 @@ def table(
 ) -> str:
     if environment not in {"table", "table*", "longtable"}:
         raise SystemExit(f"Unsupported table environment: {environment}")
-    spec = "l" + ("r" * (len(headers) - 1))
+    spec = "".join(alignments)
     if environment == "longtable":
         return longtable(label, caption, headers, rows, size, tabcolsep, provenance, spec)
     lines = [

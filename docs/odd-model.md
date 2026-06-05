@@ -100,7 +100,7 @@ Main report targets use fixed run designs. Each run has an independent determini
 - Interaction snapshot: 25 runs, 60 contests per run, seed 342.
 - Portfolio screen: 35 runs, 70 contests per run, seed 442.
 
-Each report manifest records the command, seed, run count, contest count, Java version, Git state, and calibration checksum.
+Each report manifest records the command, seed, run count, contest count, runtime provenance, Git state, and calibration checksum. The committed review artifacts use a stable runtime-provenance label so Java 21 CI and local Java runtimes do not rewrite otherwise identical report snapshots.
 
 ## Input Data and Calibration Mapping
 
