@@ -82,13 +82,9 @@ Switch-rule diagnostics are reported as scenario-level averages in Table~\ref{ta
 
 \input{tables/switch_rule_snapshot.tex}
 
-Additional composite-diagnostic variants for follow-up runs are:
+Composite-diagnostic variants are reported for selected portfolio rows in Table~\ref{tab:diagnostic-variant-snapshot}. The equal-weight distortion diagnostic averages observed capture, hidden capture, policy distortion, procurement bias, comment flooding, technical distortion, opacity, venue-shift load, and administrative burden. The hidden-discounted diagnostic halves the hidden-substitution component before clamping. The burden-heavy design loss puts additional weight on administrative burden and legitimate-advocacy chill.
 
-\begin{itemize}
-  \item equal-weight diagnostic: average observed capture, hidden capture, policy distortion, procurement bias, comment flooding, technical distortion, opacity, venue-shift load, and administrative burden;
-  \item hidden-influence-discounted diagnostic: halve hidden influence, preserved influence, hidden capture, and substitution-risk terms before clamping;
-  \item burden-heavy diagnostic: double administrative burden and chill weights, then report portfolio rankings separately from the main design loss.
-\end{itemize}
+\input{tables/diagnostic_variant_snapshot.tex}
 
 \section{Generated Report Artifacts}
 
@@ -139,9 +135,9 @@ The source-facing parameters and benchmark ranges are maintained in \path{data/c
 
 Paper figures are generated as SVGs and converted to Wiley-preferred PDF graphics. The script \texttt{scripts/generate-interaction-figures.py} uses simple label-placement logic with visible callout lines so point labels remain distinct and connected to the corresponding point. The script \texttt{scripts/audit-paper-layout.py} checks the generated PDFs for sparse float pages, excessive vertical whitespace, and figure or table pages with too little surrounding readable text. Its report is written to \texttt{reports/paper-layout-audit.md}. A separate visual checklist is written to \texttt{reports/manual-visual-audit.md}; it checks generated SVG label boxes for overlap, bounds, and leader-line coverage where callout labels exist and records table-float layout status.
 
-\section{Remaining Calibration Priorities}
+\section{Calibration Priorities}
 
-The main paper should not claim calibrated policy estimates until the following source panels and tuning loops improve:
+The model remains a mechanism article until the following source panels and tuning loops improve:
 
 \begin{itemize}
   \item direct dark-money identifiers and intermediary routing panels;

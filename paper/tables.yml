@@ -358,6 +358,69 @@
       ]
     },
     {
+      "output": "diagnostic_variant_snapshot.tex",
+      "source": "lobby-capture-portfolio.csv",
+      "label": "tab:diagnostic-variant-snapshot",
+      "caption": "Composite-diagnostic variants for selected portfolio rows. Main loss is the portfolio objective used in the article; the other columns recompute diagnostics from the same run under equal-weight, hidden-discounted, and burden-heavy conventions.",
+      "size": "scriptsize",
+      "environment": "longtable",
+      "width": "\\linewidth",
+      "tabcolsep": "2pt",
+      "rows": [
+        "portfolio-transparency-first",
+        "portfolio-balanced-compliance",
+        "portfolio-procurement-hardening",
+        "portfolio-civil-liberties",
+        "portfolio-full-anti-substitution",
+        "portfolio-full-anti-substitution-high-evasion"
+      ],
+      "columns": [
+        {
+          "header": "Portfolio",
+          "source": "scenarioName",
+          "format": "label",
+          "labels": {
+            "Portfolio: transparency-first baseline": "Transparency",
+            "Portfolio: balanced compliance core": "Balanced",
+            "Portfolio: procurement hardening stack": "Procurement",
+            "Portfolio: civil-liberties-constrained portfolio": "Civil-liberties",
+            "Portfolio: full anti-substitution portfolio": "Full anti-sub.",
+            "Portfolio: full anti-substitution under high evasion": "Full+evasion"
+          }
+        },
+        {
+          "header": "Main loss",
+          "source": "designLoss",
+          "format": "float3"
+        },
+        {
+          "header": "Equal dist.",
+          "source": "distortionEqualWeightDiagnostic",
+          "format": "float3"
+        },
+        {
+          "header": "Hidden disc.",
+          "source": "distortionHiddenDiscountedDiagnostic",
+          "format": "float3"
+        },
+        {
+          "header": "Burden loss",
+          "source": "designLossBurdenHeavy",
+          "format": "float3"
+        },
+        {
+          "header": "Admin",
+          "source": "administrativeCost",
+          "format": "float3"
+        },
+        {
+          "header": "Chill",
+          "source": "legitimateAdvocacyChill",
+          "format": "float3"
+        }
+      ]
+    },
+    {
       "output": "sensitivity_snapshot.tex",
       "source": "lobby-capture-sensitivity.csv",
       "label": "tab:sensitivity",

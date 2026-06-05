@@ -26,6 +26,7 @@ This report complements the scripted layout audit. Figure rows check generated S
 | `apparent_failure_ranking.tex` | layout pass | layout pass | layout pass | layout pass |  |
 | `campaign_snapshot.tex` | layout pass | layout pass | layout pass | layout pass |  |
 | `composite_weights.tex` | layout pass | layout pass | layout pass | layout pass |  |
+| `diagnostic_variant_snapshot.tex` | layout pass | layout pass | layout pass | layout pass |  |
 | `distortion_decomposition.tex` | layout pass | layout pass | layout pass | layout pass |  |
 | `experiment_design.tex` | layout pass | layout pass | layout pass | layout pass |  |
 | `full_campaign_appendix.tex` | layout pass | layout pass | layout pass | layout pass |  |

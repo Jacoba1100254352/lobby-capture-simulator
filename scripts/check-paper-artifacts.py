@@ -23,7 +23,7 @@ WILEY_PDF = PAPER / "regulation-governance-wiley.pdf"
 SUPPLEMENT_PDF = PAPER / "supplement.pdf"
 SUBMISSION_ZIP = DIST / "lobby-capture-wiley-submission.zip"
 SUBMISSION_DECLARATIONS = PAPER / "sections" / "submission-declarations.tex"
-RELEASE_TAG = "paper-publication-readiness-2026-06-05"
+RELEASE_TAG = "paper-publication-readiness-2026-06-05-r2"
 FORBIDDEN_LOCAL_ARTIFACTS = [
     PAPER / "main.tex",
     PAPER / "main.pdf",
@@ -31,6 +31,7 @@ FORBIDDEN_LOCAL_ARTIFACTS = [
 FORBIDDEN_ZIP_MEMBERS = {
     "main.tex",
     "main.pdf",
+    "supporting-information/submission-release-checklist.md",
 }
 
 EXPECTED_ZIP_MEMBERS = {
@@ -58,6 +59,8 @@ EXPECTED_ZIP_MEMBERS = {
     "tables/interaction_snapshot.tex",
     "tables/portfolio_snapshot.tex",
     "figures/Figure_1_model_architecture.pdf",
+    "tables/switch_rule_snapshot.tex",
+    "tables/diagnostic_variant_snapshot.tex",
     "figures/Figure_1_channel_mix.pdf",
     "figures/Figure_2_evasion_sensitivity.pdf",
     "figures/Figure_3_interaction_tradeoffs.pdf",
@@ -77,7 +80,6 @@ EXPECTED_ZIP_MEMBERS = {
     "supporting-information/calibration-queue.md",
     "supporting-information/paper-layout-audit.md",
     "supporting-information/manual-visual-audit.md",
-    "supporting-information/submission-release-checklist.md",
 }
 
 
@@ -187,7 +189,6 @@ def submission_inputs() -> list[Path]:
         ROOT / "reports" / "calibration-queue.md",
         ROOT / "reports" / "paper-layout-audit.md",
         ROOT / "reports" / "manual-visual-audit.md",
-        ROOT / "docs" / "submission-release-checklist.md",
         PAPER / ".wiley-build" / "USG.cls",
         PAPER / ".wiley-build" / "wileyNJD-Chicago.bst",
         PAPER / ".wiley-template" / "Optimal-Design-layout" / "LETTERSP.STY",

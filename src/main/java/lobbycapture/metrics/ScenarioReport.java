@@ -190,6 +190,49 @@ public record ScenarioReport(
 				+ distortionProcessBurdenComponent();
 	}
 
+	public double distortionEqualWeightDiagnostic() {
+		return MetricDefinition.average(
+				observedCaptureRate,
+				hiddenCaptureIndex,
+				averagePolicyDistortion,
+				procurementBiasIndex,
+				commentFloodingIndex,
+				technicalRulemakingDistortion,
+				networkOpacityIndex,
+				venueShiftNetworkLoad,
+				administrativeCostIndex
+		);
+	}
+
+	public double distortionHiddenDiscountedDiagnostic() {
+		return Math.min(
+				1.0,
+				Math.max(
+						0.0,
+						distortionObservedComponent()
+								+ (0.50 * distortionHiddenSubstitutionComponent())
+								+ distortionInformationProcurementComponent()
+								+ distortionNetworkVenueComponent()
+								+ distortionProcessBurdenComponent()
+				)
+		);
+	}
+
+	public double designLossBurdenHeavy() {
+		return Math.max(
+				0.0,
+				(0.28 * totalInfluenceDistortion)
+						+ (0.18 * hiddenCaptureIndex)
+						+ (0.14 * substitutionRisk)
+						+ (0.20 * administrativeCostIndex)
+						+ (0.08 * networkOpacityIndex)
+						+ (0.14 * legitimateAdvocacyChillRate)
+						+ (0.07 * speechRestrictionRisk)
+						- (0.05 * crossVenueDetectionIndex)
+						- (0.04 * participationProtectionIndex)
+		);
+	}
+
 	public double representationScore() {
 		return MetricDefinition.average(
 				averagePublicInterestScore,
