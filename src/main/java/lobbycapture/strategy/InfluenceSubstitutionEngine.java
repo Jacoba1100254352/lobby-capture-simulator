@@ -262,6 +262,10 @@ public final class InfluenceSubstitutionEngine
 				0.0,
 				1.0
 		);
+		double upperTailEvasion = Values.clamp((world.evasionFreedom() - 0.90) / 0.10, 0.0, 1.0);
+		double upperTailHiddenCapacity = upperTailEvasion
+				* (0.55 + (0.45 * anonymityValue))
+				* (0.50 + (0.50 * Math.max(visibleRestriction, opacityPressure)));
 		double hiddenShare = Values.clamp(
 				activated * (
 						0.42
@@ -273,6 +277,7 @@ public final class InfluenceSubstitutionEngine
 								+ (0.24 * procurementVenueValue)
 								+ (0.18 * legalVenuePressure)
 				)
+						+ (0.80 * upperTailHiddenCapacity)
 						- (0.07 * Math.max(0.0, reform.transparencyStrength() - world.evasionFreedom()))
 						- (0.12 * crossVenueDetection),
 				0.0,

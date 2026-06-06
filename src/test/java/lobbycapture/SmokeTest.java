@@ -24,6 +24,7 @@ public final class SmokeTest
 		ScenarioReport bundle = simulator.run(ScenarioCatalog.require("full-anti-capture-bundle"), 4, 30, 13L);
 		ScenarioReport evasion = simulator.run(ScenarioCatalog.require("bundle-with-evasion"), 4, 30, 14L);
 		ScenarioReport intermediary = simulator.run(ScenarioCatalog.require("intermediary-substitution"), 4, 30, 17L);
+		ScenarioReport maximumShadow = simulator.run(ScenarioCatalog.require("shadow-lobbying-maximum-stress"), 4, 30, 19L);
 		List<ScenarioReport> sensitivity = new SensitivityRunner().run(1, 10, 15L);
 		List<ScenarioReport> interactions = new InteractionRunner().run(1, 10, 16L);
 		List<ScenarioReport> ablation = new AblationRunner().run(3, 30, 242L);
@@ -84,6 +85,7 @@ public final class SmokeTest
 		require(evasion.evasionPenaltyRate() >= 0.0, "evasion penalty should stay non-negative");
 		require(intermediary.intermediarySpendShare() > 0.0, "intermediary scenario should route influence through intermediaries");
 		require(intermediary.substitutionRisk() >= 0.0, "intermediary substitution risk should be reported");
+		require(maximumShadow.hiddenInfluenceShare() >= 0.50, "maximum shadow-lobbying stress should expose upper-tail hidden influence");
 		require(sensitivity.size() == 20, "sensitivity runner should cover reform and evasion sweeps");
 		require(interactions.size() == 24, "interaction runner should cover two-way reform sweeps");
 		require(ablation.size() == 7, "ablation runner should cover baseline plus six removals");

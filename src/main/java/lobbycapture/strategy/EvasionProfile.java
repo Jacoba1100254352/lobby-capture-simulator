@@ -35,6 +35,10 @@ public record EvasionProfile(
 	public static EvasionProfile high() {
 		return new EvasionProfile(0.44, 0.56, 0.32, 0.28, 0.36, 0.46, 0.72);
 	}
+
+	public static EvasionProfile extreme() {
+		return new EvasionProfile(0.72, 0.88, 0.42, 0.54, 0.56, 0.38, 0.90);
+	}
 	
 	public double opacity() {
 		return Values.clamp((0.28 * tradeAssociationShift) + (0.34 * nonprofitDarkPoolShift)
@@ -42,4 +46,3 @@ public record EvasionProfile(
 				                    + (0.14 * revolvingDoorPlacementShift), 0.0, 1.0);
 	}
 }
-

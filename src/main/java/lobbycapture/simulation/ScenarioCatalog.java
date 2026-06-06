@@ -303,6 +303,9 @@ public final class ScenarioCatalog
 	}
 	
 	private static EvasionProfile evasionProfile(double evasionFreedom) {
+		if (evasionFreedom >= 0.95) {
+			return EvasionProfile.extreme();
+		}
 		if (evasionFreedom >= 0.70) {
 			return EvasionProfile.high();
 		}

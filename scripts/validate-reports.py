@@ -148,7 +148,7 @@ def benchmark_scope(rows: list[dict[str, str]], benchmark: dict[str, str]) -> tu
     if key == "super_pac_large_donor_dependence":
         return filter_rows(rows, campaign_finance_scope), "campaign-finance and outside-spending scenarios"
     if key == "dark_money_super_pac_routing":
-        return filter_rows(rows, hidden_substitution_scope), "hidden-substitution stress scenarios"
+        return filter_rows(rows, opaque_electoral_routing_scope), "opaque electoral-routing stress scenarios"
     if key == "shadow_lobbying_share":
         return filter_rows(rows, shadow_lobbying_scope), "shadow-lobbying stress scenarios"
     if key == "cooling_off_shadow_lobbying":
@@ -180,10 +180,24 @@ def campaign_finance_scope(row: dict[str, str]) -> bool:
     return marked or (money_heavy and not public_financing_counterweight)
 
 
-def hidden_substitution_scope(row: dict[str, str]) -> bool:
+def opaque_electoral_routing_scope(row: dict[str, str]) -> bool:
     text = row_text(row)
-    markers = ("evasion", "dark-money", "shadow", "intermediary", "substitution", "venue", "hard-budget", "outside")
-    return any(marker in text for marker in markers) or metric(row, "hiddenInfluenceShare") >= 0.30
+    markers = (
+        "dark-money",
+        "dark money",
+        "outside-spending",
+        "outside spending",
+        "super pac",
+        "super-pac",
+        "visible-ban",
+        "visible lobbying ban",
+        "leakage",
+        "public-finance dark-money",
+        "maximum dark-money",
+        "nonprofit issue-ad",
+        "independent expenditure",
+    )
+    return any(marker in text for marker in markers)
 
 
 def shadow_lobbying_scope(row: dict[str, str]) -> bool:
