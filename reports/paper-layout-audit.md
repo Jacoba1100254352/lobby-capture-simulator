@@ -14,7 +14,7 @@ This audit checks generated PDFs for sparse float pages, large whitespace gaps, 
 | paper/strategic-channel-substitution-regulatory-capture.pdf | 5 | 126 | 3390 | 0.854 | 0.055 | no | pass | layout density acceptable |
 | paper/strategic-channel-substitution-regulatory-capture.pdf | 6 | 208 | 3437 | 0.843 | 0.066 | no | pass | layout density acceptable |
 | paper/strategic-channel-substitution-regulatory-capture.pdf | 7 | 79 | 3671 | 0.852 | 0.058 | yes | pass | layout density acceptable |
-| paper/strategic-channel-substitution-regulatory-capture.pdf | 8 | 145 | 2932 | 0.852 | 0.093 | yes | pass | layout density acceptable |
+| paper/strategic-channel-substitution-regulatory-capture.pdf | 8 | 152 | 3153 | 0.852 | 0.058 | yes | pass | layout density acceptable |
 | paper/strategic-channel-substitution-regulatory-capture.pdf | 9 | 168 | 2833 | 0.852 | 0.058 | yes | pass | layout density acceptable |
 | paper/strategic-channel-substitution-regulatory-capture.pdf | 10 | 60 | 896 | 0.824 | 0.085 | yes | pass | layout density acceptable |
 | paper/strategic-channel-substitution-regulatory-capture.pdf | 11 | 182 | 2880 | 0.852 | 0.058 | yes | pass | layout density acceptable |
@@ -31,7 +31,7 @@ This audit checks generated PDFs for sparse float pages, large whitespace gaps, 
 | paper/regulation-governance-wiley.pdf | 4 | 193 | 3726 | 0.939 | 0.054 | no | pass | layout density acceptable |
 | paper/regulation-governance-wiley.pdf | 5 | 149 | 4909 | 0.932 | 0.043 | no | pass | layout density acceptable |
 | paper/regulation-governance-wiley.pdf | 6 | 129 | 4976 | 0.939 | 0.059 | yes | pass | layout density acceptable |
-| paper/regulation-governance-wiley.pdf | 7 | 150 | 3772 | 0.939 | 0.060 | yes | pass | layout density acceptable |
+| paper/regulation-governance-wiley.pdf | 7 | 156 | 3996 | 0.939 | 0.050 | yes | pass | layout density acceptable |
 | paper/regulation-governance-wiley.pdf | 8 | 175 | 2323 | 0.939 | 0.062 | yes | pass | layout density acceptable |
 | paper/regulation-governance-wiley.pdf | 9 | 177 | 2377 | 0.934 | 0.043 | yes | pass | layout density acceptable |
 | paper/regulation-governance-wiley.pdf | 10 | 122 | 1482 | 0.932 | 0.053 | no | pass | layout density acceptable |
@@ -43,6 +43,6 @@ This audit checks generated PDFs for sparse float pages, large whitespace gaps, 
 | paper/supplement.pdf | 2 | 58 | 2882 | 0.854 | 0.055 | no | pass | layout density acceptable |
 | paper/supplement.pdf | 3 | 234 | 2514 | 0.858 | 0.052 | yes | pass | layout density acceptable |
 | paper/supplement.pdf | 4 | 85 | 2857 | 0.854 | 0.055 | yes | pass | layout density acceptable |
-| paper/supplement.pdf | 5 | 78 | 2397 | 0.854 | 0.055 | yes | pass | layout density acceptable |
-| paper/supplement.pdf | 6 | 51 | 3054 | 0.854 | 0.055 | no | pass | references/declarations page |
+| paper/supplement.pdf | 5 | 80 | 2411 | 0.854 | 0.055 | yes | pass | layout density acceptable |
+| paper/supplement.pdf | 6 | 52 | 3141 | 0.854 | 0.055 | no | pass | references/declarations page |
 | paper/supplement.pdf | 7 | 50 | 2515 | 0.857 | 0.101 | yes | pass | references/declarations page |

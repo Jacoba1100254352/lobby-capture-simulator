@@ -19,6 +19,7 @@ CATEGORY_BY_METRIC = {
     "donorInfluenceGini": ("direct-source-moment", "replace report-level proxy with top-k donor/client moments from source tables"),
     "largeDonorDependence": ("model-tuning", "inspect remaining campaign/outside rows and tune allocation-to-source concentration only where high-end outside spending is intended"),
     "darkMoneyTraceability": ("metric-split", "keep all-flow traceability separate from dark-only direct visibility"),
+    "darkMoneyDirectVisibility": ("direct-source-moment", "replace thin proxy rows with direct hidden-donor, electioneering, or nonprofit-routing source records"),
     "hiddenInfluenceShare": ("scenario-coverage", "add stress cases where reforms bind enough to force hidden substitution"),
     "commentUniqueInformationShare": ("model-tuning", "lower unique-information weight for template-heavy dockets"),
     "commentCompressionRate": ("model-tuning", "raise compression under anti-astroturf and duplicate-detection tooling"),
@@ -49,6 +50,7 @@ DIRECT_SOURCE_HINTS = {
     "donorInfluenceGini": "fecDonorTop3Share",
     "largeDonorDependence": "fecLargeDonorWeightedShare",
     "darkMoneyTraceability": "moneyFlowTraceability",
+    "darkMoneyDirectVisibility": "darkMoneyDirectVisibility",
     "commentAuthenticity": "commentAuthenticationShareMean",
     "commentCompressionRate": "commentTemplateShareMean",
     "procurementBias": "procurementAmountWeightedSingleBidShare",
@@ -79,7 +81,7 @@ def main() -> int:
     queue = [
         classify(row, source_moments)
         for row in validation_rows
-        if row["status"] in {"miss", "partial", "unknown"}
+        if row["status"] in {"miss", "partial", "unknown", "source_gap"}
     ]
     queue.sort(key=lambda row: (priority_rank(row["priority"]), row["metric"], row["report"]))
     args.output.mkdir(parents=True, exist_ok=True)
@@ -114,6 +116,10 @@ def classify(row: dict[str, str], source_moments: dict[str, str]) -> dict[str, s
 def priority_for(row: dict[str, str]) -> str:
     if row["status"] == "unknown":
         return "P0"
+    if row["status"] == "source_gap" and row["evidenceType"] in {"observed", "observed_proxy", "benchmark"}:
+        return "P1"
+    if row["status"] == "source_gap":
+        return "P2"
     if row["status"] == "miss" and row["evidenceType"] in {"observed", "observed_proxy", "benchmark"}:
         return "P1"
     if row["status"] == "miss":

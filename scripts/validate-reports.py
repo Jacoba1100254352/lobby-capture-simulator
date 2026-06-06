@@ -236,12 +236,40 @@ def validate_source_moments(
             status = "fit"
             note = "source moment inside benchmark range"
         else:
-            status = "miss"
-            note = "source moment outside benchmark range"
+            gap_note = source_scope_gap(metric, value, source_moments)
+            if gap_note:
+                status = "source_gap"
+                note = f"{gap_note}; source moment outside benchmark range"
+            else:
+                status = "miss"
+                note = "source moment outside benchmark range"
         source_benchmark = dict(benchmark)
         source_benchmark["targetKind"] = "source_moment"
         output.append(summary_row(source_path, source_benchmark, f4(value), f4(value), status, note))
     return output
+
+
+def source_scope_gap(metric: str, value: float, source_moments: dict[str, float]) -> str:
+    """Return a source-coverage note when the panel cannot test the benchmark."""
+    procurement_rows = source_moments.get("procurementRows", 0.0)
+    single_agency_panel = (
+        procurement_rows > 0
+        and source_moments.get("procurementAgencyTop1Share", 0.0) >= 0.98
+    )
+    initial_award_panel = (
+        procurement_rows > 0
+        and source_moments.get("procurementInitialAwardShare", 0.0) >= 0.95
+    )
+    thin_dark_money_panel = source_moments.get("darkMoneySourceShare", 0.0) < 0.05
+    if metric == "procurementAgencyTop1Share" and single_agency_panel:
+        return "single-agency procurement snapshot cannot validate a multi-agency agency-concentration benchmark"
+    if metric == "procurementRecipientTop3Share" and single_agency_panel:
+        return "single-agency procurement snapshot cannot validate a cross-agency recipient-concentration benchmark"
+    if metric == "procurementExPostModificationShare" and initial_award_panel and value <= 0.0:
+        return "award-level procurement snapshot is dominated by initial awards; action-level FPDS/SAM modification transactions are needed"
+    if metric == "darkMoneyDirectVisibility" and thin_dark_money_panel:
+        return "dark-money source panel is thin and proxy-backed; direct hidden-donor or electioneering rows are needed"
+    return ""
 
 
 def audit_substitution_warnings(report_paths: list[Path]) -> list[dict[str, str]]:
@@ -456,16 +484,17 @@ def write_substitution_csv(path: Path, rows: list[dict[str, str]]) -> None:
 def write_markdown(path: Path, rows: list[dict[str, str]]) -> None:
     counts = {
         status: sum(1 for row in rows if row["status"] == status)
-        for status in ("fit", "partial", "miss", "unknown", "not_applicable")
+        for status in ("fit", "partial", "miss", "source_gap", "unknown", "not_applicable")
     }
     lines = [
         "# Validation Summary",
         "",
-        "Benchmark ranges are plausibility checks, not causal empirical claims.",
+        "Benchmark ranges are plausibility checks, not causal empirical claims. `source_gap` rows mark source panels that are too narrow or too proxy-backed to test a benchmark directly.",
         "",
         f"- Fit: `{counts['fit']}`",
         f"- Partial: `{counts['partial']}`",
         f"- Miss: `{counts['miss']}`",
+        f"- Source gap: `{counts['source_gap']}`",
         f"- Unknown: `{counts['unknown']}`",
         f"- Not applicable: `{counts['not_applicable']}`",
         "",
@@ -477,11 +506,12 @@ def write_markdown(path: Path, rows: list[dict[str, str]]) -> None:
         fit = sum(1 for row in evidence_rows if row["status"] == "fit")
         partial = sum(1 for row in evidence_rows if row["status"] == "partial")
         miss = sum(1 for row in evidence_rows if row["status"] == "miss")
+        source_gap = sum(1 for row in evidence_rows if row["status"] == "source_gap")
         unknown = sum(1 for row in evidence_rows if row["status"] == "unknown")
         not_applicable = sum(1 for row in evidence_rows if row["status"] == "not_applicable")
         lines.append(
             f"- `{evidence_type}`: fit `{fit}`, partial `{partial}`, miss `{miss}`, "
-            f"unknown `{unknown}`, not applicable `{not_applicable}`"
+            f"source gap `{source_gap}`, unknown `{unknown}`, not applicable `{not_applicable}`"
         )
     lines.extend([
         "",

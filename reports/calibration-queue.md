@@ -4,18 +4,18 @@ This queue classifies validation misses and partial overlaps into concrete follo
 
 ## Category Counts
 
-- `benchmark-review`: `13`
-- `direct-source-moment`: `3`
+- `benchmark-review`: `12`
+- `direct-source-moment`: `4`
 - `model-tuning`: `15`
 - `scale-alignment`: `1`
 - `scenario-coverage`: `10`
 
 | Priority | Category | Report | Metric | Status | Observed | Benchmark | Source Moment | Action |
 | --- | --- | --- | --- | --- | ---: | ---: | ---: | --- |
-| P1 | direct-source-moment | source-moments.csv | `procurementAgencyTop1Share` | miss | 1.0000-1.0000 | 0.55-0.65 | procurementAgencyTop1Share=1.0000 | expand the procurement source panel beyond the EPA slice before treating agency concentration as representative |
-| P1 | direct-source-moment | source-moments.csv | `procurementExPostModificationShare` | miss | 0.0000-0.0000 | 0.01-0.05 | procurementExPostModificationShare=0.0000 | fill SAM/FPDS modification fields and compare ex-post modification exposure against the procurement bridge target |
-| P1 | direct-source-moment | source-moments.csv | `procurementRecipientTop3Share` | miss | 0.1723-0.1723 | 0.25-0.40 | procurementRecipientTop3Share=0.1723 | compare recipient concentration by agency, award type, and fiscal year rather than treating the EPA slice as a universal target |
-| P2 | benchmark-review | source-moments.csv | `darkMoneyDirectVisibility` | miss | 0.2028-0.2028 | 0.00-0.10 |  | decide whether the benchmark applies to this scenario family |
+| P1 | direct-source-moment | source-moments.csv | `procurementAgencyTop1Share` | source_gap | 1.0000-1.0000 | 0.55-0.65 | procurementAgencyTop1Share=1.0000 | expand the procurement source panel beyond the EPA slice before treating agency concentration as representative |
+| P1 | direct-source-moment | source-moments.csv | `procurementExPostModificationShare` | source_gap | 0.0000-0.0000 | 0.01-0.05 | procurementExPostModificationShare=0.0000 | fill SAM/FPDS modification fields and compare ex-post modification exposure against the procurement bridge target |
+| P1 | direct-source-moment | source-moments.csv | `procurementRecipientTop3Share` | source_gap | 0.1723-0.1723 | 0.25-0.40 | procurementRecipientTop3Share=0.1723 | compare recipient concentration by agency, award type, and fiscal year rather than treating the EPA slice as a universal target |
+| P2 | direct-source-moment | source-moments.csv | `darkMoneyDirectVisibility` | source_gap | 0.2028-0.2028 | 0.00-0.10 | darkMoneyDirectVisibility=0.2028 | replace thin proxy rows with direct hidden-donor, electioneering, or nonprofit-routing source records |
 | P2 | scenario-coverage | lobby-capture-campaign.csv | `hiddenInfluenceShare` | miss | 0.2422-0.4791 | 0.60-0.80 |  | add stress cases where reforms bind enough to force hidden substitution |
 | P2 | scenario-coverage | lobby-capture-interactions.csv | `hiddenInfluenceShare` | miss | 0.0096-0.4638 | 0.60-0.80 |  | add stress cases where reforms bind enough to force hidden substitution |
 | P2 | scenario-coverage | lobby-capture-mechanism-comparison.csv | `hiddenInfluenceShare` | miss | 0.0000-0.3886 | 0.60-0.80 |  | add stress cases where reforms bind enough to force hidden substitution |

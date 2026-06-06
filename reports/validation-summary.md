@@ -1,23 +1,24 @@
 # Validation Summary
 
-Benchmark ranges are plausibility checks, not causal empirical claims.
+Benchmark ranges are plausibility checks, not causal empirical claims. `source_gap` rows mark source panels that are too narrow or too proxy-backed to test a benchmark directly.
 
 - Fit: `308`
 - Partial: `33`
-- Miss: `9`
+- Miss: `5`
+- Source gap: `4`
 - Unknown: `0`
 - Not applicable: `7`
 
 ## Evidence Classes
 
-- `benchmark`: fit `121`, partial `0`, miss `0`, unknown `0`, not applicable `0`
-- `inferred`: fit `0`, partial `0`, miss `6`, unknown `0`, not applicable `1`
-- `judgmental`: fit `4`, partial `2`, miss `0`, unknown `0`, not applicable `0`
-- `observed`: fit `29`, partial `15`, miss `2`, unknown `0`, not applicable `5`
-- `observed_proxy`: fit `25`, partial `0`, miss `1`, unknown `0`, not applicable `0`
-- `proxy`: fit `53`, partial `13`, miss `0`, unknown `0`, not applicable `1`
-- `sectoral`: fit `7`, partial `0`, miss `0`, unknown `0`, not applicable `0`
-- `synthetic`: fit `69`, partial `3`, miss `0`, unknown `0`, not applicable `0`
+- `benchmark`: fit `121`, partial `0`, miss `0`, source gap `0`, unknown `0`, not applicable `0`
+- `inferred`: fit `0`, partial `0`, miss `5`, source gap `1`, unknown `0`, not applicable `1`
+- `judgmental`: fit `4`, partial `2`, miss `0`, source gap `0`, unknown `0`, not applicable `0`
+- `observed`: fit `29`, partial `15`, miss `0`, source gap `2`, unknown `0`, not applicable `5`
+- `observed_proxy`: fit `25`, partial `0`, miss `0`, source gap `1`, unknown `0`, not applicable `0`
+- `proxy`: fit `53`, partial `13`, miss `0`, source gap `0`, unknown `0`, not applicable `1`
+- `sectoral`: fit `7`, partial `0`, miss `0`, source gap `0`, unknown `0`, not applicable `0`
+- `synthetic`: fit `69`, partial `3`, miss `0`, source gap `0`, unknown `0`, not applicable `0`
 
 | Report | Metric | Observed | Benchmark | Status | Note |
 | --- | --- | ---: | ---: | --- | --- |
@@ -371,10 +372,10 @@ Benchmark ranges are plausibility checks, not causal empirical claims.
 | lobby-capture-sensitivity.csv | venueShiftNetworkLoad | 0.0836-0.2974 | 0.00-0.85 | fit | all scenario values inside benchmark range; scope=all scenarios; rows=20 |
 | source-moments.csv | commentFloodingIndex | 0.3072-0.3072 | 0.00-1.00 | fit | source moment inside benchmark range |
 | source-moments.csv | fecDonorTop3Share | 0.3715-0.3715 | 0.10-0.85 | fit | source moment inside benchmark range |
-| source-moments.csv | darkMoneyDirectVisibility | 0.2028-0.2028 | 0.00-0.10 | miss | source moment outside benchmark range |
-| source-moments.csv | procurementAgencyTop1Share | 1.0000-1.0000 | 0.55-0.65 | miss | source moment outside benchmark range |
-| source-moments.csv | procurementRecipientTop3Share | 0.1723-0.1723 | 0.25-0.40 | miss | source moment outside benchmark range |
+| source-moments.csv | darkMoneyDirectVisibility | 0.2028-0.2028 | 0.00-0.10 | source_gap | dark-money source panel is thin and proxy-backed; direct hidden-donor or electioneering rows are needed; source moment outside benchmark range |
+| source-moments.csv | procurementAgencyTop1Share | 1.0000-1.0000 | 0.55-0.65 | source_gap | single-agency procurement snapshot cannot validate a multi-agency agency-concentration benchmark; source moment outside benchmark range |
+| source-moments.csv | procurementRecipientTop3Share | 0.1723-0.1723 | 0.25-0.40 | source_gap | single-agency procurement snapshot cannot validate a cross-agency recipient-concentration benchmark; source moment outside benchmark range |
 | source-moments.csv | revolvingDoorInfluenceMean | 0.3400-0.3400 | 0.25-0.75 | fit | source moment inside benchmark range |
 | source-moments.csv | commentFloodingIndex | 0.3072-0.3072 | 0.00-0.90 | fit | source moment inside benchmark range |
 | source-moments.csv | procurementSingleBidShare | 0.2350-0.2350 | 0.10-0.25 | fit | source moment inside benchmark range |
-| source-moments.csv | procurementExPostModificationShare | 0.0000-0.0000 | 0.01-0.05 | miss | source moment outside benchmark range |
+| source-moments.csv | procurementExPostModificationShare | 0.0000-0.0000 | 0.01-0.05 | source_gap | award-level procurement snapshot is dominated by initial awards; action-level FPDS/SAM modification transactions are needed; source moment outside benchmark range |
