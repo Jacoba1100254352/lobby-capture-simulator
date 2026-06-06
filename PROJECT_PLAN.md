@@ -14,7 +14,9 @@ The new project should not treat lobbying as one wrapper around a bill vote. It 
 
 ## Current Implementation Status
 
-The repository now contains a runnable Java MVP with a Makefile workflow, scenario catalog, campaign reports, sensitivity sweeps, ablation sweeps, interaction sweeps, validation summaries, calibration queues, source-level moment reports, calibration fixtures, a partial 2024 EPA/ENV live snapshot, source-native live normalization hooks, source JSON parser fixtures, configurable generated paper tables and figures, a Regulation & Governance-oriented LaTeX working paper, a Wiley-template submission wrapper, and smoke tests. Lobby organizations remain the central strategic actors. The active engine includes client funding, contribution-ledger flows, adaptive channel allocation, influence substitution, per-client/per-domain funding memory, regulator attention queues, watchdog monitoring budgets, rulemaking docket/comment campaigns, comment triage, evasion profiles, enforcement detection and penalties, adaptation-speed diagnostics, reform-decay pressure, and anti-capture reform bundles.
+The repository now contains a runnable Java mechanism model with a Makefile workflow, scenario catalog, campaign reports, mechanism-comparison reports, sensitivity sweeps, ablation sweeps, interaction sweeps, validation summaries, calibration queues, source-level moment reports, calibration fixtures, a partial 2024 EPA/ENV live snapshot, source-native live normalization hooks, source JSON parser fixtures, configurable generated paper tables and figures, a Regulation & Governance-oriented LaTeX manuscript, a supplement, a Wiley-template submission wrapper, a standalone submission package, and CI gates that rebuild the paper artifacts. Lobby organizations remain the central strategic actors. The active engine includes client funding, contribution-ledger flows, adaptive channel allocation, influence substitution, per-client/per-domain funding memory, regulator attention queues, watchdog monitoring budgets, rulemaking docket/comment campaigns, comment triage, evasion profiles, enforcement detection and penalties, adaptation-speed diagnostics, reform-decay pressure, and anti-capture reform bundles.
+
+The publication-readiness path is treated as part of the project, not a side artifact. `make paper-artifacts-check` regenerates reports, paper tables, figures, PDFs, layout audits, manual visual-review checklists, and the Wiley submission ZIP, then verifies that the ZIP compiles from an extracted directory. Release-oriented builds pin a GitHub release tag in both the manuscript declarations and the artifact checker so the paper, code, and published review bundle stay synchronized.
 
 ## 1. Proposed Repo Architecture
 
@@ -532,8 +534,11 @@ Use empirical data for scale, distributions, and plausibility checks. Do not cla
 - Add seed robustness, scenario ablations, sensitivity sweeps, and report manifests.
 - Add tests for deterministic seeds, budget conservation, disclosure lag, enforcement sanctions, adaptive strategy learning, and reform bundle interactions.
 - Write `docs/validation.md`, `docs/scenario-catalog.md`, and an ODD+D style model appendix.
-- Maintain a Regulation & Governance submission path with word-count checks, a Wiley-template wrapper, and a supplement-ready separation between article claims and reproducibility artifacts.
-- Package an anonymous/shareable archive if needed.
+- Maintain a Regulation & Governance submission path with word-count checks, a Wiley-template wrapper, supplement-ready separation between article claims and reproducibility artifacts, and a standalone submission ZIP compile check.
+- Keep the review bundle tied to an explicit release tag, with CI verifying paper builds, committed generated artifacts, and release-tag exactness for publication-readiness tags.
+- Package an anonymous/shareable archive if the paper is retargeted to a double-blind venue.
+
+Status: implemented for the public review bundle. Future work should focus on stronger empirical panels, external archival DOI minting if required by the target venue, and domain-specific validation extensions rather than rebuilding the paper workflow from scratch.
 
 ## 7. Code To Copy Or Adapt From Existing Simulator
 

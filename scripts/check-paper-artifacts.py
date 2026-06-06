@@ -4,6 +4,7 @@
 from __future__ import annotations
 
 import os
+import re
 import shutil
 import subprocess
 import sys
@@ -23,11 +24,15 @@ WILEY_PDF = PAPER / "regulation-governance-wiley.pdf"
 SUPPLEMENT_PDF = PAPER / "supplement.pdf"
 SUBMISSION_ZIP = DIST / "lobby-capture-wiley-submission.zip"
 SUBMISSION_DECLARATIONS = PAPER / "sections" / "submission-declarations.tex"
-RELEASE_TAG = "paper-publication-readiness-2026-06-05-r10"
+RELEASE_TAG = "paper-publication-readiness-2026-06-05-r11"
 FORBIDDEN_LOCAL_ARTIFACTS = [
     PAPER / "main.tex",
     PAPER / "main.pdf",
 ]
+FORBIDDEN_LOCAL_COPY_SUFFIX = re.compile(
+    r".+ [0-9]+\.(aux|bbl|blg|log|out|pag|pdf|tex)$",
+    re.IGNORECASE,
+)
 FORBIDDEN_ZIP_MEMBERS = {
     "main.tex",
     "main.pdf",
@@ -110,11 +115,17 @@ def check_exists(paths: list[Path]) -> list[str]:
 
 
 def check_forbidden_local_artifacts() -> list[str]:
-    return [
+    failures = [
         f"stale generic paper artifact remains: {path.relative_to(ROOT)}"
         for path in FORBIDDEN_LOCAL_ARTIFACTS
         if path.exists()
     ]
+    failures.extend(
+        f"duplicate copy-suffix paper artifact remains: {path.relative_to(ROOT)}"
+        for path in sorted(PAPER.iterdir())
+        if path.is_file() and FORBIDDEN_LOCAL_COPY_SUFFIX.fullmatch(path.name)
+    )
+    return failures
 
 
 def check_freshness() -> list[str]:

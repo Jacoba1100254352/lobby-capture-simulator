@@ -17,7 +17,7 @@ OUTPUT = Path("reports")
 CATEGORY_BY_METRIC = {
     "averageDisclosureLag": ("scale-alignment", "separate current-public-visibility lag from historical age of archived filings"),
     "donorInfluenceGini": ("direct-source-moment", "replace report-level proxy with top-k donor/client moments from source tables"),
-    "largeDonorDependence": ("model-tuning", "use source large-donor moments and scale campaign finance influence into report state"),
+    "largeDonorDependence": ("model-tuning", "inspect remaining campaign/outside rows and tune allocation-to-source concentration only where high-end outside spending is intended"),
     "darkMoneyTraceability": ("metric-split", "keep all-flow traceability separate from dark-only direct visibility"),
     "hiddenInfluenceShare": ("scenario-coverage", "add stress cases where reforms bind enough to force hidden substitution"),
     "commentUniqueInformationShare": ("model-tuning", "lower unique-information weight for template-heavy dockets"),

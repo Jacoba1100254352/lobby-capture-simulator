@@ -96,6 +96,18 @@ def validate_report(report: Path, benchmarks: list[dict[str, str]]) -> list[dict
             output.append(summary_row(report, benchmark, "", "", "unknown", "metric not present in report"))
             continue
         scoped_rows, scope = benchmark_scope(rows, benchmark)
+        if not scoped_rows:
+            output.append(summary_row(
+                report,
+                benchmark,
+                "",
+                "",
+                "not_applicable",
+                f"no rows matched validation scope; scope={scope}; rows=0",
+                scope,
+                "0",
+            ))
+            continue
         values = [float(row[metric]) for row in scoped_rows if row.get(metric, "") != ""]
         if not values:
             output.append(summary_row(report, benchmark, "", "", "unknown", f"metric has no values in {scope}"))
@@ -127,7 +139,7 @@ def validate_report(report: Path, benchmarks: list[dict[str, str]]) -> list[dict
 
 
 def benchmark_scope(rows: list[dict[str, str]], benchmark: dict[str, str]) -> tuple[list[dict[str, str]], str]:
-    key = benchmark.get("key", "")
+    key = normalized_benchmark_key(benchmark)
     metric_name = benchmark.get("metric", "")
     if key == "public_financing_candidate_uptake":
         return filter_rows(rows, lambda row: metric(row, "publicFinancingShare") >= 0.45), "public-financing scenarios"
@@ -146,21 +158,26 @@ def benchmark_scope(rows: list[dict[str, str]], benchmark: dict[str, str]) -> tu
     return rows, "all scenarios"
 
 
+def normalized_benchmark_key(benchmark: dict[str, str]) -> str:
+    key = benchmark.get("key", "")
+    return key.split(":", 1)[1] if key.startswith("parameter-map:") else key
+
+
 def filter_rows(rows: list[dict[str, str]], predicate) -> list[dict[str, str]]:
-    filtered = [row for row in rows if predicate(row)]
-    return filtered if filtered else rows
+    return [row for row in rows if predicate(row)]
 
 
 def campaign_finance_scope(row: dict[str, str]) -> bool:
     text = row_text(row)
-    return (
-        "campaign" in text
-        or "election" in text
-        or "dark-money" in text
-        or "outside" in text
-        or "electoral" in text
-        or metric(row, "campaignFinanceShare") + metric(row, "darkMoneyShare") >= 0.24
+    markers = ("campaign-finance", "campaign finance", "dark-money", "dark money", "outside", "super pac", "super-pac")
+    marked = any(marker in text for marker in markers)
+    money_heavy = metric(row, "campaignFinanceShare") + metric(row, "darkMoneyShare") >= 0.30
+    public_financing_counterweight = (
+        metric(row, "publicFinancingShare") >= 0.45
+        or metric(row, "voucherParticipation") >= 0.45
+        or metric(row, "participationProtectionIndex") >= 0.65
     )
+    return marked or (money_heavy and not public_financing_counterweight)
 
 
 def hidden_substitution_scope(row: dict[str, str]) -> bool:
@@ -437,7 +454,10 @@ def write_substitution_csv(path: Path, rows: list[dict[str, str]]) -> None:
 
 
 def write_markdown(path: Path, rows: list[dict[str, str]]) -> None:
-    counts = {status: sum(1 for row in rows if row["status"] == status) for status in ("fit", "partial", "miss", "unknown")}
+    counts = {
+        status: sum(1 for row in rows if row["status"] == status)
+        for status in ("fit", "partial", "miss", "unknown", "not_applicable")
+    }
     lines = [
         "# Validation Summary",
         "",
@@ -447,6 +467,7 @@ def write_markdown(path: Path, rows: list[dict[str, str]]) -> None:
         f"- Partial: `{counts['partial']}`",
         f"- Miss: `{counts['miss']}`",
         f"- Unknown: `{counts['unknown']}`",
+        f"- Not applicable: `{counts['not_applicable']}`",
         "",
         "## Evidence Classes",
         "",
@@ -457,7 +478,11 @@ def write_markdown(path: Path, rows: list[dict[str, str]]) -> None:
         partial = sum(1 for row in evidence_rows if row["status"] == "partial")
         miss = sum(1 for row in evidence_rows if row["status"] == "miss")
         unknown = sum(1 for row in evidence_rows if row["status"] == "unknown")
-        lines.append(f"- `{evidence_type}`: fit `{fit}`, partial `{partial}`, miss `{miss}`, unknown `{unknown}`")
+        not_applicable = sum(1 for row in evidence_rows if row["status"] == "not_applicable")
+        lines.append(
+            f"- `{evidence_type}`: fit `{fit}`, partial `{partial}`, miss `{miss}`, "
+            f"unknown `{unknown}`, not applicable `{not_applicable}`"
+        )
     lines.extend([
         "",
         "| Report | Metric | Observed | Benchmark | Status | Note |",

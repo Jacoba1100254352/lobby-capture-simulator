@@ -268,6 +268,51 @@ public final class MetricsAccumulator
 				1.0
 		);
 	}
+
+	private static double largeDonorDependence(
+			PolicyContest contest,
+			WorldState world,
+			ReformRegime reform,
+			ChannelAllocation allocation,
+			double ledgerLargeDonorDependence
+	) {
+		double ledgerEstimate = ledgerLargeDonorDependence == 0.0
+				? Values.clamp(Math.max(contest.campaignFinanceInfluence(), contest.darkMoneyInfluence()), 0.0, 1.0)
+				: ledgerLargeDonorDependence;
+		double sourceEstimate = Values.clamp(
+				(0.58 * world.calibratedLargeDonorShare(contest.issueDomain()))
+						+ (0.42 * world.calibratedDonorConcentrationIndex(contest.issueDomain())),
+				0.0,
+				0.82
+		);
+		double moneyChannelShare = allocation.total() == 0.0
+				? 0.0
+				: allocation.share(InfluenceChannel.CAMPAIGN_FINANCE) + allocation.share(InfluenceChannel.DARK_MONEY);
+		double moneyPressure = Values.clamp(
+				(0.50 * moneyChannelShare)
+						+ (0.25 * contest.campaignFinanceInfluence())
+						+ (0.25 * contest.darkMoneyInfluence()),
+				0.0,
+				1.0
+		);
+		double publicFinancingCounterweight = Values.clamp(
+				(0.55 * reform.publicFinancingStrength())
+						+ (0.25 * reform.democracyVoucherStrength())
+						+ (0.20 * reform.campaignFinanceCounterweight()),
+				0.0,
+				1.0
+		);
+		double sourceWeight = Values.clamp(
+				0.15 + (0.60 * moneyPressure) - (0.35 * publicFinancingCounterweight),
+				0.0,
+				0.75
+		);
+		return Values.clamp(
+				((1.0 - sourceWeight) * ledgerEstimate) + (sourceWeight * sourceEstimate),
+				0.0,
+				1.0
+		);
+	}
 	
 	private static double commentReviewCapacity(PolicyContest contest, WorldState world, ReformRegime reform) {
 		return Values.clamp(
@@ -332,9 +377,14 @@ public final class MetricsAccumulator
 				: ledgerTraceability;
 		darkMoneyDirectVisibilitySum += world.contributionLedger().darkMoneyDirectVisibility();
 		double ledgerLargeDonorDependence = world.contributionLedger().largeDonorDependence();
-		largeDonorDependenceSum += ledgerLargeDonorDependence == 0.0
-				? Values.clamp(contest.campaignFinanceInfluence(), 0.0, 1.0)
-				: ledgerLargeDonorDependence;
+		double reportedLargeDonorDependence = largeDonorDependence(
+				contest,
+				world,
+				reform,
+				allocation,
+				ledgerLargeDonorDependence
+		);
+		largeDonorDependenceSum += reportedLargeDonorDependence;
 		voucherParticipationSum += reform.democracyVoucherStrength();
 		voucherResidentParticipationSum += voucherResidentParticipation(reform, world.contributionLedger().publicFinancingSourceShare());
 		publicFinancingShareSum += Values.clamp(
@@ -343,7 +393,7 @@ public final class MetricsAccumulator
 				0.0,
 				1.0
 		);
-		publicFinancingCandidateUptakeSum += publicFinancingCandidateUptake(reform, ledgerLargeDonorDependence);
+		publicFinancingCandidateUptakeSum += publicFinancingCandidateUptake(reform, reportedLargeDonorDependence);
 		revolvingDoorInfluenceSum += contest.revolvingDoorInfluence();
 		commentRecordDistortionSum += contest.commentRecordDistortion();
 		templateCommentSaturationSum += contest.docket().templateSaturation();
