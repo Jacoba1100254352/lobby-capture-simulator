@@ -43,7 +43,11 @@ def extract_scope(scope: str, root: Path, prefix: str) -> list[dict[str, str]]:
         root / f"{prefix}dark-money.csv",
     ))
     rows.extend(regulatory_moments(scope, root / f"{prefix}regulatory-dockets.csv"))
-    rows.extend(usaspending_moments(scope, root / f"{prefix}usaspending-awards.csv"))
+    rows.extend(usaspending_moments(
+        scope,
+        root / f"{prefix}usaspending-awards.csv",
+        root / f"{prefix}usaspending-procurement-bridge.csv",
+    ))
     rows.extend(revolving_door_moments(scope, root / f"{prefix}revolving-door.csv"))
     rows.extend(intermediary_moments(scope, root / f"{prefix}intermediaries.csv"))
     return rows
@@ -134,50 +138,58 @@ def regulatory_moments(scope: str, path: Path) -> list[dict[str, str]]:
     ]
 
 
-def usaspending_moments(scope: str, path: Path) -> list[dict[str, str]]:
+def usaspending_moments(scope: str, path: Path, bridge_path: Path) -> list[dict[str, str]]:
     rows = read_rows(path)
-    if not rows:
+    bridge_rows = read_rows(bridge_path)
+    if not rows and not bridge_rows:
         return [moment(scope, "usaspending", "procurementRows", 0.0, "observed", f"{path} missing or empty")]
-    by_recipient = grouped_amount(rows, "recipient")
-    by_agency = grouped_amount(rows, "agency")
-    by_sub_agency = grouped_amount(rows, "subAgency")
-    total = sum(number(row.get("amount")) for row in rows)
-    single_bid_rows = [row for row in rows if number(row.get("numberOfOffers")) <= 1.0 and number(row.get("numberOfOffers")) > 0.0]
-    modified_rows = [row for row in rows if flag(row.get("exPostModification")) or modification_sequence(row.get("modificationNumber")) > 0]
-    initial_rows = [row for row in rows if not flag(row.get("exPostModification")) and modification_sequence(row.get("modificationNumber")) == 0]
-    price_only_rows = [row for row in rows if flag(row.get("priceOnlyAward"))]
-    firewall_rows = [row for row in rows if flag(row.get("firewallCovered"))]
-    protest_rows = [row for row in rows if flag(row.get("protestFiled"))]
-    exclusion_rows = [row for row in rows if flag(row.get("exclusionFlag")) or "EXCLUSION" in row.get("competitionType", "").upper()]
+    source_rows = bridge_rows if bridge_rows else rows
+    source_note = "multi-agency procurement bridge rows" if bridge_rows else "normalized USAspending award rows"
+    by_recipient = grouped_amount(source_rows, "recipient")
+    by_agency = grouped_amount(source_rows, "agency")
+    by_sub_agency = grouped_amount(source_rows, "subAgency")
+    total = sum(number(row.get("amount")) for row in source_rows)
+    single_bid_rows = [row for row in source_rows if number(row.get("numberOfOffers")) <= 1.0 and number(row.get("numberOfOffers")) > 0.0]
+    modified_rows = [row for row in source_rows if flag(row.get("exPostModification")) or modification_sequence(row.get("modificationNumber")) > 0]
+    initial_rows = [row for row in source_rows if not flag(row.get("exPostModification")) and modification_sequence(row.get("modificationNumber")) == 0]
+    price_only_rows = [row for row in source_rows if flag(row.get("priceOnlyAward"))]
+    firewall_rows = [row for row in source_rows if flag(row.get("firewallCovered"))]
+    protest_rows = [row for row in source_rows if flag(row.get("protestFiled"))]
+    exclusion_rows = [row for row in source_rows if flag(row.get("exclusionFlag")) or "EXCLUSION" in row.get("competitionType", "").upper()]
     limited_competition_rows = [
         row
-        for row in rows
+        for row in source_rows
         if competition_limited(row.get("competitionType", "")) or (number(row.get("numberOfOffers")) <= 1.0 and number(row.get("numberOfOffers")) > 0.0)
     ]
-    uei_rows = [row for row in rows if row.get("uei", "").strip()]
-    piid_rows = [row for row in rows if row.get("piid", "").strip()]
+    uei_rows = [row for row in source_rows if row.get("uei", "").strip()]
+    piid_rows = [row for row in source_rows if row.get("piid", "").strip()]
+    agency_count = len({row.get("agency", "") for row in bridge_rows if row.get("agency", "").strip()})
     return [
         moment(scope, "usaspending", "procurementRows", len(rows), "observed", "normalized USAspending award rows"),
-        moment(scope, "usaspending", "procurementTotalAwards", total, "observed", "sum of normalized USAspending award amount"),
-        moment(scope, "usaspending", "procurementRecipientTop1Share", top_share(by_recipient, 1), "observed", "largest recipient share of normalized award amount"),
-        moment(scope, "usaspending", "procurementRecipientTop3Share", top_share(by_recipient, 3), "observed", "top three recipients share of normalized award amount"),
-        moment(scope, "usaspending", "procurementRecipientHerfindahl", herfindahl(by_recipient), "observed", "recipient award-amount Herfindahl"),
-        moment(scope, "usaspending", "procurementAgencyTop1Share", top_share(by_agency, 1), "observed", "largest awarding agency share of normalized award amount"),
-        moment(scope, "usaspending", "procurementAgencyHerfindahl", herfindahl(by_agency), "observed", "awarding-agency amount Herfindahl"),
-        moment(scope, "usaspending", "procurementSubAgencyTop3Share", top_share(by_sub_agency, 3), "observed", "top three sub-agencies share of normalized award amount"),
-        moment(scope, "usaspending", "procurementAwardCount", sum(number(row.get("awardCount")) for row in rows), "observed", "sum of normalized award or transaction counts"),
-        moment(scope, "usaspending", "procurementSingleBidShare", safe_divide(len(single_bid_rows), len(rows)), "observed_proxy", "share of rows with one known offer"),
+        moment(scope, "usaspending", "procurementBridgeRows", len(bridge_rows), "observed", "multi-agency USAspending bridge rows, if available"),
+        moment(scope, "usaspending", "procurementBridgeAgencyCount", agency_count, "observed", "distinct awarding agencies in procurement source moment panel"),
+        moment(scope, "usaspending", "procurementBridgeTopAwardSample", 1.0 if bridge_rows else 0.0, "diagnostic", "1 when procurement concentration moments use a multi-agency top-award bridge"),
+        moment(scope, "usaspending", "procurementLatestTransactionModificationProxy", 1.0 if bridge_rows else 0.0, "diagnostic", "1 when modification moments use latest-transaction enrichment rather than action-level FPDS denominator"),
+        moment(scope, "usaspending", "procurementTotalAwards", total, "observed", f"sum of {source_note} amount"),
+        moment(scope, "usaspending", "procurementRecipientTop1Share", top_share(by_recipient, 1), "observed", f"largest recipient share of {source_note} amount"),
+        moment(scope, "usaspending", "procurementRecipientTop3Share", top_share(by_recipient, 3), "observed", f"top three recipients share of {source_note} amount"),
+        moment(scope, "usaspending", "procurementRecipientHerfindahl", herfindahl(by_recipient), "observed", f"recipient award-amount Herfindahl over {source_note}"),
+        moment(scope, "usaspending", "procurementAgencyTop1Share", top_share(by_agency, 1), "observed", f"largest awarding agency share of {source_note} amount"),
+        moment(scope, "usaspending", "procurementAgencyHerfindahl", herfindahl(by_agency), "observed", f"awarding-agency amount Herfindahl over {source_note}"),
+        moment(scope, "usaspending", "procurementSubAgencyTop3Share", top_share(by_sub_agency, 3), "observed", f"top three sub-agencies share of {source_note} amount"),
+        moment(scope, "usaspending", "procurementAwardCount", sum(number(row.get("awardCount")) for row in source_rows), "observed", f"sum of normalized award or transaction counts in {source_note}"),
+        moment(scope, "usaspending", "procurementSingleBidShare", safe_divide(len(single_bid_rows), len(source_rows)), "observed_proxy", "share of rows with one known offer"),
         moment(scope, "usaspending", "procurementAmountWeightedSingleBidShare", safe_divide(sum(number(row.get("amount")) for row in single_bid_rows), total), "observed_proxy", "award-amount share with one known offer"),
-        moment(scope, "usaspending", "procurementInitialAwardShare", safe_divide(len(initial_rows), len(rows)), "observed_proxy", "share of rows that appear to be initial awards rather than modifications"),
-        moment(scope, "usaspending", "procurementExPostModificationShare", safe_divide(len(modified_rows), len(rows)), "observed_proxy", "share of rows marked as ex-post modifications or nonzero modification sequence"),
+        moment(scope, "usaspending", "procurementInitialAwardShare", safe_divide(len(initial_rows), len(source_rows)), "observed_proxy", "share of rows that appear to be initial awards rather than modifications"),
+        moment(scope, "usaspending", "procurementExPostModificationShare", safe_divide(len(modified_rows), len(source_rows)), "observed_proxy", "share of rows marked as ex-post modifications or nonzero modification sequence"),
         moment(scope, "usaspending", "procurementAmountWeightedModificationShare", safe_divide(sum(number(row.get("amount")) for row in modified_rows), total), "observed_proxy", "award-amount share marked as ex-post modifications"),
-        moment(scope, "usaspending", "procurementPriceOnlyAwardShare", safe_divide(len(price_only_rows), len(rows)), "observed_proxy", "share of rows marked as price-only or one-offer awards"),
-        moment(scope, "usaspending", "procurementLimitedCompetitionShare", safe_divide(len(limited_competition_rows), len(rows)), "observed_proxy", "share of rows with limited competition, exclusions, or one known offer"),
-        moment(scope, "usaspending", "procurementProtestShare", safe_divide(len(protest_rows), len(rows)), "observed_proxy", "share of rows marked with a protest flag"),
-        moment(scope, "usaspending", "procurementExclusionShare", safe_divide(len(exclusion_rows), len(rows)), "observed_proxy", "share of rows marked as exclusions or after-exclusion competition"),
-        moment(scope, "usaspending", "procurementFirewallCoverageShare", safe_divide(len(firewall_rows), len(rows)), "observed_proxy", "share of rows covered by a procurement-firewall flag"),
-        moment(scope, "usaspending", "procurementKnownUeiShare", safe_divide(len(uei_rows), len(rows)), "diagnostic", "share of rows carrying a recipient UEI"),
-        moment(scope, "usaspending", "procurementKnownPiidShare", safe_divide(len(piid_rows), len(rows)), "diagnostic", "share of rows carrying a procurement instrument identifier"),
+        moment(scope, "usaspending", "procurementPriceOnlyAwardShare", safe_divide(len(price_only_rows), len(source_rows)), "observed_proxy", "share of rows marked as price-only or one-offer awards"),
+        moment(scope, "usaspending", "procurementLimitedCompetitionShare", safe_divide(len(limited_competition_rows), len(source_rows)), "observed_proxy", "share of rows with limited competition, exclusions, or one known offer"),
+        moment(scope, "usaspending", "procurementProtestShare", safe_divide(len(protest_rows), len(source_rows)), "observed_proxy", "share of rows marked with a protest flag"),
+        moment(scope, "usaspending", "procurementExclusionShare", safe_divide(len(exclusion_rows), len(source_rows)), "observed_proxy", "share of rows marked as exclusions or after-exclusion competition"),
+        moment(scope, "usaspending", "procurementFirewallCoverageShare", safe_divide(len(firewall_rows), len(source_rows)), "observed_proxy", "share of rows covered by a procurement-firewall flag"),
+        moment(scope, "usaspending", "procurementKnownUeiShare", safe_divide(len(uei_rows), len(source_rows)), "diagnostic", "share of rows carrying a recipient UEI"),
+        moment(scope, "usaspending", "procurementKnownPiidShare", safe_divide(len(piid_rows), len(source_rows)), "diagnostic", "share of rows carrying a procurement instrument identifier"),
     ]
 
 

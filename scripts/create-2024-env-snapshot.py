@@ -48,6 +48,11 @@ SOURCES = {
         "description": "EPA fiscal-year 2024 USAspending award panel for procurement concentration, SAM/FPDS bridge identifiers, competition, modification, and firewall moments.",
         "request": "USASPENDING_FISCAL_YEAR=2024 USASPENDING_AGENCY='Environmental Protection Agency' ./scripts/fetch-usaspending.sh --live",
     },
+    "usaspending-procurement-bridge": {
+        "input": RAW / "usaspending-procurement-bridge.csv",
+        "description": "Multi-agency fiscal-year 2024 USAspending top-award bridge for procurement concentration and latest-transaction modification diagnostics; kept separate from the EPA calibration slice.",
+        "request": "USASPENDING_AGENCIES='Environmental Protection Agency,Department of Energy,Department of the Interior,Department of Agriculture,Department of Transportation,Department of Defense' USASPENDING_PAGE_SIZE=25 USASPENDING_MAX_PAGES=1 USASPENDING_TREAT_LATEST_TRANSACTION_AS_MODIFICATION=1 python3 scripts/fetch-source-data.py usaspending --output data/raw/usaspending-procurement-bridge.csv",
+    },
     "revolving-door": {
         "input": RAW / "revolving-door.csv",
         "description": "Normalized revolving-door source panel from a licensed/exported CSV or LDA covered-position derivation, with fixture fallback.",
@@ -171,6 +176,7 @@ def source_status(source: str, live_status: list[dict[str, str]]) -> tuple[str, 
         "dark-money": [row for row in live_status if row["source"] == "dark-money"],
         "regulatory": [row for row in live_status if row["source"] in {"regulations-gov", "federal-register"}],
         "usaspending": [row for row in live_status if row["source"] == "usaspending"],
+        "usaspending-procurement-bridge": [row for row in live_status if row["source"] == "usaspending-procurement-bridge"],
         "revolving-door": [row for row in live_status if row["source"] == "revolving-door"],
         "intermediary": [row for row in live_status if row["source"] == "intermediary"],
     }.get(source, [])
@@ -232,6 +238,7 @@ def write_readme(root: Path, entries: list[dict[str, object]]) -> None:
         "- Public-financing bridge: NYC CFB public-funds payments or configured program export rows carried as a separate bridge panel.",
         "- Dark-money bridge: configured source export rows or IRS EO BMF 501(c)(4)/(c)(6) opaque-capacity proxy rows; super PAC rows remain separate.",
         "- USAspending fiscal year: 2024, Environmental Protection Agency awards.",
+        "- USAspending procurement bridge: multi-agency fiscal-year 2024 top-award rows for procurement concentration diagnostics, kept separate from the EPA calibration slice.",
         "- Revolving-door panel: licensed/source export or LDA covered-position derivation when available; fixture otherwise.",
         "- Intermediary panel: NYC CFB intermediary rows, IRS EO BMF nonprofit/association capacity rows, or configured nonprofit, 527, association, and think-tank export when available; fixture otherwise.",
         "",

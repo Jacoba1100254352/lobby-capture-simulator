@@ -153,6 +153,23 @@ else
   printf "usaspending,unavailable,upstream USAspending request returned no rows or failed\n" >> "$status_file"
 fi
 
+if [ "${USASPENDING_PROCUREMENT_BRIDGE_SOURCE_NATIVE:-1}" = "1" ]; then
+  if SOURCE_RAW_DIR="$raw_dir/usaspending-procurement-bridge" \
+    USASPENDING_FISCAL_YEAR="${USASPENDING_FISCAL_YEAR:-2024}" \
+    USASPENDING_AGENCIES="${USASPENDING_PROCUREMENT_BRIDGE_AGENCIES:-Environmental Protection Agency,Department of Energy,Department of the Interior,Department of Agriculture,Department of Transportation,Department of Defense}" \
+    USASPENDING_PAGE_SIZE="${USASPENDING_PROCUREMENT_BRIDGE_PAGE_SIZE:-25}" \
+    USASPENDING_MAX_PAGES="${USASPENDING_PROCUREMENT_BRIDGE_MAX_PAGES:-1}" \
+    USASPENDING_ENRICH_LIMIT="${USASPENDING_PROCUREMENT_BRIDGE_ENRICH_LIMIT:-150}" \
+    USASPENDING_TREAT_LATEST_TRANSACTION_AS_MODIFICATION=1 \
+      python3 scripts/fetch-source-data.py usaspending --output data/raw/usaspending-procurement-bridge.csv; then
+    printf "usaspending-procurement-bridge,ok,normalized multi-agency procurement bridge rows written\n" >> "$status_file"
+  else
+    printf "usaspending-procurement-bridge,unavailable,upstream USAspending multi-agency bridge request returned no rows or failed\n" >> "$status_file"
+  fi
+else
+  printf "usaspending-procurement-bridge,missing,multi-agency procurement bridge disabled\n" >> "$status_file"
+fi
+
 if [ -n "${REVOLVING_DOOR_LIVE_CSV:-}" ] || [ -n "${REVOLVING_DOOR_LIVE_URL:-}" ]; then
   if ./scripts/fetch-revolving-door.sh --live; then
     printf "revolving-door,ok,normalized configured source export written\n" >> "$status_file"

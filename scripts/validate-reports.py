@@ -266,8 +266,13 @@ def validate_source_moments(
 def source_scope_gap(metric: str, value: float, source_moments: dict[str, float]) -> str:
     """Return a source-coverage note when the panel cannot test the benchmark."""
     procurement_rows = source_moments.get("procurementRows", 0.0)
+    procurement_bridge_rows = source_moments.get("procurementBridgeRows", 0.0)
+    procurement_bridge_agencies = source_moments.get("procurementBridgeAgencyCount", 0.0)
+    top_award_bridge = source_moments.get("procurementBridgeTopAwardSample", 0.0) >= 0.5
+    latest_transaction_mod_proxy = source_moments.get("procurementLatestTransactionModificationProxy", 0.0) >= 0.5
     single_agency_panel = (
         procurement_rows > 0
+        and procurement_bridge_rows <= 0
         and source_moments.get("procurementAgencyTop1Share", 0.0) >= 0.98
     )
     initial_award_panel = (
@@ -277,10 +282,14 @@ def source_scope_gap(metric: str, value: float, source_moments: dict[str, float]
     thin_dark_money_panel = source_moments.get("darkMoneySourceShare", 0.0) < 0.05
     if metric == "procurementAgencyTop1Share" and single_agency_panel:
         return "single-agency procurement snapshot cannot validate a multi-agency agency-concentration benchmark"
+    if metric == "procurementAgencyTop1Share" and top_award_bridge and procurement_bridge_agencies > 1:
+        return "multi-agency procurement bridge is present but top-award sampling is not representative enough for agency-concentration calibration"
     if metric == "procurementRecipientTop3Share" and single_agency_panel:
         return "single-agency procurement snapshot cannot validate a cross-agency recipient-concentration benchmark"
     if metric == "procurementExPostModificationShare" and initial_award_panel and value <= 0.0:
         return "award-level procurement snapshot is dominated by initial awards; action-level FPDS/SAM modification transactions are needed"
+    if metric == "procurementExPostModificationShare" and latest_transaction_mod_proxy:
+        return "latest-transaction modification enrichment is useful directionally but lacks the action-level FPDS/SAM denominator needed for incidence calibration"
     if metric == "darkMoneyDirectVisibility" and thin_dark_money_panel:
         return "dark-money source panel is thin and proxy-backed; direct hidden-donor or electioneering rows are needed"
     return ""

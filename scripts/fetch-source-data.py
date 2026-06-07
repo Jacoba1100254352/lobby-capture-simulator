@@ -423,44 +423,39 @@ def fetch_usaspending(output: Path) -> int:
     max_pages = int_env("USASPENDING_MAX_PAGES", 2, 1, 20)
     start_date, end_date = usaspending_time_period()
     rows = []
-    for page in range(1, max_pages + 1):
-        payload = {
-            "filters": {
-                "time_period": [{"start_date": start_date, "end_date": end_date}],
-                "agencies": [
-                    {
-                        "type": os.environ.get("USASPENDING_AGENCY_TYPE", "awarding"),
-                        "tier": os.environ.get("USASPENDING_AGENCY_TIER", "toptier"),
-                        "name": os.environ.get("USASPENDING_AGENCY", "Environmental Protection Agency"),
-                    }
+    for agency_filter in usaspending_agency_filters():
+        for page in range(1, max_pages + 1):
+            payload = {
+                "filters": {
+                    "time_period": [{"start_date": start_date, "end_date": end_date}],
+                    "agencies": [agency_filter],
+                    "award_type_codes": split_csv_env("USASPENDING_AWARD_TYPE_CODES", "A,B,C,D"),
+                },
+                "fields": [
+                    "Award ID",
+                    "Recipient Name",
+                    "Recipient UEI",
+                    "Award Amount",
+                    "Awarding Agency",
+                    "Awarding Sub Agency",
+                    "Award Type",
+                    "PIID",
+                    "Action Date",
+                    "Modification Number",
+                    "Competition Type",
+                    "Number of Offers",
                 ],
-                "award_type_codes": split_csv_env("USASPENDING_AWARD_TYPE_CODES", "A,B,C,D"),
-            },
-            "fields": [
-                "Award ID",
-                "Recipient Name",
-                "Recipient UEI",
-                "Award Amount",
-                "Awarding Agency",
-                "Awarding Sub Agency",
-                "Award Type",
-                "PIID",
-                "Action Date",
-                "Modification Number",
-                "Competition Type",
-                "Number of Offers",
-            ],
-            "page": page,
-            "limit": limit,
-            "sort": os.environ.get("USASPENDING_SORT", "Award Amount"),
-            "order": os.environ.get("USASPENDING_ORDER", "desc"),
-        }
-        response = post_json(f"{base}/search/spending_by_award/", payload)
-        page_rows = normalize_usaspending_records(base, response.get("results", []))
-        rows.extend(page_rows)
-        metadata = response.get("page_metadata", {})
-        if not metadata.get("hasNext"):
-            break
+                "page": page,
+                "limit": limit,
+                "sort": os.environ.get("USASPENDING_SORT", "Award Amount"),
+                "order": os.environ.get("USASPENDING_ORDER", "desc"),
+            }
+            response = post_json(f"{base}/search/spending_by_award/", payload)
+            page_rows = normalize_usaspending_records(base, response.get("results", []))
+            rows.extend(page_rows)
+            metadata = response.get("page_metadata", {})
+            if not metadata.get("hasNext"):
+                break
     write_rows(
         output,
         [
@@ -488,6 +483,23 @@ def fetch_usaspending(output: Path) -> int:
         "USAspending awards",
     )
     return 0
+
+
+def usaspending_agency_filters() -> list[dict[str, str]]:
+    agency_type = os.environ.get("USASPENDING_AGENCY_TYPE", "awarding")
+    agency_tier = os.environ.get("USASPENDING_AGENCY_TIER", "toptier")
+    agencies = split_csv_env("USASPENDING_AGENCIES", "")
+    if not agencies:
+        agencies = [os.environ.get("USASPENDING_AGENCY", "Environmental Protection Agency")]
+    return [
+        {
+            "type": agency_type,
+            "tier": agency_tier,
+            "name": agency,
+        }
+        for agency in agencies
+        if agency
+    ]
 
 
 def usaspending_time_period() -> tuple[str, str]:

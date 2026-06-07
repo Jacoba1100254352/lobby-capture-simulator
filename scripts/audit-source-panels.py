@@ -74,6 +74,16 @@ PANELS = [
         "action": "Broaden SAM/FPDS and USAspending enrichment with PIID, UEI, action-date, modification, competition, exclusion, and protest fields.",
     },
     {
+        "panel": "Procurement concentration bridge",
+        "metric": "procurementBridgeAgencyCount",
+        "mechanism": "Multi-agency vendor and agency concentration diagnostics",
+        "evidenceClass": "direct top-award bridge",
+        "minimum": 2.0,
+        "good": 5.0,
+        "missing": "multi-agency procurement bridge is absent",
+        "action": "Replace the top-award bridge with representative SAM/FPDS action-level extracts before treating agency concentration as calibrated.",
+    },
+    {
         "panel": "Procurement modification risk",
         "metric": "procurementExPostModificationShare",
         "mechanism": "Post-award modification and specification-change pressure",
