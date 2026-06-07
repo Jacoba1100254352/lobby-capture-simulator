@@ -38,23 +38,27 @@ snapshot,regulatory,commentAuthenticationShareMean,0.3200,observed_proxy,mean no
 snapshot,regulatory,commentFloodingIndex,0.3072,proxy,"combined top-docket concentration, template share, and low-authentication pressure"
 snapshot,regulatory,technicalClaimCredibilityMean,0.5000,proxy,mean normalized technical claim credibility
 snapshot,usaspending,procurementRows,200.0000,observed,normalized USAspending award rows
-snapshot,usaspending,procurementTotalAwards,4873.5621,observed,sum of normalized USAspending award amount
-snapshot,usaspending,procurementRecipientTop1Share,0.0677,observed,largest recipient share of normalized award amount
-snapshot,usaspending,procurementRecipientTop3Share,0.1723,observed,top three recipients share of normalized award amount
-snapshot,usaspending,procurementRecipientHerfindahl,0.0250,observed,recipient award-amount Herfindahl
-snapshot,usaspending,procurementAgencyTop1Share,1.0000,observed,largest awarding agency share of normalized award amount
-snapshot,usaspending,procurementAgencyHerfindahl,1.0000,observed,awarding-agency amount Herfindahl
-snapshot,usaspending,procurementSubAgencyTop3Share,1.0000,observed,top three sub-agencies share of normalized award amount
-snapshot,usaspending,procurementAwardCount,200.0000,observed,sum of normalized award or transaction counts
-snapshot,usaspending,procurementSingleBidShare,0.2350,observed_proxy,share of rows with one known offer
-snapshot,usaspending,procurementAmountWeightedSingleBidShare,0.2131,observed_proxy,award-amount share with one known offer
-snapshot,usaspending,procurementInitialAwardShare,1.0000,observed_proxy,share of rows that appear to be initial awards rather than modifications
-snapshot,usaspending,procurementExPostModificationShare,0.0000,observed_proxy,share of rows marked as ex-post modifications or nonzero modification sequence
-snapshot,usaspending,procurementAmountWeightedModificationShare,0.0000,observed_proxy,award-amount share marked as ex-post modifications
-snapshot,usaspending,procurementPriceOnlyAwardShare,0.6050,observed_proxy,share of rows marked as price-only or one-offer awards
-snapshot,usaspending,procurementLimitedCompetitionShare,0.4600,observed_proxy,"share of rows with limited competition, exclusions, or one known offer"
+snapshot,usaspending,procurementBridgeRows,150.0000,observed,"multi-agency USAspending bridge rows, if available"
+snapshot,usaspending,procurementBridgeAgencyCount,6.0000,observed,distinct awarding agencies in procurement source moment panel
+snapshot,usaspending,procurementBridgeTopAwardSample,1.0000,diagnostic,1 when procurement concentration moments use a multi-agency top-award bridge
+snapshot,usaspending,procurementLatestTransactionModificationProxy,1.0000,diagnostic,1 when modification moments use latest-transaction enrichment rather than action-level FPDS denominator
+snapshot,usaspending,procurementTotalAwards,1139155.0102,observed,sum of multi-agency procurement bridge rows amount
+snapshot,usaspending,procurementRecipientTop1Share,0.1196,observed,largest recipient share of multi-agency procurement bridge rows amount
+snapshot,usaspending,procurementRecipientTop3Share,0.2852,observed,top three recipients share of multi-agency procurement bridge rows amount
+snapshot,usaspending,procurementRecipientHerfindahl,0.0485,observed,recipient award-amount Herfindahl over multi-agency procurement bridge rows
+snapshot,usaspending,procurementAgencyTop1Share,0.5134,observed,largest awarding agency share of multi-agency procurement bridge rows amount
+snapshot,usaspending,procurementAgencyHerfindahl,0.4765,observed,awarding-agency amount Herfindahl over multi-agency procurement bridge rows
+snapshot,usaspending,procurementSubAgencyTop3Share,0.7934,observed,top three sub-agencies share of multi-agency procurement bridge rows amount
+snapshot,usaspending,procurementAwardCount,150.0000,observed,sum of normalized award or transaction counts in multi-agency procurement bridge rows
+snapshot,usaspending,procurementSingleBidShare,0.2933,observed_proxy,share of rows with one known offer
+snapshot,usaspending,procurementAmountWeightedSingleBidShare,0.2980,observed_proxy,award-amount share with one known offer
+snapshot,usaspending,procurementInitialAwardShare,0.0000,observed_proxy,share of rows that appear to be initial awards rather than modifications
+snapshot,usaspending,procurementExPostModificationShare,1.0000,observed_proxy,share of rows marked as ex-post modifications or nonzero modification sequence
+snapshot,usaspending,procurementAmountWeightedModificationShare,1.0000,observed_proxy,award-amount share marked as ex-post modifications
+snapshot,usaspending,procurementPriceOnlyAwardShare,0.6133,observed_proxy,share of rows marked as price-only or one-offer awards
+snapshot,usaspending,procurementLimitedCompetitionShare,0.4000,observed_proxy,"share of rows with limited competition, exclusions, or one known offer"
 snapshot,usaspending,procurementProtestShare,0.0000,observed_proxy,share of rows marked with a protest flag
-snapshot,usaspending,procurementExclusionShare,0.2500,observed_proxy,share of rows marked as exclusions or after-exclusion competition
+snapshot,usaspending,procurementExclusionShare,0.0933,observed_proxy,share of rows marked as exclusions or after-exclusion competition
 snapshot,usaspending,procurementFirewallCoverageShare,0.0000,observed_proxy,share of rows covered by a procurement-firewall flag
 snapshot,usaspending,procurementKnownUeiShare,1.0000,diagnostic,share of rows carrying a recipient UEI
 snapshot,usaspending,procurementKnownPiidShare,1.0000,diagnostic,share of rows carrying a procurement instrument identifier
@@ -117,14 +121,18 @@ fixture,regulatory,commentAuthenticationShareMean,0.3100,observed_proxy,mean nor
 fixture,regulatory,commentFloodingIndex,0.4888,proxy,"combined top-docket concentration, template share, and low-authentication pressure"
 fixture,regulatory,technicalClaimCredibilityMean,0.4875,proxy,mean normalized technical claim credibility
 fixture,usaspending,procurementRows,5.0000,observed,normalized USAspending award rows
-fixture,usaspending,procurementTotalAwards,700.0000,observed,sum of normalized USAspending award amount
-fixture,usaspending,procurementRecipientTop1Share,0.3429,observed,largest recipient share of normalized award amount
-fixture,usaspending,procurementRecipientTop3Share,0.8143,observed,top three recipients share of normalized award amount
-fixture,usaspending,procurementRecipientHerfindahl,0.2469,observed,recipient award-amount Herfindahl
-fixture,usaspending,procurementAgencyTop1Share,1.0000,observed,largest awarding agency share of normalized award amount
-fixture,usaspending,procurementAgencyHerfindahl,1.0000,observed,awarding-agency amount Herfindahl
-fixture,usaspending,procurementSubAgencyTop3Share,0.8143,observed,top three sub-agencies share of normalized award amount
-fixture,usaspending,procurementAwardCount,48.0000,observed,sum of normalized award or transaction counts
+fixture,usaspending,procurementBridgeRows,0.0000,observed,"multi-agency USAspending bridge rows, if available"
+fixture,usaspending,procurementBridgeAgencyCount,0.0000,observed,distinct awarding agencies in procurement source moment panel
+fixture,usaspending,procurementBridgeTopAwardSample,0.0000,diagnostic,1 when procurement concentration moments use a multi-agency top-award bridge
+fixture,usaspending,procurementLatestTransactionModificationProxy,0.0000,diagnostic,1 when modification moments use latest-transaction enrichment rather than action-level FPDS denominator
+fixture,usaspending,procurementTotalAwards,700.0000,observed,sum of normalized USAspending award rows amount
+fixture,usaspending,procurementRecipientTop1Share,0.3429,observed,largest recipient share of normalized USAspending award rows amount
+fixture,usaspending,procurementRecipientTop3Share,0.8143,observed,top three recipients share of normalized USAspending award rows amount
+fixture,usaspending,procurementRecipientHerfindahl,0.2469,observed,recipient award-amount Herfindahl over normalized USAspending award rows
+fixture,usaspending,procurementAgencyTop1Share,1.0000,observed,largest awarding agency share of normalized USAspending award rows amount
+fixture,usaspending,procurementAgencyHerfindahl,1.0000,observed,awarding-agency amount Herfindahl over normalized USAspending award rows
+fixture,usaspending,procurementSubAgencyTop3Share,0.8143,observed,top three sub-agencies share of normalized USAspending award rows amount
+fixture,usaspending,procurementAwardCount,48.0000,observed,sum of normalized award or transaction counts in normalized USAspending award rows
 fixture,usaspending,procurementSingleBidShare,0.4000,observed_proxy,share of rows with one known offer
 fixture,usaspending,procurementAmountWeightedSingleBidShare,0.3429,observed_proxy,award-amount share with one known offer
 fixture,usaspending,procurementInitialAwardShare,0.4000,observed_proxy,share of rows that appear to be initial awards rather than modifications

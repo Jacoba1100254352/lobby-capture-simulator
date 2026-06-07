@@ -1,7 +1,7 @@
 {
   "snapshot": "2024-env",
-  "generatedAt": "2026-05-17T20:46:17.574801+00:00",
-  "gitCommit": "7bd1949",
+  "generatedAt": "2026-06-07T01:54:32.414415+00:00",
+  "gitCommit": "1e51f4c",
   "gitTreeState": "clean",
   "gitTreeStateScope": "working tree status excluding generated 2024-env snapshot, reports, paper tables, and paper figures",
   "scope": {
@@ -74,6 +74,16 @@
       "statusNotes": "usaspending: ok (normalized EPA award rows written)"
     },
     {
+      "source": "usaspending-procurement-bridge",
+      "description": "Multi-agency fiscal-year 2024 USAspending top-award bridge for procurement concentration and latest-transaction modification diagnostics; kept separate from the EPA calibration slice.",
+      "requestTemplate": "USASPENDING_AGENCIES='Environmental Protection Agency,Department of Energy,Department of the Interior,Department of Agriculture,Department of Transportation,Department of Defense' USASPENDING_PAGE_SIZE=25 USASPENDING_MAX_PAGES=1 USASPENDING_TREAT_LATEST_TRANSACTION_AS_MODIFICATION=1 python3 scripts/fetch-source-data.py usaspending --output data/raw/usaspending-procurement-bridge.csv",
+      "normalizedFile": "data/snapshots/2024-env/normalized/usaspending-procurement-bridge.csv",
+      "rowCount": 150,
+      "sha256": "f6082c17f121c58153f72729d95e5541d62a69804fbc6269450f09517586b324",
+      "status": "live",
+      "statusNotes": "usaspending-procurement-bridge: ok (normalized multi-agency procurement bridge rows written)"
+    },
+    {
       "source": "revolving-door",
       "description": "Normalized revolving-door source panel from a licensed/exported CSV or LDA covered-position derivation, with fixture fallback.",
       "requestTemplate": "REVOLVING_DOOR_LIVE_CSV=/path/to/export.csv ./scripts/fetch-revolving-door.sh --live or REVOLVING_DOOR_SOURCE_NATIVE=1 python3 scripts/fetch-source-data.py revolving-door",
@@ -96,6 +106,6 @@
   ],
   "liveRunStatus": {
     "file": "data/snapshots/2024-env/live-run-status.csv",
-    "sha256": "ba0c6c4d1550125fa6d0cdb2fd9cc56b8b98bf0c3a7a11b7086d05addc010593"
+    "sha256": "456d19a84a2620c4fe7ad14d1e5c9bb9200c9196d30461837a86f34bd3b477cf"
   }
 }

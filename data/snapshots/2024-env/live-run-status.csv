@@ -15,5 +15,6 @@ dark-money,ok,normalized IRS EO BMF opaque-capacity proxy rows written
 regulations-gov,ok,normalized rows appended
 federal-register,ok,normalized rows appended
 usaspending,ok,normalized EPA award rows written
+usaspending-procurement-bridge,ok,normalized multi-agency procurement bridge rows written
 revolving-door,ok,derived normalized covered-position rows from LDA source
 intermediary,ok,NYC CFB intermediary rows; IRS EO BMF nonprofit/association capacity rows; 

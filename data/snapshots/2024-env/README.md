@@ -12,6 +12,7 @@ Scope:
 - Public-financing bridge: NYC CFB public-funds payments or configured program export rows carried as a separate bridge panel.
 - Dark-money bridge: configured source export rows or IRS EO BMF 501(c)(4)/(c)(6) opaque-capacity proxy rows; super PAC rows remain separate.
 - USAspending fiscal year: 2024, Environmental Protection Agency awards.
+- USAspending procurement bridge: multi-agency fiscal-year 2024 top-award rows for procurement concentration diagnostics, kept separate from the EPA calibration slice.
 - Revolving-door panel: licensed/source export or LDA covered-position derivation when available; fixture otherwise.
 - Intermediary panel: NYC CFB intermediary rows, IRS EO BMF nonprofit/association capacity rows, or configured nonprofit, 527, association, and think-tank export when available; fixture otherwise.
 
@@ -25,6 +26,7 @@ The current command freezes whatever normalized files are present under `data/ra
 | dark-money | 250 | live | `data/snapshots/2024-env/normalized/dark-money.csv` |
 | regulatory | 200 | live | `data/snapshots/2024-env/normalized/regulatory-dockets.csv` |
 | usaspending | 200 | live | `data/snapshots/2024-env/normalized/usaspending-awards.csv` |
+| usaspending-procurement-bridge | 150 | live | `data/snapshots/2024-env/normalized/usaspending-procurement-bridge.csv` |
 | revolving-door | 284 | live | `data/snapshots/2024-env/normalized/revolving-door.csv` |
 | intermediary | 853 | live | `data/snapshots/2024-env/normalized/intermediaries.csv` |
 
