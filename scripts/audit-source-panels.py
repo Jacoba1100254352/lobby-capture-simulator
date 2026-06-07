@@ -79,8 +79,9 @@ PANELS = [
         "mechanism": "Multi-agency vendor and agency concentration diagnostics",
         "evidenceClass": "direct top-award bridge",
         "minimum": 2.0,
-        "good": 5.0,
+        "good": 10.0,
         "missing": "multi-agency procurement bridge is absent",
+        "thin": "multi-agency top-award bridge is present, but top-award sampling is not representative enough for calibration",
         "action": "Replace the top-award bridge with representative SAM/FPDS action-level extracts before treating agency concentration as calibrated.",
     },
     {
@@ -92,6 +93,8 @@ PANELS = [
         "good": 0.05,
         "maximum": 0.40,
         "missing": "modification proxy appears saturated or missing",
+        "warningMetric": "procurementLatestTransactionModificationProxy",
+        "warning": "latest-transaction modification enrichment is directional only and lacks an action-level denominator",
         "action": "Separate initial awards from post-award modifications and validate nonzero modification numbers against FPDS transactions.",
     },
 ]
@@ -144,6 +147,9 @@ def panel_row(panel: dict[str, object], moments: dict[str, dict[str, float]]) ->
         else:
             status = "missing"
             note = str(panel["missing"])
+    elif panel_warning(panel, moments):
+        status = "warning"
+        note = str(panel["warning"])
     elif "maximum" in panel and value > float(panel["maximum"]):
         status = "warning"
         note = str(panel["missing"])
@@ -152,7 +158,7 @@ def panel_row(panel: dict[str, object], moments: dict[str, dict[str, float]]) ->
         note = "coverage is usable for mechanism diagnostics, subject to source-scope limits"
     else:
         status = "thin"
-        note = "coverage is present but thin for article-level calibration"
+        note = str(panel.get("thin", "coverage is present but thin for article-level calibration"))
     return {
         "panel": str(panel["panel"]),
         "mechanism": str(panel["mechanism"]),
@@ -169,6 +175,13 @@ def panel_row(panel: dict[str, object], moments: dict[str, dict[str, float]]) ->
 
 def fixture_supported(panel: dict[str, object], value: float | None) -> bool:
     return value is not None and value >= float(panel["minimum"])
+
+
+def panel_warning(panel: dict[str, object], moments: dict[str, dict[str, float]]) -> bool:
+    metric = panel.get("warningMetric")
+    if not metric:
+        return False
+    return moments["snapshot"].get(str(metric), 0.0) >= 0.5
 
 
 def write_csv(path: Path, rows: list[dict[str, str]]) -> None:

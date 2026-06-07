@@ -439,6 +439,14 @@ def representativeness_warnings(rows: list[dict[str, str]]) -> list[str]:
         warnings.append(
             "Snapshot procurement rows have weak PIID coverage; SAM/FPDS-style bridge diagnostics remain incomplete."
         )
+    if metric_value(rows, "snapshot", "usaspending", "procurementBridgeTopAwardSample") >= 0.5:
+        warnings.append(
+            "Snapshot procurement concentration uses a multi-agency top-award bridge; this improves agency coverage but remains a sampling diagnostic rather than a representative SAM/FPDS panel."
+        )
+    if metric_value(rows, "snapshot", "usaspending", "procurementLatestTransactionModificationProxy") >= 0.5:
+        warnings.append(
+            "Snapshot procurement modification moments use latest-transaction enrichment; action-level SAM/FPDS denominators are still needed before treating modification incidence as calibrated."
+        )
     if metric_value(rows, "snapshot", "usaspending", "procurementExPostModificationShare") >= 0.95 and metric_value(rows, "snapshot", "usaspending", "procurementInitialAwardShare") <= 0.05:
         warnings.append(
             "Snapshot procurement rows are dominated by post-award modification transactions; award and modification effects should be reported separately."
