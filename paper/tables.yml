@@ -704,6 +704,7 @@
             "Intermediaries": "Intermediaries",
             "Revolving door": "Revolving door",
             "Procurement identifiers": "Proc. IDs",
+            "Procurement concentration bridge": "Proc. concentration",
             "Procurement modification risk": "Proc. mods"
           }
         },
@@ -719,6 +720,7 @@
             "Association, nonprofit, think-tank, and campaign-intermediary capacity": "Intermediaries",
             "Post-government access, covered-position links, and cooling-off exposure": "Revolving door",
             "Vendor and award-path matching for procurement influence": "Procurement matching",
+            "Multi-agency vendor and agency concentration diagnostics": "Multi-agency concentration",
             "Post-award modification and specification-change pressure": "Post-award pressure"
           }
         },
@@ -732,7 +734,8 @@
             "direct": "direct",
             "direct when present": "direct if present",
             "proxy": "proxy",
-            "direct identifier coverage": "direct IDs"
+            "direct identifier coverage": "direct IDs",
+            "direct top-award bridge": "top-award bridge"
           }
         },
         {
@@ -747,6 +750,7 @@
             "Intermediaries": "proxy rows",
             "Revolving door": "thin proxy rows",
             "Procurement identifiers": "direct ID coverage",
+            "Procurement concentration bridge": "top-award bridge",
             "Procurement modification risk": "no mod rows"
           }
         },

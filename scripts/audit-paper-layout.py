@@ -132,6 +132,8 @@ def classify_page(
         return "pass", "title/front-matter page"
     if page_number >= max(1, total_pages - 1) and characters >= 900:
         return "pass", "references/declarations page"
+    if page_number == total_pages and not has_float_label and characters >= 500:
+        return "pass", "short terminal references/declarations page"
     if characters < 450 and coverage < 0.45:
         return "fail", "page is too sparse; likely float-only or mostly blank"
     if has_float_label and characters < 700:
