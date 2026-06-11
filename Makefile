@@ -12,7 +12,7 @@ MAIN_CLASS := lobbycapture.Main
 TEST_CLASSES := lobbycapture.SimulatorTests
 PAPER_BASENAME := strategic-channel-substitution-regulatory-capture
 
-.PHONY: compile test run campaign mechanism-comparison sensitivity ablation interactions portfolio source-moments source-panel-inventory calibration-queue validate snapshot-2024-env tables figures paper paper-build paper-supplement-build paper-supplement paper-word-count wiley-template wiley-tex-deps paper-wiley paper-wiley-build submission-package submission-package-build submission-package-check paper-layout-audit visual-review-checklist paper-artifacts paper-artifacts-check clean
+.PHONY: compile test run campaign mechanism-comparison sensitivity ablation interactions portfolio source-moments source-panel-inventory claim-boundary-audit calibration-queue validate snapshot-2024-env tables figures paper paper-build paper-supplement-build paper-supplement paper-word-count wiley-template wiley-tex-deps paper-wiley paper-wiley-build submission-package submission-package-build submission-package-check paper-layout-audit visual-review-checklist paper-artifacts paper-artifacts-check clean
 
 compile:
 	@mkdir -p out/classes
@@ -59,13 +59,16 @@ calibration-queue: validate
 validate: source-moments source-panel-inventory
 	python3 scripts/validate-reports.py
 
+claim-boundary-audit: validate
+	python3 scripts/audit-claim-boundaries.py
+
 snapshot-2024-env:
 	python3 scripts/create-2024-env-snapshot.py
 
-tables: validate
+tables: claim-boundary-audit
 	python3 scripts/generate-paper-tables.py
 
-figures: validate
+figures: claim-boundary-audit
 	python3 scripts/generate-interaction-figures.py
 
 paper-build:
@@ -113,7 +116,7 @@ paper-layout-audit: paper-build paper-wiley-build paper-supplement-build
 visual-review-checklist: paper-layout-audit
 	python3 scripts/write-visual-review-checklist.py
 
-paper-artifacts: campaign mechanism-comparison sensitivity ablation interactions portfolio source-moments source-panel-inventory validate calibration-queue tables figures paper-build paper-wiley-build paper-supplement-build paper-word-count paper-layout-audit visual-review-checklist submission-package-build submission-package-check
+paper-artifacts: campaign mechanism-comparison sensitivity ablation interactions portfolio source-moments source-panel-inventory validate claim-boundary-audit calibration-queue tables figures paper-build paper-wiley-build paper-supplement-build paper-word-count paper-layout-audit visual-review-checklist submission-package-build submission-package-check
 
 paper-artifacts-check: paper-artifacts
 	python3 scripts/check-paper-artifacts.py
@@ -122,7 +125,7 @@ clean:
 	rm -rf out
 	rm -f paper/*.aux paper/*.bbl paper/*.blg paper/*.log paper/*.out paper/*.pdf paper/*.pag paper/*.synctex.gz
 	rm -f reports/validation-summary.csv reports/validation-summary.md reports/substitution-audit.csv reports/substitution-audit.md
-	rm -f reports/source-moments.csv reports/source-moments.md reports/source-panel-inventory.csv reports/source-panel-inventory.md reports/paper-layout-audit.md reports/calibration-queue.csv reports/calibration-queue.md
+	rm -f reports/source-moments.csv reports/source-moments.md reports/source-panel-inventory.csv reports/source-panel-inventory.md reports/claim-boundary-audit.csv reports/claim-boundary-audit.md reports/paper-layout-audit.md reports/calibration-queue.csv reports/calibration-queue.md
 	rm -f reports/lobby-capture-mechanism-comparison.csv reports/lobby-capture-mechanism-comparison.md reports/lobby-capture-mechanism-comparison.manifest.json
 	rm -f reports/manual-visual-audit.md
 	rm -rf dist

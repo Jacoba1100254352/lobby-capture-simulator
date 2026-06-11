@@ -32,7 +32,9 @@ VALIDATION_SUMMARY = ROOT / "reports" / "validation-summary.md"
 SOURCE_PANEL_INVENTORY = ROOT / "reports" / "source-panel-inventory.csv"
 LAYOUT_AUDIT = ROOT / "reports" / "paper-layout-audit.md"
 MANUAL_VISUAL_AUDIT = ROOT / "reports" / "manual-visual-audit.md"
-RELEASE_TAG = "paper-publication-readiness-2026-06-11-r30"
+CLAIM_BOUNDARY_AUDIT_MD = ROOT / "reports" / "claim-boundary-audit.md"
+CLAIM_BOUNDARY_AUDIT_CSV = ROOT / "reports" / "claim-boundary-audit.csv"
+RELEASE_TAG = "paper-publication-readiness-2026-06-11-r31"
 CITATION_CFF = ROOT / "CITATION.cff"
 ZENODO_JSON = ROOT / ".zenodo.json"
 FORBIDDEN_LOCAL_ARTIFACTS = [
@@ -103,6 +105,7 @@ EXPECTED_ZIP_MEMBERS = {
     "supporting-information/source-data-roadmap.md",
     "supporting-information/source-moments.md",
     "supporting-information/source-panel-inventory.md",
+    "supporting-information/claim-boundary-audit.md",
     "supporting-information/validation-summary.md",
     "supporting-information/substitution-audit.md",
     "supporting-information/portfolio-screen.md",
@@ -122,6 +125,7 @@ def main() -> int:
     failures.extend(check_wiley_text())
     failures.extend(check_submission_statements())
     failures.extend(check_claim_alignment())
+    failures.extend(check_claim_boundary_audit())
     failures.extend(check_layout_and_visual_reports())
     failures.extend(check_archive_metadata())
     failures.extend(check_release_tag_exactness())
@@ -232,6 +236,7 @@ def submission_inputs() -> list[Path]:
         ROOT / "docs" / "source-data-roadmap.md",
         ROOT / "reports" / "source-moments.md",
         ROOT / "reports" / "source-panel-inventory.md",
+        ROOT / "reports" / "claim-boundary-audit.md",
         ROOT / "reports" / "validation-summary.md",
         ROOT / "reports" / "substitution-audit.md",
         ROOT / "reports" / "lobby-capture-portfolio.md",
@@ -369,6 +374,90 @@ def check_claim_alignment() -> list[str]:
                     failures.append(
                         "live snapshot runner status overstates electoral-communication rows despite missing source-panel rows"
                     )
+    return failures
+
+
+def check_claim_boundary_audit() -> list[str]:
+    failures: list[str] = []
+    if not SOURCE_PANEL_INVENTORY.exists():
+        return failures
+    missing = [
+        path.relative_to(ROOT)
+        for path in (CLAIM_BOUNDARY_AUDIT_MD, CLAIM_BOUNDARY_AUDIT_CSV)
+        if not path.exists()
+    ]
+    if missing:
+        return [f"missing claim-boundary audit artifact: {path}" for path in missing]
+
+    with SOURCE_PANEL_INVENTORY.open(newline="", encoding="utf-8") as source:
+        panels = list(csv.DictReader(source))
+    with CLAIM_BOUNDARY_AUDIT_CSV.open(newline="", encoding="utf-8") as source:
+        claim_rows = list(csv.DictReader(source))
+    claim_by_panel = {row.get("panel", ""): row for row in claim_rows}
+    audit_md = CLAIM_BOUNDARY_AUDIT_MD.read_text(encoding="utf-8")
+    body = REGGOV_BODY.read_text(encoding="utf-8") if REGGOV_BODY.exists() else ""
+    supplement = SUPPLEMENT_BODY.read_text(encoding="utf-8") if SUPPLEMENT_BODY.exists() else ""
+
+    if len(claim_rows) != len(panels):
+        failures.append(
+            "claim-boundary audit row count does not match source-panel inventory"
+        )
+
+    weak_statuses = {"thin", "warning", "fixture-only", "missing"}
+    for panel in panels:
+        panel_name = panel.get("panel", "")
+        status = panel.get("status", "")
+        claim = claim_by_panel.get(panel_name)
+        if not claim:
+            failures.append(f"claim-boundary audit missing panel: {panel_name}")
+            continue
+        if claim.get("status") != status:
+            failures.append(
+                f"claim-boundary audit status mismatch for {panel_name}: "
+                f"{claim.get('status')} != {status}"
+            )
+        if status in weak_statuses:
+            if panel_name not in audit_md:
+                failures.append(f"claim-boundary audit markdown omits weak panel: {panel_name}")
+            if claim.get("supportLevel") == "stronger":
+                failures.append(f"weak panel has stronger support level: {panel_name}")
+
+    if any(panel.get("status") in weak_statuses for panel in panels):
+        required_phrases = [
+            "claim-boundary audit",
+            "source bridge remains incomplete",
+        ]
+        combined = body + "\n" + supplement
+        for phrase in required_phrases:
+            if phrase not in combined:
+                failures.append(
+                    f"manuscript/supplement missing claim-boundary phrase: {phrase}"
+                )
+
+    strong_claim_patterns = [
+        r"\bis a calibrated policy simulation\b",
+        r"\bempirically validated hidden capture\b",
+        r"\bvalidated hidden-channel magnitudes\b",
+        r"\brepresentative national source panel\b",
+        r"\bcalibrated estimates of reform effects\b",
+        r"\bvalidated reform-effect magnitudes\b",
+    ]
+    checked_files = [
+        path for path in (
+            REGGOV_BODY,
+            SUPPLEMENT_BODY,
+            ROOT / "docs" / "validation.md",
+            ROOT / "docs" / "source-data-roadmap.md",
+        )
+        if path.exists()
+    ]
+    for path in checked_files:
+        text = path.read_text(encoding="utf-8")
+        for pattern in strong_claim_patterns:
+            if re.search(pattern, text, flags=re.IGNORECASE):
+                failures.append(
+                    f"{path.relative_to(ROOT)} contains source-coverage overclaim: {pattern}"
+                )
     return failures
 
 
@@ -510,6 +599,7 @@ def package_byte_checks() -> list[tuple[Path, str]]:
         (ROOT / "docs" / "source-data-roadmap.md", "supporting-information/source-data-roadmap.md"),
         (ROOT / "reports" / "source-moments.md", "supporting-information/source-moments.md"),
         (ROOT / "reports" / "source-panel-inventory.md", "supporting-information/source-panel-inventory.md"),
+        (ROOT / "reports" / "claim-boundary-audit.md", "supporting-information/claim-boundary-audit.md"),
         (ROOT / "reports" / "validation-summary.md", "supporting-information/validation-summary.md"),
         (ROOT / "reports" / "substitution-audit.md", "supporting-information/substitution-audit.md"),
         (ROOT / "reports" / "lobby-capture-portfolio.md", "supporting-information/portfolio-screen.md"),
