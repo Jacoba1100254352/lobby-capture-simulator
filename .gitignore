@@ -30,6 +30,8 @@ reports/*.md
 !reports/source-panel-inventory.md
 !reports/claim-boundary-audit.csv
 !reports/claim-boundary-audit.md
+!reports/claim-posture-audit.csv
+!reports/claim-posture-audit.md
 !reports/calibration-queue.csv
 !reports/calibration-queue.md
 !reports/paper-layout-audit.md

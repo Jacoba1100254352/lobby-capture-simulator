@@ -6,13 +6,38 @@ PAPER_DIR="$ROOT_DIR/paper"
 WILEY_DIR="$PAPER_DIR/.wiley-template/Optimal-Design-layout"
 WILEY_BUILD_DIR="$PAPER_DIR/.wiley-build"
 
+resolve_binary() {
+  name="$1"
+  if command -v "$name" >/dev/null 2>&1; then
+    command -v "$name"
+    return 0
+  fi
+  for dir in \
+    /usr/local/texlive/2026basic/bin/universal-darwin \
+    /usr/local/texlive/2025basic/bin/universal-darwin \
+    /Library/TeX/texbin \
+    /opt/homebrew/bin \
+    /usr/local/bin; do
+    if [ -x "$dir/$name" ]; then
+      printf '%s\n' "$dir/$name"
+      return 0
+    fi
+  done
+  printf 'Required binary not found: %s\n' "$name" >&2
+  return 1
+}
+
+PDFLATEX="$(resolve_binary pdflatex)"
+BIBTEX="$(resolve_binary bibtex)"
+KPSEWHICH="$(resolve_binary kpsewhich)"
+
 if [ ! -f "$WILEY_DIR/USG.cls" ]; then
   "$ROOT_DIR/scripts/fetch-wiley-template.sh"
 fi
 
 missing=""
 for sty in dashrule.sty multirow.sty cuted.sty floatpag.sty dblfloatfix.sty soul.sty xargs.sty tcolorbox.sty varwidth.sty tikzpagenodes.sty boites.sty wrapfig.sty footmisc.sty stix2.sty ifoddpage.sty algpseudocode.sty; do
-  if ! kpsewhich "$sty" >/dev/null 2>&1; then
+  if ! "$KPSEWHICH" "$sty" >/dev/null 2>&1; then
     missing="$missing $sty"
   fi
 done
@@ -97,15 +122,15 @@ cd "$PAPER_DIR"
 TEXINPUTS=".wiley-build//:.wiley-template/Optimal-Design-layout//:" \
 BIBINPUTS=".:.wiley-template/Optimal-Design-layout//:" \
 BSTINPUTS=".wiley-build//:.wiley-template/Optimal-Design-layout//:" \
-pdflatex -interaction=nonstopmode regulation-governance-wiley.tex
+"$PDFLATEX" -interaction=nonstopmode regulation-governance-wiley.tex
 BIBINPUTS=".:.wiley-template/Optimal-Design-layout//:" \
 BSTINPUTS=".wiley-build//:.wiley-template/Optimal-Design-layout//:" \
-bibtex regulation-governance-wiley
+"$BIBTEX" regulation-governance-wiley
 TEXINPUTS=".wiley-build//:.wiley-template/Optimal-Design-layout//:" \
 BIBINPUTS=".:.wiley-template/Optimal-Design-layout//:" \
 BSTINPUTS=".wiley-build//:.wiley-template/Optimal-Design-layout//:" \
-pdflatex -interaction=nonstopmode regulation-governance-wiley.tex
+"$PDFLATEX" -interaction=nonstopmode regulation-governance-wiley.tex
 TEXINPUTS=".wiley-build//:.wiley-template/Optimal-Design-layout//:" \
 BIBINPUTS=".:.wiley-template/Optimal-Design-layout//:" \
 BSTINPUTS=".wiley-build//:.wiley-template/Optimal-Design-layout//:" \
-pdflatex -interaction=nonstopmode regulation-governance-wiley.tex
+"$PDFLATEX" -interaction=nonstopmode regulation-governance-wiley.tex

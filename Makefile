@@ -1,5 +1,7 @@
 JAVAC ?= javac
 JAVA ?= java
+PDFLATEX ?= $(or $(shell command -v pdflatex 2>/dev/null),$(firstword $(wildcard /usr/local/texlive/2026basic/bin/universal-darwin/pdflatex /usr/local/texlive/2025basic/bin/universal-darwin/pdflatex /Library/TeX/texbin/pdflatex /opt/homebrew/bin/pdflatex /usr/local/bin/pdflatex)),pdflatex)
+BIBTEX ?= $(or $(shell command -v bibtex 2>/dev/null),$(firstword $(wildcard /usr/local/texlive/2026basic/bin/universal-darwin/bibtex /usr/local/texlive/2025basic/bin/universal-darwin/bibtex /Library/TeX/texbin/bibtex /opt/homebrew/bin/bibtex /usr/local/bin/bibtex)),bibtex)
 REPORT_GENERATED_AT ?= 2026-05-05T00:00:00Z
 REPORT_GIT_COMMIT ?= tracked-artifact-build
 REPORT_GIT_DIRTY ?= false
@@ -12,7 +14,7 @@ MAIN_CLASS := lobbycapture.Main
 TEST_CLASSES := lobbycapture.SimulatorTests
 PAPER_BASENAME := strategic-channel-substitution-regulatory-capture
 
-.PHONY: compile test run campaign mechanism-comparison sensitivity ablation interactions portfolio source-moments source-panel-inventory claim-boundary-audit calibration-queue validate snapshot-2024-env tables figures paper paper-build paper-supplement-build paper-supplement paper-word-count wiley-template wiley-tex-deps paper-wiley paper-wiley-build submission-package submission-package-build submission-package-check paper-layout-audit visual-review-checklist paper-artifacts paper-artifacts-check clean
+.PHONY: compile test run campaign mechanism-comparison sensitivity ablation interactions portfolio source-moments source-panel-inventory claim-boundary-audit claim-posture-audit calibration-queue validate snapshot-2024-env tables figures paper paper-build paper-supplement-build paper-supplement paper-word-count wiley-template wiley-tex-deps paper-wiley paper-wiley-build submission-package submission-package-build submission-package-check paper-layout-audit visual-review-checklist paper-artifacts paper-artifacts-check clean
 
 compile:
 	@mkdir -p out/classes
@@ -73,16 +75,16 @@ figures: claim-boundary-audit
 
 paper-build:
 	rm -f paper/$(PAPER_BASENAME).aux paper/$(PAPER_BASENAME).bbl paper/$(PAPER_BASENAME).blg
-	cd paper && pdflatex -interaction=nonstopmode $(PAPER_BASENAME).tex
-	cd paper && bibtex $(PAPER_BASENAME)
-	cd paper && pdflatex -interaction=nonstopmode $(PAPER_BASENAME).tex
-	cd paper && pdflatex -interaction=nonstopmode $(PAPER_BASENAME).tex
-	cd paper && pdflatex -interaction=nonstopmode $(PAPER_BASENAME).tex
+	cd paper && $(PDFLATEX) -interaction=nonstopmode $(PAPER_BASENAME).tex
+	cd paper && $(BIBTEX) $(PAPER_BASENAME)
+	cd paper && $(PDFLATEX) -interaction=nonstopmode $(PAPER_BASENAME).tex
+	cd paper && $(PDFLATEX) -interaction=nonstopmode $(PAPER_BASENAME).tex
+	cd paper && $(PDFLATEX) -interaction=nonstopmode $(PAPER_BASENAME).tex
 
 paper-supplement-build:
 	rm -f paper/supplement.aux paper/supplement.bbl paper/supplement.blg
-	cd paper && pdflatex -interaction=nonstopmode supplement.tex
-	cd paper && pdflatex -interaction=nonstopmode supplement.tex
+	cd paper && $(PDFLATEX) -interaction=nonstopmode supplement.tex
+	cd paper && $(PDFLATEX) -interaction=nonstopmode supplement.tex
 
 paper-supplement: tables figures paper-supplement-build
 
@@ -116,7 +118,10 @@ paper-layout-audit: paper-build paper-wiley-build paper-supplement-build
 visual-review-checklist: paper-layout-audit
 	python3 scripts/write-visual-review-checklist.py
 
-paper-artifacts: campaign mechanism-comparison sensitivity ablation interactions portfolio source-moments source-panel-inventory validate claim-boundary-audit calibration-queue tables figures paper-build paper-wiley-build paper-supplement-build paper-word-count paper-layout-audit visual-review-checklist submission-package-build submission-package-check
+claim-posture-audit: claim-boundary-audit calibration-queue visual-review-checklist
+	python3 scripts/audit-claim-posture.py
+
+paper-artifacts: campaign mechanism-comparison sensitivity ablation interactions portfolio source-moments source-panel-inventory validate claim-boundary-audit calibration-queue tables figures paper-build paper-wiley-build paper-supplement-build paper-word-count paper-layout-audit visual-review-checklist claim-posture-audit submission-package-build submission-package-check
 
 paper-artifacts-check: paper-artifacts
 	python3 scripts/check-paper-artifacts.py
@@ -125,7 +130,7 @@ clean:
 	rm -rf out
 	rm -f paper/*.aux paper/*.bbl paper/*.blg paper/*.log paper/*.out paper/*.pdf paper/*.pag paper/*.synctex.gz
 	rm -f reports/validation-summary.csv reports/validation-summary.md reports/substitution-audit.csv reports/substitution-audit.md
-	rm -f reports/source-moments.csv reports/source-moments.md reports/source-panel-inventory.csv reports/source-panel-inventory.md reports/claim-boundary-audit.csv reports/claim-boundary-audit.md reports/paper-layout-audit.md reports/calibration-queue.csv reports/calibration-queue.md
+	rm -f reports/source-moments.csv reports/source-moments.md reports/source-panel-inventory.csv reports/source-panel-inventory.md reports/claim-boundary-audit.csv reports/claim-boundary-audit.md reports/claim-posture-audit.csv reports/claim-posture-audit.md reports/paper-layout-audit.md reports/calibration-queue.csv reports/calibration-queue.md
 	rm -f reports/lobby-capture-mechanism-comparison.csv reports/lobby-capture-mechanism-comparison.md reports/lobby-capture-mechanism-comparison.manifest.json
 	rm -f reports/manual-visual-audit.md
 	rm -rf dist

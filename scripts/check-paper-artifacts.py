@@ -34,7 +34,9 @@ LAYOUT_AUDIT = ROOT / "reports" / "paper-layout-audit.md"
 MANUAL_VISUAL_AUDIT = ROOT / "reports" / "manual-visual-audit.md"
 CLAIM_BOUNDARY_AUDIT_MD = ROOT / "reports" / "claim-boundary-audit.md"
 CLAIM_BOUNDARY_AUDIT_CSV = ROOT / "reports" / "claim-boundary-audit.csv"
-RELEASE_TAG = "paper-publication-readiness-2026-06-11-r31"
+CLAIM_POSTURE_AUDIT_MD = ROOT / "reports" / "claim-posture-audit.md"
+CLAIM_POSTURE_AUDIT_CSV = ROOT / "reports" / "claim-posture-audit.csv"
+RELEASE_TAG = "paper-publication-readiness-2026-06-11-r32"
 CITATION_CFF = ROOT / "CITATION.cff"
 ZENODO_JSON = ROOT / ".zenodo.json"
 FORBIDDEN_LOCAL_ARTIFACTS = [
@@ -54,6 +56,14 @@ FORBIDDEN_ZIP_MEMBERS = {
     "main.pdf",
     "supporting-information/submission-release-checklist.md",
 }
+TEX_BINARY_DIRS = [
+    Path("/usr/local/texlive/2026basic/bin/universal-darwin"),
+    Path("/usr/local/texlive/2025basic/bin/universal-darwin"),
+    Path("/Library/TeX/texbin"),
+    Path("/opt/homebrew/bin"),
+    Path("/usr/local/bin"),
+]
+SUBMISSION_COMPILE_TIMEOUT_SECONDS = 180
 
 EXPECTED_ZIP_MEMBERS = {
     f"{LOCAL_BASENAME}.tex",
@@ -106,6 +116,7 @@ EXPECTED_ZIP_MEMBERS = {
     "supporting-information/source-moments.md",
     "supporting-information/source-panel-inventory.md",
     "supporting-information/claim-boundary-audit.md",
+    "supporting-information/claim-posture-audit.md",
     "supporting-information/validation-summary.md",
     "supporting-information/substitution-audit.md",
     "supporting-information/portfolio-screen.md",
@@ -126,6 +137,7 @@ def main() -> int:
     failures.extend(check_submission_statements())
     failures.extend(check_claim_alignment())
     failures.extend(check_claim_boundary_audit())
+    failures.extend(check_claim_posture_audit())
     failures.extend(check_layout_and_visual_reports())
     failures.extend(check_archive_metadata())
     failures.extend(check_release_tag_exactness())
@@ -237,6 +249,7 @@ def submission_inputs() -> list[Path]:
         ROOT / "reports" / "source-moments.md",
         ROOT / "reports" / "source-panel-inventory.md",
         ROOT / "reports" / "claim-boundary-audit.md",
+        ROOT / "reports" / "claim-posture-audit.md",
         ROOT / "reports" / "validation-summary.md",
         ROOT / "reports" / "substitution-audit.md",
         ROOT / "reports" / "lobby-capture-portfolio.md",
@@ -461,6 +474,64 @@ def check_claim_boundary_audit() -> list[str]:
     return failures
 
 
+def check_claim_posture_audit() -> list[str]:
+    failures: list[str] = []
+    if not SOURCE_PANEL_INVENTORY.exists():
+        return failures
+    missing = [
+        path.relative_to(ROOT)
+        for path in (CLAIM_POSTURE_AUDIT_MD, CLAIM_POSTURE_AUDIT_CSV)
+        if not path.exists()
+    ]
+    if missing:
+        return [f"missing claim-posture audit artifact: {path}" for path in missing]
+
+    with SOURCE_PANEL_INVENTORY.open(newline="", encoding="utf-8") as source:
+        panels = list(csv.DictReader(source))
+    with CLAIM_POSTURE_AUDIT_CSV.open(newline="", encoding="utf-8") as source:
+        rows = {row.get("gate", ""): row for row in csv.DictReader(source)}
+
+    required_gates = {
+        "Mechanism-model article",
+        "Empirical bridge",
+        "Calibrated policy-simulation claim",
+        "Reproducibility and layout bundle",
+    }
+    missing_gates = sorted(required_gates - set(rows))
+    failures.extend(f"claim-posture audit missing gate: {gate}" for gate in missing_gates)
+    if missing_gates:
+        return failures
+
+    weak_statuses = {"thin", "warning", "fixture-only", "missing"}
+    weak_panels = [panel for panel in panels if panel.get("status") in weak_statuses]
+    if rows["Mechanism-model article"].get("status") != "cleared":
+        failures.append("mechanism-model claim posture is not cleared")
+    if rows["Reproducibility and layout bundle"].get("status") != "cleared":
+        failures.append("reproducibility/layout claim posture is not cleared")
+    if weak_panels:
+        if rows["Empirical bridge"].get("status") != "bounded":
+            failures.append("empirical bridge should be bounded while weak panels remain")
+        if rows["Calibrated policy-simulation claim"].get("status") != "not_cleared":
+            failures.append(
+                "calibrated policy-simulation posture should not be cleared while weak panels remain"
+            )
+    posture_md = CLAIM_POSTURE_AUDIT_MD.read_text(encoding="utf-8")
+    posture_md_lower = posture_md.lower()
+    required_text = [
+        "mechanism-model article",
+        "calibrated policy-simulation claim",
+        "Weak Source Panels",
+    ]
+    for phrase in required_text:
+        if phrase.lower() not in posture_md_lower:
+            failures.append(f"claim-posture audit markdown missing phrase: {phrase}")
+    if SUPPLEMENT_BODY.exists():
+        supplement = SUPPLEMENT_BODY.read_text(encoding="utf-8")
+        if "claim-posture audit" not in supplement:
+            failures.append("supplement does not disclose the claim-posture audit")
+    return failures
+
+
 def check_layout_and_visual_reports() -> list[str]:
     failures: list[str] = []
     if not LAYOUT_AUDIT.exists():
@@ -600,6 +671,7 @@ def package_byte_checks() -> list[tuple[Path, str]]:
         (ROOT / "reports" / "source-moments.md", "supporting-information/source-moments.md"),
         (ROOT / "reports" / "source-panel-inventory.md", "supporting-information/source-panel-inventory.md"),
         (ROOT / "reports" / "claim-boundary-audit.md", "supporting-information/claim-boundary-audit.md"),
+        (ROOT / "reports" / "claim-posture-audit.md", "supporting-information/claim-posture-audit.md"),
         (ROOT / "reports" / "validation-summary.md", "supporting-information/validation-summary.md"),
         (ROOT / "reports" / "substitution-audit.md", "supporting-information/substitution-audit.md"),
         (ROOT / "reports" / "lobby-capture-portfolio.md", "supporting-information/portfolio-screen.md"),
@@ -639,10 +711,12 @@ def package_byte_checks() -> list[tuple[Path, str]]:
 def check_submission_zip_compiles() -> list[str]:
     if not SUBMISSION_ZIP.exists():
         return []
-    required = ["pdflatex", "bibtex"]
-    missing = [binary for binary in required if shutil.which(binary) is None]
+    binaries = {binary: resolve_binary(binary) for binary in ("pdflatex", "bibtex")}
+    missing = [binary for binary, path in binaries.items() if path is None]
     if missing:
         return [f"could not compile submission zip; missing binaries: {', '.join(missing)}"]
+    pdflatex = str(binaries["pdflatex"])
+    bibtex = str(binaries["bibtex"])
 
     with tempfile.TemporaryDirectory(prefix="lobby-capture-submission-") as temp_dir:
         temp = Path(temp_dir)
@@ -656,29 +730,27 @@ def check_submission_zip_compiles() -> list[str]:
         for key in ("TEXINPUTS", "BIBINPUTS", "BSTINPUTS"):
             env.pop(key, None)
         commands = [
-            ["pdflatex", "-interaction=nonstopmode", f"{LOCAL_BASENAME}.tex"],
-            ["bibtex", LOCAL_BASENAME],
-            ["pdflatex", "-interaction=nonstopmode", f"{LOCAL_BASENAME}.tex"],
-            ["pdflatex", "-interaction=nonstopmode", f"{LOCAL_BASENAME}.tex"],
-            ["pdflatex", "-interaction=nonstopmode", f"{LOCAL_BASENAME}.tex"],
-            ["pdflatex", "-interaction=nonstopmode", f"{LOCAL_BASENAME}.tex"],
+            [pdflatex, "-interaction=nonstopmode", f"{LOCAL_BASENAME}.tex"],
+            [bibtex, LOCAL_BASENAME],
+            [pdflatex, "-interaction=nonstopmode", f"{LOCAL_BASENAME}.tex"],
+            [pdflatex, "-interaction=nonstopmode", f"{LOCAL_BASENAME}.tex"],
+            [pdflatex, "-interaction=nonstopmode", f"{LOCAL_BASENAME}.tex"],
+            [pdflatex, "-interaction=nonstopmode", f"{LOCAL_BASENAME}.tex"],
         ]
         for command in commands:
-            result = subprocess.run(
-                command,
-                cwd=temp,
-                env=env,
-                text=True,
-                stdout=subprocess.PIPE,
-                stderr=subprocess.STDOUT,
-            )
-            if command[0] == "pdflatex" and is_nonfatal_latex_pass(result.stdout, temp / f"{LOCAL_BASENAME}.pdf"):
+            result = run_compile_command(command, temp, env)
+            if result.timed_out:
+                return [
+                    "submission zip compile timed out with "
+                    f"`{' '.join(command)}` after {SUBMISSION_COMPILE_TIMEOUT_SECONDS} seconds:\n"
+                    + result.tail
+                ]
+            if Path(command[0]).name == "pdflatex" and is_nonfatal_latex_pass(result.output, temp / f"{LOCAL_BASENAME}.pdf"):
                 continue
             if result.returncode != 0:
-                tail = "\n".join(result.stdout.splitlines()[-20:])
                 return [
                     "submission zip does not compile from extracted root with "
-                    f"`{' '.join(command)}`:\n{tail}"
+                    f"`{' '.join(command)}`:\n{result.tail}"
                 ]
         final_log = temp / f"{LOCAL_BASENAME}.log"
         if not final_log.exists():
@@ -705,28 +777,76 @@ def check_submission_zip_compiles() -> list[str]:
 def compile_supplement(temp: Path, env: dict[str, str]) -> list[str]:
     if not (temp / "supplement.tex").exists():
         return ["submission zip compile check did not find supplement.tex"]
+    pdflatex = resolve_binary("pdflatex")
+    if pdflatex is None:
+        return ["could not compile submission supplement; missing binary: pdflatex"]
     commands = [
-        ["pdflatex", "-interaction=nonstopmode", "supplement.tex"],
-        ["pdflatex", "-interaction=nonstopmode", "supplement.tex"],
+        [str(pdflatex), "-interaction=nonstopmode", "supplement.tex"],
+        [str(pdflatex), "-interaction=nonstopmode", "supplement.tex"],
     ]
     for command in commands:
-        result = subprocess.run(
-            command,
-            cwd=temp,
-            env=env,
-            text=True,
-            stdout=subprocess.PIPE,
-            stderr=subprocess.STDOUT,
-        )
-        if command[0] == "pdflatex" and is_nonfatal_latex_pass(result.stdout, temp / "supplement.pdf"):
+        result = run_compile_command(command, temp, env)
+        if result.timed_out:
+            return [
+                "submission supplement compile timed out with "
+                f"`{' '.join(command)}` after {SUBMISSION_COMPILE_TIMEOUT_SECONDS} seconds:\n"
+                + result.tail
+            ]
+        if Path(command[0]).name == "pdflatex" and is_nonfatal_latex_pass(result.output, temp / "supplement.pdf"):
             continue
         if result.returncode != 0:
-            tail = "\n".join(result.stdout.splitlines()[-20:])
             return [
                 "submission supplement does not compile from extracted root with "
-                f"`{' '.join(command)}`:\n{tail}"
+                f"`{' '.join(command)}`:\n{result.tail}"
             ]
     return []
+
+
+class CompileResult:
+    def __init__(self, returncode: int, output: str, timed_out: bool = False) -> None:
+        self.returncode = returncode
+        self.output = output
+        self.timed_out = timed_out
+
+    @property
+    def tail(self) -> str:
+        return "\n".join(self.output.splitlines()[-20:])
+
+
+def run_compile_command(command: list[str], cwd: Path, env: dict[str, str]) -> CompileResult:
+    with tempfile.NamedTemporaryFile(
+        mode="w+",
+        encoding="utf-8",
+        errors="replace",
+        prefix="lobby-capture-compile-",
+        suffix=".log",
+    ) as output:
+        try:
+            completed = subprocess.run(
+                command,
+                cwd=cwd,
+                env=env,
+                text=True,
+                stdout=output,
+                stderr=subprocess.STDOUT,
+                timeout=SUBMISSION_COMPILE_TIMEOUT_SECONDS,
+            )
+        except subprocess.TimeoutExpired:
+            output.seek(0)
+            return CompileResult(124, output.read(), timed_out=True)
+        output.seek(0)
+        return CompileResult(completed.returncode, output.read())
+
+
+def resolve_binary(name: str) -> Path | None:
+    located = shutil.which(name)
+    if located:
+        return Path(located)
+    for directory in TEX_BINARY_DIRS:
+        candidate = directory / name
+        if candidate.exists() and os.access(candidate, os.X_OK):
+            return candidate
+    return None
 
 
 def is_nonfatal_latex_pass(output: str, pdf_path: Path) -> bool:

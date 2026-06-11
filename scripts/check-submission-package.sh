@@ -5,6 +5,30 @@ ROOT_DIR="$(CDPATH= cd -- "$(dirname -- "$0")/.." && pwd)"
 ZIP_PATH="${1:-$ROOT_DIR/dist/lobby-capture-wiley-submission.zip}"
 SUBMISSION_BASENAME="strategic-channel-substitution-regulatory-capture"
 
+resolve_binary() {
+  name="$1"
+  if command -v "$name" >/dev/null 2>&1; then
+    command -v "$name"
+    return 0
+  fi
+  for dir in \
+    /usr/local/texlive/2026basic/bin/universal-darwin \
+    /usr/local/texlive/2025basic/bin/universal-darwin \
+    /Library/TeX/texbin \
+    /opt/homebrew/bin \
+    /usr/local/bin; do
+    if [ -x "$dir/$name" ]; then
+      printf '%s\n' "$dir/$name"
+      return 0
+    fi
+  done
+  printf 'Required binary not found: %s\n' "$name" >&2
+  return 1
+}
+
+PDFLATEX="$(resolve_binary pdflatex)"
+BIBTEX="$(resolve_binary bibtex)"
+
 if [ ! -f "$ZIP_PATH" ]; then
   printf 'Missing submission package: %s\n' "$ZIP_PATH" >&2
   exit 2
@@ -49,13 +73,13 @@ run_pdflatex() {
   label="$1"
   tex_file="$2"
   stdout_path="$WORK_DIR/$label.stdout"
-  pdflatex -interaction=nonstopmode "$tex_file" > "$stdout_path" 2>&1 || true
+  "$PDFLATEX" -interaction=nonstopmode "$tex_file" > "$stdout_path" 2>&1 || true
 }
 
 (
   cd "$WORK_DIR"
   run_pdflatex manuscript-pass1 "$SUBMISSION_BASENAME.tex"
-  run_step manuscript-bibtex bibtex "$SUBMISSION_BASENAME"
+  run_step manuscript-bibtex "$BIBTEX" "$SUBMISSION_BASENAME"
   run_pdflatex manuscript-pass2 "$SUBMISSION_BASENAME.tex"
   run_pdflatex manuscript-pass3 "$SUBMISSION_BASENAME.tex"
   run_pdflatex manuscript-pass4 "$SUBMISSION_BASENAME.tex"
