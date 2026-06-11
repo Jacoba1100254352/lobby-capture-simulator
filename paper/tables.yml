@@ -688,7 +688,7 @@
       "label": "tab:validation-gaps",
       "caption": "Source-panel coverage for the 2024 EPA/ENV validation snapshot. Snapshot support is categorical in the main article; numeric source moments remain in the source-panel inventory report. Schema scaffold indicates whether a mechanism bridge exists outside representative source coverage. Thin, warning, fixture-only, or missing rows are validation gaps.",
       "size": "scriptsize",
-      "environment": "table*",
+      "environment": "inline-table",
       "width": "\\textwidth",
       "tabcolsep": "2pt",
       "rowMode": "all",

@@ -5,7 +5,7 @@ This queue classifies validation misses and partial overlaps into concrete follo
 ## Category Counts
 
 - `benchmark-review`: `12`
-- `direct-source-moment`: `4`
+- `direct-source-moment`: `3`
 - `model-tuning`: `15`
 - `scale-alignment`: `1`
 - `scenario-coverage`: `6`
@@ -13,8 +13,7 @@ This queue classifies validation misses and partial overlaps into concrete follo
 | Priority | Category | Report | Metric | Status | Observed | Benchmark | Source Moment | Action |
 | --- | --- | --- | --- | --- | ---: | ---: | ---: | --- |
 | P1 | direct-source-moment | source-moments.csv | `procurementAgencyTop1Share` | source_gap | 0.5134-0.5134 | 0.55-0.65 | procurementAgencyTop1Share=0.5134 | replace the multi-agency top-award bridge with representative SAM/FPDS action-level extracts before treating agency concentration as calibrated |
-| P1 | direct-source-moment | source-moments.csv | `procurementExPostModificationShare` | source_gap | 1.0000-1.0000 | 0.01-0.05 | procurementExPostModificationShare=1.0000 | replace latest-transaction modification enrichment with action-level SAM/FPDS modification denominators before treating modification incidence as calibrated |
-| P1 | direct-source-moment | source-moments.csv | `procurementSingleBidShare` | source_gap | 0.2933-0.2933 | 0.10-0.25 | procurementSingleBidShare=0.2933 | fill SAM/FPDS competition fields and compare single-bid exposure against the procurement bridge target |
+| P1 | direct-source-moment | source-moments.csv | `procurementExPostModificationShare` | source_gap | 0.0000-0.0000 | 0.01-0.05 | procurementExPostModificationShare=0.0000 | add representative SAM/FPDS action-level modification transactions before treating modification incidence as calibrated |
 | P2 | direct-source-moment | source-moments.csv | `darkMoneyDirectVisibility` | source_gap | 0.2028-0.2028 | 0.00-0.10 | darkMoneyDirectVisibility=0.2028 | replace thin proxy rows with direct hidden-donor, electioneering, or nonprofit-routing source records |
 | P3 | scale-alignment | lobby-capture-campaign.csv | `averageDisclosureLag` | partial | 0.2312-0.5230 | 0.20-0.45 |  | separate current-public-visibility lag from historical age of archived filings |
 | P3 | model-tuning | lobby-capture-campaign.csv | `commentCompressionRate` | partial | 0.3103-0.8318 | 0.50-0.99 | commentTemplateShareMean=0.4600 | raise compression under anti-astroturf and duplicate-detection tooling |

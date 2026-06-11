@@ -204,11 +204,13 @@ def table(
         tabcolsep: str,
         provenance: str,
 ) -> str:
-    if environment not in {"table", "table*", "longtable"}:
+    if environment not in {"table", "table*", "longtable", "inline-table"}:
         raise SystemExit(f"Unsupported table environment: {environment}")
     spec = "".join(alignments)
     if environment == "longtable":
         return longtable(label, caption, headers, rows, size, tabcolsep, provenance, spec)
+    if environment == "inline-table":
+        return inline_table(label, caption, headers, rows, alignments, size, width, tabcolsep, provenance)
     lines = [
         provenance,
         f"\\begin{{{environment}}}[{placement}]",
@@ -229,6 +231,50 @@ def table(
             f"\\caption{{{escape(caption)}}}",
             f"\\label{{{label}}}",
             f"\\end{{{environment}}}",
+            "",
+        ]
+    )
+    return "\n".join(lines)
+
+
+def inline_table(
+        label: str,
+        caption: str,
+        headers: list[str],
+        rows: list[list[str]],
+        alignments: list[str],
+        size: str,
+        width: str,
+        tabcolsep: str,
+        provenance: str,
+) -> str:
+    spec = "".join(alignments)
+    lines = [
+        provenance,
+        "\\begingroup",
+        "\\begin{center}",
+        f"\\begin{{minipage}}{{{width}}}",
+        "\\centering",
+        "\\refstepcounter{table}",
+        f"\\label{{{label}}}",
+        f"\\{size}",
+        f"\\setlength{{\\tabcolsep}}{{{tabcolsep}}}",
+        f"\\begin{{tabular*}}{{{width}}}{{@{{\\extracolsep{{\\fill}}}}{spec}@{{}}}}",
+        "\\toprule",
+        " & ".join(escape(header) for header in headers) + " \\\\",
+        "\\midrule",
+    ]
+    for row in rows:
+        lines.append(" & ".join(escape(cell) for cell in row) + " \\\\")
+    lines.extend(
+        [
+            "\\bottomrule",
+            "\\end{tabular*}",
+            "\\par\\smallskip",
+            f"\\small \\textbf{{\\tablename~\\thetable.}} {escape(caption)}",
+            "\\end{minipage}",
+            "\\end{center}",
+            "\\endgroup",
             "",
         ]
     )

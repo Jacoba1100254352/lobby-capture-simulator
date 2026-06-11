@@ -39,9 +39,11 @@ snapshot,regulatory,commentFloodingIndex,0.3072,proxy,"combined top-docket conce
 snapshot,regulatory,technicalClaimCredibilityMean,0.5000,proxy,mean normalized technical claim credibility
 snapshot,usaspending,procurementRows,200.0000,observed,normalized USAspending award rows
 snapshot,usaspending,procurementBridgeRows,150.0000,observed,"multi-agency USAspending bridge rows, if available"
+snapshot,usaspending,procurementCompetitionPanelRows,200.0000,diagnostic,rows used for competition moments from normalized USAspending award rows with competition fields
+snapshot,usaspending,procurementModificationPanelRows,200.0000,diagnostic,rows used for modification moments from normalized USAspending award rows with modification fields
 snapshot,usaspending,procurementBridgeAgencyCount,6.0000,observed,distinct awarding agencies in procurement source moment panel
 snapshot,usaspending,procurementBridgeTopAwardSample,1.0000,diagnostic,1 when procurement concentration moments use a multi-agency top-award bridge
-snapshot,usaspending,procurementLatestTransactionModificationProxy,1.0000,diagnostic,1 when modification moments use latest-transaction enrichment rather than action-level FPDS denominator
+snapshot,usaspending,procurementLatestTransactionModificationProxy,1.0000,diagnostic,1 when latest-transaction enrichment exists but is kept separate from action-level modification incidence
 snapshot,usaspending,procurementTotalAwards,1139155.0102,observed,sum of multi-agency procurement bridge rows amount
 snapshot,usaspending,procurementRecipientTop1Share,0.1196,observed,largest recipient share of multi-agency procurement bridge rows amount
 snapshot,usaspending,procurementRecipientTop3Share,0.2852,observed,top three recipients share of multi-agency procurement bridge rows amount
@@ -50,18 +52,18 @@ snapshot,usaspending,procurementAgencyTop1Share,0.5134,observed,largest awarding
 snapshot,usaspending,procurementAgencyHerfindahl,0.4765,observed,awarding-agency amount Herfindahl over multi-agency procurement bridge rows
 snapshot,usaspending,procurementSubAgencyTop3Share,0.7934,observed,top three sub-agencies share of multi-agency procurement bridge rows amount
 snapshot,usaspending,procurementAwardCount,150.0000,observed,sum of normalized award or transaction counts in multi-agency procurement bridge rows
-snapshot,usaspending,procurementSingleBidShare,0.2933,observed_proxy,share of rows with one known offer
-snapshot,usaspending,procurementAmountWeightedSingleBidShare,0.2980,observed_proxy,award-amount share with one known offer
-snapshot,usaspending,procurementInitialAwardShare,0.0000,observed_proxy,share of rows that appear to be initial awards rather than modifications
-snapshot,usaspending,procurementExPostModificationShare,1.0000,observed_proxy,share of rows marked as ex-post modifications or nonzero modification sequence
-snapshot,usaspending,procurementAmountWeightedModificationShare,1.0000,observed_proxy,award-amount share marked as ex-post modifications
-snapshot,usaspending,procurementPriceOnlyAwardShare,0.6133,observed_proxy,share of rows marked as price-only or one-offer awards
-snapshot,usaspending,procurementLimitedCompetitionShare,0.4000,observed_proxy,"share of rows with limited competition, exclusions, or one known offer"
-snapshot,usaspending,procurementProtestShare,0.0000,observed_proxy,share of rows marked with a protest flag
-snapshot,usaspending,procurementExclusionShare,0.0933,observed_proxy,share of rows marked as exclusions or after-exclusion competition
-snapshot,usaspending,procurementFirewallCoverageShare,0.0000,observed_proxy,share of rows covered by a procurement-firewall flag
-snapshot,usaspending,procurementKnownUeiShare,1.0000,diagnostic,share of rows carrying a recipient UEI
-snapshot,usaspending,procurementKnownPiidShare,1.0000,diagnostic,share of rows carrying a procurement instrument identifier
+snapshot,usaspending,procurementSingleBidShare,0.2350,observed_proxy,share among normalized USAspending award rows with competition fields that have one known offer
+snapshot,usaspending,procurementAmountWeightedSingleBidShare,0.2131,observed_proxy,award-amount share among normalized USAspending award rows with competition fields with one known offer
+snapshot,usaspending,procurementInitialAwardShare,1.0000,observed_proxy,share of normalized USAspending award rows with modification fields that appear to be initial awards
+snapshot,usaspending,procurementExPostModificationShare,0.0000,observed_proxy,share of normalized USAspending award rows with modification fields marked as ex-post modifications or nonzero modification sequence
+snapshot,usaspending,procurementAmountWeightedModificationShare,0.0000,observed_proxy,award-amount share of normalized USAspending award rows with modification fields marked as ex-post modifications
+snapshot,usaspending,procurementPriceOnlyAwardShare,0.6050,observed_proxy,share among normalized USAspending award rows with competition fields marked as price-only or one-offer awards
+snapshot,usaspending,procurementLimitedCompetitionShare,0.4600,observed_proxy,"share among normalized USAspending award rows with competition fields with limited competition, exclusions, or one known offer"
+snapshot,usaspending,procurementProtestShare,0.0000,observed_proxy,share of normalized award rows marked with a protest flag
+snapshot,usaspending,procurementExclusionShare,0.2500,observed_proxy,share among normalized USAspending award rows with competition fields marked as exclusions or after-exclusion competition
+snapshot,usaspending,procurementFirewallCoverageShare,0.0000,observed_proxy,share of normalized award rows covered by a procurement-firewall flag
+snapshot,usaspending,procurementKnownUeiShare,1.0000,diagnostic,share of normalized award rows carrying a recipient UEI
+snapshot,usaspending,procurementKnownPiidShare,1.0000,diagnostic,share of normalized award rows carrying a procurement instrument identifier
 snapshot,revolving-door,revolvingDoorRows,284.0000,observed,normalized revolving-door rows
 snapshot,revolving-door,revolvingDoorFixtureShare,0.0000,diagnostic,share of rows marked as tracked fixture rather than live/exported source
 snapshot,revolving-door,revolvingDoorFormerOfficialShare,1.0000,observed_proxy,share of rows with former official role
@@ -122,9 +124,11 @@ fixture,regulatory,commentFloodingIndex,0.4888,proxy,"combined top-docket concen
 fixture,regulatory,technicalClaimCredibilityMean,0.4875,proxy,mean normalized technical claim credibility
 fixture,usaspending,procurementRows,5.0000,observed,normalized USAspending award rows
 fixture,usaspending,procurementBridgeRows,0.0000,observed,"multi-agency USAspending bridge rows, if available"
+fixture,usaspending,procurementCompetitionPanelRows,5.0000,diagnostic,rows used for competition moments from normalized USAspending award rows with competition fields
+fixture,usaspending,procurementModificationPanelRows,5.0000,diagnostic,rows used for modification moments from normalized USAspending award rows with modification fields
 fixture,usaspending,procurementBridgeAgencyCount,0.0000,observed,distinct awarding agencies in procurement source moment panel
 fixture,usaspending,procurementBridgeTopAwardSample,0.0000,diagnostic,1 when procurement concentration moments use a multi-agency top-award bridge
-fixture,usaspending,procurementLatestTransactionModificationProxy,0.0000,diagnostic,1 when modification moments use latest-transaction enrichment rather than action-level FPDS denominator
+fixture,usaspending,procurementLatestTransactionModificationProxy,0.0000,diagnostic,1 when latest-transaction enrichment exists but is kept separate from action-level modification incidence
 fixture,usaspending,procurementTotalAwards,700.0000,observed,sum of normalized USAspending award rows amount
 fixture,usaspending,procurementRecipientTop1Share,0.3429,observed,largest recipient share of normalized USAspending award rows amount
 fixture,usaspending,procurementRecipientTop3Share,0.8143,observed,top three recipients share of normalized USAspending award rows amount
@@ -133,18 +137,18 @@ fixture,usaspending,procurementAgencyTop1Share,1.0000,observed,largest awarding 
 fixture,usaspending,procurementAgencyHerfindahl,1.0000,observed,awarding-agency amount Herfindahl over normalized USAspending award rows
 fixture,usaspending,procurementSubAgencyTop3Share,0.8143,observed,top three sub-agencies share of normalized USAspending award rows amount
 fixture,usaspending,procurementAwardCount,48.0000,observed,sum of normalized award or transaction counts in normalized USAspending award rows
-fixture,usaspending,procurementSingleBidShare,0.4000,observed_proxy,share of rows with one known offer
-fixture,usaspending,procurementAmountWeightedSingleBidShare,0.3429,observed_proxy,award-amount share with one known offer
-fixture,usaspending,procurementInitialAwardShare,0.4000,observed_proxy,share of rows that appear to be initial awards rather than modifications
-fixture,usaspending,procurementExPostModificationShare,0.6000,observed_proxy,share of rows marked as ex-post modifications or nonzero modification sequence
-fixture,usaspending,procurementAmountWeightedModificationShare,0.5571,observed_proxy,award-amount share marked as ex-post modifications
-fixture,usaspending,procurementPriceOnlyAwardShare,0.4000,observed_proxy,share of rows marked as price-only or one-offer awards
-fixture,usaspending,procurementLimitedCompetitionShare,0.4000,observed_proxy,"share of rows with limited competition, exclusions, or one known offer"
-fixture,usaspending,procurementProtestShare,0.0000,observed_proxy,share of rows marked with a protest flag
-fixture,usaspending,procurementExclusionShare,0.0000,observed_proxy,share of rows marked as exclusions or after-exclusion competition
-fixture,usaspending,procurementFirewallCoverageShare,0.6000,observed_proxy,share of rows covered by a procurement-firewall flag
-fixture,usaspending,procurementKnownUeiShare,1.0000,diagnostic,share of rows carrying a recipient UEI
-fixture,usaspending,procurementKnownPiidShare,1.0000,diagnostic,share of rows carrying a procurement instrument identifier
+fixture,usaspending,procurementSingleBidShare,0.4000,observed_proxy,share among normalized USAspending award rows with competition fields that have one known offer
+fixture,usaspending,procurementAmountWeightedSingleBidShare,0.3429,observed_proxy,award-amount share among normalized USAspending award rows with competition fields with one known offer
+fixture,usaspending,procurementInitialAwardShare,0.4000,observed_proxy,share of normalized USAspending award rows with modification fields that appear to be initial awards
+fixture,usaspending,procurementExPostModificationShare,0.6000,observed_proxy,share of normalized USAspending award rows with modification fields marked as ex-post modifications or nonzero modification sequence
+fixture,usaspending,procurementAmountWeightedModificationShare,0.5571,observed_proxy,award-amount share of normalized USAspending award rows with modification fields marked as ex-post modifications
+fixture,usaspending,procurementPriceOnlyAwardShare,0.4000,observed_proxy,share among normalized USAspending award rows with competition fields marked as price-only or one-offer awards
+fixture,usaspending,procurementLimitedCompetitionShare,0.4000,observed_proxy,"share among normalized USAspending award rows with competition fields with limited competition, exclusions, or one known offer"
+fixture,usaspending,procurementProtestShare,0.0000,observed_proxy,share of normalized award rows marked with a protest flag
+fixture,usaspending,procurementExclusionShare,0.0000,observed_proxy,share among normalized USAspending award rows with competition fields marked as exclusions or after-exclusion competition
+fixture,usaspending,procurementFirewallCoverageShare,0.6000,observed_proxy,share of normalized award rows covered by a procurement-firewall flag
+fixture,usaspending,procurementKnownUeiShare,1.0000,diagnostic,share of normalized award rows carrying a recipient UEI
+fixture,usaspending,procurementKnownPiidShare,1.0000,diagnostic,share of normalized award rows carrying a procurement instrument identifier
 fixture,revolving-door,revolvingDoorRows,14.0000,observed,normalized revolving-door rows
 fixture,revolving-door,revolvingDoorFixtureShare,1.0000,diagnostic,share of rows marked as tracked fixture rather than live/exported source
 fixture,revolving-door,revolvingDoorFormerOfficialShare,0.7857,observed_proxy,share of rows with former official role

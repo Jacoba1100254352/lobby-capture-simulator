@@ -287,11 +287,11 @@ def source_scope_gap(metric: str, value: float, source_moments: dict[str, float]
     if metric == "procurementRecipientTop3Share" and single_agency_panel:
         return "single-agency procurement snapshot cannot validate a cross-agency recipient-concentration benchmark"
     if metric == "procurementSingleBidShare" and top_award_bridge:
-        return "multi-agency procurement bridge is present but top-award sampling is not representative enough for single-bid incidence calibration"
+        return "competition moments come from a limited top-award procurement slice, not representative SAM/FPDS action-level competition coverage"
     if metric == "procurementExPostModificationShare" and initial_award_panel and value <= 0.0:
         return "award-level procurement snapshot is dominated by initial awards; action-level FPDS/SAM modification transactions are needed"
     if metric == "procurementExPostModificationShare" and latest_transaction_mod_proxy:
-        return "latest-transaction modification enrichment is useful directionally but lacks the action-level FPDS/SAM denominator needed for incidence calibration"
+        return "latest-transaction modification enrichment is kept separate from action-level incidence; representative FPDS/SAM transaction denominators are still needed"
     if metric == "darkMoneyDirectVisibility" and thin_dark_money_panel:
         return "dark-money source panel is thin and proxy-backed; direct hidden-donor or electioneering rows are needed"
     return ""

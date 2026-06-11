@@ -94,7 +94,7 @@ PANELS = [
         "maximum": 0.40,
         "missing": "modification proxy appears saturated or missing",
         "warningMetric": "procurementLatestTransactionModificationProxy",
-        "warning": "latest-transaction modification enrichment is directional only and lacks an action-level denominator",
+        "warning": "latest-transaction modification enrichment is available but kept separate from action-level incidence; representative transaction denominators are still absent",
         "action": "Separate initial awards from post-award modifications and validate nonzero modification numbers against FPDS transactions.",
     },
 ]
