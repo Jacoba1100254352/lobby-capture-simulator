@@ -12,6 +12,7 @@ from pathlib import Path
 REPORTS = Path("reports")
 SOURCE_PANEL_INVENTORY = REPORTS / "source-panel-inventory.csv"
 CLAIM_BOUNDARY_AUDIT = REPORTS / "claim-boundary-audit.csv"
+CLAIM_SOURCE_DEPENDENCY = REPORTS / "claim-source-dependency.csv"
 VALIDATION_SUMMARY = REPORTS / "validation-summary.csv"
 CALIBRATION_QUEUE = REPORTS / "calibration-queue.csv"
 LAYOUT_AUDIT = REPORTS / "paper-layout-audit.md"
@@ -27,14 +28,15 @@ def main() -> int:
 
     panels = read_csv(args.reports / SOURCE_PANEL_INVENTORY.name)
     claim_rows = read_csv(args.reports / CLAIM_BOUNDARY_AUDIT.name)
+    dependency_rows = read_csv(args.reports / CLAIM_SOURCE_DEPENDENCY.name)
     validation_rows = read_csv(args.reports / VALIDATION_SUMMARY.name)
     calibration_rows = read_csv(args.reports / CALIBRATION_QUEUE.name)
     layout = read_text(args.reports / LAYOUT_AUDIT.name)
     visual = read_text(args.reports / VISUAL_AUDIT.name)
 
-    rows = posture_rows(panels, claim_rows, validation_rows, calibration_rows, layout, visual)
+    rows = posture_rows(panels, claim_rows, dependency_rows, validation_rows, calibration_rows, layout, visual)
     write_csv(args.reports / "claim-posture-audit.csv", rows)
-    write_markdown(args.reports / "claim-posture-audit.md", rows, panels, validation_rows, calibration_rows)
+    write_markdown(args.reports / "claim-posture-audit.md", rows, panels, dependency_rows, validation_rows, calibration_rows)
     print(f"Wrote {args.reports / 'claim-posture-audit.csv'}")
     print(f"Wrote {args.reports / 'claim-posture-audit.md'}")
     return 0
@@ -54,6 +56,7 @@ def read_text(path: Path) -> str:
 def posture_rows(
         panels: list[dict[str, str]],
         claim_rows: list[dict[str, str]],
+        dependency_rows: list[dict[str, str]],
         validation_rows: list[dict[str, str]],
         calibration_rows: list[dict[str, str]],
         layout: str,
@@ -64,14 +67,17 @@ def posture_rows(
     p1_actions = [row for row in calibration_rows if field(row, "priority", "Priority") == "P1"]
     p2_actions = [row for row in calibration_rows if field(row, "priority", "Priority") == "P2"]
     source_gaps = counts.get("source_gap", 0)
+    dependency_counts = claim_dependency_counts(dependency_rows)
     layout_pass = "- Failures: `0`" in layout
     visual_pass = bool(visual) and "needs review" not in visual and "Layout audit has not been generated yet" not in visual
     claim_audit_complete = len(claim_rows) == len(panels) and bool(claim_rows)
+    dependency_audit_complete = bool(dependency_rows)
 
     mechanism_status = "cleared" if (
         counts.get("miss", 0) == 0
         and counts.get("unknown", 0) == 0
         and claim_audit_complete
+        and dependency_audit_complete
     ) else "needs_revision"
     reproducibility_status = "cleared" if layout_pass and visual_pass else "needs_revision"
     empirical_status = "bounded" if weak_panels or source_gaps else "cleared"
@@ -84,7 +90,8 @@ def posture_rows(
             (
                 f"{counts.get('miss', 0)} validation misses, "
                 f"{counts.get('unknown', 0)} unknown validations, "
-                f"{len(weak_panels)} weak source panels bounded by claim audit"
+                f"{len(weak_panels)} weak source panels bounded by claim audit, "
+                f"{dependency_counts.get('not_cleared', 0)} dependency claims not cleared"
             ),
             "The manuscript can present a transparent mechanism model and synthetic stress tests under explicit source limits.",
             "Keep empirical language tied to source moments, source gaps, and model diagnostics.",
@@ -94,6 +101,7 @@ def posture_rows(
             empirical_status,
             (
                 f"{source_gaps} source-gap validations and {len(weak_panels)} thin, warning, fixture-only, or missing panels"
+                f"; {dependency_counts.get('bounded', 0)} bounded claim dependencies"
             ),
             "The bridge constrains plausible ranges and flags evidence gaps; it does not validate hidden-channel magnitudes.",
             "Prioritize direct dark-money, electoral-communication, public-financing, revolving-door, and procurement-action panels.",
@@ -102,7 +110,8 @@ def posture_rows(
             "Calibrated policy-simulation claim",
             policy_status,
             (
-                f"{len(p1_actions)} P1 and {len(p2_actions)} P2 calibration/source actions remain"
+                f"{len(p1_actions)} P1 and {len(p2_actions)} P2 calibration/source actions remain; "
+                f"{dependency_counts.get('not_cleared', 0)} claim dependencies not cleared"
             ),
             "The current artifact should not claim calibrated reform effects or representative national hidden-channel magnitudes.",
             "Clear P1/P2 source gaps and rerun calibration before using calibrated policy-simulation language.",
@@ -122,6 +131,15 @@ def posture_rows(
 
 def validation_counts(rows: list[dict[str, str]]) -> dict[str, int]:
     counts = {"fit": 0, "partial": 0, "miss": 0, "source_gap": 0, "unknown": 0, "not_applicable": 0}
+    for row in rows:
+        status = row.get("status", "")
+        if status in counts:
+            counts[status] += 1
+    return counts
+
+
+def claim_dependency_counts(rows: list[dict[str, str]]) -> dict[str, int]:
+    counts = {"cleared": 0, "bounded": 0, "not_cleared": 0}
     for row in rows:
         status = row.get("status", "")
         if status in counts:
@@ -151,6 +169,7 @@ def write_markdown(
         path: Path,
         rows: list[dict[str, str]],
         panels: list[dict[str, str]],
+        dependency_rows: list[dict[str, str]],
         validation_rows: list[dict[str, str]],
         calibration_rows: list[dict[str, str]],
 ) -> None:
@@ -160,6 +179,7 @@ def write_markdown(
         row for row in calibration_rows
         if field(row, "priority", "Priority") in {"P1", "P2"}
     ]
+    dependency_counts = claim_dependency_counts(dependency_rows)
     lines = [
         "# Claim Posture Audit",
         "",
@@ -197,6 +217,21 @@ def write_markdown(
         lines.append(
             f"- `{panel.get('panel', '')}` ({panel.get('status', '')}): {panel.get('note', '')}"
         )
+    lines.extend(
+        [
+            "",
+            "## Claim-Source Dependencies",
+            "",
+            f"- Cleared claim dependencies: `{dependency_counts['cleared']}`",
+            f"- Bounded claim dependencies: `{dependency_counts['bounded']}`",
+            f"- Not-cleared claim dependencies: `{dependency_counts['not_cleared']}`",
+        ]
+    )
+    for item in dependency_rows:
+        if item.get("status") in {"bounded", "not_cleared"}:
+            lines.append(
+                f"- `{item.get('claimFamily', '')}` ({item.get('status', '')}): {item.get('sourceSupport', '')}"
+            )
     lines.extend(["", "## P1/P2 Calibration Actions", ""])
     if not p1_p2:
         lines.append("- None")

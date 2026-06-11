@@ -6,9 +6,9 @@ This audit summarizes which claim posture is cleared by the current source panel
 
 | Gate | Status | Evidence | Claim boundary | Next action |
 | --- | --- | --- | --- | --- |
-| Mechanism-model article | cleared | 0 validation misses, 0 unknown validations, 7 weak source panels bounded by claim audit | The manuscript can present a transparent mechanism model and synthetic stress tests under explicit source limits. | Keep empirical language tied to source moments, source gaps, and model diagnostics. |
-| Empirical bridge | bounded | 3 source-gap validations and 7 thin, warning, fixture-only, or missing panels | The bridge constrains plausible ranges and flags evidence gaps; it does not validate hidden-channel magnitudes. | Prioritize direct dark-money, electoral-communication, public-financing, revolving-door, and procurement-action panels. |
-| Calibrated policy-simulation claim | not_cleared | 2 P1 and 1 P2 calibration/source actions remain | The current artifact should not claim calibrated reform effects or representative national hidden-channel magnitudes. | Clear P1/P2 source gaps and rerun calibration before using calibrated policy-simulation language. |
+| Mechanism-model article | cleared | 0 validation misses, 0 unknown validations, 7 weak source panels bounded by claim audit, 3 dependency claims not cleared | The manuscript can present a transparent mechanism model and synthetic stress tests under explicit source limits. | Keep empirical language tied to source moments, source gaps, and model diagnostics. |
+| Empirical bridge | bounded | 3 source-gap validations and 7 thin, warning, fixture-only, or missing panels; 3 bounded claim dependencies | The bridge constrains plausible ranges and flags evidence gaps; it does not validate hidden-channel magnitudes. | Prioritize direct dark-money, electoral-communication, public-financing, revolving-door, and procurement-action panels. |
+| Calibrated policy-simulation claim | not_cleared | 2 P1 and 1 P2 calibration/source actions remain; 3 claim dependencies not cleared | The current artifact should not claim calibrated reform effects or representative national hidden-channel magnitudes. | Clear P1/P2 source gaps and rerun calibration before using calibrated policy-simulation language. |
 | Reproducibility and layout bundle | cleared | layout failures=0, visual checklist=pass | The generated review bundle is reproducible when the paper artifact gate passes. | Rerun the full artifact gate after any source, table, figure, LaTeX, or package change. |
 
 ## Validation Counts
@@ -30,6 +30,18 @@ This audit summarizes which claim posture is cleared by the current source panel
 - `Procurement concentration bridge` (thin): multi-agency top-award bridge is present, but top-award sampling is not representative enough for calibration
 - `Procurement action history` (fixture-only): no USAspending/SAM/FPDS transaction/action rows in the pinned snapshot; fixture bridge is available but not article-level empirical coverage
 - `Procurement modification risk` (warning): latest-transaction modification enrichment is available but an action-level transaction denominator is still absent
+
+## Claim-Source Dependencies
+
+- Cleared claim dependencies: `4`
+- Bounded claim dependencies: `3`
+- Not-cleared claim dependencies: `3`
+- `Strategic substitution mechanism` (bounded): Bounded by weak panels: Direct dark money (thin), Revolving door (thin).
+- `Public-financing counterweight` (bounded): Bounded by weak panels: Public financing (thin).
+- `Revolving-door access` (bounded): Bounded by weak panels: Revolving door (thin).
+- `Hidden-channel magnitude` (not_cleared): Not cleared because of weak panels: Direct dark money (thin), Electoral communications (missing), Revolving door (thin); missing moment thresholds: electoralCommunicationRows<1.
+- `Procurement modification capture` (not_cleared): Not cleared because of weak panels: Procurement concentration bridge (thin), Procurement action history (fixture-only), Procurement modification risk (warning); missing moment thresholds: procurementActionRows<1, procurementExPostModificationShare<0.01.
+- `Calibrated policy simulation` (not_cleared): Not cleared because of weak panels: Direct dark money (thin), Electoral communications (missing), Public financing (thin), Revolving door (thin), Procurement concentration bridge (thin), Procurement action history (fixture-only), Procurement modification risk (warning); missing moment thresholds: electoralCommunicationRows<1, procurementActionRows<1.
 
 ## P1/P2 Calibration Actions
 

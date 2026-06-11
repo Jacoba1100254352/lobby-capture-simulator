@@ -34,9 +34,11 @@ LAYOUT_AUDIT = ROOT / "reports" / "paper-layout-audit.md"
 MANUAL_VISUAL_AUDIT = ROOT / "reports" / "manual-visual-audit.md"
 CLAIM_BOUNDARY_AUDIT_MD = ROOT / "reports" / "claim-boundary-audit.md"
 CLAIM_BOUNDARY_AUDIT_CSV = ROOT / "reports" / "claim-boundary-audit.csv"
+CLAIM_SOURCE_DEPENDENCY_MD = ROOT / "reports" / "claim-source-dependency.md"
+CLAIM_SOURCE_DEPENDENCY_CSV = ROOT / "reports" / "claim-source-dependency.csv"
 CLAIM_POSTURE_AUDIT_MD = ROOT / "reports" / "claim-posture-audit.md"
 CLAIM_POSTURE_AUDIT_CSV = ROOT / "reports" / "claim-posture-audit.csv"
-RELEASE_TAG = "paper-publication-readiness-2026-06-11-r32"
+RELEASE_TAG = "paper-publication-readiness-2026-06-11-r33"
 CITATION_CFF = ROOT / "CITATION.cff"
 ZENODO_JSON = ROOT / ".zenodo.json"
 FORBIDDEN_LOCAL_ARTIFACTS = [
@@ -116,6 +118,7 @@ EXPECTED_ZIP_MEMBERS = {
     "supporting-information/source-moments.md",
     "supporting-information/source-panel-inventory.md",
     "supporting-information/claim-boundary-audit.md",
+    "supporting-information/claim-source-dependency.md",
     "supporting-information/claim-posture-audit.md",
     "supporting-information/validation-summary.md",
     "supporting-information/substitution-audit.md",
@@ -137,6 +140,7 @@ def main() -> int:
     failures.extend(check_submission_statements())
     failures.extend(check_claim_alignment())
     failures.extend(check_claim_boundary_audit())
+    failures.extend(check_claim_source_dependency_audit())
     failures.extend(check_claim_posture_audit())
     failures.extend(check_layout_and_visual_reports())
     failures.extend(check_archive_metadata())
@@ -249,6 +253,7 @@ def submission_inputs() -> list[Path]:
         ROOT / "reports" / "source-moments.md",
         ROOT / "reports" / "source-panel-inventory.md",
         ROOT / "reports" / "claim-boundary-audit.md",
+        ROOT / "reports" / "claim-source-dependency.md",
         ROOT / "reports" / "claim-posture-audit.md",
         ROOT / "reports" / "validation-summary.md",
         ROOT / "reports" / "substitution-audit.md",
@@ -474,6 +479,86 @@ def check_claim_boundary_audit() -> list[str]:
     return failures
 
 
+def check_claim_source_dependency_audit() -> list[str]:
+    failures: list[str] = []
+    if not SOURCE_PANEL_INVENTORY.exists():
+        return failures
+    missing = [
+        path.relative_to(ROOT)
+        for path in (CLAIM_SOURCE_DEPENDENCY_MD, CLAIM_SOURCE_DEPENDENCY_CSV)
+        if not path.exists()
+    ]
+    if missing:
+        return [f"missing claim-source dependency audit artifact: {path}" for path in missing]
+
+    with SOURCE_PANEL_INVENTORY.open(newline="", encoding="utf-8") as source:
+        panels = list(csv.DictReader(source))
+    with CLAIM_SOURCE_DEPENDENCY_CSV.open(newline="", encoding="utf-8") as source:
+        rows = {row.get("claimKey", ""): row for row in csv.DictReader(source)}
+
+    required_claims = {
+        "lobbying-disclosure-surface",
+        "visible-electoral-money",
+        "rulemaking-comment-record",
+        "procurement-identifier-competition",
+        "strategic-substitution-mechanism",
+        "public-financing-counterweight",
+        "revolving-door-cooling-off",
+        "hidden-channel-magnitude",
+        "procurement-modification-capture",
+        "calibrated-policy-simulation",
+    }
+    missing_claims = sorted(required_claims - set(rows))
+    failures.extend(f"claim-source dependency audit missing claim family: {claim}" for claim in missing_claims)
+    if missing_claims:
+        return failures
+
+    weak_statuses = {"thin", "warning", "fixture-only", "missing"}
+    weak_panels = [panel for panel in panels if panel.get("status") in weak_statuses]
+    if rows["lobbying-disclosure-surface"].get("status") != "cleared":
+        failures.append("lobbying disclosure source dependency should be cleared")
+    if rows["rulemaking-comment-record"].get("status") != "cleared":
+        failures.append("rulemaking comment source dependency should be cleared")
+    if weak_panels:
+        bounded_expected = {
+            "strategic-substitution-mechanism",
+            "public-financing-counterweight",
+            "revolving-door-cooling-off",
+        }
+        for claim in bounded_expected:
+            if rows[claim].get("status") != "bounded":
+                failures.append(f"claim-source dependency should be bounded while weak panels remain: {claim}")
+        not_cleared_expected = {
+            "hidden-channel-magnitude",
+            "procurement-modification-capture",
+            "calibrated-policy-simulation",
+        }
+        for claim in not_cleared_expected:
+            if rows[claim].get("status") != "not_cleared":
+                failures.append(f"claim-source dependency should not be cleared while weak panels remain: {claim}")
+
+    dependency_md = CLAIM_SOURCE_DEPENDENCY_MD.read_text(encoding="utf-8")
+    required_text = [
+        "Claim-Source Dependency Audit",
+        "Calibrated policy simulation",
+        "not_cleared",
+        "bounded",
+    ]
+    for phrase in required_text:
+        if phrase not in dependency_md:
+            failures.append(f"claim-source dependency markdown missing phrase: {phrase}")
+    if SUPPLEMENT_BODY.exists():
+        supplement = SUPPLEMENT_BODY.read_text(encoding="utf-8")
+        required_supplement = [
+            "claim-source dependency audit",
+            "claim_source_dependency.tex",
+        ]
+        for phrase in required_supplement:
+            if phrase not in supplement:
+                failures.append(f"supplement does not disclose claim-source dependency artifact: {phrase}")
+    return failures
+
+
 def check_claim_posture_audit() -> list[str]:
     failures: list[str] = []
     if not SOURCE_PANEL_INVENTORY.exists():
@@ -521,6 +606,7 @@ def check_claim_posture_audit() -> list[str]:
         "mechanism-model article",
         "calibrated policy-simulation claim",
         "Weak Source Panels",
+        "Claim-Source Dependencies",
     ]
     for phrase in required_text:
         if phrase.lower() not in posture_md_lower:
@@ -671,6 +757,7 @@ def package_byte_checks() -> list[tuple[Path, str]]:
         (ROOT / "reports" / "source-moments.md", "supporting-information/source-moments.md"),
         (ROOT / "reports" / "source-panel-inventory.md", "supporting-information/source-panel-inventory.md"),
         (ROOT / "reports" / "claim-boundary-audit.md", "supporting-information/claim-boundary-audit.md"),
+        (ROOT / "reports" / "claim-source-dependency.md", "supporting-information/claim-source-dependency.md"),
         (ROOT / "reports" / "claim-posture-audit.md", "supporting-information/claim-posture-audit.md"),
         (ROOT / "reports" / "validation-summary.md", "supporting-information/validation-summary.md"),
         (ROOT / "reports" / "substitution-audit.md", "supporting-information/substitution-audit.md"),
