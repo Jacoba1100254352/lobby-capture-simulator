@@ -1,0 +1,37 @@
+{
+  "title": "Lobby Capture Simulator: Strategic Channel Substitution in Regulatory Capture",
+  "upload_type": "software",
+  "publication_date": "2026-06-11",
+  "description": "Versioned simulator, source snapshots, validation reports, generated manuscript tables and figures, and Wiley-oriented submission package for an agent-based mechanism model of lobbying, regulatory capture, channel substitution, and anti-capture reform design.",
+  "creators": [
+    {
+      "name": "Anderson, Jacob",
+      "affiliation": "Independent Researcher"
+    }
+  ],
+  "license": "MIT",
+  "keywords": [
+    "lobbying",
+    "regulatory capture",
+    "agent-based modeling",
+    "campaign finance",
+    "dark money",
+    "rulemaking",
+    "procurement",
+    "transparency",
+    "enforcement"
+  ],
+  "related_identifiers": [
+    {
+      "identifier": "https://github.com/Jacoba1100254352/lobby-capture-simulator",
+      "relation": "isSupplementTo",
+      "resource_type": "software"
+    },
+    {
+      "identifier": "https://github.com/Jacoba1100254352/lobby-capture-simulator/releases/tag/paper-publication-readiness-2026-06-11-r16",
+      "relation": "isIdenticalTo",
+      "resource_type": "software"
+    }
+  ],
+  "notes": "Private credentials and raw API payload archives are excluded. Normalized public-data snapshots, source-status manifests, report CSVs, validation summaries, generated tables, generated figure sources, and manuscript source are included in the repository and release artifacts."
+}

@@ -1,0 +1,34 @@
+cff-version: 1.2.0
+message: "If you use this simulator or paper artifact, cite the versioned release."
+title: "Lobby Capture Simulator: Strategic Channel Substitution in Regulatory Capture"
+version: "paper-publication-readiness-2026-06-11-r16"
+date-released: "2026-06-11"
+type: software
+authors:
+  - family-names: Anderson
+    given-names: Jacob
+    email: jacobdanderson@gmail.com
+repository-code: "https://github.com/Jacoba1100254352/lobby-capture-simulator"
+url: "https://github.com/Jacoba1100254352/lobby-capture-simulator/releases/tag/paper-publication-readiness-2026-06-11-r16"
+license: MIT
+abstract: "A Java-based agent simulation and manuscript artifact for studying lobbying, money in politics, regulatory capture, strategic channel substitution, and anti-capture reform portfolios."
+keywords:
+  - lobbying
+  - regulatory capture
+  - agent-based modeling
+  - campaign finance
+  - dark money
+  - rulemaking
+  - procurement
+  - transparency
+  - enforcement
+preferred-citation:
+  type: article
+  title: "Strategic Channel Substitution in Regulatory Capture: An Agent-Based Model of Anti-Capture Reform"
+  authors:
+    - family-names: Anderson
+      given-names: Jacob
+      email: jacobdanderson@gmail.com
+  year: 2026
+  journal: "Regulation & Governance"
+  status: unpublished

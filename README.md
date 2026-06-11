@@ -158,6 +158,10 @@ The Wiley build patches only the generated `.wiley-build/USG.cls` copy to remove
 
 Submission strategy details live in `docs/submission-strategy.md`.
 
+## Citation and Archive Metadata
+
+Use the versioned GitHub release named in the paper's Data and Code Availability statement when citing the review bundle. `CITATION.cff` provides machine-readable software and preferred-paper citation metadata, and `.zenodo.json` provides release metadata for DOI archiving if the GitHub repository is connected to Zenodo. The Wiley submission package includes copies of both files under `supporting-information/`, and `make paper-artifacts-check` fails if those files are missing or no longer point at the current review-bundle tag.
+
 The source-native fetcher has tiny checked-in JSON fixtures under `data/fixtures/source-native/`. `make test` verifies those parser paths without hitting the network. Live source requests retry transient `429` and `5xx` responses; tune with `SOURCE_FETCH_RETRIES` and `SOURCE_FETCH_BACKOFF_SECONDS`.
 
 ## Current Modeling Slice

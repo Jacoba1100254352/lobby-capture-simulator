@@ -4,6 +4,7 @@
 from __future__ import annotations
 
 import os
+import json
 import re
 import shutil
 import subprocess
@@ -24,7 +25,9 @@ WILEY_PDF = PAPER / "regulation-governance-wiley.pdf"
 SUPPLEMENT_PDF = PAPER / "supplement.pdf"
 SUBMISSION_ZIP = DIST / "lobby-capture-wiley-submission.zip"
 SUBMISSION_DECLARATIONS = PAPER / "sections" / "submission-declarations.tex"
-RELEASE_TAG = "paper-publication-readiness-2026-06-10-r15"
+RELEASE_TAG = "paper-publication-readiness-2026-06-11-r16"
+CITATION_CFF = ROOT / "CITATION.cff"
+ZENODO_JSON = ROOT / ".zenodo.json"
 FORBIDDEN_LOCAL_ARTIFACTS = [
     PAPER / "main.tex",
     PAPER / "main.pdf",
@@ -89,6 +92,8 @@ EXPECTED_ZIP_MEMBERS = {
     "supporting-information/calibration-queue.md",
     "supporting-information/paper-layout-audit.md",
     "supporting-information/manual-visual-audit.md",
+    "supporting-information/CITATION.cff",
+    "supporting-information/zenodo.json",
 }
 
 
@@ -99,6 +104,7 @@ def main() -> int:
     failures.extend(check_freshness())
     failures.extend(check_wiley_text())
     failures.extend(check_submission_statements())
+    failures.extend(check_archive_metadata())
     failures.extend(check_release_tag_exactness())
     failures.extend(check_submission_zip())
     failures.extend(check_submission_zip_compiles())
@@ -199,6 +205,8 @@ def submission_inputs() -> list[Path]:
         PAPER / "supplement.tex",
         PAPER / "references.bib",
         ROOT / "scripts" / "build-submission-package.sh",
+        CITATION_CFF,
+        ZENODO_JSON,
         ROOT / "docs" / "odd-model.md",
         ROOT / "docs" / "scenario-catalog.md",
         ROOT / "docs" / "validation.md",
@@ -271,6 +279,51 @@ def check_submission_statements() -> list[str]:
         for phrase in required
         if phrase not in text
     )
+    return failures
+
+
+def check_archive_metadata() -> list[str]:
+    failures: list[str] = []
+    for path in (CITATION_CFF, ZENODO_JSON):
+        if not path.exists():
+            failures.append(f"missing archive metadata file: {path.relative_to(ROOT)}")
+    if CITATION_CFF.exists():
+        citation = CITATION_CFF.read_text(encoding="utf-8")
+        required = [
+            "cff-version: 1.2.0",
+            f'version: "{RELEASE_TAG}"',
+            f'url: "https://github.com/Jacoba1100254352/lobby-capture-simulator/releases/tag/{RELEASE_TAG}"',
+            "license: MIT",
+            "preferred-citation:",
+        ]
+        failures.extend(
+            f"CITATION.cff missing required release metadata: {phrase}"
+            for phrase in required
+            if phrase not in citation
+        )
+    if ZENODO_JSON.exists():
+        try:
+            zenodo = json.loads(ZENODO_JSON.read_text(encoding="utf-8"))
+        except json.JSONDecodeError as error:
+            return [*failures, f".zenodo.json is not valid JSON: {error}"]
+        required_pairs = {
+            "title": "Lobby Capture Simulator: Strategic Channel Substitution in Regulatory Capture",
+            "upload_type": "software",
+            "license": "MIT",
+        }
+        failures.extend(
+            f".zenodo.json missing or changed required field {key}={value!r}"
+            for key, value in required_pairs.items()
+            if zenodo.get(key) != value
+        )
+        related = zenodo.get("related_identifiers", [])
+        if not any(
+            isinstance(item, dict)
+            and item.get("identifier")
+            == f"https://github.com/Jacoba1100254352/lobby-capture-simulator/releases/tag/{RELEASE_TAG}"
+            for item in related
+        ):
+            failures.append(".zenodo.json missing related identifier for the current release tag")
     return failures
 
 

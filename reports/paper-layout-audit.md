@@ -22,7 +22,7 @@ This audit checks generated PDFs for sparse float pages, large whitespace gaps, 
 | paper/strategic-channel-substitution-regulatory-capture.pdf | 13 | 123 | 2782 | 0.852 | 0.058 | yes | pass | layout density acceptable |
 | paper/strategic-channel-substitution-regulatory-capture.pdf | 14 | 133 | 1128 | 0.781 | 0.148 | yes | pass | layout density acceptable |
 | paper/strategic-channel-substitution-regulatory-capture.pdf | 15 | 46 | 3440 | 0.854 | 0.055 | no | pass | layout density acceptable |
-| paper/strategic-channel-substitution-regulatory-capture.pdf | 16 | 58 | 2639 | 0.854 | 0.055 | no | pass | layout density acceptable |
+| paper/strategic-channel-substitution-regulatory-capture.pdf | 16 | 54 | 2626 | 0.854 | 0.055 | no | pass | layout density acceptable |
 | paper/strategic-channel-substitution-regulatory-capture.pdf | 17 | 91 | 2471 | 0.854 | 0.055 | no | pass | references/declarations page |
 | paper/strategic-channel-substitution-regulatory-capture.pdf | 18 | 100 | 2354 | 0.854 | 0.100 | no | pass | references/declarations page |
 | paper/regulation-governance-wiley.pdf | 1 | 25 | 1253 | 0.876 | 0.385 | no | pass | title/front-matter page |
@@ -37,7 +37,7 @@ This audit checks generated PDFs for sparse float pages, large whitespace gaps, 
 | paper/regulation-governance-wiley.pdf | 10 | 114 | 2300 | 0.934 | 0.043 | yes | pass | layout density acceptable |
 | paper/regulation-governance-wiley.pdf | 11 | 133 | 2178 | 0.934 | 0.046 | yes | pass | layout density acceptable |
 | paper/regulation-governance-wiley.pdf | 12 | 150 | 2509 | 0.934 | 0.046 | no | pass | layout density acceptable |
-| paper/regulation-governance-wiley.pdf | 13 | 59 | 4660 | 0.942 | 0.043 | no | pass | layout density acceptable |
+| paper/regulation-governance-wiley.pdf | 13 | 57 | 4647 | 0.942 | 0.043 | no | pass | layout density acceptable |
 | paper/regulation-governance-wiley.pdf | 14 | 93 | 4552 | 0.943 | 0.043 | no | pass | references/declarations page |
 | paper/regulation-governance-wiley.pdf | 15 | 15 | 669 | 0.942 | 0.825 | no | pass | short terminal references/declarations page |
 | paper/supplement.pdf | 1 | 33 | 1885 | 0.805 | 0.105 | no | pass | title/front-matter page |

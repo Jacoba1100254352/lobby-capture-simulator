@@ -66,6 +66,8 @@ cp "$ROOT_DIR/reports/lobby-capture-portfolio.md" "$STAGING_DIR/supporting-infor
 cp "$ROOT_DIR/reports/calibration-queue.md" "$STAGING_DIR/supporting-information/calibration-queue.md"
 cp "$ROOT_DIR/reports/paper-layout-audit.md" "$STAGING_DIR/supporting-information/paper-layout-audit.md"
 cp "$ROOT_DIR/reports/manual-visual-audit.md" "$STAGING_DIR/supporting-information/manual-visual-audit.md"
+cp "$ROOT_DIR/CITATION.cff" "$STAGING_DIR/supporting-information/CITATION.cff"
+cp "$ROOT_DIR/.zenodo.json" "$STAGING_DIR/supporting-information/zenodo.json"
 mkdir -p "$STAGING_DIR/figures"
 cp "$PAPER_DIR"/figures/Figure_*.pdf "$STAGING_DIR/figures/"
 cp "$PAPER_DIR"/figures/*.tex "$STAGING_DIR/figures/"
