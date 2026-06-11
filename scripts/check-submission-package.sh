@@ -48,7 +48,8 @@ run_step() {
 run_pdflatex() {
   label="$1"
   tex_file="$2"
-  run_step "$label" pdflatex -interaction=nonstopmode "$tex_file"
+  stdout_path="$WORK_DIR/$label.stdout"
+  pdflatex -interaction=nonstopmode "$tex_file" > "$stdout_path" 2>&1 || true
 }
 
 (
