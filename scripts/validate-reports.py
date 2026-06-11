@@ -267,6 +267,7 @@ def source_scope_gap(metric: str, value: float, source_moments: dict[str, float]
     """Return a source-coverage note when the panel cannot test the benchmark."""
     procurement_rows = source_moments.get("procurementRows", 0.0)
     procurement_bridge_rows = source_moments.get("procurementBridgeRows", 0.0)
+    procurement_action_rows = source_moments.get("procurementActionRows", 0.0)
     procurement_bridge_agencies = source_moments.get("procurementBridgeAgencyCount", 0.0)
     top_award_bridge = source_moments.get("procurementBridgeTopAwardSample", 0.0) >= 0.5
     latest_transaction_mod_proxy = source_moments.get("procurementLatestTransactionModificationProxy", 0.0) >= 0.5
@@ -277,6 +278,7 @@ def source_scope_gap(metric: str, value: float, source_moments: dict[str, float]
     )
     initial_award_panel = (
         procurement_rows > 0
+        and procurement_action_rows <= 0
         and source_moments.get("procurementInitialAwardShare", 0.0) >= 0.95
     )
     thin_dark_money_panel = source_moments.get("darkMoneySourceShare", 0.0) < 0.05
@@ -290,7 +292,7 @@ def source_scope_gap(metric: str, value: float, source_moments: dict[str, float]
         return "competition moments come from a limited top-award procurement slice, not representative SAM/FPDS action-level competition coverage"
     if metric == "procurementExPostModificationShare" and initial_award_panel and value <= 0.0:
         return "award-level procurement snapshot is dominated by initial awards; action-level FPDS/SAM modification transactions are needed"
-    if metric == "procurementExPostModificationShare" and latest_transaction_mod_proxy:
+    if metric == "procurementExPostModificationShare" and latest_transaction_mod_proxy and procurement_action_rows <= 0:
         return "latest-transaction modification enrichment is kept separate from action-level incidence; representative FPDS/SAM transaction denominators are still needed"
     if metric == "darkMoneyDirectVisibility" and thin_dark_money_panel:
         return "dark-money source panel is thin and proxy-backed; direct hidden-donor or electioneering rows are needed"

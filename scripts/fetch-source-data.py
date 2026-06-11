@@ -42,6 +42,9 @@ def main() -> int:
     usaspending = subparsers.add_parser("usaspending", help="Fetch USAspending award records.")
     usaspending.add_argument("--output", type=Path, default=Path("data/raw/usaspending-awards.csv"))
 
+    usaspending_actions = subparsers.add_parser("usaspending-actions", help="Fetch USAspending transaction/action rows for procurement modification diagnostics.")
+    usaspending_actions.add_argument("--output", type=Path, default=Path("data/raw/usaspending-procurement-actions.csv"))
+
     nyc_public_financing = subparsers.add_parser("nyc-public-financing", help="Fetch NYC CFB public-funds payments.")
     nyc_public_financing.add_argument("--output", type=Path, default=Path("data/raw/public-financing.csv"))
 
@@ -65,6 +68,8 @@ def main() -> int:
         return fetch_regulatory(args.output)
     if args.kind == "usaspending":
         return fetch_usaspending(args.output)
+    if args.kind == "usaspending-actions":
+        return fetch_usaspending_actions(args.output)
     if args.kind == "nyc-public-financing":
         return fetch_nyc_public_financing(args.output)
     if args.kind == "nyc-intermediaries":
@@ -458,29 +463,62 @@ def fetch_usaspending(output: Path) -> int:
                 break
     write_rows(
         output,
-        [
-            "awardId",
-            "recipient",
-            "agency",
-            "subAgency",
-            "awardType",
-            "amount",
-            "issueDomain",
-            "awardCount",
-            "uei",
-            "piid",
-            "modificationNumber",
-            "actionDate",
-            "competitionType",
-            "numberOfOffers",
-            "priceOnlyAward",
-            "exPostModification",
-            "protestFiled",
-            "exclusionFlag",
-            "firewallCovered",
-        ],
+        USASPENDING_FIELDS,
         rows,
         "USAspending awards",
+    )
+    return 0
+
+
+def fetch_usaspending_actions(output: Path) -> int:
+    base = os.environ.get("USASPENDING_API_BASE", "https://api.usaspending.gov/api/v2").rstrip("/")
+    limit = int_env("USASPENDING_ACTION_AWARD_PAGE_SIZE", int_env("USASPENDING_PAGE_SIZE", 50, 1, 100), 1, 100)
+    max_pages = int_env("USASPENDING_ACTION_AWARD_MAX_PAGES", int_env("USASPENDING_MAX_PAGES", 1, 1, 20), 1, 20)
+    start_date, end_date = usaspending_time_period()
+    rows: list[dict[str, object]] = []
+    for agency_filter in usaspending_agency_filters():
+        for page in range(1, max_pages + 1):
+            payload = {
+                "filters": {
+                    "time_period": [{"start_date": start_date, "end_date": end_date}],
+                    "agencies": [agency_filter],
+                    "award_type_codes": split_csv_env("USASPENDING_AWARD_TYPE_CODES", "A,B,C,D"),
+                },
+                "fields": [
+                    "Award ID",
+                    "Recipient Name",
+                    "Recipient UEI",
+                    "Award Amount",
+                    "Awarding Agency",
+                    "Awarding Sub Agency",
+                    "Award Type",
+                    "PIID",
+                    "Action Date",
+                    "Modification Number",
+                    "Competition Type",
+                    "Number of Offers",
+                ],
+                "page": page,
+                "limit": limit,
+                "sort": os.environ.get("USASPENDING_ACTION_AWARD_SORT", os.environ.get("USASPENDING_SORT", "Award Amount")),
+                "order": os.environ.get("USASPENDING_ACTION_AWARD_ORDER", os.environ.get("USASPENDING_ORDER", "desc")),
+            }
+            response = post_json(f"{base}/search/spending_by_award/", payload)
+            for record in response.get("results", []):
+                if not isinstance(record, dict):
+                    continue
+                detail = usaspending_award_detail(base, record)
+                piid = first_text(detail, "piid", default=first_text(record, "PIID", "piid", "Award ID", "award_id", default=""))
+                transactions = usaspending_transaction_records(base, piid)
+                rows.extend(normalize_usaspending_transaction_records(record, detail, transactions))
+            metadata = response.get("page_metadata", {})
+            if not metadata.get("hasNext"):
+                break
+    write_rows(
+        output,
+        USASPENDING_FIELDS,
+        rows,
+        "USAspending procurement action rows",
     )
     return 0
 
@@ -507,6 +545,29 @@ def usaspending_time_period() -> tuple[str, str]:
         return os.environ["USASPENDING_DATE_FROM"], os.environ["USASPENDING_DATE_TO"]
     fiscal_year = int_env("USASPENDING_FISCAL_YEAR", 2024, 2008, 2100)
     return f"{fiscal_year - 1}-10-01", f"{fiscal_year}-09-30"
+
+
+USASPENDING_FIELDS = [
+    "awardId",
+    "recipient",
+    "agency",
+    "subAgency",
+    "awardType",
+    "amount",
+    "issueDomain",
+    "awardCount",
+    "uei",
+    "piid",
+    "modificationNumber",
+    "actionDate",
+    "competitionType",
+    "numberOfOffers",
+    "priceOnlyAward",
+    "exPostModification",
+    "protestFiled",
+    "exclusionFlag",
+    "firewallCovered",
+]
 
 
 def normalize_usaspending_records(base: str, records: list[dict[str, object]]) -> list[dict[str, object]]:
@@ -558,6 +619,61 @@ def normalize_usaspending_records(base: str, records: list[dict[str, object]]) -
                 "numberOfOffers": number_of_offers,
                 "priceOnlyAward": str(single_bid or "price" in pricing_type.lower() or "sole source" in competition_type.lower()).lower(),
                 "exPostModification": str(modified).lower(),
+                "protestFiled": "false",
+                "exclusionFlag": str(exclusion_flag).lower(),
+                "firewallCovered": str(os.environ.get("USASPENDING_FIREWALL_COVERED", "false").lower() == "true").lower(),
+            }
+        )
+    return rows
+
+
+def normalize_usaspending_transaction_records(
+        award_record: dict[str, object],
+        detail: dict[str, object],
+        transactions: list[dict[str, object]],
+) -> list[dict[str, object]]:
+    contract_data = detail.get("latest_transaction_contract_data") if isinstance(detail, dict) else {}
+    contract_data = contract_data if isinstance(contract_data, dict) else {}
+    award_id = first_text(award_record, "Award ID", "award_id", "generated_internal_id", default="UNKNOWN")
+    piid = first_text(detail, "piid", default=first_text(award_record, "PIID", "piid", default=award_id))
+    recipient = first_text(award_record, "Recipient Name", "recipient_name", "recipient", default="Unknown recipient")
+    agency = first_text(award_record, "Awarding Agency", "awarding_agency", default="Unknown agency")
+    sub_agency = first_text(award_record, "Awarding Sub Agency", "awarding_sub_agency", default=agency)
+    award_type = first_text(detail, "type_description", default=first_text(award_record, "Award Type", "award_type", default="contract"))
+    number_of_offers = first_text(contract_data, "number_of_offers_received", default=first_text(award_record, "Number of Offers", "number_of_offers_received", default="0"))
+    competition_type = first_text(
+        contract_data,
+        "extent_competed_description",
+        "extent_competed",
+        "solicitation_procedures_description",
+        default=first_text(award_record, "Competition Type", "extent_competed", default="unknown"),
+    )
+    pricing_type = first_text(contract_data, "type_of_contract_pricing_description", "type_of_contract_pricing", default="")
+    single_bid = numeric_value(number_of_offers) <= 1.0 and numeric_value(number_of_offers) > 0.0
+    exclusion_flag = "exclusion" in competition_type.lower()
+    rows: list[dict[str, object]] = []
+    for transaction in transactions:
+        modification_number = first_text(transaction, "Mod", "mod", "Modification Number", "modification_number", default="0")
+        transaction_amount = first_text(transaction, "Transaction Amount", "transaction_amount", "Award Amount", "award_amount", default=first_text(award_record, "Award Amount", "award_amount", default="0"))
+        action_date = first_text(transaction, "Action Date", "action_date", default=first_text(award_record, "Action Date", "action_date", default=""))
+        rows.append(
+            {
+                "awardId": first_text(transaction, "Award ID", "award_id", default=award_id),
+                "recipient": first_text(transaction, "Recipient Name", "recipient_name", default=recipient),
+                "agency": first_text(transaction, "Awarding Agency", "awarding_agency", default=agency),
+                "subAgency": first_text(transaction, "Awarding Sub Agency", "awarding_sub_agency", default=sub_agency),
+                "awardType": first_text(transaction, "Award Type", "award_type", default=award_type or "contract"),
+                "amount": money_millions(transaction_amount),
+                "issueDomain": os.environ.get("USASPENDING_ISSUE_DOMAIN", "procurement"),
+                "awardCount": 1,
+                "uei": first_text(detail, "recipient.recipient_uei", default=first_text(transaction, "Recipient UEI", "recipient_uei", default=first_text(award_record, "Recipient UEI", "recipient_uei", "UEI", default=""))),
+                "piid": first_text(transaction, "PIID", "piid", default=piid),
+                "modificationNumber": modification_number,
+                "actionDate": action_date,
+                "competitionType": competition_type,
+                "numberOfOffers": number_of_offers,
+                "priceOnlyAward": str(single_bid or "price" in pricing_type.lower() or "sole source" in competition_type.lower()).lower(),
+                "exPostModification": str(modification_sequence(modification_number) > 0).lower(),
                 "protestFiled": "false",
                 "exclusionFlag": str(exclusion_flag).lower(),
                 "firewallCovered": str(os.environ.get("USASPENDING_FIREWALL_COVERED", "false").lower() == "true").lower(),
@@ -920,6 +1036,18 @@ def usaspending_award_detail(base: str, record: dict[str, object]) -> dict[str, 
 def usaspending_transaction_summary(base: str, piid: str) -> dict[str, object]:
     if os.environ.get("USASPENDING_ENRICH_TRANSACTIONS", "1") != "1" or not piid:
         return {}
+    rows = usaspending_transaction_records(base, piid)
+    mods = [first_text(row, "Mod", "mod", default="") for row in rows if isinstance(row, dict)]
+    nonzero_mods = [mod for mod in mods if mod.strip() not in {"", "0", "0.0", "none", "None"}]
+    return {
+        "modificationNumber": nonzero_mods[0] if nonzero_mods else (mods[0] if mods else "0"),
+        "actionDate": first_text(rows[0], "Action Date", "action_date", default="") if rows else "",
+    }
+
+
+def usaspending_transaction_records(base: str, piid: str) -> list[dict[str, object]]:
+    if os.environ.get("USASPENDING_ENRICH_TRANSACTIONS", "1") != "1" or not piid:
+        return []
     payload = {
         "filters": {
             "award_ids": [piid],
@@ -930,9 +1058,15 @@ def usaspending_transaction_summary(base: str, piid: str) -> dict[str, object]:
             "Action Date",
             "Mod",
             "Transaction Amount",
+            "Recipient Name",
+            "Recipient UEI",
+            "Awarding Agency",
+            "Awarding Sub Agency",
+            "Award Type",
+            "PIID",
         ],
         "page": 1,
-        "limit": int_env("USASPENDING_TRANSACTION_LIMIT", 20, 1, 100),
+        "limit": int_env("USASPENDING_TRANSACTION_LIMIT", int_env("USASPENDING_ACTION_TRANSACTION_LIMIT", 50, 1, 100), 1, 100),
         "sort": "Action Date",
         "order": "desc",
     }
@@ -941,14 +1075,9 @@ def usaspending_transaction_summary(base: str, piid: str) -> dict[str, object]:
     except SystemExit:
         if os.environ.get("USASPENDING_STRICT_ENRICHMENT", "0") == "1":
             raise
-        return {}
+        return []
     rows = response.get("results", []) if isinstance(response, dict) else []
-    mods = [first_text(row, "Mod", "mod", default="") for row in rows if isinstance(row, dict)]
-    nonzero_mods = [mod for mod in mods if mod.strip() not in {"", "0", "0.0", "none", "None"}]
-    return {
-        "modificationNumber": nonzero_mods[0] if nonzero_mods else (mods[0] if mods else "0"),
-        "actionDate": first_text(rows[0], "Action Date", "action_date", default="") if rows else "",
-    }
+    return [row for row in rows if isinstance(row, dict)]
 
 
 def fetch_regulations_gov_rows() -> list[dict[str, object]]:

@@ -1,0 +1,6 @@
+awardId,recipient,agency,subAgency,awardType,amount,issueDomain,awardCount,uei,piid,modificationNumber,actionDate,competitionType,numberOfOffers,priceOnlyAward,exPostModification,protestFiled,exclusionFlag,firewallCovered
+EPA-ENV-001,CDM Federal Programs Corporation,Environmental Protection Agency,Office of Air and Radiation,contract,120.0000,procurement,1,UEI0001,68HE0H24C0001,0,2024-02-14,full-and-open,4,false,false,false,false,true
+EPA-ENV-001,CDM Federal Programs Corporation,Environmental Protection Agency,Office of Air and Radiation,contract,30.0000,procurement,1,UEI0001,68HE0H24C0001,P00001,2024-05-02,full-and-open,4,false,true,false,false,true
+EPA-ENV-002,Environmental Systems Research Institute,Environmental Protection Agency,Office of Environmental Information,contract,90.0000,procurement,1,UEI0002,68HERH24F0002,0,2024-04-20,limited-sources,1,true,false,false,false,false
+EPA-ENV-002,Environmental Systems Research Institute,Environmental Protection Agency,Office of Environmental Information,contract,22.0000,procurement,1,UEI0002,68HERH24F0002,2,2024-09-15,limited-sources,1,true,true,false,false,false
+EPA-ENV-003,Clean Water Engineering Partners,Environmental Protection Agency,Office of Water,contract,110.0000,procurement,1,UEI0003,68HERC24C0003,0,2024-05-09,full-and-open,3,false,false,false,false,true

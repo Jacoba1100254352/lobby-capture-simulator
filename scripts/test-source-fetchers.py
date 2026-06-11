@@ -113,6 +113,7 @@ def assert_federal_register(fetchers) -> None:
 
 def assert_usaspending(fetchers) -> None:
     payload = read_json("usaspending-awards.json")
+    transaction_payload = read_json("usaspending-transactions.json")
     os.environ["USASPENDING_ENRICH_AWARD_DETAILS"] = "0"
     os.environ["USASPENDING_ENRICH_TRANSACTIONS"] = "0"
     rows = fetchers.normalize_usaspending_records("", payload["results"])
@@ -138,6 +139,13 @@ def assert_usaspending(fetchers) -> None:
         "firewallCovered": "false",
     }, rows[0]
     assert rows[1]["recipient"] == "LOCKHEED MARTIN SERVICES, LLC", rows[1]
+    action_rows = fetchers.normalize_usaspending_transaction_records(payload["results"][0], {}, transaction_payload["results"])
+    assert len(action_rows) == 2, action_rows
+    assert action_rows[0]["modificationNumber"] == "0", action_rows[0]
+    assert action_rows[0]["exPostModification"] == "false", action_rows[0]
+    assert action_rows[1]["modificationNumber"] == "P00001", action_rows[1]
+    assert action_rows[1]["exPostModification"] == "true", action_rows[1]
+    assert action_rows[1]["amount"] == 25.0, action_rows[1]
 
 
 def assert_nyc_public_financing(fetchers) -> None:

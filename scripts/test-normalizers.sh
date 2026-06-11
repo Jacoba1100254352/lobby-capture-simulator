@@ -10,6 +10,7 @@ trap cleanup EXIT
 python3 scripts/normalize-calibration.py lda data/fixtures/normalized-lda-lobbying.csv "$tmpdir/lda.csv" >/dev/null
 python3 scripts/normalize-calibration.py fec data/fixtures/normalized-fec-campaign-finance.csv "$tmpdir/fec.csv" >/dev/null
 python3 scripts/normalize-calibration.py intermediary data/fixtures/normalized-intermediaries.csv "$tmpdir/intermediaries.csv" >/dev/null
+python3 scripts/normalize-calibration.py usaspending-actions data/fixtures/normalized-usaspending-procurement-actions.csv "$tmpdir/usaspending-actions.csv" >/dev/null
 python3 - "$tmpdir/lda.csv" <<'PY'
 import csv
 import sys
@@ -34,6 +35,15 @@ with open(sys.argv[1], newline="", encoding="utf-8") as source:
     rows = list(csv.DictReader(source))
 assert len(rows) == 6, len(rows)
 assert "donorDisclosure" in rows[0], rows[0]
+PY
+python3 - "$tmpdir/usaspending-actions.csv" <<'PY'
+import csv
+import sys
+with open(sys.argv[1], newline="", encoding="utf-8") as source:
+    rows = list(csv.DictReader(source))
+assert len(rows) == 5, len(rows)
+assert rows[1]["modificationNumber"] == "P00001", rows[1]
+assert rows[1]["exPostModification"] == "true", rows[1]
 PY
 
 printf 'client,amount\nA,1\n' > "$tmpdir/bad-lda.csv"
@@ -86,9 +96,11 @@ grep -q "lobbyingClientTop1Share" "$tmpdir/reports/source-moments.csv"
 grep -q "outsideSpendingSourceShare" "$tmpdir/reports/source-moments.csv"
 grep -q "publicFinancingRows" "$tmpdir/reports/source-moments.csv"
 grep -q "procurementRecipientTop3Share" "$tmpdir/reports/source-moments.csv"
+grep -q "procurementActionRows" "$tmpdir/reports/source-moments.csv"
 grep -q "procurementBridgeAgencyCount" "$tmpdir/reports/source-moments.csv"
 grep -q "procurementAmountWeightedSingleBidShare" "$tmpdir/reports/source-moments.csv"
 grep -q "procurementInitialAwardShare" "$tmpdir/reports/source-moments.csv"
+grep -q "procurementActionModificationRows" "$tmpdir/reports/source-moments.csv"
 grep -q "procurementLimitedCompetitionShare" "$tmpdir/reports/source-moments.csv"
 grep -q "revolvingDoorFormerOfficialShare" "$tmpdir/reports/source-moments.csv"
 grep -q "intermediaryPoliticalSpendShare" "$tmpdir/reports/source-moments.csv"

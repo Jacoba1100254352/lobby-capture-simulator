@@ -216,6 +216,7 @@ SCHEMAS = {
 
 SCHEMAS["public-financing"] = SCHEMAS["fec"]
 SCHEMAS["dark-money"] = SCHEMAS["fec"]
+SCHEMAS["usaspending-actions"] = SCHEMAS["usaspending"]
 
 
 def main() -> int:

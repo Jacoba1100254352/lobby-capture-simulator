@@ -23,7 +23,7 @@ append_csv() {
   fi
 }
 
-rm -f data/raw/lda-lobbying.csv data/raw/fec-campaign-finance.csv data/raw/public-financing.csv data/raw/dark-money.csv data/raw/regulatory-dockets.csv data/raw/usaspending-awards.csv data/raw/revolving-door.csv data/raw/intermediaries.csv
+rm -f data/raw/lda-lobbying.csv data/raw/fec-campaign-finance.csv data/raw/public-financing.csv data/raw/dark-money.csv data/raw/regulatory-dockets.csv data/raw/usaspending-awards.csv data/raw/usaspending-procurement-bridge.csv data/raw/usaspending-procurement-actions.csv data/raw/revolving-door.csv data/raw/intermediaries.csv
 
 for period in first_quarter second_quarter third_quarter fourth_quarter; do
   SOURCE_RAW_DIR="$raw_dir/lda-$period" \
@@ -168,6 +168,34 @@ if [ "${USASPENDING_PROCUREMENT_BRIDGE_SOURCE_NATIVE:-1}" = "1" ]; then
   fi
 else
   printf "usaspending-procurement-bridge,missing,multi-agency procurement bridge disabled\n" >> "$status_file"
+fi
+
+if [ -n "${USASPENDING_PROCUREMENT_ACTIONS_LIVE_CSV:-}" ] || [ -n "${USASPENDING_PROCUREMENT_ACTIONS_LIVE_URL:-}" ]; then
+  source_file="$tmpdir/usaspending-procurement-actions-source.csv"
+  if [ -n "${USASPENDING_PROCUREMENT_ACTIONS_LIVE_CSV:-}" ]; then
+    cp "$USASPENDING_PROCUREMENT_ACTIONS_LIVE_CSV" "$source_file"
+  else
+    curl -fsSL "$USASPENDING_PROCUREMENT_ACTIONS_LIVE_URL" -o "$source_file"
+  fi
+  if python3 scripts/normalize-calibration.py usaspending-actions "$source_file" data/raw/usaspending-procurement-actions.csv; then
+    printf "usaspending-procurement-actions,ok,normalized configured procurement action rows written\n" >> "$status_file"
+  else
+    printf "usaspending-procurement-actions,unavailable,configured procurement action source could not be normalized\n" >> "$status_file"
+  fi
+elif [ "${USASPENDING_PROCUREMENT_ACTIONS_SOURCE_NATIVE:-1}" = "1" ]; then
+  if SOURCE_RAW_DIR="$raw_dir/usaspending-procurement-actions" \
+    USASPENDING_FISCAL_YEAR="${USASPENDING_FISCAL_YEAR:-2024}" \
+    USASPENDING_AGENCIES="${USASPENDING_PROCUREMENT_ACTIONS_AGENCIES:-Environmental Protection Agency}" \
+    USASPENDING_ACTION_AWARD_PAGE_SIZE="${USASPENDING_PROCUREMENT_ACTIONS_AWARD_PAGE_SIZE:-25}" \
+    USASPENDING_ACTION_AWARD_MAX_PAGES="${USASPENDING_PROCUREMENT_ACTIONS_AWARD_MAX_PAGES:-1}" \
+    USASPENDING_ACTION_TRANSACTION_LIMIT="${USASPENDING_PROCUREMENT_ACTIONS_TRANSACTION_LIMIT:-50}" \
+      python3 scripts/fetch-source-data.py usaspending-actions --output data/raw/usaspending-procurement-actions.csv; then
+    printf "usaspending-procurement-actions,ok,normalized USAspending procurement action rows written\n" >> "$status_file"
+  else
+    printf "usaspending-procurement-actions,unavailable,upstream USAspending transaction/action request returned no rows or failed\n" >> "$status_file"
+  fi
+else
+  printf "usaspending-procurement-actions,missing,procurement action panel disabled\n" >> "$status_file"
 fi
 
 if [ -n "${REVOLVING_DOOR_LIVE_CSV:-}" ] || [ -n "${REVOLVING_DOOR_LIVE_URL:-}" ]; then

@@ -4,7 +4,7 @@ This report complements the scripted layout audit. Figure rows check generated S
 
 ## Current Automated Layout Summary
 
-- Pages checked: `41`
+- Pages checked: `39`
 - Failures: `0`
 
 ## Figure Checks

@@ -1,0 +1,34 @@
+{
+  "spending_level": "transactions",
+  "limit": 3,
+  "results": [
+    {
+      "Award ID": "EPW05049",
+      "Recipient Name": "CDM FEDERAL PROGRAMS CORPORATION",
+      "Recipient UEI": "UEI0001",
+      "Awarding Agency": "Environmental Protection Agency",
+      "Awarding Sub Agency": "Environmental Protection Agency",
+      "Award Type": "contract",
+      "PIID": "EPW05049",
+      "Action Date": "2024-02-14",
+      "Mod": "0",
+      "Transaction Amount": 120000000.0
+    },
+    {
+      "Award ID": "EPW05049",
+      "Recipient Name": "CDM FEDERAL PROGRAMS CORPORATION",
+      "Recipient UEI": "UEI0001",
+      "Awarding Agency": "Environmental Protection Agency",
+      "Awarding Sub Agency": "Environmental Protection Agency",
+      "Award Type": "contract",
+      "PIID": "EPW05049",
+      "Action Date": "2024-05-02",
+      "Mod": "P00001",
+      "Transaction Amount": 25000000.0
+    }
+  ],
+  "page_metadata": {
+    "page": 1,
+    "hasNext": false
+  }
+}

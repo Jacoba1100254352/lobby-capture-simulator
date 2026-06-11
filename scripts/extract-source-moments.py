@@ -47,6 +47,7 @@ def extract_scope(scope: str, root: Path, prefix: str) -> list[dict[str, str]]:
         scope,
         root / f"{prefix}usaspending-awards.csv",
         root / f"{prefix}usaspending-procurement-bridge.csv",
+        root / f"{prefix}usaspending-procurement-actions.csv",
     ))
     rows.extend(revolving_door_moments(scope, root / f"{prefix}revolving-door.csv"))
     rows.extend(intermediary_moments(scope, root / f"{prefix}intermediaries.csv"))
@@ -138,18 +139,21 @@ def regulatory_moments(scope: str, path: Path) -> list[dict[str, str]]:
     ]
 
 
-def usaspending_moments(scope: str, path: Path, bridge_path: Path) -> list[dict[str, str]]:
+def usaspending_moments(scope: str, path: Path, bridge_path: Path, action_path: Path) -> list[dict[str, str]]:
     rows = read_rows(path)
     bridge_rows = read_rows(bridge_path)
-    if not rows and not bridge_rows:
+    action_rows = read_rows(action_path)
+    if not rows and not bridge_rows and not action_rows:
         return [moment(scope, "usaspending", "procurementRows", 0.0, "observed", f"{path} missing or empty")]
     concentration_rows = bridge_rows if bridge_rows else rows
+    if not concentration_rows:
+        concentration_rows = action_rows
     award_rows = rows if rows else concentration_rows
     competition_rows = [row for row in award_rows if has_competition_data(row)] or award_rows
-    modification_rows_source = [row for row in award_rows if has_modification_data(row)] or award_rows
-    concentration_note = "multi-agency procurement bridge rows" if bridge_rows else "normalized USAspending award rows"
+    modification_rows_source = action_rows or [row for row in award_rows if has_modification_data(row)] or award_rows
+    concentration_note = "multi-agency procurement bridge rows" if bridge_rows else ("normalized USAspending award rows" if rows else "normalized USAspending transaction/action rows")
     competition_note = "normalized USAspending award rows with competition fields" if rows else concentration_note
-    modification_note = "normalized USAspending award rows with modification fields" if rows else concentration_note
+    modification_note = "normalized USAspending transaction/action rows" if action_rows else ("normalized USAspending award rows with modification fields" if rows else concentration_note)
     by_recipient = grouped_amount(concentration_rows, "recipient")
     by_agency = grouped_amount(concentration_rows, "agency")
     by_sub_agency = grouped_amount(concentration_rows, "subAgency")
@@ -182,6 +186,7 @@ def usaspending_moments(scope: str, path: Path, bridge_path: Path) -> list[dict[
     return [
         moment(scope, "usaspending", "procurementRows", len(rows), "observed", "normalized USAspending award rows"),
         moment(scope, "usaspending", "procurementBridgeRows", len(bridge_rows), "observed", "multi-agency USAspending bridge rows, if available"),
+        moment(scope, "usaspending", "procurementActionRows", len(action_rows), "observed", "normalized USAspending transaction/action rows, if available"),
         moment(scope, "usaspending", "procurementCompetitionPanelRows", len(competition_rows), "diagnostic", f"rows used for competition moments from {competition_note}"),
         moment(scope, "usaspending", "procurementModificationPanelRows", len(modification_rows_source), "diagnostic", f"rows used for modification moments from {modification_note}"),
         moment(scope, "usaspending", "procurementBridgeAgencyCount", agency_count, "observed", "distinct awarding agencies in procurement source moment panel"),
@@ -200,6 +205,7 @@ def usaspending_moments(scope: str, path: Path, bridge_path: Path) -> list[dict[
         moment(scope, "usaspending", "procurementInitialAwardShare", safe_divide(len(initial_rows), len(modification_rows_source)), "observed_proxy", f"share of {modification_note} that appear to be initial awards"),
         moment(scope, "usaspending", "procurementExPostModificationShare", safe_divide(len(modified_rows), len(modification_rows_source)), "observed_proxy", f"share of {modification_note} marked as ex-post modifications or nonzero modification sequence"),
         moment(scope, "usaspending", "procurementAmountWeightedModificationShare", safe_divide(sum(number(row.get("amount")) for row in modified_rows), modification_total), "observed_proxy", f"award-amount share of {modification_note} marked as ex-post modifications"),
+        moment(scope, "usaspending", "procurementActionModificationRows", len([row for row in action_rows if flag(row.get("exPostModification")) or modification_sequence(row.get("modificationNumber")) > 0]), "diagnostic", "transaction/action rows marked as ex-post modifications"),
         moment(scope, "usaspending", "procurementPriceOnlyAwardShare", safe_divide(len(price_only_rows), len(competition_rows)), "observed_proxy", f"share among {competition_note} marked as price-only or one-offer awards"),
         moment(scope, "usaspending", "procurementLimitedCompetitionShare", safe_divide(len(limited_competition_rows), len(competition_rows)), "observed_proxy", f"share among {competition_note} with limited competition, exclusions, or one known offer"),
         moment(scope, "usaspending", "procurementProtestShare", safe_divide(len(protest_rows), len(award_rows)), "observed_proxy", "share of normalized award rows marked with a protest flag"),
@@ -477,11 +483,12 @@ def representativeness_warnings(rows: list[dict[str, str]]) -> list[str]:
         warnings.append(
             "Snapshot procurement concentration uses a multi-agency top-award bridge; this improves agency coverage but remains a sampling diagnostic rather than a representative SAM/FPDS panel."
         )
-    if metric_value(rows, "snapshot", "usaspending", "procurementLatestTransactionModificationProxy") >= 0.5:
+    action_rows = metric_value(rows, "snapshot", "usaspending", "procurementActionRows")
+    if metric_value(rows, "snapshot", "usaspending", "procurementLatestTransactionModificationProxy") >= 0.5 and action_rows <= 0:
         warnings.append(
             "Snapshot procurement latest-transaction modification enrichment is available, but modification incidence is reported from the award/action panel; representative SAM/FPDS transaction denominators are still needed before calibration."
         )
-    if metric_value(rows, "snapshot", "usaspending", "procurementInitialAwardShare") >= 0.95 and metric_value(rows, "snapshot", "usaspending", "procurementExPostModificationShare") <= 0.05:
+    if action_rows <= 0 and metric_value(rows, "snapshot", "usaspending", "procurementInitialAwardShare") >= 0.95 and metric_value(rows, "snapshot", "usaspending", "procurementExPostModificationShare") <= 0.05:
         warnings.append(
             "Snapshot procurement modification incidence is dominated by initial-award rows; use it as a coverage warning rather than an observed national modification rate."
         )

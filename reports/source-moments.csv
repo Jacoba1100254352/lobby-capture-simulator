@@ -39,6 +39,7 @@ snapshot,regulatory,commentFloodingIndex,0.3072,proxy,"combined top-docket conce
 snapshot,regulatory,technicalClaimCredibilityMean,0.5000,proxy,mean normalized technical claim credibility
 snapshot,usaspending,procurementRows,200.0000,observed,normalized USAspending award rows
 snapshot,usaspending,procurementBridgeRows,150.0000,observed,"multi-agency USAspending bridge rows, if available"
+snapshot,usaspending,procurementActionRows,0.0000,observed,"normalized USAspending transaction/action rows, if available"
 snapshot,usaspending,procurementCompetitionPanelRows,200.0000,diagnostic,rows used for competition moments from normalized USAspending award rows with competition fields
 snapshot,usaspending,procurementModificationPanelRows,200.0000,diagnostic,rows used for modification moments from normalized USAspending award rows with modification fields
 snapshot,usaspending,procurementBridgeAgencyCount,6.0000,observed,distinct awarding agencies in procurement source moment panel
@@ -57,6 +58,7 @@ snapshot,usaspending,procurementAmountWeightedSingleBidShare,0.2131,observed_pro
 snapshot,usaspending,procurementInitialAwardShare,1.0000,observed_proxy,share of normalized USAspending award rows with modification fields that appear to be initial awards
 snapshot,usaspending,procurementExPostModificationShare,0.0000,observed_proxy,share of normalized USAspending award rows with modification fields marked as ex-post modifications or nonzero modification sequence
 snapshot,usaspending,procurementAmountWeightedModificationShare,0.0000,observed_proxy,award-amount share of normalized USAspending award rows with modification fields marked as ex-post modifications
+snapshot,usaspending,procurementActionModificationRows,0.0000,diagnostic,transaction/action rows marked as ex-post modifications
 snapshot,usaspending,procurementPriceOnlyAwardShare,0.6050,observed_proxy,share among normalized USAspending award rows with competition fields marked as price-only or one-offer awards
 snapshot,usaspending,procurementLimitedCompetitionShare,0.4600,observed_proxy,"share among normalized USAspending award rows with competition fields with limited competition, exclusions, or one known offer"
 snapshot,usaspending,procurementProtestShare,0.0000,observed_proxy,share of normalized award rows marked with a protest flag
@@ -124,8 +126,9 @@ fixture,regulatory,commentFloodingIndex,0.4888,proxy,"combined top-docket concen
 fixture,regulatory,technicalClaimCredibilityMean,0.4875,proxy,mean normalized technical claim credibility
 fixture,usaspending,procurementRows,5.0000,observed,normalized USAspending award rows
 fixture,usaspending,procurementBridgeRows,0.0000,observed,"multi-agency USAspending bridge rows, if available"
+fixture,usaspending,procurementActionRows,5.0000,observed,"normalized USAspending transaction/action rows, if available"
 fixture,usaspending,procurementCompetitionPanelRows,5.0000,diagnostic,rows used for competition moments from normalized USAspending award rows with competition fields
-fixture,usaspending,procurementModificationPanelRows,5.0000,diagnostic,rows used for modification moments from normalized USAspending award rows with modification fields
+fixture,usaspending,procurementModificationPanelRows,5.0000,diagnostic,rows used for modification moments from normalized USAspending transaction/action rows
 fixture,usaspending,procurementBridgeAgencyCount,0.0000,observed,distinct awarding agencies in procurement source moment panel
 fixture,usaspending,procurementBridgeTopAwardSample,0.0000,diagnostic,1 when procurement concentration moments use a multi-agency top-award bridge
 fixture,usaspending,procurementLatestTransactionModificationProxy,0.0000,diagnostic,1 when latest-transaction enrichment exists but is kept separate from action-level modification incidence
@@ -139,9 +142,10 @@ fixture,usaspending,procurementSubAgencyTop3Share,0.8143,observed,top three sub-
 fixture,usaspending,procurementAwardCount,48.0000,observed,sum of normalized award or transaction counts in normalized USAspending award rows
 fixture,usaspending,procurementSingleBidShare,0.4000,observed_proxy,share among normalized USAspending award rows with competition fields that have one known offer
 fixture,usaspending,procurementAmountWeightedSingleBidShare,0.3429,observed_proxy,award-amount share among normalized USAspending award rows with competition fields with one known offer
-fixture,usaspending,procurementInitialAwardShare,0.4000,observed_proxy,share of normalized USAspending award rows with modification fields that appear to be initial awards
-fixture,usaspending,procurementExPostModificationShare,0.6000,observed_proxy,share of normalized USAspending award rows with modification fields marked as ex-post modifications or nonzero modification sequence
-fixture,usaspending,procurementAmountWeightedModificationShare,0.5571,observed_proxy,award-amount share of normalized USAspending award rows with modification fields marked as ex-post modifications
+fixture,usaspending,procurementInitialAwardShare,0.6000,observed_proxy,share of normalized USAspending transaction/action rows that appear to be initial awards
+fixture,usaspending,procurementExPostModificationShare,0.4000,observed_proxy,share of normalized USAspending transaction/action rows marked as ex-post modifications or nonzero modification sequence
+fixture,usaspending,procurementAmountWeightedModificationShare,0.1398,observed_proxy,award-amount share of normalized USAspending transaction/action rows marked as ex-post modifications
+fixture,usaspending,procurementActionModificationRows,2.0000,diagnostic,transaction/action rows marked as ex-post modifications
 fixture,usaspending,procurementPriceOnlyAwardShare,0.4000,observed_proxy,share among normalized USAspending award rows with competition fields marked as price-only or one-offer awards
 fixture,usaspending,procurementLimitedCompetitionShare,0.4000,observed_proxy,"share among normalized USAspending award rows with competition fields with limited competition, exclusions, or one known offer"
 fixture,usaspending,procurementProtestShare,0.0000,observed_proxy,share of normalized award rows marked with a protest flag

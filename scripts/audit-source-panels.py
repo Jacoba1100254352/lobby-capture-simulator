@@ -94,8 +94,9 @@ PANELS = [
         "maximum": 0.40,
         "missing": "modification proxy appears saturated or missing",
         "warningMetric": "procurementLatestTransactionModificationProxy",
-        "warning": "latest-transaction modification enrichment is available but kept separate from action-level incidence; representative transaction denominators are still absent",
-        "action": "Separate initial awards from post-award modifications and validate nonzero modification numbers against FPDS transactions.",
+        "warningAbsentMetric": "procurementActionRows",
+        "warning": "latest-transaction modification enrichment is available but an action-level transaction denominator is still absent",
+        "action": "Populate the procurement action panel from USAspending/SAM/FPDS transaction rows and validate nonzero modification numbers against FPDS actions.",
     },
 ]
 
@@ -180,6 +181,9 @@ def fixture_supported(panel: dict[str, object], value: float | None) -> bool:
 def panel_warning(panel: dict[str, object], moments: dict[str, dict[str, float]]) -> bool:
     metric = panel.get("warningMetric")
     if not metric:
+        return False
+    absent_metric = panel.get("warningAbsentMetric")
+    if absent_metric and moments["snapshot"].get(str(absent_metric), 0.0) > 0.0:
         return False
     return moments["snapshot"].get(str(metric), 0.0) >= 0.5
 
