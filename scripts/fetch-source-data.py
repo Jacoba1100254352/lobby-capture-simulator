@@ -157,8 +157,12 @@ def fetch_fec(output: Path) -> int:
 
     if os.environ.get("FEC_INCLUDE_SCHEDULE_E", "1") == "1":
         rows.extend(fetch_fec_outside_spending_rows(base, api_key))
+    if os.environ.get("FEC_INCLUDE_ELECTIONEERING", os.environ.get("FEC_INCLUDE_ELECTORAL_COMMUNICATIONS", "0")) == "1":
+        rows.extend(fetch_fec_electioneering_rows(base, api_key))
+    if os.environ.get("FEC_INCLUDE_COMMUNICATION_COSTS", os.environ.get("FEC_INCLUDE_ELECTORAL_COMMUNICATIONS", "0")) == "1":
+        rows.extend(fetch_fec_communication_cost_rows(base, api_key))
 
-    write_rows(output, FEC_FIELDS, rows, "OpenFEC campaign finance and independent-expenditure records")
+    write_rows(output, FEC_FIELDS, rows, "OpenFEC campaign finance, independent-expenditure, electioneering, and communication-cost records")
     return 0
 
 
@@ -199,6 +203,57 @@ def fetch_fec_outside_spending_rows(base: str, api_key: str) -> list[dict[str, o
         if not isinstance(last_indexes, dict) or not last_indexes:
             break
         next_params.update({key: str(value) for key, value in last_indexes.items() if value not in (None, "")})
+    return rows
+
+
+def fetch_fec_electioneering_rows(base: str, api_key: str) -> list[dict[str, object]]:
+    params = {
+        "api_key": api_key,
+        "per_page": os.environ.get("FEC_ELECTIONEERING_PAGE_SIZE", os.environ.get("FEC_PAGE_SIZE", "50")),
+        "report_year": os.environ.get("FEC_CYCLE", "2024"),
+        "sort": os.environ.get("FEC_ELECTIONEERING_SORT", "-disbursement_date"),
+        "min_amount": os.environ.get("FEC_ELECTIONEERING_MIN_AMOUNT", "1000"),
+    }
+    if os.environ.get("FEC_ELECTIONEERING_COMMITTEE_ID"):
+        params["committee_id"] = os.environ["FEC_ELECTIONEERING_COMMITTEE_ID"]
+    if os.environ.get("FEC_ELECTIONEERING_CANDIDATE_ID"):
+        params["candidate_id"] = os.environ["FEC_ELECTIONEERING_CANDIDATE_ID"]
+    rows = []
+    max_pages = int_env("FEC_ELECTIONEERING_MAX_PAGES", 3, 1, 25)
+    for page in range(1, max_pages + 1):
+        page_params = dict(params)
+        page_params["page"] = str(page)
+        payload = get_json(f"{base}/electioneering/?{urlencode(page_params)}")
+        rows.extend(normalize_fec_electioneering_records(payload.get("results", [])))
+        pagination = payload.get("pagination", {}) if isinstance(payload, dict) else {}
+        if not pagination.get("pages") or page >= int(pagination.get("pages", page)):
+            break
+    return rows
+
+
+def fetch_fec_communication_cost_rows(base: str, api_key: str) -> list[dict[str, object]]:
+    start_date, end_date = fec_cycle_window()
+    params = {
+        "api_key": api_key,
+        "per_page": os.environ.get("FEC_COMMUNICATION_COST_PAGE_SIZE", os.environ.get("FEC_PAGE_SIZE", "50")),
+        "min_date": os.environ.get("FEC_COMMUNICATION_COST_MIN_DATE", start_date),
+        "max_date": os.environ.get("FEC_COMMUNICATION_COST_MAX_DATE", end_date),
+        "min_amount": os.environ.get("FEC_COMMUNICATION_COST_MIN_AMOUNT", "1000"),
+    }
+    if os.environ.get("FEC_COMMUNICATION_COST_COMMITTEE_ID"):
+        params["committee_id"] = os.environ["FEC_COMMUNICATION_COST_COMMITTEE_ID"]
+    if os.environ.get("FEC_COMMUNICATION_COST_CANDIDATE_ID"):
+        params["candidate_id"] = os.environ["FEC_COMMUNICATION_COST_CANDIDATE_ID"]
+    rows = []
+    max_pages = int_env("FEC_COMMUNICATION_COST_MAX_PAGES", 3, 1, 25)
+    for page in range(1, max_pages + 1):
+        page_params = dict(params)
+        page_params["page"] = str(page)
+        payload = get_json(f"{base}/communication_costs/?{urlencode(page_params)}")
+        rows.extend(normalize_fec_communication_cost_records(payload.get("results", [])))
+        pagination = payload.get("pagination", {}) if isinstance(payload, dict) else {}
+        if not pagination.get("pages") or page >= int(pagination.get("pages", page)):
+            break
     return rows
 
 
@@ -251,6 +306,60 @@ def normalize_fec_independent_expenditure_records(records: list[dict[str, object
                 "sourceRecordId": first_text(record, "transaction_id", "image_number", "file_number", default=""),
                 "sourceUrl": fec_source_url(first_text(record, "image_number", default="")),
                 "committeeType": committee_type or "independent expenditure",
+                "spendingPurpose": purpose,
+                "supportOppose": first_text(record, "support_oppose_indicator", "support_oppose_indicator_full", default=""),
+                "disclosureLag": fec_visibility_lag(record),
+            }
+        )
+    return rows
+
+
+def normalize_fec_electioneering_records(records: list[dict[str, object]]) -> list[dict[str, object]]:
+    rows = []
+    for record in records:
+        source = first_text(record, "committee_name", "committee.name", "filer_name_text", default="Unknown electioneering filer")
+        candidate = first_text(record, "candidate_name", "candidate.name", default="Unknown candidate")
+        purpose = first_text(record, "purpose_description", "disbursement_description", default="electioneering communication")
+        amount = money_millions(first_text(record, "disbursement_amount", "calculated_candidate_share", "amount", default="0"))
+        rows.append(
+            {
+                "source": source,
+                "recipient": candidate,
+                "issueDomain": classify_domain(" ".join([source, candidate, purpose, "election democracy"])),
+                "amount": amount,
+                "flowType": "ELECTIONEERING",
+                "traceability": 0.50,
+                "largeDonorShare": 0.74,
+                "sourceRecordId": first_text(record, "sub_id", "link_id", "file_number", "sb_image_num", default=""),
+                "sourceUrl": first_text(record, "pdf_url", default=fec_source_url(first_text(record, "sb_image_num", "beginning_image_number", default=""))),
+                "committeeType": "electioneering communication",
+                "spendingPurpose": purpose,
+                "supportOppose": first_text(record, "election_type", default=""),
+                "disclosureLag": fec_visibility_lag(record),
+            }
+        )
+    return rows
+
+
+def normalize_fec_communication_cost_records(records: list[dict[str, object]]) -> list[dict[str, object]]:
+    rows = []
+    for record in records:
+        source = first_text(record, "committee_name", "committee.name", default="Unknown communication spender")
+        candidate = first_text(record, "candidate_name", default="Unknown candidate")
+        purpose = first_text(record, "purpose", "communication_type_full", "schedule_type_full", default="communication cost")
+        amount = money_millions(first_text(record, "transaction_amount", "amount", default="0"))
+        rows.append(
+            {
+                "source": source,
+                "recipient": candidate,
+                "issueDomain": classify_domain(" ".join([source, candidate, purpose, "election democracy"])),
+                "amount": amount,
+                "flowType": "COMMUNICATION_COST",
+                "traceability": 0.64,
+                "largeDonorShare": 0.66,
+                "sourceRecordId": first_text(record, "tran_id", "transaction_id", "sub_id", "image_number", default=""),
+                "sourceUrl": first_text(record, "pdf_url", default=fec_source_url(first_text(record, "image_number", default=""))),
+                "committeeType": first_text(record, "schedule_type_full", "communication_type_full", default="communication cost"),
                 "spendingPurpose": purpose,
                 "supportOppose": first_text(record, "support_oppose_indicator", "support_oppose_indicator_full", default=""),
                 "disclosureLag": fec_visibility_lag(record),
@@ -1268,11 +1377,28 @@ def fec_source_url(image_number: str) -> str:
 
 def fec_visibility_lag(record: dict[str, object]) -> float:
     filed = parse_date(first_text(record, "filed_date", "filing_date", "receipt_date", default=""))
-    activity = parse_date(first_text(record, "expenditure_date", "dissemination_date", "contribution_receipt_date", default=""))
+    activity = parse_date(first_text(
+        record,
+        "expenditure_date",
+        "disbursement_date",
+        "communication_date",
+        "transaction_date",
+        "public_distribution_date",
+        "dissemination_date",
+        "contribution_receipt_date",
+        default="",
+    ))
     if filed is None or activity is None:
         return float_env("FEC_DISCLOSURE_VISIBILITY_LAG", 0.28, 0.0, 1.0)
     days = max(0, (filed - activity).days)
-    return ValuesProxy.clamp(0.08 + (days / 120.0), 0.04, 0.70)
+    return round(ValuesProxy.clamp(0.08 + (days / 120.0), 0.04, 0.70), 4)
+
+
+def fec_cycle_window() -> tuple[str, str]:
+    cycle = int_or_zero(os.environ.get("FEC_CYCLE", "2024"))
+    if cycle <= 0:
+        cycle = 2024
+    return f"{cycle - 1}-01-01", f"{cycle}-12-31"
 
 
 def get_json(url: str, headers: dict[str, str] | None = None) -> dict[str, object] | list[object]:

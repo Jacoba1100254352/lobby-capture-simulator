@@ -700,6 +700,7 @@
           "labels": {
             "Direct dark money": "Direct dark money",
             "Outside spending": "Outside spending",
+            "Electoral communications": "Electoral comms.",
             "Public financing": "Public financing",
             "Intermediaries": "Intermediaries",
             "Revolving door": "Revolving door",
@@ -716,6 +717,7 @@
           "labels": {
             "Opaque donor routing and hidden electoral influence": "Opaque donor routing",
             "Independent expenditure pressure outside candidate finance": "Independent expenditures",
+            "Electioneering and communication-cost channels outside ordinary receipts": "Electioneering/communication costs",
             "Countervailing campaign finance and voucher/matching funds": "Public financing",
             "Association, nonprofit, think-tank, and campaign-intermediary capacity": "Intermediaries",
             "Post-government access, covered-position links, and cooling-off exposure": "Revolving door",
@@ -746,6 +748,7 @@
           "labels": {
             "Direct dark money": "thin proxy bridge",
             "Outside spending": "direct rows",
+            "Electoral communications": "no rows",
             "Public financing": "thin program rows",
             "Intermediaries": "proxy rows",
             "Revolving door": "thin proxy rows",

@@ -372,7 +372,7 @@ Benchmark ranges are plausibility checks, not causal empirical claims. `source_g
 | lobby-capture-sensitivity.csv | venueShiftNetworkLoad | 0.0836-0.2974 | 0.00-0.85 | fit | all scenario values inside benchmark range; scope=all scenarios; rows=20 |
 | source-moments.csv | commentFloodingIndex | 0.3072-0.3072 | 0.00-1.00 | fit | source moment inside benchmark range |
 | source-moments.csv | fecDonorTop3Share | 0.3715-0.3715 | 0.10-0.85 | fit | source moment inside benchmark range |
-| source-moments.csv | darkMoneyDirectVisibility | 0.2028-0.2028 | 0.00-0.10 | source_gap | dark-money source panel is thin and proxy-backed; direct hidden-donor or electioneering rows are needed; source moment outside benchmark range |
+| source-moments.csv | darkMoneyDirectVisibility | 0.2028-0.2028 | 0.00-0.10 | source_gap | dark-money source panel is thin and proxy-backed; direct hidden-donor or nonprofit-routing records are needed, while electioneering rows remain separate electoral-communication evidence; source moment outside benchmark range |
 | source-moments.csv | procurementAgencyTop1Share | 0.5134-0.5134 | 0.55-0.65 | source_gap | multi-agency procurement bridge is present but top-award sampling is not representative enough for agency-concentration calibration; source moment outside benchmark range |
 | source-moments.csv | procurementRecipientTop3Share | 0.2852-0.2852 | 0.25-0.40 | fit | source moment inside benchmark range |
 | source-moments.csv | revolvingDoorInfluenceMean | 0.3400-0.3400 | 0.25-0.75 | fit | source moment inside benchmark range |

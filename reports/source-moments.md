@@ -4,6 +4,7 @@ These are direct moments from normalized calibration tables. They are source dia
 
 ## Representativeness Warnings
 
+- Snapshot campaign-finance rows contain no OpenFEC electioneering or communication-cost rows; electoral communication channels are parser-ready but not yet represented in the pinned snapshot.
 - Snapshot procurement concentration uses a multi-agency top-award bridge; this improves agency coverage but remains a sampling diagnostic rather than a representative SAM/FPDS panel.
 - Snapshot procurement latest-transaction modification enrichment is available, but modification incidence is reported from the award/action panel; representative SAM/FPDS transaction denominators are still needed before calibration.
 - Snapshot procurement modification incidence is dominated by initial-award rows; use it as a coverage warning rather than an observed national modification rate.
@@ -32,7 +33,12 @@ These are direct moments from normalized calibration tables. They are source dia
 | snapshot | fec | `darkMoneySourceShare` | 0.0249 | observed_proxy | DARK_MONEY or opaque-capacity bridge share of normalized campaign-finance plus bridge amount |
 | snapshot | fec | `superPacSourceShare` | 0.0076 | observed_proxy | SUPER_PAC share of normalized campaign-finance plus bridge amount |
 | snapshot | fec | `opaqueElectoralSourceShare` | 0.0326 | observed_proxy | DARK_MONEY plus SUPER_PAC share of normalized campaign-finance plus bridge amount |
-| snapshot | fec | `outsideSpendingRows` | 650.0000 | observed | normalized independent expenditure, super PAC, dark-money, or association rows |
+| snapshot | fec | `electioneeringRows` | 0.0000 | observed | normalized OpenFEC electioneering communication rows |
+| snapshot | fec | `communicationCostRows` | 0.0000 | observed | normalized OpenFEC communication-cost rows |
+| snapshot | fec | `electoralCommunicationRows` | 0.0000 | observed | normalized electioneering plus communication-cost rows |
+| snapshot | fec | `electoralCommunicationSourceShare` | 0.0000 | observed_proxy | electioneering and communication-cost share of normalized campaign-finance plus bridge amount |
+| snapshot | fec | `electoralCommunicationTraceabilityMean` | 0.0000 | observed_proxy | amount-weighted traceability among electioneering and communication-cost rows |
+| snapshot | fec | `outsideSpendingRows` | 650.0000 | observed | normalized independent expenditure, super PAC, dark-money, association, electioneering, or communication-cost rows |
 | snapshot | fec | `outsideSpendingSourceShare` | 0.0326 | observed_proxy | outside-spending bridge share of normalized campaign-finance plus bridge amount |
 | snapshot | fec | `outsideSpendingTop3SourceShare` | 0.2159 | observed_proxy | top three outside spenders by normalized amount |
 | snapshot | fec | `outsideSpendingDisclosureLagMean` | 0.5593 | observed_proxy | amount-weighted reporting lag among outside-spending rows |
@@ -119,7 +125,12 @@ These are direct moments from normalized calibration tables. They are source dia
 | fixture | fec | `darkMoneySourceShare` | 0.0905 | observed_proxy | DARK_MONEY or opaque-capacity bridge share of normalized campaign-finance plus bridge amount |
 | fixture | fec | `superPacSourceShare` | 0.1067 | observed_proxy | SUPER_PAC share of normalized campaign-finance plus bridge amount |
 | fixture | fec | `opaqueElectoralSourceShare` | 0.1972 | observed_proxy | DARK_MONEY plus SUPER_PAC share of normalized campaign-finance plus bridge amount |
-| fixture | fec | `outsideSpendingRows` | 2.0000 | observed | normalized independent expenditure, super PAC, dark-money, or association rows |
+| fixture | fec | `electioneeringRows` | 0.0000 | observed | normalized OpenFEC electioneering communication rows |
+| fixture | fec | `communicationCostRows` | 0.0000 | observed | normalized OpenFEC communication-cost rows |
+| fixture | fec | `electoralCommunicationRows` | 0.0000 | observed | normalized electioneering plus communication-cost rows |
+| fixture | fec | `electoralCommunicationSourceShare` | 0.0000 | observed_proxy | electioneering and communication-cost share of normalized campaign-finance plus bridge amount |
+| fixture | fec | `electoralCommunicationTraceabilityMean` | 0.0000 | observed_proxy | amount-weighted traceability among electioneering and communication-cost rows |
+| fixture | fec | `outsideSpendingRows` | 2.0000 | observed | normalized independent expenditure, super PAC, dark-money, association, electioneering, or communication-cost rows |
 | fixture | fec | `outsideSpendingSourceShare` | 0.1972 | observed_proxy | outside-spending bridge share of normalized campaign-finance plus bridge amount |
 | fixture | fec | `outsideSpendingTop3SourceShare` | 1.0000 | observed_proxy | top three outside spenders by normalized amount |
 | fixture | fec | `outsideSpendingDisclosureLagMean` | 0.2800 | observed_proxy | amount-weighted reporting lag among outside-spending rows |

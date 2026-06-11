@@ -26,7 +26,7 @@ Use this before creating a journal submission archive or public release tag.
 
 ## Source-Panel Guardrails
 
-- Direct dark-money rows must remain separate from super PAC and Schedule E rows.
+- Direct dark-money rows must remain separate from super PAC, Schedule E, electioneering, and communication-cost rows.
 - Public-financing rows must remain separate from ordinary campaign receipts unless the manuscript explicitly reports an all-campaign denominator.
 - Procurement reports must separate initial awards from post-award modifications.
 - Fixture-only rows can support schema and mechanism tests, but cannot be described as representative empirical calibration.

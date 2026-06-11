@@ -75,6 +75,44 @@ def assert_fec(fetchers) -> None:
     }, rows[0]
     assert rows[1]["flowType"] == "SUPER_PAC", rows[1]
     assert rows[1]["issueDomain"] == "technology", rows[1]
+    electioneering_payload = read_json("fec-electioneering.json")
+    electioneering_rows = fetchers.normalize_fec_electioneering_records(electioneering_payload["results"])
+    assert electioneering_rows == [
+        {
+            "source": "VOTE YES FOR A STRONG SOUTH DAKOTA",
+            "recipient": "TRUMP, DONALD J.",
+            "issueDomain": "democracy",
+            "amount": 0.2525,
+            "flowType": "ELECTIONEERING",
+            "traceability": 0.50,
+            "largeDonorShare": 0.74,
+            "sourceRecordId": "4010820251127768002",
+            "sourceUrl": "https://docquery.fec.gov/cgi-bin/fecimg/?202412139739894332",
+            "committeeType": "electioneering communication",
+            "spendingPurpose": "ADVERTISING PLACEMENT RELATED TO FOLLOW THE MONEY",
+            "supportOppose": "G",
+            "disclosureLag": 0.4383,
+        }
+    ], electioneering_rows
+    communication_payload = read_json("fec-communication-costs.json")
+    communication_rows = fetchers.normalize_fec_communication_cost_records(communication_payload["results"])
+    assert communication_rows == [
+        {
+            "source": "CALIFORNIA LABOR FEDERATION, AFL-CIO",
+            "recipient": "HARDER, JOSH",
+            "issueDomain": "democracy",
+            "amount": 0.0,
+            "flowType": "COMMUNICATION_COST",
+            "traceability": 0.64,
+            "largeDonorShare": 0.66,
+            "sourceRecordId": "F76020719518521",
+            "sourceUrl": "https://docquery.fec.gov/pdf/185/201902050300265185/201902050300265185.pdf",
+            "committeeType": "FOR EACH COMMUNICATION",
+            "spendingPurpose": "MEMBERS",
+            "supportOppose": "S",
+            "disclosureLag": 0.7,
+        }
+    ], communication_rows
 
 
 def assert_regulations(fetchers) -> None:

@@ -295,7 +295,7 @@ def source_scope_gap(metric: str, value: float, source_moments: dict[str, float]
     if metric == "procurementExPostModificationShare" and latest_transaction_mod_proxy and procurement_action_rows <= 0:
         return "latest-transaction modification enrichment is kept separate from action-level incidence; representative FPDS/SAM transaction denominators are still needed"
     if metric == "darkMoneyDirectVisibility" and thin_dark_money_panel:
-        return "dark-money source panel is thin and proxy-backed; direct hidden-donor or electioneering rows are needed"
+        return "dark-money source panel is thin and proxy-backed; direct hidden-donor or nonprofit-routing records are needed, while electioneering rows remain separate electoral-communication evidence"
     return ""
 
 

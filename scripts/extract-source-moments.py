@@ -90,11 +90,17 @@ def fec_moments(scope: str, path: Path, public_financing_path: Path, dark_money_
     all_dark_money_rows = dark_money_rows + dark_money_bridge_rows
     all_dark_money_total = sum(number(row.get("amount")) for row in all_dark_money_rows)
     super_pac_rows = [row for row in rows if row.get("flowType", "").upper() == "SUPER_PAC"]
+    electioneering_rows = [row for row in rows if row.get("flowType", "").upper() == "ELECTIONEERING"]
+    communication_cost_rows = [row for row in rows if row.get("flowType", "").upper() == "COMMUNICATION_COST"]
+    electoral_communication_rows = electioneering_rows + communication_cost_rows
     public_rows = [row for row in rows if row.get("flowType", "").upper() in {"PUBLIC_MATCH", "DEMOCRACY_VOUCHER"}]
     all_public_rows = public_rows + public_bridge_rows
     all_public_total = sum(number(row.get("amount")) for row in all_public_rows)
     opaque_electoral_rows = all_dark_money_rows + super_pac_rows
-    outside_rows = [row for row in rows if row.get("flowType", "").upper() in {"DARK_MONEY", "SUPER_PAC", "TRADE_ASSOCIATION"}] + dark_money_bridge_rows
+    outside_rows = [
+        row for row in rows
+        if row.get("flowType", "").upper() in {"DARK_MONEY", "SUPER_PAC", "TRADE_ASSOCIATION", "ELECTIONEERING", "COMMUNICATION_COST"}
+    ] + dark_money_bridge_rows
     by_outside_source = grouped_amount(outside_rows, "source")
     campaign_total = total + all_public_total + all_dark_money_total
     return [
@@ -111,7 +117,12 @@ def fec_moments(scope: str, path: Path, public_financing_path: Path, dark_money_
         moment(scope, "fec", "darkMoneySourceShare", safe_divide(all_dark_money_total, campaign_total), "observed_proxy", "DARK_MONEY or opaque-capacity bridge share of normalized campaign-finance plus bridge amount"),
         moment(scope, "fec", "superPacSourceShare", safe_divide(sum(number(row.get("amount")) for row in super_pac_rows), campaign_total), "observed_proxy", "SUPER_PAC share of normalized campaign-finance plus bridge amount"),
         moment(scope, "fec", "opaqueElectoralSourceShare", safe_divide(sum(number(row.get("amount")) for row in opaque_electoral_rows), campaign_total), "observed_proxy", "DARK_MONEY plus SUPER_PAC share of normalized campaign-finance plus bridge amount"),
-        moment(scope, "fec", "outsideSpendingRows", len(outside_rows), "observed", "normalized independent expenditure, super PAC, dark-money, or association rows"),
+        moment(scope, "fec", "electioneeringRows", len(electioneering_rows), "observed", "normalized OpenFEC electioneering communication rows"),
+        moment(scope, "fec", "communicationCostRows", len(communication_cost_rows), "observed", "normalized OpenFEC communication-cost rows"),
+        moment(scope, "fec", "electoralCommunicationRows", len(electoral_communication_rows), "observed", "normalized electioneering plus communication-cost rows"),
+        moment(scope, "fec", "electoralCommunicationSourceShare", safe_divide(sum(number(row.get("amount")) for row in electoral_communication_rows), campaign_total), "observed_proxy", "electioneering and communication-cost share of normalized campaign-finance plus bridge amount"),
+        moment(scope, "fec", "electoralCommunicationTraceabilityMean", weighted(electoral_communication_rows, "traceability", "amount"), "observed_proxy", "amount-weighted traceability among electioneering and communication-cost rows"),
+        moment(scope, "fec", "outsideSpendingRows", len(outside_rows), "observed", "normalized independent expenditure, super PAC, dark-money, association, electioneering, or communication-cost rows"),
         moment(scope, "fec", "outsideSpendingSourceShare", safe_divide(sum(number(row.get("amount")) for row in outside_rows), campaign_total), "observed_proxy", "outside-spending bridge share of normalized campaign-finance plus bridge amount"),
         moment(scope, "fec", "outsideSpendingTop3SourceShare", top_share(by_outside_source, 3), "observed_proxy", "top three outside spenders by normalized amount"),
         moment(scope, "fec", "outsideSpendingDisclosureLagMean", weighted(outside_rows, "disclosureLag", "amount"), "observed_proxy", "amount-weighted reporting lag among outside-spending rows"),
@@ -451,6 +462,8 @@ def representativeness_warnings(rows: list[dict[str, str]]) -> list[str]:
         warnings.append("Snapshot campaign-finance rows contain no direct DARK_MONEY flow share; dark-money calibration still depends on benchmark and scenario assumptions even though Schedule E outside-spending rows are present.")
     if metric_value(rows, "snapshot", "fec", "outsideSpendingRows") == 0.0:
         warnings.append("Snapshot campaign-finance rows contain no Schedule E or outside-spending bridge rows; substitution through outside spending remains weakly anchored.")
+    if metric_value(rows, "snapshot", "fec", "electoralCommunicationRows") == 0.0:
+        warnings.append("Snapshot campaign-finance rows contain no OpenFEC electioneering or communication-cost rows; electoral communication channels are parser-ready but not yet represented in the pinned snapshot.")
     if metric_value(rows, "snapshot", "fec", "publicFinancingRows") == 0.0:
         warnings.append("Snapshot campaign-finance rows contain no public-match or democracy-voucher bridge rows; public-financing calibration still depends on external benchmarks.")
     revolving_rows = metric_value(rows, "snapshot", "revolving-door", "revolvingDoorRows")

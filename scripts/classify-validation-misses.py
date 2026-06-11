@@ -19,7 +19,7 @@ CATEGORY_BY_METRIC = {
     "donorInfluenceGini": ("direct-source-moment", "replace report-level proxy with top-k donor/client moments from source tables"),
     "largeDonorDependence": ("model-tuning", "inspect remaining campaign/outside rows and tune allocation-to-source concentration only where high-end outside spending is intended"),
     "darkMoneyTraceability": ("metric-split", "keep all-flow traceability separate from dark-only direct visibility"),
-    "darkMoneyDirectVisibility": ("direct-source-moment", "replace thin proxy rows with direct hidden-donor, electioneering, or nonprofit-routing source records"),
+    "darkMoneyDirectVisibility": ("direct-source-moment", "replace thin proxy rows with direct hidden-donor or nonprofit-routing source records; keep electioneering rows separate from hidden-donor evidence"),
     "hiddenInfluenceShare": ("scenario-coverage", "add stress cases where reforms bind enough to force hidden substitution"),
     "commentUniqueInformationShare": ("model-tuning", "lower unique-information weight for template-heavy dockets"),
     "commentCompressionRate": ("model-tuning", "raise compression under anti-astroturf and duplicate-detection tooling"),

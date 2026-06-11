@@ -28,7 +28,7 @@ The simulator now has a lobbying-centered model core with calibration fixtures, 
 - `scripts/run-2024-env-live-snapshot.sh` executes the pinned 2024 EPA/ENV live run, preserves ignored raw payloads, and records public API rate-limit gaps.
 - The default live-run pipeline uses source-native no-key NYC CFB public-financing rows, NYC CFB intermediary rows, IRS EO BMF nonprofit/association capacity rows, and IRS EO BMF 501(c)(4)/(c)(6) opaque-capacity proxy rows when configured. These replace fixture fallback for the default refresh path, but the dark-money bridge remains a capacity proxy rather than direct observed hidden donor/expenditure data.
 - `--live` fetch modes can normalize caller-provided CSVs or query LDA, OpenFEC, Regulations.gov, and Federal Register APIs directly.
-- Source-native parser fixtures exercise LDA, OpenFEC, Regulations.gov, Federal Register, USAspending award JSON, and USAspending transaction JSON without network access.
+- Source-native parser fixtures exercise LDA, OpenFEC contribution, OpenFEC electioneering, OpenFEC communication-cost, Regulations.gov, Federal Register, USAspending award JSON, and USAspending transaction JSON without network access.
 - Live source fetches retry transient `429` and `5xx` responses and redact API keys from error URLs.
 - `make source-moments` records direct source-level top-k concentration, traceability, Schedule E outside-spending, direct dark-money visibility, public-financing, procurement bridge, revolving-door, and comment-record moments.
 - `make calibration-queue` classifies validation misses and partial overlaps into actionable work categories.
@@ -51,11 +51,11 @@ Deliverables:
 
 ## 2. Expand the empirical source panels beyond the current 2024 EPA/ENV snapshot
 
-The latest key-backed live run now completes the LDA, six-committee OpenFEC, Schedule E outside-spending, Regulations.gov, Federal Register, USAspending enrichment, and LDA-derived revolving-door requests. Public financing and intermediary panels still fall back to fixtures because no source CSV/URL export is configured. The remaining problem is mostly representativeness, with those two bridge panels still needing direct source inputs.
+The latest key-backed live run now completes the LDA, six-committee OpenFEC, Schedule E outside-spending, OpenFEC electioneering/communication-cost when enabled, Regulations.gov, Federal Register, USAspending enrichment, and LDA-derived revolving-door requests. Public financing and intermediary panels now have source-native no-key paths, but their geographic/program scope remains narrower than a national calibration panel.
 
 Deliverables:
 
-- add direct dark-money identifiers and electioneering/lobbyist-bundling rows rather than treating Schedule E super PAC spending as dark money;
+- add direct dark-money identifiers and lobbyist-bundling rows rather than treating Schedule E, electioneering, communication-cost, or IRS opaque-capacity proxy rows as observed hidden-donor routing;
 - replace the public-financing bridge with representative voucher and matching-fund source panels;
 - add IRS 8871/8872, TEOS, and Form 990 XML rows for 527s, 501(c)(4)s, 501(c)(6)s, think tanks, associations, and nonprofit intermediaries;
 - add FACA, House witness disclosure, and OGE panels for sponsored-expert, advisory-committee, and official-access bridges;
@@ -67,7 +67,7 @@ Deliverables:
 
 ## 3. Broaden SAM/FPDS, revolving-door, and intermediary source panels
 
-The source-moment layer now covers LDA, OpenFEC party/Schedule E rows, regulatory dockets, USAspending award, bridge, and action-panel fields, public-financing bridge rows, and LDA-derived covered-position rows. Procurement, revolving-door, and intermediary validation still need richer representative data rather than narrow or fixture-backed panels.
+The source-moment layer now covers LDA, OpenFEC party/Schedule E/electioneering/communication-cost rows, regulatory dockets, USAspending award, bridge, and action-panel fields, public-financing bridge rows, and LDA-derived covered-position rows. Procurement, revolving-door, and intermediary validation still need richer representative data rather than narrow or fixture-backed panels.
 
 Deliverables:
 

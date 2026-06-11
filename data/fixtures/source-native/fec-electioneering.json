@@ -1,0 +1,27 @@
+{
+  "pagination": {
+    "count": 1,
+    "pages": 1,
+    "per_page": 1
+  },
+  "results": [
+    {
+      "committee_id": "C30003560",
+      "committee_name": "VOTE YES FOR A STRONG SOUTH DAKOTA",
+      "candidate_id": "P80001571",
+      "candidate_name": "TRUMP, DONALD J.",
+      "communication_date": "2024-10-31",
+      "disbursement_amount": 252550.0,
+      "disbursement_date": "2024-10-31",
+      "election_type": "G",
+      "file_number": 1859963,
+      "link_id": 4121320241076117001,
+      "pdf_url": "https://docquery.fec.gov/cgi-bin/fecimg/?202412139739894332",
+      "purpose_description": "ADVERTISING PLACEMENT RELATED TO FOLLOW THE MONEY",
+      "receipt_date": "2024-12-13",
+      "report_year": 2024,
+      "sb_image_num": "202412139739894332",
+      "sub_id": 4010820251127768002
+    }
+  ]
+}

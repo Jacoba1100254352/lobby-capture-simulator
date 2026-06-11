@@ -21,7 +21,7 @@ PANELS = [
         "minimum": 0.001,
         "good": 0.05,
         "missing": "no direct DARK_MONEY rows or opaque-capacity bridge rows in the snapshot",
-        "action": "Add explicit electioneering/curated dark-money rows where available; use IRS 501(c)(4)/(c)(6) rows only as opaque-capacity proxies and keep Schedule E super PAC rows separate.",
+        "action": "Add curated direct dark-money or nonprofit-routing rows where available; use IRS 501(c)(4)/(c)(6) rows only as opaque-capacity proxies and keep Schedule E, electioneering, and communication-cost rows separate.",
     },
     {
         "panel": "Outside spending",
@@ -31,7 +31,17 @@ PANELS = [
         "minimum": 25.0,
         "good": 250.0,
         "missing": "outside-spending bridge is too small",
-        "action": "Broaden OpenFEC Schedule E, electioneering communication, independent expenditure, and spender/payee coverage.",
+        "action": "Broaden OpenFEC Schedule E, electioneering communication, communication-cost, independent-expenditure, and spender/payee coverage.",
+    },
+    {
+        "panel": "Electoral communications",
+        "metric": "electoralCommunicationRows",
+        "mechanism": "Electioneering and communication-cost channels outside ordinary receipts",
+        "evidenceClass": "direct",
+        "minimum": 1.0,
+        "good": 50.0,
+        "missing": "no electioneering or communication-cost rows in the pinned snapshot",
+        "action": "Enable the OpenFEC electioneering and communication-cost source-native fetchers in the next live snapshot and keep these rows separate from direct dark-money evidence.",
     },
     {
         "panel": "Public financing",
