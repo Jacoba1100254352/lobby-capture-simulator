@@ -3,8 +3,6 @@
 \begin{center}
 \begin{minipage}{\textwidth}
 \centering
-\refstepcounter{table}
-\label{tab:validation-gaps}
 \scriptsize
 \setlength{\tabcolsep}{2pt}
 \begin{tabular*}{\textwidth}{@{\extracolsep{\fill}}llllll@{}}
@@ -24,7 +22,9 @@ Proc. mods & Post-award pressure & proxy/thin & no mod rows & yes & warning \\
 \bottomrule
 \end{tabular*}
 \par\smallskip
-\small \textbf{\tablename~\thetable.} Source-panel coverage for the 2024 EPA/ENV validation snapshot. Snapshot support is categorical in the main article; numeric source moments remain in the source-panel inventory report. Schema scaffold indicates whether a mechanism bridge exists outside representative source coverage. Thin, warning, fixture-only, or missing rows are validation gaps.
+\captionsetup{hypcap=false}
+\captionof{table}{Source-panel coverage for the 2024 EPA/ENV validation snapshot. Snapshot support is categorical in the main article; numeric source moments remain in the source-panel inventory report. Schema scaffold indicates whether a mechanism bridge exists outside representative source coverage. Thin, warning, fixture-only, or missing rows are validation gaps.}
+\label{tab:validation-gaps}
 \end{minipage}
 \end{center}
 \endgroup

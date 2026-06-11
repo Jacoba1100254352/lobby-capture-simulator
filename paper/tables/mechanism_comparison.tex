@@ -3,8 +3,6 @@
 \begin{center}
 \begin{minipage}{\textwidth}
 \centering
-\refstepcounter{table}
-\label{tab:mechanism-comparison}
 \scriptsize
 \setlength{\tabcolsep}{1.5pt}
 \begin{tabular*}{\textwidth}{@{\extracolsep{\fill}}lrrrrrr@{}}
@@ -23,7 +21,9 @@ Strong & Multi/subst. & 0.436 & 0.389 & 0.155 & 0.270 & 0.283 \\
 \bottomrule
 \end{tabular*}
 \par\smallskip
-\small \textbf{\tablename~\thetable.} Model-mode comparison across low-, moderate-, and strong-reform families. The rows separate a visible single-channel baseline, a multi-channel model with substitution disabled, and the substitution-enabled model.
+\captionsetup{hypcap=false}
+\captionof{table}{Model-mode comparison across low-, moderate-, and strong-reform families. The rows separate a visible single-channel baseline, a multi-channel model with substitution disabled, and the substitution-enabled model.}
+\label{tab:mechanism-comparison}
 \end{minipage}
 \end{center}
 \endgroup
