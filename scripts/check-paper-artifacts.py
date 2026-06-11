@@ -27,7 +27,9 @@ SUBMISSION_ZIP = DIST / "lobby-capture-wiley-submission.zip"
 SUBMISSION_DECLARATIONS = PAPER / "sections" / "submission-declarations.tex"
 REGGOV_BODY = PAPER / "sections" / "reggov-body.tex"
 VALIDATION_SUMMARY = ROOT / "reports" / "validation-summary.md"
-RELEASE_TAG = "paper-publication-readiness-2026-06-11-r17"
+LAYOUT_AUDIT = ROOT / "reports" / "paper-layout-audit.md"
+MANUAL_VISUAL_AUDIT = ROOT / "reports" / "manual-visual-audit.md"
+RELEASE_TAG = "paper-publication-readiness-2026-06-11-r18"
 CITATION_CFF = ROOT / "CITATION.cff"
 ZENODO_JSON = ROOT / ".zenodo.json"
 FORBIDDEN_LOCAL_ARTIFACTS = [
@@ -80,7 +82,17 @@ EXPECTED_ZIP_MEMBERS = {
     "figures/Figure_3_interaction_tradeoffs.pdf",
     "figures/Figure_4_scenario_tradeoffs.pdf",
     "figures/Figure_5_substitution_warning_map.pdf",
+    "figures/Figure_1_channel_mix.svg",
+    "figures/Figure_1_model_architecture.svg",
+    "figures/Figure_2_evasion_sensitivity.svg",
+    "figures/Figure_3_interaction_tradeoffs.svg",
+    "figures/Figure_4_scenario_tradeoffs.svg",
+    "figures/Figure_5_substitution_warning_map.svg",
+    "figures/channel_mix.tex",
+    "figures/evasion_sensitivity.tex",
+    "figures/interaction_tradeoffs.tex",
     "figures/model_architecture.tex",
+    "figures/scenario_tradeoffs.tex",
     "figures/substitution_warning_map.tex",
     "supporting-information/ODD-model.md",
     "supporting-information/scenario-catalog.md",
@@ -107,6 +119,7 @@ def main() -> int:
     failures.extend(check_wiley_text())
     failures.extend(check_submission_statements())
     failures.extend(check_claim_alignment())
+    failures.extend(check_layout_and_visual_reports())
     failures.extend(check_archive_metadata())
     failures.extend(check_release_tag_exactness())
     failures.extend(check_submission_zip())
@@ -229,6 +242,7 @@ def submission_inputs() -> list[Path]:
         *sorted((PAPER / "tables").glob("*.tex")),
         *sorted((PAPER / "figures").glob("*.tex")),
         *sorted((PAPER / "figures").glob("Figure_*.pdf")),
+        *sorted((PAPER / "figures").glob("Figure_*.svg")),
     ]
 
 
@@ -295,6 +309,26 @@ def check_claim_alignment() -> list[str]:
             "manuscript still refers to benchmark misses even though validation-summary.md reports Miss: 0",
         ]
     return []
+
+
+def check_layout_and_visual_reports() -> list[str]:
+    failures: list[str] = []
+    if not LAYOUT_AUDIT.exists():
+        failures.append(f"missing layout audit report: {LAYOUT_AUDIT.relative_to(ROOT)}")
+    else:
+        layout = LAYOUT_AUDIT.read_text(encoding="utf-8")
+        if "- Failures: `0`" not in layout:
+            failures.append("paper layout audit reports at least one failure")
+
+    if not MANUAL_VISUAL_AUDIT.exists():
+        failures.append(f"missing visual review report: {MANUAL_VISUAL_AUDIT.relative_to(ROOT)}")
+    else:
+        visual = MANUAL_VISUAL_AUDIT.read_text(encoding="utf-8")
+        if "needs review" in visual:
+            failures.append("visual review checklist contains at least one needs review entry")
+        if "Layout audit has not been generated yet" in visual:
+            failures.append("visual review checklist was generated without a layout audit")
+    return failures
 
 
 def check_archive_metadata() -> list[str]:

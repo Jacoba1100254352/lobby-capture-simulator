@@ -70,6 +70,7 @@ cp "$ROOT_DIR/CITATION.cff" "$STAGING_DIR/supporting-information/CITATION.cff"
 cp "$ROOT_DIR/.zenodo.json" "$STAGING_DIR/supporting-information/zenodo.json"
 mkdir -p "$STAGING_DIR/figures"
 cp "$PAPER_DIR"/figures/Figure_*.pdf "$STAGING_DIR/figures/"
+cp "$PAPER_DIR"/figures/Figure_*.svg "$STAGING_DIR/figures/"
 cp "$PAPER_DIR"/figures/*.tex "$STAGING_DIR/figures/"
 
 cp "$BUILD_DIR/USG.cls" "$STAGING_DIR/USG.cls"
