@@ -22,7 +22,7 @@ This audit checks generated PDFs for sparse float pages, large whitespace gaps, 
 | paper/strategic-channel-substitution-regulatory-capture.pdf | 13 | 78 | 1490 | 0.848 | 0.126 | yes | pass | layout density acceptable |
 | paper/strategic-channel-substitution-regulatory-capture.pdf | 14 | 93 | 1495 | 0.848 | 0.130 | yes | pass | layout density acceptable |
 | paper/strategic-channel-substitution-regulatory-capture.pdf | 15 | 138 | 3443 | 0.852 | 0.058 | yes | pass | layout density acceptable |
-| paper/strategic-channel-substitution-regulatory-capture.pdf | 16 | 49 | 3409 | 0.857 | 0.053 | no | pass | layout density acceptable |
+| paper/strategic-channel-substitution-regulatory-capture.pdf | 16 | 49 | 3425 | 0.857 | 0.053 | no | pass | layout density acceptable |
 | paper/strategic-channel-substitution-regulatory-capture.pdf | 17 | 57 | 2207 | 0.857 | 0.053 | no | pass | layout density acceptable |
 | paper/strategic-channel-substitution-regulatory-capture.pdf | 18 | 63 | 2341 | 0.854 | 0.055 | no | pass | references/declarations page |
 | paper/strategic-channel-substitution-regulatory-capture.pdf | 19 | 18 | 662 | 0.854 | 0.658 | no | pass | short terminal references/declarations page |
@@ -38,7 +38,7 @@ This audit checks generated PDFs for sparse float pages, large whitespace gaps, 
 | paper/regulation-governance-wiley.pdf | 10 | 154 | 2572 | 0.934 | 0.043 | yes | pass | layout density acceptable |
 | paper/regulation-governance-wiley.pdf | 11 | 93 | 1906 | 0.934 | 0.120 | yes | pass | layout density acceptable |
 | paper/regulation-governance-wiley.pdf | 12 | 150 | 2509 | 0.934 | 0.059 | no | pass | layout density acceptable |
-| paper/regulation-governance-wiley.pdf | 13 | 57 | 4700 | 0.942 | 0.050 | no | pass | layout density acceptable |
+| paper/regulation-governance-wiley.pdf | 13 | 57 | 4718 | 0.942 | 0.050 | no | pass | layout density acceptable |
 | paper/regulation-governance-wiley.pdf | 14 | 88 | 4162 | 0.943 | 0.043 | no | pass | references/declarations page |
 | paper/regulation-governance-wiley.pdf | 15 | 22 | 1098 | 0.942 | 0.745 | no | pass | references/declarations page |
 | paper/supplement.pdf | 1 | 37 | 2037 | 0.820 | 0.097 | no | pass | title/front-matter page |

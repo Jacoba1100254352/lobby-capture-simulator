@@ -32,7 +32,7 @@ VALIDATION_SUMMARY = ROOT / "reports" / "validation-summary.md"
 SOURCE_PANEL_INVENTORY = ROOT / "reports" / "source-panel-inventory.csv"
 LAYOUT_AUDIT = ROOT / "reports" / "paper-layout-audit.md"
 MANUAL_VISUAL_AUDIT = ROOT / "reports" / "manual-visual-audit.md"
-RELEASE_TAG = "paper-publication-readiness-2026-06-11-r28"
+RELEASE_TAG = "paper-publication-readiness-2026-06-11-r29"
 CITATION_CFF = ROOT / "CITATION.cff"
 ZENODO_JSON = ROOT / ".zenodo.json"
 FORBIDDEN_LOCAL_ARTIFACTS = [
@@ -349,6 +349,7 @@ def check_claim_alignment() -> list[str]:
                 "parser-ready OpenFEC electioneering and communication-cost rows",
                 "OpenFEC party/Schedule E/electioneering/communication-cost rows",
                 "Implemented for six national party committees, Schedule E independent expenditures, electioneering communications, and communication-cost rows",
+                "beyond national party committees, Schedule E, and electoral-communication rows",
             ]
             checked_texts = {REGGOV_BODY: body}
             for path in required_supporting:
@@ -360,6 +361,14 @@ def check_claim_alignment() -> list[str]:
                         failures.append(
                             f"{path.relative_to(ROOT)} overstates electoral-communication source coverage despite missing source-panel rows"
                         )
+            runner = ROOT / "scripts" / "run-2024-env-live-snapshot.sh"
+            if runner.exists():
+                runner_text = runner.read_text(encoding="utf-8")
+                stale_message = "normalized independent-expenditure and electoral-communication rows appended"
+                if stale_message in runner_text:
+                    failures.append(
+                        "live snapshot runner status overstates electoral-communication rows despite missing source-panel rows"
+                    )
     return failures
 
 

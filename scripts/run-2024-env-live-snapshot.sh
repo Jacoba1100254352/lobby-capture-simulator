@@ -71,7 +71,7 @@ if SOURCE_RAW_DIR="$raw_dir/fec-schedule-e" \
   FEC_COMMUNICATION_COST_MAX_PAGES="${FEC_COMMUNICATION_COST_MAX_PAGES:-2}" \
     python3 scripts/fetch-source-data.py fec --output "$tmpdir/fec-schedule-e.csv"; then
   append_csv "$tmpdir/fec-schedule-e.csv" data/raw/fec-campaign-finance.csv
-  printf "fec-schedule-e,ok,normalized independent-expenditure and electoral-communication rows appended\n" >> "$status_file"
+  printf "fec-schedule-e,ok,normalized independent-expenditure rows appended; electioneering/communication-cost rows included only when present\n" >> "$status_file"
 else
   printf "fec-schedule-e,unavailable,OpenFEC Schedule E/electoral communication request failed or returned no rows\n" >> "$status_file"
 fi
