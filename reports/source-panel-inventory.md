@@ -5,7 +5,7 @@ This inventory separates source coverage from simulated outcomes. A missing or t
 - Usable: `3`
 - Thin: `4`
 - Warning: `1`
-- Fixture-only: `0`
+- Fixture-only: `1`
 - Missing: `1`
 
 | Panel | Mechanism constrained | Evidence | Moment | Snapshot | Fixture scaffold? | Status | Note | Next action |
@@ -18,4 +18,5 @@ This inventory separates source coverage from simulated outcomes. A missing or t
 | Revolving door | Post-government access, covered-position links, and cooling-off exposure | proxy/thin | `revolvingDoorRows` | 284.0000 | no | thin | coverage is present but thin for article-level calibration | Supplement LDA covered-position rows with OGE, FACA, witness, LegiStorm/OpenSecrets, or archived personnel movement exports. |
 | Procurement identifiers | Vendor and award-path matching for procurement influence | direct identifier coverage | `procurementKnownPiidShare` | 1.0000 | yes | usable | coverage is usable for mechanism diagnostics, subject to source-scope limits | Broaden SAM/FPDS and USAspending enrichment with PIID, UEI, action-date, modification, competition, exclusion, and protest fields. |
 | Procurement concentration bridge | Multi-agency vendor and agency concentration diagnostics | direct top-award bridge | `procurementBridgeAgencyCount` | 6.0000 | no | thin | multi-agency top-award bridge is present, but top-award sampling is not representative enough for calibration | Replace the top-award bridge with representative SAM/FPDS action-level extracts before treating agency concentration as calibrated. |
+| Procurement action history | Transaction/action denominator for post-award modification incidence | direct action rows when present | `procurementActionRows` | 0.0000 | yes | fixture-only | no USAspending/SAM/FPDS transaction/action rows in the pinned snapshot; fixture bridge is available but not article-level empirical coverage | Populate data/snapshots/2024-env/normalized/usaspending-procurement-actions.csv from USAspending/SAM/FPDS transaction rows before treating modification incidence as calibrated. |
 | Procurement modification risk | Post-award modification and specification-change pressure | proxy/thin | `procurementExPostModificationShare` | 0.0000 | yes | warning | latest-transaction modification enrichment is available but an action-level transaction denominator is still absent | Populate the procurement action panel from USAspending/SAM/FPDS transaction rows and validate nonzero modification numbers against FPDS actions. |

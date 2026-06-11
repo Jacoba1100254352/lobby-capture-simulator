@@ -6,7 +6,7 @@
       "label": "tab:mechanism-comparison",
       "caption": "Model-mode comparison across low-, moderate-, and strong-reform families. The rows separate a visible single-channel baseline, a multi-channel model with substitution disabled, and the substitution-enabled model.",
       "size": "scriptsize",
-      "environment": "table*",
+      "environment": "inline-table",
       "width": "\\textwidth",
       "tabcolsep": "1.5pt",
       "rows": [
@@ -706,6 +706,7 @@
             "Revolving door": "Revolving door",
             "Procurement identifiers": "Proc. IDs",
             "Procurement concentration bridge": "Proc. concentration",
+            "Procurement action history": "Proc. actions",
             "Procurement modification risk": "Proc. mods"
           }
         },
@@ -723,6 +724,7 @@
             "Post-government access, covered-position links, and cooling-off exposure": "Revolving door",
             "Vendor and award-path matching for procurement influence": "Procurement matching",
             "Multi-agency vendor and agency concentration diagnostics": "Multi-agency concentration",
+            "Transaction/action denominator for post-award modification incidence": "Action-history denominator",
             "Post-award modification and specification-change pressure": "Post-award pressure"
           }
         },
@@ -737,7 +739,8 @@
             "direct when present": "direct if present",
             "proxy": "proxy",
             "direct identifier coverage": "direct IDs",
-            "direct top-award bridge": "top-award bridge"
+            "direct top-award bridge": "top-award bridge",
+            "direct action rows when present": "direct if present"
           }
         },
         {
@@ -754,6 +757,7 @@
             "Revolving door": "thin proxy rows",
             "Procurement identifiers": "direct ID coverage",
             "Procurement concentration bridge": "top-award bridge",
+            "Procurement action history": "no action rows",
             "Procurement modification risk": "no mod rows"
           }
         },

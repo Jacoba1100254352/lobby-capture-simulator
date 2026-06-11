@@ -95,6 +95,16 @@ PANELS = [
         "action": "Replace the top-award bridge with representative SAM/FPDS action-level extracts before treating agency concentration as calibrated.",
     },
     {
+        "panel": "Procurement action history",
+        "metric": "procurementActionRows",
+        "mechanism": "Transaction/action denominator for post-award modification incidence",
+        "evidenceClass": "direct action rows when present",
+        "minimum": 1.0,
+        "good": 50.0,
+        "missing": "no USAspending/SAM/FPDS transaction/action rows in the pinned snapshot",
+        "action": "Populate data/snapshots/2024-env/normalized/usaspending-procurement-actions.csv from USAspending/SAM/FPDS transaction rows before treating modification incidence as calibrated.",
+    },
+    {
         "panel": "Procurement modification risk",
         "metric": "procurementExPostModificationShare",
         "mechanism": "Post-award modification and specification-change pressure",
