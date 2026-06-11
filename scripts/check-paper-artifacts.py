@@ -25,7 +25,9 @@ WILEY_PDF = PAPER / "regulation-governance-wiley.pdf"
 SUPPLEMENT_PDF = PAPER / "supplement.pdf"
 SUBMISSION_ZIP = DIST / "lobby-capture-wiley-submission.zip"
 SUBMISSION_DECLARATIONS = PAPER / "sections" / "submission-declarations.tex"
-RELEASE_TAG = "paper-publication-readiness-2026-06-11-r16"
+REGGOV_BODY = PAPER / "sections" / "reggov-body.tex"
+VALIDATION_SUMMARY = ROOT / "reports" / "validation-summary.md"
+RELEASE_TAG = "paper-publication-readiness-2026-06-11-r17"
 CITATION_CFF = ROOT / "CITATION.cff"
 ZENODO_JSON = ROOT / ".zenodo.json"
 FORBIDDEN_LOCAL_ARTIFACTS = [
@@ -104,6 +106,7 @@ def main() -> int:
     failures.extend(check_freshness())
     failures.extend(check_wiley_text())
     failures.extend(check_submission_statements())
+    failures.extend(check_claim_alignment())
     failures.extend(check_archive_metadata())
     failures.extend(check_release_tag_exactness())
     failures.extend(check_submission_zip())
@@ -280,6 +283,18 @@ def check_submission_statements() -> list[str]:
         if phrase not in text
     )
     return failures
+
+
+def check_claim_alignment() -> list[str]:
+    if not REGGOV_BODY.exists() or not VALIDATION_SUMMARY.exists():
+        return []
+    body = REGGOV_BODY.read_text(encoding="utf-8")
+    validation = VALIDATION_SUMMARY.read_text(encoding="utf-8")
+    if "- Miss: `0`" in validation and "benchmark misses" in body:
+        return [
+            "manuscript still refers to benchmark misses even though validation-summary.md reports Miss: 0",
+        ]
+    return []
 
 
 def check_archive_metadata() -> list[str]:
