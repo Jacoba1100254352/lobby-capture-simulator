@@ -19,6 +19,7 @@ Use this before creating a journal submission archive or public release tag.
 - If a Zenodo, OSF, or institutional archive DOI is created, record it in `paper/sections/submission-declarations.tex`; otherwise, the data availability statement should cite the GitHub release URL without saying that the archive is unfinished.
 - Confirm the release archive includes normalized snapshots, report CSVs, generated tables, generated figure sources, generated PDF figures, the manuscript PDF, supplement PDF, and the Wiley submission archive.
 - Confirm the Wiley submission archive includes `supporting-information/CITATION.cff` and `supporting-information/zenodo.json`.
+- Confirm the Wiley submission archive includes `supporting-information/report-data/` with the generated CSV, Markdown, and manifest report files. `make paper-artifacts-check` byte-compares those package copies against the working tree.
 - Confirm the Wiley submission archive includes generated PDF graphics, SVG figure sources, and LaTeX figure wrappers under `figures/`.
 - Do not archive private credentials or raw API payloads that cannot be redistributed.
 - `make paper-artifacts-check` should fail if the submission declarations contain self-invalidating archive language such as `No external DOI` or `should be minted`.

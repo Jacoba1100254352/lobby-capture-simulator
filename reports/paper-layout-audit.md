@@ -40,10 +40,10 @@ This audit checks generated PDFs for sparse float pages, large whitespace gaps, 
 | paper/regulation-governance-wiley.pdf | 13 | 58 | 4709 | 0.942 | 0.043 | no | pass | layout density acceptable |
 | paper/regulation-governance-wiley.pdf | 14 | 93 | 4552 | 0.943 | 0.043 | no | pass | references/declarations page |
 | paper/regulation-governance-wiley.pdf | 15 | 15 | 669 | 0.942 | 0.825 | no | pass | short terminal references/declarations page |
-| paper/supplement.pdf | 1 | 33 | 1885 | 0.805 | 0.105 | no | pass | title/front-matter page |
-| paper/supplement.pdf | 2 | 58 | 2882 | 0.854 | 0.055 | no | pass | layout density acceptable |
-| paper/supplement.pdf | 3 | 234 | 2514 | 0.858 | 0.052 | yes | pass | layout density acceptable |
-| paper/supplement.pdf | 4 | 85 | 2857 | 0.854 | 0.055 | yes | pass | layout density acceptable |
-| paper/supplement.pdf | 5 | 80 | 2405 | 0.854 | 0.055 | yes | pass | layout density acceptable |
-| paper/supplement.pdf | 6 | 49 | 3108 | 0.854 | 0.055 | no | pass | references/declarations page |
-| paper/supplement.pdf | 7 | 55 | 2802 | 0.854 | 0.055 | yes | pass | references/declarations page |
+| paper/supplement.pdf | 1 | 37 | 2037 | 0.820 | 0.097 | no | pass | title/front-matter page |
+| paper/supplement.pdf | 2 | 57 | 2834 | 0.872 | 0.046 | no | pass | layout density acceptable |
+| paper/supplement.pdf | 3 | 233 | 2508 | 0.873 | 0.051 | yes | pass | layout density acceptable |
+| paper/supplement.pdf | 4 | 82 | 2866 | 0.838 | 0.079 | yes | pass | layout density acceptable |
+| paper/supplement.pdf | 5 | 84 | 2591 | 0.872 | 0.045 | yes | pass | layout density acceptable |
+| paper/supplement.pdf | 6 | 54 | 3324 | 0.870 | 0.048 | no | pass | references/declarations page |
+| paper/supplement.pdf | 7 | 53 | 2373 | 0.872 | 0.151 | yes | pass | references/declarations page |

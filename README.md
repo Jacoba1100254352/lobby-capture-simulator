@@ -148,7 +148,7 @@ The Wiley-template path is available but intentionally separate from the default
 - `make wiley-tex-deps` installs the extra Wiley-template LaTeX packages into the user TeX tree through `tlmgr --usermode`.
 - `paper/regulation-governance-wiley.tex` is the Regulation & Governance/Wiley wrapper using Wiley's `USG` class.
 - `make paper-wiley` builds the Wiley wrapper after the official bundle and TeX dependencies are available. It writes ignored scratch files under `paper/.wiley-build/` to work around a BibTeX failure in the current Wiley archive's primary Chicago style file while still using the downloaded Wiley class and template assets.
-- `make submission-package` builds the Wiley wrapper and writes `dist/lobby-capture-wiley-submission.zip` with the root LaTeX file, compiled PDF, patched peer-review class copy, bibliography, generated tables, PDF graphics, SVG figure sources, and LaTeX figure wrappers.
+- `make submission-package` builds the Wiley wrapper and writes `dist/lobby-capture-wiley-submission.zip` with the root LaTeX file, compiled PDF, patched peer-review class copy, bibliography, generated tables, PDF graphics, SVG figure sources, LaTeX figure wrappers, supporting-information files, and the full generated CSV/Markdown/manifest report bundle.
 - `make paper-artifacts` is the full paper refresh target. It reruns the committed report sweeps, mechanism comparison, portfolio screen, source moments, validation, calibration queue, tables, figures, local PDF, Wiley PDF, word count, and submission zip.
 - `make paper-artifacts-check` runs the same refresh and then verifies the local PDF, Wiley PDF, supplement PDF, layout audit, visual-review checklist, and submission zip are present, fresh relative to their inputs, free of generic Wiley-template placeholder text, and internally consistent. CI uses this target so stale paper inputs cannot pass without rebuilding the PDFs and submission package.
 
@@ -160,7 +160,7 @@ Submission strategy details live in `docs/submission-strategy.md`.
 
 ## Citation and Archive Metadata
 
-Use the versioned GitHub release named in the paper's Data and Code Availability statement when citing the review bundle. `CITATION.cff` provides machine-readable software and preferred-paper citation metadata, and `.zenodo.json` provides release metadata for DOI archiving if the GitHub repository is connected to Zenodo. The Wiley submission package includes copies of both files under `supporting-information/`, and `make paper-artifacts-check` fails if those files are missing or no longer point at the current review-bundle tag.
+Use the versioned GitHub release named in the paper's Data and Code Availability statement when citing the review bundle. `CITATION.cff` provides machine-readable software and preferred-paper citation metadata, and `.zenodo.json` provides release metadata for DOI archiving if the GitHub repository is connected to Zenodo. The Wiley submission package includes copies of both files under `supporting-information/`, plus the full generated report bundle under `supporting-information/report-data/`. `make paper-artifacts-check` fails if those files are missing, stale, byte-different from the working tree, or no longer point at the current review-bundle tag.
 
 The source-native fetcher has tiny checked-in JSON fixtures under `data/fixtures/source-native/`. `make test` verifies those parser paths without hitting the network. Live source requests retry transient `429` and `5xx` responses; tune with `SOURCE_FETCH_RETRIES` and `SOURCE_FETCH_BACKOFF_SECONDS`.
 

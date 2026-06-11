@@ -99,6 +99,8 @@ The reproducible report pipeline writes:
   \item generated paper tables, figures, local PDF, Wiley PDF, supplement PDF, and Wiley submission archive.
 \end{itemize}
 
+The Wiley submission archive includes the generated CSV, Markdown, and manifest report files under \texttt{supporting-information/report-data/}. The artifact checker compares those packaged files against the repository copies so the reviewer bundle cannot silently omit or stale-copy a generated report.
+
 The canonical local check is:
 
 \begin{verbatim}
@@ -154,4 +156,4 @@ The calibration queue in \texttt{reports/calibration-queue.md} records the class
 
 The supporting files are organized to make the boundary between model assumptions and evidence visible. The source moments and source-panel inventory should be read first when assessing empirical scope. They state which panels are direct, proxy, thin, fixture-supported, or missing. The mechanism-comparison report should be read next because it shows the consequence of enabling substitution relative to simpler model modes. The campaign, sensitivity, ablation, interaction, and portfolio reports are then best interpreted as stress tests under those model assumptions.
 
-For replication, the Makefile targets regenerate the committed reports, tables, figures, local PDF, Wiley PDF, supplement, layout audit, visual checklist, and submission ZIP from the same checked-in sources. Credentials and ignored raw API payloads are not needed for this default rebuild because the submission path uses normalized committed snapshots. Live-source refreshes are intentionally separate so exploratory API output cannot silently alter the review bundle.
+Replication uses \texttt{make paper-artifacts-check}, which regenerates reports, tables, figures, PDFs, layout and visual audits, and the submission ZIP from checked-in sources. Live-source refreshes are separate so exploratory API output cannot silently alter the review bundle.

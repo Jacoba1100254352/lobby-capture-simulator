@@ -68,6 +68,12 @@ cp "$ROOT_DIR/reports/paper-layout-audit.md" "$STAGING_DIR/supporting-informatio
 cp "$ROOT_DIR/reports/manual-visual-audit.md" "$STAGING_DIR/supporting-information/manual-visual-audit.md"
 cp "$ROOT_DIR/CITATION.cff" "$STAGING_DIR/supporting-information/CITATION.cff"
 cp "$ROOT_DIR/.zenodo.json" "$STAGING_DIR/supporting-information/zenodo.json"
+mkdir -p "$STAGING_DIR/supporting-information/report-data"
+for report_artifact in "$ROOT_DIR"/reports/*.csv "$ROOT_DIR"/reports/*.md "$ROOT_DIR"/reports/*.manifest.json; do
+  if [ -e "$report_artifact" ]; then
+    cp "$report_artifact" "$STAGING_DIR/supporting-information/report-data/"
+  fi
+done
 mkdir -p "$STAGING_DIR/figures"
 cp "$PAPER_DIR"/figures/Figure_*.pdf "$STAGING_DIR/figures/"
 cp "$PAPER_DIR"/figures/Figure_*.svg "$STAGING_DIR/figures/"

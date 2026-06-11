@@ -29,7 +29,7 @@ REGGOV_BODY = PAPER / "sections" / "reggov-body.tex"
 VALIDATION_SUMMARY = ROOT / "reports" / "validation-summary.md"
 LAYOUT_AUDIT = ROOT / "reports" / "paper-layout-audit.md"
 MANUAL_VISUAL_AUDIT = ROOT / "reports" / "manual-visual-audit.md"
-RELEASE_TAG = "paper-publication-readiness-2026-06-11-r18"
+RELEASE_TAG = "paper-publication-readiness-2026-06-11-r19"
 CITATION_CFF = ROOT / "CITATION.cff"
 ZENODO_JSON = ROOT / ".zenodo.json"
 FORBIDDEN_LOCAL_ARTIFACTS = [
@@ -235,6 +235,7 @@ def submission_inputs() -> list[Path]:
         ROOT / "reports" / "calibration-queue.md",
         ROOT / "reports" / "paper-layout-audit.md",
         ROOT / "reports" / "manual-visual-audit.md",
+        *report_bundle_inputs(),
         PAPER / ".wiley-build" / "USG.cls",
         PAPER / ".wiley-build" / "wileyNJD-Chicago.bst",
         PAPER / ".wiley-template" / "Optimal-Design-layout" / "LETTERSP.STY",
@@ -243,6 +244,14 @@ def submission_inputs() -> list[Path]:
         *sorted((PAPER / "figures").glob("*.tex")),
         *sorted((PAPER / "figures").glob("Figure_*.pdf")),
         *sorted((PAPER / "figures").glob("Figure_*.svg")),
+    ]
+
+
+def report_bundle_inputs() -> list[Path]:
+    return [
+        *sorted((ROOT / "reports").glob("*.csv")),
+        *sorted((ROOT / "reports").glob("*.md")),
+        *sorted((ROOT / "reports").glob("*.manifest.json")),
     ]
 
 
@@ -411,25 +420,78 @@ def check_submission_zip() -> list[str]:
     try:
         with zipfile.ZipFile(SUBMISSION_ZIP) as archive:
             names = set(archive.namelist())
+            expected_members = EXPECTED_ZIP_MEMBERS | {
+                member for _, member in package_byte_checks()
+            }
             failures = [
                 f"submission zip missing {member}"
-                for member in sorted(EXPECTED_ZIP_MEMBERS - names)
+                for member in sorted(expected_members - names)
             ]
             failures.extend(
                 f"submission zip should not contain generic {member}"
                 for member in sorted(FORBIDDEN_ZIP_MEMBERS & names)
             )
-            with WILEY_PDF.open("rb") as pdf:
-                if archive.read(f"{LOCAL_BASENAME}.pdf") != pdf.read():
+            for source, member in package_byte_checks():
+                if member not in names:
+                    continue
+                if archive.read(member) != source.read_bytes():
                     failures.append(
-                        f"submission zip {LOCAL_BASENAME}.pdf differs from paper/regulation-governance-wiley.pdf"
+                        f"submission zip {member} differs from {source.relative_to(ROOT)}"
                     )
-            with SUPPLEMENT_PDF.open("rb") as pdf:
-                if archive.read("supplement.pdf") != pdf.read():
-                    failures.append("submission zip supplement.pdf differs from paper/supplement.pdf")
             return failures
     except (OSError, KeyError, zipfile.BadZipFile) as error:
         return [f"could not inspect submission zip: {error}"]
+
+
+def package_byte_checks() -> list[tuple[Path, str]]:
+    checks: list[tuple[Path, str]] = [
+        (PAPER / "regulation-governance-wiley.tex", f"{LOCAL_BASENAME}.tex"),
+        (WILEY_PDF, f"{LOCAL_BASENAME}.pdf"),
+        (PAPER / "supplement.tex", "supplement.tex"),
+        (SUPPLEMENT_PDF, "supplement.pdf"),
+        (PAPER / "references.bib", "references.bib"),
+        (PAPER / ".wiley-build" / "USG.cls", "USG.cls"),
+        (PAPER / ".wiley-build" / "wileyNJD-Chicago.bst", "wileyNJD-Chicago.bst"),
+        (ROOT / "docs" / "odd-model.md", "supporting-information/ODD-model.md"),
+        (ROOT / "docs" / "scenario-catalog.md", "supporting-information/scenario-catalog.md"),
+        (ROOT / "docs" / "validation.md", "supporting-information/validation-plan.md"),
+        (ROOT / "docs" / "source-data-roadmap.md", "supporting-information/source-data-roadmap.md"),
+        (ROOT / "reports" / "source-moments.md", "supporting-information/source-moments.md"),
+        (ROOT / "reports" / "source-panel-inventory.md", "supporting-information/source-panel-inventory.md"),
+        (ROOT / "reports" / "validation-summary.md", "supporting-information/validation-summary.md"),
+        (ROOT / "reports" / "substitution-audit.md", "supporting-information/substitution-audit.md"),
+        (ROOT / "reports" / "lobby-capture-portfolio.md", "supporting-information/portfolio-screen.md"),
+        (ROOT / "reports" / "calibration-queue.md", "supporting-information/calibration-queue.md"),
+        (ROOT / "reports" / "paper-layout-audit.md", "supporting-information/paper-layout-audit.md"),
+        (ROOT / "reports" / "manual-visual-audit.md", "supporting-information/manual-visual-audit.md"),
+        (CITATION_CFF, "supporting-information/CITATION.cff"),
+        (ZENODO_JSON, "supporting-information/zenodo.json"),
+    ]
+    checks.extend(
+        (path, f"sections/{path.name}")
+        for path in sorted((PAPER / "sections").glob("*.tex"))
+    )
+    checks.extend(
+        (path, f"tables/{path.name}")
+        for path in sorted((PAPER / "tables").glob("*.tex"))
+    )
+    checks.extend(
+        (path, f"figures/{path.name}")
+        for path in sorted((PAPER / "figures").glob("*.tex"))
+    )
+    checks.extend(
+        (path, f"figures/{path.name}")
+        for path in sorted((PAPER / "figures").glob("Figure_*.pdf"))
+    )
+    checks.extend(
+        (path, f"figures/{path.name}")
+        for path in sorted((PAPER / "figures").glob("Figure_*.svg"))
+    )
+    checks.extend(
+        (path, f"supporting-information/report-data/{path.name}")
+        for path in report_bundle_inputs()
+    )
+    return [(path, member) for path, member in checks if path.exists()]
 
 
 def check_submission_zip_compiles() -> list[str]:
