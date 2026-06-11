@@ -24,13 +24,17 @@ WILEY_PDF = PAPER / "regulation-governance-wiley.pdf"
 SUPPLEMENT_PDF = PAPER / "supplement.pdf"
 SUBMISSION_ZIP = DIST / "lobby-capture-wiley-submission.zip"
 SUBMISSION_DECLARATIONS = PAPER / "sections" / "submission-declarations.tex"
-RELEASE_TAG = "paper-publication-readiness-2026-06-06-r14"
+RELEASE_TAG = "paper-publication-readiness-2026-06-10-r15"
 FORBIDDEN_LOCAL_ARTIFACTS = [
     PAPER / "main.tex",
     PAPER / "main.pdf",
 ]
 FORBIDDEN_LOCAL_COPY_SUFFIX = re.compile(
     r".+ [0-9]+\.(aux|bbl|blg|log|out|pag|pdf|tex)$",
+    re.IGNORECASE,
+)
+FORBIDDEN_DIST_COPY_SUFFIX = re.compile(
+    r"lobby-capture-wiley-submission [0-9]+\.zip$",
     re.IGNORECASE,
 )
 FORBIDDEN_ZIP_MEMBERS = {
@@ -125,6 +129,12 @@ def check_forbidden_local_artifacts() -> list[str]:
         for path in sorted(PAPER.iterdir())
         if path.is_file() and FORBIDDEN_LOCAL_COPY_SUFFIX.fullmatch(path.name)
     )
+    if DIST.exists():
+        failures.extend(
+            f"duplicate copy-suffix submission archive remains: {path.relative_to(ROOT)}"
+            for path in sorted(DIST.iterdir())
+            if path.is_file() and FORBIDDEN_DIST_COPY_SUFFIX.fullmatch(path.name)
+        )
     return failures
 
 
