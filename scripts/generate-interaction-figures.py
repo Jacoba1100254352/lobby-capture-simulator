@@ -246,6 +246,7 @@ def write_channel_mix(indexed: dict[str, dict[str, str]], report: Path, figure_d
         report,
         "Grouped channel allocation mix for selected scenarios. The stacked bars aggregate detailed report channels into visible access, public or technical information, money channels, intermediary or venue channels, and defense or evasion.",
         "fig:channel-mix",
+        width="0.76\\linewidth",
     )
 
 
@@ -382,6 +383,7 @@ def write_scenario_tradeoffs(indexed: dict[str, dict[str, str]], report: Path, f
         "Scenario tradeoff between observed capture and total influence distortion across selected campaign scenarios.",
         "fig:scenario-tradeoffs",
         extra="x=capture rate; y=Total influence distortion",
+        width="0.76\\linewidth",
     )
 
 
