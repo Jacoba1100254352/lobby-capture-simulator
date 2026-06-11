@@ -3,8 +3,9 @@
 
 from __future__ import annotations
 
-import os
+import csv
 import json
+import os
 import re
 import shutil
 import subprocess
@@ -27,9 +28,10 @@ SUBMISSION_ZIP = DIST / "lobby-capture-wiley-submission.zip"
 SUBMISSION_DECLARATIONS = PAPER / "sections" / "submission-declarations.tex"
 REGGOV_BODY = PAPER / "sections" / "reggov-body.tex"
 VALIDATION_SUMMARY = ROOT / "reports" / "validation-summary.md"
+SOURCE_PANEL_INVENTORY = ROOT / "reports" / "source-panel-inventory.csv"
 LAYOUT_AUDIT = ROOT / "reports" / "paper-layout-audit.md"
 MANUAL_VISUAL_AUDIT = ROOT / "reports" / "manual-visual-audit.md"
-RELEASE_TAG = "paper-publication-readiness-2026-06-11-r26"
+RELEASE_TAG = "paper-publication-readiness-2026-06-11-r27"
 CITATION_CFF = ROOT / "CITATION.cff"
 ZENODO_JSON = ROOT / ".zenodo.json"
 FORBIDDEN_LOCAL_ARTIFACTS = [
@@ -313,11 +315,28 @@ def check_claim_alignment() -> list[str]:
         return []
     body = REGGOV_BODY.read_text(encoding="utf-8")
     validation = VALIDATION_SUMMARY.read_text(encoding="utf-8")
+    failures: list[str] = []
     if "- Miss: `0`" in validation and "benchmark misses" in body:
-        return [
+        failures.append(
             "manuscript still refers to benchmark misses even though validation-summary.md reports Miss: 0",
-        ]
-    return []
+        )
+    if SOURCE_PANEL_INVENTORY.exists():
+        with SOURCE_PANEL_INVENTORY.open(newline="", encoding="utf-8") as source:
+            panels = {row["panel"]: row for row in csv.DictReader(source)}
+        electoral = panels.get("Electoral communications")
+        if electoral and electoral.get("status") == "missing":
+            required = "electioneering and communication-cost rows are schema-supported but absent"
+            if required not in body:
+                failures.append(
+                    "source-panel inventory marks electoral communications missing, "
+                    f"but the manuscript does not state that {required}"
+                )
+            overstated = "validation snapshot adds Schedule E outside spending, parser-ready OpenFEC electioneering and communication-cost channels"
+            if overstated in body:
+                failures.append(
+                    "manuscript overstates electoral-communication source coverage despite missing source-panel rows"
+                )
+    return failures
 
 
 def check_layout_and_visual_reports() -> list[str]:
