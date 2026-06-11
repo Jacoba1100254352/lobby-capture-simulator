@@ -27,11 +27,12 @@ SUPPLEMENT_PDF = PAPER / "supplement.pdf"
 SUBMISSION_ZIP = DIST / "lobby-capture-wiley-submission.zip"
 SUBMISSION_DECLARATIONS = PAPER / "sections" / "submission-declarations.tex"
 REGGOV_BODY = PAPER / "sections" / "reggov-body.tex"
+SUPPLEMENT_BODY = PAPER / "sections" / "supplement-body.tex"
 VALIDATION_SUMMARY = ROOT / "reports" / "validation-summary.md"
 SOURCE_PANEL_INVENTORY = ROOT / "reports" / "source-panel-inventory.csv"
 LAYOUT_AUDIT = ROOT / "reports" / "paper-layout-audit.md"
 MANUAL_VISUAL_AUDIT = ROOT / "reports" / "manual-visual-audit.md"
-RELEASE_TAG = "paper-publication-readiness-2026-06-11-r27"
+RELEASE_TAG = "paper-publication-readiness-2026-06-11-r28"
 CITATION_CFF = ROOT / "CITATION.cff"
 ZENODO_JSON = ROOT / ".zenodo.json"
 FORBIDDEN_LOCAL_ARTIFACTS = [
@@ -331,11 +332,34 @@ def check_claim_alignment() -> list[str]:
                     "source-panel inventory marks electoral communications missing, "
                     f"but the manuscript does not state that {required}"
                 )
-            overstated = "validation snapshot adds Schedule E outside spending, parser-ready OpenFEC electioneering and communication-cost channels"
-            if overstated in body:
-                failures.append(
-                    "manuscript overstates electoral-communication source coverage despite missing source-panel rows"
-                )
+            required_supporting = {
+                SUPPLEMENT_BODY: required,
+                ROOT / "docs" / "scenario-catalog.md": "OpenFEC electioneering and communication-cost channels are parser-supported but absent from the pinned snapshot",
+                ROOT / "docs" / "validation.md": "electioneering and communication-cost channels are parser-supported but absent from the pinned snapshot",
+                ROOT / "docs" / "next-steps.md": "the pinned snapshot still has zero electoral-communication rows",
+                ROOT / "docs" / "source-data-roadmap.md": "the pinned 2024 EPA/ENV snapshot has zero electoral-communication rows",
+            }
+            for path, phrase in required_supporting.items():
+                if path.exists() and phrase not in path.read_text(encoding="utf-8"):
+                    failures.append(
+                        f"{path.relative_to(ROOT)} does not disclose missing electoral-communication source rows"
+                    )
+            overstated_phrases = [
+                "validation snapshot adds Schedule E outside spending, parser-ready OpenFEC electioneering and communication-cost channels",
+                "parser-ready OpenFEC electioneering and communication-cost rows",
+                "OpenFEC party/Schedule E/electioneering/communication-cost rows",
+                "Implemented for six national party committees, Schedule E independent expenditures, electioneering communications, and communication-cost rows",
+            ]
+            checked_texts = {REGGOV_BODY: body}
+            for path in required_supporting:
+                if path.exists():
+                    checked_texts[path] = path.read_text(encoding="utf-8")
+            for path, text in checked_texts.items():
+                for phrase in overstated_phrases:
+                    if phrase in text:
+                        failures.append(
+                            f"{path.relative_to(ROOT)} overstates electoral-communication source coverage despite missing source-panel rows"
+                        )
     return failures
 
 

@@ -21,7 +21,7 @@ The Deep Research reports are distilled into `docs/research/research-synthesis.m
 Current calibration links:
 
 - `normalized-lda-lobbying.csv` constrains issue funding scale, issue mix, and disclosure lag.
-- `normalized-fec-campaign-finance.csv` constrains donor concentration, Schedule E outside-spending pressure, electioneering and communication-cost coverage, and traceability; `normalized-public-financing.csv` and `normalized-dark-money.csv` carry separate public-financing and opaque-capacity bridge rows.
+- `normalized-fec-campaign-finance.csv` constrains donor concentration, Schedule E outside-spending pressure, and traceability. Electioneering and communication-cost fields are parser-supported and recorded as zero-row coverage in the pinned snapshot until live electoral-communication rows are present; `normalized-public-financing.csv` and `normalized-dark-money.csv` carry separate public-financing and opaque-capacity bridge rows.
 - `normalized-regulatory-dockets.csv` constrains docket volume, comment authenticity, template saturation, and technical-claim credibility.
 - `reports/source-moments.csv` records direct top-k concentration, traceability, direct dark-money visibility, Schedule E outside spending, electoral-communication coverage, public financing, comment-record, procurement bridge, intermediary, and revolving-door moments from the current snapshot and fixture baselines.
 
@@ -79,7 +79,7 @@ Run `scripts/run-2024-env-live-snapshot.sh` to execute the pinned live slice. Th
 The current committed 2024 EPA/ENV snapshot is regenerated from official endpoints and bridge sources using configured local API keys where required and no-key public CSV/API endpoints where available:
 
 - LDA: 121 normalized 2024 `ENV` rows from the Senate LDA API.
-- FEC: normalized 2024 OpenFEC rows, including six national party committee requests, Schedule E independent expenditures, and optional electioneering/communication-cost rows.
+- FEC: normalized 2024 OpenFEC rows from six national party committee requests and Schedule E independent expenditures. Electioneering and communication-cost fetchers are implemented, but the pinned snapshot has zero electoral-communication rows.
 - Public financing: NYC CFB public-funds payment rows or configured program exports, stored as a separate bridge panel.
 - Dark money/opaque capacity: IRS EO BMF 501(c)(4)/(c)(6) capacity proxy rows or configured direct dark-money exports, stored separately from ordinary FEC and Schedule E rows.
 - Regulations.gov and Federal Register: 200 combined EPA 2024 regulatory rows.
@@ -87,6 +87,6 @@ The current committed 2024 EPA/ENV snapshot is regenerated from official endpoin
 - Revolving door: 284 LDA-derived covered-position rows. This is source-native but narrower than a full post-employment panel.
 - Intermediaries: NYC CFB intermediary rows plus IRS EO BMF nonprofit/association capacity rows by default; richer IRS 527/Form 990/OpenSecrets/ProPublica panels remain optional overlays.
 
-The snapshot is stronger than the earlier public/demo run, but it is still not a representative empirical panel. Schedule E, electioneering, and communication-cost rows are separated from dark-money/opaque-capacity rows, and IRS EO BMF rows should be read as capacity proxies rather than observed hidden spending. NYC CFB public-financing and intermediary rows are direct local program records, not national estimates. Procurement remains EPA/USAspending-centered and still needs representative SAM/FPDS action-history coverage before modification incidence is calibration-grade. `reports/source-moments.md` records these representativeness warnings directly.
+The snapshot is stronger than the earlier public/demo run, but it is still not a representative empirical panel. Schedule E rows are separated from dark-money/opaque-capacity rows, while electioneering and communication-cost channels are parser-supported but absent from the pinned snapshot. IRS EO BMF rows should be read as capacity proxies rather than observed hidden spending. NYC CFB public-financing and intermediary rows are direct local program records, not national estimates. Procurement remains EPA/USAspending-centered and still needs representative SAM/FPDS action-history coverage before modification incidence is calibration-grade. `reports/source-moments.md` records these representativeness warnings directly.
 
 Run `make snapshot-2024-env` after any subsequent source-native fetches to freeze normalized rows under `data/snapshots/2024-env/` and write a machine-readable manifest with row counts, request templates, hashes, and Git state.
