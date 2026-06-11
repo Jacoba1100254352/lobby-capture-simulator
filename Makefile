@@ -12,7 +12,7 @@ MAIN_CLASS := lobbycapture.Main
 TEST_CLASSES := lobbycapture.SimulatorTests
 PAPER_BASENAME := strategic-channel-substitution-regulatory-capture
 
-.PHONY: compile test run campaign mechanism-comparison sensitivity ablation interactions portfolio source-moments source-panel-inventory calibration-queue validate snapshot-2024-env tables figures paper paper-build paper-supplement-build paper-supplement paper-word-count wiley-template wiley-tex-deps paper-wiley paper-wiley-build submission-package submission-package-build paper-layout-audit visual-review-checklist paper-artifacts paper-artifacts-check clean
+.PHONY: compile test run campaign mechanism-comparison sensitivity ablation interactions portfolio source-moments source-panel-inventory calibration-queue validate snapshot-2024-env tables figures paper paper-build paper-supplement-build paper-supplement paper-word-count wiley-template wiley-tex-deps paper-wiley paper-wiley-build submission-package submission-package-build submission-package-check paper-layout-audit visual-review-checklist paper-artifacts paper-artifacts-check clean
 
 compile:
 	@mkdir -p out/classes
@@ -102,7 +102,10 @@ paper-wiley: tables figures paper-wiley-build
 submission-package-build:
 	./scripts/build-submission-package.sh
 
-submission-package: paper-wiley paper-supplement paper-word-count visual-review-checklist submission-package-build
+submission-package-check: submission-package-build
+	./scripts/check-submission-package.sh
+
+submission-package: paper-wiley paper-supplement paper-word-count visual-review-checklist submission-package-build submission-package-check
 
 paper-layout-audit: paper-build paper-wiley-build paper-supplement-build
 	python3 scripts/audit-paper-layout.py
@@ -110,7 +113,7 @@ paper-layout-audit: paper-build paper-wiley-build paper-supplement-build
 visual-review-checklist: paper-layout-audit
 	python3 scripts/write-visual-review-checklist.py
 
-paper-artifacts: campaign mechanism-comparison sensitivity ablation interactions portfolio source-moments source-panel-inventory validate calibration-queue tables figures paper-build paper-wiley-build paper-supplement-build paper-word-count paper-layout-audit visual-review-checklist submission-package-build
+paper-artifacts: campaign mechanism-comparison sensitivity ablation interactions portfolio source-moments source-panel-inventory validate calibration-queue tables figures paper-build paper-wiley-build paper-supplement-build paper-word-count paper-layout-audit visual-review-checklist submission-package-build submission-package-check
 
 paper-artifacts-check: paper-artifacts
 	python3 scripts/check-paper-artifacts.py
