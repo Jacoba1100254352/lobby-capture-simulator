@@ -34,7 +34,7 @@ The simulator now has a lobbying-centered model core with calibration fixtures, 
 - `make test` now includes Python compilation plus `bash -n` shell-script checks through `make script-checks`, and CI uses the same target before simulator and paper-package gates.
 - Live source fetches retry transient `429` and `5xx` responses and redact API keys from error URLs.
 - `make source-moments` records direct source-level top-k concentration, traceability, Schedule E outside-spending, non-proxy direct dark-money routing row coverage, direct dark-money visibility, public-financing, procurement bridge, revolving-door, and comment-record moments.
-- `make calibration-queue` classifies validation misses and partial overlaps into actionable work categories.
+- `make calibration-queue` classifies validation misses and partial overlaps into actionable work categories, including scenario-family splits where one validation scope mixes baseline, stress, and extreme-stress rows.
 - `make tables` regenerates paper table inputs from report CSV snapshots using `paper/tables.yml`.
 - `make figures` regenerates the paper's numbered SVG/PDF figure assets and LaTeX wrappers.
 - Adaptive institutions now include per-client/per-domain funding memory, regulator queue pressure, watchdog monitoring budget allocation, adaptation speed, and reform-decay pressure.

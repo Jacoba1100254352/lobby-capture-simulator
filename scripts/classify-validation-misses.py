@@ -27,7 +27,7 @@ CATEGORY_BY_METRIC = {
     "commentUniqueInformationShare": ("model-tuning", "lower unique-information weight for template-heavy dockets"),
     "commentCompressionRate": ("model-tuning", "raise compression under anti-astroturf and duplicate-detection tooling"),
     "commentAuthenticity": ("metric-split", "separate all-comment authenticity from contacted/verified commenter coverage"),
-    "detectionRate": ("model-tuning", "increase detection response under enforcement-heavy regimes"),
+    "detectionRate": ("metric-split", "split narrow reporting-error incidence from broader modeled detection under enforcement-heavy regimes"),
     "sanctionRate": ("model-tuning", "raise sanction incidence after detection or narrow benchmark to campaign filer cases"),
     "procurementBias": ("direct-source-moment", "use USAspending/SAM/FPDS bridge moments for single-bid awards, ex-post modifications, UEI/PIID coverage, and recipient concentration"),
     "procurementAgencyTop1Share": ("direct-source-moment", "replace the bounded USAspending concentration panel with representative SAM/FPDS action-level extracts before treating agency concentration as calibrated"),
@@ -99,6 +99,7 @@ def main() -> int:
 def classify(row: dict[str, str], source_moments: dict[str, str]) -> dict[str, str]:
     metric = row["metric"]
     category, action = CATEGORY_BY_METRIC.get(metric, ("benchmark-review", "decide whether the benchmark applies to this scenario family"))
+    category, action = refine_partial_action(row, category, action)
     source_metric = DIRECT_SOURCE_HINTS.get(metric, "")
     source_value = source_moments.get(source_metric, "") if source_metric else ""
     priority = priority_for(row)
@@ -115,6 +116,42 @@ def classify(row: dict[str, str], source_moments: dict[str, str]) -> dict[str, s
         "sourceValue": source_value,
         "recommendedAction": action,
     }
+
+
+def refine_partial_action(row: dict[str, str], category: str, action: str) -> tuple[str, str]:
+    if row["status"] != "partial" or category != "scenario-coverage":
+        return category, action
+    observed_min = as_float(row.get("observedMin"))
+    observed_max = as_float(row.get("observedMax"))
+    benchmark_min = as_float(row.get("benchmarkMin"))
+    benchmark_max = as_float(row.get("benchmarkMax"))
+    if None in {observed_min, observed_max, benchmark_min, benchmark_max}:
+        return category, action
+    if observed_min < benchmark_min and observed_max > benchmark_max:
+        return (
+            "scenario-family-split",
+            "split baseline, substitution-stress, and extreme-stress scenarios before using this benchmark as a single calibration target",
+        )
+    if observed_max < benchmark_max and observed_min < benchmark_min:
+        return (
+            "scenario-coverage",
+            "add or isolate higher-pressure substitution scenarios so the scoped validation family reaches the benchmark floor",
+        )
+    if observed_min > benchmark_min and observed_max > benchmark_max:
+        return (
+            "benchmark-review",
+            "treat the current scoped rows as an extreme-stress family or raise the benchmark only with source evidence",
+        )
+    return category, action
+
+
+def as_float(value: str | None) -> float | None:
+    if value is None or value == "":
+        return None
+    try:
+        return float(value)
+    except ValueError:
+        return None
 
 
 def priority_for(row: dict[str, str]) -> str:
