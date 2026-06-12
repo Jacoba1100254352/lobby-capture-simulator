@@ -38,7 +38,7 @@ CLAIM_SOURCE_DEPENDENCY_MD = ROOT / "reports" / "claim-source-dependency.md"
 CLAIM_SOURCE_DEPENDENCY_CSV = ROOT / "reports" / "claim-source-dependency.csv"
 CLAIM_POSTURE_AUDIT_MD = ROOT / "reports" / "claim-posture-audit.md"
 CLAIM_POSTURE_AUDIT_CSV = ROOT / "reports" / "claim-posture-audit.csv"
-RELEASE_TAG = "paper-publication-readiness-2026-06-11-r34"
+RELEASE_TAG = "paper-publication-readiness-2026-06-12-r35"
 CITATION_CFF = ROOT / "CITATION.cff"
 ZENODO_JSON = ROOT / ".zenodo.json"
 FORBIDDEN_LOCAL_ARTIFACTS = [
@@ -392,6 +392,41 @@ def check_claim_alignment() -> list[str]:
                     failures.append(
                         "live snapshot runner status overstates electoral-communication rows despite missing source-panel rows"
                     )
+        elif electoral and electoral.get("status") in {"usable", "thin", "warning"}:
+            required = "OpenFEC electioneering and communication-cost rows"
+            if required not in body:
+                failures.append(
+                    "source-panel inventory has electoral-communication rows, "
+                    f"but the manuscript does not describe the {required} bridge"
+                )
+            supporting_required = {
+                SUPPLEMENT_BODY: required,
+                ROOT / "docs" / "scenario-catalog.md": "OpenFEC electioneering and communication-cost rows are included in the pinned snapshot",
+                ROOT / "docs" / "validation.md": "OpenFEC electioneering and communication-cost rows are included in the pinned snapshot",
+                ROOT / "docs" / "next-steps.md": "OpenFEC electioneering and communication-cost rows are now present in the pinned snapshot",
+                ROOT / "docs" / "source-data-roadmap.md": "electioneering and communication-cost rows present in the pinned 2024 EPA/ENV snapshot",
+            }
+            for path, phrase in supporting_required.items():
+                if path.exists() and phrase not in path.read_text(encoding="utf-8"):
+                    failures.append(
+                        f"{path.relative_to(ROOT)} does not disclose electoral-communication source-row coverage"
+                    )
+            stale_absent_phrases = [
+                "electioneering and communication-cost rows are schema-supported but absent",
+                "OpenFEC electioneering and communication-cost channels are parser-supported but absent from the pinned snapshot",
+                "the pinned snapshot still has zero electoral-communication rows",
+                "the pinned 2024 EPA/ENV snapshot has zero electoral-communication rows",
+            ]
+            checked_texts = {REGGOV_BODY: body}
+            for path in supporting_required:
+                if path.exists():
+                    checked_texts[path] = path.read_text(encoding="utf-8")
+            for path, text in checked_texts.items():
+                for phrase in stale_absent_phrases:
+                    if phrase in text:
+                        failures.append(
+                            f"{path.relative_to(ROOT)} still describes electoral-communication rows as absent"
+                        )
     return failures
 
 

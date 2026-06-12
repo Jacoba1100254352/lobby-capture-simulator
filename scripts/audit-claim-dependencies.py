@@ -33,7 +33,7 @@ CLAIMS = [
         "moments": [("fecRows", 100.0), ("outsideSpendingRows", 250.0)],
         "permitted": "Distributional anchor for observed receipts and independent-expenditure pressure.",
         "avoid": "Do not treat visible FEC rows as direct dark-money or hidden-donor evidence.",
-        "next": "Add lobbyist bundling, electioneering, communication-cost, and state/local overlays.",
+        "next": "Add lobbyist bundling, broader electoral-communication coverage, and state/local overlays.",
     },
     {
         "key": "rulemaking-comment-record",
@@ -87,8 +87,8 @@ CLAIMS = [
         "moments": [("darkMoneySourceShare", 0.01), ("electoralCommunicationRows", 1.0)],
         "strict": True,
         "permitted": "Missingness and proxy-gap diagnosis for hidden-channel mechanisms.",
-        "avoid": "Do not claim calibrated hidden-donor, electioneering, or hidden-channel magnitudes.",
-        "next": "Add direct hidden-donor or nonprofit-routing evidence plus electioneering and communication-cost rows.",
+        "avoid": "Do not treat bounded electoral-communication rows as hidden-donor or hidden-channel magnitude evidence.",
+        "next": "Add direct hidden-donor or nonprofit-routing evidence plus broader electoral-communication coverage.",
     },
     {
         "key": "procurement-modification-capture",
@@ -359,7 +359,7 @@ def table_support(row: dict[str, str]) -> str:
         "strategic-substitution-mechanism": "Thin direct dark-money and revolving-door panels.",
         "public-financing-counterweight": "Thin public-financing program panel.",
         "revolving-door-cooling-off": "Thin LDA-derived revolving-door proxy.",
-        "hidden-channel-magnitude": "Missing electoral-communication rows; thin hidden-channel proxies.",
+        "hidden-channel-magnitude": "Thin direct dark-money and revolving-door proxies; bounded electoral-communication bridge present.",
         "procurement-modification-capture": "No action rows; modification moment below threshold.",
         "calibrated-policy-simulation": "Hidden-channel and procurement-action dependencies not cleared.",
     }.get(row["claimKey"], row["sourceSupport"])
@@ -381,7 +381,7 @@ def table_next(row: dict[str, str]) -> str:
         "strategic-substitution-mechanism": "Direct routing, personnel, and action exports.",
         "public-financing-counterweight": "Broader public-program rows.",
         "revolving-door-cooling-off": "OGE, FACA, witness, or personnel exports.",
-        "hidden-channel-magnitude": "Direct hidden-donor plus electoral-communication rows.",
+        "hidden-channel-magnitude": "Direct hidden-donor/nonprofit-routing rows plus broader electoral-communication coverage.",
         "procurement-modification-capture": "Representative SAM/FPDS action rows.",
         "calibrated-policy-simulation": "Clear P1/P2 source gaps.",
     }.get(row["claimKey"], row["nextEvidence"])

@@ -51,7 +51,7 @@ Deliverables:
 
 ## 2. Expand the empirical source panels beyond the current 2024 EPA/ENV snapshot
 
-The latest key-backed live run now completes the LDA, six-committee OpenFEC, Schedule E outside-spending, Regulations.gov, Federal Register, USAspending enrichment, and LDA-derived revolving-door requests. OpenFEC electioneering and communication-cost request paths are implemented, but the pinned snapshot still has zero electoral-communication rows. Public financing and intermediary panels now have source-native no-key paths, but their geographic/program scope remains narrower than a national calibration panel.
+The latest key-backed live run now completes the LDA, six-committee OpenFEC, Schedule E outside-spending, OpenFEC electioneering and communication-cost rows, Regulations.gov, Federal Register, USAspending enrichment, and LDA-derived revolving-door requests. OpenFEC electioneering and communication-cost rows are now present in the pinned snapshot, but the bridge remains bounded and should not be treated as a representative national electoral-spending panel. Public financing and intermediary panels now have source-native no-key paths, but their geographic/program scope remains narrower than a national calibration panel.
 
 Deliverables:
 
@@ -67,7 +67,7 @@ Deliverables:
 
 ## 3. Broaden SAM/FPDS, revolving-door, and intermediary source panels
 
-The source-moment layer now covers LDA, OpenFEC party/Schedule E rows, zero-row electioneering/communication-cost coverage diagnostics, regulatory dockets, USAspending award, bridge, and action-panel fields, public-financing bridge rows, and LDA-derived covered-position rows. Procurement, revolving-door, intermediary, and electoral-communication validation still need richer representative data rather than narrow, missing, or fixture-backed panels.
+The source-moment layer now covers LDA, OpenFEC party/Schedule E/electioneering/communication-cost rows, regulatory dockets, USAspending award, bridge, and action-panel fields, public-financing bridge rows, and LDA-derived covered-position rows. Procurement, revolving-door, intermediary, and electoral-communication validation still need richer representative data rather than narrow or fixture-backed panels.
 
 Deliverables:
 

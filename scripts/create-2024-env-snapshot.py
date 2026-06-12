@@ -26,7 +26,7 @@ SOURCES = {
     "fec": {
         "input": RAW / "fec-campaign-finance.csv",
         "description": "FEC 2024 cycle party committee contributions, OpenFEC Schedule E independent expenditures, electioneering communications, and communication-cost rows when available. Public-financing and opaque-capacity bridge rows are stored in separate panels.",
-        "request": "FEC_CYCLE=2024 FEC_COMMITTEE_ID in C00010603,C00042366,C00000935,C00003418,C00027466,C00075820 plus FEC_ONLY_SCHEDULE_E=1 FEC_INCLUDE_ELECTIONEERING=1 FEC_INCLUDE_COMMUNICATION_COSTS=1 ./scripts/fetch-fec.sh --live",
+        "request": "FEC_CYCLE=2024 FEC_COMMITTEE_ID in C00010603,C00042366,C00000935,C00003418,C00027466,C00075820 plus FEC_ONLY_SCHEDULE_E=1 FEC_INCLUDE_SCHEDULE_E=1 for Schedule E plus FEC_INCLUDE_SCHEDULE_E=0 FEC_INCLUDE_ELECTIONEERING=1 FEC_INCLUDE_COMMUNICATION_COSTS=1 for electoral-communication rows",
     },
     "public-financing": {
         "input": RAW / "public-financing.csv",
@@ -240,7 +240,8 @@ def write_readme(root: Path, entries: list[dict[str, object]]) -> None:
         "- LDA issue code: ENV.",
         "- Agency: EPA.",
         "- FEC cycle: 2024, with the six national party committees as the first electoral-pressure panel.",
-        "- Outside-spending and electoral-communication bridge: OpenFEC Schedule E independent expenditures, electioneering communications, and communication-cost rows when available.",
+        "- Outside-spending bridge: OpenFEC Schedule E independent expenditures.",
+        "- Electoral-communication bridge: OpenFEC electioneering communications and communication-cost rows when available.",
         "- Public-financing bridge: NYC CFB public-funds payments or configured program export rows carried as a separate bridge panel.",
         "- Dark-money bridge: configured source export rows or IRS EO BMF 501(c)(4)/(c)(6) opaque-capacity proxy rows; super PAC rows remain separate.",
         "- USAspending fiscal year: 2024, Environmental Protection Agency awards.",

@@ -58,22 +58,36 @@ if SOURCE_RAW_DIR="$raw_dir/fec-schedule-e" \
   FEC_CYCLE="${FEC_CYCLE:-2024}" \
   FEC_ONLY_SCHEDULE_E=1 \
   FEC_INCLUDE_SCHEDULE_E=1 \
-  FEC_INCLUDE_ELECTIONEERING="${FEC_INCLUDE_ELECTIONEERING:-1}" \
-  FEC_INCLUDE_COMMUNICATION_COSTS="${FEC_INCLUDE_COMMUNICATION_COSTS:-1}" \
+  FEC_INCLUDE_ELECTIONEERING=0 \
+  FEC_INCLUDE_COMMUNICATION_COSTS=0 \
   FEC_SCHEDULE_E_MIN_AMOUNT="${FEC_SCHEDULE_E_MIN_AMOUNT:-1000}" \
   FEC_SCHEDULE_E_PAGE_SIZE="${FEC_SCHEDULE_E_PAGE_SIZE:-100}" \
   FEC_SCHEDULE_E_MAX_PAGES="${FEC_SCHEDULE_E_MAX_PAGES:-4}" \
+    python3 scripts/fetch-source-data.py fec --output "$tmpdir/fec-schedule-e.csv"; then
+  append_csv "$tmpdir/fec-schedule-e.csv" data/raw/fec-campaign-finance.csv
+  printf "fec-schedule-e,ok,normalized independent-expenditure rows appended\n" >> "$status_file"
+else
+  printf "fec-schedule-e,unavailable,OpenFEC Schedule E request failed or returned no rows\n" >> "$status_file"
+fi
+
+if SOURCE_RAW_DIR="$raw_dir/fec-electoral-communications" \
+  FEC_API_KEY="${FEC_API_KEY:-DEMO_KEY}" \
+  FEC_CYCLE="${FEC_CYCLE:-2024}" \
+  FEC_ONLY_SCHEDULE_E=1 \
+  FEC_INCLUDE_SCHEDULE_E=0 \
+  FEC_INCLUDE_ELECTIONEERING="${FEC_INCLUDE_ELECTIONEERING:-1}" \
+  FEC_INCLUDE_COMMUNICATION_COSTS="${FEC_INCLUDE_COMMUNICATION_COSTS:-1}" \
   FEC_ELECTIONEERING_MIN_AMOUNT="${FEC_ELECTIONEERING_MIN_AMOUNT:-1000}" \
   FEC_ELECTIONEERING_PAGE_SIZE="${FEC_ELECTIONEERING_PAGE_SIZE:-100}" \
   FEC_ELECTIONEERING_MAX_PAGES="${FEC_ELECTIONEERING_MAX_PAGES:-2}" \
   FEC_COMMUNICATION_COST_MIN_AMOUNT="${FEC_COMMUNICATION_COST_MIN_AMOUNT:-1000}" \
   FEC_COMMUNICATION_COST_PAGE_SIZE="${FEC_COMMUNICATION_COST_PAGE_SIZE:-100}" \
   FEC_COMMUNICATION_COST_MAX_PAGES="${FEC_COMMUNICATION_COST_MAX_PAGES:-2}" \
-    python3 scripts/fetch-source-data.py fec --output "$tmpdir/fec-schedule-e.csv"; then
-  append_csv "$tmpdir/fec-schedule-e.csv" data/raw/fec-campaign-finance.csv
-  printf "fec-schedule-e,ok,normalized independent-expenditure rows appended; electioneering/communication-cost rows included only when present\n" >> "$status_file"
+    python3 scripts/fetch-source-data.py fec --output "$tmpdir/fec-electoral-communications.csv"; then
+  append_csv "$tmpdir/fec-electoral-communications.csv" data/raw/fec-campaign-finance.csv
+  printf "fec-electoral-communications,ok,normalized electioneering and communication-cost rows appended\n" >> "$status_file"
 else
-  printf "fec-schedule-e,unavailable,OpenFEC Schedule E/electoral communication request failed or returned no rows\n" >> "$status_file"
+  printf "fec-electoral-communications,unavailable,OpenFEC electioneering or communication-cost request failed or returned no rows\n" >> "$status_file"
 fi
 
 if [ -n "${PUBLIC_FINANCING_LIVE_CSV:-}" ] || [ -n "${PUBLIC_FINANCING_LIVE_URL:-}" ]; then

@@ -16,14 +16,14 @@ P3,scenario-coverage,lobby-capture-campaign.csv,hiddenInfluenceShare,partial,inf
 P3,scenario-coverage,lobby-capture-campaign.csv,hiddenInfluenceShare,partial,proxy,0.2422-0.6708,0.30-0.60,,,add stress cases where reforms bind enough to force hidden substitution
 P3,benchmark-review,lobby-capture-campaign.csv,influencePreservationRate,partial,proxy,0.1674-0.4727,0.20-1.50,,,decide whether the benchmark applies to this scenario family
 P3,benchmark-review,lobby-capture-mechanism-comparison.csv,influencePreservationRate,partial,proxy,0.0000-0.4256,0.20-1.50,,,decide whether the benchmark applies to this scenario family
-P3,model-tuning,lobby-capture-campaign.csv,largeDonorDependence,partial,observed,0.5702-0.7009,0.60-0.80,fecLargeDonorWeightedShare,0.9485,inspect remaining campaign/outside rows and tune allocation-to-source concentration only where high-end outside spending is intended
+P3,model-tuning,lobby-capture-campaign.csv,largeDonorDependence,partial,observed,0.5620-0.6928,0.60-0.80,fecLargeDonorWeightedShare,0.9459,inspect remaining campaign/outside rows and tune allocation-to-source concentration only where high-end outside spending is intended
 P3,benchmark-review,lobby-capture-campaign.csv,observedCaptureRate,partial,synthetic,0.0094-1.0000,0.00-0.80,,,decide whether the benchmark applies to this scenario family
 P3,benchmark-review,lobby-capture-mechanism-comparison.csv,observedCaptureRate,partial,synthetic,0.0000-0.8916,0.00-0.80,,,decide whether the benchmark applies to this scenario family
-P3,benchmark-review,lobby-capture-campaign.csv,publicFinancingCandidateUptake,partial,observed,0.4708-0.6877,0.57-0.86,,,decide whether the benchmark applies to this scenario family
-P3,benchmark-review,lobby-capture-interactions.csv,publicFinancingCandidateUptake,partial,observed,0.4684-0.7012,0.57-0.86,,,decide whether the benchmark applies to this scenario family
-P3,benchmark-review,lobby-capture-mechanism-comparison.csv,publicFinancingCandidateUptake,partial,observed,0.5658-0.5798,0.57-0.86,,,decide whether the benchmark applies to this scenario family
-P3,benchmark-review,lobby-capture-portfolio.csv,publicFinancingCandidateUptake,partial,observed,0.4381-0.7003,0.57-0.86,,,decide whether the benchmark applies to this scenario family
-P3,benchmark-review,lobby-capture-sensitivity.csv,publicFinancingCandidateUptake,partial,observed,0.4818-0.7012,0.57-0.86,,,decide whether the benchmark applies to this scenario family
+P3,benchmark-review,lobby-capture-campaign.csv,publicFinancingCandidateUptake,partial,observed,0.4721-0.6888,0.57-0.86,,,decide whether the benchmark applies to this scenario family
+P3,benchmark-review,lobby-capture-interactions.csv,publicFinancingCandidateUptake,partial,observed,0.4696-0.7024,0.57-0.86,,,decide whether the benchmark applies to this scenario family
+P3,benchmark-review,lobby-capture-mechanism-comparison.csv,publicFinancingCandidateUptake,partial,observed,0.5670-0.5810,0.57-0.86,,,decide whether the benchmark applies to this scenario family
+P3,benchmark-review,lobby-capture-portfolio.csv,publicFinancingCandidateUptake,partial,observed,0.4393-0.7014,0.57-0.86,,,decide whether the benchmark applies to this scenario family
+P3,benchmark-review,lobby-capture-sensitivity.csv,publicFinancingCandidateUptake,partial,observed,0.4830-0.7024,0.57-0.86,,,decide whether the benchmark applies to this scenario family
 P3,benchmark-review,lobby-capture-campaign.csv,regulatorQueueBacklog,partial,observed,0.2361-0.6676,0.50-0.75,,,decide whether the benchmark applies to this scenario family
 P3,benchmark-review,lobby-capture-mechanism-comparison.csv,regulatorQueueBacklog,partial,observed,0.2361-0.6686,0.50-0.75,,,decide whether the benchmark applies to this scenario family
 P3,model-tuning,lobby-capture-ablation.csv,sanctionRate,partial,proxy,0.0006-0.0222,0.003-0.015,,,raise sanction incidence after detection or narrow benchmark to campaign filer cases

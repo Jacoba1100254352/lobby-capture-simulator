@@ -11,6 +11,7 @@ public final class SimulatorTests
 	
 	public static void main(String[] args) throws IOException {
 		AdaptationTest.run();
+		CalibrationLoaderTest.run();
 		SmokeTest.run();
 		System.out.println("All simulator tests passed.");
 	}

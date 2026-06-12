@@ -41,7 +41,7 @@ PANELS = [
         "minimum": 1.0,
         "good": 50.0,
         "missing": "no electioneering or communication-cost rows in the pinned snapshot",
-        "action": "Enable the OpenFEC electioneering and communication-cost source-native fetchers in the next live snapshot and keep these rows separate from direct dark-money evidence.",
+        "action": "Broaden OpenFEC electioneering and communication-cost coverage and keep these rows separate from direct dark-money evidence.",
     },
     {
         "panel": "Public financing",
