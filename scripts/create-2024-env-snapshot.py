@@ -56,7 +56,7 @@ SOURCES = {
     "usaspending-procurement-actions": {
         "input": RAW / "usaspending-procurement-actions.csv",
         "description": "USAspending transaction/action panel for action-level procurement modification diagnostics; kept separate from award rows and top-award concentration bridge rows.",
-        "request": "USASPENDING_ACTION_PERIOD_BUCKETS=monthly USASPENDING_ACTION_TRANSACTION_PAGE_SIZE=100 USASPENDING_ACTION_TRANSACTION_MAX_PAGES=1 python3 scripts/fetch-source-data.py usaspending-actions --output data/raw/usaspending-procurement-actions.csv",
+        "request": "USASPENDING_ACTION_PERIOD_BUCKETS=monthly USASPENDING_ACTION_TRANSACTION_PAGE_SIZE=100 USASPENDING_ACTION_TRANSACTION_MAX_PAGES=1 USASPENDING_ACTION_TRANSACTION_SORT='Transaction Amount' USASPENDING_ACTION_TRANSACTION_ORDER=desc python3 scripts/fetch-source-data.py usaspending-actions --output data/raw/usaspending-procurement-actions.csv",
     },
     "revolving-door": {
         "input": RAW / "revolving-door.csv",
