@@ -94,10 +94,10 @@ These are direct moments from normalized calibration tables. They are source dia
 | snapshot | usaspending | `procurementFirewallCoverageShare` | 0.0000 | observed_proxy | share of normalized award rows covered by a procurement-firewall flag |
 | snapshot | usaspending | `procurementKnownUeiShare` | 1.0000 | diagnostic | share of normalized award rows carrying a recipient UEI |
 | snapshot | usaspending | `procurementKnownPiidShare` | 1.0000 | diagnostic | share of normalized award rows carrying a procurement instrument identifier |
-| snapshot | revolving-door | `revolvingDoorRows` | 284.0000 | observed | normalized revolving-door rows |
+| snapshot | revolving-door | `revolvingDoorRows` | 803.0000 | observed | normalized revolving-door rows |
 | snapshot | revolving-door | `revolvingDoorFixtureShare` | 0.0000 | diagnostic | share of rows marked as tracked fixture rather than live/exported source |
 | snapshot | revolving-door | `revolvingDoorFormerOfficialShare` | 1.0000 | observed_proxy | share of rows with former official role |
-| snapshot | revolving-door | `revolvingDoorAgencyTop1Share` | 0.4754 | observed_proxy | largest agency share of normalized revolving-door rows |
+| snapshot | revolving-door | `revolvingDoorAgencyTop1Share` | 0.4919 | observed_proxy | largest agency share of normalized revolving-door rows |
 | snapshot | revolving-door | `revolvingDoorCoolingOffUnderOneYearShare` | 0.0000 | observed_proxy | share of rows with cooling-off interval below one year |
 | snapshot | revolving-door | `revolvingDoorCoolingOffMeanMonths` | 12.0000 | observed_proxy | mean cooling-off interval in months |
 | snapshot | revolving-door | `revolvingDoorHighInfluenceShare` | 0.0000 | proxy | share of rows with high normalized influence |

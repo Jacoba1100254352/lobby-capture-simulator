@@ -357,12 +357,12 @@ def posture_label(status: str) -> str:
 
 def table_support(row: dict[str, str]) -> str:
     return {
-        "strategic-substitution-mechanism": "Thin direct dark-money and revolving-door panels.",
+        "strategic-substitution-mechanism": "Thin direct dark-money panel; other substitution panels usable.",
         "public-financing-counterweight": "Bounded local public-financing program panel.",
-        "revolving-door-cooling-off": "Thin LDA-derived revolving-door proxy.",
-        "hidden-channel-magnitude": "Thin direct dark-money and revolving-door proxies; bounded electoral-communication bridge present.",
-        "procurement-modification-capture": "No action rows; modification moment below threshold.",
-        "calibrated-policy-simulation": "Hidden-channel and procurement-action dependencies not cleared.",
+        "revolving-door-cooling-off": "LDA-derived covered-position bridge.",
+        "hidden-channel-magnitude": "Thin direct dark-money panel; electoral and covered-position bridges present.",
+        "procurement-modification-capture": "Action rows present; modification incidence remains thin.",
+        "calibrated-policy-simulation": "Direct dark-money and procurement-modification dependencies not cleared.",
     }.get(row["claimKey"], row["sourceSupport"])
 
 

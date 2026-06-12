@@ -38,7 +38,7 @@ CLAIM_SOURCE_DEPENDENCY_MD = ROOT / "reports" / "claim-source-dependency.md"
 CLAIM_SOURCE_DEPENDENCY_CSV = ROOT / "reports" / "claim-source-dependency.csv"
 CLAIM_POSTURE_AUDIT_MD = ROOT / "reports" / "claim-posture-audit.md"
 CLAIM_POSTURE_AUDIT_CSV = ROOT / "reports" / "claim-posture-audit.csv"
-RELEASE_TAG = "paper-publication-readiness-2026-06-12-r42"
+RELEASE_TAG = "paper-publication-readiness-2026-06-12-r43"
 CITATION_CFF = ROOT / "CITATION.cff"
 ZENODO_JSON = ROOT / ".zenodo.json"
 FORBIDDEN_LOCAL_ARTIFACTS = [
@@ -550,15 +550,17 @@ def check_claim_source_dependency_audit() -> list[str]:
 
     weak_statuses = {"thin", "warning", "fixture-only", "missing"}
     weak_panels = [panel for panel in panels if panel.get("status") in weak_statuses]
+    weak_panel_names = {panel.get("panel", "") for panel in weak_panels}
     if rows["lobbying-disclosure-surface"].get("status") != "cleared":
         failures.append("lobbying disclosure source dependency should be cleared")
     if rows["rulemaking-comment-record"].get("status") != "cleared":
         failures.append("rulemaking comment source dependency should be cleared")
     if weak_panels:
-        bounded_expected = {
-            "strategic-substitution-mechanism",
-            "revolving-door-cooling-off",
-        }
+        bounded_expected = set()
+        if "Direct dark money" in weak_panel_names or "Revolving door" in weak_panel_names:
+            bounded_expected.add("strategic-substitution-mechanism")
+        if "Revolving door" in weak_panel_names:
+            bounded_expected.add("revolving-door-cooling-off")
         for claim in bounded_expected:
             if rows[claim].get("status") != "bounded":
                 failures.append(f"claim-source dependency should be bounded while weak panels remain: {claim}")
@@ -570,6 +572,9 @@ def check_claim_source_dependency_audit() -> list[str]:
         for claim in not_cleared_expected:
             if rows[claim].get("status") != "not_cleared":
                 failures.append(f"claim-source dependency should not be cleared while weak panels remain: {claim}")
+    revolving_panel = next((panel for panel in panels if panel.get("panel") == "Revolving door"), {})
+    if revolving_panel.get("status") == "usable" and rows["revolving-door-cooling-off"].get("status") != "cleared":
+        failures.append("revolving-door source dependency should be cleared when the revolving-door panel is usable")
     public_panel = next((panel for panel in panels if panel.get("panel") == "Public financing"), {})
     if public_panel.get("status") == "usable" and rows["public-financing-counterweight"].get("status") != "cleared":
         failures.append("public-financing source dependency should be cleared when the public-financing panel is usable")

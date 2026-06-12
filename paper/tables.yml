@@ -762,7 +762,7 @@
             "Public financing": "NYC+Seattle rows",
             "Intermediaries": "proxy rows",
             "IRS 527 political organizations": "bounded rows",
-            "Revolving door": "thin proxy rows",
+            "Revolving door": "LDA covered-position rows",
             "Procurement identifiers": "ID coverage",
             "Procurement concentration panel": "bounded panel",
             "Procurement action history": "action rows",

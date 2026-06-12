@@ -32,7 +32,7 @@ The current command freezes whatever normalized files are present under `data/ra
 | usaspending-procurement-bridge | 150 | live | `data/snapshots/2024-env/normalized/usaspending-procurement-bridge.csv` |
 | usaspending-procurement-actions | 2399 | live | `data/snapshots/2024-env/normalized/usaspending-procurement-actions.csv` |
 | sam-contract-awards | 0 | missing | `data/snapshots/2024-env/normalized/sam-contract-awards.csv` |
-| revolving-door | 284 | live | `data/snapshots/2024-env/normalized/revolving-door.csv` |
+| revolving-door | 803 | live | `data/snapshots/2024-env/normalized/revolving-door.csv` |
 | intermediary | 1353 | live | `data/snapshots/2024-env/normalized/intermediaries.csv` |
 
 `live-run-status.csv` records which official live requests completed and which were blocked by public API limits or missing credentials.

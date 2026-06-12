@@ -38,7 +38,7 @@ Benchmark ranges are plausibility checks, not causal empirical claims. `source_g
 | lobby-capture-ablation.csv | networkLegibilityIndex | 0.5411-0.7279 | 0.00-1.00 | fit | all scenario values inside benchmark range; scope=all scenarios; rows=7 |
 | lobby-capture-ablation.csv | intermediaryCentrality | 0.3524-0.3695 | 0.00-1.00 | fit | all scenario values inside benchmark range; scope=all scenarios; rows=7 |
 | lobby-capture-ablation.csv | procurementNetworkExposure | 0.1492-0.2931 | 0.00-1.00 | fit | all scenario values inside benchmark range; scope=procurement scenarios; rows=7 |
-| lobby-capture-ablation.csv | revolvingDoorBridgeIndex | 0.1624-0.4051 | 0.00-1.00 | fit | all scenario values inside benchmark range; scope=all scenarios; rows=7 |
+| lobby-capture-ablation.csv | revolvingDoorBridgeIndex | 0.1625-0.4051 | 0.00-1.00 | fit | all scenario values inside benchmark range; scope=all scenarios; rows=7 |
 | lobby-capture-ablation.csv | crossVenueDetectionIndex | 0.4950-0.7538 | 0.00-1.00 | fit | all scenario values inside benchmark range; scope=all scenarios; rows=7 |
 | lobby-capture-ablation.csv | participationProtectionIndex | 0.3432-0.6696 | 0.00-1.00 | fit | all scenario values inside benchmark range; scope=all scenarios; rows=7 |
 | lobby-capture-ablation.csv | speechRestrictionRisk | 0.1549-0.3223 | 0.00-1.00 | fit | all scenario values inside benchmark range; scope=all scenarios; rows=7 |
@@ -77,7 +77,7 @@ Benchmark ranges are plausibility checks, not causal empirical claims. `source_g
 | lobby-capture-ablation.csv | speechRestrictionRisk | 0.1549-0.3223 | 0.00-0.80 | fit | all scenario values inside benchmark range; scope=all scenarios; rows=7 |
 | lobby-capture-ablation.csv | intermediaryCentrality | 0.3524-0.3695 | 0.00-0.80 | fit | all scenario values inside benchmark range; scope=all scenarios; rows=7 |
 | lobby-capture-ablation.csv | procurementNetworkExposure | 0.1492-0.2931 | 0.00-0.80 | fit | all scenario values inside benchmark range; scope=procurement scenarios; rows=7 |
-| lobby-capture-ablation.csv | revolvingDoorBridgeIndex | 0.1624-0.4051 | 0.00-0.85 | fit | all scenario values inside benchmark range; scope=all scenarios; rows=7 |
+| lobby-capture-ablation.csv | revolvingDoorBridgeIndex | 0.1625-0.4051 | 0.00-0.85 | fit | all scenario values inside benchmark range; scope=all scenarios; rows=7 |
 | lobby-capture-ablation.csv | commentNetworkLoad | 0.1337-0.2055 | 0.00-0.85 | fit | all scenario values inside benchmark range; scope=all scenarios; rows=7 |
 | lobby-capture-ablation.csv | venueShiftNetworkLoad | 0.1286-0.2755 | 0.00-0.85 | fit | all scenario values inside benchmark range; scope=all scenarios; rows=7 |
 | lobby-capture-campaign.csv | lobbySpendPerContest | 0.1235-1.4603 | 0.01-5.00 | fit | all scenario values inside benchmark range; scope=all scenarios; rows=35 |

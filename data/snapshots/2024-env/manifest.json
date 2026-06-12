@@ -1,7 +1,7 @@
 {
   "snapshot": "2024-env",
-  "generatedAt": "2026-06-12T08:18:39.542118+00:00",
-  "gitCommit": "bbf2acf",
+  "generatedAt": "2026-06-12T08:47:39.448416+00:00",
+  "gitCommit": "8bab983",
   "gitTreeState": "clean",
   "gitTreeStateScope": "working tree status excluding generated 2024-env snapshot, reports, paper tables, and paper figures",
   "scope": {
@@ -108,8 +108,8 @@
       "description": "Normalized revolving-door source panel from a licensed/exported CSV or LDA covered-position derivation, with fixture fallback.",
       "requestTemplate": "REVOLVING_DOOR_LIVE_CSV=/path/to/export.csv ./scripts/fetch-revolving-door.sh --live or REVOLVING_DOOR_SOURCE_NATIVE=1 python3 scripts/fetch-source-data.py revolving-door",
       "normalizedFile": "data/snapshots/2024-env/normalized/revolving-door.csv",
-      "rowCount": 284,
-      "sha256": "656829170696bee9657ea63d4b9d789e09063a73bae172e19cf2db1bee4d4c0e",
+      "rowCount": 803,
+      "sha256": "2e140ab84fd0c71002a0e312245beb5ccdf38dabd415956cbfacf9a40f24c6fa",
       "status": "live",
       "statusNotes": "revolving-door: ok (derived normalized covered-position rows from LDA source)"
     },
