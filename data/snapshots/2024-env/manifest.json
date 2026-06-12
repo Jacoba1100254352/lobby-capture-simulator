@@ -1,8 +1,8 @@
 {
   "snapshot": "2024-env",
-  "generatedAt": "2026-06-12T06:13:13.871043+00:00",
-  "gitCommit": "de81997",
-  "gitTreeState": "clean",
+  "generatedAt": "2026-06-12T06:35:34.354150+00:00",
+  "gitCommit": "e5f5425",
+  "gitTreeState": "dirty",
   "gitTreeStateScope": "working tree status excluding generated 2024-env snapshot, reports, paper tables, and paper figures",
   "scope": {
     "calendarWindow": "2024-01-01/2024-12-31",
@@ -75,7 +75,7 @@
     },
     {
       "source": "usaspending-procurement-bridge",
-      "description": "Multi-agency fiscal-year 2024 USAspending top-award bridge for procurement concentration and latest-transaction modification diagnostics; kept separate from the EPA calibration slice.",
+      "description": "Multi-agency fiscal-year 2024 USAspending top-award bridge for high-value procurement concentration and latest-transaction modification diagnostics; kept separate from the EPA calibration slice and action-panel denominator.",
       "requestTemplate": "USASPENDING_AGENCIES='Environmental Protection Agency,Department of Energy,Department of the Interior,Department of Agriculture,Department of Transportation,Department of Defense' USASPENDING_PAGE_SIZE=25 USASPENDING_MAX_PAGES=1 USASPENDING_TREAT_LATEST_TRANSACTION_AS_MODIFICATION=1 python3 scripts/fetch-source-data.py usaspending --output data/raw/usaspending-procurement-bridge.csv",
       "normalizedFile": "data/snapshots/2024-env/normalized/usaspending-procurement-bridge.csv",
       "rowCount": 150,
@@ -85,7 +85,7 @@
     },
     {
       "source": "usaspending-procurement-actions",
-      "description": "Stratified six-agency USAspending transaction/action panel for action-level procurement modification diagnostics; initial-action and high-value transaction strata are deduplicated and kept separate from award rows and top-award concentration bridge rows.",
+      "description": "Stratified six-agency USAspending transaction/action panel for action-level procurement concentration and modification diagnostics; initial-action and high-value transaction strata are deduplicated and kept separate from award rows and top-award bridge rows.",
       "requestTemplate": "USASPENDING_AGENCIES='Environmental Protection Agency,Department of Energy,Department of the Interior,Department of Agriculture,Department of Transportation,Department of Defense' USASPENDING_ACTION_PERIOD_BUCKETS=monthly USASPENDING_ACTION_TRANSACTION_PAGE_SIZE=25 USASPENDING_ACTION_TRANSACTION_MAX_PAGES=1 USASPENDING_ACTION_TRANSACTION_SORT_SPECS='Mod:asc;Transaction Amount:desc' python3 scripts/fetch-source-data.py usaspending-actions --output data/raw/usaspending-procurement-actions.csv",
       "normalizedFile": "data/snapshots/2024-env/normalized/usaspending-procurement-actions.csv",
       "rowCount": 3578,

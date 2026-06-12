@@ -13,8 +13,8 @@ Scope:
 - Public-financing bridge: NYC CFB public-funds payments, Seattle Democracy Voucher rows, or configured program export rows carried as a separate bridge panel.
 - Dark-money bridge: configured source export rows or IRS EO BMF 501(c)(4)/(c)(6) opaque-capacity proxy rows; super PAC rows remain separate.
 - USAspending fiscal year: 2024, Environmental Protection Agency awards.
-- USAspending procurement bridge: multi-agency fiscal-year 2024 top-award rows for procurement concentration diagnostics, kept separate from the EPA calibration slice.
-- USAspending procurement actions: stratified six-agency transaction/action rows for modification-incidence diagnostics when present, combining initial-action and high-value transaction strata and kept separate from award rows and concentration rows.
+- USAspending procurement bridge: multi-agency fiscal-year 2024 top-award rows for high-value procurement diagnostics, kept separate from the EPA calibration slice and action-panel denominator.
+- USAspending procurement actions: stratified six-agency transaction/action rows for concentration and modification-incidence diagnostics when present, combining initial-action and high-value transaction strata and kept separate from award rows and top-award bridge rows.
 - Revolving-door panel: licensed/source export or LDA covered-position derivation when available; fixture otherwise.
 - Intermediary panel: NYC CFB intermediary rows, IRS EO BMF nonprofit/association capacity rows, IRS POFD Form 8872 527 political-organization rows, or configured nonprofit, 527, association, and think-tank export when available; fixture otherwise.
 

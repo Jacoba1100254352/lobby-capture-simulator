@@ -269,7 +269,10 @@ def source_scope_gap(metric: str, value: float, source_moments: dict[str, float]
     procurement_bridge_rows = source_moments.get("procurementBridgeRows", 0.0)
     procurement_action_rows = source_moments.get("procurementActionRows", 0.0)
     procurement_bridge_agencies = source_moments.get("procurementBridgeAgencyCount", 0.0)
-    top_award_bridge = source_moments.get("procurementBridgeTopAwardSample", 0.0) >= 0.5
+    concentration_panel_agencies = source_moments.get("procurementConcentrationPanelAgencyCount", 0.0)
+    concentration_action_panel = source_moments.get("procurementConcentrationPanelActionSample", 0.0) >= 0.5
+    concentration_top_award_panel = source_moments.get("procurementConcentrationPanelTopAwardSample", 0.0) >= 0.5
+    top_award_bridge_available = source_moments.get("procurementBridgeTopAwardSample", 0.0) >= 0.5
     latest_transaction_mod_proxy = source_moments.get("procurementLatestTransactionModificationProxy", 0.0) >= 0.5
     single_agency_panel = (
         procurement_rows > 0
@@ -284,15 +287,17 @@ def source_scope_gap(metric: str, value: float, source_moments: dict[str, float]
     thin_dark_money_panel = source_moments.get("darkMoneySourceShare", 0.0) < 0.05
     if metric == "procurementAgencyTop1Share" and single_agency_panel:
         return "single-agency procurement snapshot cannot validate a multi-agency agency-concentration benchmark"
-    if metric == "procurementAgencyTop1Share" and top_award_bridge and procurement_bridge_agencies > 1:
+    if metric == "procurementAgencyTop1Share" and concentration_action_panel and concentration_panel_agencies > 1:
+        return "bounded stratified procurement action panel is present, but it is not representative enough for agency-concentration calibration"
+    if metric == "procurementAgencyTop1Share" and concentration_top_award_panel and procurement_bridge_agencies > 1:
         return "multi-agency procurement bridge is present but top-award sampling is not representative enough for agency-concentration calibration"
     if metric == "procurementRecipientTop3Share" and single_agency_panel:
         return "single-agency procurement snapshot cannot validate a cross-agency recipient-concentration benchmark"
-    if metric == "procurementSingleBidShare" and top_award_bridge:
+    if metric == "procurementSingleBidShare" and concentration_top_award_panel:
         return "competition moments come from a limited top-award procurement slice, not representative SAM/FPDS action-level competition coverage"
     if metric == "procurementExPostModificationShare" and initial_award_panel and value <= 0.0:
         return "award-level procurement snapshot is dominated by initial awards; action-level FPDS/SAM modification transactions are needed"
-    if metric == "procurementExPostModificationShare" and latest_transaction_mod_proxy and procurement_action_rows <= 0:
+    if metric == "procurementExPostModificationShare" and latest_transaction_mod_proxy and procurement_action_rows <= 0 and top_award_bridge_available:
         return "latest-transaction modification enrichment is kept separate from action-level incidence; representative FPDS/SAM transaction denominators are still needed"
     if metric == "procurementExPostModificationShare" and procurement_action_rows > 0 and value > 0.05:
         return "bounded USAspending transaction-action panel is present, but the modification-action share remains above the benchmark range and still needs representative SAM/FPDS validation"

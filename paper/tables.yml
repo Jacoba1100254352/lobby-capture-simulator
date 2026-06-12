@@ -706,7 +706,7 @@
             "IRS 527 political organizations": "IRS 527 orgs.",
             "Revolving door": "Rev. door",
             "Procurement identifiers": "Proc. IDs",
-            "Procurement concentration bridge": "Proc. conc.",
+            "Procurement concentration panel": "Proc. conc.",
             "Procurement action history": "Proc. actions",
             "Procurement modification risk": "Proc. mods"
           }
@@ -743,6 +743,7 @@
             "proxy": "proxy",
             "direct observed 527 filings": "direct 527 filings",
             "direct identifier coverage": "direct IDs",
+            "direct bounded action/top-award panel": "bounded panel",
             "direct top-award bridge": "top-award bridge",
             "direct action rows when present": "direct rows"
           }
@@ -761,7 +762,7 @@
             "IRS 527 political organizations": "bounded rows",
             "Revolving door": "thin proxy rows",
             "Procurement identifiers": "ID coverage",
-            "Procurement concentration bridge": "top-award",
+            "Procurement concentration panel": "bounded panel",
             "Procurement action history": "action rows",
             "Procurement modification risk": "high mod share"
           }

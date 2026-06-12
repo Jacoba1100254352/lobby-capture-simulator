@@ -149,7 +149,7 @@ These are synthetic path diagnostics. They do not claim to reconstruct observed 
 
 ### Procurement Bridge
 
-Procurement contests use both simulated channel pressure and source-panel procurement risk. The bridge risk is computed from recipient concentration, single-bid or limited-competition share, post-award modification share, price-only awards, protest flags, exclusion flags, and missing firewall coverage. Source moments keep award rows, top-award concentration bridge rows, and transaction/action rows separate. Transaction/action rows are the preferred denominator for modification incidence when present; award rows remain a fallback and are reported with coverage warnings when dominated by initial awards.
+Procurement contests use both simulated channel pressure and source-panel procurement risk. The bridge risk is computed from recipient concentration, single-bid or limited-competition share, post-award modification share, price-only awards, protest flags, exclusion flags, and missing firewall coverage. Source moments keep award rows, top-award bridge rows, and transaction/action rows separate. Transaction/action rows are the preferred denominator for concentration when they provide sufficient multi-agency coverage and for modification incidence when present; award rows remain a fallback and are reported with coverage warnings when dominated by initial awards.
 
 ### Rulemaking Comment Triage
 

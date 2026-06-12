@@ -12,7 +12,7 @@ This queue classifies validation misses and partial overlaps into concrete follo
 
 | Priority | Category | Report | Metric | Status | Observed | Benchmark | Source Moment | Action |
 | --- | --- | --- | --- | --- | ---: | ---: | ---: | --- |
-| P1 | direct-source-moment | source-moments.csv | `procurementAgencyTop1Share` | source_gap | 0.5134-0.5134 | 0.55-0.65 | procurementAgencyTop1Share=0.5134 | replace the multi-agency top-award bridge with representative SAM/FPDS action-level extracts before treating agency concentration as calibrated |
+| P1 | direct-source-moment | source-moments.csv | `procurementAgencyTop1Share` | source_gap | 0.6680-0.6680 | 0.55-0.65 | procurementAgencyTop1Share=0.6680 | replace the bounded USAspending concentration panel with representative SAM/FPDS action-level extracts before treating agency concentration as calibrated |
 | P1 | direct-source-moment | source-moments.csv | `procurementExPostModificationShare` | source_gap | 0.3111-0.3111 | 0.01-0.05 | procurementExPostModificationShare=0.3111 | broaden the bounded USAspending action panel with representative SAM/FPDS action histories before treating modification incidence as calibrated |
 | P2 | direct-source-moment | source-moments.csv | `darkMoneyDirectVisibility` | source_gap | 0.2043-0.2043 | 0.00-0.10 | darkMoneyDirectVisibility=0.2043 | replace thin proxy rows with direct hidden-donor or nonprofit-routing source records; keep electioneering rows separate from hidden-donor evidence |
 | P3 | scale-alignment | lobby-capture-campaign.csv | `averageDisclosureLag` | partial | 0.2312-0.5230 | 0.20-0.45 |  | separate current-public-visibility lag from historical age of archived filings |

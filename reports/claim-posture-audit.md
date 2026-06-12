@@ -25,7 +25,7 @@ This audit summarizes which claim posture is cleared by the current source panel
 - Weak panels: `4`
 - `Direct dark money` (thin): coverage is present but thin for article-level calibration
 - `Revolving door` (thin): coverage is present but thin for article-level calibration
-- `Procurement concentration bridge` (thin): multi-agency top-award bridge is present, but top-award sampling is not representative enough for calibration
+- `Procurement concentration panel` (thin): bounded procurement concentration panel is present, but it is not representative enough for calibration
 - `Procurement modification risk` (thin): stratified transaction-action rows are present, but modification incidence remains too high for calibration-grade national inference
 
 ## Claim-Source Dependencies
@@ -36,11 +36,11 @@ This audit summarizes which claim posture is cleared by the current source panel
 - `Strategic substitution mechanism` (bounded): Bounded by weak panels: Direct dark money (thin), Revolving door (thin).
 - `Revolving-door access` (bounded): Bounded by weak panels: Revolving door (thin).
 - `Hidden-channel magnitude` (not_cleared): Not cleared because of weak panels: Direct dark money (thin), Revolving door (thin).
-- `Procurement modification capture` (not_cleared): Not cleared because of weak panels: Procurement concentration bridge (thin), Procurement modification risk (thin).
-- `Calibrated policy simulation` (not_cleared): Not cleared because of weak panels: Direct dark money (thin), Revolving door (thin), Procurement concentration bridge (thin), Procurement modification risk (thin).
+- `Procurement modification capture` (not_cleared): Not cleared because of weak panels: Procurement concentration panel (thin), Procurement modification risk (thin).
+- `Calibrated policy simulation` (not_cleared): Not cleared because of weak panels: Direct dark money (thin), Revolving door (thin), Procurement concentration panel (thin), Procurement modification risk (thin).
 
 ## P1/P2 Calibration Actions
 
-- `procurementAgencyTop1Share` (P1, direct-source-moment): replace the multi-agency top-award bridge with representative SAM/FPDS action-level extracts before treating agency concentration as calibrated
+- `procurementAgencyTop1Share` (P1, direct-source-moment): replace the bounded USAspending concentration panel with representative SAM/FPDS action-level extracts before treating agency concentration as calibrated
 - `procurementExPostModificationShare` (P1, direct-source-moment): broaden the bounded USAspending action panel with representative SAM/FPDS action histories before treating modification incidence as calibrated
 - `darkMoneyDirectVisibility` (P2, direct-source-moment): replace thin proxy rows with direct hidden-donor or nonprofit-routing source records; keep electioneering rows separate from hidden-donor evidence
