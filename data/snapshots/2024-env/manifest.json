@@ -1,7 +1,7 @@
 {
   "snapshot": "2024-env",
-  "generatedAt": "2026-06-07T01:54:32.414415+00:00",
-  "gitCommit": "1e51f4c",
+  "generatedAt": "2026-06-12T02:38:27.932202+00:00",
+  "gitCommit": "f60ed42",
   "gitTreeState": "clean",
   "gitTreeStateScope": "working tree status excluding generated 2024-env snapshot, reports, paper tables, and paper figures",
   "scope": {
@@ -25,8 +25,8 @@
     },
     {
       "source": "fec",
-      "description": "FEC 2024 cycle party committee contributions and OpenFEC Schedule E independent expenditures. Public-financing and opaque-capacity bridge rows are stored in separate panels.",
-      "requestTemplate": "FEC_CYCLE=2024 FEC_COMMITTEE_ID in C00010603,C00042366,C00000935,C00003418,C00027466,C00075820 plus FEC_ONLY_SCHEDULE_E=1 ./scripts/fetch-fec.sh --live",
+      "description": "FEC 2024 cycle party committee contributions, OpenFEC Schedule E independent expenditures, electioneering communications, and communication-cost rows when available. Public-financing and opaque-capacity bridge rows are stored in separate panels.",
+      "requestTemplate": "FEC_CYCLE=2024 FEC_COMMITTEE_ID in C00010603,C00042366,C00000935,C00003418,C00027466,C00075820 plus FEC_ONLY_SCHEDULE_E=1 FEC_INCLUDE_ELECTIONEERING=1 FEC_INCLUDE_COMMUNICATION_COSTS=1 ./scripts/fetch-fec.sh --live",
       "normalizedFile": "data/snapshots/2024-env/normalized/fec-campaign-finance.csv",
       "rowCount": 1000,
       "sha256": "b9adf86801a34484ad196f691e211eb9301dcbc5c138769c5ea8ddc109e05a99",
@@ -84,6 +84,16 @@
       "statusNotes": "usaspending-procurement-bridge: ok (normalized multi-agency procurement bridge rows written)"
     },
     {
+      "source": "usaspending-procurement-actions",
+      "description": "USAspending transaction/action panel for action-level procurement modification diagnostics; kept separate from award rows and top-award concentration bridge rows.",
+      "requestTemplate": "USASPENDING_ACTION_PERIOD_BUCKETS=monthly USASPENDING_ACTION_TRANSACTION_PAGE_SIZE=100 USASPENDING_ACTION_TRANSACTION_MAX_PAGES=1 USASPENDING_ACTION_TRANSACTION_SORT='Transaction Amount' USASPENDING_ACTION_TRANSACTION_ORDER=desc python3 scripts/fetch-source-data.py usaspending-actions --output data/raw/usaspending-procurement-actions.csv",
+      "normalizedFile": "data/snapshots/2024-env/normalized/usaspending-procurement-actions.csv",
+      "rowCount": 1200,
+      "sha256": "0198b2201a57b83c5bc8034a33113ca7696579e1bb793a565b1c7992615bf6c0",
+      "status": "live",
+      "statusNotes": "usaspending-procurement-actions: ok (normalized monthly amount-sorted EPA procurement action rows written)"
+    },
+    {
       "source": "revolving-door",
       "description": "Normalized revolving-door source panel from a licensed/exported CSV or LDA covered-position derivation, with fixture fallback.",
       "requestTemplate": "REVOLVING_DOOR_LIVE_CSV=/path/to/export.csv ./scripts/fetch-revolving-door.sh --live or REVOLVING_DOOR_SOURCE_NATIVE=1 python3 scripts/fetch-source-data.py revolving-door",
@@ -106,6 +116,6 @@
   ],
   "liveRunStatus": {
     "file": "data/snapshots/2024-env/live-run-status.csv",
-    "sha256": "456d19a84a2620c4fe7ad14d1e5c9bb9200c9196d30461837a86f34bd3b477cf"
+    "sha256": "e21990887c43b7242421a2d42d2d83164bf0292e1a5390af91aca5c066bc074e"
   }
 }
