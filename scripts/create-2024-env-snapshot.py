@@ -55,8 +55,8 @@ SOURCES = {
     },
     "usaspending-procurement-actions": {
         "input": RAW / "usaspending-procurement-actions.csv",
-        "description": "Stratified six-agency USAspending transaction/action panel for action-level procurement concentration and modification diagnostics; initial-action and high-value transaction strata are deduplicated and kept separate from award rows and top-award bridge rows.",
-        "request": "USASPENDING_AGENCIES='Environmental Protection Agency,Department of Energy,Department of the Interior,Department of Agriculture,Department of Transportation,Department of Defense' USASPENDING_ACTION_PERIOD_BUCKETS=monthly USASPENDING_ACTION_TRANSACTION_PAGE_SIZE=25 USASPENDING_ACTION_TRANSACTION_MAX_PAGES=1 USASPENDING_ACTION_TRANSACTION_SORT_SPECS='Mod:asc;Transaction Amount:desc' python3 scripts/fetch-source-data.py usaspending-actions --output data/raw/usaspending-procurement-actions.csv",
+        "description": "Stratified six-agency USAspending transaction/action panel, or opt-in SAM.gov Contract Awards rows, for action-level procurement concentration and modification diagnostics; rows are deduplicated and kept separate from award rows and top-award bridge rows.",
+        "request": "USASPENDING_AGENCIES='Environmental Protection Agency,Department of Energy,Department of the Interior,Department of Agriculture,Department of Transportation,Department of Defense' USASPENDING_ACTION_PERIOD_BUCKETS=monthly USASPENDING_ACTION_TRANSACTION_PAGE_SIZE=25 USASPENDING_ACTION_TRANSACTION_MAX_PAGES=1 USASPENDING_ACTION_TRANSACTION_SORT_SPECS='Mod:asc;Transaction Amount:desc' python3 scripts/fetch-source-data.py usaspending-actions --output data/raw/usaspending-procurement-actions.csv, or SAM_CONTRACT_AWARDS_SOURCE_NATIVE=1 SAM_API_KEY=... python3 scripts/fetch-source-data.py sam-contract-awards --output data/raw/usaspending-procurement-actions.csv",
     },
     "revolving-door": {
         "input": RAW / "revolving-door.csv",

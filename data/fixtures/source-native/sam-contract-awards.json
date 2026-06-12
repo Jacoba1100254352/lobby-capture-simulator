@@ -1,0 +1,111 @@
+{
+  "awardSummary": [
+    {
+      "contractId": {
+        "subtier": {
+          "name": "ENVIRONMENTAL PROTECTION AGENCY"
+        },
+        "piid": "68HERH24F0001",
+        "modificationNumber": "0",
+        "transactionNumber": "0"
+      },
+      "coreData": {
+        "awardOrIDVType": {
+          "name": "DELIVERY ORDER"
+        },
+        "federalOrganization": {
+          "contractingInformation": {
+            "contractingDepartment": {
+              "name": "ENVIRONMENTAL PROTECTION AGENCY"
+            },
+            "contractingSubtier": {
+              "name": "ENVIRONMENTAL PROTECTION AGENCY"
+            }
+          }
+        },
+        "acquisitionData": {
+          "typeOfContractPricing": {
+            "name": "FIRM FIXED PRICE"
+          }
+        },
+        "competitionInformation": {
+          "extentCompeted": {
+            "name": "FULL AND OPEN COMPETITION"
+          },
+          "numberOfOffersReceived": "3"
+        }
+      },
+      "awardDetails": {
+        "awardeeData": {
+          "awardeeHeader": {
+            "legalBusinessName": "EXAMPLE ENVIRONMENTAL CONTRACTOR LLC"
+          },
+          "awardeeUEIInformation": {
+            "uniqueEntityId": "ABCDEF123456"
+          }
+        },
+        "dollars": {
+          "actionObligation": "2500000"
+        },
+        "transactionData": {
+          "approvedDate": "2024-03-15T11:39:06Z"
+        }
+      }
+    },
+    {
+      "contractId": {
+        "subtier": {
+          "name": "ENVIRONMENTAL PROTECTION AGENCY"
+        },
+        "piid": "68HERH24F0001",
+        "modificationNumber": "P00001",
+        "transactionNumber": "1"
+      },
+      "coreData": {
+        "awardOrIDVType": {
+          "name": "DELIVERY ORDER"
+        },
+        "federalOrganization": {
+          "contractingInformation": {
+            "contractingDepartment": {
+              "name": "ENVIRONMENTAL PROTECTION AGENCY"
+            },
+            "contractingSubtier": {
+              "name": "ENVIRONMENTAL PROTECTION AGENCY"
+            }
+          }
+        },
+        "acquisitionData": {
+          "typeOfContractPricing": {
+            "name": "FIRM FIXED PRICE"
+          }
+        },
+        "competitionInformation": {
+          "extentCompeted": {
+            "name": "NOT COMPETED"
+          },
+          "numberOfOffersReceived": "1"
+        }
+      },
+      "awardDetails": {
+        "awardeeData": {
+          "awardeeHeader": {
+            "legalBusinessName": "EXAMPLE ENVIRONMENTAL CONTRACTOR LLC"
+          },
+          "awardeeUEIInformation": {
+            "uniqueEntityId": "ABCDEF123456"
+          }
+        },
+        "dollars": {
+          "actionObligation": "500000"
+        },
+        "transactionData": {
+          "approvedDate": "2024-06-20T12:00:00Z"
+        }
+      }
+    }
+  ],
+  "totalRecords": "2",
+  "limit": "100",
+  "offset": "0"
+}

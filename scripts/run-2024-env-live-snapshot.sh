@@ -23,6 +23,19 @@ append_csv() {
   fi
 }
 
+fetch_usaspending_procurement_actions() {
+  SOURCE_RAW_DIR="$raw_dir/usaspending-procurement-actions" \
+  USASPENDING_FISCAL_YEAR="${USASPENDING_FISCAL_YEAR:-2024}" \
+  USASPENDING_AGENCIES="${USASPENDING_PROCUREMENT_ACTIONS_AGENCIES:-Environmental Protection Agency,Department of Energy,Department of the Interior,Department of Agriculture,Department of Transportation,Department of Defense}" \
+  USASPENDING_ACTION_PERIOD_BUCKETS="${USASPENDING_PROCUREMENT_ACTIONS_PERIOD_BUCKETS:-monthly}" \
+  USASPENDING_ACTION_TRANSACTION_PAGE_SIZE="${USASPENDING_PROCUREMENT_ACTIONS_TRANSACTION_PAGE_SIZE:-25}" \
+  USASPENDING_ACTION_TRANSACTION_MAX_PAGES="${USASPENDING_PROCUREMENT_ACTIONS_TRANSACTION_MAX_PAGES:-1}" \
+  USASPENDING_ACTION_TRANSACTION_SORT="${USASPENDING_PROCUREMENT_ACTIONS_TRANSACTION_SORT:-Transaction Amount}" \
+  USASPENDING_ACTION_TRANSACTION_ORDER="${USASPENDING_PROCUREMENT_ACTIONS_TRANSACTION_ORDER:-desc}" \
+  USASPENDING_ACTION_TRANSACTION_SORT_SPECS="${USASPENDING_PROCUREMENT_ACTIONS_TRANSACTION_SORT_SPECS:-Mod:asc;Transaction Amount:desc}" \
+    python3 scripts/fetch-source-data.py usaspending-actions --output data/raw/usaspending-procurement-actions.csv
+}
+
 rm -f data/raw/lda-lobbying.csv data/raw/fec-campaign-finance.csv data/raw/public-financing.csv data/raw/dark-money.csv data/raw/regulatory-dockets.csv data/raw/usaspending-awards.csv data/raw/usaspending-procurement-bridge.csv data/raw/usaspending-procurement-actions.csv data/raw/revolving-door.csv data/raw/intermediaries.csv
 
 for period in first_quarter second_quarter third_quarter fourth_quarter; do
@@ -224,16 +237,25 @@ if [ -n "${USASPENDING_PROCUREMENT_ACTIONS_LIVE_CSV:-}" ] || [ -n "${USASPENDING
     printf "usaspending-procurement-actions,unavailable,configured procurement action source could not be normalized\n" >> "$status_file"
   fi
 elif [ "${USASPENDING_PROCUREMENT_ACTIONS_SOURCE_NATIVE:-1}" = "1" ]; then
-  if SOURCE_RAW_DIR="$raw_dir/usaspending-procurement-actions" \
-    USASPENDING_FISCAL_YEAR="${USASPENDING_FISCAL_YEAR:-2024}" \
-    USASPENDING_AGENCIES="${USASPENDING_PROCUREMENT_ACTIONS_AGENCIES:-Environmental Protection Agency,Department of Energy,Department of the Interior,Department of Agriculture,Department of Transportation,Department of Defense}" \
-    USASPENDING_ACTION_PERIOD_BUCKETS="${USASPENDING_PROCUREMENT_ACTIONS_PERIOD_BUCKETS:-monthly}" \
-    USASPENDING_ACTION_TRANSACTION_PAGE_SIZE="${USASPENDING_PROCUREMENT_ACTIONS_TRANSACTION_PAGE_SIZE:-25}" \
-    USASPENDING_ACTION_TRANSACTION_MAX_PAGES="${USASPENDING_PROCUREMENT_ACTIONS_TRANSACTION_MAX_PAGES:-1}" \
-    USASPENDING_ACTION_TRANSACTION_SORT="${USASPENDING_PROCUREMENT_ACTIONS_TRANSACTION_SORT:-Transaction Amount}" \
-    USASPENDING_ACTION_TRANSACTION_ORDER="${USASPENDING_PROCUREMENT_ACTIONS_TRANSACTION_ORDER:-desc}" \
-    USASPENDING_ACTION_TRANSACTION_SORT_SPECS="${USASPENDING_PROCUREMENT_ACTIONS_TRANSACTION_SORT_SPECS:-Mod:asc;Transaction Amount:desc}" \
-      python3 scripts/fetch-source-data.py usaspending-actions --output data/raw/usaspending-procurement-actions.csv; then
+  if [ "${SAM_CONTRACT_AWARDS_SOURCE_NATIVE:-0}" = "1" ] && [ -n "${SAM_API_KEY:-}" ]; then
+    if SOURCE_RAW_DIR="$raw_dir/sam-contract-awards" \
+      SAM_CONTRACT_AWARDS_FISCAL_YEAR="${SAM_CONTRACT_AWARDS_FISCAL_YEAR:-${USASPENDING_FISCAL_YEAR:-2024}}" \
+      SAM_CONTRACT_AWARDS_AGENCIES="${SAM_CONTRACT_AWARDS_AGENCIES:-${USASPENDING_PROCUREMENT_ACTIONS_AGENCIES:-Environmental Protection Agency,Department of Energy,Department of the Interior,Department of Agriculture,Department of Transportation,Department of Defense}}" \
+      SAM_CONTRACT_AWARDS_PAGE_SIZE="${SAM_CONTRACT_AWARDS_PAGE_SIZE:-100}" \
+      SAM_CONTRACT_AWARDS_MAX_PAGES="${SAM_CONTRACT_AWARDS_MAX_PAGES:-1}" \
+      SAM_CONTRACT_AWARDS_INCLUDE_SECTIONS="${SAM_CONTRACT_AWARDS_INCLUDE_SECTIONS:-contractId,coreData,awardDetails,awardeeData}" \
+        python3 scripts/fetch-source-data.py sam-contract-awards --output data/raw/usaspending-procurement-actions.csv; then
+      printf "sam-contract-awards,ok,normalized SAM.gov Contract Awards rows written to procurement action schema\n" >> "$status_file"
+      printf "usaspending-procurement-actions,ok,procurement action schema populated from SAM.gov Contract Awards\n" >> "$status_file"
+    else
+      printf "sam-contract-awards,unavailable,SAM.gov Contract Awards request failed; falling back to USAspending action rows\n" >> "$status_file"
+      if fetch_usaspending_procurement_actions; then
+        printf "usaspending-procurement-actions,ok,normalized USAspending procurement action rows written after SAM fallback\n" >> "$status_file"
+      else
+        printf "usaspending-procurement-actions,unavailable,SAM.gov and USAspending procurement action requests failed\n" >> "$status_file"
+      fi
+    fi
+  elif fetch_usaspending_procurement_actions; then
     printf "usaspending-procurement-actions,ok,normalized USAspending procurement action rows written\n" >> "$status_file"
   else
     printf "usaspending-procurement-actions,unavailable,upstream USAspending transaction/action request returned no rows or failed\n" >> "$status_file"

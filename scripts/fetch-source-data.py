@@ -11,6 +11,7 @@ from io import StringIO
 import json
 import os
 import re
+import socket
 import sys
 import time
 import tempfile
@@ -49,6 +50,9 @@ def main() -> int:
     usaspending_actions = subparsers.add_parser("usaspending-actions", help="Fetch USAspending transaction/action rows for procurement modification diagnostics.")
     usaspending_actions.add_argument("--output", type=Path, default=Path("data/raw/usaspending-procurement-actions.csv"))
 
+    sam_contract_awards = subparsers.add_parser("sam-contract-awards", help="Fetch SAM.gov Contract Awards rows into the procurement action schema.")
+    sam_contract_awards.add_argument("--output", type=Path, default=Path("data/raw/usaspending-procurement-actions.csv"))
+
     nyc_public_financing = subparsers.add_parser("nyc-public-financing", help="Fetch NYC CFB public-funds payments.")
     nyc_public_financing.add_argument("--output", type=Path, default=Path("data/raw/public-financing.csv"))
 
@@ -80,6 +84,8 @@ def main() -> int:
         return fetch_usaspending(args.output)
     if args.kind == "usaspending-actions":
         return fetch_usaspending_actions(args.output)
+    if args.kind == "sam-contract-awards":
+        return fetch_sam_contract_awards(args.output)
     if args.kind == "nyc-public-financing":
         return fetch_nyc_public_financing(args.output)
     if args.kind == "seattle-democracy-vouchers":
@@ -704,6 +710,241 @@ def fetch_usaspending_actions_by_award(output: Path) -> int:
     return 0
 
 
+def fetch_sam_contract_awards(output: Path) -> int:
+    api_key = os.environ.get("SAM_API_KEY", "").strip()
+    if not api_key:
+        raise SystemExit("Set SAM_API_KEY before running the SAM.gov Contract Awards source-native fetcher.")
+    base = os.environ.get("SAM_API_BASE", "https://api.sam.gov").rstrip("/")
+    limit = int_env("SAM_CONTRACT_AWARDS_PAGE_SIZE", 100, 1, 100)
+    max_pages = int_env("SAM_CONTRACT_AWARDS_MAX_PAGES", 1, 1, 20)
+    offset_start = int_env("SAM_CONTRACT_AWARDS_OFFSET_START", 0, 0, 400000)
+    base_params = sam_contract_awards_base_params(api_key, limit)
+    rows: list[dict[str, object]] = []
+    seen_rows: set[tuple[object, ...]] = set()
+    for filter_key, filter_value in sam_contract_awards_filters():
+        for page_index in range(max_pages):
+            params = dict(base_params)
+            params[filter_key] = filter_value
+            params["offset"] = str(offset_start + page_index)
+            payload = get_json(f"{base}/contract-awards/v1/search?{urlencode(params)}")
+            page_records = sam_contract_award_records(payload)
+            for row in normalize_sam_contract_award_records(page_records):
+                row_key = usaspending_action_row_key(row)
+                if row_key in seen_rows:
+                    continue
+                seen_rows.add(row_key)
+                rows.append(row)
+            total_records = sam_contract_awards_total_records(payload)
+            if not page_records or len(page_records) < limit:
+                break
+            if total_records > 0 and (page_index + 1) * limit >= total_records:
+                break
+    write_rows(
+        output,
+        USASPENDING_FIELDS,
+        rows,
+        "SAM.gov Contract Awards",
+    )
+    return 0
+
+
+def sam_contract_awards_base_params(api_key: str, limit: int) -> dict[str, str]:
+    params = {
+        "api_key": api_key,
+        "limit": str(limit),
+        "includeSections": os.environ.get(
+            "SAM_CONTRACT_AWARDS_INCLUDE_SECTIONS",
+            "contractId,coreData,awardDetails,awardeeData",
+        ),
+    }
+    fiscal_year = os.environ.get("SAM_CONTRACT_AWARDS_FISCAL_YEAR", os.environ.get("USASPENDING_FISCAL_YEAR", "2024")).strip()
+    if fiscal_year:
+        params["fiscalYear"] = fiscal_year
+    date_signed = sam_contract_awards_range_param("SAM_CONTRACT_AWARDS_DATE")
+    if date_signed:
+        params["dateSigned"] = date_signed
+    last_modified = sam_contract_awards_range_param("SAM_CONTRACT_AWARDS_LAST_MODIFIED")
+    if last_modified:
+        params["lastModifiedDate"] = last_modified
+    for env_name, parameter_name in (
+        ("SAM_CONTRACT_AWARDS_AWARD_OR_IDV", "awardOrIDV"),
+        ("SAM_CONTRACT_AWARDS_AWARD_OR_IDV_TYPE", "awardOrIDVTypeName"),
+        ("SAM_CONTRACT_AWARDS_PRODUCT_OR_SERVICE_TYPE", "productOrServiceType"),
+        ("SAM_CONTRACT_AWARDS_EXTENT_COMPETED", "extentCompetedName"),
+        ("SAM_CONTRACT_AWARDS_MIN_MAX_DOLLARS", "dollarsObligated"),
+    ):
+        value = os.environ.get(env_name, "").strip()
+        if value:
+            params[parameter_name] = value
+    return params
+
+
+def sam_contract_awards_range_param(prefix: str) -> str:
+    start = os.environ.get(f"{prefix}_FROM", "").strip()
+    end = os.environ.get(f"{prefix}_TO", "").strip()
+    if not start and not end:
+        return ""
+    return f"[{sam_contract_awards_date(start)},{sam_contract_awards_date(end)}]"
+
+
+def sam_contract_awards_date(value: str) -> str:
+    parsed = parse_date(value)
+    if parsed is None:
+        return value
+    return parsed.strftime("%m/%d/%Y")
+
+
+def sam_contract_awards_filters() -> list[tuple[str, str]]:
+    department_codes = split_csv_env("SAM_CONTRACT_AWARDS_DEPARTMENT_CODES", "")
+    if department_codes:
+        return [("contractingDepartmentCode", code) for code in department_codes]
+    agency_names = split_csv_env(
+        "SAM_CONTRACT_AWARDS_AGENCIES",
+        os.environ.get(
+            "USASPENDING_PROCUREMENT_ACTIONS_AGENCIES",
+            os.environ.get("USASPENDING_AGENCIES", os.environ.get("USASPENDING_AGENCY", "Environmental Protection Agency")),
+        ),
+    )
+    return [("contractingDepartmentName", agency) for agency in agency_names if agency]
+
+
+def sam_contract_award_records(payload: dict[str, object] | list[object]) -> list[dict[str, object]]:
+    if isinstance(payload, list):
+        return [record for record in payload if isinstance(record, dict)]
+    if not isinstance(payload, dict):
+        return []
+    for key in ("awardSummary", "results", "records", "data", "awards", "contracts"):
+        value = payload.get(key)
+        if isinstance(value, list):
+            return [record for record in value if isinstance(record, dict)]
+    return []
+
+
+def sam_contract_awards_total_records(payload: dict[str, object] | list[object]) -> int:
+    if not isinstance(payload, dict):
+        return 0
+    return int_or_zero(first_text(payload, "totalRecords", "total_records", "page_metadata.total", default="0"))
+
+
+def normalize_sam_contract_award_records(records: list[dict[str, object]]) -> list[dict[str, object]]:
+    rows: list[dict[str, object]] = []
+    for record in records:
+        piid = first_text(record, "contractId.piid", "piid", "PIID", "awardDetails.contractId.piid", default="UNKNOWN")
+        modification_number = first_text(record, "contractId.modificationNumber", "modificationNumber", "Mod", "mod", default="0")
+        transaction_number = first_text(record, "contractId.transactionNumber", "transactionNumber", default="")
+        award_id = first_text(record, "awardId", "Award ID", "generated_internal_id", default=piid)
+        if award_id == "UNKNOWN" and transaction_number:
+            award_id = f"{piid}-{modification_number}-{transaction_number}"
+        competition_type = sam_contract_awards_competition_type(record)
+        pricing_type = first_text(
+            record,
+            "coreData.acquisitionData.typeOfContractPricing.name",
+            "awardDetails.acquisitionData.typeOfContractPricing.name",
+            "typeOfContractPricingName",
+            "typeOfContractPricing",
+            default="",
+        )
+        number_of_offers = first_text(
+            record,
+            "awardDetails.competitionInformation.numberOfOffersReceived",
+            "awardDetails.competitionInformation.idvNumberOfOffersReceived",
+            "coreData.competitionInformation.numberOfOffersReceived",
+            "coreData.competitionInformation.idvNumberOfOffersReceived",
+            "numberOfOffersReceived",
+            "numberOfOffers",
+            default="0",
+        )
+        competition_lower = competition_type.lower()
+        rows.append(
+            {
+                "awardId": award_id,
+                "recipient": first_text(
+                    record,
+                    "awardDetails.awardeeData.awardeeHeader.legalBusinessName",
+                    "awardDetails.awardeeData.awardeeHeader.awardeeName",
+                    "awardDetails.awardeeData.awardeeHeader.awardeeNameFromContract",
+                    "awardeeData.awardeeHeader.legalBusinessName",
+                    "awardeeData.awardeeHeader.awardeeName",
+                    "awardeeLegalBusinessName",
+                    "recipient",
+                    default="Unknown recipient",
+                ),
+                "agency": first_text(
+                    record,
+                    "coreData.federalOrganization.contractingInformation.contractingDepartment.name",
+                    "awardDetails.federalOrganization.contractingInformation.contractingDepartment.name",
+                    "contractingDepartmentName",
+                    "contractId.subtier.name",
+                    default="Unknown agency",
+                ),
+                "subAgency": first_text(
+                    record,
+                    "coreData.federalOrganization.contractingInformation.contractingSubtier.name",
+                    "awardDetails.federalOrganization.contractingInformation.contractingSubtier.name",
+                    "contractingSubtierName",
+                    "contractId.subtier.name",
+                    default="Unknown agency",
+                ),
+                "awardType": first_text(record, "coreData.awardOrIDVType.name", "awardOrIDVTypeName", "awardType", default="contract"),
+                "amount": money_millions(first_text(
+                    record,
+                    "awardDetails.dollars.actionObligation",
+                    "awardDetails.dollars.dollarsObligated",
+                    "awardDetails.dollars.baseAndAllOptionsValue",
+                    "awardDetails.dollars.currentTotalValueOfAward",
+                    "awardDetails.totalContractDollars.totalActionObligation",
+                    "dollarsObligated",
+                    "actionObligation",
+                    "totalDollarsObligated",
+                    default="0",
+                )),
+                "issueDomain": os.environ.get("SAM_CONTRACT_AWARDS_ISSUE_DOMAIN", os.environ.get("USASPENDING_ISSUE_DOMAIN", "procurement")),
+                "awardCount": 1,
+                "uei": first_text(
+                    record,
+                    "awardDetails.awardeeData.awardeeUEIInformation.uniqueEntityId",
+                    "awardeeData.awardeeUEIInformation.uniqueEntityId",
+                    "awardeeUEI",
+                    "uei",
+                    "UEI",
+                    default="",
+                ),
+                "piid": piid,
+                "modificationNumber": modification_number,
+                "actionDate": first_text(
+                    record,
+                    "awardDetails.transactionData.approvedDate",
+                    "coreData.dateSigned",
+                    "dateSigned",
+                    "approvedDate",
+                    "actionDate",
+                    default="",
+                ),
+                "competitionType": competition_type,
+                "numberOfOffers": number_of_offers,
+                "priceOnlyAward": str(price_only_procurement_flag(number_of_offers, pricing_type, competition_type)).lower(),
+                "exPostModification": str(modification_sequence(modification_number) > 0).lower(),
+                "protestFiled": "false",
+                "exclusionFlag": str("exclusion" in competition_lower).lower(),
+                "firewallCovered": str(os.environ.get("SAM_CONTRACT_AWARDS_FIREWALL_COVERED", os.environ.get("USASPENDING_FIREWALL_COVERED", "false")).lower() == "true").lower(),
+            }
+        )
+    return rows
+
+
+def sam_contract_awards_competition_type(record: dict[str, object]) -> str:
+    return first_text(
+        record,
+        "awardDetails.competitionInformation.extentCompeted.name",
+        "coreData.competitionInformation.extentCompeted.name",
+        "awardDetails.competitionInformation.extentCompetedForReferencedIdv.name",
+        "coreData.competitionInformation.extentCompetedForReferencedIdv.name",
+        "extentCompetedName",
+        "Competition Type",
+        default="unknown",
+    )
+
+
 def usaspending_agency_filters() -> list[dict[str, str]]:
     agency_type = os.environ.get("USASPENDING_AGENCY_TYPE", "awarding")
     agency_tier = os.environ.get("USASPENDING_AGENCY_TIER", "toptier")
@@ -838,7 +1079,6 @@ def normalize_usaspending_records(base: str, records: list[dict[str, object]]) -
             default=first_text(record, "Competition Type", "extent_competed", default="unknown"),
         )
         pricing_type = first_text(contract_data, "type_of_contract_pricing_description", "type_of_contract_pricing", default="")
-        single_bid = numeric_value(number_of_offers) <= 1.0 and numeric_value(number_of_offers) > 0.0
         modified = modification_sequence(modification_number) > 0
         exclusion_flag = "exclusion" in competition_type.lower()
         rows.append(
@@ -857,7 +1097,7 @@ def normalize_usaspending_records(base: str, records: list[dict[str, object]]) -
                 "actionDate": first_text(detail, "date_signed", default=first_text(record, "Action Date", "action_date", default=first_text(transaction, "actionDate", default=""))),
                 "competitionType": competition_type,
                 "numberOfOffers": number_of_offers,
-                "priceOnlyAward": str(single_bid or "price" in pricing_type.lower() or "sole source" in competition_type.lower()).lower(),
+                "priceOnlyAward": str(price_only_procurement_flag(number_of_offers, pricing_type, competition_type)).lower(),
                 "exPostModification": str(modified).lower(),
                 "protestFiled": "false",
                 "exclusionFlag": str(exclusion_flag).lower(),
@@ -889,7 +1129,6 @@ def normalize_usaspending_transaction_records(
         default=first_text(award_record, "Competition Type", "extent_competed", default="unknown"),
     )
     pricing_type = first_text(contract_data, "type_of_contract_pricing_description", "type_of_contract_pricing", default="")
-    single_bid = numeric_value(number_of_offers) <= 1.0 and numeric_value(number_of_offers) > 0.0
     exclusion_flag = "exclusion" in competition_type.lower()
     rows: list[dict[str, object]] = []
     for transaction in transactions:
@@ -912,7 +1151,7 @@ def normalize_usaspending_transaction_records(
                 "actionDate": action_date,
                 "competitionType": competition_type,
                 "numberOfOffers": number_of_offers,
-                "priceOnlyAward": str(single_bid or "price" in pricing_type.lower() or "sole source" in competition_type.lower()).lower(),
+                "priceOnlyAward": str(price_only_procurement_flag(number_of_offers, pricing_type, competition_type)).lower(),
                 "exPostModification": str(modification_sequence(modification_number) > 0).lower(),
                 "protestFiled": "false",
                 "exclusionFlag": str(exclusion_flag).lower(),
@@ -2048,12 +2287,18 @@ def request_text(
     request = Request(url, data=body, headers=request_headers, method=method)
     attempts = int_env("SOURCE_FETCH_RETRIES", 3, 1, 8)
     backoff = float_env("SOURCE_FETCH_BACKOFF_SECONDS", 1.0, 0.0, 30.0)
+    timeout = float_env("SOURCE_FETCH_TIMEOUT_SECONDS", 30.0, 1.0, 300.0)
     for attempt in range(1, attempts + 1):
         try:
-            with urlopen(request, timeout=30) as response:
-                text = response.read().decode("utf-8")
-                write_raw_payload(url, text, method, body)
-                return text
+            previous_timeout = socket.getdefaulttimeout()
+            socket.setdefaulttimeout(timeout)
+            try:
+                with urlopen(request, timeout=timeout) as response:
+                    text = response.read().decode("utf-8")
+                    write_raw_payload(url, text, method, body)
+                    return text
+            finally:
+                socket.setdefaulttimeout(previous_timeout)
         except HTTPError as error:
             if should_retry(error.code, attempt, attempts):
                 sleep_before_retry(error, attempt, backoff)
@@ -2173,6 +2418,33 @@ def modification_sequence(value: str) -> int:
     if index == len(text) - 1:
         return 0
     return int(text[index + 1:])
+
+
+def price_only_procurement_flag(number_of_offers: str, pricing_type: str, competition_type: str) -> bool:
+    offers = numeric_value(number_of_offers)
+    single_bid = 0.0 < offers <= 1.0
+    pricing_lower = pricing_type.lower()
+    competition_lower = competition_type.lower()
+    explicit_price_only = any(
+        marker in pricing_lower
+        for marker in (
+            "lowest price",
+            "low price",
+            "price only",
+            "lpta",
+        )
+    )
+    constrained_competition = any(
+        marker in competition_lower
+        for marker in (
+            "sole source",
+            "not competed",
+            "only one source",
+            "single source",
+            "single award",
+        )
+    )
+    return single_bid or explicit_price_only or constrained_competition
 
 
 def bounded_int_env(name: str, default: int, minimum: int, maximum: int) -> str:

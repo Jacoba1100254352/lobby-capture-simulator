@@ -28,7 +28,7 @@ The simulator now has a lobbying-centered model core with calibration fixtures, 
 - `scripts/run-2024-env-live-snapshot.sh` executes the pinned 2024 EPA/ENV live run, preserves ignored raw payloads, and records public API rate-limit gaps.
 - The default live-run pipeline uses source-native no-key NYC CFB public-financing rows, Seattle Democracy Voucher rows, NYC CFB intermediary rows, IRS EO BMF nonprofit/association capacity rows, and IRS EO BMF 501(c)(4)/(c)(6) opaque-capacity proxy rows when configured. These replace fixture fallback for the default refresh path, but the dark-money bridge remains a capacity proxy rather than direct observed hidden donor/expenditure data.
 - `--live` fetch modes can normalize caller-provided CSVs or query LDA, OpenFEC, Regulations.gov, and Federal Register APIs directly.
-- Source-native parser fixtures exercise LDA, OpenFEC contribution, OpenFEC electioneering, OpenFEC communication-cost, Regulations.gov, Federal Register, USAspending award JSON, and USAspending transaction JSON without network access.
+- Source-native parser fixtures exercise LDA, OpenFEC contribution, OpenFEC electioneering, OpenFEC communication-cost, Regulations.gov, Federal Register, USAspending award JSON, USAspending transaction JSON, and SAM.gov Contract Awards JSON without network access.
 - Live source fetches retry transient `429` and `5xx` responses and redact API keys from error URLs.
 - `make source-moments` records direct source-level top-k concentration, traceability, Schedule E outside-spending, direct dark-money visibility, public-financing, procurement bridge, revolving-door, and comment-record moments.
 - `make calibration-queue` classifies validation misses and partial overlaps into actionable work categories.
@@ -67,11 +67,11 @@ Deliverables:
 
 ## 3. Broaden SAM/FPDS, revolving-door, and intermediary source panels
 
-The source-moment layer now covers LDA, OpenFEC party/Schedule E/electioneering/communication-cost rows, regulatory dockets, USAspending award, multi-agency bridge, and stratified action-panel fields, public-financing bridge rows, and LDA-derived covered-position rows. Procurement, revolving-door, intermediary, and electoral-communication validation still need richer representative data rather than narrow or fixture-backed panels.
+The source-moment layer now covers LDA, OpenFEC party/Schedule E/electioneering/communication-cost rows, regulatory dockets, USAspending award, multi-agency bridge, and stratified action-panel fields, an optional SAM.gov Contract Awards procurement-action importer, public-financing bridge rows, and LDA-derived covered-position rows. Procurement, revolving-door, intermediary, and electoral-communication validation still need richer representative data rather than narrow or fixture-backed panels.
 
 Deliverables:
 
-- expand the stratified USAspending action-panel bridge into representative SAM/FPDS UEI, PIID, action-level modification, exclusion, award-action, and protest coverage;
+- run and archive a representative SAM/FPDS action-history pull using the optional SAM Contract Awards path, then compare its UEI, PIID, action-level modification, exclusion, award-action, and protest coverage against the stratified USAspending action panel;
 - add source moments for single-bid exposure, ex-post modification risk, price-only awards, award concentration, and procurement firewall coverage;
 - expand the revolving-door import path beyond covered-position indicators and keep headcount share separate from influence intensity;
 - update `data/calibration/parameter-map.csv` so procurement and revolving-door rows point at direct source moments where possible.

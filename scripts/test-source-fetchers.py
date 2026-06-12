@@ -22,6 +22,7 @@ def main() -> int:
     assert_regulations(fetchers)
     assert_federal_register(fetchers)
     assert_usaspending(fetchers)
+    assert_sam_contract_awards(fetchers)
     assert_nyc_public_financing(fetchers)
     assert_seattle_democracy_vouchers(fetchers)
     assert_nyc_intermediaries(fetchers)
@@ -211,6 +212,41 @@ def assert_usaspending(fetchers) -> None:
     ]
     for name in ("USASPENDING_DATE_FROM", "USASPENDING_DATE_TO", "USASPENDING_ACTION_PERIOD_BUCKETS", "USASPENDING_ACTION_TRANSACTION_SORT_SPECS", "USASPENDING_ACTION_TRANSACTION_ORDER"):
         os.environ.pop(name, None)
+
+
+def assert_sam_contract_awards(fetchers) -> None:
+    payload = read_json("sam-contract-awards.json")
+    records = fetchers.sam_contract_award_records(payload)
+    assert len(records) == 2, records
+    assert fetchers.sam_contract_awards_total_records(payload) == 2
+    rows = fetchers.normalize_sam_contract_award_records(records)
+    assert rows[0] == {
+        "awardId": "68HERH24F0001",
+        "recipient": "EXAMPLE ENVIRONMENTAL CONTRACTOR LLC",
+        "agency": "ENVIRONMENTAL PROTECTION AGENCY",
+        "subAgency": "ENVIRONMENTAL PROTECTION AGENCY",
+        "awardType": "DELIVERY ORDER",
+        "amount": 2.5,
+        "issueDomain": "procurement",
+        "awardCount": 1,
+        "uei": "ABCDEF123456",
+        "piid": "68HERH24F0001",
+        "modificationNumber": "0",
+        "actionDate": "2024-03-15T11:39:06Z",
+        "competitionType": "FULL AND OPEN COMPETITION",
+        "numberOfOffers": "3",
+        "priceOnlyAward": "false",
+        "exPostModification": "false",
+        "protestFiled": "false",
+        "exclusionFlag": "false",
+        "firewallCovered": "false",
+    }, rows[0]
+    assert rows[1]["amount"] == 0.5, rows[1]
+    assert rows[1]["modificationNumber"] == "P00001", rows[1]
+    assert rows[1]["competitionType"] == "NOT COMPETED", rows[1]
+    assert rows[1]["numberOfOffers"] == "1", rows[1]
+    assert rows[1]["priceOnlyAward"] == "true", rows[1]
+    assert rows[1]["exPostModification"] == "true", rows[1]
 
 
 def assert_nyc_public_financing(fetchers) -> None:
