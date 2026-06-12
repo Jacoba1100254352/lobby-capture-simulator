@@ -74,7 +74,8 @@ The source-moment layer now covers LDA, OpenFEC party/Schedule E/electioneering/
 
 Deliverables:
 
-- run `make sam-contract-awards-preflight`, then archive a representative SAM/FPDS action-history pull using the optional SAM Contract Awards extract path after quota/access is available; compare its UEI, PIID, action-level modification, exclusion, award-action, and protest coverage against the stratified USAspending action panel;
+- run `make sam-contract-awards-preflight` immediately before any SAM refresh; if the redacted preflight reports `quota_blocked`, wait until its `nextAccessTime` before rerunning rather than spending the full live snapshot attempt;
+- after a successful SAM preflight, archive a representative SAM/FPDS action-history pull using the optional SAM Contract Awards extract path when an extract email is configured, or a bounded offset/department-code diagnostic pull when extract mode is unavailable; compare its UEI, PIID, action-level modification, exclusion, award-action, and protest coverage against the stratified USAspending action panel;
 - add source moments for single-bid exposure, ex-post modification risk, price-only awards, award concentration, and procurement firewall coverage;
 - expand the revolving-door import path beyond covered-position indicators and keep headcount share separate from influence intensity;
 - update `data/calibration/parameter-map.csv` so procurement and revolving-door rows point at direct source moments where possible.
@@ -85,8 +86,8 @@ Deliverables:
 
 Deliverables:
 
-- tune comment authenticity, comment compression, unique-information weight, detection, and sanction incidence;
-- decide whether high-end Super PAC and opaque-capacity large-donor dependence should be scenario-specific rather than applied to every report;
-- add scenario coverage where hidden substitution and revolving-door influence are intentionally stressed; the current catalog now includes visible-ban dark-money leakage, meeting-log intermediary leakage, public-finance outside-spending leakage, and comment-authenticity technical-substitution stress cases;
-- replace synthetic influence-network diagnostics with direct network panels where sources permit.
-- split speech-restriction risk, legitimate-advocacy chill, false-positive costs, and participation protection in the paper's portfolio interpretation.
+- treat the three P1 procurement source gaps as source-acquisition work, not model tuning: agency concentration, recipient concentration, and ex-post modification incidence need representative SAM/FPDS or demonstrably broader public procurement panels before calibrated policy-simulation claims are available;
+- keep the P3 `largeDonorDependence` partial scoped to campaign/outside-spending stress rows unless a broader donor-identity panel is added;
+- keep venue-substitution and hidden-influence partials as scenario-coverage or scenario-family-split work rather than collapsing baseline, stress, and extreme-stress rows into one benchmark;
+- replace synthetic influence-network diagnostics with direct network panels where sources permit;
+- preserve the current claim boundary in the paper until the procurement P1 rows clear in `reports/calibration-queue.md`.
