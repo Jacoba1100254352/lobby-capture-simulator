@@ -532,7 +532,7 @@ def check_source_capability_audit() -> list[str]:
     for phrase in (
             "Source Capability Audit",
             "SAM/FPDS action-history",
-            "National-volume agency and recipient concentration",
+            "usaspending-national-action-panel",
             "Direct hidden-donor",
             "SAM_CONTRACT_AWARDS_OFFSET_STARTS",
             "SAM_CONTRACT_AWARDS_EXTRACT_MODE",
