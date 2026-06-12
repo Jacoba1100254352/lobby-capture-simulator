@@ -32,6 +32,8 @@ VALIDATION_SUMMARY = ROOT / "reports" / "validation-summary.md"
 SOURCE_PANEL_INVENTORY = ROOT / "reports" / "source-panel-inventory.csv"
 SOURCE_CAPABILITY_AUDIT_MD = ROOT / "reports" / "source-capability-audit.md"
 SOURCE_CAPABILITY_AUDIT_CSV = ROOT / "reports" / "source-capability-audit.csv"
+PROCUREMENT_DENOMINATOR_AUDIT_MD = ROOT / "reports" / "procurement-denominator-audit.md"
+PROCUREMENT_DENOMINATOR_AUDIT_CSV = ROOT / "reports" / "procurement-denominator-audit.csv"
 LAYOUT_AUDIT = ROOT / "reports" / "paper-layout-audit.md"
 MANUAL_VISUAL_AUDIT = ROOT / "reports" / "manual-visual-audit.md"
 CLAIM_BOUNDARY_AUDIT_MD = ROOT / "reports" / "claim-boundary-audit.md"
@@ -40,7 +42,7 @@ CLAIM_SOURCE_DEPENDENCY_MD = ROOT / "reports" / "claim-source-dependency.md"
 CLAIM_SOURCE_DEPENDENCY_CSV = ROOT / "reports" / "claim-source-dependency.csv"
 CLAIM_POSTURE_AUDIT_MD = ROOT / "reports" / "claim-posture-audit.md"
 CLAIM_POSTURE_AUDIT_CSV = ROOT / "reports" / "claim-posture-audit.csv"
-RELEASE_TAG = "paper-publication-readiness-2026-06-12-r44"
+RELEASE_TAG = "paper-publication-readiness-2026-06-12-r45"
 CITATION_CFF = ROOT / "CITATION.cff"
 ZENODO_JSON = ROOT / ".zenodo.json"
 FORBIDDEN_LOCAL_ARTIFACTS = [
@@ -120,6 +122,7 @@ EXPECTED_ZIP_MEMBERS = {
     "supporting-information/source-moments.md",
     "supporting-information/source-panel-inventory.md",
     "supporting-information/source-capability-audit.md",
+    "supporting-information/procurement-denominator-audit.md",
     "supporting-information/claim-boundary-audit.md",
     "supporting-information/claim-source-dependency.md",
     "supporting-information/claim-posture-audit.md",
@@ -143,6 +146,7 @@ def main() -> int:
     failures.extend(check_submission_statements())
     failures.extend(check_claim_alignment())
     failures.extend(check_source_capability_audit())
+    failures.extend(check_procurement_denominator_audit())
     failures.extend(check_claim_boundary_audit())
     failures.extend(check_claim_source_dependency_audit())
     failures.extend(check_claim_posture_audit())
@@ -257,6 +261,7 @@ def submission_inputs() -> list[Path]:
         ROOT / "reports" / "source-moments.md",
         ROOT / "reports" / "source-panel-inventory.md",
         SOURCE_CAPABILITY_AUDIT_MD,
+        PROCUREMENT_DENOMINATOR_AUDIT_MD,
         ROOT / "reports" / "claim-boundary-audit.md",
         ROOT / "reports" / "claim-source-dependency.md",
         ROOT / "reports" / "claim-posture-audit.md",
@@ -493,6 +498,58 @@ def check_source_capability_audit() -> list[str]:
     for phrase in ("Source Capability Audit", "SAM/FPDS action-history", "Direct hidden-donor"):
         if phrase not in text:
             failures.append(f"source capability audit markdown missing phrase: {phrase}")
+    return failures
+
+
+def check_procurement_denominator_audit() -> list[str]:
+    failures: list[str] = []
+    missing = [
+        path.relative_to(ROOT)
+        for path in (PROCUREMENT_DENOMINATOR_AUDIT_MD, PROCUREMENT_DENOMINATOR_AUDIT_CSV)
+        if not path.exists()
+    ]
+    if missing:
+        return [f"missing procurement denominator audit artifact: {path}" for path in missing]
+
+    with PROCUREMENT_DENOMINATOR_AUDIT_CSV.open(newline="", encoding="utf-8") as source:
+        rows = {row.get("source", ""): row for row in csv.DictReader(source)}
+    required = {
+        "usaspending-procurement-actions",
+        "sam-contract-awards",
+        "usaspending-procurement-bridge",
+        "usaspending-awards",
+    }
+    missing_sources = sorted(required - set(rows))
+    failures.extend(
+        f"procurement denominator audit missing source: {source_name}"
+        for source_name in missing_sources
+    )
+    if missing_sources:
+        return failures
+
+    action_rows = int(float(rows["usaspending-procurement-actions"].get("rows", "0") or "0"))
+    action_agencies = int(float(rows["usaspending-procurement-actions"].get("agencyCount", "0") or "0"))
+    if action_rows <= 0 or action_agencies < 2:
+        failures.append(
+            "procurement denominator audit should show an active multi-agency USAspending action panel"
+        )
+    if rows["sam-contract-awards"].get("snapshotStatus") == "ok" and int(float(rows["sam-contract-awards"].get("rows", "0") or "0")) <= 0:
+        failures.append(
+            "SAM Contract Awards cannot be marked ok without committed action rows"
+        )
+    text = PROCUREMENT_DENOMINATOR_AUDIT_MD.read_text(encoding="utf-8")
+    required_text = [
+        "Procurement Denominator Audit",
+        "representative SAM/FPDS action-history denominator",
+        "modified-action share",
+    ]
+    for phrase in required_text:
+        if phrase not in text:
+            failures.append(f"procurement denominator audit markdown missing phrase: {phrase}")
+    if SUPPLEMENT_BODY.exists():
+        supplement = SUPPLEMENT_BODY.read_text(encoding="utf-8")
+        if "procurement-denominator audit" not in supplement:
+            failures.append("supplement does not disclose the procurement-denominator audit")
     return failures
 
 
@@ -865,6 +922,7 @@ def package_byte_checks() -> list[tuple[Path, str]]:
         (ROOT / "reports" / "source-moments.md", "supporting-information/source-moments.md"),
         (ROOT / "reports" / "source-panel-inventory.md", "supporting-information/source-panel-inventory.md"),
         (SOURCE_CAPABILITY_AUDIT_MD, "supporting-information/source-capability-audit.md"),
+        (PROCUREMENT_DENOMINATOR_AUDIT_MD, "supporting-information/procurement-denominator-audit.md"),
         (ROOT / "reports" / "claim-boundary-audit.md", "supporting-information/claim-boundary-audit.md"),
         (ROOT / "reports" / "claim-source-dependency.md", "supporting-information/claim-source-dependency.md"),
         (ROOT / "reports" / "claim-posture-audit.md", "supporting-information/claim-posture-audit.md"),
