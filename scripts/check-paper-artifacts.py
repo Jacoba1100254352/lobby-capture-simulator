@@ -30,6 +30,8 @@ REGGOV_BODY = PAPER / "sections" / "reggov-body.tex"
 SUPPLEMENT_BODY = PAPER / "sections" / "supplement-body.tex"
 VALIDATION_SUMMARY = ROOT / "reports" / "validation-summary.md"
 SOURCE_PANEL_INVENTORY = ROOT / "reports" / "source-panel-inventory.csv"
+SOURCE_CAPABILITY_AUDIT_MD = ROOT / "reports" / "source-capability-audit.md"
+SOURCE_CAPABILITY_AUDIT_CSV = ROOT / "reports" / "source-capability-audit.csv"
 LAYOUT_AUDIT = ROOT / "reports" / "paper-layout-audit.md"
 MANUAL_VISUAL_AUDIT = ROOT / "reports" / "manual-visual-audit.md"
 CLAIM_BOUNDARY_AUDIT_MD = ROOT / "reports" / "claim-boundary-audit.md"
@@ -38,7 +40,7 @@ CLAIM_SOURCE_DEPENDENCY_MD = ROOT / "reports" / "claim-source-dependency.md"
 CLAIM_SOURCE_DEPENDENCY_CSV = ROOT / "reports" / "claim-source-dependency.csv"
 CLAIM_POSTURE_AUDIT_MD = ROOT / "reports" / "claim-posture-audit.md"
 CLAIM_POSTURE_AUDIT_CSV = ROOT / "reports" / "claim-posture-audit.csv"
-RELEASE_TAG = "paper-publication-readiness-2026-06-12-r43"
+RELEASE_TAG = "paper-publication-readiness-2026-06-12-r44"
 CITATION_CFF = ROOT / "CITATION.cff"
 ZENODO_JSON = ROOT / ".zenodo.json"
 FORBIDDEN_LOCAL_ARTIFACTS = [
@@ -117,6 +119,7 @@ EXPECTED_ZIP_MEMBERS = {
     "supporting-information/source-data-roadmap.md",
     "supporting-information/source-moments.md",
     "supporting-information/source-panel-inventory.md",
+    "supporting-information/source-capability-audit.md",
     "supporting-information/claim-boundary-audit.md",
     "supporting-information/claim-source-dependency.md",
     "supporting-information/claim-posture-audit.md",
@@ -139,6 +142,7 @@ def main() -> int:
     failures.extend(check_wiley_text())
     failures.extend(check_submission_statements())
     failures.extend(check_claim_alignment())
+    failures.extend(check_source_capability_audit())
     failures.extend(check_claim_boundary_audit())
     failures.extend(check_claim_source_dependency_audit())
     failures.extend(check_claim_posture_audit())
@@ -252,6 +256,7 @@ def submission_inputs() -> list[Path]:
         ROOT / "docs" / "source-data-roadmap.md",
         ROOT / "reports" / "source-moments.md",
         ROOT / "reports" / "source-panel-inventory.md",
+        SOURCE_CAPABILITY_AUDIT_MD,
         ROOT / "reports" / "claim-boundary-audit.md",
         ROOT / "reports" / "claim-source-dependency.md",
         ROOT / "reports" / "claim-posture-audit.md",
@@ -427,6 +432,67 @@ def check_claim_alignment() -> list[str]:
                         failures.append(
                             f"{path.relative_to(ROOT)} still describes electoral-communication rows as absent"
                         )
+    return failures
+
+
+def check_source_capability_audit() -> list[str]:
+    failures: list[str] = []
+    missing = [
+        path.relative_to(ROOT)
+        for path in (SOURCE_CAPABILITY_AUDIT_MD, SOURCE_CAPABILITY_AUDIT_CSV)
+        if not path.exists()
+    ]
+    if missing:
+        return [f"missing source capability audit artifact: {path}" for path in missing]
+
+    with SOURCE_CAPABILITY_AUDIT_CSV.open(newline="", encoding="utf-8") as source:
+        rows = {row.get("capability", ""): row for row in csv.DictReader(source)}
+    required = {
+        "direct-dark-money-routing",
+        "sam-contract-awards-action-history",
+        "usaspending-stratified-action-panel",
+        "lda-covered-position-revolving-door",
+        "irs-527-political-organizations",
+        "licensed-access-overlays",
+    }
+    missing_capabilities = sorted(required - set(rows))
+    failures.extend(
+        f"source capability audit missing capability: {capability}"
+        for capability in missing_capabilities
+    )
+    if missing_capabilities:
+        return failures
+
+    if rows["direct-dark-money-routing"].get("capabilityStatus") != "proxy-only":
+        failures.append(
+            "direct dark-money capability should remain proxy-only until direct source-routing rows are present"
+        )
+    if rows["sam-contract-awards-action-history"].get("capabilityStatus") not in {
+        "implemented-not-active",
+        "active-bounded",
+    }:
+        failures.append(
+            "SAM Contract Awards capability status should be implemented-not-active or active-bounded"
+        )
+    if rows["usaspending-stratified-action-panel"].get("capabilityStatus") not in {
+        "active-usable",
+        "active-bounded",
+    }:
+        failures.append(
+            "USAspending action panel capability should be active in the committed snapshot"
+        )
+    if rows["lda-covered-position-revolving-door"].get("capabilityStatus") != "active-usable":
+        failures.append(
+            "LDA covered-position revolving-door capability should be active and usable"
+        )
+    if rows["irs-527-political-organizations"].get("capabilityStatus") != "active-usable":
+        failures.append(
+            "IRS 527 political-organization capability should be active and usable"
+        )
+    text = SOURCE_CAPABILITY_AUDIT_MD.read_text(encoding="utf-8")
+    for phrase in ("Source Capability Audit", "SAM/FPDS action-history", "Direct hidden-donor"):
+        if phrase not in text:
+            failures.append(f"source capability audit markdown missing phrase: {phrase}")
     return failures
 
 
@@ -798,6 +864,7 @@ def package_byte_checks() -> list[tuple[Path, str]]:
         (ROOT / "docs" / "source-data-roadmap.md", "supporting-information/source-data-roadmap.md"),
         (ROOT / "reports" / "source-moments.md", "supporting-information/source-moments.md"),
         (ROOT / "reports" / "source-panel-inventory.md", "supporting-information/source-panel-inventory.md"),
+        (SOURCE_CAPABILITY_AUDIT_MD, "supporting-information/source-capability-audit.md"),
         (ROOT / "reports" / "claim-boundary-audit.md", "supporting-information/claim-boundary-audit.md"),
         (ROOT / "reports" / "claim-source-dependency.md", "supporting-information/claim-source-dependency.md"),
         (ROOT / "reports" / "claim-posture-audit.md", "supporting-information/claim-posture-audit.md"),

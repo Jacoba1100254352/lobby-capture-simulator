@@ -63,6 +63,7 @@ cp "$ROOT_DIR/docs/validation.md" "$STAGING_DIR/supporting-information/validatio
 cp "$ROOT_DIR/docs/source-data-roadmap.md" "$STAGING_DIR/supporting-information/source-data-roadmap.md"
 cp "$ROOT_DIR/reports/source-moments.md" "$STAGING_DIR/supporting-information/source-moments.md"
 cp "$ROOT_DIR/reports/source-panel-inventory.md" "$STAGING_DIR/supporting-information/source-panel-inventory.md"
+cp "$ROOT_DIR/reports/source-capability-audit.md" "$STAGING_DIR/supporting-information/source-capability-audit.md"
 cp "$ROOT_DIR/reports/claim-boundary-audit.md" "$STAGING_DIR/supporting-information/claim-boundary-audit.md"
 cp "$ROOT_DIR/reports/claim-source-dependency.md" "$STAGING_DIR/supporting-information/claim-source-dependency.md"
 cp "$ROOT_DIR/reports/claim-posture-audit.md" "$STAGING_DIR/supporting-information/claim-posture-audit.md"

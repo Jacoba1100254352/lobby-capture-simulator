@@ -1,6 +1,6 @@
 \section{Purpose of the Supporting Information}
 
-This supplement records implementation details that should not carry the main article's narrative burden. It makes the model schedule, scenario catalog, validation artifacts, and source-panel gaps easy to inspect.
+This supplement records implementation details that should not carry the main article's narrative burden. It makes the model schedule, scenario catalog, validation artifacts, source-panel gaps, and source-capability status easy to inspect.
 
 \section{Model Schedule and State}
 
@@ -94,6 +94,7 @@ The reproducible report pipeline writes:
   \item campaign, mechanism-comparison, sensitivity, ablation, interaction, and portfolio CSV and Markdown reports;
   \item source moments from normalized public-data panels;
   \item source-panel inventory diagnostics;
+  \item source-capability audit separating implemented routes from snapshot support;
   \item validation summary and classified calibration queue;
   \item substitution audit with distortion-failure, warning, and channel-shift tradeoff labels;
   \item generated paper tables, figures, local PDF, Wiley PDF, supplement PDF, and Wiley submission archive.
@@ -117,7 +118,7 @@ The portfolio target ranks candidate reform bundles by total distortion, hidden 
 
 The 2024 EPA/ENV snapshot is a reproducibility scaffold, not a representative empirical panel. It is strongest for LDA, OpenFEC Schedule E, OpenFEC electioneering and communication-cost rows, NYC CFB public-financing and intermediary rows, Seattle Democracy Voucher rows, Regulations.gov, Federal Register, source-native IRS Form 8872 rows for a bounded 527 alphabetic slice, USAspending schema checks, the multi-agency USAspending top-award procurement bridge, and the stratified 12-agency quarterly USAspending transaction/action panel. Procurement source moments separate the selected concentration denominator, award-level competition, and transaction/action modification-incidence panels; when the action panel is available it supplies the concentration denominator, while the top-award bridge remains a separate high-value diagnostic. The codebase has an optional SAM.gov Contract Awards importer for the procurement action schema, but this path is not part of the committed snapshot unless a future run archives a representative SAM/FPDS action-history pull. Public financing and direct dark money are separate bridge panels. This prevents public-financing program rows or future dark-money exports from being mistaken for ordinary FEC receipts, and it keeps direct dark money separate from super PAC, electioneering, communication-cost, and other outside-spending rows. The source bridge remains incomplete for direct dark-money source rows, representative national public-financing program data, representative SAM/FPDS action-level procurement histories, representative Form 990 nonprofit routing, complete IRS 527 coverage beyond the bounded alphabetic slice, and post-employment movement beyond LDA-derived covered-position records.
 
-The source-panel inventory in \texttt{reports/source-panel-inventory.md} is included in the submission bundle. It should be read before using any model output as more than a mechanism diagnostic.
+The source-panel inventory in \texttt{reports/source-panel-inventory.md} is included in the submission bundle. The source-capability audit in \texttt{reports/source-capability-audit.md} separates implemented live-source routes from the evidence actually present in the frozen snapshot; an implemented importer does not strengthen a manuscript claim unless the committed snapshot contains usable rows and the claim ledger permits that claim. These reports should be read before using any model output as more than a mechanism diagnostic.
 
 \section{Claim Boundary Audit}
 
