@@ -296,6 +296,10 @@ def source_scope_gap(metric: str, value: float, source_moments: dict[str, float]
         return "multi-agency procurement bridge is present but top-award sampling is not representative enough for agency-concentration calibration"
     if metric == "procurementRecipientTop3Share" and single_agency_panel:
         return "single-agency procurement snapshot cannot validate a cross-agency recipient-concentration benchmark"
+    if metric == "procurementRecipientTop3Share" and concentration_action_panel and concentration_panel_agencies > 1:
+        if concentration_sam_action_panel:
+            return "bounded SAM.gov Contract Awards panel is present, but it is not representative enough for recipient-concentration calibration"
+        return "bounded stratified USAspending action panel is present, but it is not representative enough for recipient-concentration calibration"
     if metric == "procurementSingleBidShare" and concentration_top_award_panel:
         return "competition moments come from a limited top-award procurement slice, not representative SAM/FPDS action-level competition coverage"
     if metric == "procurementExPostModificationShare" and initial_award_panel and value <= 0.0:

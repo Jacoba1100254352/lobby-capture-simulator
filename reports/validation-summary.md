@@ -2,10 +2,10 @@
 
 Benchmark ranges are plausibility checks, not causal empirical claims. `source_gap` rows mark source panels that are too narrow or too proxy-backed to test a benchmark directly.
 
-- Fit: `309`
+- Fit: `308`
 - Partial: `34`
 - Miss: `0`
-- Source gap: `3`
+- Source gap: `4`
 - Unknown: `0`
 - Not applicable: `11`
 
@@ -15,7 +15,7 @@ Benchmark ranges are plausibility checks, not causal empirical claims. `source_g
 - `inferred`: fit `0`, partial `1`, miss `0`, source gap `1`, unknown `0`, not applicable `5`
 - `judgmental`: fit `4`, partial `2`, miss `0`, source gap `0`, unknown `0`, not applicable `0`
 - `observed`: fit `29`, partial `15`, miss `0`, source gap `2`, unknown `0`, not applicable `5`
-- `observed_proxy`: fit `26`, partial `0`, miss `0`, source gap `0`, unknown `0`, not applicable `0`
+- `observed_proxy`: fit `25`, partial `0`, miss `0`, source gap `1`, unknown `0`, not applicable `0`
 - `proxy`: fit `53`, partial `13`, miss `0`, source gap `0`, unknown `0`, not applicable `1`
 - `sectoral`: fit `7`, partial `0`, miss `0`, source gap `0`, unknown `0`, not applicable `0`
 - `synthetic`: fit `69`, partial `3`, miss `0`, source gap `0`, unknown `0`, not applicable `0`
@@ -373,9 +373,9 @@ Benchmark ranges are plausibility checks, not causal empirical claims. `source_g
 | source-moments.csv | commentFloodingIndex | 0.3072-0.3072 | 0.00-1.00 | fit | source moment inside benchmark range |
 | source-moments.csv | fecDonorTop3Share | 0.3668-0.3668 | 0.10-0.85 | fit | source moment inside benchmark range |
 | source-moments.csv | darkMoneyDirectVisibility | 0.2043-0.2043 | 0.00-0.10 | source_gap | dark-money source panel is thin and proxy-backed; direct hidden-donor or nonprofit-routing records are needed, while electioneering rows remain separate electoral-communication evidence; source moment outside benchmark range |
-| source-moments.csv | procurementAgencyTop1Share | 0.6680-0.6680 | 0.55-0.65 | source_gap | bounded stratified USAspending action panel is present, but it is not representative enough for agency-concentration calibration; source moment outside benchmark range |
-| source-moments.csv | procurementRecipientTop3Share | 0.2500-0.2500 | 0.25-0.40 | fit | source moment inside benchmark range |
+| source-moments.csv | procurementAgencyTop1Share | 0.3866-0.3866 | 0.55-0.65 | source_gap | bounded stratified USAspending action panel is present, but it is not representative enough for agency-concentration calibration; source moment outside benchmark range |
+| source-moments.csv | procurementRecipientTop3Share | 0.2457-0.2457 | 0.25-0.40 | source_gap | bounded stratified USAspending action panel is present, but it is not representative enough for recipient-concentration calibration; source moment outside benchmark range |
 | source-moments.csv | revolvingDoorInfluenceMean | 0.3400-0.3400 | 0.25-0.75 | fit | source moment inside benchmark range |
 | source-moments.csv | commentFloodingIndex | 0.3072-0.3072 | 0.00-0.90 | fit | source moment inside benchmark range |
 | source-moments.csv | procurementSingleBidShare | 0.2350-0.2350 | 0.10-0.25 | fit | source moment inside benchmark range |
-| source-moments.csv | procurementExPostModificationShare | 0.3111-0.3111 | 0.01-0.05 | source_gap | bounded USAspending transaction-action panel is present, but the modification-action share remains above the benchmark range and still needs representative SAM/FPDS validation; source moment outside benchmark range |
+| source-moments.csv | procurementExPostModificationShare | 0.3297-0.3297 | 0.01-0.05 | source_gap | bounded USAspending transaction-action panel is present, but the modification-action share remains above the benchmark range and still needs representative SAM/FPDS validation; source moment outside benchmark range |

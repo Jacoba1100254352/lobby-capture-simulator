@@ -4,7 +4,7 @@ These are direct moments from normalized calibration tables. They are source dia
 
 ## Representativeness Warnings
 
-- Snapshot procurement concentration uses a stratified USAspending transaction/action panel; this is stronger than the top-award bridge but remains a bounded six-agency diagnostic rather than a representative SAM/FPDS panel.
+- Snapshot procurement concentration uses a stratified multi-agency USAspending transaction/action panel; this is stronger than the top-award bridge but remains a bounded diagnostic rather than a representative SAM/FPDS panel.
 
 | Scope | Source | Metric | Value | Evidence | Notes |
 | --- | --- | --- | ---: | --- | --- |
@@ -57,36 +57,36 @@ These are direct moments from normalized calibration tables. They are source dia
 | snapshot | regulatory | `technicalClaimCredibilityMean` | 0.5000 | proxy | mean normalized technical claim credibility |
 | snapshot | usaspending | `procurementRows` | 200.0000 | observed | normalized USAspending award rows |
 | snapshot | usaspending | `procurementBridgeRows` | 150.0000 | observed | multi-agency USAspending bridge rows, if available |
-| snapshot | usaspending | `procurementActionRows` | 3578.0000 | observed | primary procurement action denominator from stratified USAspending transaction/action rows |
-| snapshot | usaspending | `procurementUsaspendingActionRows` | 3578.0000 | observed | normalized USAspending transaction/action rows, if available |
+| snapshot | usaspending | `procurementActionRows` | 2399.0000 | observed | primary procurement action denominator from stratified USAspending transaction/action rows |
+| snapshot | usaspending | `procurementUsaspendingActionRows` | 2399.0000 | observed | normalized USAspending transaction/action rows, if available |
 | snapshot | sam | `procurementSamContractAwardRows` | 0.0000 | observed | normalized SAM.gov Contract Awards rows, if available |
 | snapshot | usaspending | `procurementActionPanelUsaspendingSample` | 1.0000 | diagnostic | 1 when the primary procurement action denominator uses USAspending transaction/action rows |
 | snapshot | sam | `procurementActionPanelSamSample` | 0.0000 | diagnostic | 1 when the primary procurement action denominator uses SAM.gov Contract Awards rows |
-| snapshot | usaspending | `procurementConcentrationPanelRows` | 3578.0000 | diagnostic | rows used for concentration moments from stratified USAspending transaction/action rows |
-| snapshot | usaspending | `procurementConcentrationPanelAgencyCount` | 6.0000 | observed | distinct awarding agencies in the procurement concentration panel |
+| snapshot | usaspending | `procurementConcentrationPanelRows` | 2399.0000 | diagnostic | rows used for concentration moments from stratified USAspending transaction/action rows |
+| snapshot | usaspending | `procurementConcentrationPanelAgencyCount` | 12.0000 | observed | distinct awarding agencies in the procurement concentration panel |
 | snapshot | usaspending | `procurementConcentrationPanelActionSample` | 1.0000 | diagnostic | 1 when procurement concentration moments use a transaction/action panel |
 | snapshot | usaspending | `procurementConcentrationPanelTopAwardSample` | 0.0000 | diagnostic | 1 when procurement concentration moments use the multi-agency top-award bridge |
 | snapshot | usaspending | `procurementCompetitionPanelRows` | 200.0000 | diagnostic | rows used for competition moments from normalized USAspending award rows with competition fields |
-| snapshot | usaspending | `procurementModificationPanelRows` | 3578.0000 | diagnostic | rows used for modification moments from stratified USAspending transaction/action rows |
+| snapshot | usaspending | `procurementModificationPanelRows` | 2399.0000 | diagnostic | rows used for modification moments from stratified USAspending transaction/action rows |
 | snapshot | usaspending | `procurementBridgeAgencyCount` | 6.0000 | observed | distinct awarding agencies in procurement source moment panel |
-| snapshot | usaspending | `procurementActionAgencyCount` | 6.0000 | diagnostic | distinct awarding agencies in the primary transaction/action panel from stratified USAspending transaction/action rows |
+| snapshot | usaspending | `procurementActionAgencyCount` | 12.0000 | diagnostic | distinct awarding agencies in the primary transaction/action panel from stratified USAspending transaction/action rows |
 | snapshot | usaspending | `procurementBridgeTopAwardSample` | 1.0000 | diagnostic | 1 when a separate multi-agency top-award bridge is available |
 | snapshot | usaspending | `procurementLatestTransactionModificationProxy` | 1.0000 | diagnostic | 1 when latest-transaction enrichment exists but is kept separate from action-level modification incidence |
-| snapshot | usaspending | `procurementTotalAwards` | 161806.5313 | observed | sum of stratified USAspending transaction/action rows amount |
-| snapshot | usaspending | `procurementRecipientTop1Share` | 0.1288 | observed | largest recipient share of stratified USAspending transaction/action rows amount |
-| snapshot | usaspending | `procurementRecipientTop3Share` | 0.2500 | observed | top three recipients share of stratified USAspending transaction/action rows amount |
-| snapshot | usaspending | `procurementRecipientHerfindahl` | 0.0358 | observed | recipient award-amount Herfindahl over stratified USAspending transaction/action rows |
-| snapshot | usaspending | `procurementAgencyTop1Share` | 0.6680 | observed | largest awarding agency share of stratified USAspending transaction/action rows amount |
-| snapshot | usaspending | `procurementAgencyTop1CountShare` | 0.1677 | diagnostic | largest awarding agency row-count share of stratified USAspending transaction/action rows |
-| snapshot | usaspending | `procurementAgencyHerfindahl` | 0.5122 | observed | awarding-agency amount Herfindahl over stratified USAspending transaction/action rows |
-| snapshot | usaspending | `procurementSubAgencyTop3Share` | 0.6813 | observed | top three sub-agencies share of stratified USAspending transaction/action rows amount |
-| snapshot | usaspending | `procurementAwardCount` | 3578.0000 | observed | sum of normalized award or transaction counts in stratified USAspending transaction/action rows |
+| snapshot | usaspending | `procurementTotalAwards` | 178595.0065 | observed | sum of stratified USAspending transaction/action rows amount |
+| snapshot | usaspending | `procurementRecipientTop1Share` | 0.1123 | observed | largest recipient share of stratified USAspending transaction/action rows amount |
+| snapshot | usaspending | `procurementRecipientTop3Share` | 0.2457 | observed | top three recipients share of stratified USAspending transaction/action rows amount |
+| snapshot | usaspending | `procurementRecipientHerfindahl` | 0.0344 | observed | recipient award-amount Herfindahl over stratified USAspending transaction/action rows |
+| snapshot | usaspending | `procurementAgencyTop1Share` | 0.3866 | observed | largest awarding agency share of stratified USAspending transaction/action rows amount |
+| snapshot | usaspending | `procurementAgencyTop1CountShare` | 0.0834 | diagnostic | largest awarding agency row-count share of stratified USAspending transaction/action rows |
+| snapshot | usaspending | `procurementAgencyHerfindahl` | 0.2393 | observed | awarding-agency amount Herfindahl over stratified USAspending transaction/action rows |
+| snapshot | usaspending | `procurementSubAgencyTop3Share` | 0.5747 | observed | top three sub-agencies share of stratified USAspending transaction/action rows amount |
+| snapshot | usaspending | `procurementAwardCount` | 2399.0000 | observed | sum of normalized award or transaction counts in stratified USAspending transaction/action rows |
 | snapshot | usaspending | `procurementSingleBidShare` | 0.2350 | observed_proxy | share among normalized USAspending award rows with competition fields that have one known offer |
 | snapshot | usaspending | `procurementAmountWeightedSingleBidShare` | 0.2108 | observed_proxy | award-amount share among normalized USAspending award rows with competition fields with one known offer |
-| snapshot | usaspending | `procurementInitialAwardShare` | 0.6889 | observed_proxy | share of stratified USAspending transaction/action rows that appear to be initial awards |
-| snapshot | usaspending | `procurementExPostModificationShare` | 0.3111 | observed_proxy | share of stratified USAspending transaction/action rows marked as ex-post modifications or nonzero modification sequence |
-| snapshot | usaspending | `procurementAmountWeightedModificationShare` | 0.7517 | observed_proxy | award-amount share of stratified USAspending transaction/action rows marked as ex-post modifications |
-| snapshot | usaspending | `procurementActionModificationRows` | 1113.0000 | diagnostic | primary transaction/action rows from stratified USAspending transaction/action rows marked as ex-post modifications |
+| snapshot | usaspending | `procurementInitialAwardShare` | 0.6703 | observed_proxy | share of stratified USAspending transaction/action rows that appear to be initial awards |
+| snapshot | usaspending | `procurementExPostModificationShare` | 0.3297 | observed_proxy | share of stratified USAspending transaction/action rows marked as ex-post modifications or nonzero modification sequence |
+| snapshot | usaspending | `procurementAmountWeightedModificationShare` | 0.6141 | observed_proxy | award-amount share of stratified USAspending transaction/action rows marked as ex-post modifications |
+| snapshot | usaspending | `procurementActionModificationRows` | 791.0000 | diagnostic | primary transaction/action rows from stratified USAspending transaction/action rows marked as ex-post modifications |
 | snapshot | usaspending | `procurementPriceOnlyAwardShare` | 0.2400 | observed_proxy | share among normalized USAspending award rows with competition fields marked as price-only or one-offer awards |
 | snapshot | usaspending | `procurementLimitedCompetitionShare` | 0.4600 | observed_proxy | share among normalized USAspending award rows with competition fields with limited competition, exclusions, or one known offer |
 | snapshot | usaspending | `procurementProtestShare` | 0.0000 | observed_proxy | share of normalized award rows marked with a protest flag |

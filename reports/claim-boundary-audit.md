@@ -4,10 +4,10 @@ This audit maps each empirical source panel to the strongest manuscript claim it
 
 ## Validation Status Summary
 
-- Fit: `309`
+- Fit: `308`
 - Partial: `34`
 - Miss: `0`
-- Source gap: `3`
+- Source gap: `4`
 - Unknown: `0`
 - Not applicable: `11`
 
@@ -23,14 +23,13 @@ This audit maps each empirical source panel to the strongest manuscript claim it
 | IRS 527 political organizations | Political-organization receipts and disbursements for campaign-adjacent intermediaries | direct observed 527 filings | usable | stronger | May support mechanism diagnostics and distributional anchoring within the stated source scope. | Do not present as a causal estimate or nationally representative policy effect. | Broaden beyond the default bounded IRS POFD alphabetic slice, preserve the electronic-filing scope note, and keep 527 political-organization rows separate from 501(c)(4)/(c)(6) hidden-donor evidence. |
 | Revolving door | Post-government access, covered-position links, and cooling-off exposure | proxy/thin | thin | limited | May support source-aware plausibility checks only; magnitude claims must be phrased as proxy-backed or thin. | Do not present as article-level calibration or validation of hidden-channel magnitude. | Supplement LDA covered-position rows with OGE, FACA, witness, LegiStorm/OpenSecrets, or archived personnel movement exports. |
 | Procurement identifiers | Vendor and award-path matching for procurement influence | direct identifier coverage | usable | stronger | May support mechanism diagnostics and distributional anchoring within the stated source scope. | Do not present as a causal estimate or nationally representative policy effect. | Broaden SAM/FPDS and USAspending enrichment with PIID, UEI, action-date, modification, competition, exclusion, and protest fields. |
-| Procurement concentration panel | Multi-agency vendor and agency concentration diagnostics | direct bounded SAM/USAspending action or top-award panel | thin | limited | May support source-aware plausibility checks only; magnitude claims must be phrased as proxy-backed or thin. | Do not present as article-level calibration or validation of hidden-channel magnitude. | Replace the bounded SAM/USAspending concentration panel with representative SAM/FPDS action-level extracts before treating agency concentration as calibrated. |
+| Procurement concentration panel | Multi-agency vendor and agency concentration diagnostics | direct bounded SAM/USAspending action or top-award panel | usable | stronger | May support mechanism diagnostics and distributional anchoring within the stated source scope. | Do not present as a causal estimate or nationally representative policy effect. | Replace the bounded SAM/USAspending concentration panel with representative SAM/FPDS action-level extracts before treating agency concentration as calibrated. |
 | Procurement action history | Transaction/action denominator for post-award modification incidence | direct primary SAM/USAspending action rows when present | usable | stronger | May support mechanism diagnostics and distributional anchoring within the stated source scope. | Do not present as a causal estimate or nationally representative policy effect. | Broaden the selected SAM/USAspending action panel with representative SAM/FPDS action-history extracts before treating modification incidence as calibration-grade. |
 | Procurement modification risk | Post-award modification and specification-change pressure | proxy/thin | thin | limited | May support source-aware plausibility checks only; magnitude claims must be phrased as proxy-backed or thin. | Do not present as article-level calibration or validation of hidden-channel magnitude. | Validate nonzero modification numbers against representative SAM/FPDS action histories and separate transaction-action incidence from award-level modification incidence. |
 
 ## Weak-Panel Gate
 
-- Weak panels requiring explicit claim limits: `4`
+- Weak panels requiring explicit claim limits: `3`
 - `Direct dark money` (thin): May support source-aware plausibility checks only; magnitude claims must be phrased as proxy-backed or thin.
 - `Revolving door` (thin): May support source-aware plausibility checks only; magnitude claims must be phrased as proxy-backed or thin.
-- `Procurement concentration panel` (thin): May support source-aware plausibility checks only; magnitude claims must be phrased as proxy-backed or thin.
 - `Procurement modification risk` (thin): May support source-aware plausibility checks only; magnitude claims must be phrased as proxy-backed or thin.

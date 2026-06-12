@@ -1,7 +1,7 @@
 {
   "snapshot": "2024-env",
-  "generatedAt": "2026-06-12T07:39:52.588184+00:00",
-  "gitCommit": "3b1157d",
+  "generatedAt": "2026-06-12T08:18:39.542118+00:00",
+  "gitCommit": "bbf2acf",
   "gitTreeState": "clean",
   "gitTreeStateScope": "working tree status excluding generated 2024-env snapshot, reports, paper tables, and paper figures",
   "scope": {
@@ -79,17 +79,17 @@
       "requestTemplate": "USASPENDING_AGENCIES='Environmental Protection Agency,Department of Energy,Department of the Interior,Department of Agriculture,Department of Transportation,Department of Defense' USASPENDING_PAGE_SIZE=25 USASPENDING_MAX_PAGES=1 USASPENDING_TREAT_LATEST_TRANSACTION_AS_MODIFICATION=1 python3 scripts/fetch-source-data.py usaspending --output data/raw/usaspending-procurement-bridge.csv",
       "normalizedFile": "data/snapshots/2024-env/normalized/usaspending-procurement-bridge.csv",
       "rowCount": 150,
-      "sha256": "93c68f69e2e59b0ccf5b6936e9d05e970676545afdd94d7c2f4fc227997fe3a0",
+      "sha256": "5888b12d73850fc6f0768ed8db041b0a2b405a6d8e2eb1bacdef9be4ac7f01dd",
       "status": "live",
       "statusNotes": "usaspending-procurement-bridge: ok (normalized multi-agency procurement bridge rows written)"
     },
     {
       "source": "usaspending-procurement-actions",
-      "description": "Stratified six-agency USAspending transaction/action panel for action-level procurement concentration and modification diagnostics; rows are deduplicated and kept separate from award rows, top-award bridge rows, and SAM.gov Contract Awards rows.",
-      "requestTemplate": "USASPENDING_AGENCIES='Environmental Protection Agency,Department of Energy,Department of the Interior,Department of Agriculture,Department of Transportation,Department of Defense' USASPENDING_ACTION_PERIOD_BUCKETS=monthly USASPENDING_ACTION_TRANSACTION_PAGE_SIZE=25 USASPENDING_ACTION_TRANSACTION_MAX_PAGES=1 USASPENDING_ACTION_TRANSACTION_SORT_SPECS='Mod:asc;Transaction Amount:desc' python3 scripts/fetch-source-data.py usaspending-actions --output data/raw/usaspending-procurement-actions.csv",
+      "description": "Stratified 12-agency quarterly USAspending transaction/action panel for action-level procurement concentration and modification diagnostics; rows are deduplicated and kept separate from award rows, top-award bridge rows, and SAM.gov Contract Awards rows.",
+      "requestTemplate": "USASPENDING_AGENCIES='Environmental Protection Agency,Department of Energy,Department of the Interior,Department of Agriculture,Department of Transportation,Department of Defense,Department of Health and Human Services,Department of Veterans Affairs,Department of Homeland Security,National Aeronautics and Space Administration,General Services Administration,Department of Commerce' USASPENDING_ACTION_PERIOD_BUCKETS=quarterly USASPENDING_ACTION_TRANSACTION_PAGE_SIZE=25 USASPENDING_ACTION_TRANSACTION_MAX_PAGES=1 USASPENDING_ACTION_TRANSACTION_SORT_SPECS='Mod:asc;Transaction Amount:desc' python3 scripts/fetch-source-data.py usaspending-actions --output data/raw/usaspending-procurement-actions.csv",
       "normalizedFile": "data/snapshots/2024-env/normalized/usaspending-procurement-actions.csv",
-      "rowCount": 3578,
-      "sha256": "33155448bf655b953da106906721387699375c1f03db07485900e5d1726dbffc",
+      "rowCount": 2399,
+      "sha256": "422da2001ba9ddb75c763a0928fc1cfdc41bd33e5c42312e90e4cf88db9cadb1",
       "status": "live",
       "statusNotes": "usaspending-procurement-actions: ok (normalized USAspending procurement action rows written)"
     },
