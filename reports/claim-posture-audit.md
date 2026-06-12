@@ -13,8 +13,8 @@ This audit summarizes which claim posture is cleared by the current source panel
 
 ## Validation Counts
 
-- Fit: `311`
-- Partial: `31`
+- Fit: `317`
+- Partial: `25`
 - Miss: `0`
 - Source gap: `3`
 - Unknown: `0`

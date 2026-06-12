@@ -149,6 +149,8 @@ public final class MarkdownReportWriter
 			       .append(CsvReportWriter.format(fullBundle.antiCaptureSuccessRate()))
 			       .append("`, detection rate: `")
 			       .append(CsvReportWriter.format(fullBundle.detectionRate()))
+			       .append("`, reporting-error detection: `")
+			       .append(CsvReportWriter.format(fullBundle.reportingErrorDetectionRate()))
 			       .append("`, total distortion: `")
 			       .append(CsvReportWriter.format(fullBundle.totalInfluenceDistortion()))
 			       .append("`.\n");

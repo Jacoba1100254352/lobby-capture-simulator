@@ -6,7 +6,6 @@ This queue classifies validation misses and partial overlaps into concrete follo
 
 - `benchmark-review`: `12`
 - `direct-source-moment`: `3`
-- `metric-split`: `6`
 - `model-tuning`: `7`
 - `scenario-coverage`: `5`
 - `scenario-family-split`: `1`
@@ -17,12 +16,6 @@ This queue classifies validation misses and partial overlaps into concrete follo
 | P1 | direct-source-moment | source-moments.csv | `procurementExPostModificationShare` | source_gap | 0.4220-0.4220 | 0.01-0.05 | procurementExPostModificationShare=0.4220 | broaden the bounded USAspending action panel with representative SAM/FPDS action histories that support transaction-row, distinct-award, and amount-weighted denominators before treating modification incidence as calibrated |
 | P1 | direct-source-moment | source-moments.csv | `procurementRecipientTop3Share` | source_gap | 0.1876-0.1876 | 0.25-0.40 | procurementRecipientTop3Share=0.1876 | compare recipient concentration against the bounded procurement concentration panel, then broaden by award type and fiscal year before treating it as calibrated |
 | P3 | benchmark-review | lobby-capture-interactions.csv | `crossVenueDetectionIndex` | partial | 0.0754-0.9403 | 0.00-0.90 |  | treat as a synthetic portfolio capability until linked source coverage is measured |
-| P3 | metric-split | lobby-capture-ablation.csv | `detectionRate` | partial | 0.1147-0.3413 | 0.05-0.21 |  | split narrow reporting-error incidence from broader modeled detection under enforcement-heavy regimes |
-| P3 | metric-split | lobby-capture-campaign.csv | `detectionRate` | partial | 0.0725-0.5613 | 0.05-0.21 |  | split narrow reporting-error incidence from broader modeled detection under enforcement-heavy regimes |
-| P3 | metric-split | lobby-capture-interactions.csv | `detectionRate` | partial | 0.0480-0.4380 | 0.05-0.21 |  | split narrow reporting-error incidence from broader modeled detection under enforcement-heavy regimes |
-| P3 | metric-split | lobby-capture-mechanism-comparison.csv | `detectionRate` | partial | 0.1016-0.3381 | 0.05-0.21 |  | split narrow reporting-error incidence from broader modeled detection under enforcement-heavy regimes |
-| P3 | metric-split | lobby-capture-portfolio.csv | `detectionRate` | partial | 0.1465-0.3747 | 0.05-0.21 |  | split narrow reporting-error incidence from broader modeled detection under enforcement-heavy regimes |
-| P3 | metric-split | lobby-capture-sensitivity.csv | `detectionRate` | partial | 0.1162-0.3900 | 0.05-0.21 |  | split narrow reporting-error incidence from broader modeled detection under enforcement-heavy regimes |
 | P3 | scenario-coverage | lobby-capture-campaign.csv | `hiddenInfluenceShare` | partial | 0.3378-0.6708 | 0.60-0.80 |  | add or isolate higher-pressure substitution scenarios so the scoped validation family reaches the benchmark floor |
 | P3 | scenario-family-split | lobby-capture-campaign.csv | `hiddenInfluenceShare` | partial | 0.2423-0.6708 | 0.30-0.60 |  | split baseline, substitution-stress, and extreme-stress scenarios before using this benchmark as a single calibration target |
 | P3 | benchmark-review | lobby-capture-campaign.csv | `influencePreservationRate` | partial | 0.1674-0.4727 | 0.20-1.50 |  | decide whether the benchmark applies to this scenario family |

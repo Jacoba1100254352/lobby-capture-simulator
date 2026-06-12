@@ -244,7 +244,7 @@ Scenario reports include:
 - technical rulemaking distortion;
 - procurement bias;
 - influence-network opacity, legibility, donor concentration, intermediary centrality, official-access centrality, procurement exposure, revolving-door bridge strength, comment-network load, venue-shift load, cross-venue detection, participation protection, and speech-restriction risk;
-- enforcement capacity, detection, sanctions, and backlog;
+- enforcement capacity, broad capture detection, narrow reporting-error detection, sanctions, and backlog;
 - Wilson intervals for binomial capture and reform-success outcomes.
 
 The primary synthetic comparison for reform packages is `totalInfluenceDistortion`, not `captureRate`. If observed capture falls while total distortion rises, the validation audit treats the row as an apparent-success distortion failure. If observed capture falls while hidden influence, hidden capture, or substitution risk rises, the row is reported as a substitution warning. If visible lobbying falls while hidden diagnostics or channel movement worsen without lower observed capture, the row is reported as a visible-channel warning. Network opacity, venue shifting, and channel-network load are still reported, but rows with channel movement and no higher distortion are classified as channel-shift tradeoffs.

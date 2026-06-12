@@ -416,6 +416,7 @@ The catalog should be organized as scenario families so batch reports can compar
 
 - `antiCaptureSuccessRate`
 - `detectionRate`
+- `reportingErrorDetectionRate`
 - `auditFalseNegativeRate`
 - `auditFalsePositiveRate`
 - `sanctionDeterrence`

@@ -88,6 +88,7 @@ public final class MetricsAccumulator
 	private double visibleLobbyingSpendSum;
 	private double intermediarySpendSum;
 	private double enforcementCapacitySum;
+	private double reportingErrorDetectionSum;
 	private double networkOpacitySum;
 	private double donorNetworkConcentrationSum;
 	private double intermediaryCentralitySum;
@@ -234,6 +235,45 @@ public final class MetricsAccumulator
 				0.0,
 				1.0
 		);
+	}
+
+	private static double reportingErrorDetectionRate(
+			ContestOutcome outcome,
+			ReformRegime reform,
+			ChannelAllocation allocation,
+			double enforcementCapacity
+	) {
+		double regulatedLobbyingSurface = Values.clamp(
+				(0.48 * allocation.share(InfluenceChannel.DIRECT_ACCESS))
+						+ (0.24 * allocation.share(InfluenceChannel.AGENDA_ACCESS))
+						+ (0.16 * allocation.share(InfluenceChannel.PUBLIC_CAMPAIGN))
+						+ (0.12 * allocation.share(InfluenceChannel.INTERMEDIARY)),
+				0.0,
+				1.0
+		);
+		double disclosureFriction = Values.clamp(
+				(0.56 * outcome.influenceResult().lobbyingDisclosureLag())
+						+ (0.22 * (1.0 - reform.realTimeDisclosure()))
+						+ (0.14 * (1.0 - reform.contactLogCoverage()))
+						+ (0.08 * outcome.influenceResult().switchDisclosureCost()),
+				0.0,
+				1.0
+		);
+		double reportingErrorRisk = Values.clamp(
+				0.035 + (0.12 * disclosureFriction) + (0.08 * regulatedLobbyingSurface),
+				0.0,
+				1.0
+		);
+		double detectionSurface = Values.clamp(
+				(0.36 * enforcementCapacity)
+						+ (0.24 * reform.auditRate())
+						+ (0.20 * reform.contactLogCoverage())
+						+ (0.12 * reform.disclosureStrength())
+						+ (0.08 * reform.crossVenueDetectionStrength()),
+				0.0,
+				1.0
+		);
+		return Values.clamp(reportingErrorRisk * (0.46 + (0.72 * detectionSurface)), 0.0, 1.0);
 	}
 	
 	private static double stdDev(List<Double> values) {
@@ -412,11 +452,13 @@ public final class MetricsAccumulator
 		double commentFloodingIndex = commentFloodingIndex(contest, triage);
 		double technicalRulemakingDistortion = technicalRulemakingDistortion(contest, triage);
 		double enforcementCapacity = enforcementCapacity(contest, world, reform);
+		double reportingErrorDetectionRate = reportingErrorDetectionRate(outcome, reform, allocation, enforcementCapacity);
 		double hiddenCaptureIndex = hiddenCaptureIndex(outcome, totalSpend);
 		var network = outcome.influenceResult().networkSnapshot();
 		commentFloodingSum += commentFloodingIndex;
 		technicalRulemakingDistortionSum += technicalRulemakingDistortion;
 		enforcementCapacitySum += enforcementCapacity;
+		reportingErrorDetectionSum += reportingErrorDetectionRate;
 		networkOpacitySum += network.networkOpacityIndex();
 		donorNetworkConcentrationSum += network.donorNetworkConcentration();
 		intermediaryCentralitySum += network.intermediaryCentrality();
@@ -520,6 +562,7 @@ public final class MetricsAccumulator
 				allocationSum.share(InfluenceChannel.INTERMEDIARY),
 				allocationSum.share(InfluenceChannel.DEFENSIVE_REFORM),
 				ratio(detectedCaptured, totalContests),
+				reportingErrorDetectionSum / total,
 				ratio(sanctionedCaptured, totalContests),
 				enforcementCapacitySum / total,
 				policyDistortionSum / total,

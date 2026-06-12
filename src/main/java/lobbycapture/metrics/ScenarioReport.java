@@ -39,6 +39,7 @@ public record ScenarioReport(
 		double intermediarySpendShare,
 		double defensiveChannelSpendShare,
 		double detectionRate,
+		double reportingErrorDetectionRate,
 		double sanctionRate,
 		double enforcementCapacityIndex,
 		double averagePolicyDistortion,

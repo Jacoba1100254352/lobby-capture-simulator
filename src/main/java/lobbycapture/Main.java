@@ -93,6 +93,7 @@ public final class Main
 		System.out.println("commentUniqueInformationShare=" + format(report.commentUniqueInformationShare()));
 		System.out.println("commentReviewBurden=" + format(report.commentReviewBurden()));
 		System.out.println("detectionRate=" + format(report.detectionRate()));
+		System.out.println("reportingErrorDetectionRate=" + format(report.reportingErrorDetectionRate()));
 		System.out.println("enforcementCapacityIndex=" + format(report.enforcementCapacityIndex()));
 		System.out.println("captureRateSeedStdDev=" + format(report.captureRateSeedStdDev()));
 		System.out.println("hiddenInfluenceSeedStdDev=" + format(report.hiddenInfluenceSeedStdDev()));
