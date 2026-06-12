@@ -34,6 +34,8 @@ SOURCE_CAPABILITY_AUDIT_MD = ROOT / "reports" / "source-capability-audit.md"
 SOURCE_CAPABILITY_AUDIT_CSV = ROOT / "reports" / "source-capability-audit.csv"
 DARK_MONEY_BRIDGE_AUDIT_MD = ROOT / "reports" / "dark-money-bridge-audit.md"
 DARK_MONEY_BRIDGE_AUDIT_CSV = ROOT / "reports" / "dark-money-bridge-audit.csv"
+INTERMEDIARY_BRIDGE_AUDIT_MD = ROOT / "reports" / "intermediary-bridge-audit.md"
+INTERMEDIARY_BRIDGE_AUDIT_CSV = ROOT / "reports" / "intermediary-bridge-audit.csv"
 REVOLVING_DOOR_BRIDGE_AUDIT_MD = ROOT / "reports" / "revolving-door-bridge-audit.md"
 REVOLVING_DOOR_BRIDGE_AUDIT_CSV = ROOT / "reports" / "revolving-door-bridge-audit.csv"
 PROCUREMENT_DENOMINATOR_AUDIT_MD = ROOT / "reports" / "procurement-denominator-audit.md"
@@ -46,7 +48,7 @@ CLAIM_SOURCE_DEPENDENCY_MD = ROOT / "reports" / "claim-source-dependency.md"
 CLAIM_SOURCE_DEPENDENCY_CSV = ROOT / "reports" / "claim-source-dependency.csv"
 CLAIM_POSTURE_AUDIT_MD = ROOT / "reports" / "claim-posture-audit.md"
 CLAIM_POSTURE_AUDIT_CSV = ROOT / "reports" / "claim-posture-audit.csv"
-RELEASE_TAG = "paper-publication-readiness-2026-06-12-r47"
+RELEASE_TAG = "paper-publication-readiness-2026-06-12-r48"
 CITATION_CFF = ROOT / "CITATION.cff"
 ZENODO_JSON = ROOT / ".zenodo.json"
 FORBIDDEN_LOCAL_ARTIFACTS = [
@@ -127,6 +129,7 @@ EXPECTED_ZIP_MEMBERS = {
     "supporting-information/source-panel-inventory.md",
     "supporting-information/source-capability-audit.md",
     "supporting-information/dark-money-bridge-audit.md",
+    "supporting-information/intermediary-bridge-audit.md",
     "supporting-information/revolving-door-bridge-audit.md",
     "supporting-information/procurement-denominator-audit.md",
     "supporting-information/claim-boundary-audit.md",
@@ -153,6 +156,7 @@ def main() -> int:
     failures.extend(check_claim_alignment())
     failures.extend(check_source_capability_audit())
     failures.extend(check_dark_money_bridge_audit())
+    failures.extend(check_intermediary_bridge_audit())
     failures.extend(check_revolving_door_bridge_audit())
     failures.extend(check_procurement_denominator_audit())
     failures.extend(check_claim_boundary_audit())
@@ -270,6 +274,7 @@ def submission_inputs() -> list[Path]:
         ROOT / "reports" / "source-panel-inventory.md",
         SOURCE_CAPABILITY_AUDIT_MD,
         DARK_MONEY_BRIDGE_AUDIT_MD,
+        INTERMEDIARY_BRIDGE_AUDIT_MD,
         REVOLVING_DOOR_BRIDGE_AUDIT_MD,
         PROCUREMENT_DENOMINATOR_AUDIT_MD,
         ROOT / "reports" / "claim-boundary-audit.md",
@@ -569,6 +574,83 @@ def check_dark_money_bridge_audit() -> list[str]:
         supplement = SUPPLEMENT_BODY.read_text(encoding="utf-8")
         if "dark-money bridge audit" not in supplement:
             failures.append("supplement does not disclose the dark-money bridge audit")
+    return failures
+
+
+def check_intermediary_bridge_audit() -> list[str]:
+    failures: list[str] = []
+    missing = [
+        path.relative_to(ROOT)
+        for path in (INTERMEDIARY_BRIDGE_AUDIT_MD, INTERMEDIARY_BRIDGE_AUDIT_CSV)
+        if not path.exists()
+    ]
+    if missing:
+        return [f"missing intermediary bridge audit artifact: {path}" for path in missing]
+
+    with INTERMEDIARY_BRIDGE_AUDIT_CSV.open(newline="", encoding="utf-8") as source:
+        rows = {row.get("source", ""): row for row in csv.DictReader(source)}
+    required = {
+        "nyc-cfb-campaign-intermediaries",
+        "irs-eo-bmf-nonprofit-capacity",
+        "irs-527-political-organizations",
+        "form990-nonprofit-routing",
+        "association-capacity",
+        "social-welfare-capacity",
+        "think-tank-charitable-capacity",
+    }
+    missing_sources = sorted(required - set(rows))
+    failures.extend(
+        f"intermediary bridge audit missing source: {source_name}"
+        for source_name in missing_sources
+    )
+    if missing_sources:
+        return failures
+
+    nyc = rows["nyc-cfb-campaign-intermediaries"]
+    if int(float(nyc.get("rows", "0") or "0")) <= 0:
+        failures.append("intermediary bridge audit should include NYC CFB local intermediary rows")
+    bmf = rows["irs-eo-bmf-nonprofit-capacity"]
+    if int(float(bmf.get("rows", "0") or "0")) <= 0:
+        failures.append("intermediary bridge audit should include IRS EO BMF capacity rows")
+    if int(float(bmf.get("capacityProxyRows", "0") or "0")) <= 0:
+        failures.append("intermediary bridge audit should classify BMF rows as capacity proxies")
+    c527 = rows["irs-527-political-organizations"]
+    if int(float(c527.get("rows", "0") or "0")) <= 0:
+        failures.append("intermediary bridge audit should include IRS 527 political-organization rows")
+    if int(float(c527.get("c527Rows", "0") or "0")) <= 0:
+        failures.append("intermediary bridge audit should classify IRS 527 rows separately")
+    form990 = rows["form990-nonprofit-routing"]
+    if int(float(form990.get("rows", "0") or "0")) != 0:
+        failures.append(
+            "intermediary bridge audit should report no committed Form 990 routing rows until the snapshot includes them"
+        )
+    if int(float(form990.get("directRoutingRows", "0") or "0")) != 0:
+        failures.append(
+            "intermediary bridge audit should not promote proxy rows as direct nonprofit routing"
+        )
+    for source_name, column in {
+        "association-capacity": "c6Rows",
+        "social-welfare-capacity": "c4Rows",
+        "think-tank-charitable-capacity": "c3Rows",
+    }.items():
+        if int(float(rows[source_name].get("rows", "0") or "0")) <= 0:
+            failures.append(f"intermediary bridge audit should include rows for {source_name}")
+        if int(float(rows[source_name].get(column, "0") or "0")) <= 0:
+            failures.append(f"intermediary bridge audit should classify subsection rows for {source_name}")
+
+    text = INTERMEDIARY_BRIDGE_AUDIT_MD.read_text(encoding="utf-8")
+    required_text = [
+        "Intermediary Bridge Audit",
+        "0 Form 990 nonprofit-routing rows",
+        "not representative nonprofit routing",
+    ]
+    for phrase in required_text:
+        if phrase not in text:
+            failures.append(f"intermediary bridge audit markdown missing phrase: {phrase}")
+    if SUPPLEMENT_BODY.exists():
+        supplement = SUPPLEMENT_BODY.read_text(encoding="utf-8")
+        if "intermediary bridge audit" not in supplement:
+            failures.append("supplement does not disclose the intermediary bridge audit")
     return failures
 
 
@@ -1053,6 +1135,7 @@ def package_byte_checks() -> list[tuple[Path, str]]:
         (ROOT / "reports" / "source-panel-inventory.md", "supporting-information/source-panel-inventory.md"),
         (SOURCE_CAPABILITY_AUDIT_MD, "supporting-information/source-capability-audit.md"),
         (DARK_MONEY_BRIDGE_AUDIT_MD, "supporting-information/dark-money-bridge-audit.md"),
+        (INTERMEDIARY_BRIDGE_AUDIT_MD, "supporting-information/intermediary-bridge-audit.md"),
         (REVOLVING_DOOR_BRIDGE_AUDIT_MD, "supporting-information/revolving-door-bridge-audit.md"),
         (PROCUREMENT_DENOMINATOR_AUDIT_MD, "supporting-information/procurement-denominator-audit.md"),
         (ROOT / "reports" / "claim-boundary-audit.md", "supporting-information/claim-boundary-audit.md"),

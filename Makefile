@@ -14,7 +14,7 @@ MAIN_CLASS := lobbycapture.Main
 TEST_CLASSES := lobbycapture.SimulatorTests
 PAPER_BASENAME := strategic-channel-substitution-regulatory-capture
 
-.PHONY: compile test run campaign mechanism-comparison sensitivity ablation interactions portfolio source-moments source-panel-inventory source-capability-audit dark-money-bridge-audit revolving-door-bridge-audit procurement-denominator-audit claim-boundary-audit claim-source-dependency-audit claim-posture-audit calibration-queue validate snapshot-2024-env tables figures paper paper-build paper-supplement-build paper-supplement paper-word-count wiley-template wiley-tex-deps paper-wiley paper-wiley-build submission-package submission-package-build submission-package-check paper-layout-audit visual-review-checklist paper-artifacts paper-artifacts-check clean
+.PHONY: compile test run campaign mechanism-comparison sensitivity ablation interactions portfolio source-moments source-panel-inventory source-capability-audit dark-money-bridge-audit intermediary-bridge-audit revolving-door-bridge-audit procurement-denominator-audit claim-boundary-audit claim-source-dependency-audit claim-posture-audit calibration-queue validate snapshot-2024-env tables figures paper paper-build paper-supplement-build paper-supplement paper-word-count wiley-template wiley-tex-deps paper-wiley paper-wiley-build submission-package submission-package-build submission-package-check paper-layout-audit visual-review-checklist paper-artifacts paper-artifacts-check clean
 
 compile:
 	@mkdir -p out/classes
@@ -60,6 +60,9 @@ source-capability-audit: source-panel-inventory
 
 dark-money-bridge-audit: source-moments
 	python3 scripts/audit-dark-money-bridge.py
+
+intermediary-bridge-audit: source-moments
+	python3 scripts/audit-intermediary-bridge.py
 
 revolving-door-bridge-audit: source-moments
 	python3 scripts/audit-revolving-door-bridge.py
@@ -137,7 +140,7 @@ visual-review-checklist: paper-layout-audit
 claim-posture-audit: claim-boundary-audit claim-source-dependency-audit calibration-queue visual-review-checklist
 	python3 scripts/audit-claim-posture.py
 
-paper-artifacts: campaign mechanism-comparison sensitivity ablation interactions portfolio source-moments source-panel-inventory source-capability-audit dark-money-bridge-audit revolving-door-bridge-audit procurement-denominator-audit validate claim-boundary-audit claim-source-dependency-audit calibration-queue tables figures paper-build paper-wiley-build paper-supplement-build paper-word-count paper-layout-audit visual-review-checklist claim-posture-audit submission-package-build submission-package-check
+paper-artifacts: campaign mechanism-comparison sensitivity ablation interactions portfolio source-moments source-panel-inventory source-capability-audit dark-money-bridge-audit intermediary-bridge-audit revolving-door-bridge-audit procurement-denominator-audit validate claim-boundary-audit claim-source-dependency-audit calibration-queue tables figures paper-build paper-wiley-build paper-supplement-build paper-word-count paper-layout-audit visual-review-checklist claim-posture-audit submission-package-build submission-package-check
 
 paper-artifacts-check: paper-artifacts
 	python3 scripts/check-paper-artifacts.py
@@ -146,7 +149,7 @@ clean:
 	rm -rf out
 	rm -f paper/*.aux paper/*.bbl paper/*.blg paper/*.log paper/*.out paper/*.pdf paper/*.pag paper/*.synctex.gz
 	rm -f reports/validation-summary.csv reports/validation-summary.md reports/substitution-audit.csv reports/substitution-audit.md
-	rm -f reports/source-moments.csv reports/source-moments.md reports/source-panel-inventory.csv reports/source-panel-inventory.md reports/source-capability-audit.csv reports/source-capability-audit.md reports/dark-money-bridge-audit.csv reports/dark-money-bridge-audit.md reports/revolving-door-bridge-audit.csv reports/revolving-door-bridge-audit.md reports/procurement-denominator-audit.csv reports/procurement-denominator-audit.md reports/claim-boundary-audit.csv reports/claim-boundary-audit.md reports/claim-source-dependency.csv reports/claim-source-dependency.md reports/claim-posture-audit.csv reports/claim-posture-audit.md reports/paper-layout-audit.md reports/calibration-queue.csv reports/calibration-queue.md
+	rm -f reports/source-moments.csv reports/source-moments.md reports/source-panel-inventory.csv reports/source-panel-inventory.md reports/source-capability-audit.csv reports/source-capability-audit.md reports/dark-money-bridge-audit.csv reports/dark-money-bridge-audit.md reports/intermediary-bridge-audit.csv reports/intermediary-bridge-audit.md reports/revolving-door-bridge-audit.csv reports/revolving-door-bridge-audit.md reports/procurement-denominator-audit.csv reports/procurement-denominator-audit.md reports/claim-boundary-audit.csv reports/claim-boundary-audit.md reports/claim-source-dependency.csv reports/claim-source-dependency.md reports/claim-posture-audit.csv reports/claim-posture-audit.md reports/paper-layout-audit.md reports/calibration-queue.csv reports/calibration-queue.md
 	rm -f reports/lobby-capture-mechanism-comparison.csv reports/lobby-capture-mechanism-comparison.md reports/lobby-capture-mechanism-comparison.manifest.json
 	rm -f reports/manual-visual-audit.md
 	rm -rf dist
