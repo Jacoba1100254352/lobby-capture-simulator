@@ -16,36 +16,36 @@ This queue classifies validation misses and partial overlaps into concrete follo
 | P1 | direct-source-moment | source-moments.csv | `procurementExPostModificationShare` | source_gap | 0.6650-0.6650 | 0.01-0.05 | procurementExPostModificationShare=0.6650 | broaden the bounded USAspending action panel with representative SAM/FPDS action histories before treating modification incidence as calibrated |
 | P2 | direct-source-moment | source-moments.csv | `darkMoneyDirectVisibility` | source_gap | 0.2028-0.2028 | 0.00-0.10 | darkMoneyDirectVisibility=0.2028 | replace thin proxy rows with direct hidden-donor or nonprofit-routing source records; keep electioneering rows separate from hidden-donor evidence |
 | P3 | scale-alignment | lobby-capture-campaign.csv | `averageDisclosureLag` | partial | 0.2312-0.5230 | 0.20-0.45 |  | separate current-public-visibility lag from historical age of archived filings |
-| P3 | model-tuning | lobby-capture-campaign.csv | `commentCompressionRate` | partial | 0.3103-0.8318 | 0.50-0.99 | commentTemplateShareMean=0.4600 | raise compression under anti-astroturf and duplicate-detection tooling |
-| P3 | model-tuning | lobby-capture-mechanism-comparison.csv | `commentCompressionRate` | partial | 0.4524-0.5855 | 0.50-0.99 | commentTemplateShareMean=0.4600 | raise compression under anti-astroturf and duplicate-detection tooling |
+| P3 | model-tuning | lobby-capture-campaign.csv | `commentCompressionRate` | partial | 0.3104-0.8316 | 0.50-0.99 | commentTemplateShareMean=0.4600 | raise compression under anti-astroturf and duplicate-detection tooling |
+| P3 | model-tuning | lobby-capture-mechanism-comparison.csv | `commentCompressionRate` | partial | 0.4524-0.5851 | 0.50-0.99 | commentTemplateShareMean=0.4600 | raise compression under anti-astroturf and duplicate-detection tooling |
 | P3 | benchmark-review | lobby-capture-interactions.csv | `crossVenueDetectionIndex` | partial | 0.0754-0.9403 | 0.00-0.90 |  | treat as a synthetic portfolio capability until linked source coverage is measured |
-| P3 | model-tuning | lobby-capture-ablation.csv | `detectionRate` | partial | 0.1153-0.3400 | 0.05-0.21 |  | increase detection response under enforcement-heavy regimes |
-| P3 | model-tuning | lobby-capture-campaign.csv | `detectionRate` | partial | 0.0725-0.5550 | 0.05-0.21 |  | increase detection response under enforcement-heavy regimes |
+| P3 | model-tuning | lobby-capture-ablation.csv | `detectionRate` | partial | 0.1147-0.3413 | 0.05-0.21 |  | increase detection response under enforcement-heavy regimes |
+| P3 | model-tuning | lobby-capture-campaign.csv | `detectionRate` | partial | 0.0725-0.5613 | 0.05-0.21 |  | increase detection response under enforcement-heavy regimes |
 | P3 | model-tuning | lobby-capture-interactions.csv | `detectionRate` | partial | 0.0480-0.4380 | 0.05-0.21 |  | increase detection response under enforcement-heavy regimes |
-| P3 | model-tuning | lobby-capture-mechanism-comparison.csv | `detectionRate` | partial | 0.1016-0.3369 | 0.05-0.21 |  | increase detection response under enforcement-heavy regimes |
-| P3 | model-tuning | lobby-capture-portfolio.csv | `detectionRate` | partial | 0.1465-0.3743 | 0.05-0.21 |  | increase detection response under enforcement-heavy regimes |
+| P3 | model-tuning | lobby-capture-mechanism-comparison.csv | `detectionRate` | partial | 0.1016-0.3378 | 0.05-0.21 |  | increase detection response under enforcement-heavy regimes |
+| P3 | model-tuning | lobby-capture-portfolio.csv | `detectionRate` | partial | 0.1465-0.3747 | 0.05-0.21 |  | increase detection response under enforcement-heavy regimes |
 | P3 | model-tuning | lobby-capture-sensitivity.csv | `detectionRate` | partial | 0.1162-0.3905 | 0.05-0.21 |  | increase detection response under enforcement-heavy regimes |
-| P3 | scenario-coverage | lobby-capture-campaign.csv | `hiddenInfluenceShare` | partial | 0.3380-0.6708 | 0.60-0.80 |  | add stress cases where reforms bind enough to force hidden substitution |
-| P3 | scenario-coverage | lobby-capture-campaign.csv | `hiddenInfluenceShare` | partial | 0.2422-0.6708 | 0.30-0.60 |  | add stress cases where reforms bind enough to force hidden substitution |
+| P3 | scenario-coverage | lobby-capture-campaign.csv | `hiddenInfluenceShare` | partial | 0.3378-0.6708 | 0.60-0.80 |  | add stress cases where reforms bind enough to force hidden substitution |
+| P3 | scenario-coverage | lobby-capture-campaign.csv | `hiddenInfluenceShare` | partial | 0.2421-0.6708 | 0.30-0.60 |  | add stress cases where reforms bind enough to force hidden substitution |
 | P3 | benchmark-review | lobby-capture-campaign.csv | `influencePreservationRate` | partial | 0.1674-0.4727 | 0.20-1.50 |  | decide whether the benchmark applies to this scenario family |
 | P3 | benchmark-review | lobby-capture-mechanism-comparison.csv | `influencePreservationRate` | partial | 0.0000-0.4256 | 0.20-1.50 |  | decide whether the benchmark applies to this scenario family |
 | P3 | model-tuning | lobby-capture-campaign.csv | `largeDonorDependence` | partial | 0.5620-0.6928 | 0.60-0.80 | fecLargeDonorWeightedShare=0.9459 | inspect remaining campaign/outside rows and tune allocation-to-source concentration only where high-end outside spending is intended |
-| P3 | benchmark-review | lobby-capture-campaign.csv | `observedCaptureRate` | partial | 0.0094-1.0000 | 0.00-0.80 |  | decide whether the benchmark applies to this scenario family |
+| P3 | benchmark-review | lobby-capture-campaign.csv | `observedCaptureRate` | partial | 0.0100-1.0000 | 0.00-0.80 |  | decide whether the benchmark applies to this scenario family |
 | P3 | benchmark-review | lobby-capture-mechanism-comparison.csv | `observedCaptureRate` | partial | 0.0000-0.8916 | 0.00-0.80 |  | decide whether the benchmark applies to this scenario family |
 | P3 | benchmark-review | lobby-capture-campaign.csv | `publicFinancingCandidateUptake` | partial | 0.4721-0.6888 | 0.57-0.86 |  | decide whether the benchmark applies to this scenario family |
 | P3 | benchmark-review | lobby-capture-interactions.csv | `publicFinancingCandidateUptake` | partial | 0.4696-0.7024 | 0.57-0.86 |  | decide whether the benchmark applies to this scenario family |
 | P3 | benchmark-review | lobby-capture-mechanism-comparison.csv | `publicFinancingCandidateUptake` | partial | 0.5670-0.5810 | 0.57-0.86 |  | decide whether the benchmark applies to this scenario family |
 | P3 | benchmark-review | lobby-capture-portfolio.csv | `publicFinancingCandidateUptake` | partial | 0.4393-0.7014 | 0.57-0.86 |  | decide whether the benchmark applies to this scenario family |
 | P3 | benchmark-review | lobby-capture-sensitivity.csv | `publicFinancingCandidateUptake` | partial | 0.4830-0.7024 | 0.57-0.86 |  | decide whether the benchmark applies to this scenario family |
-| P3 | benchmark-review | lobby-capture-campaign.csv | `regulatorQueueBacklog` | partial | 0.2361-0.6676 | 0.50-0.75 |  | decide whether the benchmark applies to this scenario family |
+| P3 | benchmark-review | lobby-capture-campaign.csv | `regulatorQueueBacklog` | partial | 0.2361-0.6674 | 0.50-0.75 |  | decide whether the benchmark applies to this scenario family |
 | P3 | benchmark-review | lobby-capture-mechanism-comparison.csv | `regulatorQueueBacklog` | partial | 0.2361-0.6686 | 0.50-0.75 |  | decide whether the benchmark applies to this scenario family |
-| P3 | model-tuning | lobby-capture-ablation.csv | `sanctionRate` | partial | 0.0006-0.0222 | 0.003-0.015 |  | raise sanction incidence after detection or narrow benchmark to campaign filer cases |
+| P3 | model-tuning | lobby-capture-ablation.csv | `sanctionRate` | partial | 0.0006-0.0216 | 0.003-0.015 |  | raise sanction incidence after detection or narrow benchmark to campaign filer cases |
 | P3 | model-tuning | lobby-capture-campaign.csv | `sanctionRate` | partial | 0.0006-0.0444 | 0.003-0.015 |  | raise sanction incidence after detection or narrow benchmark to campaign filer cases |
 | P3 | model-tuning | lobby-capture-interactions.csv | `sanctionRate` | partial | 0.0000-0.0293 | 0.003-0.015 |  | raise sanction incidence after detection or narrow benchmark to campaign filer cases |
-| P3 | model-tuning | lobby-capture-mechanism-comparison.csv | `sanctionRate` | partial | 0.0006-0.0184 | 0.003-0.015 |  | raise sanction incidence after detection or narrow benchmark to campaign filer cases |
+| P3 | model-tuning | lobby-capture-mechanism-comparison.csv | `sanctionRate` | partial | 0.0006-0.0188 | 0.003-0.015 |  | raise sanction incidence after detection or narrow benchmark to campaign filer cases |
 | P3 | model-tuning | lobby-capture-portfolio.csv | `sanctionRate` | partial | 0.0033-0.0310 | 0.003-0.015 |  | raise sanction incidence after detection or narrow benchmark to campaign filer cases |
 | P3 | model-tuning | lobby-capture-sensitivity.csv | `sanctionRate` | partial | 0.0005-0.0290 | 0.003-0.015 |  | raise sanction incidence after detection or narrow benchmark to campaign filer cases |
 | P3 | scenario-coverage | lobby-capture-ablation.csv | `venueSubstitutionRate` | partial | 0.0226-0.1374 | 0.10-0.70 |  | add cooling-off and advisory-lobbying stress cases |
 | P3 | scenario-coverage | lobby-capture-campaign.csv | `venueSubstitutionRate` | partial | 0.0510-0.1772 | 0.10-0.70 |  | add cooling-off and advisory-lobbying stress cases |
-| P3 | scenario-coverage | lobby-capture-interactions.csv | `venueSubstitutionRate` | partial | 0.0259-0.1847 | 0.10-0.70 |  | add cooling-off and advisory-lobbying stress cases |
-| P3 | scenario-coverage | lobby-capture-sensitivity.csv | `venueSubstitutionRate` | partial | 0.0260-0.1728 | 0.10-0.70 |  | add cooling-off and advisory-lobbying stress cases |
+| P3 | scenario-coverage | lobby-capture-interactions.csv | `venueSubstitutionRate` | partial | 0.0259-0.1853 | 0.10-0.70 |  | add cooling-off and advisory-lobbying stress cases |
+| P3 | scenario-coverage | lobby-capture-sensitivity.csv | `venueSubstitutionRate` | partial | 0.0260-0.1719 | 0.10-0.70 |  | add cooling-off and advisory-lobbying stress cases |

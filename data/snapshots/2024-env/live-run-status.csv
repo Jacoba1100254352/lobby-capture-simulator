@@ -19,4 +19,4 @@ usaspending,ok,normalized EPA award rows written
 usaspending-procurement-bridge,ok,normalized multi-agency procurement bridge rows written
 usaspending-procurement-actions,ok,normalized monthly amount-sorted EPA procurement action rows written
 revolving-door,ok,derived normalized covered-position rows from LDA source
-intermediary,ok,NYC CFB intermediary rows; IRS EO BMF nonprofit/association capacity rows; 
+intermediary,ok,NYC CFB intermediary rows; IRS EO BMF nonprofit/association capacity rows; IRS POFD Form 8872 527 rows;

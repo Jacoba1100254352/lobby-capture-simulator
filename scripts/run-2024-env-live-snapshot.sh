@@ -273,6 +273,16 @@ else
       intermediary_sources=$((intermediary_sources + 1))
       intermediary_notes="${intermediary_notes}IRS EO BMF nonprofit/association capacity rows; "
     fi
+    if SOURCE_RAW_DIR="$raw_dir/irs-pofd-527" \
+      IRS_POFD_YEAR="${IRS_POFD_YEAR:-2024}" \
+      IRS_POFD_FILES="${IRS_POFD_FILES:-AG}" \
+      IRS_POFD_MAX_RECORDS="${IRS_POFD_MAX_RECORDS:-2500}" \
+      IRS_POFD_OUTPUT_ROWS="${IRS_POFD_OUTPUT_ROWS:-500}" \
+        python3 scripts/fetch-source-data.py irs-527 --output "$tmpdir/irs-527.csv"; then
+      append_csv "$tmpdir/irs-527.csv" data/raw/intermediaries.csv
+      intermediary_sources=$((intermediary_sources + 1))
+      intermediary_notes="${intermediary_notes}IRS POFD Form 8872 527 rows; "
+    fi
     if [ "$intermediary_sources" -gt 0 ]; then
       printf "intermediary,ok,%s\n" "$intermediary_notes" >> "$status_file"
     else

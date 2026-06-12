@@ -16,7 +16,7 @@ Scope:
 - USAspending procurement bridge: multi-agency fiscal-year 2024 top-award rows for procurement concentration diagnostics, kept separate from the EPA calibration slice.
 - USAspending procurement actions: transaction/action rows for modification-incidence diagnostics when present, kept separate from award rows and concentration rows.
 - Revolving-door panel: licensed/source export or LDA covered-position derivation when available; fixture otherwise.
-- Intermediary panel: NYC CFB intermediary rows, IRS EO BMF nonprofit/association capacity rows, or configured nonprofit, 527, association, and think-tank export when available; fixture otherwise.
+- Intermediary panel: NYC CFB intermediary rows, IRS EO BMF nonprofit/association capacity rows, IRS POFD Form 8872 527 political-organization rows, or configured nonprofit, 527, association, and think-tank export when available; fixture otherwise.
 
 The current command freezes whatever normalized files are present under `data/raw/`. Live paper snapshots should first run the request templates in `manifest.json`, preserve raw payloads outside git when too large, normalize into the same schemas, and then rerun `make snapshot-2024-env`.
 
@@ -31,6 +31,6 @@ The current command freezes whatever normalized files are present under `data/ra
 | usaspending-procurement-bridge | 150 | live | `data/snapshots/2024-env/normalized/usaspending-procurement-bridge.csv` |
 | usaspending-procurement-actions | 1200 | live | `data/snapshots/2024-env/normalized/usaspending-procurement-actions.csv` |
 | revolving-door | 284 | live | `data/snapshots/2024-env/normalized/revolving-door.csv` |
-| intermediary | 853 | live | `data/snapshots/2024-env/normalized/intermediaries.csv` |
+| intermediary | 1353 | live | `data/snapshots/2024-env/normalized/intermediaries.csv` |
 
 `live-run-status.csv` records which official live requests completed and which were blocked by public API limits or missing credentials.

@@ -24,6 +24,7 @@ def main() -> int:
     assert_nyc_intermediaries(fetchers)
     assert_irs_eo_bmf(fetchers)
     assert_irs_dark_money_capacity(fetchers)
+    assert_irs_527(fetchers)
     assert fetchers.redact_url("https://example.test/path?api_key=SECRET&x=1").endswith("api_key=REDACTED&x=1")
     print("Source-native parser fixture tests passed.")
     return 0
@@ -334,6 +335,71 @@ def assert_irs_dark_money_capacity(fetchers) -> None:
             "supportOppose": "",
             "disclosureLag": 0.55,
         }
+    ], rows
+
+
+def assert_irs_527(fetchers) -> None:
+    os.environ["IRS_POFD_OUTPUT_ROWS"] = "10"
+    source_rows = [
+        {
+            "formId": "123",
+            "periodBegin": "20240101",
+            "periodEnd": "20240201",
+            "organization": "Example Policy Action Fund",
+            "ein": "123456789",
+            "state": "DC",
+            "scheduleAIndicator": "0",
+            "totalContributions": "120000",
+            "scheduleBIndicator": "0",
+            "totalExpenditures": "50000",
+            "insertDateTime": "2024-02-03 10:00:00",
+            "purpose": "policy campaign",
+            "sourceUrl": "https://forms.irs.gov/app/pod/dataDownload/dataAG",
+        },
+        {
+            "formId": "124",
+            "periodBegin": "20240202",
+            "periodEnd": "20240301",
+            "organization": "Example Policy Action Fund",
+            "ein": "123456789",
+            "state": "DC",
+            "scheduleAIndicator": "1",
+            "totalContributions": "20000",
+            "scheduleBIndicator": "0",
+            "totalExpenditures": "30000",
+            "insertDateTime": "2024-03-03 10:00:00",
+            "purpose": "policy campaign",
+            "sourceUrl": "https://forms.irs.gov/app/pod/dataDownload/dataAG",
+        },
+    ]
+    rows = fetchers.normalize_irs_pofd_8872_records(source_rows)
+    assert rows == [
+        {
+            "organization": "Example Policy Action Fund",
+            "ein": "123456789",
+            "sourceType": "irs-pofd-8872",
+            "subsection": "527",
+            "issueDomain": "democracy",
+            "revenue": 0.17,
+            "politicalSpend": 0.05,
+            "grantmaking": 0.0,
+            "donorDisclosure": 0.72,
+            "recipient": "DC",
+            "sourceUrl": "https://forms.irs.gov/app/pod/dataDownload/dataAG",
+        },
+        {
+            "organization": "Example Policy Action Fund",
+            "ein": "123456789",
+            "sourceType": "irs-pofd-8872",
+            "subsection": "527",
+            "issueDomain": "democracy",
+            "revenue": 0.05,
+            "politicalSpend": 0.03,
+            "grantmaking": 0.0,
+            "donorDisclosure": 0.66,
+            "recipient": "DC",
+            "sourceUrl": "https://forms.irs.gov/app/pod/dataDownload/dataAG",
+        },
     ], rows
 
 

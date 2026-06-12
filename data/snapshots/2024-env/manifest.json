@@ -1,8 +1,8 @@
 {
   "snapshot": "2024-env",
-  "generatedAt": "2026-06-12T03:38:18.035624+00:00",
-  "gitCommit": "7bc562c",
-  "gitTreeState": "clean",
+  "generatedAt": "2026-06-12T04:21:35.343735+00:00",
+  "gitCommit": "c238dad",
+  "gitTreeState": "dirty",
   "gitTreeStateScope": "working tree status excluding generated 2024-env snapshot, reports, paper tables, and paper figures",
   "scope": {
     "calendarWindow": "2024-01-01/2024-12-31",
@@ -105,17 +105,17 @@
     },
     {
       "source": "intermediary",
-      "description": "Normalized nonprofit, 527, think-tank, campaign-intermediary, and association panel from NYC CFB, IRS EO BMF, ProPublica, OpenSecrets, or curated source exports.",
-      "requestTemplate": "INTERMEDIARY_SOURCE_NATIVE=1 ./scripts/fetch-intermediaries.sh --live or INTERMEDIARY_LIVE_CSV=/path/to/export.csv ./scripts/fetch-intermediaries.sh --live",
+      "description": "Normalized nonprofit, 527, think-tank, campaign-intermediary, and association panel from NYC CFB, IRS EO BMF, IRS POFD Form 8872, ProPublica, OpenSecrets, or curated source exports.",
+      "requestTemplate": "INTERMEDIARY_SOURCE_NATIVE=1 with nyc-intermediaries, irs-eo-bmf, and irs-527 source-native fetchers, or INTERMEDIARY_LIVE_CSV=/path/to/export.csv ./scripts/fetch-intermediaries.sh --live",
       "normalizedFile": "data/snapshots/2024-env/normalized/intermediaries.csv",
-      "rowCount": 853,
-      "sha256": "b630dbda920b20752cf2f20aade98f80fd7475eada1e3b6b347fa4f4a08b2f0b",
+      "rowCount": 1353,
+      "sha256": "f39dd404111cc70d2870fdf6168e46f373a521c6aeca3bb6453f8bc8ed703e7d",
       "status": "live",
-      "statusNotes": "intermediary: ok (NYC CFB intermediary rows; IRS EO BMF nonprofit/association capacity rows; )"
+      "statusNotes": "intermediary: ok (NYC CFB intermediary rows; IRS EO BMF nonprofit/association capacity rows; IRS POFD Form 8872 527 rows;)"
     }
   ],
   "liveRunStatus": {
     "file": "data/snapshots/2024-env/live-run-status.csv",
-    "sha256": "12822d4d6098136c017fe350a5ac281e51c6f4b50dfc4c4e92482a37b1f23b09"
+    "sha256": "5cf7936532c58922031d56a45333f3a066a03a84fd5d42ef1320dc611501efe3"
   }
 }

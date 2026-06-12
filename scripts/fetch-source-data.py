@@ -9,8 +9,11 @@ import hashlib
 from io import StringIO
 import json
 import os
+import re
 import sys
 import time
+import tempfile
+import zipfile
 from http.client import RemoteDisconnected
 from datetime import date, datetime
 from pathlib import Path
@@ -57,6 +60,9 @@ def main() -> int:
     irs_dark_money_capacity = subparsers.add_parser("irs-dark-money-capacity", help="Fetch IRS EO BMF 501(c)(4)/(c)(6) opaque-capacity proxy rows.")
     irs_dark_money_capacity.add_argument("--output", type=Path, default=Path("data/raw/dark-money.csv"))
 
+    irs_527 = subparsers.add_parser("irs-527", help="Fetch IRS POFD Form 8872 political-organization rows.")
+    irs_527.add_argument("--output", type=Path, default=Path("data/raw/intermediaries.csv"))
+
     args = parser.parse_args()
     if args.kind == "lda":
         return fetch_lda(args.output)
@@ -78,6 +84,8 @@ def main() -> int:
         return fetch_irs_eo_bmf(args.output)
     if args.kind == "irs-dark-money-capacity":
         return fetch_irs_dark_money_capacity(args.output)
+    if args.kind == "irs-527":
+        return fetch_irs_527(args.output)
     raise AssertionError(args.kind)
 
 
@@ -1080,6 +1088,233 @@ def normalize_irs_dark_money_capacity_records(source_rows: list[dict[str, str]])
     return rows[: int_env("IRS_DARK_MONEY_CAPACITY_OUTPUT_ROWS", 250, 1, 5000)]
 
 
+IRS_POFD_DOWNLOAD_BASE = "https://forms.irs.gov/app/pod/dataDownload"
+IRS_POFD_FILE_ENDPOINTS = {
+    "FULL": "fullData",
+    "AG": "dataAG",
+    "HM": "dataHM",
+    "NR": "dataNR",
+    "SZ": "dataSZ",
+}
+IRS_POFD_DATA_PAGE = f"{IRS_POFD_DOWNLOAD_BASE}/dataDownload"
+
+
+def fetch_irs_527(output: Path) -> int:
+    source_rows = irs_pofd_8872_source_rows()
+    rows = normalize_irs_pofd_8872_records(source_rows)
+    write_rows(output, INTERMEDIARY_FIELDS, rows, "IRS POFD Form 8872 political-organization rows")
+    return 0
+
+
+def normalize_irs_pofd_8872_records(source_rows: list[dict[str, str]]) -> list[dict[str, object]]:
+    grouped: dict[tuple[str, str], dict[str, object]] = {}
+    for record in source_rows:
+        organization = first_text(record, "organization", default="").strip()
+        ein = first_text(record, "ein", default="").strip()
+        if not organization:
+            continue
+        contributions = money_millions(first_text(record, "totalContributions", default="0"))
+        expenditures = money_millions(first_text(record, "totalExpenditures", default="0"))
+        activity_volume = round(contributions + expenditures, 4)
+        if activity_volume <= 0.0:
+            continue
+        period_end = first_text(record, "periodEnd", default="")
+        key = (ein or organization, period_end)
+        existing = grouped.setdefault(
+            key,
+            {
+                "organization": organization,
+                "ein": ein,
+                "sourceType": "irs-pofd-8872",
+                "subsection": "527",
+                "issueDomain": classify_domain(" ".join([
+                    organization,
+                    first_text(record, "purpose", default=""),
+                    first_text(record, "state", default=""),
+                ])),
+                "revenue": 0.0,
+                "politicalSpend": 0.0,
+                "grantmaking": 0.0,
+                "donorDisclosure": donor_disclosure_for_irs_8872(record),
+                "recipient": first_text(record, "state", default="527 political activity"),
+                "sourceUrl": first_text(record, "sourceUrl", default=IRS_POFD_DATA_PAGE),
+            },
+        )
+        existing["revenue"] = round(float(existing["revenue"]) + activity_volume, 4)
+        existing["politicalSpend"] = round(float(existing["politicalSpend"]) + expenditures, 4)
+        existing["donorDisclosure"] = max(float(existing["donorDisclosure"]), donor_disclosure_for_irs_8872(record))
+    rows = [grouped[key] for key in sorted(grouped)]
+    rows.sort(key=lambda row: (float(row["politicalSpend"]), float(row["revenue"])), reverse=True)
+    return rows[: int_env("IRS_POFD_OUTPUT_ROWS", 500, 1, 10000)]
+
+
+def irs_pofd_8872_source_rows() -> list[dict[str, str]]:
+    urls = split_csv_env("IRS_POFD_URLS", "")
+    if not urls:
+        base = os.environ.get("IRS_POFD_DOWNLOAD_BASE", IRS_POFD_DOWNLOAD_BASE).rstrip("/")
+        files = [file_code.upper() for file_code in split_csv_env("IRS_POFD_FILES", "AG")]
+        urls = [f"{base}/{IRS_POFD_FILE_ENDPOINTS.get(file_code, file_code)}" for file_code in files]
+    max_lines = int_env("IRS_POFD_MAX_LINES_PER_FILE", 0, 0, 50_000_000)
+    max_records = int_env("IRS_POFD_MAX_RECORDS", 2500, 1, 100000)
+    rows: list[dict[str, str]] = []
+    for url in urls:
+        remaining = max_records - len(rows)
+        if remaining <= 0:
+            break
+        rows.extend(irs_pofd_8872_records_from_url(url, remaining, max_lines))
+    if not rows:
+        raise SystemExit("IRS POFD Form 8872 source returned no rows after filters. Check IRS_POFD_YEAR, IRS_POFD_FILES, IRS_POFD_MAX_LINES_PER_FILE, and upstream availability.")
+    return rows
+
+
+def irs_pofd_8872_records_from_url(url: str, max_records: int, max_lines: int = 0) -> list[dict[str, str]]:
+    year_filter = os.environ.get("IRS_POFD_YEAR", os.environ.get("FEC_CYCLE", "2024")).strip()
+    minimum_activity = float_env("IRS_POFD_MIN_ACTIVITY_DOLLARS", 1.0, 0.0, 1_000_000_000.0)
+    purposes_by_ein: dict[str, str] = {}
+    rows: list[dict[str, str]] = []
+    selected_lines: list[str] = []
+    with tempfile.TemporaryFile() as archive_file:
+        download_binary(url, archive_file)
+        archive_file.seek(0)
+        with zipfile.ZipFile(archive_file) as archive:
+            text_members = [name for name in archive.namelist() if name.lower().endswith(".txt")]
+            if not text_members:
+                raise SystemExit(f"{redact_url(url)} did not contain a text data file.")
+            with archive.open(text_members[0]) as source:
+                for line_number, raw_line in enumerate(source, 1):
+                    if max_lines and line_number > max_lines:
+                        break
+                    line = raw_line.decode("latin-1", errors="replace").rstrip("\r\n")
+                    if not line:
+                        continue
+                    parts = line.split("|")
+                    if not parts:
+                        continue
+                    if parts[0] == "1" and len(parts) > 41:
+                        ein = parts[6].strip()
+                        purpose = parts[39].strip() if len(parts) > 39 else ""
+                        if ein and purpose and ein not in purposes_by_ein:
+                            purposes_by_ein[ein] = purpose
+                        continue
+                    if parts[0] != "2" or len(parts) < 49:
+                        continue
+                    period_end = parts[4].strip()
+                    insert_datetime = parts[48].strip() if len(parts) > 48 else ""
+                    if year_filter and not pofd_record_matches_year(period_end, insert_datetime, year_filter):
+                        continue
+                    total_contributions = raw_money(parts[45] if len(parts) > 45 else "0")
+                    total_expenditures = raw_money(parts[47] if len(parts) > 47 else "0")
+                    if total_contributions + total_expenditures < minimum_activity:
+                        continue
+                    ein = parts[10].strip()
+                    row = {
+                        "formId": parts[2].strip(),
+                        "periodBegin": parts[3].strip(),
+                        "periodEnd": period_end,
+                        "organization": parts[9].strip(),
+                        "ein": ein,
+                        "state": (parts[43].strip() if len(parts) > 43 else "") or (parts[14].strip() if len(parts) > 14 else ""),
+                        "scheduleAIndicator": parts[44].strip() if len(parts) > 44 else "",
+                        "totalContributions": str(total_contributions),
+                        "scheduleBIndicator": parts[46].strip() if len(parts) > 46 else "",
+                        "totalExpenditures": str(total_expenditures),
+                        "insertDateTime": insert_datetime,
+                        "purpose": purposes_by_ein.get(ein, ""),
+                        "sourceUrl": url,
+                    }
+                    rows.append(row)
+                    if len(selected_lines) < 25:
+                        selected_lines.append(line)
+                    if len(rows) >= max_records:
+                        break
+    write_raw_binary_source_manifest(url, "irs-pofd-8872", len(rows), selected_lines)
+    return rows
+
+
+def pofd_record_matches_year(period_end: str, insert_datetime: str, year_filter: str) -> bool:
+    if not year_filter:
+        return True
+    years = {part.strip() for part in year_filter.split(",") if part.strip()}
+    period_year = period_end[:4] if len(period_end) >= 4 else ""
+    insert_year = insert_datetime[:4] if len(insert_datetime) >= 4 else ""
+    return period_year in years or insert_year in years
+
+
+def donor_disclosure_for_irs_8872(record: dict[str, str]) -> float:
+    has_schedule_a = first_text(record, "scheduleAIndicator", default="1") == "0"
+    has_schedule_b = first_text(record, "scheduleBIndicator", default="1") == "0"
+    contributions = raw_money(first_text(record, "totalContributions", default="0"))
+    expenditures = raw_money(first_text(record, "totalExpenditures", default="0"))
+    if has_schedule_a and contributions > 0.0:
+        return 0.72
+    if has_schedule_b and expenditures > 0.0:
+        return 0.66
+    return donor_disclosure_for_irs_subsection("527")
+
+
+def download_binary(url: str, destination) -> None:
+    request = Request(url, headers={"User-Agent": "lobby-capture-simulator/0.1"})
+    attempts = int_env("SOURCE_FETCH_RETRIES", 3, 1, 8)
+    backoff = float_env("SOURCE_FETCH_BACKOFF_SECONDS", 1.0, 0.0, 30.0)
+    for attempt in range(1, attempts + 1):
+        try:
+            with urlopen(request, timeout=120) as response:
+                digest = hashlib.sha256()
+                total = 0
+                while True:
+                    chunk = response.read(1024 * 1024)
+                    if not chunk:
+                        break
+                    destination.write(chunk)
+                    digest.update(chunk)
+                    total += len(chunk)
+                write_raw_binary_source_manifest(url, "binary-download", 0, [], total, digest.hexdigest())
+                return
+        except HTTPError as error:
+            if should_retry(error.code, attempt, attempts):
+                sleep_before_retry(error, attempt, backoff)
+                continue
+            detail = error.read().decode("utf-8", errors="replace")[:500]
+            raise SystemExit(f"GET {redact_url(url)} failed with HTTP {error.code}: {detail}{auth_hint(error.code)}") from error
+        except (URLError, RemoteDisconnected, TimeoutError, ConnectionError, OSError) as error:
+            if attempt < attempts:
+                sleep_before_retry(None, attempt, backoff)
+                continue
+            reason = getattr(error, "reason", str(error))
+            raise SystemExit(f"GET {redact_url(url)} failed after {attempts} attempts: {reason}") from error
+    raise AssertionError("unreachable")
+
+
+def write_raw_binary_source_manifest(
+        url: str,
+        source_name: str,
+        normalized_rows: int,
+        sample_lines: list[str],
+        byte_count: int | None = None,
+        sha256_digest: str | None = None,
+) -> None:
+    raw_dir = os.environ.get("SOURCE_RAW_DIR")
+    if not raw_dir:
+        return
+    root = Path(raw_dir)
+    root.mkdir(parents=True, exist_ok=True)
+    entry = {
+        "source": source_name,
+        "url": redact_url(url),
+        "normalizedRows": normalized_rows,
+    }
+    if byte_count is not None:
+        entry["byteCount"] = byte_count
+    if sha256_digest:
+        entry["sha256"] = sha256_digest
+    with (root / "request-manifest.jsonl").open("a", encoding="utf-8") as manifest:
+        manifest.write(json.dumps(entry, sort_keys=True) + "\n")
+    if sample_lines:
+        digest = hashlib.sha256(url.encode("utf-8")).hexdigest()[:12]
+        sample_path = root / f"irs-pofd-8872-sample-{digest}.txt"
+        sample_path.write_text("\n".join(sample_lines) + "\n", encoding="utf-8")
+
+
 def nyc_cfb_data_url(filename: str) -> str:
     return f"{os.environ.get('NYC_CFB_DATA_BASE', 'https://nyccfb.info/DataLibrary').rstrip('/')}/{filename}"
 
@@ -1434,9 +1669,15 @@ def classify_domain(text: str) -> str:
         "democracy": ("election", "campaign", "disclosure", "ethics", "voting", "democracy"),
     }
     for domain, keywords in rules.items():
-        if any(keyword in normalized for keyword in keywords):
+        if any(keyword_matches(normalized, keyword) for keyword in keywords):
             return domain
     return os.environ.get("DEFAULT_ISSUE_DOMAIN", "democracy")
+
+
+def keyword_matches(text: str, keyword: str) -> bool:
+    if len(keyword) <= 2 and keyword.isalnum():
+        return re.search(rf"\b{re.escape(keyword)}\b", text) is not None
+    return keyword in text
 
 
 def infer_fec_flow_type(recipient: str) -> str:

@@ -90,16 +90,19 @@ These are direct moments from normalized calibration tables. They are source dia
 | snapshot | revolving-door | `revolvingDoorInfluenceWeightedFormerOfficialShare` | 1.0000 | proxy | influence-weighted former-official share |
 | snapshot | revolving-door | `revolvingDoorInfluenceMean` | 0.3400 | proxy | mean normalized influence share from source panel |
 | snapshot | revolving-door | `revolvingDoorConfidenceMean` | 0.7400 | diagnostic | mean source-match confidence for revolving-door records |
-| snapshot | intermediary | `intermediaryRows` | 853.0000 | observed | normalized nonprofit, 527, association, or think-tank intermediary rows |
-| snapshot | intermediary | `intermediaryTotalRevenue` | 4148.8681 | observed_proxy | sum of normalized intermediary revenue |
-| snapshot | intermediary | `intermediaryPoliticalSpendShare` | 0.0105 | observed_proxy | political spend share of normalized intermediary revenue |
-| snapshot | intermediary | `intermediaryTop3RevenueShare` | 0.1805 | observed_proxy | top three intermediary organizations by revenue |
-| snapshot | intermediary | `intermediaryDonorDisclosureMean` | 0.6461 | observed_proxy | mean donor/source disclosure score |
-| snapshot | intermediary | `intermediaryAssociationShare` | 0.1489 | observed_proxy | share of rows marked 501(c)(6) association |
-| snapshot | intermediary | `intermediaryC4Share` | 0.0410 | observed_proxy | share of rows marked 501(c)(4) social welfare |
-| snapshot | intermediary | `intermediaryC3Share` | 0.3962 | observed_proxy | share of rows marked 501(c)(3) nonprofit |
-| snapshot | intermediary | `intermediary527PoliticalSpendShare` | 0.0000 | observed_proxy | 527/IRS 8872 share of intermediary political spending |
-| snapshot | intermediary | `intermediaryGrantmakingShare` | 0.0120 | observed_proxy | grantmaking share of normalized intermediary revenue |
+| snapshot | intermediary | `intermediaryRows` | 1353.0000 | observed | normalized nonprofit, 527, association, or think-tank intermediary rows |
+| snapshot | intermediary | `intermediaryTotalRevenue` | 5843.3172 | observed_proxy | sum of normalized intermediary revenue |
+| snapshot | intermediary | `intermediaryPoliticalSpendShare` | 0.1542 | observed_proxy | political spend share of normalized intermediary revenue |
+| snapshot | intermediary | `intermediaryTop3RevenueShare` | 0.1740 | observed_proxy | top three intermediary organizations by revenue |
+| snapshot | intermediary | `intermediaryDonorDisclosureMean` | 0.6715 | observed_proxy | mean donor/source disclosure score |
+| snapshot | intermediary | `intermediaryAssociationShare` | 0.0939 | observed_proxy | share of rows marked 501(c)(6) association |
+| snapshot | intermediary | `intermediaryC4Share` | 0.0259 | observed_proxy | share of rows marked 501(c)(4) social welfare |
+| snapshot | intermediary | `intermediaryC3Share` | 0.2498 | observed_proxy | share of rows marked 501(c)(3) nonprofit |
+| snapshot | intermediary | `intermediary527Rows` | 500.0000 | observed | normalized IRS 527/Form 8872 intermediary rows |
+| snapshot | intermediary | `intermediary527PoliticalSpend` | 857.0814 | observed_proxy | sum of normalized 527/IRS 8872 political spending |
+| snapshot | intermediary | `intermediary527PoliticalSpendShare` | 0.9515 | observed_proxy | 527/IRS 8872 share of intermediary political spending |
+| snapshot | intermediary | `intermediary527DonorDisclosureMean` | 0.7148 | observed_proxy | mean donor/source disclosure among 527/IRS 8872 rows |
+| snapshot | intermediary | `intermediaryGrantmakingShare` | 0.0085 | observed_proxy | grantmaking share of normalized intermediary revenue |
 | fixture | lda | `ldaRows` | 4.0000 | observed | normalized LDA rows |
 | fixture | lda | `ldaTotalSpend` | 30.5000 | observed | sum of normalized LDA amount |
 | fixture | lda | `lobbyingClientTop1Share` | 0.2984 | observed | largest client share of normalized LDA amount |
@@ -190,5 +193,8 @@ These are direct moments from normalized calibration tables. They are source dia
 | fixture | intermediary | `intermediaryAssociationShare` | 0.3333 | observed_proxy | share of rows marked 501(c)(6) association |
 | fixture | intermediary | `intermediaryC4Share` | 0.1667 | observed_proxy | share of rows marked 501(c)(4) social welfare |
 | fixture | intermediary | `intermediaryC3Share` | 0.3333 | observed_proxy | share of rows marked 501(c)(3) nonprofit |
+| fixture | intermediary | `intermediary527Rows` | 1.0000 | observed | normalized IRS 527/Form 8872 intermediary rows |
+| fixture | intermediary | `intermediary527PoliticalSpend` | 9.6000 | observed_proxy | sum of normalized 527/IRS 8872 political spending |
 | fixture | intermediary | `intermediary527PoliticalSpendShare` | 0.4192 | observed_proxy | 527/IRS 8872 share of intermediary political spending |
+| fixture | intermediary | `intermediary527DonorDisclosureMean` | 0.6600 | observed_proxy | mean donor/source disclosure among 527/IRS 8872 rows |
 | fixture | intermediary | `intermediaryGrantmakingShare` | 0.1751 | observed_proxy | grantmaking share of normalized intermediary revenue |

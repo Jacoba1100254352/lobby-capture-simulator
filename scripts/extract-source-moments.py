@@ -269,7 +269,10 @@ def intermediary_moments(scope: str, path: Path) -> list[dict[str, str]]:
         moment(scope, "intermediary", "intermediaryAssociationShare", safe_divide(len(association_rows), len(rows)), "observed_proxy", "share of rows marked 501(c)(6) association"),
         moment(scope, "intermediary", "intermediaryC4Share", safe_divide(len(c4_rows), len(rows)), "observed_proxy", "share of rows marked 501(c)(4) social welfare"),
         moment(scope, "intermediary", "intermediaryC3Share", safe_divide(len(c3_rows), len(rows)), "observed_proxy", "share of rows marked 501(c)(3) nonprofit"),
+        moment(scope, "intermediary", "intermediary527Rows", len(section_527_rows), "observed", "normalized IRS 527/Form 8872 intermediary rows"),
+        moment(scope, "intermediary", "intermediary527PoliticalSpend", sum(number(row.get("politicalSpend")) for row in section_527_rows), "observed_proxy", "sum of normalized 527/IRS 8872 political spending"),
         moment(scope, "intermediary", "intermediary527PoliticalSpendShare", safe_divide(sum(number(row.get("politicalSpend")) for row in section_527_rows), total_political), "observed_proxy", "527/IRS 8872 share of intermediary political spending"),
+        moment(scope, "intermediary", "intermediary527DonorDisclosureMean", average([number(row.get("donorDisclosure")) for row in section_527_rows]), "observed_proxy", "mean donor/source disclosure among 527/IRS 8872 rows"),
         moment(scope, "intermediary", "intermediaryGrantmakingShare", safe_divide(total_grants, total_revenue), "observed_proxy", "grantmaking share of normalized intermediary revenue"),
     ]
 

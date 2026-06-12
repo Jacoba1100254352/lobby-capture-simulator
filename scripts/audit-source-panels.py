@@ -64,6 +64,16 @@ PANELS = [
         "action": "Expand NYC CFB intermediary and IRS EO BMF rows with IRS 8871/8872, Form 990 XML, association, think-tank, and grantmaking exports.",
     },
     {
+        "panel": "IRS 527 political organizations",
+        "metric": "intermediary527Rows",
+        "mechanism": "Political-organization receipts and disbursements for campaign-adjacent intermediaries",
+        "evidenceClass": "direct observed 527 filings",
+        "minimum": 1.0,
+        "good": 100.0,
+        "missing": "no source-native IRS POFD Form 8872 rows in the pinned snapshot",
+        "action": "Broaden beyond the default bounded IRS POFD alphabetic slice, preserve the electronic-filing scope note, and keep 527 political-organization rows separate from 501(c)(4)/(c)(6) hidden-donor evidence.",
+    },
+    {
         "panel": "Revolving door",
         "metric": "revolvingDoorRows",
         "mechanism": "Post-government access, covered-position links, and cooling-off exposure",

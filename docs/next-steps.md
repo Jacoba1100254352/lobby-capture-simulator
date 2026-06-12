@@ -51,13 +51,13 @@ Deliverables:
 
 ## 2. Expand the empirical source panels beyond the current 2024 EPA/ENV snapshot
 
-The latest key-backed live run now completes the LDA, six-committee OpenFEC, Schedule E outside-spending, OpenFEC electioneering and communication-cost rows, Regulations.gov, Federal Register, USAspending enrichment, and LDA-derived revolving-door requests. OpenFEC electioneering and communication-cost rows are now present in the pinned snapshot, but the bridge remains bounded and should not be treated as a representative national electoral-spending panel. Public financing and intermediary panels now have source-native no-key paths, but their geographic/program scope remains narrower than a national calibration panel.
+The latest key-backed live run now completes the LDA, six-committee OpenFEC, Schedule E outside-spending, OpenFEC electioneering and communication-cost rows, Regulations.gov, Federal Register, USAspending enrichment, bounded IRS POFD Form 8872 527 rows, and LDA-derived revolving-door requests. OpenFEC electioneering and communication-cost rows are now present in the pinned snapshot, but the bridge remains bounded and should not be treated as a representative national electoral-spending panel. Public financing and intermediary panels now have source-native no-key paths, but their geographic/program scope remains narrower than a national calibration panel.
 
 Deliverables:
 
 - add direct dark-money identifiers and lobbyist-bundling rows rather than treating Schedule E, electioneering, communication-cost, or IRS opaque-capacity proxy rows as observed hidden-donor routing;
 - replace the public-financing bridge with representative voucher and matching-fund source panels;
-- add IRS 8871/8872, TEOS, and Form 990 XML rows for 527s, 501(c)(4)s, 501(c)(6)s, think tanks, associations, and nonprofit intermediaries;
+- broaden the IRS 8871/8872 bridge beyond the default A-G Form 8872 slice and add TEOS/Form 990 XML rows for 501(c)(4)s, 501(c)(6)s, think tanks, associations, and nonprofit intermediaries;
 - add FACA, House witness disclosure, and OGE panels for sponsored-expert, advisory-committee, and official-access bridges;
 - expand the LDA-derived revolving-door bridge with documented post-employment movement, advisory-committee, witness, OGE, or licensed personnel panels;
 - preserve raw source payloads outside git if they are too large;

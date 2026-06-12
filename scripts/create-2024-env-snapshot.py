@@ -65,8 +65,8 @@ SOURCES = {
     },
     "intermediary": {
         "input": RAW / "intermediaries.csv",
-        "description": "Normalized nonprofit, 527, think-tank, campaign-intermediary, and association panel from NYC CFB, IRS EO BMF, ProPublica, OpenSecrets, or curated source exports.",
-        "request": "INTERMEDIARY_SOURCE_NATIVE=1 ./scripts/fetch-intermediaries.sh --live or INTERMEDIARY_LIVE_CSV=/path/to/export.csv ./scripts/fetch-intermediaries.sh --live",
+        "description": "Normalized nonprofit, 527, think-tank, campaign-intermediary, and association panel from NYC CFB, IRS EO BMF, IRS POFD Form 8872, ProPublica, OpenSecrets, or curated source exports.",
+        "request": "INTERMEDIARY_SOURCE_NATIVE=1 with nyc-intermediaries, irs-eo-bmf, and irs-527 source-native fetchers, or INTERMEDIARY_LIVE_CSV=/path/to/export.csv ./scripts/fetch-intermediaries.sh --live",
     },
 }
 
@@ -248,7 +248,7 @@ def write_readme(root: Path, entries: list[dict[str, object]]) -> None:
         "- USAspending procurement bridge: multi-agency fiscal-year 2024 top-award rows for procurement concentration diagnostics, kept separate from the EPA calibration slice.",
         "- USAspending procurement actions: transaction/action rows for modification-incidence diagnostics when present, kept separate from award rows and concentration rows.",
         "- Revolving-door panel: licensed/source export or LDA covered-position derivation when available; fixture otherwise.",
-        "- Intermediary panel: NYC CFB intermediary rows, IRS EO BMF nonprofit/association capacity rows, or configured nonprofit, 527, association, and think-tank export when available; fixture otherwise.",
+        "- Intermediary panel: NYC CFB intermediary rows, IRS EO BMF nonprofit/association capacity rows, IRS POFD Form 8872 527 political-organization rows, or configured nonprofit, 527, association, and think-tank export when available; fixture otherwise.",
         "",
         "The current command freezes whatever normalized files are present under `data/raw/`. Live paper snapshots should first run the request templates in `manifest.json`, preserve raw payloads outside git when too large, normalize into the same schemas, and then rerun `make snapshot-2024-env`.",
         "",
