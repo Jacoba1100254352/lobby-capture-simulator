@@ -24,6 +24,13 @@ append_csv() {
   fi
 }
 
+redact_source_log() {
+  local log_file="$1"
+  if [ -s "$log_file" ]; then
+    sed -E 's/(api_key=)[^&[:space:]]+/\1REDACTED/g; s/(SAM_API_KEY=)[^[:space:]]+/\1REDACTED/g' "$log_file" >&2 || true
+  fi
+}
+
 fetch_usaspending_procurement_actions() {
   SOURCE_RAW_DIR="$raw_dir/usaspending-procurement-actions" \
   USASPENDING_FISCAL_YEAR="${USASPENDING_FISCAL_YEAR:-2024}" \
@@ -260,6 +267,7 @@ elif [ "${USASPENDING_PROCUREMENT_ACTIONS_SOURCE_NATIVE:-1}" = "1" ]; then
     sam_extract_format="${SAM_CONTRACT_AWARDS_EXTRACT_FORMAT:-${SAM_CONTRACT_AWARDS_FORMAT:-json}}"
     sam_offset_starts="${SAM_CONTRACT_AWARDS_OFFSET_STARTS:-${SAM_CONTRACT_AWARDS_OFFSET_START:-0}}"
     sam_offset_note="${sam_offset_starts//,/+}"
+    sam_log="$tmpdir/sam-contract-awards.log"
     sam_filter_count="$(python3 - <<'PY'
 import os
 values = os.environ.get("SAM_CONTRACT_AWARDS_PIID_SUBTIER_CODES", "").strip()
@@ -291,11 +299,20 @@ PY
       SAM_CONTRACT_AWARDS_EXTRACT_POLL_SECONDS="${SAM_CONTRACT_AWARDS_EXTRACT_POLL_SECONDS:-10}" \
       SAM_CONTRACT_AWARDS_OFFSET_STARTS="$sam_offset_starts" \
       SAM_CONTRACT_AWARDS_INCLUDE_SECTIONS="${SAM_CONTRACT_AWARDS_INCLUDE_SECTIONS:-contractId,coreData,awardDetails,awardeeData}" \
-        python3 scripts/fetch-source-data.py sam-contract-awards --output data/raw/sam-contract-awards.csv; then
+        python3 scripts/fetch-source-data.py sam-contract-awards --output data/raw/sam-contract-awards.csv >"$sam_log" 2>&1; then
+      redact_source_log "$sam_log"
       printf "sam-contract-awards,ok,normalized SAM.gov Contract Awards rows written to separate procurement action schema; mode=%s; format=%s; filterCount=%s; pageSize=%s; maxPages=%s; offsetPageStarts=%s\n" "$sam_extract_mode" "$sam_extract_format" "$sam_filter_count" "$sam_page_size" "$sam_max_pages" "$sam_offset_note" >> "$status_file"
       printf "usaspending-procurement-actions,skipped,SAM.gov Contract Awards selected as the primary procurement action source for this live run\n" >> "$status_file"
     else
-      printf "sam-contract-awards,unavailable,SAM.gov Contract Awards request failed; fallback=USAspending action rows; mode=%s; format=%s; filterCount=%s; pageSize=%s; maxPages=%s; offsetPageStarts=%s\n" "$sam_extract_mode" "$sam_extract_format" "$sam_filter_count" "$sam_page_size" "$sam_max_pages" "$sam_offset_note" >> "$status_file"
+      redact_source_log "$sam_log"
+      python3 scripts/classify-source-failure.py sam-contract-awards "$sam_log" \
+        --fallback-note "fallback=USAspending action rows" \
+        --context "mode=$sam_extract_mode" \
+        --context "format=$sam_extract_format" \
+        --context "filterCount=$sam_filter_count" \
+        --context "pageSize=$sam_page_size" \
+        --context "maxPages=$sam_max_pages" \
+        --context "offsetPageStarts=$sam_offset_note" >> "$status_file"
       if fetch_usaspending_procurement_actions; then
         printf "usaspending-procurement-actions,ok,normalized USAspending procurement action rows written after SAM fallback\n" >> "$status_file"
       else

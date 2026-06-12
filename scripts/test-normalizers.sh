@@ -111,4 +111,17 @@ grep -q "Fixture scaffold?" "$tmpdir/reports/source-panel-inventory.md"
 
 python3 scripts/test-source-fetchers.py
 
+printf 'GET https://api.sam.gov/contract-awards/v1/search?api_key=REDACTED failed with HTTP 429: {"code":"900804","message":"Message throttled out","description":"You have exceeded your quota .","nextAccessTime":"2026-Jun-13 00:00:00+0000 UTC"}\n' > "$tmpdir/sam-quota.log"
+python3 scripts/classify-source-failure.py sam-contract-awards "$tmpdir/sam-quota.log" --context "mode=0" --fallback-note "fallback=USAspending action rows" > "$tmpdir/sam-quota-status.csv"
+python3 - "$tmpdir/sam-quota-status.csv" <<'PY'
+import csv
+import sys
+with open(sys.argv[1], newline="", encoding="utf-8") as source:
+    rows = list(csv.DictReader(source, fieldnames=["source", "status", "notes"]))
+assert rows[0]["source"] == "sam-contract-awards", rows[0]
+assert rows[0]["status"] == "quota_blocked", rows[0]
+assert "2026-Jun-13 00:00:00+0000 UTC" in rows[0]["notes"], rows[0]
+assert "fallback=USAspending action rows" in rows[0]["notes"], rows[0]
+PY
+
 echo "Normalizer and table-generator tests passed."

@@ -50,7 +50,7 @@ CLAIM_SOURCE_DEPENDENCY_MD = ROOT / "reports" / "claim-source-dependency.md"
 CLAIM_SOURCE_DEPENDENCY_CSV = ROOT / "reports" / "claim-source-dependency.csv"
 CLAIM_POSTURE_AUDIT_MD = ROOT / "reports" / "claim-posture-audit.md"
 CLAIM_POSTURE_AUDIT_CSV = ROOT / "reports" / "claim-posture-audit.csv"
-RELEASE_TAG = "paper-publication-readiness-2026-06-12-r60"
+RELEASE_TAG = "paper-publication-readiness-2026-06-12-r61"
 CITATION_CFF = ROOT / "CITATION.cff"
 ZENODO_JSON = ROOT / ".zenodo.json"
 FORBIDDEN_LOCAL_ARTIFACTS = [
@@ -495,9 +495,10 @@ def check_source_capability_audit() -> list[str]:
     if rows["sam-contract-awards-action-history"].get("capabilityStatus") not in {
         "implemented-not-active",
         "active-bounded",
+        "quota-blocked",
     }:
         failures.append(
-            "SAM Contract Awards capability status should be implemented-not-active or active-bounded"
+            "SAM Contract Awards capability status should be implemented-not-active, quota-blocked, or active-bounded"
         )
     if rows["usaspending-stratified-action-panel"].get("capabilityStatus") not in {
         "active-usable",

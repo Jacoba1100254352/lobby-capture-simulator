@@ -199,6 +199,8 @@ def classify_capability(
     if capability == "sam-contract-awards-action-history":
         if row_count > 0 and source_status == "ok":
             return "active-bounded"
+        if source_status == "quota_blocked":
+            return "quota-blocked"
         return "implemented-not-active"
     if row_count > 0 and source_status == "ok" and panel_status == "usable":
         return "active-usable"

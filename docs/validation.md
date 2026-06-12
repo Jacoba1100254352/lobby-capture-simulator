@@ -43,6 +43,7 @@ Source-native live variables:
 - Federal Register: `REGULATORY_SOURCE=federal-register`, `FEDERAL_REGISTER_API_BASE`, `FEDERAL_REGISTER_TYPE`, `REGULATORY_SEARCH_TERM`, `REGULATORY_DATE_FROM`, `REGULATORY_DATE_TO`.
 - Retry controls: `SOURCE_FETCH_RETRIES`, `SOURCE_FETCH_BACKOFF_SECONDS`.
 - Request fallback: `SOURCE_FETCH_CURL_FALLBACK=1` lets source-native GET requests fall back to `curl` after the Python hard timeout when an endpoint responds to curl but hangs under urllib.
+- Source failure classification: `scripts/run-2024-env-live-snapshot.sh` records SAM.gov Contract Awards quota failures as `quota_blocked` in `live-run-status.csv` when the upstream response exposes a `nextAccessTime`; the runner then falls back to USAspending action rows without promoting partial SAM payloads.
 - Raw-payload archive control: `SOURCE_RAW_DIR`.
 - USAspending enrichment: `USASPENDING_ENRICH_AWARD_DETAILS`, `USASPENDING_ENRICH_TRANSACTIONS`, `USASPENDING_ENRICH_LIMIT`, `USASPENDING_TRANSACTION_LIMIT`.
 - USAspending/SAM modification handling: `USASPENDING_TREAT_LATEST_TRANSACTION_AS_MODIFICATION=0` keeps award-level rows from being marked as ex-post modifications just because the latest enriched transaction is a modification. Prefer the separate `usaspending-actions` fetcher, the separate `sam-contract-awards` fetcher, or a normalized action-level CSV when estimating action-level modification incidence.
