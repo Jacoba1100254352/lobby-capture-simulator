@@ -15,12 +15,13 @@ OUTPUT = Path("reports")
 PANELS = [
     {
         "panel": "Direct dark money",
-        "metric": "darkMoneySourceShare",
+        "metric": "darkMoneyDirectRoutingRows",
         "mechanism": "Opaque donor routing and hidden electoral influence",
-        "evidenceClass": "proxy/thin",
-        "minimum": 0.001,
-        "good": 0.05,
-        "missing": "no direct DARK_MONEY rows or opaque-capacity bridge rows in the snapshot",
+        "evidenceClass": "direct/proxy gap",
+        "minimum": 1.0,
+        "good": 50.0,
+        "missing": "no non-proxy direct DARK_MONEY routing rows in the snapshot",
+        "thin": "direct DARK_MONEY routing rows are present but too sparse for article-level calibration",
         "action": "Add curated direct dark-money or nonprofit-routing rows where available; use IRS 501(c)(4)/(c)(6) rows only as opaque-capacity proxies and keep Schedule E, electioneering, and communication-cost rows separate.",
     },
     {

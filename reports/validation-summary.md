@@ -2,7 +2,7 @@
 
 Benchmark ranges are plausibility checks, not causal empirical claims. `source_gap` rows mark source panels that are too narrow or too proxy-backed to test a benchmark directly.
 
-- Fit: `308`
+- Fit: `309`
 - Partial: `34`
 - Miss: `0`
 - Source gap: `4`
@@ -12,9 +12,9 @@ Benchmark ranges are plausibility checks, not causal empirical claims. `source_g
 ## Evidence Classes
 
 - `benchmark`: fit `121`, partial `0`, miss `0`, source gap `0`, unknown `0`, not applicable `0`
-- `inferred`: fit `0`, partial `1`, miss `0`, source gap `1`, unknown `0`, not applicable `5`
+- `inferred`: fit `1`, partial `1`, miss `0`, source gap `0`, unknown `0`, not applicable `5`
 - `judgmental`: fit `4`, partial `2`, miss `0`, source gap `0`, unknown `0`, not applicable `0`
-- `observed`: fit `29`, partial `15`, miss `0`, source gap `2`, unknown `0`, not applicable `5`
+- `observed`: fit `29`, partial `15`, miss `0`, source gap `3`, unknown `0`, not applicable `5`
 - `observed_proxy`: fit `25`, partial `0`, miss `0`, source gap `1`, unknown `0`, not applicable `0`
 - `proxy`: fit `53`, partial `13`, miss `0`, source gap `0`, unknown `0`, not applicable `1`
 - `sectoral`: fit `7`, partial `0`, miss `0`, source gap `0`, unknown `0`, not applicable `0`
@@ -372,7 +372,8 @@ Benchmark ranges are plausibility checks, not causal empirical claims. `source_g
 | lobby-capture-sensitivity.csv | venueShiftNetworkLoad | 0.0836-0.2971 | 0.00-0.85 | fit | all scenario values inside benchmark range; scope=all scenarios; rows=20 |
 | source-moments.csv | commentFloodingIndex | 0.3072-0.3072 | 0.00-1.00 | fit | source moment inside benchmark range |
 | source-moments.csv | fecDonorTop3Share | 0.3668-0.3668 | 0.10-0.85 | fit | source moment inside benchmark range |
-| source-moments.csv | darkMoneyDirectVisibility | 0.2043-0.2043 | 0.00-0.10 | source_gap | dark-money source panel is thin and proxy-backed; direct hidden-donor or nonprofit-routing records are needed, while electioneering rows remain separate electoral-communication evidence; source moment outside benchmark range |
+| source-moments.csv | darkMoneyDirectVisibility | 0.0000-0.0000 | 0.00-0.10 | fit | source moment inside benchmark range |
+| source-moments.csv | darkMoneyDirectRoutingRows | 0.0000-0.0000 | 1-50 | source_gap | dark-money source panel has opaque-capacity and adjacent outside-spending rows but no non-proxy direct hidden-donor or nonprofit-routing rows; source moment outside benchmark range |
 | source-moments.csv | procurementAgencyTop1Share | 0.3866-0.3866 | 0.55-0.65 | source_gap | bounded stratified USAspending action panel is present, but it is not representative enough for agency-concentration calibration; source moment outside benchmark range |
 | source-moments.csv | procurementRecipientTop3Share | 0.2457-0.2457 | 0.25-0.40 | source_gap | bounded stratified USAspending action panel is present, but it is not representative enough for recipient-concentration calibration; source moment outside benchmark range |
 | source-moments.csv | revolvingDoorInfluenceMean | 0.3400-0.3400 | 0.25-0.75 | fit | source moment inside benchmark range |

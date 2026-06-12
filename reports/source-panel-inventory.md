@@ -3,14 +3,14 @@
 This inventory separates source coverage from simulated outcomes. A missing or thin panel is a validation gap, not evidence that the underlying form of influence is absent.
 
 - Usable: `9`
-- Thin: `2`
+- Thin: `1`
 - Warning: `0`
-- Fixture-only: `0`
+- Fixture-only: `1`
 - Missing: `0`
 
 | Panel | Mechanism constrained | Evidence | Moment | Snapshot | Fixture scaffold? | Status | Note | Next action |
 | --- | --- | --- | --- | ---: | --- | --- | --- | --- |
-| Direct dark money | Opaque donor routing and hidden electoral influence | proxy/thin | `darkMoneySourceShare` | 0.0245 | yes | thin | coverage is present but thin for article-level calibration | Add curated direct dark-money or nonprofit-routing rows where available; use IRS 501(c)(4)/(c)(6) rows only as opaque-capacity proxies and keep Schedule E, electioneering, and communication-cost rows separate. |
+| Direct dark money | Opaque donor routing and hidden electoral influence | direct/proxy gap | `darkMoneyDirectRoutingRows` | 0.0000 | yes | fixture-only | no non-proxy direct DARK_MONEY routing rows in the snapshot; fixture bridge is available but not article-level empirical coverage | Add curated direct dark-money or nonprofit-routing rows where available; use IRS 501(c)(4)/(c)(6) rows only as opaque-capacity proxies and keep Schedule E, electioneering, and communication-cost rows separate. |
 | Outside spending | Independent expenditure pressure outside candidate finance | direct | `outsideSpendingRows` | 918.0000 | no | usable | coverage is usable for mechanism diagnostics, subject to source-scope limits | Broaden OpenFEC Schedule E, electioneering communication, communication-cost, independent-expenditure, and spender/payee coverage. |
 | Electoral communications | Electioneering and communication-cost channels outside ordinary receipts | direct | `electoralCommunicationRows` | 268.0000 | no | usable | coverage is usable for mechanism diagnostics, subject to source-scope limits | Broaden OpenFEC electioneering and communication-cost coverage and keep these rows separate from direct dark-money evidence. |
 | Public financing | Countervailing campaign finance and voucher/matching funds | direct program rows when present | `publicFinancingProgramCount` | 2.0000 | yes | usable | coverage is usable for mechanism diagnostics, subject to source-scope limits | Broaden NYC matching-fund and Seattle voucher rows with federal, state, and additional local public-financing panels before treating uptake as representative. |

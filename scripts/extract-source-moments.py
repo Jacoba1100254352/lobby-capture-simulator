@@ -89,7 +89,10 @@ def fec_moments(scope: str, path: Path, public_financing_path: Path, dark_money_
     total = sum(amounts)
     dark_money_rows = [row for row in rows if row.get("flowType", "").upper() == "DARK_MONEY"]
     all_dark_money_rows = dark_money_rows + dark_money_bridge_rows
+    dark_money_capacity_proxy_rows = [row for row in all_dark_money_rows if is_dark_money_capacity_proxy(row)]
+    dark_money_direct_routing_rows = [row for row in all_dark_money_rows if not is_dark_money_capacity_proxy(row)]
     all_dark_money_total = sum(number(row.get("amount")) for row in all_dark_money_rows)
+    dark_money_direct_routing_total = sum(number(row.get("amount")) for row in dark_money_direct_routing_rows)
     super_pac_rows = [row for row in rows if row.get("flowType", "").upper() == "SUPER_PAC"]
     electioneering_rows = [row for row in rows if row.get("flowType", "").upper() == "ELECTIONEERING"]
     communication_cost_rows = [row for row in rows if row.get("flowType", "").upper() == "COMMUNICATION_COST"]
@@ -117,7 +120,10 @@ def fec_moments(scope: str, path: Path, public_financing_path: Path, dark_money_
         moment(scope, "fec", "fecLargeDonorWeightedShare", weighted(rows, "largeDonorShare", "amount"), "observed_proxy", "amount-weighted normalized large donor share"),
         moment(scope, "fec", "moneyFlowTraceability", weighted(rows, "traceability", "amount"), "observed_proxy", "amount-weighted traceability across all normalized FEC rows"),
         moment(scope, "fec", "darkMoneyRows", len(all_dark_money_rows), "observed_proxy", "DARK_MONEY rows from FEC or explicit dark-money/opaque-capacity bridge panels"),
-        moment(scope, "fec", "darkMoneyDirectVisibility", weighted(all_dark_money_rows, "traceability", "amount"), "inferred", "amount-weighted traceability among DARK_MONEY bridge rows only"),
+        moment(scope, "fec", "darkMoneyCapacityProxyRows", len(dark_money_capacity_proxy_rows), "observed_proxy", "DARK_MONEY rows marked as IRS EO BMF opaque-capacity proxies"),
+        moment(scope, "fec", "darkMoneyDirectRoutingRows", len(dark_money_direct_routing_rows), "observed", "non-proxy DARK_MONEY rows that can support direct hidden-donor or nonprofit-routing evidence"),
+        moment(scope, "fec", "darkMoneyDirectRoutingSourceShare", safe_divide(dark_money_direct_routing_total, campaign_total), "observed", "non-proxy DARK_MONEY share of normalized campaign-finance plus bridge amount"),
+        moment(scope, "fec", "darkMoneyDirectVisibility", weighted(dark_money_direct_routing_rows, "traceability", "amount"), "inferred", "amount-weighted traceability among non-proxy DARK_MONEY routing rows only"),
         moment(scope, "fec", "darkMoneySourceShare", safe_divide(all_dark_money_total, campaign_total), "observed_proxy", "DARK_MONEY or opaque-capacity bridge share of normalized campaign-finance plus bridge amount"),
         moment(scope, "fec", "superPacSourceShare", safe_divide(sum(number(row.get("amount")) for row in super_pac_rows), campaign_total), "observed_proxy", "SUPER_PAC share of normalized campaign-finance plus bridge amount"),
         moment(scope, "fec", "opaqueElectoralSourceShare", safe_divide(sum(number(row.get("amount")) for row in opaque_electoral_rows), campaign_total), "observed_proxy", "DARK_MONEY plus SUPER_PAC share of normalized campaign-finance plus bridge amount"),
@@ -535,8 +541,8 @@ def representativeness_warnings(rows: list[dict[str, str]]) -> list[str]:
         warnings.append(
             f"Snapshot FEC row count is {fec_rows:.0f}; use FEC moments as panel diagnostics rather than representative election-cycle estimates."
         )
-    if metric_value(rows, "snapshot", "fec", "darkMoneyRows") == 0.0:
-        warnings.append("Snapshot campaign-finance rows contain no direct DARK_MONEY flow share; dark-money calibration still depends on benchmark and scenario assumptions even though Schedule E outside-spending rows are present.")
+    if metric_value(rows, "snapshot", "fec", "darkMoneyDirectRoutingRows") == 0.0:
+        warnings.append("Snapshot campaign-finance rows contain no non-proxy direct DARK_MONEY routing rows; dark-money calibration still depends on benchmark and scenario assumptions even though opaque-capacity and outside-spending rows are present.")
     if metric_value(rows, "snapshot", "fec", "outsideSpendingRows") == 0.0:
         warnings.append("Snapshot campaign-finance rows contain no Schedule E or outside-spending bridge rows; substitution through outside spending remains weakly anchored.")
     if metric_value(rows, "snapshot", "fec", "electoralCommunicationRows") == 0.0:
@@ -602,6 +608,17 @@ def metric_value(rows: list[dict[str, str]], scope: str, source: str, metric_nam
         if row["scope"] == scope and row["source"] == source and row["metric"] == metric_name:
             return number(row["value"])
     return 0.0
+
+
+def is_dark_money_capacity_proxy(row: dict[str, str]) -> bool:
+    text = " ".join(
+        [
+            row.get("committeeType", ""),
+            row.get("spendingPurpose", ""),
+            row.get("sourceUrl", ""),
+        ]
+    ).lower()
+    return "capacity proxy" in text or ("eo_" in text and "irs-soi" in text)
 
 
 if __name__ == "__main__":

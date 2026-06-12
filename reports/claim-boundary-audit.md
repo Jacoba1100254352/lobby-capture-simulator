@@ -4,7 +4,7 @@ This audit maps each empirical source panel to the strongest manuscript claim it
 
 ## Validation Status Summary
 
-- Fit: `308`
+- Fit: `309`
 - Partial: `34`
 - Miss: `0`
 - Source gap: `4`
@@ -15,7 +15,7 @@ This audit maps each empirical source panel to the strongest manuscript claim it
 
 | Panel | Mechanism | Evidence | Status | Support level | Permitted claim boundary | Claim to avoid | Required next evidence |
 | --- | --- | --- | --- | --- | --- | --- | --- |
-| Direct dark money | Opaque donor routing and hidden electoral influence | proxy/thin | thin | limited | May support source-aware plausibility checks only; magnitude claims must be phrased as proxy-backed or thin. | Do not present as article-level calibration or validation of hidden-channel magnitude. | Add curated direct dark-money or nonprofit-routing rows where available; use IRS 501(c)(4)/(c)(6) rows only as opaque-capacity proxies and keep Schedule E, electioneering, and communication-cost rows separate. |
+| Direct dark money | Opaque donor routing and hidden electoral influence | direct/proxy gap | fixture-only | schema-only | May show that the parser, schema, and model path exist; it does not support empirical magnitude claims. | Do not cite fixture values as source coverage or calibration evidence. | Add curated direct dark-money or nonprofit-routing rows where available; use IRS 501(c)(4)/(c)(6) rows only as opaque-capacity proxies and keep Schedule E, electioneering, and communication-cost rows separate. |
 | Outside spending | Independent expenditure pressure outside candidate finance | direct | usable | stronger | May support mechanism diagnostics and distributional anchoring within the stated source scope. | Do not present as a causal estimate or nationally representative policy effect. | Broaden OpenFEC Schedule E, electioneering communication, communication-cost, independent-expenditure, and spender/payee coverage. |
 | Electoral communications | Electioneering and communication-cost channels outside ordinary receipts | direct | usable | stronger | May support mechanism diagnostics and distributional anchoring within the stated source scope. | Do not present as a causal estimate or nationally representative policy effect. | Broaden OpenFEC electioneering and communication-cost coverage and keep these rows separate from direct dark-money evidence. |
 | Public financing | Countervailing campaign finance and voucher/matching funds | direct program rows when present | usable | stronger | May support mechanism diagnostics and distributional anchoring within the stated source scope. | Do not present as a causal estimate or nationally representative policy effect. | Broaden NYC matching-fund and Seattle voucher rows with federal, state, and additional local public-financing panels before treating uptake as representative. |
@@ -30,5 +30,5 @@ This audit maps each empirical source panel to the strongest manuscript claim it
 ## Weak-Panel Gate
 
 - Weak panels requiring explicit claim limits: `2`
-- `Direct dark money` (thin): May support source-aware plausibility checks only; magnitude claims must be phrased as proxy-backed or thin.
+- `Direct dark money` (fixture-only): May show that the parser, schema, and model path exist; it does not support empirical magnitude claims.
 - `Procurement modification risk` (thin): May support source-aware plausibility checks only; magnitude claims must be phrased as proxy-backed or thin.

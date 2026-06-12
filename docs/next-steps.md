@@ -33,7 +33,7 @@ The simulator now has a lobbying-centered model core with calibration fixtures, 
 - The procurement denominator audit now reports row-count balance versus amount concentration, making clear that a stratified action sample can support schema and mechanism diagnostics without clearing volume-representative SAM/FPDS calibration.
 - `make test` now includes Python compilation plus `bash -n` shell-script checks through `make script-checks`, and CI uses the same target before simulator and paper-package gates.
 - Live source fetches retry transient `429` and `5xx` responses and redact API keys from error URLs.
-- `make source-moments` records direct source-level top-k concentration, traceability, Schedule E outside-spending, direct dark-money visibility, public-financing, procurement bridge, revolving-door, and comment-record moments.
+- `make source-moments` records direct source-level top-k concentration, traceability, Schedule E outside-spending, non-proxy direct dark-money routing row coverage, direct dark-money visibility, public-financing, procurement bridge, revolving-door, and comment-record moments.
 - `make calibration-queue` classifies validation misses and partial overlaps into actionable work categories.
 - `make tables` regenerates paper table inputs from report CSV snapshots using `paper/tables.yml`.
 - `make figures` regenerates the paper's numbered SVG/PDF figure assets and LaTeX wrappers.
@@ -70,7 +70,7 @@ Deliverables:
 
 ## 3. Broaden SAM/FPDS, revolving-door, and intermediary source panels
 
-The source-moment layer now covers LDA, OpenFEC party/Schedule E/electioneering/communication-cost rows, regulatory dockets, USAspending award, multi-agency bridge, and stratified action-panel fields, an optional SAM.gov Contract Awards procurement-action importer, public-financing bridge rows, and LDA-derived covered-position rows. Procurement modification, direct dark-money, intermediary, electoral-communication, and revolving-door validation still need richer representative data before the model can claim calibrated national hidden-channel magnitudes.
+The source-moment layer now covers LDA, OpenFEC party/Schedule E/electioneering/communication-cost rows, regulatory dockets, USAspending award, multi-agency bridge, and stratified action-panel fields, an optional SAM.gov Contract Awards procurement-action importer, public-financing bridge rows, and LDA-derived covered-position rows. Procurement modification, non-proxy direct dark-money routing, intermediary, electoral-communication, and revolving-door validation still need richer representative data before the model can claim calibrated national hidden-channel magnitudes.
 
 Deliverables:
 

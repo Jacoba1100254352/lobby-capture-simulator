@@ -4,6 +4,7 @@ These are direct moments from normalized calibration tables. They are source dia
 
 ## Representativeness Warnings
 
+- Snapshot campaign-finance rows contain no non-proxy direct DARK_MONEY routing rows; dark-money calibration still depends on benchmark and scenario assumptions even though opaque-capacity and outside-spending rows are present.
 - Snapshot procurement concentration uses a stratified multi-agency USAspending transaction/action panel; this is stronger than the top-award bridge but remains a bounded diagnostic rather than a representative SAM/FPDS panel.
 
 | Scope | Source | Metric | Value | Evidence | Notes |
@@ -26,7 +27,10 @@ These are direct moments from normalized calibration tables. They are source dia
 | snapshot | fec | `fecLargeDonorWeightedShare` | 0.9457 | observed_proxy | amount-weighted normalized large donor share |
 | snapshot | fec | `moneyFlowTraceability` | 0.6183 | observed_proxy | amount-weighted traceability across all normalized FEC rows |
 | snapshot | fec | `darkMoneyRows` | 250.0000 | observed_proxy | DARK_MONEY rows from FEC or explicit dark-money/opaque-capacity bridge panels |
-| snapshot | fec | `darkMoneyDirectVisibility` | 0.2043 | inferred | amount-weighted traceability among DARK_MONEY bridge rows only |
+| snapshot | fec | `darkMoneyCapacityProxyRows` | 250.0000 | observed_proxy | DARK_MONEY rows marked as IRS EO BMF opaque-capacity proxies |
+| snapshot | fec | `darkMoneyDirectRoutingRows` | 0.0000 | observed | non-proxy DARK_MONEY rows that can support direct hidden-donor or nonprofit-routing evidence |
+| snapshot | fec | `darkMoneyDirectRoutingSourceShare` | 0.0000 | observed | non-proxy DARK_MONEY share of normalized campaign-finance plus bridge amount |
+| snapshot | fec | `darkMoneyDirectVisibility` | 0.0000 | inferred | amount-weighted traceability among non-proxy DARK_MONEY routing rows only |
 | snapshot | fec | `darkMoneySourceShare` | 0.0245 | observed_proxy | DARK_MONEY or opaque-capacity bridge share of normalized campaign-finance plus bridge amount |
 | snapshot | fec | `superPacSourceShare` | 0.0075 | observed_proxy | SUPER_PAC share of normalized campaign-finance plus bridge amount |
 | snapshot | fec | `opaqueElectoralSourceShare` | 0.0321 | observed_proxy | DARK_MONEY plus SUPER_PAC share of normalized campaign-finance plus bridge amount |
@@ -135,7 +139,10 @@ These are direct moments from normalized calibration tables. They are source dia
 | fixture | fec | `fecLargeDonorWeightedShare` | 0.6081 | observed_proxy | amount-weighted normalized large donor share |
 | fixture | fec | `moneyFlowTraceability` | 0.6648 | observed_proxy | amount-weighted traceability across all normalized FEC rows |
 | fixture | fec | `darkMoneyRows` | 1.0000 | observed_proxy | DARK_MONEY rows from FEC or explicit dark-money/opaque-capacity bridge panels |
-| fixture | fec | `darkMoneyDirectVisibility` | 0.2400 | inferred | amount-weighted traceability among DARK_MONEY bridge rows only |
+| fixture | fec | `darkMoneyCapacityProxyRows` | 0.0000 | observed_proxy | DARK_MONEY rows marked as IRS EO BMF opaque-capacity proxies |
+| fixture | fec | `darkMoneyDirectRoutingRows` | 1.0000 | observed | non-proxy DARK_MONEY rows that can support direct hidden-donor or nonprofit-routing evidence |
+| fixture | fec | `darkMoneyDirectRoutingSourceShare` | 0.0905 | observed | non-proxy DARK_MONEY share of normalized campaign-finance plus bridge amount |
+| fixture | fec | `darkMoneyDirectVisibility` | 0.2400 | inferred | amount-weighted traceability among non-proxy DARK_MONEY routing rows only |
 | fixture | fec | `darkMoneySourceShare` | 0.0905 | observed_proxy | DARK_MONEY or opaque-capacity bridge share of normalized campaign-finance plus bridge amount |
 | fixture | fec | `superPacSourceShare` | 0.1067 | observed_proxy | SUPER_PAC share of normalized campaign-finance plus bridge amount |
 | fixture | fec | `opaqueElectoralSourceShare` | 0.1972 | observed_proxy | DARK_MONEY plus SUPER_PAC share of normalized campaign-finance plus bridge amount |

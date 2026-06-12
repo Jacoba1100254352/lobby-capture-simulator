@@ -183,7 +183,11 @@ def classify_capability(
     if capability == "licensed-access-overlays":
         return "planned-overlay"
     if capability == "direct-dark-money-routing":
-        return "proxy-only" if panel_status == "thin" else panel_status or "missing"
+        if panel_status == "usable":
+            return "active-usable"
+        if row_count > 0:
+            return "proxy-only"
+        return panel_status or "missing"
     if capability == "sam-contract-awards-action-history":
         if row_count > 0 and source_status == "ok":
             return "active-bounded"
@@ -217,7 +221,7 @@ def write_csv(path: Path, rows: list[dict[str, str]]) -> None:
         "nextAction",
     ]
     with path.open("w", newline="", encoding="utf-8") as output:
-        writer = csv.DictWriter(output, fieldnames=fieldnames)
+        writer = csv.DictWriter(output, fieldnames=fieldnames, lineterminator="\n")
         writer.writeheader()
         writer.writerows(rows)
 

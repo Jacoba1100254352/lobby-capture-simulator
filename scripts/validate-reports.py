@@ -285,7 +285,7 @@ def source_scope_gap(metric: str, value: float, source_moments: dict[str, float]
         and procurement_action_rows <= 0
         and source_moments.get("procurementInitialAwardShare", 0.0) >= 0.95
     )
-    thin_dark_money_panel = source_moments.get("darkMoneySourceShare", 0.0) < 0.05
+    thin_dark_money_panel = source_moments.get("darkMoneyDirectRoutingRows", 0.0) <= 0.0
     if metric == "procurementAgencyTop1Share" and single_agency_panel:
         return "single-agency procurement snapshot cannot validate a multi-agency agency-concentration benchmark"
     if metric == "procurementAgencyTop1Share" and concentration_action_panel and concentration_panel_agencies > 1:
@@ -310,8 +310,10 @@ def source_scope_gap(metric: str, value: float, source_moments: dict[str, float]
         if concentration_sam_action_panel:
             return "bounded SAM.gov Contract Awards panel is present, but the modification-action share remains above the benchmark range and still needs representative SAM/FPDS validation"
         return "bounded USAspending transaction-action panel is present, but the modification-action share remains above the benchmark range and still needs representative SAM/FPDS validation"
+    if metric == "darkMoneyDirectRoutingRows" and thin_dark_money_panel:
+        return "dark-money source panel has opaque-capacity and adjacent outside-spending rows but no non-proxy direct hidden-donor or nonprofit-routing rows"
     if metric == "darkMoneyDirectVisibility" and thin_dark_money_panel:
-        return "dark-money source panel is thin and proxy-backed; direct hidden-donor or nonprofit-routing records are needed, while electioneering rows remain separate electoral-communication evidence"
+        return "dark-money source panel has no non-proxy direct routing rows; direct hidden-donor or nonprofit-routing records are needed, while capacity proxies and electioneering rows remain separate evidence"
     return ""
 
 

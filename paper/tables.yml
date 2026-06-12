@@ -737,6 +737,7 @@
           "format": "label",
           "labels": {
             "proxy/thin": "proxy/thin",
+            "direct/proxy gap": "direct gap",
             "direct": "direct",
             "direct program rows when present": "direct rows",
             "direct when present": "direct rows",
@@ -756,7 +757,7 @@
           "align": "l",
           "format": "label",
           "labels": {
-            "Direct dark money": "thin proxy",
+            "Direct dark money": "0 direct rows",
             "Outside spending": "direct rows",
             "Electoral communications": "direct rows",
             "Public financing": "NYC+Seattle rows",

@@ -58,6 +58,7 @@ CLAIMS = [
         "family": "Strategic substitution mechanism",
         "panels": ["Direct dark money", "Outside spending", "Intermediaries", "IRS 527 political organizations", "Revolving door", "Procurement identifiers"],
         "moments": [("outsideSpendingRows", 250.0), ("intermediaryRows", 50.0), ("intermediary527Rows", 1.0), ("revolvingDoorRows", 100.0)],
+        "boundWeakPanels": True,
         "permitted": "Mechanism tests and source-aware stress diagnostics for channel substitution.",
         "avoid": "Do not present hidden substitution magnitudes as empirically validated.",
         "next": "Replace thin hidden-channel panels with direct routing, personnel, and transaction exports.",
@@ -84,7 +85,7 @@ CLAIMS = [
         "key": "hidden-channel-magnitude",
         "family": "Hidden-channel magnitude",
         "panels": ["Direct dark money", "Electoral communications", "Revolving door"],
-        "moments": [("darkMoneySourceShare", 0.01), ("electoralCommunicationRows", 1.0)],
+        "moments": [("darkMoneyDirectRoutingRows", 1.0), ("electoralCommunicationRows", 1.0)],
         "strict": True,
         "permitted": "Missingness and proxy-gap diagnosis for hidden-channel mechanisms.",
         "avoid": "Do not treat bounded electoral-communication rows as hidden-donor or hidden-channel magnitude evidence.",
@@ -113,7 +114,7 @@ CLAIMS = [
             "Procurement action history",
             "Procurement modification risk",
         ],
-        "moments": [("electoralCommunicationRows", 1.0), ("intermediary527Rows", 1.0), ("procurementActionRows", 1.0)],
+        "moments": [("darkMoneyDirectRoutingRows", 1.0), ("electoralCommunicationRows", 1.0), ("intermediary527Rows", 1.0), ("procurementActionRows", 1.0)],
         "strict": True,
         "permitted": "Not cleared; the current article can only use mechanism diagnostics and bounded source moments.",
         "avoid": "Do not describe the artifact as a calibrated policy-effect simulator.",
@@ -178,7 +179,8 @@ def claim_row(
     failed_moments = [item for item in moment_results if not item["passed"]]
 
     strict = bool(claim.get("strict", False))
-    if failed_moments or (strict and (weak or blocking)) or blocking:
+    bound_weak_panels = bool(claim.get("boundWeakPanels", False))
+    if failed_moments or (strict and (weak or blocking)) or (blocking and not bound_weak_panels):
         status = "not_cleared"
     elif weak:
         status = "bounded"
@@ -357,12 +359,12 @@ def posture_label(status: str) -> str:
 
 def table_support(row: dict[str, str]) -> str:
     return {
-        "strategic-substitution-mechanism": "Thin direct dark-money panel; other substitution panels usable.",
+        "strategic-substitution-mechanism": "No non-proxy direct dark-money routing rows; other substitution panels usable.",
         "public-financing-counterweight": "Bounded local public-financing program panel.",
         "revolving-door-cooling-off": "LDA-derived covered-position bridge.",
-        "hidden-channel-magnitude": "Thin direct dark-money panel; electoral and covered-position bridges present.",
+        "hidden-channel-magnitude": "No non-proxy direct dark-money routing rows; electoral and covered-position bridges present.",
         "procurement-modification-capture": "Action rows present; modification incidence remains thin.",
-        "calibrated-policy-simulation": "Direct dark-money and procurement-modification dependencies not cleared.",
+        "calibrated-policy-simulation": "Direct dark-money routing and procurement-modification dependencies not cleared.",
     }.get(row["claimKey"], row["sourceSupport"])
 
 
