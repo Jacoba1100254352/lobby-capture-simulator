@@ -31,7 +31,7 @@ SOURCES = {
     "public-financing": {
         "input": RAW / "public-financing.csv",
         "description": "Public financing and voucher bridge rows for direct program participation and public-fund share diagnostics.",
-        "request": "PUBLIC_FINANCING_SOURCE_NATIVE=1 python3 scripts/fetch-source-data.py nyc-public-financing --output data/raw/public-financing.csv or PUBLIC_FINANCING_LIVE_CSV=/path/to/program-export.csv ./scripts/fetch-public-financing.sh --live",
+        "request": "PUBLIC_FINANCING_SOURCE_NATIVE=1 with nyc-public-financing and seattle-democracy-vouchers source-native fetchers, or PUBLIC_FINANCING_LIVE_CSV=/path/to/program-export.csv ./scripts/fetch-public-financing.sh --live",
     },
     "dark-money": {
         "input": RAW / "dark-money.csv",
@@ -242,7 +242,7 @@ def write_readme(root: Path, entries: list[dict[str, object]]) -> None:
         "- FEC cycle: 2024, with the six national party committees as the first electoral-pressure panel.",
         "- Outside-spending bridge: OpenFEC Schedule E independent expenditures.",
         "- Electoral-communication bridge: OpenFEC electioneering communications and communication-cost rows when available.",
-        "- Public-financing bridge: NYC CFB public-funds payments or configured program export rows carried as a separate bridge panel.",
+        "- Public-financing bridge: NYC CFB public-funds payments, Seattle Democracy Voucher rows, or configured program export rows carried as a separate bridge panel.",
         "- Dark-money bridge: configured source export rows or IRS EO BMF 501(c)(4)/(c)(6) opaque-capacity proxy rows; super PAC rows remain separate.",
         "- USAspending fiscal year: 2024, Environmental Protection Agency awards.",
         "- USAspending procurement bridge: multi-agency fiscal-year 2024 top-award rows for procurement concentration diagnostics, kept separate from the EPA calibration slice.",

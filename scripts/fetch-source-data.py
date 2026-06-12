@@ -6,6 +6,7 @@ from __future__ import annotations
 import argparse
 import csv
 import hashlib
+import html
 from io import StringIO
 import json
 import os
@@ -51,6 +52,9 @@ def main() -> int:
     nyc_public_financing = subparsers.add_parser("nyc-public-financing", help="Fetch NYC CFB public-funds payments.")
     nyc_public_financing.add_argument("--output", type=Path, default=Path("data/raw/public-financing.csv"))
 
+    seattle_democracy_vouchers = subparsers.add_parser("seattle-democracy-vouchers", help="Fetch Seattle Democracy Voucher program rows.")
+    seattle_democracy_vouchers.add_argument("--output", type=Path, default=Path("data/raw/public-financing.csv"))
+
     nyc_intermediaries = subparsers.add_parser("nyc-intermediaries", help="Fetch NYC CFB intermediary fundraising rows.")
     nyc_intermediaries.add_argument("--output", type=Path, default=Path("data/raw/intermediaries.csv"))
 
@@ -78,6 +82,8 @@ def main() -> int:
         return fetch_usaspending_actions(args.output)
     if args.kind == "nyc-public-financing":
         return fetch_nyc_public_financing(args.output)
+    if args.kind == "seattle-democracy-vouchers":
+        return fetch_seattle_democracy_vouchers(args.output)
     if args.kind == "nyc-intermediaries":
         return fetch_nyc_intermediaries(args.output)
     if args.kind == "irs-eo-bmf":
@@ -903,6 +909,8 @@ def normalize_usaspending_direct_transaction_records(transactions: list[dict[str
 
 
 NYC_PUBLIC_FINANCING_SOURCE = "NYC Campaign Finance Board"
+SEATTLE_DVP_SOURCE = "Seattle Democracy Voucher Program"
+SEATTLE_DVP_PROGRAM_DATA_PAGE = "https://www.seattle.gov/ethics-and-elections/democracy-voucher-program/program-data"
 INTERMEDIARY_FIELDS = [
     "organization",
     "ein",
@@ -932,6 +940,95 @@ def fetch_nyc_public_financing(output: Path) -> int:
     rows = normalize_nyc_public_financing_records(payments, analysis, payments_url, election)
     write_rows(output, FEC_FIELDS, rows, "NYC CFB public-funds payment rows")
     return 0
+
+
+def fetch_seattle_democracy_vouchers(output: Path) -> int:
+    source_url = os.environ.get("SEATTLE_DVP_XLSX_URL") or latest_seattle_dvp_xlsx_url()
+    records = seattle_democracy_voucher_source_rows(source_url)
+    rows = normalize_seattle_democracy_voucher_records(records, source_url)
+    write_rows(output, FEC_FIELDS, rows, "Seattle Democracy Voucher program rows")
+    return 0
+
+
+def latest_seattle_dvp_xlsx_url() -> str:
+    page_url = os.environ.get("SEATTLE_DVP_PROGRAM_DATA_PAGE", SEATTLE_DVP_PROGRAM_DATA_PAGE)
+    page = get_text(page_url)
+    matches = re.findall(r'href=["\']([^"\']+\.xlsx)["\']', page, flags=re.IGNORECASE)
+    if not matches:
+        raise SystemExit(f"{redact_url(page_url)} did not expose a Democracy Voucher XLSX link.")
+    root = "https://www.seattle.gov"
+    urls = [absolute_seattle_url(html.unescape(match), root) for match in matches]
+    urls.sort(reverse=True)
+    return urls[0]
+
+
+def absolute_seattle_url(href: str, root: str) -> str:
+    if href.startswith(("http://", "https://")):
+        return href
+    if href.startswith("/"):
+        return root + href
+    return root + "/" + href
+
+
+def seattle_democracy_voucher_source_rows(source_url: str) -> list[dict[str, str]]:
+    max_rows = int_env("SEATTLE_DVP_MAX_ROWS", 50000, 1, 500000)
+    with tempfile.TemporaryFile() as workbook_file:
+        download_binary(source_url, workbook_file)
+        workbook_file.seek(0)
+        rows = xlsx_rows_from_file(workbook_file, os.environ.get("SEATTLE_DVP_SHEET", "Web Program Data"), max_rows)
+    if not rows:
+        raise SystemExit(f"{redact_url(source_url)} returned no Democracy Voucher rows.")
+    write_raw_binary_source_manifest(source_url, "seattle-democracy-vouchers", len(rows), [])
+    return rows
+
+
+def normalize_seattle_democracy_voucher_records(records: list[dict[str, str]], source_url: str = "") -> list[dict[str, object]]:
+    accepted_statuses = {
+        status.lower()
+        for status in split_csv_env("SEATTLE_DVP_ACCEPTED_STATUSES", "Redeemed,Accepted")
+    }
+    voucher_value = float_env("SEATTLE_DVP_VOUCHER_VALUE", 25.0, 0.0, 1000.0)
+    minimum_vouchers = int_env("SEATTLE_DVP_MIN_VOUCHERS", 2, 1, 100000)
+    disclosure_lag = float_env("SEATTLE_DVP_DISCLOSURE_LAG", 0.08, 0.0, 1.0)
+    campaign_counts: dict[str, int] = {}
+    status_counts: dict[str, int] = {}
+    for record in records:
+        status = first_text(record, "Voucher Status", "status", "voucher_status", default="").strip()
+        status_counts[status] = status_counts.get(status, 0) + 1
+        if status.lower() not in accepted_statuses:
+            continue
+        campaign = first_text(record, "Assigned Campaign", "assigned_campaign", "campaign", default="").strip()
+        if not campaign or campaign.lower() == "unassigned":
+            continue
+        campaign_counts[campaign] = campaign_counts.get(campaign, 0) + 1
+    rows: list[dict[str, object]] = []
+    for campaign, voucher_count in sorted(campaign_counts.items()):
+        if voucher_count < minimum_vouchers:
+            continue
+        amount = voucher_count * voucher_value
+        digest = hashlib.sha256(campaign.encode("utf-8")).hexdigest()[:10]
+        rows.append(
+            {
+                "source": SEATTLE_DVP_SOURCE,
+                "recipient": campaign,
+                "issueDomain": "democracy",
+                "amount": money_millions(str(amount)),
+                "flowType": "DEMOCRACY_VOUCHER",
+                "traceability": 0.98,
+                "largeDonorShare": 0.04,
+                "sourceRecordId": f"seattle-dvp-{digest}",
+                "sourceUrl": source_url,
+                "committeeType": "municipal democracy vouchers",
+                "spendingPurpose": f"{voucher_count} accepted or redeemed vouchers",
+                "supportOppose": "",
+                "disclosureLag": disclosure_lag,
+            }
+        )
+    rows.sort(key=lambda row: (float(row["amount"]), str(row["recipient"])), reverse=True)
+    if not rows:
+        details = ", ".join(f"{key}={value}" for key, value in sorted(status_counts.items())[:8])
+        raise SystemExit(f"Seattle Democracy Voucher workbook had no accepted voucher rows after filters ({details}).")
+    return rows
 
 
 def normalize_nyc_public_financing_records(
@@ -1463,6 +1560,121 @@ def csv_rows_from_url(url: str, max_rows: int) -> list[dict[str, str]]:
     if not rows:
         raise SystemExit(f"{redact_url(url)} returned no CSV rows.")
     return rows
+
+
+def xlsx_rows_from_file(workbook_file, sheet_name: str | None = None, max_rows: int = 50000) -> list[dict[str, str]]:
+    with zipfile.ZipFile(workbook_file) as archive:
+        shared_strings = xlsx_shared_strings(archive)
+        worksheet = xlsx_worksheet_member(archive, sheet_name)
+        xml_root = ET_from_zip(archive, worksheet)
+        namespace = {"a": "http://schemas.openxmlformats.org/spreadsheetml/2006/main"}
+        matrix: list[list[str]] = []
+        for row in xml_root.findall(".//a:sheetData/a:row", namespace):
+            values: list[str] = []
+            for cell in row.findall("a:c", namespace):
+                column = xlsx_cell_column_index(cell.attrib.get("r", ""))
+                while len(values) <= column:
+                    values.append("")
+                values[column] = xlsx_cell_value(cell, shared_strings, namespace)
+            matrix.append(values)
+            if len(matrix) > max_rows:
+                break
+    if not matrix:
+        return []
+    header = [value.strip() for value in matrix[0]]
+    rows: list[dict[str, str]] = []
+    for values in matrix[1:]:
+        if not any(value.strip() for value in values):
+            continue
+        row = {
+            header[index]: values[index].strip() if index < len(values) else ""
+            for index in range(len(header))
+            if header[index]
+        }
+        rows.append(row)
+        if len(rows) >= max_rows:
+            break
+    return rows
+
+
+def xlsx_shared_strings(archive: zipfile.ZipFile) -> list[str]:
+    if "xl/sharedStrings.xml" not in archive.namelist():
+        return []
+    namespace = {"a": "http://schemas.openxmlformats.org/spreadsheetml/2006/main"}
+    root = ET_from_zip(archive, "xl/sharedStrings.xml")
+    strings: list[str] = []
+    for item in root.findall("a:si", namespace):
+        strings.append("".join(text.text or "" for text in item.findall(".//a:t", namespace)))
+    return strings
+
+
+def xlsx_worksheet_member(archive: zipfile.ZipFile, sheet_name: str | None) -> str:
+    worksheets = sorted(name for name in archive.namelist() if re.fullmatch(r"xl/worksheets/sheet\d+\.xml", name))
+    if not worksheets:
+        raise SystemExit("XLSX workbook did not contain worksheet XML.")
+    if not sheet_name:
+        return worksheets[0]
+    namespace = {
+        "a": "http://schemas.openxmlformats.org/spreadsheetml/2006/main",
+        "r": "http://schemas.openxmlformats.org/officeDocument/2006/relationships",
+    }
+    try:
+        workbook = ET_from_zip(archive, "xl/workbook.xml")
+        rels = xlsx_workbook_relationships(archive)
+    except KeyError:
+        return worksheets[0]
+    for sheet in workbook.findall("a:sheets/a:sheet", namespace):
+        if sheet.attrib.get("name") != sheet_name:
+            continue
+        relationship_id = sheet.attrib.get("{http://schemas.openxmlformats.org/officeDocument/2006/relationships}id", "")
+        target = rels.get(relationship_id, "")
+        if not target:
+            break
+        member = "xl/" + target.lstrip("/")
+        if member in archive.namelist():
+            return member
+        member = "xl/worksheets/" + Path(target).name
+        if member in archive.namelist():
+            return member
+    return worksheets[0]
+
+
+def xlsx_workbook_relationships(archive: zipfile.ZipFile) -> dict[str, str]:
+    namespace = {"r": "http://schemas.openxmlformats.org/package/2006/relationships"}
+    root = ET_from_zip(archive, "xl/_rels/workbook.xml.rels")
+    return {
+        relationship.attrib.get("Id", ""): relationship.attrib.get("Target", "")
+        for relationship in root.findall("r:Relationship", namespace)
+    }
+
+
+def xlsx_cell_column_index(reference: str) -> int:
+    letters = "".join(ch for ch in reference if ch.isalpha()).upper()
+    if not letters:
+        return 0
+    index = 0
+    for letter in letters:
+        index = index * 26 + (ord(letter) - ord("A") + 1)
+    return index - 1
+
+
+def xlsx_cell_value(cell, shared_strings: list[str], namespace: dict[str, str]) -> str:
+    if cell.attrib.get("t") == "inlineStr":
+        return "".join(text.text or "" for text in cell.findall(".//a:t", namespace))
+    value = cell.find("a:v", namespace)
+    if value is None or value.text is None:
+        return ""
+    text = value.text
+    if cell.attrib.get("t") == "s":
+        index = int(text)
+        return shared_strings[index] if index < len(shared_strings) else ""
+    return text
+
+
+def ET_from_zip(archive: zipfile.ZipFile, member: str):
+    import xml.etree.ElementTree as ET
+
+    return ET.fromstring(archive.read(member))
 
 
 def usaspending_award_detail(base: str, record: dict[str, object]) -> dict[str, object]:

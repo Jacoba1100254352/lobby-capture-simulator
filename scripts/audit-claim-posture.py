@@ -104,7 +104,7 @@ def posture_rows(
                 f"; {dependency_counts.get('bounded', 0)} bounded claim dependencies"
             ),
             "The bridge constrains plausible ranges and flags evidence gaps; it does not validate hidden-channel magnitudes.",
-            "Prioritize direct dark-money, electoral-communication, public-financing, revolving-door, and procurement-action panels.",
+            "Prioritize direct dark-money, revolving-door, and representative procurement action panels; broaden electoral-communication and public-financing rows as secondary coverage upgrades.",
         ),
         row(
             "Calibrated policy-simulation claim",

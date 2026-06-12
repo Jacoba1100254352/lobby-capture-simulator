@@ -11,7 +11,7 @@ fec-C00027466,ok,normalized rows appended
 fec-C00075820,ok,normalized rows appended
 fec-schedule-e,ok,normalized independent-expenditure rows appended
 fec-electoral-communications,ok,normalized electioneering and communication-cost rows appended
-public-financing,ok,normalized NYC CFB public-financing rows written
+public-financing,ok,NYC CFB public-financing rows; Seattle Democracy Voucher rows;
 dark-money,ok,normalized IRS EO BMF opaque-capacity proxy rows written
 regulations-gov,ok,normalized rows appended
 federal-register,ok,normalized rows appended

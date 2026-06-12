@@ -4,22 +4,22 @@
 \begin{minipage}{\textwidth}
 \centering
 \scriptsize
-\setlength{\tabcolsep}{2pt}
+\setlength{\tabcolsep}{1pt}
 \begin{tabular*}{\textwidth}{@{\extracolsep{\fill}}llllll@{}}
 \toprule
-Panel & Mechanism & Evidence & Snapshot support & Schema scaffold & Status \\
+Panel & Mechanism & Evidence & Support & Scaffold & Status \\
 \midrule
-Direct dark money & Opaque donor routing & proxy/thin & thin proxy bridge & yes & thin \\
+Direct DM & Opaque donor routing & proxy/thin & thin proxy & yes & thin \\
 Outside spending & Independent expenditures & direct & direct rows & no & usable \\
-Electoral comms. & Electioneering/communication costs & direct & direct rows & no & usable \\
-Public financing & Public financing & direct if present & thin program rows & yes & thin \\
+Electoral comms. & Electioneering & direct & direct rows & no & usable \\
+Public fin. & Public financing & direct rows & NYC+Seattle rows & yes & usable \\
 Intermediaries & Intermediaries & proxy & proxy rows & yes & usable \\
-IRS 527 orgs. & 527 receipts/disbursements & direct 527 filings & bounded direct rows & yes & usable \\
-Revolving door & Revolving door & proxy/thin & thin proxy rows & no & thin \\
-Proc. IDs & Procurement matching & direct IDs & direct ID coverage & yes & usable \\
-Proc. concentration & Multi-agency concentration & top-award bridge & top-award bridge & no & thin \\
-Proc. actions & Action-history denominator & direct if present & action rows & yes & usable \\
-Proc. mods & Post-award pressure & proxy/thin & high mod-action share & yes & warning \\
+IRS 527 orgs. & 527 receipts/disbursements & direct 527 filings & bounded rows & yes & usable \\
+Rev. door & Revolving door & proxy/thin & thin proxy rows & no & thin \\
+Proc. IDs & Procurement matching & direct IDs & ID coverage & yes & usable \\
+Proc. conc. & Multi-agency conc. & top-award bridge & top-award & no & thin \\
+Proc. actions & Action denominator & direct rows & action rows & yes & usable \\
+Proc. mods & Post-award pressure & proxy/thin & high mod share & yes & warning \\
 \bottomrule
 \end{tabular*}
 \par\smallskip

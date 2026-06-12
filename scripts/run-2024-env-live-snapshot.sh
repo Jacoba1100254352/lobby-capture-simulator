@@ -97,15 +97,33 @@ if [ -n "${PUBLIC_FINANCING_LIVE_CSV:-}" ] || [ -n "${PUBLIC_FINANCING_LIVE_URL:
     printf "public-financing,unavailable,configured public-financing source could not be normalized\n" >> "$status_file"
   fi
 elif [ "${PUBLIC_FINANCING_SOURCE_NATIVE:-1}" = "1" ]; then
+  public_financing_written=0
+  public_financing_notes=""
   if SOURCE_RAW_DIR="$raw_dir/nyc-cfb-public-financing" \
     NYC_CFB_ELECTION="${NYC_CFB_ELECTION:-2025}" \
     NYC_CFB_PUBLIC_PAYMENTS_MAX_ROWS="${NYC_CFB_PUBLIC_PAYMENTS_MAX_ROWS:-5000}" \
     NYC_CFB_FINANCIAL_ANALYSIS_MAX_ROWS="${NYC_CFB_FINANCIAL_ANALYSIS_MAX_ROWS:-5000}" \
-      python3 scripts/fetch-source-data.py nyc-public-financing --output data/raw/public-financing.csv; then
-    printf "public-financing,ok,normalized NYC CFB public-financing rows written\n" >> "$status_file"
+      python3 scripts/fetch-source-data.py nyc-public-financing --output "$tmpdir/nyc-public-financing.csv"; then
+    append_csv "$tmpdir/nyc-public-financing.csv" data/raw/public-financing.csv
+    public_financing_written=1
+    public_financing_notes="${public_financing_notes}NYC CFB public-financing rows; "
+  else
+    public_financing_notes="${public_financing_notes}NYC CFB source-native public-financing request failed; "
+  fi
+  if SOURCE_RAW_DIR="$raw_dir/seattle-democracy-vouchers" \
+    SEATTLE_DVP_MAX_ROWS="${SEATTLE_DVP_MAX_ROWS:-50000}" \
+      python3 scripts/fetch-source-data.py seattle-democracy-vouchers --output "$tmpdir/seattle-democracy-vouchers.csv"; then
+    append_csv "$tmpdir/seattle-democracy-vouchers.csv" data/raw/public-financing.csv
+    public_financing_written=1
+    public_financing_notes="${public_financing_notes}Seattle Democracy Voucher rows; "
+  else
+    public_financing_notes="${public_financing_notes}Seattle Democracy Voucher source-native request failed; "
+  fi
+  if [ "$public_financing_written" = "1" ]; then
+    printf "public-financing,ok,%s\n" "$public_financing_notes" >> "$status_file"
   else
     ./scripts/fetch-public-financing.sh
-    printf "public-financing,fixture,NYC CFB source-native public-financing request failed; fixture copied for schema continuity\n" >> "$status_file"
+    printf "public-financing,fixture,%sfixture copied for schema continuity\n" "$public_financing_notes" >> "$status_file"
   fi
 else
   ./scripts/fetch-public-financing.sh

@@ -10,7 +10,7 @@ Scope:
 - FEC cycle: 2024, with the six national party committees as the first electoral-pressure panel.
 - Outside-spending bridge: OpenFEC Schedule E independent expenditures.
 - Electoral-communication bridge: OpenFEC electioneering communications and communication-cost rows when available.
-- Public-financing bridge: NYC CFB public-funds payments or configured program export rows carried as a separate bridge panel.
+- Public-financing bridge: NYC CFB public-funds payments, Seattle Democracy Voucher rows, or configured program export rows carried as a separate bridge panel.
 - Dark-money bridge: configured source export rows or IRS EO BMF 501(c)(4)/(c)(6) opaque-capacity proxy rows; super PAC rows remain separate.
 - USAspending fiscal year: 2024, Environmental Protection Agency awards.
 - USAspending procurement bridge: multi-agency fiscal-year 2024 top-award rows for procurement concentration diagnostics, kept separate from the EPA calibration slice.
@@ -24,7 +24,7 @@ The current command freezes whatever normalized files are present under `data/ra
 | --- | ---: | --- | --- |
 | lda | 121 | live | `data/snapshots/2024-env/normalized/lda-lobbying.csv` |
 | fec | 1269 | live | `data/snapshots/2024-env/normalized/fec-campaign-finance.csv` |
-| public-financing | 132 | live | `data/snapshots/2024-env/normalized/public-financing.csv` |
+| public-financing | 135 | live | `data/snapshots/2024-env/normalized/public-financing.csv` |
 | dark-money | 250 | live | `data/snapshots/2024-env/normalized/dark-money.csv` |
 | regulatory | 200 | live | `data/snapshots/2024-env/normalized/regulatory-dockets.csv` |
 | usaspending | 200 | live | `data/snapshots/2024-env/normalized/usaspending-awards.csv` |

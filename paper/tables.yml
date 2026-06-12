@@ -237,7 +237,7 @@
       "size": "scriptsize",
       "environment": "inline-table",
       "width": "\\textwidth",
-      "tabcolsep": "2pt",
+      "tabcolsep": "1pt",
       "rows": [
         "open-access-lobbying",
         "dark-money-dominant",
@@ -307,7 +307,7 @@
       "size": "scriptsize",
       "environment": "longtable",
       "width": "\\linewidth",
-      "tabcolsep": "2pt",
+      "tabcolsep": "1pt",
       "rows": [
         "open-access-lobbying",
         "budgeted-disclosed-lobbying",
@@ -690,7 +690,7 @@
       "size": "scriptsize",
       "environment": "inline-table",
       "width": "\\textwidth",
-      "tabcolsep": "2pt",
+      "tabcolsep": "1pt",
       "rowMode": "all",
       "columns": [
         {
@@ -698,15 +698,15 @@
           "source": "panel",
           "format": "label",
           "labels": {
-            "Direct dark money": "Direct dark money",
+            "Direct dark money": "Direct DM",
             "Outside spending": "Outside spending",
             "Electoral communications": "Electoral comms.",
-            "Public financing": "Public financing",
+            "Public financing": "Public fin.",
             "Intermediaries": "Intermediaries",
             "IRS 527 political organizations": "IRS 527 orgs.",
-            "Revolving door": "Revolving door",
+            "Revolving door": "Rev. door",
             "Procurement identifiers": "Proc. IDs",
-            "Procurement concentration bridge": "Proc. concentration",
+            "Procurement concentration bridge": "Proc. conc.",
             "Procurement action history": "Proc. actions",
             "Procurement modification risk": "Proc. mods"
           }
@@ -719,14 +719,14 @@
           "labels": {
             "Opaque donor routing and hidden electoral influence": "Opaque donor routing",
             "Independent expenditure pressure outside candidate finance": "Independent expenditures",
-            "Electioneering and communication-cost channels outside ordinary receipts": "Electioneering/communication costs",
+            "Electioneering and communication-cost channels outside ordinary receipts": "Electioneering",
             "Countervailing campaign finance and voucher/matching funds": "Public financing",
             "Association, nonprofit, think-tank, and campaign-intermediary capacity": "Intermediaries",
             "Political-organization receipts and disbursements for campaign-adjacent intermediaries": "527 receipts/disbursements",
             "Post-government access, covered-position links, and cooling-off exposure": "Revolving door",
             "Vendor and award-path matching for procurement influence": "Procurement matching",
-            "Multi-agency vendor and agency concentration diagnostics": "Multi-agency concentration",
-            "Transaction/action denominator for post-award modification incidence": "Action-history denominator",
+            "Multi-agency vendor and agency concentration diagnostics": "Multi-agency conc.",
+            "Transaction/action denominator for post-award modification incidence": "Action denominator",
             "Post-award modification and specification-change pressure": "Post-award pressure"
           }
         },
@@ -738,35 +738,36 @@
           "labels": {
             "proxy/thin": "proxy/thin",
             "direct": "direct",
-            "direct when present": "direct if present",
+            "direct program rows when present": "direct rows",
+            "direct when present": "direct rows",
             "proxy": "proxy",
             "direct observed 527 filings": "direct 527 filings",
             "direct identifier coverage": "direct IDs",
             "direct top-award bridge": "top-award bridge",
-            "direct action rows when present": "direct if present"
+            "direct action rows when present": "direct rows"
           }
         },
         {
-          "header": "Snapshot support",
+          "header": "Support",
           "source": "panel",
           "align": "l",
           "format": "label",
           "labels": {
-            "Direct dark money": "thin proxy bridge",
+            "Direct dark money": "thin proxy",
             "Outside spending": "direct rows",
             "Electoral communications": "direct rows",
-            "Public financing": "thin program rows",
+            "Public financing": "NYC+Seattle rows",
             "Intermediaries": "proxy rows",
-            "IRS 527 political organizations": "bounded direct rows",
+            "IRS 527 political organizations": "bounded rows",
             "Revolving door": "thin proxy rows",
-            "Procurement identifiers": "direct ID coverage",
-            "Procurement concentration bridge": "top-award bridge",
+            "Procurement identifiers": "ID coverage",
+            "Procurement concentration bridge": "top-award",
             "Procurement action history": "action rows",
-            "Procurement modification risk": "high mod-action share"
+            "Procurement modification risk": "high mod share"
           }
         },
         {
-          "header": "Schema scaffold",
+          "header": "Scaffold",
           "source": "fixtureSupported",
           "align": "l",
           "format": "label",

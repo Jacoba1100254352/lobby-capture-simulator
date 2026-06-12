@@ -7,6 +7,8 @@ import importlib.util
 import json
 import os
 from pathlib import Path
+import tempfile
+import zipfile
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -21,6 +23,7 @@ def main() -> int:
     assert_federal_register(fetchers)
     assert_usaspending(fetchers)
     assert_nyc_public_financing(fetchers)
+    assert_seattle_democracy_vouchers(fetchers)
     assert_nyc_intermediaries(fetchers)
     assert_irs_eo_bmf(fetchers)
     assert_irs_dark_money_capacity(fetchers)
@@ -240,6 +243,41 @@ def assert_nyc_public_financing(fetchers) -> None:
     ], rows
 
 
+def assert_seattle_democracy_vouchers(fetchers) -> None:
+    with tempfile.TemporaryFile() as workbook:
+        write_minimal_xlsx(
+            workbook,
+            "Web Program Data",
+            [
+                ["Voucher Number", "Participant", "Assigned Campaign", "Received Date", "Voucher Status", "Participant ID (Participant) (Contact)"],
+                ["A00000001", "Resident One", "Example Voucher Candidate", "46103", "Redeemed", "100"],
+                ["A00000002", "Resident Two", "Example Voucher Candidate", "46103", "Accepted", "101"],
+                ["A00000003", "Resident Three", "Ignored Candidate", "46103", "Under Review", "102"],
+                ["A00000004", "Resident Four", "Unassigned", "46103", "Redeemed", "103"],
+            ],
+        )
+        workbook.seek(0)
+        records = fetchers.xlsx_rows_from_file(workbook, "Web Program Data", 100)
+    rows = fetchers.normalize_seattle_democracy_voucher_records(records, "https://www.seattle.gov/example.xlsx")
+    assert rows == [
+        {
+            "source": "Seattle Democracy Voucher Program",
+            "recipient": "Example Voucher Candidate",
+            "issueDomain": "democracy",
+            "amount": 0.0001,
+            "flowType": "DEMOCRACY_VOUCHER",
+            "traceability": 0.98,
+            "largeDonorShare": 0.04,
+            "sourceRecordId": "seattle-dvp-9d90f961eb",
+            "sourceUrl": "https://www.seattle.gov/example.xlsx",
+            "committeeType": "municipal democracy vouchers",
+            "spendingPurpose": "2 accepted or redeemed vouchers",
+            "supportOppose": "",
+            "disclosureLag": 0.08,
+        }
+    ], rows
+
+
 def assert_nyc_intermediaries(fetchers) -> None:
     records = [
         {
@@ -406,6 +444,63 @@ def assert_irs_527(fetchers) -> None:
 def read_json(name: str):
     with (FIXTURES / name).open(encoding="utf-8") as source:
         return json.load(source)
+
+
+def write_minimal_xlsx(destination, sheet_name: str, rows: list[list[str]]) -> None:
+    shared: list[str] = []
+    shared_index: dict[str, int] = {}
+
+    def shared_id(value: str) -> int:
+        if value not in shared_index:
+            shared_index[value] = len(shared)
+            shared.append(value)
+        return shared_index[value]
+
+    sheet_rows = []
+    for row_index, row in enumerate(rows, 1):
+        cells = []
+        for column_index, value in enumerate(row):
+            reference = f"{xlsx_column(column_index)}{row_index}"
+            cells.append(f'<c r="{reference}" t="s"><v>{shared_id(value)}</v></c>')
+        sheet_rows.append(f'<row r="{row_index}">{"".join(cells)}</row>')
+
+    shared_items = "".join(f"<si><t>{xml_escape(value)}</t></si>" for value in shared)
+    with zipfile.ZipFile(destination, "w") as archive:
+        archive.writestr("[Content_Types].xml", """<?xml version="1.0" encoding="UTF-8"?>
+<Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types">
+  <Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/>
+  <Default Extension="xml" ContentType="application/xml"/>
+  <Override PartName="/xl/workbook.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet.main+xml"/>
+  <Override PartName="/xl/worksheets/sheet1.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.worksheet+xml"/>
+  <Override PartName="/xl/sharedStrings.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.sharedStrings+xml"/>
+</Types>""")
+        archive.writestr("xl/workbook.xml", f"""<?xml version="1.0" encoding="UTF-8"?>
+<workbook xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships">
+  <sheets><sheet name="{xml_escape(sheet_name)}" sheetId="1" r:id="rId1"/></sheets>
+</workbook>""")
+        archive.writestr("xl/_rels/workbook.xml.rels", """<?xml version="1.0" encoding="UTF-8"?>
+<Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">
+  <Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/worksheet" Target="worksheets/sheet1.xml"/>
+</Relationships>""")
+        archive.writestr("xl/sharedStrings.xml", f"""<?xml version="1.0" encoding="UTF-8"?>
+<sst xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main" count="{len(shared)}" uniqueCount="{len(shared)}">{shared_items}</sst>""")
+        archive.writestr("xl/worksheets/sheet1.xml", f"""<?xml version="1.0" encoding="UTF-8"?>
+<worksheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main">
+  <sheetData>{"".join(sheet_rows)}</sheetData>
+</worksheet>""")
+
+
+def xlsx_column(index: int) -> str:
+    value = ""
+    index += 1
+    while index:
+        index, remainder = divmod(index - 1, 26)
+        value = chr(ord("A") + remainder) + value
+    return value
+
+
+def xml_escape(value: str) -> str:
+    return value.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;").replace('"', "&quot;")
 
 
 if __name__ == "__main__":

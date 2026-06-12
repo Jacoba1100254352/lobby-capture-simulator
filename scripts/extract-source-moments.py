@@ -96,6 +96,9 @@ def fec_moments(scope: str, path: Path, public_financing_path: Path, dark_money_
     public_rows = [row for row in rows if row.get("flowType", "").upper() in {"PUBLIC_MATCH", "DEMOCRACY_VOUCHER"}]
     all_public_rows = public_rows + public_bridge_rows
     all_public_total = sum(number(row.get("amount")) for row in all_public_rows)
+    voucher_rows = [row for row in all_public_rows if row.get("flowType", "").upper() == "DEMOCRACY_VOUCHER"]
+    public_match_rows = [row for row in all_public_rows if row.get("flowType", "").upper() == "PUBLIC_MATCH"]
+    public_programs = {row.get("source", "") for row in all_public_rows if row.get("source", "")}
     opaque_electoral_rows = all_dark_money_rows + super_pac_rows
     outside_rows = [
         row for row in rows
@@ -127,6 +130,10 @@ def fec_moments(scope: str, path: Path, public_financing_path: Path, dark_money_
         moment(scope, "fec", "outsideSpendingTop3SourceShare", top_share(by_outside_source, 3), "observed_proxy", "top three outside spenders by normalized amount"),
         moment(scope, "fec", "outsideSpendingDisclosureLagMean", weighted(outside_rows, "disclosureLag", "amount"), "observed_proxy", "amount-weighted reporting lag among outside-spending rows"),
         moment(scope, "fec", "publicFinancingRows", len(all_public_rows), "observed_proxy", "public-match or voucher rows from FEC or explicit public-financing panel"),
+        moment(scope, "fec", "publicFinancingProgramCount", len(public_programs), "observed_proxy", "distinct public-financing program sources represented"),
+        moment(scope, "fec", "publicFinancingVoucherRows", len(voucher_rows), "observed", "democracy-voucher rows from explicit public-financing panels"),
+        moment(scope, "fec", "publicFinancingMatchingRows", len(public_match_rows), "observed", "public matching-fund rows from explicit public-financing panels"),
+        moment(scope, "fec", "publicFinancingVoucherAmount", sum(number(row.get("amount")) for row in voucher_rows), "observed_proxy", "sum of normalized democracy-voucher amount"),
         moment(scope, "fec", "publicFinancingProgramAmount", all_public_total, "observed_proxy", "sum of public-match and voucher bridge amount"),
         moment(scope, "fec", "publicFinancingSourceShare", safe_divide(all_public_total, campaign_total), "observed_proxy", "public-match or voucher share of normalized campaign-finance plus bridge amount"),
         moment(scope, "fec", "publicFinancingTraceabilityMean", weighted(all_public_rows, "traceability", "amount"), "observed_proxy", "amount-weighted traceability among public-financing rows"),

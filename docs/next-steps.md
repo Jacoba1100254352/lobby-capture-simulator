@@ -26,7 +26,7 @@ The simulator now has a lobbying-centered model core with calibration fixtures, 
 - `docs/source-data-roadmap.md` records the direct/proxy/restricted public-data roadmap for LDA, FEC, IRS, nonprofit, procurement, rulemaking, witness, advisory-committee, OGE, OpenSecrets, LegiStorm, and ProPublica-style panels.
 - `make snapshot-2024-env` writes a closed-window snapshot manifest and freezes normalized rows for the 2024 environmental validation slice.
 - `scripts/run-2024-env-live-snapshot.sh` executes the pinned 2024 EPA/ENV live run, preserves ignored raw payloads, and records public API rate-limit gaps.
-- The default live-run pipeline uses source-native no-key NYC CFB public-financing rows, NYC CFB intermediary rows, IRS EO BMF nonprofit/association capacity rows, and IRS EO BMF 501(c)(4)/(c)(6) opaque-capacity proxy rows when configured. These replace fixture fallback for the default refresh path, but the dark-money bridge remains a capacity proxy rather than direct observed hidden donor/expenditure data.
+- The default live-run pipeline uses source-native no-key NYC CFB public-financing rows, Seattle Democracy Voucher rows, NYC CFB intermediary rows, IRS EO BMF nonprofit/association capacity rows, and IRS EO BMF 501(c)(4)/(c)(6) opaque-capacity proxy rows when configured. These replace fixture fallback for the default refresh path, but the dark-money bridge remains a capacity proxy rather than direct observed hidden donor/expenditure data.
 - `--live` fetch modes can normalize caller-provided CSVs or query LDA, OpenFEC, Regulations.gov, and Federal Register APIs directly.
 - Source-native parser fixtures exercise LDA, OpenFEC contribution, OpenFEC electioneering, OpenFEC communication-cost, Regulations.gov, Federal Register, USAspending award JSON, and USAspending transaction JSON without network access.
 - Live source fetches retry transient `429` and `5xx` responses and redact API keys from error URLs.
@@ -56,7 +56,7 @@ The latest key-backed live run now completes the LDA, six-committee OpenFEC, Sch
 Deliverables:
 
 - add direct dark-money identifiers and lobbyist-bundling rows rather than treating Schedule E, electioneering, communication-cost, or IRS opaque-capacity proxy rows as observed hidden-donor routing;
-- replace the public-financing bridge with representative voucher and matching-fund source panels;
+- broaden the public-financing bridge from NYC matching-fund and Seattle voucher rows into representative federal, state, and additional local voucher and matching-fund source panels;
 - broaden the IRS 8871/8872 bridge beyond the default A-G Form 8872 slice and add TEOS/Form 990 XML rows for 501(c)(4)s, 501(c)(6)s, think tanks, associations, and nonprofit intermediaries;
 - add FACA, House witness disclosure, and OGE panels for sponsored-expert, advisory-committee, and official-access bridges;
 - expand the LDA-derived revolving-door bridge with documented post-employment movement, advisory-committee, witness, OGE, or licensed personnel panels;

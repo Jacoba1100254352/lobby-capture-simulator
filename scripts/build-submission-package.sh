@@ -43,6 +43,9 @@ if [ ! -f "$PAPER_DIR/supplement.pdf" ]; then
   (cd "$PAPER_DIR" && pdflatex -interaction=nonstopmode supplement.tex && pdflatex -interaction=nonstopmode supplement.tex)
 fi
 
+if [ -d "$DIST_DIR" ]; then
+  find "$DIST_DIR" -maxdepth 1 -type f -name 'lobby-capture-wiley-submission [0-9]*.zip' -exec rm -f {} +
+fi
 rm -rf "$STAGING_DIR" "$ZIP_PATH"
 mkdir -p "$STAGING_DIR"
 

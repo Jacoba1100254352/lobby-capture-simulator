@@ -85,6 +85,7 @@ paper-build:
 	cd paper && $(PDFLATEX) -interaction=nonstopmode $(PAPER_BASENAME).tex
 
 paper-supplement-build:
+	find paper -maxdepth 1 -type f -name 'supplement [0-9]*.aux' -exec rm -f {} +
 	rm -f paper/supplement.aux paper/supplement.bbl paper/supplement.blg
 	cd paper && $(PDFLATEX) -interaction=nonstopmode supplement.tex
 	cd paper && $(PDFLATEX) -interaction=nonstopmode supplement.tex

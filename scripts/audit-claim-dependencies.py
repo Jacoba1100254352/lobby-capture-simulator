@@ -66,10 +66,10 @@ CLAIMS = [
         "key": "public-financing-counterweight",
         "family": "Public-financing counterweight",
         "panels": ["Public financing"],
-        "moments": [("publicFinancingRows", 50.0), ("publicFinancingSourceShare", 0.01)],
-        "permitted": "Thin program-row anchor for countervailing campaign-finance mechanisms.",
+        "moments": [("publicFinancingRows", 50.0), ("publicFinancingProgramCount", 2.0)],
+        "permitted": "Bounded local-program anchor for countervailing campaign-finance mechanisms.",
         "avoid": "Do not claim representative national public-financing uptake.",
-        "next": "Add NYC, Seattle, federal, and additional local program rows with archived source files.",
+        "next": "Add federal, state, and additional local program rows with archived source files.",
     },
     {
         "key": "revolving-door-cooling-off",
@@ -358,7 +358,7 @@ def posture_label(status: str) -> str:
 def table_support(row: dict[str, str]) -> str:
     return {
         "strategic-substitution-mechanism": "Thin direct dark-money and revolving-door panels.",
-        "public-financing-counterweight": "Thin public-financing program panel.",
+        "public-financing-counterweight": "Bounded local public-financing program panel.",
         "revolving-door-cooling-off": "Thin LDA-derived revolving-door proxy.",
         "hidden-channel-magnitude": "Thin direct dark-money and revolving-door proxies; bounded electoral-communication bridge present.",
         "procurement-modification-capture": "No action rows; modification moment below threshold.",
@@ -369,7 +369,7 @@ def table_support(row: dict[str, str]) -> str:
 def table_use(row: dict[str, str]) -> str:
     return {
         "strategic-substitution-mechanism": "Mechanism stress tests.",
-        "public-financing-counterweight": "Thin countervailing-finance anchor.",
+        "public-financing-counterweight": "Bounded countervailing-finance anchor.",
         "revolving-door-cooling-off": "Proxy-backed cooling-off diagnostics.",
         "hidden-channel-magnitude": "Missingness and proxy-gap diagnosis only.",
         "procurement-modification-capture": "Coverage warning and schema check.",
@@ -380,7 +380,7 @@ def table_use(row: dict[str, str]) -> str:
 def table_next(row: dict[str, str]) -> str:
     return {
         "strategic-substitution-mechanism": "Direct routing, personnel, and action exports.",
-        "public-financing-counterweight": "Broader public-program rows.",
+        "public-financing-counterweight": "Federal, state, and additional local rows.",
         "revolving-door-cooling-off": "OGE, FACA, witness, or personnel exports.",
         "hidden-channel-magnitude": "Direct hidden-donor/nonprofit-routing rows plus broader electoral-communication coverage.",
         "procurement-modification-capture": "Representative SAM/FPDS action rows.",

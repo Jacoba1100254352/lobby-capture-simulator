@@ -10,12 +10,12 @@
 
 | Removed component | Total distortion increase | Capture increase | Hidden capture increase | Substitution risk | Comment flooding | Donor Gini | Enforcement capacity |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| No beneficial-owner disclosure | 0.1207 | 0.3759 | 0.0586 | 0.2539 | 0.2163 | 0.4532 | 0.5312 |
-| No enforcement | 0.0894 | 0.3322 | 0.0344 | 0.2124 | 0.2176 | 0.4509 | 0.0437 |
-| No public advocate or blind review | 0.0448 | 0.1947 | -0.0047 | 0.1523 | 0.2490 | 0.4500 | 0.5173 |
-| No public financing or vouchers | 0.0066 | 0.0328 | -0.0003 | 0.1603 | 0.2193 | 0.4556 | 0.5019 |
-| No anti-astroturf authentication | -0.0024 | 0.0119 | -0.0093 | 0.1497 | 0.2424 | 0.4523 | 0.4980 |
-| No cooling-off rules | -0.0072 | -0.0066 | -0.0069 | 0.1505 | 0.2198 | 0.4493 | 0.4964 |
+| No beneficial-owner disclosure | 0.1207 | 0.3759 | 0.0586 | 0.2539 | 0.2163 | 0.4529 | 0.5312 |
+| No enforcement | 0.0894 | 0.3322 | 0.0344 | 0.2124 | 0.2176 | 0.4506 | 0.0437 |
+| No public advocate or blind review | 0.0448 | 0.1947 | -0.0047 | 0.1523 | 0.2490 | 0.4497 | 0.5173 |
+| No public financing or vouchers | 0.0066 | 0.0328 | -0.0003 | 0.1603 | 0.2193 | 0.4553 | 0.5019 |
+| No anti-astroturf authentication | -0.0024 | 0.0119 | -0.0093 | 0.1497 | 0.2424 | 0.4520 | 0.4980 |
+| No cooling-off rules | -0.0072 | -0.0066 | -0.0069 | 0.1505 | 0.2198 | 0.4490 | 0.4964 |
 
 ## Full Snapshot
 

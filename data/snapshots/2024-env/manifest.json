@@ -1,8 +1,8 @@
 {
   "snapshot": "2024-env",
-  "generatedAt": "2026-06-12T04:22:21.447770+00:00",
-  "gitCommit": "5cc5022",
-  "gitTreeState": "clean",
+  "generatedAt": "2026-06-12T04:55:06.742428+00:00",
+  "gitCommit": "d35bfa6",
+  "gitTreeState": "dirty",
   "gitTreeStateScope": "working tree status excluding generated 2024-env snapshot, reports, paper tables, and paper figures",
   "scope": {
     "calendarWindow": "2024-01-01/2024-12-31",
@@ -36,12 +36,12 @@
     {
       "source": "public-financing",
       "description": "Public financing and voucher bridge rows for direct program participation and public-fund share diagnostics.",
-      "requestTemplate": "PUBLIC_FINANCING_SOURCE_NATIVE=1 python3 scripts/fetch-source-data.py nyc-public-financing --output data/raw/public-financing.csv or PUBLIC_FINANCING_LIVE_CSV=/path/to/program-export.csv ./scripts/fetch-public-financing.sh --live",
+      "requestTemplate": "PUBLIC_FINANCING_SOURCE_NATIVE=1 with nyc-public-financing and seattle-democracy-vouchers source-native fetchers, or PUBLIC_FINANCING_LIVE_CSV=/path/to/program-export.csv ./scripts/fetch-public-financing.sh --live",
       "normalizedFile": "data/snapshots/2024-env/normalized/public-financing.csv",
-      "rowCount": 132,
-      "sha256": "f1300218a9044e39c9ce9243f1baf474a6c623b4ac172f3245eb121c547f4165",
+      "rowCount": 135,
+      "sha256": "e83b30ab8dff2247d4be37409ce328bae5963e6eb21d624e54d5a80d5d79aa7d",
       "status": "live",
-      "statusNotes": "public-financing: ok (normalized NYC CFB public-financing rows written)"
+      "statusNotes": "public-financing: ok (NYC CFB public-financing rows; Seattle Democracy Voucher rows;)"
     },
     {
       "source": "dark-money",
@@ -116,6 +116,6 @@
   ],
   "liveRunStatus": {
     "file": "data/snapshots/2024-env/live-run-status.csv",
-    "sha256": "5cf7936532c58922031d56a45333f3a066a03a84fd5d42ef1320dc611501efe3"
+    "sha256": "4d94aa686a3dedbfe5cfb358fa13ae922101f3a031892e21e008dad09da667ac"
   }
 }

@@ -119,6 +119,13 @@ cleanup() {
 trap cleanup EXIT HUP INT TERM
 
 cd "$PAPER_DIR"
+rm -f regulation-governance-wiley.aux \
+  regulation-governance-wiley.bbl \
+  regulation-governance-wiley.blg \
+  regulation-governance-wiley.log \
+  regulation-governance-wiley.out \
+  regulation-governance-wiley.pag \
+  regulation-governance-wiley.synctex.gz
 TEXINPUTS=".wiley-build//:.wiley-template/Optimal-Design-layout//:" \
 BIBINPUTS=".:.wiley-template/Optimal-Design-layout//:" \
 BSTINPUTS=".wiley-build//:.wiley-template/Optimal-Design-layout//:" \

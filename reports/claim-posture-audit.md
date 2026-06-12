@@ -6,8 +6,8 @@ This audit summarizes which claim posture is cleared by the current source panel
 
 | Gate | Status | Evidence | Claim boundary | Next action |
 | --- | --- | --- | --- | --- |
-| Mechanism-model article | cleared | 0 validation misses, 0 unknown validations, 5 weak source panels bounded by claim audit, 3 dependency claims not cleared | The manuscript can present a transparent mechanism model and synthetic stress tests under explicit source limits. | Keep empirical language tied to source moments, source gaps, and model diagnostics. |
-| Empirical bridge | bounded | 3 source-gap validations and 5 thin, warning, fixture-only, or missing panels; 3 bounded claim dependencies | The bridge constrains plausible ranges and flags evidence gaps; it does not validate hidden-channel magnitudes. | Prioritize direct dark-money, electoral-communication, public-financing, revolving-door, and procurement-action panels. |
+| Mechanism-model article | cleared | 0 validation misses, 0 unknown validations, 4 weak source panels bounded by claim audit, 3 dependency claims not cleared | The manuscript can present a transparent mechanism model and synthetic stress tests under explicit source limits. | Keep empirical language tied to source moments, source gaps, and model diagnostics. |
+| Empirical bridge | bounded | 3 source-gap validations and 4 thin, warning, fixture-only, or missing panels; 2 bounded claim dependencies | The bridge constrains plausible ranges and flags evidence gaps; it does not validate hidden-channel magnitudes. | Prioritize direct dark-money, revolving-door, and representative procurement action panels; broaden electoral-communication and public-financing rows as secondary coverage upgrades. |
 | Calibrated policy-simulation claim | not_cleared | 2 P1 and 1 P2 calibration/source actions remain; 3 claim dependencies not cleared | The current artifact should not claim calibrated reform effects or representative national hidden-channel magnitudes. | Clear P1/P2 source gaps and rerun calibration before using calibrated policy-simulation language. |
 | Reproducibility and layout bundle | cleared | layout failures=0, visual checklist=pass | The generated review bundle is reproducible when the paper artifact gate passes. | Rerun the full artifact gate after any source, table, figure, LaTeX, or package change. |
 
@@ -22,24 +22,22 @@ This audit summarizes which claim posture is cleared by the current source panel
 
 ## Weak Source Panels
 
-- Weak panels: `5`
+- Weak panels: `4`
 - `Direct dark money` (thin): coverage is present but thin for article-level calibration
-- `Public financing` (thin): coverage is present but thin for article-level calibration
 - `Revolving door` (thin): coverage is present but thin for article-level calibration
 - `Procurement concentration bridge` (thin): multi-agency top-award bridge is present, but top-award sampling is not representative enough for calibration
 - `Procurement modification risk` (warning): modification-action share is outside the benchmark range, likely reflecting bounded action-sample scope or nonrepresentative transaction coverage
 
 ## Claim-Source Dependencies
 
-- Cleared claim dependencies: `4`
-- Bounded claim dependencies: `3`
+- Cleared claim dependencies: `5`
+- Bounded claim dependencies: `2`
 - Not-cleared claim dependencies: `3`
 - `Strategic substitution mechanism` (bounded): Bounded by weak panels: Direct dark money (thin), Revolving door (thin).
-- `Public-financing counterweight` (bounded): Bounded by weak panels: Public financing (thin).
 - `Revolving-door access` (bounded): Bounded by weak panels: Revolving door (thin).
 - `Hidden-channel magnitude` (not_cleared): Not cleared because of weak panels: Direct dark money (thin), Revolving door (thin).
 - `Procurement modification capture` (not_cleared): Not cleared because of weak panels: Procurement concentration bridge (thin), Procurement modification risk (warning).
-- `Calibrated policy simulation` (not_cleared): Not cleared because of weak panels: Direct dark money (thin), Public financing (thin), Revolving door (thin), Procurement concentration bridge (thin), Procurement modification risk (warning).
+- `Calibrated policy simulation` (not_cleared): Not cleared because of weak panels: Direct dark money (thin), Revolving door (thin), Procurement concentration bridge (thin), Procurement modification risk (warning).
 
 ## P1/P2 Calibration Actions
 
