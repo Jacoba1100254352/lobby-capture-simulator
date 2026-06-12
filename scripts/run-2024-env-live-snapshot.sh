@@ -29,11 +29,11 @@ fetch_usaspending_procurement_actions() {
   USASPENDING_FISCAL_YEAR="${USASPENDING_FISCAL_YEAR:-2024}" \
   USASPENDING_AGENCIES="${USASPENDING_PROCUREMENT_ACTIONS_AGENCIES:-$default_procurement_action_agencies}" \
   USASPENDING_ACTION_PERIOD_BUCKETS="${USASPENDING_PROCUREMENT_ACTIONS_PERIOD_BUCKETS:-quarterly}" \
-  USASPENDING_ACTION_TRANSACTION_PAGE_SIZE="${USASPENDING_PROCUREMENT_ACTIONS_TRANSACTION_PAGE_SIZE:-25}" \
-  USASPENDING_ACTION_TRANSACTION_MAX_PAGES="${USASPENDING_PROCUREMENT_ACTIONS_TRANSACTION_MAX_PAGES:-1}" \
+  USASPENDING_ACTION_TRANSACTION_PAGE_SIZE="${USASPENDING_PROCUREMENT_ACTIONS_TRANSACTION_PAGE_SIZE:-100}" \
+  USASPENDING_ACTION_TRANSACTION_MAX_PAGES="${USASPENDING_PROCUREMENT_ACTIONS_TRANSACTION_MAX_PAGES:-2}" \
   USASPENDING_ACTION_TRANSACTION_SORT="${USASPENDING_PROCUREMENT_ACTIONS_TRANSACTION_SORT:-Transaction Amount}" \
   USASPENDING_ACTION_TRANSACTION_ORDER="${USASPENDING_PROCUREMENT_ACTIONS_TRANSACTION_ORDER:-desc}" \
-  USASPENDING_ACTION_TRANSACTION_SORT_SPECS="${USASPENDING_PROCUREMENT_ACTIONS_TRANSACTION_SORT_SPECS:-Mod:asc;Transaction Amount:desc}" \
+  USASPENDING_ACTION_TRANSACTION_SORT_SPECS="${USASPENDING_PROCUREMENT_ACTIONS_TRANSACTION_SORT_SPECS:-Mod:asc;Transaction Amount:desc;Action Date:asc}" \
     python3 scripts/fetch-source-data.py usaspending-actions --output data/raw/usaspending-procurement-actions.csv
 }
 
@@ -303,7 +303,7 @@ PY
       fi
     fi
   elif fetch_usaspending_procurement_actions; then
-    printf "usaspending-procurement-actions,ok,normalized USAspending procurement action rows written\n" >> "$status_file"
+    printf "usaspending-procurement-actions,ok,normalized expanded USAspending procurement action rows written; agencies=12; periodBuckets=%s; pageSize=%s; maxPages=%s; sortSpecs=%s\n" "${USASPENDING_PROCUREMENT_ACTIONS_PERIOD_BUCKETS:-quarterly}" "${USASPENDING_PROCUREMENT_ACTIONS_TRANSACTION_PAGE_SIZE:-100}" "${USASPENDING_PROCUREMENT_ACTIONS_TRANSACTION_MAX_PAGES:-2}" "${USASPENDING_PROCUREMENT_ACTIONS_TRANSACTION_SORT_SPECS:-Mod:asc;Transaction Amount:desc;Action Date:asc}" >> "$status_file"
   else
     printf "usaspending-procurement-actions,unavailable,upstream USAspending transaction/action request returned no rows or failed\n" >> "$status_file"
   fi
