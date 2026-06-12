@@ -87,7 +87,7 @@ Deliverables:
 Deliverables:
 
 - treat the three P1 procurement source gaps as source-acquisition work, not model tuning: agency concentration, recipient concentration, and ex-post modification incidence need representative SAM/FPDS or demonstrably broader public procurement panels before calibrated policy-simulation claims are available;
-- keep the P3 `largeDonorDependence` partial scoped to campaign/outside-spending stress rows unless a broader donor-identity panel is added;
+- keep the cleared campaign/outside-spending `largeDonorDependence` regression covered by tests, while treating broader hidden-donor identity evidence as a separate source-panel expansion rather than a model-tuning item;
 - keep venue-substitution and hidden-influence partials as scenario-coverage or scenario-family-split work rather than collapsing baseline, stress, and extreme-stress rows into one benchmark;
 - replace synthetic influence-network diagnostics with direct network panels where sources permit;
 - preserve the current claim boundary in the paper until the procurement P1 rows clear in `reports/calibration-queue.md`.

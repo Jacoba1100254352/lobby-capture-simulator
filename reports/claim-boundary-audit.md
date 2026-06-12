@@ -4,8 +4,8 @@ This audit maps each empirical source panel to the strongest manuscript claim it
 
 ## Validation Status Summary
 
-- Fit: `323`
-- Partial: `19`
+- Fit: `324`
+- Partial: `18`
 - Miss: `0`
 - Source gap: `3`
 - Unknown: `0`

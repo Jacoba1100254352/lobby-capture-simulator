@@ -381,10 +381,10 @@ public final class MetricsAccumulator
 				? Values.clamp(Math.max(contest.campaignFinanceInfluence(), contest.darkMoneyInfluence()), 0.0, 1.0)
 				: ledgerLargeDonorDependence;
 		double sourceEstimate = Values.clamp(
-				(0.58 * world.calibratedLargeDonorShare(contest.issueDomain()))
-						+ (0.42 * world.calibratedDonorConcentrationIndex(contest.issueDomain())),
+				(0.66 * world.calibratedLargeDonorShare(contest.issueDomain()))
+						+ (0.34 * world.calibratedDonorConcentrationIndex(contest.issueDomain())),
 				0.0,
-				0.82
+				0.90
 		);
 		double moneyChannelShare = allocation.total() == 0.0
 				? 0.0
@@ -404,9 +404,9 @@ public final class MetricsAccumulator
 				1.0
 		);
 		double sourceWeight = Values.clamp(
-				0.15 + (0.60 * moneyPressure) - (0.35 * publicFinancingCounterweight),
+				0.38 + (1.10 * moneyPressure) - (0.50 * publicFinancingCounterweight),
 				0.0,
-				0.75
+				0.90
 		);
 		return Values.clamp(
 				((1.0 - sourceWeight) * ledgerEstimate) + (sourceWeight * sourceEstimate),

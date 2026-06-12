@@ -6,7 +6,6 @@ This queue classifies validation misses and partial overlaps into concrete follo
 
 - `benchmark-review`: `12`
 - `direct-source-moment`: `3`
-- `model-tuning`: `1`
 - `scenario-coverage`: `5`
 - `scenario-family-split`: `1`
 
@@ -20,14 +19,13 @@ This queue classifies validation misses and partial overlaps into concrete follo
 | P3 | scenario-family-split | lobby-capture-campaign.csv | `hiddenInfluenceShare` | partial | 0.2423-0.6708 | 0.30-0.60 |  | split baseline, substitution-stress, and extreme-stress scenarios before using this benchmark as a single calibration target |
 | P3 | benchmark-review | lobby-capture-campaign.csv | `influencePreservationRate` | partial | 0.1674-0.4727 | 0.20-1.50 |  | decide whether the benchmark applies to this scenario family |
 | P3 | benchmark-review | lobby-capture-mechanism-comparison.csv | `influencePreservationRate` | partial | 0.0000-0.4256 | 0.20-1.50 |  | decide whether the benchmark applies to this scenario family |
-| P3 | model-tuning | lobby-capture-campaign.csv | `largeDonorDependence` | partial | 0.5576-0.6916 | 0.60-0.80 | fecLargeDonorWeightedShare=0.9457 | inspect remaining campaign/outside rows and tune allocation-to-source concentration only where high-end outside spending is intended |
 | P3 | benchmark-review | lobby-capture-campaign.csv | `observedCaptureRate` | partial | 0.0094-1.0000 | 0.00-0.80 |  | decide whether the benchmark applies to this scenario family |
 | P3 | benchmark-review | lobby-capture-mechanism-comparison.csv | `observedCaptureRate` | partial | 0.0000-0.8916 | 0.00-0.80 |  | decide whether the benchmark applies to this scenario family |
-| P3 | benchmark-review | lobby-capture-campaign.csv | `publicFinancingCandidateUptake` | partial | 0.4728-0.6890 | 0.57-0.86 |  | decide whether the benchmark applies to this scenario family |
-| P3 | benchmark-review | lobby-capture-interactions.csv | `publicFinancingCandidateUptake` | partial | 0.4701-0.7029 | 0.57-0.86 |  | decide whether the benchmark applies to this scenario family |
-| P3 | benchmark-review | lobby-capture-mechanism-comparison.csv | `publicFinancingCandidateUptake` | partial | 0.5675-0.5814 | 0.57-0.86 |  | decide whether the benchmark applies to this scenario family |
-| P3 | benchmark-review | lobby-capture-portfolio.csv | `publicFinancingCandidateUptake` | partial | 0.4399-0.7020 | 0.57-0.86 |  | decide whether the benchmark applies to this scenario family |
-| P3 | benchmark-review | lobby-capture-sensitivity.csv | `publicFinancingCandidateUptake` | partial | 0.4836-0.7029 | 0.57-0.86 |  | decide whether the benchmark applies to this scenario family |
+| P3 | benchmark-review | lobby-capture-campaign.csv | `publicFinancingCandidateUptake` | partial | 0.4675-0.6873 | 0.57-0.86 |  | decide whether the benchmark applies to this scenario family |
+| P3 | benchmark-review | lobby-capture-interactions.csv | `publicFinancingCandidateUptake` | partial | 0.4683-0.7005 | 0.57-0.86 |  | decide whether the benchmark applies to this scenario family |
+| P3 | benchmark-review | lobby-capture-mechanism-comparison.csv | `publicFinancingCandidateUptake` | partial | 0.5660-0.5791 | 0.57-0.86 |  | decide whether the benchmark applies to this scenario family |
+| P3 | benchmark-review | lobby-capture-portfolio.csv | `publicFinancingCandidateUptake` | partial | 0.4350-0.6978 | 0.57-0.86 |  | decide whether the benchmark applies to this scenario family |
+| P3 | benchmark-review | lobby-capture-sensitivity.csv | `publicFinancingCandidateUptake` | partial | 0.4789-0.7005 | 0.57-0.86 |  | decide whether the benchmark applies to this scenario family |
 | P3 | benchmark-review | lobby-capture-campaign.csv | `regulatorQueueBacklog` | partial | 0.2361-0.6674 | 0.50-0.75 |  | decide whether the benchmark applies to this scenario family |
 | P3 | benchmark-review | lobby-capture-mechanism-comparison.csv | `regulatorQueueBacklog` | partial | 0.2361-0.6686 | 0.50-0.75 |  | decide whether the benchmark applies to this scenario family |
 | P3 | scenario-coverage | lobby-capture-ablation.csv | `venueSubstitutionRate` | partial | 0.0226-0.1373 | 0.10-0.70 |  | add or isolate higher-pressure substitution scenarios so the scoped validation family reaches the benchmark floor |

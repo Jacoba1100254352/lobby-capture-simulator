@@ -20,6 +20,8 @@ public final class SmokeTest
 	public static void run() throws IOException {
 		Simulator simulator = new Simulator();
 		ScenarioReport open = simulator.run(ScenarioCatalog.require("open-access-lobbying"), 4, 30, 11L);
+		ScenarioReport campaignFinance = simulator.run(ScenarioCatalog.require("campaign-finance-dominant"), 4, 30, 20L);
+		ScenarioReport democracyVouchers = simulator.run(ScenarioCatalog.require("democracy-vouchers"), 4, 30, 21L);
 		ScenarioReport reformThreat = simulator.run(ScenarioCatalog.require("reform-threat-mobilization"), 4, 30, 12L);
 		ScenarioReport bundle = simulator.run(ScenarioCatalog.require("full-anti-capture-bundle"), 4, 30, 13L);
 		ScenarioReport evasion = simulator.run(ScenarioCatalog.require("bundle-with-evasion"), 4, 30, 14L);
@@ -46,6 +48,8 @@ public final class SmokeTest
 		require(open.darkMoneyDirectVisibility() >= 0.0 && open.darkMoneyDirectVisibility() <= 1.0, "dark-money visibility should stay bounded");
 		require(open.voucherResidentParticipation() >= 0.0 && open.voucherResidentParticipation() <= 1.0, "voucher participation should stay bounded");
 		require(open.publicFinancingCandidateUptake() >= 0.0 && open.publicFinancingCandidateUptake() <= 1.0, "public financing uptake should stay bounded");
+		require(campaignFinance.largeDonorDependence() >= 0.60, "campaign finance stress should retain high large-donor dependence");
+		require(democracyVouchers.largeDonorDependence() < campaignFinance.largeDonorDependence(), "voucher counterweights should lower large-donor dependence relative to campaign finance stress");
 		require(open.substitutionPressure() >= 0.0 && open.substitutionPressure() <= 1.0, "substitution pressure should stay bounded");
 		require(open.distortionEqualWeightDiagnostic() >= 0.0 && open.distortionEqualWeightDiagnostic() <= 1.0, "equal-weight distortion diagnostic should stay bounded");
 		require(open.distortionHiddenDiscountedDiagnostic() >= 0.0 && open.distortionHiddenDiscountedDiagnostic() <= 1.0, "hidden-discounted distortion diagnostic should stay bounded");
