@@ -586,39 +586,40 @@ def fetch_usaspending_actions(output: Path) -> int:
     base = os.environ.get("USASPENDING_API_BASE", "https://api.usaspending.gov/api/v2").rstrip("/")
     limit = int_env("USASPENDING_ACTION_TRANSACTION_PAGE_SIZE", int_env("USASPENDING_ACTION_AWARD_PAGE_SIZE", int_env("USASPENDING_PAGE_SIZE", 50, 1, 100), 1, 100), 1, 100)
     max_pages = int_env("USASPENDING_ACTION_TRANSACTION_MAX_PAGES", int_env("USASPENDING_ACTION_AWARD_MAX_PAGES", int_env("USASPENDING_MAX_PAGES", 1, 1, 20), 1, 20), 1, 20)
-    start_date, end_date = usaspending_time_period()
+    periods = usaspending_action_periods()
     rows: list[dict[str, object]] = []
     for agency_filter in usaspending_agency_filters():
-        for page in range(1, max_pages + 1):
-            payload = {
-                "filters": {
-                    "time_period": [{"start_date": start_date, "end_date": end_date}],
-                    "agencies": [agency_filter],
-                    "award_type_codes": split_csv_env("USASPENDING_AWARD_TYPE_CODES", "A,B,C,D"),
-                },
-                "fields": [
-                    "Award ID",
-                    "Action Date",
-                    "Action Type",
-                    "Mod",
-                    "Transaction Amount",
-                    "Recipient Name",
-                    "Recipient UEI",
-                    "Awarding Agency",
-                    "Awarding Sub Agency",
-                    "Award Type",
-                    "generated_internal_id",
-                ],
-                "page": page,
-                "limit": limit,
-                "sort": os.environ.get("USASPENDING_ACTION_TRANSACTION_SORT", "Action Date"),
-                "order": os.environ.get("USASPENDING_ACTION_TRANSACTION_ORDER", "desc"),
-            }
-            response = post_json(f"{base}/search/spending_by_transaction/", payload)
-            rows.extend(normalize_usaspending_direct_transaction_records(response.get("results", [])))
-            metadata = response.get("page_metadata", {})
-            if not metadata.get("hasNext"):
-                break
+        for start_date, end_date in periods:
+            for page in range(1, max_pages + 1):
+                payload = {
+                    "filters": {
+                        "time_period": [{"start_date": start_date, "end_date": end_date}],
+                        "agencies": [agency_filter],
+                        "award_type_codes": split_csv_env("USASPENDING_AWARD_TYPE_CODES", "A,B,C,D"),
+                    },
+                    "fields": [
+                        "Award ID",
+                        "Action Date",
+                        "Action Type",
+                        "Mod",
+                        "Transaction Amount",
+                        "Recipient Name",
+                        "Recipient UEI",
+                        "Awarding Agency",
+                        "Awarding Sub Agency",
+                        "Award Type",
+                        "generated_internal_id",
+                    ],
+                    "page": page,
+                    "limit": limit,
+                    "sort": os.environ.get("USASPENDING_ACTION_TRANSACTION_SORT", "Action Date"),
+                    "order": os.environ.get("USASPENDING_ACTION_TRANSACTION_ORDER", "desc"),
+                }
+                response = post_json(f"{base}/search/spending_by_transaction/", payload)
+                rows.extend(normalize_usaspending_direct_transaction_records(response.get("results", [])))
+                metadata = response.get("page_metadata", {})
+                if not metadata.get("hasNext"):
+                    break
     write_rows(
         output,
         USASPENDING_FIELDS,
@@ -703,6 +704,26 @@ def usaspending_time_period() -> tuple[str, str]:
         return os.environ["USASPENDING_DATE_FROM"], os.environ["USASPENDING_DATE_TO"]
     fiscal_year = int_env("USASPENDING_FISCAL_YEAR", 2024, 2008, 2100)
     return f"{fiscal_year - 1}-10-01", f"{fiscal_year}-09-30"
+
+
+def usaspending_action_periods() -> list[tuple[str, str]]:
+    start_text, end_text = usaspending_time_period()
+    bucket = os.environ.get("USASPENDING_ACTION_PERIOD_BUCKETS", "").strip().lower()
+    if bucket not in {"month", "monthly"}:
+        return [(start_text, end_text)]
+    start = parse_date(start_text)
+    end = parse_date(end_text)
+    if start is None or end is None:
+        return [(start_text, end_text)]
+    periods: list[tuple[str, str]] = []
+    cursor = date(start.year, start.month, 1)
+    while cursor <= end:
+        next_month = date(cursor.year + (1 if cursor.month == 12 else 0), 1 if cursor.month == 12 else cursor.month + 1, 1)
+        period_start = max(cursor, start)
+        period_end = min(date.fromordinal(next_month.toordinal() - 1), end)
+        periods.append((period_start.isoformat(), period_end.isoformat()))
+        cursor = next_month
+    return periods
 
 
 USASPENDING_FIELDS = [

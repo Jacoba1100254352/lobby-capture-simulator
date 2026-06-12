@@ -757,8 +757,8 @@
             "Revolving door": "thin proxy rows",
             "Procurement identifiers": "direct ID coverage",
             "Procurement concentration bridge": "top-award bridge",
-            "Procurement action history": "no action rows",
-            "Procurement modification risk": "no mod rows"
+            "Procurement action history": "action rows",
+            "Procurement modification risk": "high mod-action share"
           }
         },
         {

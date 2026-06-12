@@ -102,7 +102,7 @@ PANELS = [
         "minimum": 1.0,
         "good": 50.0,
         "missing": "no USAspending/SAM/FPDS transaction/action rows in the pinned snapshot",
-        "action": "Populate data/snapshots/2024-env/normalized/usaspending-procurement-actions.csv from USAspending/SAM/FPDS transaction rows before treating modification incidence as calibrated.",
+        "action": "Broaden the USAspending action panel with representative SAM/FPDS action-history extracts before treating modification incidence as calibration-grade.",
     },
     {
         "panel": "Procurement modification risk",
@@ -112,11 +112,11 @@ PANELS = [
         "minimum": 0.0,
         "good": 0.05,
         "maximum": 0.40,
-        "missing": "modification proxy appears saturated or missing",
+        "missing": "modification-action share is outside the benchmark range, likely reflecting bounded action-sample scope or nonrepresentative transaction coverage",
         "warningMetric": "procurementLatestTransactionModificationProxy",
         "warningAbsentMetric": "procurementActionRows",
         "warning": "latest-transaction modification enrichment is available but an action-level transaction denominator is still absent",
-        "action": "Populate the procurement action panel from USAspending/SAM/FPDS transaction rows and validate nonzero modification numbers against FPDS actions.",
+        "action": "Validate nonzero modification numbers against representative SAM/FPDS action histories and separate transaction-action incidence from award-level modification incidence.",
     },
 ]
 

@@ -190,6 +190,16 @@ def assert_usaspending(fetchers) -> None:
     assert direct_action_rows[0]["piid"] == "EPW05049", direct_action_rows[0]
     assert direct_action_rows[1]["modificationNumber"] == "P00001", direct_action_rows[1]
     assert direct_action_rows[1]["exPostModification"] == "true", direct_action_rows[1]
+    os.environ["USASPENDING_DATE_FROM"] = "2024-01-15"
+    os.environ["USASPENDING_DATE_TO"] = "2024-03-05"
+    os.environ["USASPENDING_ACTION_PERIOD_BUCKETS"] = "monthly"
+    assert fetchers.usaspending_action_periods() == [
+        ("2024-01-15", "2024-01-31"),
+        ("2024-02-01", "2024-02-29"),
+        ("2024-03-01", "2024-03-05"),
+    ]
+    for name in ("USASPENDING_DATE_FROM", "USASPENDING_DATE_TO", "USASPENDING_ACTION_PERIOD_BUCKETS"):
+        os.environ.pop(name, None)
 
 
 def assert_nyc_public_financing(fetchers) -> None:

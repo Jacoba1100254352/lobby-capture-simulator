@@ -83,7 +83,7 @@ The current committed 2024 EPA/ENV snapshot is regenerated from official endpoin
 - Public financing: NYC CFB public-funds payment rows or configured program exports, stored as a separate bridge panel.
 - Dark money/opaque capacity: IRS EO BMF 501(c)(4)/(c)(6) capacity proxy rows or configured direct dark-money exports, stored separately from ordinary FEC and Schedule E rows.
 - Regulations.gov and Federal Register: 200 combined EPA 2024 regulatory rows.
-- USAspending: EPA fiscal-year 2024 award rows with UEI/PIID coverage and award-detail competition fields where the source returns them; optional procurement action rows supply the preferred modification-incidence denominator when present. Latest-transaction modifications are kept separate from award-level modification status unless explicitly enabled for a diagnostic bridge.
+- USAspending: EPA fiscal-year 2024 award rows with UEI/PIID coverage and award-detail competition fields where the source returns them; monthly procurement action rows supply the preferred transaction-action denominator when present. Latest-transaction modifications are kept separate from award-level modification status unless explicitly enabled for a diagnostic bridge. The transaction-action modification share remains a warning-level source moment until representative SAM/FPDS action histories validate it against award-level modification incidence.
 - Revolving door: 284 LDA-derived covered-position rows. This is source-native but narrower than a full post-employment panel.
 - Intermediaries: NYC CFB intermediary rows plus IRS EO BMF nonprofit/association capacity rows by default; richer IRS 527/Form 990/OpenSecrets/ProPublica panels remain optional overlays.
 
