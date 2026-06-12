@@ -1,8 +1,8 @@
 {
   "snapshot": "2024-env",
-  "generatedAt": "2026-06-12T04:21:35.343735+00:00",
-  "gitCommit": "c238dad",
-  "gitTreeState": "dirty",
+  "generatedAt": "2026-06-12T04:22:21.447770+00:00",
+  "gitCommit": "5cc5022",
+  "gitTreeState": "clean",
   "gitTreeStateScope": "working tree status excluding generated 2024-env snapshot, reports, paper tables, and paper figures",
   "scope": {
     "calendarWindow": "2024-01-01/2024-12-31",
