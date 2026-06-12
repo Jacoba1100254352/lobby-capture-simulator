@@ -15,6 +15,7 @@ Scope:
 - USAspending fiscal year: 2024, Environmental Protection Agency awards.
 - USAspending procurement bridge: multi-agency fiscal-year 2024 top-award rows for high-value procurement diagnostics, kept separate from the EPA calibration slice and action-panel denominator.
 - USAspending procurement actions: stratified six-agency transaction/action rows for concentration and modification-incidence diagnostics when present, combining initial-action and high-value transaction strata and kept separate from award rows and top-award bridge rows.
+- SAM.gov Contract Awards: optional source-native action rows for PIID/UEI, competition, modification, award-date, and contracting-department diagnostics, kept separate from USAspending action rows so source provenance remains visible.
 - Revolving-door panel: licensed/source export or LDA covered-position derivation when available; fixture otherwise.
 - Intermediary panel: NYC CFB intermediary rows, IRS EO BMF nonprofit/association capacity rows, IRS POFD Form 8872 527 political-organization rows, or configured nonprofit, 527, association, and think-tank export when available; fixture otherwise.
 
@@ -30,6 +31,7 @@ The current command freezes whatever normalized files are present under `data/ra
 | usaspending | 200 | live | `data/snapshots/2024-env/normalized/usaspending-awards.csv` |
 | usaspending-procurement-bridge | 150 | live | `data/snapshots/2024-env/normalized/usaspending-procurement-bridge.csv` |
 | usaspending-procurement-actions | 3578 | live | `data/snapshots/2024-env/normalized/usaspending-procurement-actions.csv` |
+| sam-contract-awards | 0 | missing | `data/snapshots/2024-env/normalized/sam-contract-awards.csv` |
 | revolving-door | 284 | live | `data/snapshots/2024-env/normalized/revolving-door.csv` |
 | intermediary | 1353 | live | `data/snapshots/2024-env/normalized/intermediaries.csv` |
 

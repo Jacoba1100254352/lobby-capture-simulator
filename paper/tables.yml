@@ -744,8 +744,10 @@
             "direct observed 527 filings": "direct 527 filings",
             "direct identifier coverage": "direct IDs",
             "direct bounded action/top-award panel": "bounded panel",
+            "direct bounded SAM/USAspending action or top-award panel": "bounded panel",
             "direct top-award bridge": "top-award bridge",
-            "direct action rows when present": "direct rows"
+            "direct action rows when present": "direct rows",
+            "direct primary SAM/USAspending action rows when present": "direct rows"
           }
         },
         {

@@ -1,7 +1,7 @@
 {
   "snapshot": "2024-env",
-  "generatedAt": "2026-06-12T07:11:07.235844+00:00",
-  "gitCommit": "d226dc8",
+  "generatedAt": "2026-06-12T07:39:52.588184+00:00",
+  "gitCommit": "3b1157d",
   "gitTreeState": "clean",
   "gitTreeStateScope": "working tree status excluding generated 2024-env snapshot, reports, paper tables, and paper figures",
   "scope": {
@@ -85,13 +85,23 @@
     },
     {
       "source": "usaspending-procurement-actions",
-      "description": "Stratified six-agency USAspending transaction/action panel, or opt-in SAM.gov Contract Awards rows, for action-level procurement concentration and modification diagnostics; rows are deduplicated and kept separate from award rows and top-award bridge rows.",
-      "requestTemplate": "USASPENDING_AGENCIES='Environmental Protection Agency,Department of Energy,Department of the Interior,Department of Agriculture,Department of Transportation,Department of Defense' USASPENDING_ACTION_PERIOD_BUCKETS=monthly USASPENDING_ACTION_TRANSACTION_PAGE_SIZE=25 USASPENDING_ACTION_TRANSACTION_MAX_PAGES=1 USASPENDING_ACTION_TRANSACTION_SORT_SPECS='Mod:asc;Transaction Amount:desc' python3 scripts/fetch-source-data.py usaspending-actions --output data/raw/usaspending-procurement-actions.csv, or SAM_CONTRACT_AWARDS_SOURCE_NATIVE=1 SAM_API_KEY=... python3 scripts/fetch-source-data.py sam-contract-awards --output data/raw/usaspending-procurement-actions.csv",
+      "description": "Stratified six-agency USAspending transaction/action panel for action-level procurement concentration and modification diagnostics; rows are deduplicated and kept separate from award rows, top-award bridge rows, and SAM.gov Contract Awards rows.",
+      "requestTemplate": "USASPENDING_AGENCIES='Environmental Protection Agency,Department of Energy,Department of the Interior,Department of Agriculture,Department of Transportation,Department of Defense' USASPENDING_ACTION_PERIOD_BUCKETS=monthly USASPENDING_ACTION_TRANSACTION_PAGE_SIZE=25 USASPENDING_ACTION_TRANSACTION_MAX_PAGES=1 USASPENDING_ACTION_TRANSACTION_SORT_SPECS='Mod:asc;Transaction Amount:desc' python3 scripts/fetch-source-data.py usaspending-actions --output data/raw/usaspending-procurement-actions.csv",
       "normalizedFile": "data/snapshots/2024-env/normalized/usaspending-procurement-actions.csv",
       "rowCount": 3578,
       "sha256": "33155448bf655b953da106906721387699375c1f03db07485900e5d1726dbffc",
       "status": "live",
       "statusNotes": "usaspending-procurement-actions: ok (normalized USAspending procurement action rows written)"
+    },
+    {
+      "source": "sam-contract-awards",
+      "description": "Optional SAM.gov Contract Awards action panel for PIID/UEI, competition, modification, award-date, and contracting-department diagnostics; kept separate from USAspending action rows so procurement provenance remains auditable.",
+      "requestTemplate": "SAM_CONTRACT_AWARDS_SOURCE_NATIVE=1 SAM_API_KEY=... python3 scripts/fetch-source-data.py sam-contract-awards --output data/raw/sam-contract-awards.csv",
+      "normalizedFile": "data/snapshots/2024-env/normalized/sam-contract-awards.csv",
+      "rowCount": 0,
+      "sha256": "missing",
+      "status": "missing",
+      "statusNotes": "normalized source file missing"
     },
     {
       "source": "revolving-door",
