@@ -50,7 +50,7 @@ CLAIM_SOURCE_DEPENDENCY_MD = ROOT / "reports" / "claim-source-dependency.md"
 CLAIM_SOURCE_DEPENDENCY_CSV = ROOT / "reports" / "claim-source-dependency.csv"
 CLAIM_POSTURE_AUDIT_MD = ROOT / "reports" / "claim-posture-audit.md"
 CLAIM_POSTURE_AUDIT_CSV = ROOT / "reports" / "claim-posture-audit.csv"
-RELEASE_TAG = "paper-publication-readiness-2026-06-12-r54"
+RELEASE_TAG = "paper-publication-readiness-2026-06-12-r55"
 CITATION_CFF = ROOT / "CITATION.cff"
 ZENODO_JSON = ROOT / ".zenodo.json"
 FORBIDDEN_LOCAL_ARTIFACTS = [
@@ -515,7 +515,7 @@ def check_source_capability_audit() -> list[str]:
             "IRS 527 political-organization capability should be active and usable"
         )
     text = SOURCE_CAPABILITY_AUDIT_MD.read_text(encoding="utf-8")
-    for phrase in ("Source Capability Audit", "SAM/FPDS action-history", "Direct hidden-donor"):
+    for phrase in ("Source Capability Audit", "SAM/FPDS action-history", "Direct hidden-donor", "SAM_CONTRACT_AWARDS_OFFSET_STARTS"):
         if phrase not in text:
             failures.append(f"source capability audit markdown missing phrase: {phrase}")
     return failures
@@ -819,8 +819,8 @@ def check_procurement_modification_composition_audit() -> list[str]:
     sam = source_rows.get("sam-contract-awards")
     if not sam:
         failures.append("procurement modification composition audit missing SAM Contract Awards source summary")
-    elif audit_number(sam.get("rows")) != 0:
-        failures.append("procurement modification composition audit should report zero committed SAM Contract Awards rows")
+    elif sam.get("snapshotStatus") == "ok" and audit_number(sam.get("rows")) <= 0:
+        failures.append("SAM Contract Awards cannot be marked ok in the composition audit without committed rows")
 
     group_types = {row.get("groupType", "") for row in rows}
     for group_type in ("agency", "awardType", "recipient"):
@@ -856,7 +856,7 @@ def check_procurement_modification_composition_audit() -> list[str]:
     required_text = [
         "Procurement Modification Composition Audit",
         "bounded sample diagnostic",
-        "SAM.gov Contract Awards has 0 committed rows",
+        "SAM.gov Contract Awards has",
         "does not clear the procurement-modification source gap",
     ]
     for phrase in required_text:

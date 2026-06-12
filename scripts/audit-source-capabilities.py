@@ -44,7 +44,8 @@ CAPABILITIES = [
         "mechanism": "Representative SAM/FPDS action-history denominator",
         "implementedRoute": (
             "optional SAM.gov Contract Awards importer behind "
-            "SAM_CONTRACT_AWARDS_SOURCE_NATIVE=1 and SAM_API_KEY"
+            "SAM_CONTRACT_AWARDS_SOURCE_NATIVE=1 and SAM_API_KEY; supports "
+            "non-adjacent offset strata through SAM_CONTRACT_AWARDS_OFFSET_STARTS"
         ),
         "snapshotSource": "sam-contract-awards",
         "panel": "Procurement modification risk",
@@ -170,6 +171,7 @@ def capability_row(
         "snapshotSource": source or "not-promoted",
         "snapshotStatus": source_status or ("not-promoted" if not source else "missing"),
         "snapshotRows": str(row_count),
+        "snapshotPlan": snapshot_plan(capability["capability"], live_status, row_count),
         "panel": capability["panel"] or "not-promoted",
         "panelStatus": panel_status or "not-promoted",
         "capabilityStatus": capability_status,
@@ -202,6 +204,24 @@ def classify_capability(
     return "missing"
 
 
+def snapshot_plan(capability: str, live_status: dict[str, str], row_count: int) -> str:
+    note = live_status.get("notes", "").strip()
+    if capability == "sam-contract-awards-action-history":
+        if note:
+            return note
+        if row_count > 0:
+            return "SAM.gov Contract Awards rows are present, but the live status note is missing."
+        return (
+            "Not active in the committed snapshot. Enable SAM_CONTRACT_AWARDS_SOURCE_NATIVE=1 "
+            "with SAM_API_KEY and use SAM_CONTRACT_AWARDS_OFFSET_STARTS for non-adjacent slices."
+        )
+    if note:
+        return note
+    if row_count > 0:
+        return "Active rows are present in the frozen snapshot."
+    return "No active committed rows."
+
+
 def csv_row_count(path: Path) -> int:
     if not path.exists():
         return 0
@@ -217,6 +237,7 @@ def write_csv(path: Path, rows: list[dict[str, str]]) -> None:
         "snapshotSource",
         "snapshotStatus",
         "snapshotRows",
+        "snapshotPlan",
         "panel",
         "panelStatus",
         "capabilityStatus",
@@ -254,16 +275,16 @@ def write_markdown(path: Path, rows: list[dict[str, str]]) -> None:
             "",
             (
                 "| Capability | Snapshot source | Rows | Panel status | Capability status | "
-                "Needed for | Next action |"
+                "Snapshot plan | Needed for | Next action |"
             ),
-            "| --- | --- | ---: | --- | --- | --- | --- |",
+            "| --- | --- | ---: | --- | --- | --- | --- | --- |",
         ]
     )
     for row in rows:
         escaped = {key: markdown_cell(value) for key, value in row.items()}
         lines.append(
             "| {capability} | {snapshotSource} ({snapshotStatus}) | {snapshotRows} | "
-            "{panelStatus} | {capabilityStatus} | {neededFor} | {nextAction} |".format(
+            "{panelStatus} | {capabilityStatus} | {snapshotPlan} | {neededFor} | {nextAction} |".format(
                 **escaped
             )
         )

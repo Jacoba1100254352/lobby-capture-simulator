@@ -281,6 +281,24 @@ def assert_sam_contract_awards(fetchers) -> None:
     assert fetchers.sam_contract_awards_offset(0, 0, 100) == 0
     assert fetchers.sam_contract_awards_offset(0, 1, 100) == 100
     assert fetchers.sam_contract_awards_offset(10, 2, 25) == 60
+    os.environ.pop("SAM_CONTRACT_AWARDS_OFFSET_STARTS", None)
+    os.environ.pop("SAM_CONTRACT_AWARDS_OFFSET_START", None)
+    assert fetchers.sam_contract_awards_offset_starts() == [0]
+    os.environ["SAM_CONTRACT_AWARDS_OFFSET_START"] = "200"
+    assert fetchers.sam_contract_awards_offset_starts() == [200]
+    assert fetchers.sam_contract_awards_offsets(2, 50) == [200, 250]
+    os.environ["SAM_CONTRACT_AWARDS_OFFSET_STARTS"] = "1000,0,1000,250"
+    assert fetchers.sam_contract_awards_offset_starts() == [0, 250, 1000]
+    assert fetchers.sam_contract_awards_offsets(2, 100) == [0, 100, 250, 350, 1000, 1100]
+    os.environ["SAM_CONTRACT_AWARDS_OFFSET_STARTS"] = "bad"
+    try:
+        fetchers.sam_contract_awards_offset_starts()
+    except SystemExit as exc:
+        assert "SAM_CONTRACT_AWARDS_OFFSET_STARTS" in str(exc), exc
+    else:
+        raise AssertionError("invalid SAM offset starts did not fail")
+    os.environ.pop("SAM_CONTRACT_AWARDS_OFFSET_STARTS", None)
+    os.environ.pop("SAM_CONTRACT_AWARDS_OFFSET_START", None)
     rows = fetchers.normalize_sam_contract_award_records(records)
     assert rows[0] == {
         "awardId": "68HERH24F0001",

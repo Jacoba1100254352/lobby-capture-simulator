@@ -1,6 +1,6 @@
 # Procurement Denominator Audit
 
-This audit explains the denominator behind procurement modification and concentration moments. It separates the active USAspending action panel from the optional SAM.gov Contract Awards route and from award-level bridge rows.
+This audit explains the denominator behind procurement modification and concentration moments. It separates the active USAspending action panel from the optional SAM.gov Contract Awards route and from award-level bridge rows. The SAM.gov route supports non-adjacent offset strata through `SAM_CONTRACT_AWARDS_OFFSET_STARTS`; those rows strengthen the snapshot only when the resulting action-history panel is archived.
 
 ## Claim Boundary
 

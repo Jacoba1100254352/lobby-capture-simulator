@@ -754,15 +754,18 @@ def fetch_sam_contract_awards(output: Path) -> int:
     base = os.environ.get("SAM_API_BASE", "https://api.sam.gov").rstrip("/")
     limit = int_env("SAM_CONTRACT_AWARDS_PAGE_SIZE", 100, 1, 100)
     max_pages = int_env("SAM_CONTRACT_AWARDS_MAX_PAGES", 1, 1, 20)
-    offset_start = int_env("SAM_CONTRACT_AWARDS_OFFSET_START", 0, 0, 400000)
+    offsets = sam_contract_awards_offsets(max_pages, limit)
     base_params = sam_contract_awards_base_params(api_key, limit)
     rows: list[dict[str, object]] = []
     seen_rows: set[tuple[object, ...]] = set()
     for filter_key, filter_value in sam_contract_awards_filters():
-        for page_index in range(max_pages):
+        total_records = 0
+        for offset in offsets:
+            if total_records > 0 and offset >= total_records:
+                break
             params = dict(base_params)
             params[filter_key] = filter_value
-            params["offset"] = str(sam_contract_awards_offset(offset_start, page_index, limit))
+            params["offset"] = str(offset)
             payload = get_json(f"{base}/contract-awards/v1/search?{urlencode(params)}")
             page_records = sam_contract_award_records(payload)
             for row in normalize_sam_contract_award_records(page_records):
@@ -772,9 +775,7 @@ def fetch_sam_contract_awards(output: Path) -> int:
                 seen_rows.add(row_key)
                 rows.append(row)
             total_records = sam_contract_awards_total_records(payload)
-            if not page_records or len(page_records) < limit:
-                break
-            if total_records > 0 and (page_index + 1) * limit >= total_records:
+            if not page_records and total_records <= 0:
                 break
     write_rows(
         output,
@@ -818,6 +819,31 @@ def sam_contract_awards_base_params(api_key: str, limit: int) -> dict[str, str]:
 
 def sam_contract_awards_offset(offset_start: int, page_index: int, limit: int) -> int:
     return offset_start + (page_index * limit)
+
+
+def sam_contract_awards_offset_starts() -> list[int]:
+    starts = split_csv_env("SAM_CONTRACT_AWARDS_OFFSET_STARTS", "")
+    if not starts:
+        return [int_env("SAM_CONTRACT_AWARDS_OFFSET_START", 0, 0, 400000)]
+    parsed: list[int] = []
+    for start in starts:
+        try:
+            offset = int(start)
+        except ValueError as error:
+            raise SystemExit(f"SAM_CONTRACT_AWARDS_OFFSET_STARTS contains a non-integer offset: {start}") from error
+        if offset < 0 or offset > 400000:
+            raise SystemExit(f"SAM_CONTRACT_AWARDS_OFFSET_STARTS offset out of range 0..400000: {start}")
+        parsed.append(offset)
+    return sorted(dict.fromkeys(parsed))
+
+
+def sam_contract_awards_offsets(max_pages: int, limit: int) -> list[int]:
+    offsets = [
+        sam_contract_awards_offset(offset_start, page_index, limit)
+        for offset_start in sam_contract_awards_offset_starts()
+        for page_index in range(max_pages)
+    ]
+    return sorted(dict.fromkeys(offsets))
 
 
 def sam_contract_awards_range_param(prefix: str) -> str:
