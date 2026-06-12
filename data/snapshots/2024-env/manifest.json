@@ -1,7 +1,7 @@
 {
   "snapshot": "2024-env",
-  "generatedAt": "2026-06-12T02:38:27.932202+00:00",
-  "gitCommit": "f60ed42",
+  "generatedAt": "2026-06-12T03:38:18.035624+00:00",
+  "gitCommit": "7bc562c",
   "gitTreeState": "clean",
   "gitTreeStateScope": "working tree status excluding generated 2024-env snapshot, reports, paper tables, and paper figures",
   "scope": {
@@ -26,12 +26,12 @@
     {
       "source": "fec",
       "description": "FEC 2024 cycle party committee contributions, OpenFEC Schedule E independent expenditures, electioneering communications, and communication-cost rows when available. Public-financing and opaque-capacity bridge rows are stored in separate panels.",
-      "requestTemplate": "FEC_CYCLE=2024 FEC_COMMITTEE_ID in C00010603,C00042366,C00000935,C00003418,C00027466,C00075820 plus FEC_ONLY_SCHEDULE_E=1 FEC_INCLUDE_ELECTIONEERING=1 FEC_INCLUDE_COMMUNICATION_COSTS=1 ./scripts/fetch-fec.sh --live",
+      "requestTemplate": "FEC_CYCLE=2024 FEC_COMMITTEE_ID in C00010603,C00042366,C00000935,C00003418,C00027466,C00075820 plus FEC_ONLY_SCHEDULE_E=1 FEC_INCLUDE_SCHEDULE_E=1 for Schedule E plus FEC_INCLUDE_SCHEDULE_E=0 FEC_INCLUDE_ELECTIONEERING=1 FEC_INCLUDE_COMMUNICATION_COSTS=1 for electoral-communication rows",
       "normalizedFile": "data/snapshots/2024-env/normalized/fec-campaign-finance.csv",
-      "rowCount": 1000,
-      "sha256": "b9adf86801a34484ad196f691e211eb9301dcbc5c138769c5ea8ddc109e05a99",
+      "rowCount": 1269,
+      "sha256": "607b37df5195b7c64e604991dd8fb86d31c6db0d1760868a74e2d99f0cdf3e54",
       "status": "live",
-      "statusNotes": "fec-C00010603: ok (normalized rows appended); fec-C00042366: ok (normalized rows appended); fec-C00000935: ok (normalized rows appended); fec-C00003418: ok (normalized rows appended); fec-C00027466: ok (normalized rows appended); fec-C00075820: ok (normalized rows appended); fec-schedule-e: ok (normalized independent-expenditure rows appended)"
+      "statusNotes": "fec-C00010603: ok (normalized rows appended); fec-C00042366: ok (normalized rows appended); fec-C00000935: ok (normalized rows appended); fec-C00003418: ok (normalized rows appended); fec-C00027466: ok (normalized rows appended); fec-C00075820: ok (normalized rows appended); fec-schedule-e: ok (normalized independent-expenditure rows appended); fec-electoral-communications: ok (normalized electioneering and communication-cost rows appended)"
     },
     {
       "source": "public-financing",
@@ -116,6 +116,6 @@
   ],
   "liveRunStatus": {
     "file": "data/snapshots/2024-env/live-run-status.csv",
-    "sha256": "e21990887c43b7242421a2d42d2d83164bf0292e1a5390af91aca5c066bc074e"
+    "sha256": "12822d4d6098136c017fe350a5ac281e51c6f4b50dfc4c4e92482a37b1f23b09"
   }
 }
