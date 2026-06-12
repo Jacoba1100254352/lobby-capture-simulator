@@ -122,7 +122,7 @@ FEC_API_KEY=... FEC_ONLY_SCHEDULE_E=1 FEC_INCLUDE_ELECTIONEERING=1 FEC_INCLUDE_C
 REGULATIONS_API_KEY=... ./scripts/fetch-regulatory.sh --live
 REGULATORY_SOURCE=federal-register ./scripts/fetch-regulatory.sh --live
 ./scripts/fetch-usaspending.sh --live
-SAM_API_KEY=... python3 scripts/fetch-source-data.py sam-contract-awards --output data/raw/usaspending-procurement-actions.csv
+SAM_API_KEY=... python3 scripts/fetch-source-data.py sam-contract-awards --output data/raw/sam-contract-awards.csv
 REVOLVING_DOOR_SOURCE_NATIVE=1 python3 scripts/fetch-source-data.py revolving-door --output data/raw/revolving-door.csv
 ```
 
@@ -132,7 +132,7 @@ The pinned 2024 EPA/ENV live runner is:
 scripts/run-2024-env-live-snapshot.sh
 ```
 
-It preserves raw public API payloads under ignored `data/raw/source-payloads/2024-env/`, writes normalized rows into `data/raw/`, runs the snapshot freezer, and emits source moments. If no personal API keys are configured it uses official public/demo access where possible and records rate-limit gaps in `data/snapshots/2024-env/live-run-status.csv`. Set `SAM_CONTRACT_AWARDS_SOURCE_NATIVE=1` with `SAM_API_KEY` to try the SAM.gov Contract Awards API for the procurement action schema; the runner records SAM availability and falls back to USAspending action rows if that opt-in request fails.
+It preserves raw public API payloads under ignored `data/raw/source-payloads/2024-env/`, writes normalized rows into `data/raw/`, runs the snapshot freezer, and emits source moments. If no personal API keys are configured it uses official public/demo access where possible and records rate-limit gaps in `data/snapshots/2024-env/live-run-status.csv`. Set `SAM_CONTRACT_AWARDS_SOURCE_NATIVE=1` with `SAM_API_KEY` to try the SAM.gov Contract Awards API as a separate procurement action panel; the runner records SAM availability and falls back to USAspending action rows if that opt-in request fails.
 
 `docs/source-data-roadmap.md` records the next source panels and matching identifiers: LDA registrant/client IDs, FEC committee/candidate IDs, IRS EINs, SAM UEIs, PIIDs, docket/document/comment IDs, and official/person records. The project keeps direct observed source rows separate from proxy overlays and synthetic design metrics.
 
@@ -164,7 +164,7 @@ Submission strategy details live in `docs/submission-strategy.md`.
 
 Use the versioned GitHub release named in the paper's Data and Code Availability statement when citing the review bundle. `CITATION.cff` provides machine-readable software and preferred-paper citation metadata, and `.zenodo.json` provides release metadata for DOI archiving if the GitHub repository is connected to Zenodo. The Wiley submission package includes copies of both files under `supporting-information/`, plus the full generated report bundle under `supporting-information/report-data/`. `make paper-artifacts-check` fails if those files are missing, stale, byte-different from the working tree, or no longer point at the current review-bundle tag.
 
-The source-native fetcher has tiny checked-in JSON fixtures under `data/fixtures/source-native/`, including OpenFEC contribution, electioneering, communication-cost, USAspending award/transaction, and SAM.gov Contract Awards payloads. `make test` verifies those parser paths without hitting the network. Live source requests retry transient `429` and `5xx` responses; tune with `SOURCE_FETCH_RETRIES`, `SOURCE_FETCH_BACKOFF_SECONDS`, and `SOURCE_FETCH_TIMEOUT_SECONDS`.
+The source-native fetcher has tiny checked-in JSON fixtures under `data/fixtures/source-native/`, including OpenFEC contribution, electioneering, communication-cost, USAspending award/transaction, and SAM.gov Contract Awards payloads. `make test` verifies those parser paths without hitting the network. Live source requests retry transient `429` and `5xx` responses; tune with `SOURCE_FETCH_RETRIES`, `SOURCE_FETCH_BACKOFF_SECONDS`, `SOURCE_FETCH_TIMEOUT_SECONDS`, and `SOURCE_FETCH_HARD_TIMEOUT_SECONDS`.
 
 ## Current Modeling Slice
 

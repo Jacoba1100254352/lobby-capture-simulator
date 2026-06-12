@@ -36,7 +36,7 @@ fetch_usaspending_procurement_actions() {
     python3 scripts/fetch-source-data.py usaspending-actions --output data/raw/usaspending-procurement-actions.csv
 }
 
-rm -f data/raw/lda-lobbying.csv data/raw/fec-campaign-finance.csv data/raw/public-financing.csv data/raw/dark-money.csv data/raw/regulatory-dockets.csv data/raw/usaspending-awards.csv data/raw/usaspending-procurement-bridge.csv data/raw/usaspending-procurement-actions.csv data/raw/revolving-door.csv data/raw/intermediaries.csv
+rm -f data/raw/lda-lobbying.csv data/raw/fec-campaign-finance.csv data/raw/public-financing.csv data/raw/dark-money.csv data/raw/regulatory-dockets.csv data/raw/usaspending-awards.csv data/raw/usaspending-procurement-bridge.csv data/raw/usaspending-procurement-actions.csv data/raw/sam-contract-awards.csv data/raw/revolving-door.csv data/raw/intermediaries.csv
 
 for period in first_quarter second_quarter third_quarter fourth_quarter; do
   SOURCE_RAW_DIR="$raw_dir/lda-$period" \
@@ -244,9 +244,9 @@ elif [ "${USASPENDING_PROCUREMENT_ACTIONS_SOURCE_NATIVE:-1}" = "1" ]; then
       SAM_CONTRACT_AWARDS_PAGE_SIZE="${SAM_CONTRACT_AWARDS_PAGE_SIZE:-100}" \
       SAM_CONTRACT_AWARDS_MAX_PAGES="${SAM_CONTRACT_AWARDS_MAX_PAGES:-1}" \
       SAM_CONTRACT_AWARDS_INCLUDE_SECTIONS="${SAM_CONTRACT_AWARDS_INCLUDE_SECTIONS:-contractId,coreData,awardDetails,awardeeData}" \
-        python3 scripts/fetch-source-data.py sam-contract-awards --output data/raw/usaspending-procurement-actions.csv; then
-      printf "sam-contract-awards,ok,normalized SAM.gov Contract Awards rows written to procurement action schema\n" >> "$status_file"
-      printf "usaspending-procurement-actions,ok,procurement action schema populated from SAM.gov Contract Awards\n" >> "$status_file"
+        python3 scripts/fetch-source-data.py sam-contract-awards --output data/raw/sam-contract-awards.csv; then
+      printf "sam-contract-awards,ok,normalized SAM.gov Contract Awards rows written to separate procurement action schema\n" >> "$status_file"
+      printf "usaspending-procurement-actions,skipped,SAM.gov Contract Awards selected as the primary procurement action source for this live run\n" >> "$status_file"
     else
       printf "sam-contract-awards,unavailable,SAM.gov Contract Awards request failed; falling back to USAspending action rows\n" >> "$status_file"
       if fetch_usaspending_procurement_actions; then

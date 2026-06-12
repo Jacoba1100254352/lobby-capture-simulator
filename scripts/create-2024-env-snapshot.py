@@ -55,8 +55,13 @@ SOURCES = {
     },
     "usaspending-procurement-actions": {
         "input": RAW / "usaspending-procurement-actions.csv",
-        "description": "Stratified six-agency USAspending transaction/action panel, or opt-in SAM.gov Contract Awards rows, for action-level procurement concentration and modification diagnostics; rows are deduplicated and kept separate from award rows and top-award bridge rows.",
-        "request": "USASPENDING_AGENCIES='Environmental Protection Agency,Department of Energy,Department of the Interior,Department of Agriculture,Department of Transportation,Department of Defense' USASPENDING_ACTION_PERIOD_BUCKETS=monthly USASPENDING_ACTION_TRANSACTION_PAGE_SIZE=25 USASPENDING_ACTION_TRANSACTION_MAX_PAGES=1 USASPENDING_ACTION_TRANSACTION_SORT_SPECS='Mod:asc;Transaction Amount:desc' python3 scripts/fetch-source-data.py usaspending-actions --output data/raw/usaspending-procurement-actions.csv, or SAM_CONTRACT_AWARDS_SOURCE_NATIVE=1 SAM_API_KEY=... python3 scripts/fetch-source-data.py sam-contract-awards --output data/raw/usaspending-procurement-actions.csv",
+        "description": "Stratified six-agency USAspending transaction/action panel for action-level procurement concentration and modification diagnostics; rows are deduplicated and kept separate from award rows, top-award bridge rows, and SAM.gov Contract Awards rows.",
+        "request": "USASPENDING_AGENCIES='Environmental Protection Agency,Department of Energy,Department of the Interior,Department of Agriculture,Department of Transportation,Department of Defense' USASPENDING_ACTION_PERIOD_BUCKETS=monthly USASPENDING_ACTION_TRANSACTION_PAGE_SIZE=25 USASPENDING_ACTION_TRANSACTION_MAX_PAGES=1 USASPENDING_ACTION_TRANSACTION_SORT_SPECS='Mod:asc;Transaction Amount:desc' python3 scripts/fetch-source-data.py usaspending-actions --output data/raw/usaspending-procurement-actions.csv",
+    },
+    "sam-contract-awards": {
+        "input": RAW / "sam-contract-awards.csv",
+        "description": "Optional SAM.gov Contract Awards action panel for PIID/UEI, competition, modification, award-date, and contracting-department diagnostics; kept separate from USAspending action rows so procurement provenance remains auditable.",
+        "request": "SAM_CONTRACT_AWARDS_SOURCE_NATIVE=1 SAM_API_KEY=... python3 scripts/fetch-source-data.py sam-contract-awards --output data/raw/sam-contract-awards.csv",
     },
     "revolving-door": {
         "input": RAW / "revolving-door.csv",
@@ -183,6 +188,7 @@ def source_status(source: str, live_status: list[dict[str, str]]) -> tuple[str, 
         "usaspending": [row for row in live_status if row["source"] == "usaspending"],
         "usaspending-procurement-bridge": [row for row in live_status if row["source"] == "usaspending-procurement-bridge"],
         "usaspending-procurement-actions": [row for row in live_status if row["source"] == "usaspending-procurement-actions"],
+        "sam-contract-awards": [row for row in live_status if row["source"] == "sam-contract-awards"],
         "revolving-door": [row for row in live_status if row["source"] == "revolving-door"],
         "intermediary": [row for row in live_status if row["source"] == "intermediary"],
     }.get(source, [])
@@ -247,6 +253,7 @@ def write_readme(root: Path, entries: list[dict[str, object]]) -> None:
         "- USAspending fiscal year: 2024, Environmental Protection Agency awards.",
         "- USAspending procurement bridge: multi-agency fiscal-year 2024 top-award rows for high-value procurement diagnostics, kept separate from the EPA calibration slice and action-panel denominator.",
         "- USAspending procurement actions: stratified six-agency transaction/action rows for concentration and modification-incidence diagnostics when present, combining initial-action and high-value transaction strata and kept separate from award rows and top-award bridge rows.",
+        "- SAM.gov Contract Awards: optional source-native action rows for PIID/UEI, competition, modification, award-date, and contracting-department diagnostics, kept separate from USAspending action rows so source provenance remains visible.",
         "- Revolving-door panel: licensed/source export or LDA covered-position derivation when available; fixture otherwise.",
         "- Intermediary panel: NYC CFB intermediary rows, IRS EO BMF nonprofit/association capacity rows, IRS POFD Form 8872 527 political-organization rows, or configured nonprofit, 527, association, and think-tank export when available; fixture otherwise.",
         "",

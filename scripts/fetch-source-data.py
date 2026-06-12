@@ -9,7 +9,9 @@ import hashlib
 import html
 from io import StringIO
 import json
+import multiprocessing
 import os
+import queue
 import re
 import socket
 import sys
@@ -26,6 +28,14 @@ from urllib.request import Request, urlopen
 
 MODEL_DOMAINS = ("energy", "technology", "finance", "procurement", "democracy")
 RAW_SEQUENCE = 0
+
+
+class SourceHttpStatus(Exception):
+    def __init__(self, code: int, detail: str, headers: dict[str, str] | None = None) -> None:
+        super().__init__(f"HTTP {code}")
+        self.code = code
+        self.detail = detail
+        self.headers = headers or {}
 
 
 def main() -> int:
@@ -51,7 +61,7 @@ def main() -> int:
     usaspending_actions.add_argument("--output", type=Path, default=Path("data/raw/usaspending-procurement-actions.csv"))
 
     sam_contract_awards = subparsers.add_parser("sam-contract-awards", help="Fetch SAM.gov Contract Awards rows into the procurement action schema.")
-    sam_contract_awards.add_argument("--output", type=Path, default=Path("data/raw/usaspending-procurement-actions.csv"))
+    sam_contract_awards.add_argument("--output", type=Path, default=Path("data/raw/sam-contract-awards.csv"))
 
     nyc_public_financing = subparsers.add_parser("nyc-public-financing", help="Fetch NYC CFB public-funds payments.")
     nyc_public_financing.add_argument("--output", type=Path, default=Path("data/raw/public-financing.csv"))
@@ -2284,26 +2294,20 @@ def request_text(
     request_headers = {"User-Agent": "lobby-capture-simulator/0.1"}
     if headers:
         request_headers.update(headers)
-    request = Request(url, data=body, headers=request_headers, method=method)
     attempts = int_env("SOURCE_FETCH_RETRIES", 3, 1, 8)
     backoff = float_env("SOURCE_FETCH_BACKOFF_SECONDS", 1.0, 0.0, 30.0)
     timeout = float_env("SOURCE_FETCH_TIMEOUT_SECONDS", 30.0, 1.0, 300.0)
+    hard_timeout = float_env("SOURCE_FETCH_HARD_TIMEOUT_SECONDS", min(timeout + 5.0, 305.0), 1.0, 600.0)
     for attempt in range(1, attempts + 1):
         try:
-            previous_timeout = socket.getdefaulttimeout()
-            socket.setdefaulttimeout(timeout)
-            try:
-                with urlopen(request, timeout=timeout) as response:
-                    text = response.read().decode("utf-8")
-                    write_raw_payload(url, text, method, body)
-                    return text
-            finally:
-                socket.setdefaulttimeout(previous_timeout)
-        except HTTPError as error:
+            text = fetch_url_text_with_hard_timeout(method, url, request_headers, body, timeout, hard_timeout)
+            write_raw_payload(url, text, method, body)
+            return text
+        except SourceHttpStatus as error:
             if should_retry(error.code, attempt, attempts):
                 sleep_before_retry(error, attempt, backoff)
                 continue
-            detail = error.read().decode("utf-8", errors="replace")[:500]
+            detail = error.detail[:500]
             hint = auth_hint(error.code)
             raise SystemExit(f"{method} {redact_url(url)} failed with HTTP {error.code}: {detail}{hint}") from error
         except (URLError, RemoteDisconnected, TimeoutError, ConnectionError, OSError) as error:
@@ -2313,6 +2317,83 @@ def request_text(
             reason = getattr(error, "reason", str(error))
             raise SystemExit(f"{method} {redact_url(url)} failed after {attempts} attempts: {reason}") from error
     raise AssertionError("unreachable")
+
+
+def fetch_url_text_with_hard_timeout(
+        method: str,
+        url: str,
+        headers: dict[str, str],
+        body: bytes | None,
+        timeout: float,
+        hard_timeout: float,
+) -> str:
+    """Fetch URL text in a child process so stuck sockets cannot block live snapshots."""
+    fd, output_name = tempfile.mkstemp(prefix="lobby-source-fetch-", suffix=".txt")
+    os.close(fd)
+    output_path = Path(output_name)
+    context = multiprocessing_context()
+    result_queue = context.Queue()
+    process = context.Process(
+        target=fetch_url_text_child,
+        args=(method, url, headers, body, timeout, output_name, result_queue),
+    )
+    process.start()
+    process.join(hard_timeout)
+    if process.is_alive():
+        process.terminate()
+        process.join(2.0)
+        output_path.unlink(missing_ok=True)
+        raise TimeoutError(f"source fetch exceeded hard timeout ({hard_timeout:.1f}s)")
+    try:
+        result = result_queue.get_nowait()
+    except queue.Empty as error:
+        output_path.unlink(missing_ok=True)
+        raise OSError(f"source fetch child exited without a result (exit code {process.exitcode})") from error
+    status = result.get("status")
+    if status == "ok":
+        try:
+            return output_path.read_text(encoding="utf-8")
+        finally:
+            output_path.unlink(missing_ok=True)
+    output_path.unlink(missing_ok=True)
+    if status == "http":
+        raise SourceHttpStatus(int(result.get("code", 0)), str(result.get("detail", "")), result.get("headers", {}))
+    reason = str(result.get("reason", result.get("type", "unknown source fetch error")))
+    raise OSError(reason)
+
+
+def multiprocessing_context() -> multiprocessing.context.BaseContext:
+    try:
+        return multiprocessing.get_context("fork")
+    except ValueError:
+        return multiprocessing.get_context("spawn")
+
+
+def fetch_url_text_child(
+        method: str,
+        url: str,
+        headers: dict[str, str],
+        body: bytes | None,
+        timeout: float,
+        output_name: str,
+        result_queue: multiprocessing.Queue,
+) -> None:
+    previous_timeout = socket.getdefaulttimeout()
+    try:
+        socket.setdefaulttimeout(timeout)
+        request = Request(url, data=body, headers=headers, method=method)
+        with urlopen(request, timeout=timeout) as response:
+            text = response.read().decode("utf-8")
+        Path(output_name).write_text(text, encoding="utf-8")
+        result_queue.put({"status": "ok"})
+    except HTTPError as error:
+        detail = error.read().decode("utf-8", errors="replace")[:500]
+        result_queue.put({"status": "http", "code": error.code, "detail": detail, "headers": dict(error.headers)})
+    except BaseException as error:  # noqa: BLE001 - child reports all source-fetch failures to parent.
+        reason = getattr(error, "reason", str(error))
+        result_queue.put({"status": "error", "type": type(error).__name__, "reason": str(reason)})
+    finally:
+        socket.setdefaulttimeout(previous_timeout)
 
 
 def first_text(record: dict[str, object], *paths: str, default: str = "") -> str:
@@ -2471,7 +2552,7 @@ def should_retry(status_code: int, attempt: int, attempts: int) -> bool:
     return attempt < attempts and (status_code == 429 or 500 <= status_code <= 599)
 
 
-def sleep_before_retry(error: HTTPError | None, attempt: int, backoff: float) -> None:
+def sleep_before_retry(error: HTTPError | SourceHttpStatus | None, attempt: int, backoff: float) -> None:
     retry_after = error.headers.get("Retry-After") if error is not None else None
     if retry_after is not None:
         try:

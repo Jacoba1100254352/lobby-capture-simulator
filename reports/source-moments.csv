@@ -48,15 +48,19 @@ snapshot,regulatory,commentFloodingIndex,0.3072,proxy,"combined top-docket conce
 snapshot,regulatory,technicalClaimCredibilityMean,0.5000,proxy,mean normalized technical claim credibility
 snapshot,usaspending,procurementRows,200.0000,observed,normalized USAspending award rows
 snapshot,usaspending,procurementBridgeRows,150.0000,observed,"multi-agency USAspending bridge rows, if available"
-snapshot,usaspending,procurementActionRows,3578.0000,observed,"normalized USAspending transaction/action rows, if available"
+snapshot,usaspending,procurementActionRows,3578.0000,observed,primary procurement action denominator from stratified USAspending transaction/action rows
+snapshot,usaspending,procurementUsaspendingActionRows,3578.0000,observed,"normalized USAspending transaction/action rows, if available"
+snapshot,sam,procurementSamContractAwardRows,0.0000,observed,"normalized SAM.gov Contract Awards rows, if available"
+snapshot,usaspending,procurementActionPanelUsaspendingSample,1.0000,diagnostic,1 when the primary procurement action denominator uses USAspending transaction/action rows
+snapshot,sam,procurementActionPanelSamSample,0.0000,diagnostic,1 when the primary procurement action denominator uses SAM.gov Contract Awards rows
 snapshot,usaspending,procurementConcentrationPanelRows,3578.0000,diagnostic,rows used for concentration moments from stratified USAspending transaction/action rows
 snapshot,usaspending,procurementConcentrationPanelAgencyCount,6.0000,observed,distinct awarding agencies in the procurement concentration panel
-snapshot,usaspending,procurementConcentrationPanelActionSample,1.0000,diagnostic,1 when procurement concentration moments use the transaction/action panel
+snapshot,usaspending,procurementConcentrationPanelActionSample,1.0000,diagnostic,1 when procurement concentration moments use a transaction/action panel
 snapshot,usaspending,procurementConcentrationPanelTopAwardSample,0.0000,diagnostic,1 when procurement concentration moments use the multi-agency top-award bridge
 snapshot,usaspending,procurementCompetitionPanelRows,200.0000,diagnostic,rows used for competition moments from normalized USAspending award rows with competition fields
-snapshot,usaspending,procurementModificationPanelRows,3578.0000,diagnostic,rows used for modification moments from normalized USAspending transaction/action rows
+snapshot,usaspending,procurementModificationPanelRows,3578.0000,diagnostic,rows used for modification moments from stratified USAspending transaction/action rows
 snapshot,usaspending,procurementBridgeAgencyCount,6.0000,observed,distinct awarding agencies in procurement source moment panel
-snapshot,usaspending,procurementActionAgencyCount,6.0000,diagnostic,distinct awarding agencies in the transaction/action modification panel
+snapshot,usaspending,procurementActionAgencyCount,6.0000,diagnostic,distinct awarding agencies in the primary transaction/action panel from stratified USAspending transaction/action rows
 snapshot,usaspending,procurementBridgeTopAwardSample,1.0000,diagnostic,1 when a separate multi-agency top-award bridge is available
 snapshot,usaspending,procurementLatestTransactionModificationProxy,1.0000,diagnostic,1 when latest-transaction enrichment exists but is kept separate from action-level modification incidence
 snapshot,usaspending,procurementTotalAwards,161806.5313,observed,sum of stratified USAspending transaction/action rows amount
@@ -70,10 +74,10 @@ snapshot,usaspending,procurementSubAgencyTop3Share,0.6813,observed,top three sub
 snapshot,usaspending,procurementAwardCount,3578.0000,observed,sum of normalized award or transaction counts in stratified USAspending transaction/action rows
 snapshot,usaspending,procurementSingleBidShare,0.2350,observed_proxy,share among normalized USAspending award rows with competition fields that have one known offer
 snapshot,usaspending,procurementAmountWeightedSingleBidShare,0.2108,observed_proxy,award-amount share among normalized USAspending award rows with competition fields with one known offer
-snapshot,usaspending,procurementInitialAwardShare,0.6889,observed_proxy,share of normalized USAspending transaction/action rows that appear to be initial awards
-snapshot,usaspending,procurementExPostModificationShare,0.3111,observed_proxy,share of normalized USAspending transaction/action rows marked as ex-post modifications or nonzero modification sequence
-snapshot,usaspending,procurementAmountWeightedModificationShare,0.7517,observed_proxy,award-amount share of normalized USAspending transaction/action rows marked as ex-post modifications
-snapshot,usaspending,procurementActionModificationRows,1113.0000,diagnostic,transaction/action rows marked as ex-post modifications
+snapshot,usaspending,procurementInitialAwardShare,0.6889,observed_proxy,share of stratified USAspending transaction/action rows that appear to be initial awards
+snapshot,usaspending,procurementExPostModificationShare,0.3111,observed_proxy,share of stratified USAspending transaction/action rows marked as ex-post modifications or nonzero modification sequence
+snapshot,usaspending,procurementAmountWeightedModificationShare,0.7517,observed_proxy,award-amount share of stratified USAspending transaction/action rows marked as ex-post modifications
+snapshot,usaspending,procurementActionModificationRows,1113.0000,diagnostic,primary transaction/action rows from stratified USAspending transaction/action rows marked as ex-post modifications
 snapshot,usaspending,procurementPriceOnlyAwardShare,0.2400,observed_proxy,share among normalized USAspending award rows with competition fields marked as price-only or one-offer awards
 snapshot,usaspending,procurementLimitedCompetitionShare,0.4600,observed_proxy,"share among normalized USAspending award rows with competition fields with limited competition, exclusions, or one known offer"
 snapshot,usaspending,procurementProtestShare,0.0000,observed_proxy,share of normalized award rows marked with a protest flag
@@ -153,15 +157,19 @@ fixture,regulatory,commentFloodingIndex,0.4888,proxy,"combined top-docket concen
 fixture,regulatory,technicalClaimCredibilityMean,0.4875,proxy,mean normalized technical claim credibility
 fixture,usaspending,procurementRows,5.0000,observed,normalized USAspending award rows
 fixture,usaspending,procurementBridgeRows,0.0000,observed,"multi-agency USAspending bridge rows, if available"
-fixture,usaspending,procurementActionRows,5.0000,observed,"normalized USAspending transaction/action rows, if available"
+fixture,usaspending,procurementActionRows,5.0000,observed,primary procurement action denominator from stratified USAspending transaction/action rows
+fixture,usaspending,procurementUsaspendingActionRows,5.0000,observed,"normalized USAspending transaction/action rows, if available"
+fixture,sam,procurementSamContractAwardRows,0.0000,observed,"normalized SAM.gov Contract Awards rows, if available"
+fixture,usaspending,procurementActionPanelUsaspendingSample,1.0000,diagnostic,1 when the primary procurement action denominator uses USAspending transaction/action rows
+fixture,sam,procurementActionPanelSamSample,0.0000,diagnostic,1 when the primary procurement action denominator uses SAM.gov Contract Awards rows
 fixture,usaspending,procurementConcentrationPanelRows,5.0000,diagnostic,rows used for concentration moments from normalized USAspending award rows
 fixture,usaspending,procurementConcentrationPanelAgencyCount,1.0000,observed,distinct awarding agencies in the procurement concentration panel
-fixture,usaspending,procurementConcentrationPanelActionSample,0.0000,diagnostic,1 when procurement concentration moments use the transaction/action panel
+fixture,usaspending,procurementConcentrationPanelActionSample,0.0000,diagnostic,1 when procurement concentration moments use a transaction/action panel
 fixture,usaspending,procurementConcentrationPanelTopAwardSample,0.0000,diagnostic,1 when procurement concentration moments use the multi-agency top-award bridge
 fixture,usaspending,procurementCompetitionPanelRows,5.0000,diagnostic,rows used for competition moments from normalized USAspending award rows with competition fields
-fixture,usaspending,procurementModificationPanelRows,5.0000,diagnostic,rows used for modification moments from normalized USAspending transaction/action rows
+fixture,usaspending,procurementModificationPanelRows,5.0000,diagnostic,rows used for modification moments from stratified USAspending transaction/action rows
 fixture,usaspending,procurementBridgeAgencyCount,0.0000,observed,distinct awarding agencies in procurement source moment panel
-fixture,usaspending,procurementActionAgencyCount,1.0000,diagnostic,distinct awarding agencies in the transaction/action modification panel
+fixture,usaspending,procurementActionAgencyCount,1.0000,diagnostic,distinct awarding agencies in the primary transaction/action panel from stratified USAspending transaction/action rows
 fixture,usaspending,procurementBridgeTopAwardSample,0.0000,diagnostic,1 when a separate multi-agency top-award bridge is available
 fixture,usaspending,procurementLatestTransactionModificationProxy,0.0000,diagnostic,1 when latest-transaction enrichment exists but is kept separate from action-level modification incidence
 fixture,usaspending,procurementTotalAwards,700.0000,observed,sum of normalized USAspending award rows amount
@@ -175,10 +183,10 @@ fixture,usaspending,procurementSubAgencyTop3Share,0.8143,observed,top three sub-
 fixture,usaspending,procurementAwardCount,48.0000,observed,sum of normalized award or transaction counts in normalized USAspending award rows
 fixture,usaspending,procurementSingleBidShare,0.4000,observed_proxy,share among normalized USAspending award rows with competition fields that have one known offer
 fixture,usaspending,procurementAmountWeightedSingleBidShare,0.3429,observed_proxy,award-amount share among normalized USAspending award rows with competition fields with one known offer
-fixture,usaspending,procurementInitialAwardShare,0.6000,observed_proxy,share of normalized USAspending transaction/action rows that appear to be initial awards
-fixture,usaspending,procurementExPostModificationShare,0.4000,observed_proxy,share of normalized USAspending transaction/action rows marked as ex-post modifications or nonzero modification sequence
-fixture,usaspending,procurementAmountWeightedModificationShare,0.1398,observed_proxy,award-amount share of normalized USAspending transaction/action rows marked as ex-post modifications
-fixture,usaspending,procurementActionModificationRows,2.0000,diagnostic,transaction/action rows marked as ex-post modifications
+fixture,usaspending,procurementInitialAwardShare,0.6000,observed_proxy,share of stratified USAspending transaction/action rows that appear to be initial awards
+fixture,usaspending,procurementExPostModificationShare,0.4000,observed_proxy,share of stratified USAspending transaction/action rows marked as ex-post modifications or nonzero modification sequence
+fixture,usaspending,procurementAmountWeightedModificationShare,0.1398,observed_proxy,award-amount share of stratified USAspending transaction/action rows marked as ex-post modifications
+fixture,usaspending,procurementActionModificationRows,2.0000,diagnostic,primary transaction/action rows from stratified USAspending transaction/action rows marked as ex-post modifications
 fixture,usaspending,procurementPriceOnlyAwardShare,0.4000,observed_proxy,share among normalized USAspending award rows with competition fields marked as price-only or one-offer awards
 fixture,usaspending,procurementLimitedCompetitionShare,0.4000,observed_proxy,"share among normalized USAspending award rows with competition fields with limited competition, exclusions, or one known offer"
 fixture,usaspending,procurementProtestShare,0.0000,observed_proxy,share of normalized award rows marked with a protest flag
