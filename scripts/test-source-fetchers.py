@@ -184,6 +184,12 @@ def assert_usaspending(fetchers) -> None:
     assert action_rows[1]["modificationNumber"] == "P00001", action_rows[1]
     assert action_rows[1]["exPostModification"] == "true", action_rows[1]
     assert action_rows[1]["amount"] == 25.0, action_rows[1]
+    direct_action_rows = fetchers.normalize_usaspending_direct_transaction_records(transaction_payload["results"])
+    assert len(direct_action_rows) == 2, direct_action_rows
+    assert direct_action_rows[0]["awardId"] == "EPW05049", direct_action_rows[0]
+    assert direct_action_rows[0]["piid"] == "EPW05049", direct_action_rows[0]
+    assert direct_action_rows[1]["modificationNumber"] == "P00001", direct_action_rows[1]
+    assert direct_action_rows[1]["exPostModification"] == "true", direct_action_rows[1]
 
 
 def assert_nyc_public_financing(fetchers) -> None:

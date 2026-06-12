@@ -580,6 +580,55 @@ def fetch_usaspending(output: Path) -> int:
 
 
 def fetch_usaspending_actions(output: Path) -> int:
+    if os.environ.get("USASPENDING_ACTION_AWARD_EXPANSION", "0") == "1":
+        return fetch_usaspending_actions_by_award(output)
+
+    base = os.environ.get("USASPENDING_API_BASE", "https://api.usaspending.gov/api/v2").rstrip("/")
+    limit = int_env("USASPENDING_ACTION_TRANSACTION_PAGE_SIZE", int_env("USASPENDING_ACTION_AWARD_PAGE_SIZE", int_env("USASPENDING_PAGE_SIZE", 50, 1, 100), 1, 100), 1, 100)
+    max_pages = int_env("USASPENDING_ACTION_TRANSACTION_MAX_PAGES", int_env("USASPENDING_ACTION_AWARD_MAX_PAGES", int_env("USASPENDING_MAX_PAGES", 1, 1, 20), 1, 20), 1, 20)
+    start_date, end_date = usaspending_time_period()
+    rows: list[dict[str, object]] = []
+    for agency_filter in usaspending_agency_filters():
+        for page in range(1, max_pages + 1):
+            payload = {
+                "filters": {
+                    "time_period": [{"start_date": start_date, "end_date": end_date}],
+                    "agencies": [agency_filter],
+                    "award_type_codes": split_csv_env("USASPENDING_AWARD_TYPE_CODES", "A,B,C,D"),
+                },
+                "fields": [
+                    "Award ID",
+                    "Action Date",
+                    "Action Type",
+                    "Mod",
+                    "Transaction Amount",
+                    "Recipient Name",
+                    "Recipient UEI",
+                    "Awarding Agency",
+                    "Awarding Sub Agency",
+                    "Award Type",
+                    "generated_internal_id",
+                ],
+                "page": page,
+                "limit": limit,
+                "sort": os.environ.get("USASPENDING_ACTION_TRANSACTION_SORT", "Action Date"),
+                "order": os.environ.get("USASPENDING_ACTION_TRANSACTION_ORDER", "desc"),
+            }
+            response = post_json(f"{base}/search/spending_by_transaction/", payload)
+            rows.extend(normalize_usaspending_direct_transaction_records(response.get("results", [])))
+            metadata = response.get("page_metadata", {})
+            if not metadata.get("hasNext"):
+                break
+    write_rows(
+        output,
+        USASPENDING_FIELDS,
+        rows,
+        "USAspending procurement action rows",
+    )
+    return 0
+
+
+def fetch_usaspending_actions_by_award(output: Path) -> int:
     base = os.environ.get("USASPENDING_API_BASE", "https://api.usaspending.gov/api/v2").rstrip("/")
     limit = int_env("USASPENDING_ACTION_AWARD_PAGE_SIZE", int_env("USASPENDING_PAGE_SIZE", 50, 1, 100), 1, 100)
     max_pages = int_env("USASPENDING_ACTION_AWARD_MAX_PAGES", int_env("USASPENDING_MAX_PAGES", 1, 1, 20), 1, 20)
@@ -785,6 +834,39 @@ def normalize_usaspending_transaction_records(
                 "exPostModification": str(modification_sequence(modification_number) > 0).lower(),
                 "protestFiled": "false",
                 "exclusionFlag": str(exclusion_flag).lower(),
+                "firewallCovered": str(os.environ.get("USASPENDING_FIREWALL_COVERED", "false").lower() == "true").lower(),
+            }
+        )
+    return rows
+
+
+def normalize_usaspending_direct_transaction_records(transactions: list[dict[str, object]]) -> list[dict[str, object]]:
+    rows: list[dict[str, object]] = []
+    for transaction in transactions:
+        if not isinstance(transaction, dict):
+            continue
+        award_id = first_text(transaction, "Award ID", "generated_internal_id", default="UNKNOWN")
+        modification_number = first_text(transaction, "Mod", "mod", "Modification Number", "modification_number", default="0")
+        rows.append(
+            {
+                "awardId": award_id,
+                "recipient": first_text(transaction, "Recipient Name", "recipient_name", default="Unknown recipient"),
+                "agency": first_text(transaction, "Awarding Agency", "awarding_agency", default="Unknown agency"),
+                "subAgency": first_text(transaction, "Awarding Sub Agency", "awarding_sub_agency", default="Unknown agency"),
+                "awardType": first_text(transaction, "Award Type", "award_type", default="contract"),
+                "amount": money_millions(first_text(transaction, "Transaction Amount", "transaction_amount", "Award Amount", "award_amount", default="0")),
+                "issueDomain": os.environ.get("USASPENDING_ISSUE_DOMAIN", "procurement"),
+                "awardCount": 1,
+                "uei": first_text(transaction, "Recipient UEI", "recipient_uei", default=""),
+                "piid": award_id,
+                "modificationNumber": modification_number,
+                "actionDate": first_text(transaction, "Action Date", "action_date", default=""),
+                "competitionType": "unknown",
+                "numberOfOffers": "0",
+                "priceOnlyAward": "false",
+                "exPostModification": str(modification_sequence(modification_number) > 0).lower(),
+                "protestFiled": "false",
+                "exclusionFlag": "false",
                 "firewallCovered": str(os.environ.get("USASPENDING_FIREWALL_COVERED", "false").lower() == "true").lower(),
             }
         )
@@ -1172,7 +1254,6 @@ def usaspending_transaction_records(base: str, piid: str) -> list[dict[str, obje
             "Awarding Agency",
             "Awarding Sub Agency",
             "Award Type",
-            "PIID",
         ],
         "page": 1,
         "limit": int_env("USASPENDING_TRANSACTION_LIMIT", int_env("USASPENDING_ACTION_TRANSACTION_LIMIT", 50, 1, 100), 1, 100),
