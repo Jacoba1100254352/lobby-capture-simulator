@@ -606,8 +606,9 @@ def representativeness_warnings(rows: list[dict[str, str]]) -> list[str]:
             "Snapshot procurement concentration uses SAM.gov Contract Awards rows; this is stronger source provenance than the top-award bridge but remains a bounded diagnostic rather than a representative SAM/FPDS panel."
         )
     elif metric_value(rows, "snapshot", "usaspending", "procurementConcentrationPanelActionSample") >= 0.5:
+        action_rows = metric_value(rows, "snapshot", "usaspending", "procurementActionRows")
         warnings.append(
-            "Snapshot procurement concentration uses a stratified multi-agency USAspending transaction/action panel; this is stronger than the top-award bridge but remains a bounded diagnostic rather than a representative SAM/FPDS panel."
+            f"Snapshot procurement concentration uses an expanded stratified multi-agency USAspending transaction/action panel ({action_rows:.0f} rows); this is stronger than the top-award bridge but remains a bounded diagnostic rather than a representative SAM/FPDS panel."
         )
     elif metric_value(rows, "snapshot", "usaspending", "procurementConcentrationPanelTopAwardSample") >= 0.5:
         warnings.append(

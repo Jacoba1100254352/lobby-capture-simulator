@@ -23,7 +23,7 @@ This audit summarizes which claim posture is cleared by the current source panel
 ## Weak Source Panels
 
 - Weak panels: `1`
-- `Procurement modification risk` (thin): stratified transaction-action rows are present, but modification incidence remains too high for calibration-grade national inference; distinct-award share=0.2269, amount-weighted share=0.6141
+- `Procurement modification risk` (warning): modification-action share is outside the benchmark range, likely reflecting bounded action-sample scope or nonrepresentative transaction coverage; distinct-award share=0.3442, amount-weighted share=0.6344
 
 ## Claim-Source Dependencies
 
@@ -31,8 +31,8 @@ This audit summarizes which claim posture is cleared by the current source panel
 - Bounded claim dependencies: `1`
 - Not-cleared claim dependencies: `2`
 - `Hidden-channel magnitude` (bounded): Bounded by top-EIN Schedule I routing coverage and unobserved donor identities.
-- `Procurement modification capture` (not_cleared): Not cleared because of weak panels: Procurement modification risk (thin).
-- `Calibrated policy simulation` (not_cleared): Not cleared because of weak panels: Procurement modification risk (thin).
+- `Procurement modification capture` (not_cleared): Not cleared because of weak panels: Procurement modification risk (warning).
+- `Calibrated policy simulation` (not_cleared): Not cleared because of weak panels: Procurement modification risk (warning).
 
 ## P1/P2 Calibration Actions
 

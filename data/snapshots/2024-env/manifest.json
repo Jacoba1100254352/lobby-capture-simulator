@@ -1,7 +1,7 @@
 {
   "snapshot": "2024-env",
-  "generatedAt": "2026-06-12T13:22:25.387233+00:00",
-  "gitCommit": "5b42956",
+  "generatedAt": "2026-06-12T15:42:53.790931+00:00",
+  "gitCommit": "0144984",
   "gitTreeState": "clean",
   "gitTreeStateScope": "working tree status excluding generated 2024-env snapshot, reports, paper tables, and paper figures",
   "scope": {
@@ -85,18 +85,18 @@
     },
     {
       "source": "usaspending-procurement-actions",
-      "description": "Stratified 12-agency quarterly USAspending transaction/action panel for action-level procurement concentration and modification diagnostics; rows are deduplicated and kept separate from award rows, top-award bridge rows, and SAM.gov Contract Awards rows.",
-      "requestTemplate": "USASPENDING_AGENCIES='Environmental Protection Agency,Department of Energy,Department of the Interior,Department of Agriculture,Department of Transportation,Department of Defense,Department of Health and Human Services,Department of Veterans Affairs,Department of Homeland Security,National Aeronautics and Space Administration,General Services Administration,Department of Commerce' USASPENDING_ACTION_PERIOD_BUCKETS=quarterly USASPENDING_ACTION_TRANSACTION_PAGE_SIZE=25 USASPENDING_ACTION_TRANSACTION_MAX_PAGES=1 USASPENDING_ACTION_TRANSACTION_SORT_SPECS='Mod:asc;Transaction Amount:desc' python3 scripts/fetch-source-data.py usaspending-actions --output data/raw/usaspending-procurement-actions.csv",
+      "description": "Expanded stratified 12-agency quarterly USAspending transaction/action panel for action-level procurement concentration and modification diagnostics; rows are deduplicated across modification, amount, and action-date strata and kept separate from award rows, top-award bridge rows, and SAM.gov Contract Awards rows.",
+      "requestTemplate": "USASPENDING_AGENCIES='Environmental Protection Agency,Department of Energy,Department of the Interior,Department of Agriculture,Department of Transportation,Department of Defense,Department of Health and Human Services,Department of Veterans Affairs,Department of Homeland Security,National Aeronautics and Space Administration,General Services Administration,Department of Commerce' USASPENDING_ACTION_PERIOD_BUCKETS=quarterly USASPENDING_ACTION_TRANSACTION_PAGE_SIZE=100 USASPENDING_ACTION_TRANSACTION_MAX_PAGES=2 USASPENDING_ACTION_TRANSACTION_SORT_SPECS='Mod:asc;Transaction Amount:desc;Action Date:asc' python3 scripts/fetch-source-data.py usaspending-actions --output data/raw/usaspending-procurement-actions.csv",
       "normalizedFile": "data/snapshots/2024-env/normalized/usaspending-procurement-actions.csv",
-      "rowCount": 2399,
-      "sha256": "27dcaa9cd33312a63bb21d32c92f48921459bac1021cd8849136249ea5cd6da7",
+      "rowCount": 28115,
+      "sha256": "9e218dba3f4b3af84d278ae50a6bda09b7d84809aca5749253e6eeb1d86fc2cc",
       "status": "live",
-      "statusNotes": "usaspending-procurement-actions: ok (normalized USAspending procurement action rows written)"
+      "statusNotes": "usaspending-procurement-actions: ok (normalized expanded USAspending procurement action rows written; agencies=12; periodBuckets=quarterly; pageSize=100; maxPages=2; sortSpecs=Mod:asc;Transaction Amount:desc;Action Date:asc)"
     },
     {
       "source": "sam-contract-awards",
       "description": "Optional SAM.gov Contract Awards action panel for PIID/UEI, competition, modification, award-date, and contracting-department diagnostics; kept separate from USAspending action rows so procurement provenance remains auditable.",
-      "requestTemplate": "SAM_CONTRACT_AWARDS_SOURCE_NATIVE=1 SAM_API_KEY=... python3 scripts/fetch-source-data.py sam-contract-awards --output data/raw/sam-contract-awards.csv",
+      "requestTemplate": "SAM_CONTRACT_AWARDS_SOURCE_NATIVE=1 SAM_CONTRACT_AWARDS_EXTRACT_MODE=1 SAM_API_KEY=... python3 scripts/fetch-source-data.py sam-contract-awards --output data/raw/sam-contract-awards.csv",
       "normalizedFile": "data/snapshots/2024-env/normalized/sam-contract-awards.csv",
       "rowCount": 0,
       "sha256": "missing",
@@ -126,6 +126,6 @@
   ],
   "liveRunStatus": {
     "file": "data/snapshots/2024-env/live-run-status.csv",
-    "sha256": "41e3e3e16d9586435c8a13909892e5ef18733ec86c9e019bc531e569d9e03247"
+    "sha256": "224646eb5b2e21979f363817d90d0a2db9482dfad806d35811cb3d2c15226fe8"
   }
 }
