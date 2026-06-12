@@ -982,13 +982,32 @@ def usaspending_time_period() -> tuple[str, str]:
 def usaspending_action_periods() -> list[tuple[str, str]]:
     start_text, end_text = usaspending_time_period()
     bucket = os.environ.get("USASPENDING_ACTION_PERIOD_BUCKETS", "").strip().lower()
-    if bucket not in {"month", "monthly"}:
+    if bucket in {"", "year", "yearly", "annual", "full", "full-year"}:
         return [(start_text, end_text)]
+    if bucket not in {"month", "monthly", "quarter", "quarterly"}:
+        raise SystemExit(
+            "USASPENDING_ACTION_PERIOD_BUCKETS must be one of annual, monthly, or quarterly."
+        )
     start = parse_date(start_text)
     end = parse_date(end_text)
     if start is None or end is None:
         return [(start_text, end_text)]
     periods: list[tuple[str, str]] = []
+    if bucket in {"quarter", "quarterly"}:
+        first_quarter_month = ((start.month - 1) // 3) * 3 + 1
+        cursor = date(start.year, first_quarter_month, 1)
+        while cursor <= end:
+            next_quarter_month = cursor.month + 3
+            next_quarter_year = cursor.year
+            if next_quarter_month > 12:
+                next_quarter_month -= 12
+                next_quarter_year += 1
+            next_quarter = date(next_quarter_year, next_quarter_month, 1)
+            period_start = max(cursor, start)
+            period_end = min(date.fromordinal(next_quarter.toordinal() - 1), end)
+            periods.append((period_start.isoformat(), period_end.isoformat()))
+            cursor = next_quarter
+        return periods
     cursor = date(start.year, start.month, 1)
     while cursor <= end:
         next_month = date(cursor.year + (1 if cursor.month == 12 else 0), 1 if cursor.month == 12 else cursor.month + 1, 1)

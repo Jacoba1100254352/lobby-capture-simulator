@@ -203,6 +203,28 @@ def assert_usaspending(fetchers) -> None:
         ("2024-02-01", "2024-02-29"),
         ("2024-03-01", "2024-03-05"),
     ]
+    os.environ["USASPENDING_ACTION_PERIOD_BUCKETS"] = "quarterly"
+    assert fetchers.usaspending_action_periods() == [
+        ("2024-01-15", "2024-03-05"),
+    ]
+    os.environ["USASPENDING_DATE_FROM"] = "2024-02-15"
+    os.environ["USASPENDING_DATE_TO"] = "2024-08-05"
+    assert fetchers.usaspending_action_periods() == [
+        ("2024-02-15", "2024-03-31"),
+        ("2024-04-01", "2024-06-30"),
+        ("2024-07-01", "2024-08-05"),
+    ]
+    os.environ["USASPENDING_ACTION_PERIOD_BUCKETS"] = "annual"
+    assert fetchers.usaspending_action_periods() == [
+        ("2024-02-15", "2024-08-05"),
+    ]
+    os.environ["USASPENDING_ACTION_PERIOD_BUCKETS"] = "weekly"
+    try:
+        fetchers.usaspending_action_periods()
+    except SystemExit as exc:
+        assert "USASPENDING_ACTION_PERIOD_BUCKETS" in str(exc), exc
+    else:
+        raise AssertionError("invalid USAspending action period bucket did not fail")
     os.environ["USASPENDING_ACTION_TRANSACTION_SORT_SPECS"] = "Mod:asc; Transaction Amount:desc; Action Date:sideways"
     os.environ["USASPENDING_ACTION_TRANSACTION_ORDER"] = "asc"
     assert fetchers.usaspending_action_transaction_sort_specs() == [

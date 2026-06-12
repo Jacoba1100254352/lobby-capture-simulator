@@ -9,6 +9,7 @@ raw_dir="${SOURCE_RAW_DIR:-data/raw/source-payloads/2024-env}"
 mkdir -p data/raw "$raw_dir"
 status_file="$tmpdir/live-run-status.csv"
 printf "source,status,notes\n" > "$status_file"
+default_procurement_action_agencies="Environmental Protection Agency,Department of Energy,Department of the Interior,Department of Agriculture,Department of Transportation,Department of Defense,Department of Health and Human Services,Department of Veterans Affairs,Department of Homeland Security,National Aeronautics and Space Administration,General Services Administration,Department of Commerce"
 
 append_csv() {
   local source_file="$1"
@@ -26,8 +27,8 @@ append_csv() {
 fetch_usaspending_procurement_actions() {
   SOURCE_RAW_DIR="$raw_dir/usaspending-procurement-actions" \
   USASPENDING_FISCAL_YEAR="${USASPENDING_FISCAL_YEAR:-2024}" \
-  USASPENDING_AGENCIES="${USASPENDING_PROCUREMENT_ACTIONS_AGENCIES:-Environmental Protection Agency,Department of Energy,Department of the Interior,Department of Agriculture,Department of Transportation,Department of Defense}" \
-  USASPENDING_ACTION_PERIOD_BUCKETS="${USASPENDING_PROCUREMENT_ACTIONS_PERIOD_BUCKETS:-monthly}" \
+  USASPENDING_AGENCIES="${USASPENDING_PROCUREMENT_ACTIONS_AGENCIES:-$default_procurement_action_agencies}" \
+  USASPENDING_ACTION_PERIOD_BUCKETS="${USASPENDING_PROCUREMENT_ACTIONS_PERIOD_BUCKETS:-quarterly}" \
   USASPENDING_ACTION_TRANSACTION_PAGE_SIZE="${USASPENDING_PROCUREMENT_ACTIONS_TRANSACTION_PAGE_SIZE:-25}" \
   USASPENDING_ACTION_TRANSACTION_MAX_PAGES="${USASPENDING_PROCUREMENT_ACTIONS_TRANSACTION_MAX_PAGES:-1}" \
   USASPENDING_ACTION_TRANSACTION_SORT="${USASPENDING_PROCUREMENT_ACTIONS_TRANSACTION_SORT:-Transaction Amount}" \
@@ -240,7 +241,7 @@ elif [ "${USASPENDING_PROCUREMENT_ACTIONS_SOURCE_NATIVE:-1}" = "1" ]; then
   if [ "${SAM_CONTRACT_AWARDS_SOURCE_NATIVE:-0}" = "1" ] && [ -n "${SAM_API_KEY:-}" ]; then
     if SOURCE_RAW_DIR="$raw_dir/sam-contract-awards" \
       SAM_CONTRACT_AWARDS_FISCAL_YEAR="${SAM_CONTRACT_AWARDS_FISCAL_YEAR:-${USASPENDING_FISCAL_YEAR:-2024}}" \
-      SAM_CONTRACT_AWARDS_AGENCIES="${SAM_CONTRACT_AWARDS_AGENCIES:-${USASPENDING_PROCUREMENT_ACTIONS_AGENCIES:-Environmental Protection Agency,Department of Energy,Department of the Interior,Department of Agriculture,Department of Transportation,Department of Defense}}" \
+      SAM_CONTRACT_AWARDS_AGENCIES="${SAM_CONTRACT_AWARDS_AGENCIES:-${USASPENDING_PROCUREMENT_ACTIONS_AGENCIES:-$default_procurement_action_agencies}}" \
       SAM_CONTRACT_AWARDS_PAGE_SIZE="${SAM_CONTRACT_AWARDS_PAGE_SIZE:-100}" \
       SAM_CONTRACT_AWARDS_MAX_PAGES="${SAM_CONTRACT_AWARDS_MAX_PAGES:-1}" \
       SAM_CONTRACT_AWARDS_INCLUDE_SECTIONS="${SAM_CONTRACT_AWARDS_INCLUDE_SECTIONS:-contractId,coreData,awardDetails,awardeeData}" \
