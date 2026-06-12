@@ -40,6 +40,7 @@ public record ScenarioReport(
 		double defensiveChannelSpendShare,
 		double detectionRate,
 		double reportingErrorDetectionRate,
+		double campaignSanctionIncidence,
 		double sanctionRate,
 		double enforcementCapacityIndex,
 		double averagePolicyDistortion,

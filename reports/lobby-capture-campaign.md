@@ -48,7 +48,7 @@
 ## Defensive Reform Blocking
 
 - `reform-threat-mobilization` defensive spend share: `0.6249`, anti-capture success: `0.9153`, channel switch rate: `2.2119`, hidden influence: `0.1397`, substitution risk: `0.1744`.
-- `full-anti-capture-bundle` anti-capture success: `1.0000`, detection rate: `0.1025`, reporting-error detection: `0.0688`, total distortion: `0.1285`.
+- `full-anti-capture-bundle` anti-capture success: `1.0000`, detection rate: `0.1025`, reporting-error detection: `0.0688`, campaign sanction incidence: `0.0060`, total distortion: `0.1285`.
 - `bundle-with-evasion` dark-money share: `0.1414`, evasion shift rate: `1.6106`, evasion penalty: `0.0000`, influence preserved: `0.2721`, substitution risk: `0.2838`.
 
 ## Substitution-Warning Readout

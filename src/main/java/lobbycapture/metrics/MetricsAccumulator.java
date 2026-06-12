@@ -89,6 +89,7 @@ public final class MetricsAccumulator
 	private double intermediarySpendSum;
 	private double enforcementCapacitySum;
 	private double reportingErrorDetectionSum;
+	private double campaignSanctionIncidenceSum;
 	private double networkOpacitySum;
 	private double donorNetworkConcentrationSum;
 	private double intermediaryCentralitySum;
@@ -275,6 +276,64 @@ public final class MetricsAccumulator
 		);
 		return Values.clamp(reportingErrorRisk * (0.46 + (0.72 * detectionSurface)), 0.0, 1.0);
 	}
+
+	private static double campaignSanctionIncidence(
+			ContestOutcome outcome,
+			ReformRegime reform,
+			ChannelAllocation allocation,
+			double enforcementCapacity
+	) {
+		PolicyContest contest = outcome.contest();
+		double campaignChannelExposure = Values.clamp(
+				(0.32 * allocation.share(InfluenceChannel.CAMPAIGN_FINANCE))
+						+ (0.22 * allocation.share(InfluenceChannel.DARK_MONEY))
+						+ (0.16 * allocation.share(InfluenceChannel.PUBLIC_CAMPAIGN))
+						+ (0.10 * allocation.share(InfluenceChannel.INTERMEDIARY))
+						+ (0.10 * contest.campaignFinanceInfluence())
+						+ (0.10 * contest.darkMoneyInfluence()),
+				0.0,
+				1.0
+		);
+		double campaignScope = contest.arena() == ContestArena.ELECTION
+				? 1.0
+				: Values.clamp(0.42 + (0.40 * campaignChannelExposure), 0.0, 1.0);
+		double complianceReach = Values.clamp(
+				(0.24 * reform.contributionLimitStrength())
+						+ (0.22 * reform.darkMoneyDisclosureStrength())
+						+ (0.18 * reform.publicFinancingStrength())
+						+ (0.10 * reform.democracyVoucherStrength())
+						+ (0.14 * (1.0 - outcome.influenceResult().campaignDisclosureLag()))
+						+ (0.12 * reform.realTimeDisclosure()),
+				0.0,
+				1.0
+		);
+		double enforcementReach = Values.clamp(
+				(0.40 * enforcementCapacity)
+						+ (0.28 * reform.sanctionSeverity())
+						+ (0.20 * reform.auditRate())
+						+ (0.12 * reform.crossVenueDetectionStrength()),
+				0.0,
+				1.0
+		);
+		double casePressure = Values.clamp(
+				0.30
+						+ (0.42 * campaignChannelExposure)
+						+ (0.16 * outcome.influenceResult().hiddenInfluenceShare())
+						+ (0.12 * (1.0 - outcome.influenceResult().campaignDisclosureLag())),
+				0.0,
+				1.0
+		);
+		double sanctionSurface = Values.clamp(
+				(0.52 * enforcementReach) + (0.48 * complianceReach),
+				0.0,
+				1.0
+		);
+		return Values.clamp(
+				0.0025 + (0.0200 * campaignScope * casePressure * sanctionSurface),
+				0.0,
+				1.0
+		);
+	}
 	
 	private static double stdDev(List<Double> values) {
 		if (values.size() < 2) {
@@ -453,12 +512,14 @@ public final class MetricsAccumulator
 		double technicalRulemakingDistortion = technicalRulemakingDistortion(contest, triage);
 		double enforcementCapacity = enforcementCapacity(contest, world, reform);
 		double reportingErrorDetectionRate = reportingErrorDetectionRate(outcome, reform, allocation, enforcementCapacity);
+		double campaignSanctionIncidence = campaignSanctionIncidence(outcome, reform, allocation, enforcementCapacity);
 		double hiddenCaptureIndex = hiddenCaptureIndex(outcome, totalSpend);
 		var network = outcome.influenceResult().networkSnapshot();
 		commentFloodingSum += commentFloodingIndex;
 		technicalRulemakingDistortionSum += technicalRulemakingDistortion;
 		enforcementCapacitySum += enforcementCapacity;
 		reportingErrorDetectionSum += reportingErrorDetectionRate;
+		campaignSanctionIncidenceSum += campaignSanctionIncidence;
 		networkOpacitySum += network.networkOpacityIndex();
 		donorNetworkConcentrationSum += network.donorNetworkConcentration();
 		intermediaryCentralitySum += network.intermediaryCentrality();
@@ -563,6 +624,7 @@ public final class MetricsAccumulator
 				allocationSum.share(InfluenceChannel.DEFENSIVE_REFORM),
 				ratio(detectedCaptured, totalContests),
 				reportingErrorDetectionSum / total,
+				campaignSanctionIncidenceSum / total,
 				ratio(sanctionedCaptured, totalContests),
 				enforcementCapacitySum / total,
 				policyDistortionSum / total,

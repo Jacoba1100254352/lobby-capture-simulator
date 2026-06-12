@@ -148,7 +148,7 @@ The implementation exposes mechanism-facing parameters rather than estimated coe
   \item A distortion failure requires more than channel movement. The audit flags a row as a failure when observed capture falls while total distortion rises, as a substitution warning when hidden influence, hidden capture, or substitution risk rises after observed capture falls, and as a visible-channel warning when visible lobbying falls while hidden diagnostics worsen.
 \end{itemize}
 
-The source-facing parameters and benchmark ranges are maintained in \path{data/calibration/parameter-map.csv}. The reporting-error benchmark maps to \texttt{reportingErrorDetectionRate}, a narrow disclosure-and-audit diagnostic, while \texttt{detectionRate} remains the broader modeled capture-detection rate. Report-level bounded diagnostics remain synthetic unless the validation summary classifies the target as a source moment.
+The source-facing parameters and benchmark ranges are maintained in \path{data/calibration/parameter-map.csv}. The reporting-error benchmark maps to \texttt{reportingErrorDetectionRate}, a narrow disclosure-and-audit diagnostic, while \texttt{detectionRate} remains the broader modeled capture-detection rate. The campaign-sanction benchmark maps to \texttt{campaignSanctionIncidence}, while \texttt{sanctionRate} remains the broader per-contest capture-sanction event rate. Report-level bounded diagnostics remain synthetic unless the validation summary classifies the target as a source moment.
 
 \section{Figure and Layout Audit}
 
@@ -163,7 +163,7 @@ The model remains a mechanism article until the following source panels and tuni
   \item representative national public-financing and voucher participation records beyond the local NYC and Seattle program rows;
   \item representative SAM/FPDS procurement action histories covering modifications, offer counts, exclusions, protests, and firewalls;
   \item richer revolving-door and advisory-access records;
-  \item comment-authenticity, duplicate-compression, sanction, and regulator-backlog calibration, plus continued tuning of the split between narrow reporting-error detection and broader modeled capture detection;
+  \item comment-authenticity, duplicate-compression, regulator-backlog calibration, and continued tuning of the split between narrow reporting-error or campaign-sanction diagnostics and broader modeled enforcement events;
   \item scenario-specific benchmarks for high-end outside spending, opaque electoral routing, broader shadow-lobbying substitution, and cooling-off evasion, with mixed baseline/stress/extreme-stress families separated before one range is treated as a calibration target.
 \end{itemize}
 

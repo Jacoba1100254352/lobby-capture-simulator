@@ -6,7 +6,7 @@ This queue classifies validation misses and partial overlaps into concrete follo
 
 - `benchmark-review`: `12`
 - `direct-source-moment`: `3`
-- `model-tuning`: `7`
+- `model-tuning`: `1`
 - `scenario-coverage`: `5`
 - `scenario-family-split`: `1`
 
@@ -30,12 +30,6 @@ This queue classifies validation misses and partial overlaps into concrete follo
 | P3 | benchmark-review | lobby-capture-sensitivity.csv | `publicFinancingCandidateUptake` | partial | 0.4836-0.7029 | 0.57-0.86 |  | decide whether the benchmark applies to this scenario family |
 | P3 | benchmark-review | lobby-capture-campaign.csv | `regulatorQueueBacklog` | partial | 0.2361-0.6674 | 0.50-0.75 |  | decide whether the benchmark applies to this scenario family |
 | P3 | benchmark-review | lobby-capture-mechanism-comparison.csv | `regulatorQueueBacklog` | partial | 0.2361-0.6686 | 0.50-0.75 |  | decide whether the benchmark applies to this scenario family |
-| P3 | model-tuning | lobby-capture-ablation.csv | `sanctionRate` | partial | 0.0006-0.0219 | 0.003-0.015 |  | raise sanction incidence after detection or narrow benchmark to campaign filer cases |
-| P3 | model-tuning | lobby-capture-campaign.csv | `sanctionRate` | partial | 0.0006-0.0444 | 0.003-0.015 |  | raise sanction incidence after detection or narrow benchmark to campaign filer cases |
-| P3 | model-tuning | lobby-capture-interactions.csv | `sanctionRate` | partial | 0.0000-0.0293 | 0.003-0.015 |  | raise sanction incidence after detection or narrow benchmark to campaign filer cases |
-| P3 | model-tuning | lobby-capture-mechanism-comparison.csv | `sanctionRate` | partial | 0.0006-0.0188 | 0.003-0.015 |  | raise sanction incidence after detection or narrow benchmark to campaign filer cases |
-| P3 | model-tuning | lobby-capture-portfolio.csv | `sanctionRate` | partial | 0.0033-0.0310 | 0.003-0.015 |  | raise sanction incidence after detection or narrow benchmark to campaign filer cases |
-| P3 | model-tuning | lobby-capture-sensitivity.csv | `sanctionRate` | partial | 0.0005-0.0290 | 0.003-0.015 |  | raise sanction incidence after detection or narrow benchmark to campaign filer cases |
 | P3 | scenario-coverage | lobby-capture-ablation.csv | `venueSubstitutionRate` | partial | 0.0226-0.1373 | 0.10-0.70 |  | add or isolate higher-pressure substitution scenarios so the scoped validation family reaches the benchmark floor |
 | P3 | scenario-coverage | lobby-capture-campaign.csv | `venueSubstitutionRate` | partial | 0.0510-0.1772 | 0.10-0.70 |  | add or isolate higher-pressure substitution scenarios so the scoped validation family reaches the benchmark floor |
 | P3 | scenario-coverage | lobby-capture-interactions.csv | `venueSubstitutionRate` | partial | 0.0259-0.1853 | 0.10-0.70 |  | add or isolate higher-pressure substitution scenarios so the scoped validation family reaches the benchmark floor |

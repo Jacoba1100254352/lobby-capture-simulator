@@ -67,6 +67,7 @@ public final class SmokeTest
 		require(open.substitutionRisk() >= 0.0 && open.substitutionRisk() <= 1.0, "substitution risk should stay bounded");
 		require(open.enforcementCapacityIndex() >= 0.0 && open.enforcementCapacityIndex() <= 1.0, "enforcement capacity should stay bounded");
 		require(open.reportingErrorDetectionRate() >= 0.0 && open.reportingErrorDetectionRate() <= 1.0, "reporting-error detection should stay bounded");
+		require(open.campaignSanctionIncidence() >= 0.0 && open.campaignSanctionIncidence() <= 1.0, "campaign sanction incidence should stay bounded");
 		require(open.commentFloodingIndex() >= 0.0 && open.commentFloodingIndex() <= 1.0, "comment flooding should stay bounded");
 		require(open.technicalRulemakingDistortion() >= 0.0 && open.technicalRulemakingDistortion() <= 1.0, "technical rulemaking distortion should stay bounded");
 		require(open.captureRateSeedStdDev() >= 0.0, "multi-seed capture robustness should be reported");
@@ -127,7 +128,7 @@ public final class SmokeTest
 			require(csvText.contains("designLoss,distortionObservedComponent,distortionHiddenSubstitutionComponent,distortionInformationProcurementComponent,distortionNetworkVenueComponent,distortionProcessBurdenComponent,distortionRawComponentSum"), csv + " should report distortion decomposition");
 		require(csvText.contains("distortionEqualWeightDiagnostic,distortionHiddenDiscountedDiagnostic,designLossBurdenHeavy"), csv + " should report composite diagnostic variants");
 		require(csvText.contains("visibleLobbyingSpendShare,directAccessShare,agendaAccessShare,informationDistortionShare,publicCampaignShare,litigationThreatShare,campaignFinanceShare,darkMoneyShare,revolvingDoorShare,intermediaryShare"), csv + " should report visible and intermediary spend state");
-		require(csvText.contains("detectionRate,reportingErrorDetectionRate,sanctionRate,enforcementCapacityIndex"), csv + " should report broad detection and narrow reporting-error detection separately");
+		require(csvText.contains("detectionRate,reportingErrorDetectionRate,campaignSanctionIncidence,sanctionRate,enforcementCapacityIndex"), csv + " should report broad detection, reporting-error detection, and campaign sanctions separately");
 		require(csvText.contains("substitutionPressure,influencePreservationRate,hiddenInfluenceShare,netTransparencyGain,messengerSubstitutionRate,venueSubstitutionRate"), csv + " should report substitution state");
 		require(csvText.contains("switchScoreEqualWeight,switchScoreAnonymityHeavy,switchScoreEnforcementCostHeavy,switchDisclosureCost"), csv + " should report switch-rule robustness state");
 		require(csvText.contains("networkOpacityIndex,donorNetworkConcentration,intermediaryCentrality,officialAccessCentrality,procurementNetworkExposure,revolvingDoorBridgeIndex,commentNetworkLoad,venueShiftNetworkLoad,networkLegibilityIndex,crossVenueDetectionIndex,participationProtectionIndex,speechRestrictionRisk"), csv + " should report influence-network and civil-liberties state");
