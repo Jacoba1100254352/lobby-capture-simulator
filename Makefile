@@ -14,7 +14,7 @@ MAIN_CLASS := lobbycapture.Main
 TEST_CLASSES := lobbycapture.SimulatorTests
 PAPER_BASENAME := strategic-channel-substitution-regulatory-capture
 
-.PHONY: compile script-checks test run campaign mechanism-comparison sensitivity ablation interactions portfolio source-moments source-panel-inventory source-capability-audit dark-money-bridge-audit intermediary-bridge-audit revolving-door-bridge-audit procurement-denominator-audit procurement-modification-composition-audit procurement-refresh-readiness claim-boundary-audit claim-source-dependency-audit claim-posture-audit calibration-queue validate snapshot-2024-env tables figures paper paper-build paper-supplement-build paper-supplement paper-word-count wiley-template wiley-tex-deps paper-wiley paper-wiley-build submission-package submission-package-build submission-package-check paper-layout-audit visual-review-checklist paper-artifacts paper-artifacts-check clean
+.PHONY: compile script-checks test run campaign mechanism-comparison sensitivity ablation interactions portfolio source-moments source-panel-inventory source-capability-audit dark-money-bridge-audit intermediary-bridge-audit revolving-door-bridge-audit procurement-denominator-audit procurement-modification-composition-audit procurement-refresh-readiness sam-contract-awards-preflight claim-boundary-audit claim-source-dependency-audit claim-posture-audit calibration-queue validate snapshot-2024-env tables figures paper paper-build paper-supplement-build paper-supplement paper-word-count wiley-template wiley-tex-deps paper-wiley paper-wiley-build submission-package submission-package-build submission-package-check paper-layout-audit visual-review-checklist paper-artifacts paper-artifacts-check clean
 
 compile:
 	@mkdir -p out/classes
@@ -81,6 +81,9 @@ procurement-modification-composition-audit: source-moments
 
 procurement-refresh-readiness: source-capability-audit procurement-denominator-audit calibration-queue
 	$(REPORT_ENV) python3 scripts/write-procurement-refresh-readiness.py
+
+sam-contract-awards-preflight:
+	python3 scripts/probe-sam-contract-awards.py
 
 calibration-queue: validate
 	python3 scripts/classify-validation-misses.py

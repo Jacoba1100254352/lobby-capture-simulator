@@ -40,6 +40,12 @@ REQUIRED_ENV_VARS = [
     "SAM_CONTRACT_AWARDS_FETCH_RETRIES",
     "SAM_CONTRACT_AWARDS_FETCH_TIMEOUT_SECONDS",
     "SAM_CONTRACT_AWARDS_FETCH_HARD_TIMEOUT_SECONDS",
+    "SAM_CONTRACT_AWARDS_PREFLIGHT_AGENCY",
+    "SAM_CONTRACT_AWARDS_PREFLIGHT_PAGE_SIZE",
+    "SAM_CONTRACT_AWARDS_PREFLIGHT_RETRIES",
+    "SAM_CONTRACT_AWARDS_PREFLIGHT_TIMEOUT_SECONDS",
+    "SAM_CONTRACT_AWARDS_PREFLIGHT_HARD_TIMEOUT_SECONDS",
+    "SAM_CONTRACT_AWARDS_PREFLIGHT_EXTRACT_MODE",
     "SOURCE_FETCH_CURL_FALLBACK",
 ]
 
@@ -112,7 +118,7 @@ def readiness_rows(reports: Path, snapshot: Path, env_example: Path) -> list[dic
             "nextAction": (
                 f"Wait until {quota_reset} before rerunning SAM."
                 if quota_reset else
-                "Run only after confirming quota/access status; if the endpoint returns nextAccessTime, wait for that UTC timestamp."
+                "Run make sam-contract-awards-preflight immediately before the live snapshot; if the endpoint returns nextAccessTime, wait for that UTC timestamp."
             ),
         },
         {
@@ -152,7 +158,7 @@ def readiness_rows(reports: Path, snapshot: Path, env_example: Path) -> list[dic
                 "SAM_CONTRACT_AWARDS_EXTRACT_MODE=1 supports asynchronous JSON/CSV extract downloads."
             ),
             "nextAction": (
-                "Use extract mode for the next representative keyed refresh when the SAM account has Contract Awards access."
+                "Use extract mode for the next representative keyed refresh after make sam-contract-awards-preflight reports ok."
             ),
         },
         {
@@ -269,6 +275,12 @@ def write_markdown(path: Path, rows: list[dict[str, str]]) -> None:
         f"- Next action: {sam_status['nextAction']}",
         "",
         "## Refresh Modes",
+        "",
+        (
+            "Run `make sam-contract-awards-preflight` immediately before either SAM.gov mode. "
+            "The preflight makes a one-row redacted Contract Awards request and writes ignored "
+            "operational reports under `reports/sam-contract-awards-preflight.*`."
+        ),
         "",
         (
             "1. Preferred representative run: set `SAM_CONTRACT_AWARDS_SOURCE_NATIVE=1`, "
