@@ -207,6 +207,14 @@ def usaspending_moments(scope: str, path: Path, bridge_path: Path, action_path: 
         for row in competition_rows
         if competition_limited(row.get("competitionType", "")) or (number(row.get("numberOfOffers")) <= 1.0 and number(row.get("numberOfOffers")) > 0.0)
     ]
+    award_groups: dict[str, list[dict[str, str]]] = defaultdict(list)
+    for row in modification_rows_source:
+        award_groups[procurement_award_key(row)].append(row)
+    modified_award_groups = [
+        group
+        for group in award_groups.values()
+        if any(flag(row.get("exPostModification")) or modification_sequence(row.get("modificationNumber")) > 0 for row in group)
+    ]
     uei_rows = [row for row in award_rows if row.get("uei", "").strip()]
     piid_rows = [row for row in award_rows if row.get("piid", "").strip()]
     agency_count = len({row.get("agency", "") for row in bridge_rows if row.get("agency", "").strip()})
@@ -241,6 +249,10 @@ def usaspending_moments(scope: str, path: Path, bridge_path: Path, action_path: 
         moment(scope, "usaspending", "procurementAmountWeightedSingleBidShare", safe_divide(sum(number(row.get("amount")) for row in single_bid_rows), competition_total), "observed_proxy", f"award-amount share among {competition_note} with one known offer"),
         moment(scope, "usaspending", "procurementInitialAwardShare", safe_divide(len(initial_rows), len(modification_rows_source)), "observed_proxy", f"share of {modification_note} that appear to be initial awards"),
         moment(scope, "usaspending", "procurementExPostModificationShare", safe_divide(len(modified_rows), len(modification_rows_source)), "observed_proxy", f"share of {modification_note} marked as ex-post modifications or nonzero modification sequence"),
+        moment(scope, "usaspending", "procurementActionDistinctAwards", len(award_groups), "diagnostic", f"distinct PIID/award identifiers in {modification_note} used for award-level modification diagnostics"),
+        moment(scope, "usaspending", "procurementModifiedAwardCount", len(modified_award_groups), "diagnostic", f"distinct PIID/award identifiers in {modification_note} with at least one ex-post modification row"),
+        moment(scope, "usaspending", "procurementModifiedAwardShare", safe_divide(len(modified_award_groups), len(award_groups)), "observed_proxy", f"share of distinct PIID/award identifiers in {modification_note} with at least one ex-post modification row"),
+        moment(scope, "usaspending", "procurementModificationActionsPerModifiedAward", safe_divide(len(modified_rows), len(modified_award_groups)), "diagnostic", f"mean modified action rows per modified PIID/award identifier in {modification_note}"),
         moment(scope, "usaspending", "procurementAmountWeightedModificationShare", safe_divide(sum(number(row.get("amount")) for row in modified_rows), modification_total), "observed_proxy", f"award-amount share of {modification_note} marked as ex-post modifications"),
         moment(scope, "usaspending", "procurementActionModificationRows", len([row for row in action_rows if flag(row.get("exPostModification")) or modification_sequence(row.get("modificationNumber")) > 0]), "diagnostic", f"primary transaction/action rows from {action_note} marked as ex-post modifications"),
         moment(scope, "usaspending", "procurementPriceOnlyAwardShare", safe_divide(len(price_only_rows), len(competition_rows)), "observed_proxy", f"share among {competition_note} marked as price-only or one-offer awards"),
@@ -447,6 +459,20 @@ def flag(value: object) -> bool:
     return str(value or "").strip().lower() in {"1", "true", "yes", "y"}
 
 
+def procurement_award_key(row: dict[str, str]) -> str:
+    for key in ("piid", "awardId"):
+        value = row.get(key, "").strip()
+        if value:
+            return value
+    return "|".join(
+        [
+            row.get("recipient", "").strip(),
+            row.get("agency", "").strip(),
+            row.get("actionDate", "").strip(),
+        ]
+    )
+
+
 def has_competition_data(row: dict[str, str]) -> bool:
     competition_type = row.get("competitionType", "").strip().lower()
     return (
@@ -599,6 +625,13 @@ def representativeness_warnings(rows: list[dict[str, str]]) -> list[str]:
     if metric_value(rows, "snapshot", "usaspending", "procurementExPostModificationShare") >= 0.95 and metric_value(rows, "snapshot", "usaspending", "procurementInitialAwardShare") <= 0.05:
         warnings.append(
             "Snapshot procurement rows are dominated by post-award modification transactions; award and modification effects should be reported separately."
+        )
+    action_mod_share = metric_value(rows, "snapshot", "usaspending", "procurementExPostModificationShare")
+    award_mod_share = metric_value(rows, "snapshot", "usaspending", "procurementModifiedAwardShare")
+    amount_mod_share = metric_value(rows, "snapshot", "usaspending", "procurementAmountWeightedModificationShare")
+    if action_rows > 0 and award_mod_share > 0.0 and abs(action_mod_share - award_mod_share) >= 0.05:
+        warnings.append(
+            f"Snapshot procurement modification incidence differs by denominator: action-row share {action_mod_share:.4f}, distinct-award share {award_mod_share:.4f}, and amount-weighted share {amount_mod_share:.4f}; keep these as bounded diagnostics until representative SAM/FPDS action histories are archived."
         )
     return warnings
 

@@ -130,6 +130,10 @@ PANELS = [
         "warningMetric": "procurementLatestTransactionModificationProxy",
         "warningAbsentMetric": "procurementActionRows",
         "warning": "latest-transaction modification enrichment is available but an action-level transaction denominator is still absent",
+        "contextMetrics": [
+            ("procurementModifiedAwardShare", "distinct-award share"),
+            ("procurementAmountWeightedModificationShare", "amount-weighted share"),
+        ],
         "action": "Validate nonzero modification numbers against representative SAM/FPDS action histories and separate transaction-action incidence from award-level modification incidence.",
     },
 ]
@@ -197,6 +201,9 @@ def panel_row(panel: dict[str, object], moments: dict[str, dict[str, float]]) ->
     else:
         status = "thin"
         note = str(panel.get("thin", "coverage is present but thin for article-level calibration"))
+    context_note = context_metrics_note(panel, moments)
+    if context_note:
+        note = f"{note}; {context_note}"
     return {
         "panel": str(panel["panel"]),
         "mechanism": str(panel["mechanism"]),
@@ -223,6 +230,15 @@ def panel_warning(panel: dict[str, object], moments: dict[str, dict[str, float]]
     if absent_metric and moments["snapshot"].get(str(absent_metric), 0.0) > 0.0:
         return False
     return moments["snapshot"].get(str(metric), 0.0) >= 0.5
+
+
+def context_metrics_note(panel: dict[str, object], moments: dict[str, dict[str, float]]) -> str:
+    items = []
+    for metric, label in list(panel.get("contextMetrics", [])):
+        value = moments["snapshot"].get(str(metric))
+        if value is not None:
+            items.append(f"{label}={value:.4f}")
+    return ", ".join(items)
 
 
 def write_csv(path: Path, rows: list[dict[str, str]]) -> None:

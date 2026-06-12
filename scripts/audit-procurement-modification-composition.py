@@ -111,6 +111,12 @@ def composition_row(
 ) -> dict[str, str]:
     modified_rows = [row for row in rows if is_modified(row)]
     initial_rows = [row for row in rows if not is_modified(row)]
+    award_groups = grouped_awards(rows)
+    modified_awards = [
+        group
+        for group in award_groups.values()
+        if any(is_modified(row) for row in group)
+    ]
     amount = sum(number(row.get("amount")) for row in rows)
     modified_amount = sum(number(row.get("amount")) for row in modified_rows)
     panel_amount = sum(number(row.get("amount")) for row in panel_rows)
@@ -126,6 +132,10 @@ def composition_row(
         "modifiedRows": str(len(modified_rows)),
         "initialRows": str(len(initial_rows)),
         "modifiedActionShare": format_float(safe_divide(len(modified_rows), len(rows))),
+        "distinctAwardCount": str(len(award_groups)),
+        "modifiedAwardCount": str(len(modified_awards)),
+        "modifiedAwardShare": format_float(safe_divide(len(modified_awards), len(award_groups))),
+        "modificationRowsPerModifiedAward": format_float(safe_divide(len(modified_rows), len(modified_awards))),
         "amount": format_float(amount),
         "modifiedAmount": format_float(modified_amount),
         "amountWeightedModificationShare": format_float(safe_divide(modified_amount, amount)),
@@ -145,6 +155,27 @@ def composition_row(
 
 def is_modified(row: dict[str, str]) -> bool:
     return flag(row.get("exPostModification")) or modification_sequence(row.get("modificationNumber")) > 0
+
+
+def grouped_awards(rows: list[dict[str, str]]) -> dict[str, list[dict[str, str]]]:
+    grouped: dict[str, list[dict[str, str]]] = defaultdict(list)
+    for row in rows:
+        grouped[procurement_award_key(row)].append(row)
+    return dict(grouped)
+
+
+def procurement_award_key(row: dict[str, str]) -> str:
+    for key in ("piid", "awardId"):
+        value = row.get(key, "").strip()
+        if value:
+            return value
+    return "|".join(
+        [
+            row.get("recipient", "").strip(),
+            row.get("agency", "").strip(),
+            row.get("actionDate", "").strip(),
+        ]
+    )
 
 
 def one_known_offer(row: dict[str, str]) -> bool:
@@ -208,6 +239,10 @@ def write_csv(path: Path, rows: list[dict[str, str]]) -> None:
         "modifiedRows",
         "initialRows",
         "modifiedActionShare",
+        "distinctAwardCount",
+        "modifiedAwardCount",
+        "modifiedAwardShare",
+        "modificationRowsPerModifiedAward",
         "amount",
         "modifiedAmount",
         "amountWeightedModificationShare",
@@ -262,6 +297,7 @@ def write_markdown(path: Path, rows: list[dict[str, str]]) -> None:
         (
             f"The active USAspending action panel has {primary.get('rows', '0')} rows, "
             f"a modified-action share of {primary.get('modifiedActionShare', '0.0000')}, "
+            f"a distinct-award modification share of {primary.get('modifiedAwardShare', '0.0000')}, "
             f"and an amount-weighted modification share of {primary.get('amountWeightedModificationShare', '0.0000')}. "
             f"The largest modified-amount agency group is `{top_agency.get('groupValue', 'none')}` "
             f"with {top_agency.get('panelModifiedAmountShare', '0.0000')} of modified amount; "
@@ -275,13 +311,14 @@ def write_markdown(path: Path, rows: list[dict[str, str]]) -> None:
         "",
         "## Source Route Summary",
         "",
-        "| Source | Rows | Modified rows | Modified share | Amount-weighted modified share | PIID | UEI | Competition known | Boundary |",
-        "| --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | --- |",
+        "| Source | Rows | Modified rows | Modified action share | Modified award share | Rows/mod. award | Amount-weighted modified share | PIID | UEI | Competition known | Boundary |",
+        "| --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | --- |",
     ]
     for row in [item for item in rows if item["groupType"] == "source"]:
         escaped = {key: markdown_cell(value) for key, value in row.items()}
         lines.append(
             "| {source} | {rows} | {modifiedRows} | {modifiedActionShare} | "
+            "{modifiedAwardShare} | {modificationRowsPerModifiedAward} | "
             "{amountWeightedModificationShare} | {knownPiidShare} | {knownUeiShare} | "
             "{knownCompetitionShare} | {claimBoundary} |".format(**escaped)
         )
@@ -290,8 +327,8 @@ def write_markdown(path: Path, rows: list[dict[str, str]]) -> None:
             "",
             "## Composition Groups",
             "",
-            "| Group type | Group | Rows | Modified rows | Modified share | Modified amount share | Amount-weighted modified share |",
-            "| --- | --- | ---: | ---: | ---: | ---: | ---: |",
+            "| Group type | Group | Rows | Modified rows | Modified action share | Modified award share | Modified amount share | Amount-weighted modified share |",
+            "| --- | --- | ---: | ---: | ---: | ---: | ---: | ---: |",
         ]
     )
     group_rows = [
@@ -302,7 +339,7 @@ def write_markdown(path: Path, rows: list[dict[str, str]]) -> None:
         escaped = {key: markdown_cell(value) for key, value in row.items()}
         lines.append(
             "| {groupType} | {groupValue} | {rows} | {modifiedRows} | "
-            "{modifiedActionShare} | {panelModifiedAmountShare} | "
+            "{modifiedActionShare} | {modifiedAwardShare} | {panelModifiedAmountShare} | "
             "{amountWeightedModificationShare} |".format(**escaped)
         )
     lines.append("")

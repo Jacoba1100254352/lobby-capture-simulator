@@ -307,9 +307,15 @@ def source_scope_gap(metric: str, value: float, source_moments: dict[str, float]
     if metric == "procurementExPostModificationShare" and latest_transaction_mod_proxy and procurement_action_rows <= 0 and top_award_bridge_available:
         return "latest-transaction modification enrichment is kept separate from action-level incidence; representative FPDS/SAM transaction denominators are still needed"
     if metric == "procurementExPostModificationShare" and procurement_action_rows > 0 and value > 0.05:
+        award_share = source_moments.get("procurementModifiedAwardShare", 0.0)
+        amount_share = source_moments.get("procurementAmountWeightedModificationShare", 0.0)
+        denominator_note = (
+            f" action-row share={value:.4f}, distinct-award share={award_share:.4f}, "
+            f"amount-weighted share={amount_share:.4f}"
+        )
         if concentration_sam_action_panel:
-            return "bounded SAM.gov Contract Awards panel is present, but the modification-action share remains above the benchmark range and still needs representative SAM/FPDS validation"
-        return "bounded USAspending transaction-action panel is present, but the modification-action share remains above the benchmark range and still needs representative SAM/FPDS validation"
+            return "bounded SAM.gov Contract Awards panel is present, but the modification-action share remains above the benchmark range and still needs representative SAM/FPDS validation;" + denominator_note
+        return "bounded USAspending transaction-action panel is present, but the modification-action share remains above the benchmark range and still needs representative SAM/FPDS validation;" + denominator_note
     if metric == "darkMoneyDirectRoutingRows" and thin_dark_money_panel:
         return "dark-money source panel has opaque-capacity and adjacent outside-spending rows but no non-proxy direct hidden-donor or nonprofit-routing rows"
     if metric == "darkMoneyDirectVisibility" and thin_dark_money_panel:

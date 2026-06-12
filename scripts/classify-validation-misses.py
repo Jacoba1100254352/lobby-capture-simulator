@@ -31,7 +31,7 @@ CATEGORY_BY_METRIC = {
     "procurementAgencyTop1Share": ("direct-source-moment", "replace the bounded USAspending concentration panel with representative SAM/FPDS action-level extracts before treating agency concentration as calibrated"),
     "procurementRecipientTop3Share": ("direct-source-moment", "compare recipient concentration against the bounded procurement concentration panel, then broaden by award type and fiscal year before treating it as calibrated"),
     "procurementSingleBidShare": ("direct-source-moment", "fill SAM/FPDS competition fields and compare single-bid exposure against the procurement bridge target"),
-    "procurementExPostModificationShare": ("direct-source-moment", "broaden the bounded USAspending action panel with representative SAM/FPDS action histories before treating modification incidence as calibrated"),
+    "procurementExPostModificationShare": ("direct-source-moment", "broaden the bounded USAspending action panel with representative SAM/FPDS action histories that support transaction-row, distinct-award, and amount-weighted denominators before treating modification incidence as calibrated"),
     "revolvingDoorInfluence": ("direct-source-moment", "replace fixture rows with a documented personnel/export panel and keep headcount share separate from modeled influence intensity"),
     "voucherParticipation": ("metric-split", "split resident voucher participation from regime strength"),
     "publicFinancingShare": ("metric-split", "split candidate uptake from public-financing regime strength"),

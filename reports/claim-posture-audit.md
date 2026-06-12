@@ -23,7 +23,7 @@ This audit summarizes which claim posture is cleared by the current source panel
 ## Weak Source Panels
 
 - Weak panels: `1`
-- `Procurement modification risk` (thin): stratified transaction-action rows are present, but modification incidence remains too high for calibration-grade national inference
+- `Procurement modification risk` (thin): stratified transaction-action rows are present, but modification incidence remains too high for calibration-grade national inference; distinct-award share=0.2269, amount-weighted share=0.6141
 
 ## Claim-Source Dependencies
 
@@ -37,5 +37,5 @@ This audit summarizes which claim posture is cleared by the current source panel
 ## P1/P2 Calibration Actions
 
 - `procurementAgencyTop1Share` (P1, direct-source-moment): replace the bounded USAspending concentration panel with representative SAM/FPDS action-level extracts before treating agency concentration as calibrated
-- `procurementExPostModificationShare` (P1, direct-source-moment): broaden the bounded USAspending action panel with representative SAM/FPDS action histories before treating modification incidence as calibrated
+- `procurementExPostModificationShare` (P1, direct-source-moment): broaden the bounded USAspending action panel with representative SAM/FPDS action histories that support transaction-row, distinct-award, and amount-weighted denominators before treating modification incidence as calibrated
 - `procurementRecipientTop3Share` (P1, direct-source-moment): compare recipient concentration against the bounded procurement concentration panel, then broaden by award type and fiscal year before treating it as calibrated

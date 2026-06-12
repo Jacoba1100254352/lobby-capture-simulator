@@ -379,4 +379,4 @@ Benchmark ranges are plausibility checks, not causal empirical claims. `source_g
 | source-moments.csv | revolvingDoorInfluenceMean | 0.3400-0.3400 | 0.25-0.75 | fit | source moment inside benchmark range |
 | source-moments.csv | commentFloodingIndex | 0.3072-0.3072 | 0.00-0.90 | fit | source moment inside benchmark range |
 | source-moments.csv | procurementSingleBidShare | 0.2350-0.2350 | 0.10-0.25 | fit | source moment inside benchmark range |
-| source-moments.csv | procurementExPostModificationShare | 0.3297-0.3297 | 0.01-0.05 | source_gap | bounded USAspending transaction-action panel is present, but the modification-action share remains above the benchmark range and still needs representative SAM/FPDS validation; source moment outside benchmark range |
+| source-moments.csv | procurementExPostModificationShare | 0.3297-0.3297 | 0.01-0.05 | source_gap | bounded USAspending transaction-action panel is present, but the modification-action share remains above the benchmark range and still needs representative SAM/FPDS validation; action-row share=0.3297, distinct-award share=0.2269, amount-weighted share=0.6141; source moment outside benchmark range |

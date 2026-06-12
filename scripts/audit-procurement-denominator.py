@@ -93,6 +93,12 @@ def audit_source(source: dict[str, object], statuses: dict[str, dict[str, str]])
     recipient_count = grouped_count(rows, "recipient")
     modified_rows = [row for row in rows if is_modified(row)]
     initial_rows = [row for row in rows if not is_modified(row)]
+    award_groups = grouped_awards(rows)
+    modified_awards = [
+        group
+        for group in award_groups.values()
+        if any(is_modified(row) for row in group)
+    ]
     amount_total = sum(number(row.get("amount")) for row in rows)
     amount_modified = sum(number(row.get("amount")) for row in modified_rows)
     agencies = {row.get("agency", "").strip() for row in rows if row.get("agency", "").strip()}
@@ -109,6 +115,10 @@ def audit_source(source: dict[str, object], statuses: dict[str, dict[str, str]])
         "knownUeiShare": format_float(share_with_value(rows, "uei")),
         "initialActionShare": format_float(safe_divide(len(initial_rows), len(rows))),
         "modifiedActionShare": format_float(safe_divide(len(modified_rows), len(rows))),
+        "distinctAwardCount": str(len(award_groups)),
+        "modifiedAwardCount": str(len(modified_awards)),
+        "modifiedAwardShare": format_float(safe_divide(len(modified_awards), len(award_groups))),
+        "modificationRowsPerModifiedAward": format_float(safe_divide(len(modified_rows), len(modified_awards))),
         "amountWeightedModificationShare": format_float(safe_divide(amount_modified, amount_total)),
         "topAgencyAmountShare": format_float(top_share(agency_amount, 1)),
         "topAgencyRowShare": format_float(top_share(agency_count, 1)),
@@ -129,6 +139,27 @@ def read_rows(path: Path) -> list[dict[str, str]]:
 
 def is_modified(row: dict[str, str]) -> bool:
     return flag(row.get("exPostModification")) or modification_sequence(row.get("modificationNumber")) > 0
+
+
+def grouped_awards(rows: list[dict[str, str]]) -> dict[str, list[dict[str, str]]]:
+    grouped: dict[str, list[dict[str, str]]] = defaultdict(list)
+    for row in rows:
+        grouped[procurement_award_key(row)].append(row)
+    return dict(grouped)
+
+
+def procurement_award_key(row: dict[str, str]) -> str:
+    for key in ("piid", "awardId"):
+        value = row.get(key, "").strip()
+        if value:
+            return value
+    return "|".join(
+        [
+            row.get("recipient", "").strip(),
+            row.get("agency", "").strip(),
+            row.get("actionDate", "").strip(),
+        ]
+    )
 
 
 def grouped_amount(rows: list[dict[str, str]], key: str) -> dict[str, float]:
@@ -202,6 +233,10 @@ def write_csv(path: Path, rows: list[dict[str, str]]) -> None:
         "knownUeiShare",
         "initialActionShare",
         "modifiedActionShare",
+        "distinctAwardCount",
+        "modifiedAwardCount",
+        "modifiedAwardShare",
+        "modificationRowsPerModifiedAward",
         "amountWeightedModificationShare",
         "topAgencyAmountShare",
         "topAgencyRowShare",
@@ -237,7 +272,11 @@ def write_markdown(path: Path, rows: list[dict[str, str]]) -> None:
         (
             f"The active action denominator is `{primary.get('source', 'none')}` with "
             f"{primary.get('rows', '0')} rows across {primary.get('agencyCount', '0')} agencies. "
-            f"Its modified-action share is {primary.get('modifiedActionShare', '0.0000')}. "
+            f"Its modified-action share is {primary.get('modifiedActionShare', '0.0000')}; "
+            f"{primary.get('modifiedAwardCount', '0')} of {primary.get('distinctAwardCount', '0')} "
+            f"distinct PIID/award identifiers have at least one modification "
+            f"({primary.get('modifiedAwardShare', '0.0000')}), with "
+            f"{primary.get('modificationRowsPerModifiedAward', '0.0000')} modified rows per modified award. "
             f"The largest agency accounts for {primary.get('topAgencyRowShare', '0.0000')} of rows "
             f"but {primary.get('topAgencyAmountShare', '0.0000')} of amount, a row-to-amount gap "
             f"of {primary.get('topAgencyAmountRowGap', '0.0000')}. "
@@ -248,14 +287,15 @@ def write_markdown(path: Path, rows: list[dict[str, str]]) -> None:
             "calibration."
         ),
         "",
-        "| Source | Status | Role | Rows | Agencies | PIID | UEI | Initial | Modified | Amt-wtd mod. | Top agency amount | Top agency rows | Top recipient amount | Boundary |",
-        "| --- | --- | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | --- |",
+        "| Source | Status | Role | Rows | Agencies | PIID | UEI | Initial actions | Modified actions | Modified award share | Rows/mod. award | Amt-wtd mod. | Top agency amount | Top agency rows | Top recipient amount | Boundary |",
+        "| --- | --- | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | --- |",
     ]
     for row in rows:
         lines.append(
             "| {source} | {snapshotStatus} | {role} | {rows} | {agencyCount} | "
             "{knownPiidShare} | {knownUeiShare} | {initialActionShare} | "
-            "{modifiedActionShare} | {amountWeightedModificationShare} | "
+            "{modifiedActionShare} | {modifiedAwardShare} | {modificationRowsPerModifiedAward} | "
+            "{amountWeightedModificationShare} | "
             "{topAgencyAmountShare} | {topAgencyRowShare} | {topRecipientAmountShare} | "
             "{claimBoundary} |".format(
                 **{key: markdown_cell(value) for key, value in row.items()}

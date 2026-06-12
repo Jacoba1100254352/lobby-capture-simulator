@@ -5,6 +5,7 @@ These are direct moments from normalized calibration tables. They are source dia
 ## Representativeness Warnings
 
 - Snapshot procurement concentration uses a stratified multi-agency USAspending transaction/action panel; this is stronger than the top-award bridge but remains a bounded diagnostic rather than a representative SAM/FPDS panel.
+- Snapshot procurement modification incidence differs by denominator: action-row share 0.3297, distinct-award share 0.2269, and amount-weighted share 0.6141; keep these as bounded diagnostics until representative SAM/FPDS action histories are archived.
 
 | Scope | Source | Metric | Value | Evidence | Notes |
 | --- | --- | --- | ---: | --- | --- |
@@ -88,6 +89,10 @@ These are direct moments from normalized calibration tables. They are source dia
 | snapshot | usaspending | `procurementAmountWeightedSingleBidShare` | 0.2108 | observed_proxy | award-amount share among normalized USAspending award rows with competition fields with one known offer |
 | snapshot | usaspending | `procurementInitialAwardShare` | 0.6703 | observed_proxy | share of stratified USAspending transaction/action rows that appear to be initial awards |
 | snapshot | usaspending | `procurementExPostModificationShare` | 0.3297 | observed_proxy | share of stratified USAspending transaction/action rows marked as ex-post modifications or nonzero modification sequence |
+| snapshot | usaspending | `procurementActionDistinctAwards` | 2058.0000 | diagnostic | distinct PIID/award identifiers in stratified USAspending transaction/action rows used for award-level modification diagnostics |
+| snapshot | usaspending | `procurementModifiedAwardCount` | 467.0000 | diagnostic | distinct PIID/award identifiers in stratified USAspending transaction/action rows with at least one ex-post modification row |
+| snapshot | usaspending | `procurementModifiedAwardShare` | 0.2269 | observed_proxy | share of distinct PIID/award identifiers in stratified USAspending transaction/action rows with at least one ex-post modification row |
+| snapshot | usaspending | `procurementModificationActionsPerModifiedAward` | 1.6938 | diagnostic | mean modified action rows per modified PIID/award identifier in stratified USAspending transaction/action rows |
 | snapshot | usaspending | `procurementAmountWeightedModificationShare` | 0.6141 | observed_proxy | award-amount share of stratified USAspending transaction/action rows marked as ex-post modifications |
 | snapshot | usaspending | `procurementActionModificationRows` | 791.0000 | diagnostic | primary transaction/action rows from stratified USAspending transaction/action rows marked as ex-post modifications |
 | snapshot | usaspending | `procurementPriceOnlyAwardShare` | 0.2400 | observed_proxy | share among normalized USAspending award rows with competition fields marked as price-only or one-offer awards |
@@ -200,6 +205,10 @@ These are direct moments from normalized calibration tables. They are source dia
 | fixture | usaspending | `procurementAmountWeightedSingleBidShare` | 0.3429 | observed_proxy | award-amount share among normalized USAspending award rows with competition fields with one known offer |
 | fixture | usaspending | `procurementInitialAwardShare` | 0.6000 | observed_proxy | share of stratified USAspending transaction/action rows that appear to be initial awards |
 | fixture | usaspending | `procurementExPostModificationShare` | 0.4000 | observed_proxy | share of stratified USAspending transaction/action rows marked as ex-post modifications or nonzero modification sequence |
+| fixture | usaspending | `procurementActionDistinctAwards` | 3.0000 | diagnostic | distinct PIID/award identifiers in stratified USAspending transaction/action rows used for award-level modification diagnostics |
+| fixture | usaspending | `procurementModifiedAwardCount` | 2.0000 | diagnostic | distinct PIID/award identifiers in stratified USAspending transaction/action rows with at least one ex-post modification row |
+| fixture | usaspending | `procurementModifiedAwardShare` | 0.6667 | observed_proxy | share of distinct PIID/award identifiers in stratified USAspending transaction/action rows with at least one ex-post modification row |
+| fixture | usaspending | `procurementModificationActionsPerModifiedAward` | 1.0000 | diagnostic | mean modified action rows per modified PIID/award identifier in stratified USAspending transaction/action rows |
 | fixture | usaspending | `procurementAmountWeightedModificationShare` | 0.1398 | observed_proxy | award-amount share of stratified USAspending transaction/action rows marked as ex-post modifications |
 | fixture | usaspending | `procurementActionModificationRows` | 2.0000 | diagnostic | primary transaction/action rows from stratified USAspending transaction/action rows marked as ex-post modifications |
 | fixture | usaspending | `procurementPriceOnlyAwardShare` | 0.4000 | observed_proxy | share among normalized USAspending award rows with competition fields marked as price-only or one-offer awards |

@@ -97,7 +97,7 @@ CLAIMS = [
         "key": "procurement-modification-capture",
         "family": "Procurement modification capture",
         "panels": ["Procurement concentration panel", "Procurement action history", "Procurement modification risk"],
-        "moments": [("procurementConcentrationPanelAgencyCount", 2.0), ("procurementActionRows", 1.0), ("procurementExPostModificationShare", 0.01)],
+        "moments": [("procurementConcentrationPanelAgencyCount", 2.0), ("procurementActionRows", 1.0), ("procurementExPostModificationShare", 0.01), ("procurementModifiedAwardShare", 0.01)],
         "strict": True,
         "permitted": "Coverage warning and schema check for modification and concentration pathways.",
         "avoid": "Do not claim calibrated national procurement-modification incidence or capture rates.",
