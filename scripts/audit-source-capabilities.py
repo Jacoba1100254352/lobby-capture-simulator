@@ -44,8 +44,10 @@ CAPABILITIES = [
         "mechanism": "Representative SAM/FPDS action-history denominator",
         "implementedRoute": (
             "optional SAM.gov Contract Awards importer behind "
-            "SAM_CONTRACT_AWARDS_SOURCE_NATIVE=1 and SAM_API_KEY; supports "
-            "synchronous page fetches or SAM_CONTRACT_AWARDS_EXTRACT_MODE extract downloads, "
+            "SAM_CONTRACT_AWARDS_LIVE_CSV/SAM_CONTRACT_AWARDS_LIVE_URL for downloaded "
+            "CSV/JSON/ZIP exports, or SAM_CONTRACT_AWARDS_SOURCE_NATIVE=1 and SAM_API_KEY "
+            "for keyed API access; supports synchronous page fetches or "
+            "SAM_CONTRACT_AWARDS_EXTRACT_MODE extract downloads, "
             "department-code and PIID-subtier filters, plus non-adjacent offset page-index "
             "strata through SAM_CONTRACT_AWARDS_OFFSET_STARTS for synchronous runs; "
             "SOURCE_FETCH_CURL_FALLBACK=1 handles endpoints that respond to curl but hang under urllib"
@@ -229,11 +231,13 @@ def snapshot_plan(capability: str, live_status: dict[str, str], row_count: int) 
         if row_count > 0:
             return "SAM.gov Contract Awards rows are present, but the live status note is missing."
         return (
-            "Not active in the committed snapshot. Enable SAM_CONTRACT_AWARDS_SOURCE_NATIVE=1 "
-            "with SAM_API_KEY; use SAM_CONTRACT_AWARDS_EXTRACT_MODE=1 for asynchronous "
-            "extracts or department-code/PIID-subtier filters plus SAM_CONTRACT_AWARDS_OFFSET_STARTS "
-            "for synchronous non-adjacent page-index slices; respect SAM.gov 429 nextAccessTime "
-            "before rerunning quota-limited refreshes."
+            "Not active in the committed snapshot. Set SAM_CONTRACT_AWARDS_LIVE_CSV or "
+            "SAM_CONTRACT_AWARDS_LIVE_URL for a downloaded Contract Awards export, or enable "
+            "SAM_CONTRACT_AWARDS_SOURCE_NATIVE=1 with SAM_API_KEY; use "
+            "SAM_CONTRACT_AWARDS_EXTRACT_MODE=1 for asynchronous extracts or department-code/"
+            "PIID-subtier filters plus SAM_CONTRACT_AWARDS_OFFSET_STARTS for synchronous "
+            "non-adjacent page-index slices; respect SAM.gov 429 nextAccessTime before "
+            "rerunning quota-limited keyed refreshes."
         )
     if note:
         return note

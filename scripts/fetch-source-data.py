@@ -8,7 +8,7 @@ import csv
 import gzip
 import hashlib
 import html
-from io import StringIO
+from io import BytesIO, StringIO
 import json
 import multiprocessing
 import os
@@ -68,6 +68,10 @@ def main() -> int:
     sam_contract_awards = subparsers.add_parser("sam-contract-awards", help="Fetch SAM.gov Contract Awards rows into the procurement action schema.")
     sam_contract_awards.add_argument("--output", type=Path, default=Path("data/raw/sam-contract-awards.csv"))
 
+    sam_contract_awards_export = subparsers.add_parser("sam-contract-awards-export", help="Normalize a downloaded SAM.gov Contract Awards CSV/JSON/ZIP export into the procurement action schema.")
+    sam_contract_awards_export.add_argument("--input", type=Path, required=True)
+    sam_contract_awards_export.add_argument("--output", type=Path, default=Path("data/raw/sam-contract-awards.csv"))
+
     nyc_public_financing = subparsers.add_parser("nyc-public-financing", help="Fetch NYC CFB public-funds payments.")
     nyc_public_financing.add_argument("--output", type=Path, default=Path("data/raw/public-financing.csv"))
 
@@ -104,6 +108,8 @@ def main() -> int:
         return fetch_usaspending_actions(args.output)
     if args.kind == "sam-contract-awards":
         return fetch_sam_contract_awards(args.output)
+    if args.kind == "sam-contract-awards-export":
+        return fetch_sam_contract_awards_export(args.input, args.output)
     if args.kind == "nyc-public-financing":
         return fetch_nyc_public_financing(args.output)
     if args.kind == "seattle-democracy-vouchers":
@@ -779,6 +785,18 @@ def fetch_sam_contract_awards(output: Path) -> int:
     return 0
 
 
+def fetch_sam_contract_awards_export(input_path: Path, output: Path) -> int:
+    records = sam_contract_awards_records_from_export_file(input_path)
+    rows = dedupe_usaspending_action_rows(normalize_sam_contract_award_records(records))
+    write_rows(
+        output,
+        USASPENDING_FIELDS,
+        rows,
+        "SAM.gov Contract Awards export",
+    )
+    return 0
+
+
 def fetch_sam_contract_awards_extract(output: Path, base: str, api_key: str) -> int:
     extract_format = sam_contract_awards_extract_format()
     base_params = sam_contract_awards_extract_params(api_key, extract_format)
@@ -888,7 +906,136 @@ def sam_contract_awards_records_from_csv_or_message(text: str) -> list[dict[str,
     if stripped.startswith("{") or stripped.startswith("["):
         payload = json.loads(stripped)
         return sam_contract_award_records(payload)
-    return [row for row in csv.DictReader(StringIO(text)) if any(str(value).strip() for value in row.values())]
+    return [
+        sam_contract_awards_csv_record_aliases(row)
+        for row in csv.DictReader(StringIO(text))
+        if any(str(value).strip() for value in row.values())
+    ]
+
+
+def sam_contract_awards_records_from_export_file(path: Path) -> list[dict[str, object]]:
+    if not path.exists():
+        raise SystemExit(f"SAM.gov Contract Awards export does not exist: {path}")
+    data = path.read_bytes()
+    if path.suffix.lower() == ".zip" or data.startswith(b"PK\x03\x04"):
+        records = sam_contract_awards_records_from_zip(path)
+    else:
+        if path.suffix.lower() == ".gz" or data.startswith(b"\x1f\x8b"):
+            data = gzip.decompress(data)
+        records = sam_contract_awards_records_from_csv_or_message(data.decode("utf-8", errors="replace"))
+    if not records:
+        raise SystemExit(f"SAM.gov Contract Awards export contained no award records: {path}")
+    return records
+
+
+def sam_contract_awards_records_from_zip(path: Path) -> list[dict[str, object]]:
+    with zipfile.ZipFile(BytesIO(path.read_bytes())) as archive:
+        candidate_names = [
+            name for name in archive.namelist()
+            if not name.endswith("/") and Path(name).suffix.lower() in {".csv", ".json", ".txt"}
+        ]
+        for name in candidate_names:
+            text = archive.read(name).decode("utf-8", errors="replace")
+            records = sam_contract_awards_records_from_csv_or_message(text)
+            if records:
+                return records
+    return []
+
+
+def sam_contract_awards_csv_record_aliases(row: dict[str, object]) -> dict[str, object]:
+    expanded = dict(row)
+    normalized = {
+        normalize_header_key(key): value
+        for key, value in row.items()
+        if key is not None
+    }
+    aliases = {
+        "piid": ("contractidpiid", "contractawardid", "contractid", "piid"),
+        "modificationNumber": ("modificationnumber", "modificationno", "modnumber", "mod"),
+        "transactionNumber": ("transactionnumber", "transactionno"),
+        "awardId": ("awardid", "generatedinternalid", "contractawarduniqueid"),
+        "awardeeLegalBusinessName": (
+            "awardeelegalbusinessname",
+            "awardeename",
+            "recipientname",
+            "vendorname",
+            "legalbusinessname",
+        ),
+        "contractingDepartmentName": (
+            "contractingdepartmentname",
+            "contractingdepartment",
+            "departmentname",
+            "awardingagency",
+            "contractingagency",
+            "agency",
+        ),
+        "contractingSubtierName": (
+            "contractingsubtiername",
+            "contractingsubtier",
+            "contractingofficename",
+            "awardingsubagency",
+            "subagency",
+        ),
+        "awardOrIDVTypeName": (
+            "awardoridvtype",
+            "awardoridvtypename",
+            "awardtype",
+            "contractawardtype",
+        ),
+        "actionObligation": (
+            "actionobligation",
+            "federalactionobligation",
+            "totalactionobligation",
+            "dollarsobligated",
+            "currenttotalvalueofaward",
+            "baseandalloptionsvalue",
+        ),
+        "awardeeUEI": ("uniqueentityid", "awardeeuei", "recipientuei", "uei"),
+        "dateSigned": ("datesigned", "actiondate", "awarddate", "approveddate", "lastmodifieddate"),
+        "extentCompetedName": (
+            "extentcompeted",
+            "extentcompetedname",
+            "competitiontype",
+            "solicitationprocedures",
+            "reasonnotcompeted",
+        ),
+        "numberOfOffersReceived": (
+            "numberofoffersreceived",
+            "idvnumberofoffersreceived",
+            "numberofoffers",
+            "offersreceived",
+        ),
+        "typeOfContractPricingName": (
+            "typeofcontractpricing",
+            "typeofcontractpricingname",
+            "pricingtype",
+        ),
+    }
+    for alias, keys in aliases.items():
+        if alias in expanded and expanded[alias] not in (None, ""):
+            continue
+        for key in keys:
+            value = normalized.get(key)
+            if value not in (None, ""):
+                expanded[alias] = value
+                break
+    return expanded
+
+
+def normalize_header_key(value: object) -> str:
+    return re.sub(r"[^a-z0-9]+", "", str(value or "").lower())
+
+
+def dedupe_usaspending_action_rows(rows: list[dict[str, object]]) -> list[dict[str, object]]:
+    deduped: list[dict[str, object]] = []
+    seen: set[tuple[object, ...]] = set()
+    for row in rows:
+        key = usaspending_action_row_key(row)
+        if key in seen:
+            continue
+        seen.add(key)
+        deduped.append(row)
+    return deduped
 
 
 def sam_contract_awards_extract_message(text: str) -> str:
@@ -1027,10 +1174,10 @@ def sam_contract_awards_total_records(payload: dict[str, object] | list[object])
 def normalize_sam_contract_award_records(records: list[dict[str, object]]) -> list[dict[str, object]]:
     rows: list[dict[str, object]] = []
     for record in records:
-        piid = first_text(record, "contractId.piid", "piid", "PIID", "awardDetails.contractId.piid", default="UNKNOWN")
-        modification_number = first_text(record, "contractId.modificationNumber", "modificationNumber", "Modification Number", "Mod", "mod", default="0")
-        transaction_number = first_text(record, "contractId.transactionNumber", "transactionNumber", default="")
-        award_id = first_text(record, "awardId", "Award ID", "generated_internal_id", default=piid)
+        piid = first_text(record, "contractId.piid", "piid", "PIID", "awardDetails.contractId.piid", "contractAwardId", "Contract Award ID", "Contract ID", default="UNKNOWN")
+        modification_number = first_text(record, "contractId.modificationNumber", "modificationNumber", "modification_number", "Modification Number", "Modification No", "Mod Number", "Mod", "mod", default="0")
+        transaction_number = first_text(record, "contractId.transactionNumber", "transactionNumber", "Transaction Number", default="")
+        award_id = first_text(record, "awardId", "Award ID", "generated_internal_id", "contractAwardUniqueId", "Contract Award Unique ID", default=piid)
         if award_id == "UNKNOWN" and transaction_number:
             award_id = f"{piid}-{modification_number}-{transaction_number}"
         competition_type = sam_contract_awards_competition_type(record)
@@ -1070,6 +1217,10 @@ def normalize_sam_contract_award_records(records: list[dict[str, object]]) -> li
                     "awardeeLegalBusinessName",
                     "Awardee Legal Business Name",
                     "Awardee Name",
+                    "recipientName",
+                    "Recipient Name",
+                    "Vendor Name",
+                    "Legal Business Name",
                     "recipient",
                     default="Unknown recipient",
                 ),
@@ -1079,6 +1230,11 @@ def normalize_sam_contract_award_records(records: list[dict[str, object]]) -> li
                     "awardDetails.federalOrganization.contractingInformation.contractingDepartment.name",
                     "contractingDepartmentName",
                     "Contracting Department Name",
+                    "Contracting Department",
+                    "Department Name",
+                    "Awarding Agency",
+                    "Contracting Agency",
+                    "Agency",
                     "contractId.subtier.name",
                     default="Unknown agency",
                 ),
@@ -1088,10 +1244,14 @@ def normalize_sam_contract_award_records(records: list[dict[str, object]]) -> li
                     "awardDetails.federalOrganization.contractingInformation.contractingSubtier.name",
                     "contractingSubtierName",
                     "Contracting Subtier Name",
+                    "Contracting Subtier",
+                    "Contracting Office Name",
+                    "Awarding Sub Agency",
+                    "Sub Agency",
                     "contractId.subtier.name",
                     default="Unknown agency",
                 ),
-                "awardType": first_text(record, "coreData.awardOrIDVType.name", "awardOrIDVTypeName", "Award or IDV Type", "awardType", default="contract"),
+                "awardType": first_text(record, "coreData.awardOrIDVType.name", "awardOrIDVTypeName", "Award or IDV Type", "Award Type", "Contract Award Type", "awardType", default="contract"),
                 "amount": money_millions(first_text(
                     record,
                     "awardDetails.dollars.actionObligation",
@@ -1102,6 +1262,10 @@ def normalize_sam_contract_award_records(records: list[dict[str, object]]) -> li
                     "dollarsObligated",
                     "actionObligation",
                     "Action Obligation",
+                    "Federal Action Obligation",
+                    "Total Action Obligation",
+                    "Dollars Obligated",
+                    "Current Total Value of Award",
                     "totalDollarsObligated",
                     default="0",
                 )),
@@ -1113,6 +1277,8 @@ def normalize_sam_contract_award_records(records: list[dict[str, object]]) -> li
                     "awardeeData.awardeeUEIInformation.uniqueEntityId",
                     "awardeeUEI",
                     "Unique Entity ID",
+                    "Awardee UEI",
+                    "Recipient UEI",
                     "uei",
                     "UEI",
                     default="",
@@ -1125,6 +1291,8 @@ def normalize_sam_contract_award_records(records: list[dict[str, object]]) -> li
                     "coreData.dateSigned",
                     "dateSigned",
                     "Date Signed",
+                    "Award Date",
+                    "Last Modified Date",
                     "approvedDate",
                     "Approved Date",
                     "actionDate",
@@ -1151,7 +1319,10 @@ def sam_contract_awards_competition_type(record: dict[str, object]) -> str:
         "coreData.competitionInformation.extentCompetedForReferencedIdv.name",
         "extentCompetedName",
         "Extent Competed",
+        "Extent Competed Name",
         "Competition Type",
+        "Solicitation Procedures",
+        "Reason Not Competed",
         default="unknown",
     )
 
@@ -2947,6 +3118,8 @@ def first_text(record: dict[str, object], *paths: str, default: str = "") -> str
 
 
 def nested(record: dict[str, object], path: str) -> object | None:
+    if path in record:
+        return record.get(path)
     value: object = record
     for part in path.split("."):
         if isinstance(value, list) and part.isdigit():

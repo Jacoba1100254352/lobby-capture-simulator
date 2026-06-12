@@ -270,7 +270,25 @@ else
   printf "usaspending-procurement-national-actions,missing,national-volume procurement action panel disabled\n" >> "$status_file"
 fi
 
-if [ -n "${USASPENDING_PROCUREMENT_ACTIONS_LIVE_CSV:-}" ] || [ -n "${USASPENDING_PROCUREMENT_ACTIONS_LIVE_URL:-}" ]; then
+if [ -n "${SAM_CONTRACT_AWARDS_LIVE_CSV:-}" ] || [ -n "${SAM_CONTRACT_AWARDS_LIVE_URL:-}" ]; then
+  source_file="$tmpdir/sam-contract-awards-source"
+  if [ -n "${SAM_CONTRACT_AWARDS_LIVE_CSV:-}" ]; then
+    cp "$SAM_CONTRACT_AWARDS_LIVE_CSV" "$source_file"
+  else
+    curl -fsSL "$SAM_CONTRACT_AWARDS_LIVE_URL" -o "$source_file"
+  fi
+  if python3 scripts/fetch-source-data.py sam-contract-awards-export --input "$source_file" --output data/raw/sam-contract-awards.csv; then
+    printf "sam-contract-awards,ok,normalized configured SAM.gov Contract Awards export written; mode=manual-export\n" >> "$status_file"
+    printf "usaspending-procurement-actions,skipped,SAM.gov Contract Awards configured export selected as the primary procurement action source for this live run\n" >> "$status_file"
+  else
+    printf "sam-contract-awards,unavailable,configured SAM.gov Contract Awards export could not be normalized; fallback=USAspending action rows\n" >> "$status_file"
+    if fetch_usaspending_procurement_actions; then
+      printf "usaspending-procurement-actions,ok,normalized USAspending procurement action rows written after configured SAM export fallback\n" >> "$status_file"
+    else
+      printf "usaspending-procurement-actions,unavailable,configured SAM export and USAspending procurement action requests failed\n" >> "$status_file"
+    fi
+  fi
+elif [ -n "${USASPENDING_PROCUREMENT_ACTIONS_LIVE_CSV:-}" ] || [ -n "${USASPENDING_PROCUREMENT_ACTIONS_LIVE_URL:-}" ]; then
   source_file="$tmpdir/usaspending-procurement-actions-source.csv"
   if [ -n "${USASPENDING_PROCUREMENT_ACTIONS_LIVE_CSV:-}" ]; then
     cp "$USASPENDING_PROCUREMENT_ACTIONS_LIVE_CSV" "$source_file"

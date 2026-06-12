@@ -114,6 +114,7 @@ USASPENDING_LIVE_CSV=/path/to/awards.csv ./scripts/fetch-usaspending.sh --live
 REVOLVING_DOOR_LIVE_CSV=/path/to/revolving-door.csv ./scripts/fetch-revolving-door.sh --live
 PUBLIC_FINANCING_LIVE_CSV=/path/to/public-financing.csv ./scripts/fetch-public-financing.sh --live
 INTERMEDIARY_LIVE_CSV=/path/to/nonprofit-association-panel.csv ./scripts/fetch-intermediaries.sh --live
+SAM_CONTRACT_AWARDS_LIVE_CSV=/path/to/sam-contract-awards-export.csv ./scripts/run-2024-env-live-snapshot.sh
 
 LDA_API_KEY=... ./scripts/fetch-lda.sh --live
 FEC_API_KEY=... ./scripts/fetch-fec.sh --live
@@ -132,7 +133,7 @@ The pinned 2024 EPA/ENV live runner is:
 scripts/run-2024-env-live-snapshot.sh
 ```
 
-It preserves raw public API payloads under ignored `data/raw/source-payloads/2024-env/`, writes normalized rows into `data/raw/`, runs the snapshot freezer, and emits source moments. If no personal API keys are configured it uses official public/demo access where possible and records rate-limit gaps in `data/snapshots/2024-env/live-run-status.csv`. Set `SAM_CONTRACT_AWARDS_SOURCE_NATIVE=1` with `SAM_API_KEY` to try the SAM.gov Contract Awards API as a separate procurement action panel; the runner records SAM availability and falls back to USAspending action rows if that opt-in request fails.
+It preserves raw public API payloads under ignored `data/raw/source-payloads/2024-env/`, writes normalized rows into `data/raw/`, runs the snapshot freezer, and emits source moments. If no personal API keys are configured it uses official public/demo access where possible and records rate-limit gaps in `data/snapshots/2024-env/live-run-status.csv`. Set `SAM_CONTRACT_AWARDS_LIVE_CSV` or `SAM_CONTRACT_AWARDS_LIVE_URL` to normalize a downloaded SAM.gov Contract Awards CSV/JSON/ZIP export as the primary procurement action panel. If no export is configured, set `SAM_CONTRACT_AWARDS_SOURCE_NATIVE=1` with `SAM_API_KEY` to try the SAM.gov Contract Awards API; the runner records SAM availability and falls back to USAspending action rows if that opt-in request fails.
 
 `docs/source-data-roadmap.md` records the next source panels and matching identifiers: LDA registrant/client IDs, FEC committee/candidate IDs, IRS EINs, SAM UEIs, PIIDs, docket/document/comment IDs, and official/person records. The project keeps direct observed source rows separate from proxy overlays and synthetic design metrics.
 

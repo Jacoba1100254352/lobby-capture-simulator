@@ -29,6 +29,8 @@ CALIBRATION_QUEUE = REPORTS / "calibration-queue.csv"
 REQUIRED_ENV_VARS = [
     "SAM_API_KEY",
     "SAM_CONTRACT_AWARDS_SOURCE_NATIVE",
+    "SAM_CONTRACT_AWARDS_LIVE_CSV",
+    "SAM_CONTRACT_AWARDS_LIVE_URL",
     "SAM_CONTRACT_AWARDS_EXTRACT_MODE",
     "SAM_CONTRACT_AWARDS_EXTRACT_FORMAT",
     "SAM_CONTRACT_AWARDS_EXTRACT_EMAIL_ID",
@@ -125,7 +127,7 @@ def readiness_rows(reports: Path, snapshot: Path, env_example: Path) -> list[dic
             "nextAction": (
                 f"Wait until {quota_reset} before rerunning SAM."
                 if quota_reset else
-                "Run make sam-contract-awards-preflight immediately before the live snapshot; if the endpoint returns nextAccessTime, wait for that UTC timestamp."
+                "Use SAM_CONTRACT_AWARDS_LIVE_CSV/SAM_CONTRACT_AWARDS_LIVE_URL for a downloaded export, or run make sam-contract-awards-preflight immediately before a keyed API snapshot."
             ),
         },
         {
@@ -166,6 +168,18 @@ def readiness_rows(reports: Path, snapshot: Path, env_example: Path) -> list[dic
                 "; ".join(row.get("recommendedAction", "") for row in p1_procurement)
                 if p1_procurement else
                 "No P1 procurement source-gap actions remain."
+            ),
+        },
+        {
+            "item": "manual-export-path",
+            "status": "ready" if {"SAM_CONTRACT_AWARDS_LIVE_CSV", "SAM_CONTRACT_AWARDS_LIVE_URL"}.issubset(env_vars) else "missing",
+            "evidence": (
+                "SAM_CONTRACT_AWARDS_LIVE_CSV/SAM_CONTRACT_AWARDS_LIVE_URL can normalize a downloaded Contract Awards CSV/JSON/ZIP export"
+                if {"SAM_CONTRACT_AWARDS_LIVE_CSV", "SAM_CONTRACT_AWARDS_LIVE_URL"}.issubset(env_vars)
+                else "Manual SAM Contract Awards export variables are not both documented in .env.example"
+            ),
+            "nextAction": (
+                "Use this path when SAM API quota or extract polling blocks a representative export; archive the normalized snapshot only after paper-artifacts-check passes."
             ),
         },
         {
@@ -294,25 +308,33 @@ def write_markdown(path: Path, rows: list[dict[str, str]]) -> None:
         "## Refresh Modes",
         "",
         (
-            "Run `make sam-contract-awards-preflight` immediately before either SAM.gov mode. "
+            "Run `make sam-contract-awards-preflight` immediately before keyed SAM.gov API modes. "
             "The preflight makes a one-row redacted Contract Awards request and writes ignored "
-            "operational reports under `reports/sam-contract-awards-preflight.*`."
+            "operational reports under `reports/sam-contract-awards-preflight.*`. Manual export "
+            "normalization does not spend SAM API quota."
         ),
         "",
         (
-            "1. Preferred representative run: set `SAM_CONTRACT_AWARDS_SOURCE_NATIVE=1`, "
+            "1. Manual representative export: set `SAM_CONTRACT_AWARDS_LIVE_CSV` or "
+            "`SAM_CONTRACT_AWARDS_LIVE_URL` to a downloaded SAM.gov Contract Awards "
+            "CSV/JSON/ZIP export, then run `scripts/run-2024-env-live-snapshot.sh`. "
+            "This path bypasses API quota during normalization while still writing "
+            "`data/raw/sam-contract-awards.csv` into the standard procurement action schema."
+        ),
+        (
+            "2. Preferred keyed API run: set `SAM_CONTRACT_AWARDS_SOURCE_NATIVE=1`, "
             "`SAM_CONTRACT_AWARDS_EXTRACT_MODE=1`, `SAM_CONTRACT_AWARDS_EXTRACT_FORMAT=json`, "
             "`SAM_API_KEY`, and `SAM_CONTRACT_AWARDS_EXTRACT_EMAIL_ID`, then run "
             "`scripts/run-2024-env-live-snapshot.sh` after quota/access is available."
         ),
         (
-            "2. Bounded diagnostic run: set `SAM_CONTRACT_AWARDS_SOURCE_NATIVE=1`, "
+            "3. Bounded diagnostic run: set `SAM_CONTRACT_AWARDS_SOURCE_NATIVE=1`, "
             "`SAM_CONTRACT_AWARDS_OFFSET_STARTS`, and either department-code or "
             "PIID-subtier filters, then compare the resulting rows against the bounded "
             "USAspending action panel."
         ),
         (
-            "3. Fallback path: keep the USAspending transaction/action panel as a schema and "
+            "4. Fallback path: keep the USAspending transaction/action panel as a schema and "
             "directional diagnostic if SAM is unavailable, quota-blocked, or returns no rows."
         ),
         "",

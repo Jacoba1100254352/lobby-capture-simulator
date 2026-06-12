@@ -388,6 +388,32 @@ def assert_sam_contract_awards(fetchers) -> None:
     assert csv_rows[0]["competitionType"] == "NOT COMPETED", csv_rows[0]
     assert csv_rows[0]["numberOfOffers"] == "1", csv_rows[0]
     assert csv_rows[0]["exPostModification"] == "true", csv_rows[0]
+    with tempfile.TemporaryDirectory() as tmp:
+        export_path = Path(tmp) / "sam-contract-awards-export"
+        export_path.write_text(
+            "\n".join(
+                [
+                    "contractId.piid,modification_number,recipientName,contractingDepartmentName,contractingSubtierName,awardOrIDVTypeName,Federal Action Obligation,Recipient UEI,actionDate,extentCompetedName,numberOfOffers,typeOfContractPricingName",
+                    "68HERH24C0004,P00004,MANUAL EXPORT CONTRACTOR,ENVIRONMENTAL PROTECTION AGENCY,EPA OFFICE,DEFINITIVE CONTRACT,1250000,EXPORTUEI1234,2024-09-15,FULL AND OPEN COMPETITION,5,FIRM FIXED PRICE",
+                ]
+            ),
+            encoding="utf-8",
+        )
+        export_rows = fetchers.normalize_sam_contract_award_records(
+            fetchers.sam_contract_awards_records_from_export_file(export_path)
+        )
+        assert export_rows[0]["awardId"] == "68HERH24C0004", export_rows[0]
+        assert export_rows[0]["recipient"] == "MANUAL EXPORT CONTRACTOR", export_rows[0]
+        assert export_rows[0]["amount"] == 1.25, export_rows[0]
+        assert export_rows[0]["uei"] == "EXPORTUEI1234", export_rows[0]
+        assert export_rows[0]["exPostModification"] == "true", export_rows[0]
+        zip_path = Path(tmp) / "download-without-extension"
+        with zipfile.ZipFile(zip_path, "w") as archive:
+            archive.writestr("ContractAwards.csv", export_path.read_text(encoding="utf-8"))
+        zip_rows = fetchers.normalize_sam_contract_award_records(
+            fetchers.sam_contract_awards_records_from_export_file(zip_path)
+        )
+        assert zip_rows == export_rows, zip_rows
     assert fetchers.sam_contract_awards_extract_message('{"message":"File generation is in progress."}') == "File generation is in progress."
     for name in (
         "SAM_CONTRACT_AWARDS_EXTRACT_MODE",
