@@ -99,11 +99,11 @@ PANELS = [
         "panel": "Procurement concentration panel",
         "metric": "procurementConcentrationPanelAgencyCount",
         "mechanism": "Multi-agency vendor and agency concentration diagnostics",
-        "evidenceClass": "direct bounded SAM/USAspending national action or top-award panel",
+        "evidenceClass": "bounded national action panel",
         "minimum": 2.0,
         "good": 10.0,
         "missing": "multi-agency procurement concentration panel is absent",
-        "thin": "bounded procurement concentration panel is present, but it is not representative enough for calibration-grade modification claims",
+        "thin": "bounded procurement concentration panel is present, but it is not representative enough for calibration-grade claims",
         "action": "Use the no-agency-filtered USAspending national action panel for concentration diagnostics and representative SAM/FPDS action-level extracts before treating modification incidence as calibrated.",
     },
     {
