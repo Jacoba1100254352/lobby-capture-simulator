@@ -108,6 +108,18 @@ python3 scripts/audit-source-panels.py --source-moments "$tmpdir/reports/source-
 test -s "$tmpdir/reports/source-panel-inventory.csv"
 grep -q "Direct dark money" "$tmpdir/reports/source-panel-inventory.md"
 grep -q "Fixture scaffold?" "$tmpdir/reports/source-panel-inventory.md"
+python3 scripts/audit-source-capabilities.py --reports "$tmpdir/reports" --snapshot data/snapshots/2024-env >/dev/null
+python3 scripts/audit-procurement-denominator.py --reports "$tmpdir/reports" --snapshot data/snapshots/2024-env >/dev/null
+python3 scripts/classify-validation-misses.py --validation reports/validation-summary.csv --source-moments "$tmpdir/reports/source-moments.csv" --output "$tmpdir/reports" >/dev/null
+python3 scripts/write-procurement-refresh-readiness.py --reports "$tmpdir/reports" --snapshot data/snapshots/2024-env >/dev/null
+test -s "$tmpdir/reports/procurement-refresh-readiness.csv"
+test -s "$tmpdir/reports/procurement-refresh-readiness.md"
+grep -q "Procurement Refresh Readiness" "$tmpdir/reports/procurement-refresh-readiness.md"
+grep -q "representative SAM/FPDS action-history" "$tmpdir/reports/procurement-refresh-readiness.md"
+grep -q "Do not promote partial SAM payloads" "$tmpdir/reports/procurement-refresh-readiness.md"
+grep -q "Calibrated policy-simulation claims remain blocked" "$tmpdir/reports/procurement-refresh-readiness.md"
+grep -q "SAM_CONTRACT_AWARDS_EXTRACT_MODE=1" "$tmpdir/reports/procurement-refresh-readiness.md"
+grep -q "SAM_CONTRACT_AWARDS_OFFSET_STARTS" "$tmpdir/reports/procurement-refresh-readiness.md"
 
 python3 scripts/test-source-fetchers.py
 

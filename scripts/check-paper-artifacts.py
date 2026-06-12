@@ -42,6 +42,8 @@ PROCUREMENT_DENOMINATOR_AUDIT_MD = ROOT / "reports" / "procurement-denominator-a
 PROCUREMENT_DENOMINATOR_AUDIT_CSV = ROOT / "reports" / "procurement-denominator-audit.csv"
 PROCUREMENT_MODIFICATION_COMPOSITION_AUDIT_MD = ROOT / "reports" / "procurement-modification-composition-audit.md"
 PROCUREMENT_MODIFICATION_COMPOSITION_AUDIT_CSV = ROOT / "reports" / "procurement-modification-composition-audit.csv"
+PROCUREMENT_REFRESH_READINESS_MD = ROOT / "reports" / "procurement-refresh-readiness.md"
+PROCUREMENT_REFRESH_READINESS_CSV = ROOT / "reports" / "procurement-refresh-readiness.csv"
 LAYOUT_AUDIT = ROOT / "reports" / "paper-layout-audit.md"
 MANUAL_VISUAL_AUDIT = ROOT / "reports" / "manual-visual-audit.md"
 CLAIM_BOUNDARY_AUDIT_MD = ROOT / "reports" / "claim-boundary-audit.md"
@@ -50,7 +52,7 @@ CLAIM_SOURCE_DEPENDENCY_MD = ROOT / "reports" / "claim-source-dependency.md"
 CLAIM_SOURCE_DEPENDENCY_CSV = ROOT / "reports" / "claim-source-dependency.csv"
 CLAIM_POSTURE_AUDIT_MD = ROOT / "reports" / "claim-posture-audit.md"
 CLAIM_POSTURE_AUDIT_CSV = ROOT / "reports" / "claim-posture-audit.csv"
-RELEASE_TAG = "paper-publication-readiness-2026-06-12-r61"
+RELEASE_TAG = "paper-publication-readiness-2026-06-12-r62"
 CITATION_CFF = ROOT / "CITATION.cff"
 ZENODO_JSON = ROOT / ".zenodo.json"
 FORBIDDEN_LOCAL_ARTIFACTS = [
@@ -135,6 +137,7 @@ EXPECTED_ZIP_MEMBERS = {
     "supporting-information/revolving-door-bridge-audit.md",
     "supporting-information/procurement-denominator-audit.md",
     "supporting-information/procurement-modification-composition-audit.md",
+    "supporting-information/procurement-refresh-readiness.md",
     "supporting-information/claim-boundary-audit.md",
     "supporting-information/claim-source-dependency.md",
     "supporting-information/claim-posture-audit.md",
@@ -163,6 +166,7 @@ def main() -> int:
     failures.extend(check_revolving_door_bridge_audit())
     failures.extend(check_procurement_denominator_audit())
     failures.extend(check_procurement_modification_composition_audit())
+    failures.extend(check_procurement_refresh_readiness())
     failures.extend(check_claim_boundary_audit())
     failures.extend(check_claim_source_dependency_audit())
     failures.extend(check_claim_posture_audit())
@@ -282,6 +286,7 @@ def submission_inputs() -> list[Path]:
         REVOLVING_DOOR_BRIDGE_AUDIT_MD,
         PROCUREMENT_DENOMINATOR_AUDIT_MD,
         PROCUREMENT_MODIFICATION_COMPOSITION_AUDIT_MD,
+        PROCUREMENT_REFRESH_READINESS_MD,
         ROOT / "reports" / "claim-boundary-audit.md",
         ROOT / "reports" / "claim-source-dependency.md",
         ROOT / "reports" / "claim-posture-audit.md",
@@ -883,6 +888,71 @@ def audit_number(value: object) -> float:
         return 0.0
 
 
+def check_procurement_refresh_readiness() -> list[str]:
+    failures: list[str] = []
+    missing = [
+        path.relative_to(ROOT)
+        for path in (PROCUREMENT_REFRESH_READINESS_MD, PROCUREMENT_REFRESH_READINESS_CSV)
+        if not path.exists()
+    ]
+    if missing:
+        return [f"missing procurement refresh readiness artifact: {path}" for path in missing]
+
+    with PROCUREMENT_REFRESH_READINESS_CSV.open(newline="", encoding="utf-8") as source:
+        rows = {row.get("item", ""): row for row in csv.DictReader(source)}
+    required = {
+        "sam-control-variables",
+        "sam-live-status",
+        "representative-sam-fpds-action-history",
+        "bounded-usaspending-fallback",
+        "p1-procurement-calibration-actions",
+        "extract-mode-path",
+        "offset-strata-path",
+        "partial-payload-policy",
+        "claim-boundary",
+    }
+    missing_items = sorted(required - set(rows))
+    failures.extend(
+        f"procurement refresh readiness missing checklist item: {item}"
+        for item in missing_items
+    )
+    if missing_items:
+        return failures
+
+    if rows["sam-control-variables"].get("status") != "ready":
+        failures.append("procurement refresh readiness must show SAM controls documented in .env.example")
+    if rows["bounded-usaspending-fallback"].get("status") != "ready":
+        failures.append("procurement refresh readiness must preserve the USAspending fallback route")
+    if rows["partial-payload-policy"].get("status") != "ready":
+        failures.append("procurement refresh readiness must document the partial-payload guardrail")
+    if "SAM_CONTRACT_AWARDS_EXTRACT_MODE=1" not in rows["extract-mode-path"].get("evidence", ""):
+        failures.append("procurement refresh readiness must document the SAM extract-mode path")
+    if "SAM_CONTRACT_AWARDS_OFFSET_STARTS" not in rows["offset-strata-path"].get("evidence", ""):
+        failures.append("procurement refresh readiness must document the offset-strata path")
+    if rows["representative-sam-fpds-action-history"].get("status") == "ready":
+        if rows["claim-boundary"].get("status") != "ready":
+            failures.append("claim boundary should clear only when representative SAM/FPDS rows are ready")
+    else:
+        if rows["claim-boundary"].get("status") != "blocked":
+            failures.append("claim boundary must stay blocked until representative SAM/FPDS rows are archived")
+    if "Calibrated policy-simulation claims remain blocked" not in rows["claim-boundary"].get("evidence", ""):
+        failures.append("procurement refresh readiness must keep calibrated policy-simulation claims blocked")
+
+    text = PROCUREMENT_REFRESH_READINESS_MD.read_text(encoding="utf-8")
+    required_text = [
+        "Procurement Refresh Readiness",
+        "representative SAM/FPDS action-history",
+        "Do not promote partial SAM payloads",
+        "Calibrated policy-simulation claims remain blocked",
+        "SAM_CONTRACT_AWARDS_EXTRACT_MODE=1",
+        "SAM_CONTRACT_AWARDS_OFFSET_STARTS",
+    ]
+    for phrase in required_text:
+        if phrase not in text:
+            failures.append(f"procurement refresh readiness markdown missing phrase: {phrase}")
+    return failures
+
+
 def check_claim_boundary_audit() -> list[str]:
     failures: list[str] = []
     if not SOURCE_PANEL_INVENTORY.exists():
@@ -1261,6 +1331,7 @@ def package_byte_checks() -> list[tuple[Path, str]]:
             PROCUREMENT_MODIFICATION_COMPOSITION_AUDIT_MD,
             "supporting-information/procurement-modification-composition-audit.md",
         ),
+        (PROCUREMENT_REFRESH_READINESS_MD, "supporting-information/procurement-refresh-readiness.md"),
         (ROOT / "reports" / "claim-boundary-audit.md", "supporting-information/claim-boundary-audit.md"),
         (ROOT / "reports" / "claim-source-dependency.md", "supporting-information/claim-source-dependency.md"),
         (ROOT / "reports" / "claim-posture-audit.md", "supporting-information/claim-posture-audit.md"),

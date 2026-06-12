@@ -66,6 +66,8 @@ The source acquisition roadmap in `docs/source-data-roadmap.md` records the inte
 
 `make calibration-queue` writes `reports/calibration-queue.csv` plus `reports/calibration-queue.md`. It classifies misses and partial overlaps as model tuning, metric splits, direct source moments, scenario coverage, scale alignment, or benchmark review.
 
+`make procurement-refresh-readiness` writes `reports/procurement-refresh-readiness.csv` plus `reports/procurement-refresh-readiness.md`. This no-network preflight reads committed reports and `.env.example`, not `.env`, to document the SAM/FPDS acquisition modes, quota handling, USAspending fallback policy, and the remaining procurement claim boundary. It should be regenerated before and after any keyed SAM.gov Contract Awards refresh so partial payloads are not promoted and calibrated policy-simulation claims remain blocked until representative action-history rows are archived.
+
 The next paper-grade snapshot is fixed to a closed 2024 environmental slice:
 
 - LDA: 2024 Q1-Q4 LD-2 activity reports, post-filtered to `ENV` and EPA-facing contacts where possible.

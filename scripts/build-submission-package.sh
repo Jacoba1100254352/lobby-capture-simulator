@@ -69,6 +69,7 @@ cp "$ROOT_DIR/reports/intermediary-bridge-audit.md" "$STAGING_DIR/supporting-inf
 cp "$ROOT_DIR/reports/revolving-door-bridge-audit.md" "$STAGING_DIR/supporting-information/revolving-door-bridge-audit.md"
 cp "$ROOT_DIR/reports/procurement-denominator-audit.md" "$STAGING_DIR/supporting-information/procurement-denominator-audit.md"
 cp "$ROOT_DIR/reports/procurement-modification-composition-audit.md" "$STAGING_DIR/supporting-information/procurement-modification-composition-audit.md"
+cp "$ROOT_DIR/reports/procurement-refresh-readiness.md" "$STAGING_DIR/supporting-information/procurement-refresh-readiness.md"
 cp "$ROOT_DIR/reports/claim-boundary-audit.md" "$STAGING_DIR/supporting-information/claim-boundary-audit.md"
 cp "$ROOT_DIR/reports/claim-source-dependency.md" "$STAGING_DIR/supporting-information/claim-source-dependency.md"
 cp "$ROOT_DIR/reports/claim-posture-audit.md" "$STAGING_DIR/supporting-information/claim-posture-audit.md"
