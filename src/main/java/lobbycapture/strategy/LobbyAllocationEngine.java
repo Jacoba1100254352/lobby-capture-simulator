@@ -374,6 +374,8 @@ public final class LobbyAllocationEngine
 				funding.totalFunding(),
 				funding.donorInfluenceGini(),
 				funding.averageDisclosureLag(),
+				funding.lobbyingDisclosureLag(),
+				funding.campaignDisclosureLag(),
 				channelSwitches,
 				evasionShifts,
 				weighted(substitutionPressureSum, substitutionWeightSum),

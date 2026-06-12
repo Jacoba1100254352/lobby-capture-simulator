@@ -65,7 +65,8 @@ public final class CalibrationDataLoader
 				              parse(row, "amount"),
 				              FundingSource.valueOf(row.get("flowType")),
 				              parse(row, "traceability"),
-				              parse(row, "largeDonorShare")
+				              parse(row, "largeDonorShare"),
+				              parse(row, "disclosureLag")
 		              ))
 		              .toList();
 	}

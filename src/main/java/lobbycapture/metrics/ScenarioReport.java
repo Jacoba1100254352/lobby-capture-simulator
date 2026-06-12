@@ -22,6 +22,8 @@ public record ScenarioReport(
 		double clientFundingPerContest,
 		double donorInfluenceGini,
 		double averageDisclosureLag,
+		double lobbyingDisclosureLag,
+		double campaignDisclosureLag,
 		double defensiveReformSpendShare,
 		double captureReturnOnSpend,
 		double publicBenefitPerInfluenceDollar,

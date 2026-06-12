@@ -33,6 +33,8 @@ public final class MetricsAccumulator
 	private double clientFundingSum;
 	private double donorInfluenceGiniSum;
 	private double disclosureLagSum;
+	private double lobbyingDisclosureLagSum;
+	private double campaignDisclosureLagSum;
 	private double defensiveSpendSum;
 	private double truePublicBenefitSum;
 	private double policyDistortionSum;
@@ -361,6 +363,8 @@ public final class MetricsAccumulator
 				1.0
 		);
 		disclosureLagSum += outcome.influenceResult().averageDisclosureLag();
+		lobbyingDisclosureLagSum += outcome.influenceResult().lobbyingDisclosureLag();
+		campaignDisclosureLagSum += outcome.influenceResult().campaignDisclosureLag();
 		defensiveSpendSum += outcome.influenceResult().defensiveSpend();
 		captureIndexSum += outcome.captureIndex();
 		publicInterestSum += outcome.publicInterestScore();
@@ -499,6 +503,8 @@ public final class MetricsAccumulator
 				clientFundingSum / total,
 				donorInfluenceGiniSum / total,
 				disclosureLagSum / total,
+				lobbyingDisclosureLagSum / total,
+				campaignDisclosureLagSum / total,
 				totalSpend == 0.0 ? 0.0 : defensiveSpendSum / totalSpend,
 				totalSpend == 0.0 ? 0.0 : captureIndexSum / totalSpend,
 				totalSpend == 0.0 ? 0.0 : truePublicBenefitSum / totalSpend,

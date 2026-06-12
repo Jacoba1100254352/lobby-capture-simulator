@@ -15,7 +15,9 @@ OUTPUT = Path("reports")
 
 
 CATEGORY_BY_METRIC = {
-    "averageDisclosureLag": ("scale-alignment", "separate current-public-visibility lag from historical age of archived filings"),
+    "averageDisclosureLag": ("scale-alignment", "legacy blended visibility lag; use lobbyingDisclosureLag and campaignDisclosureLag for source-specific validation"),
+    "lobbyingDisclosureLag": ("scale-alignment", "compare modeled lobbying visibility lag against LDA timing ranges while keeping raw archived source age in source moments"),
+    "campaignDisclosureLag": ("scale-alignment", "compare modeled campaign visibility lag against FEC timing ranges while keeping lobbying visibility separate"),
     "donorInfluenceGini": ("direct-source-moment", "replace report-level proxy with top-k donor/client moments from source tables"),
     "largeDonorDependence": ("model-tuning", "inspect remaining campaign/outside rows and tune allocation-to-source concentration only where high-end outside spending is intended"),
     "darkMoneyTraceability": ("metric-split", "keep all-flow traceability separate from dark-only direct visibility"),

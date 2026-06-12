@@ -20,7 +20,7 @@ The Deep Research reports are distilled into `docs/research/research-synthesis.m
 
 Current calibration links:
 
-- `normalized-lda-lobbying.csv` constrains issue funding scale, issue mix, and disclosure lag.
+- `normalized-lda-lobbying.csv` constrains issue funding scale, issue mix, and the source timing input used for the lobbying visibility-lag component. The report applies a public-visibility transform so archived LDA source lag is not compared directly to current public-visibility benchmarks. FEC, public-financing, and dark-money rows carry a separate campaign visibility-lag component; the report-level `averageDisclosureLag` remains an operational blend rather than a source-specific validation target.
 - `normalized-fec-campaign-finance.csv` constrains donor concentration, Schedule E outside-spending pressure, traceability, and bounded OpenFEC electioneering/communication-cost coverage. OpenFEC electioneering and communication-cost rows are included in the pinned snapshot as observed electoral-communication bridge rows; `normalized-public-financing.csv` and `normalized-dark-money.csv` carry separate public-financing, opaque-capacity, and bounded Schedule I nonprofit-routing bridge rows.
 - `normalized-regulatory-dockets.csv` constrains docket volume, comment authenticity, template saturation, and technical-claim credibility.
 - `reports/source-moments.csv` records direct top-k concentration, traceability, non-proxy dark-money routing row coverage, direct dark-money visibility, Schedule E outside spending, electoral-communication coverage, public financing, comment-record, procurement bridge, intermediary, and revolving-door moments from the current snapshot and fixture baselines.

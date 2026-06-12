@@ -66,6 +66,8 @@ public final class ClientFundingModel
 	public ClientFundingResult fund(PolicyContest contest, WorldState world) {
 		double totalFunding = 0.0;
 		double weightedDisclosureLag = 0.0;
+		double weightedLobbyingDisclosureLag = 0.0;
+		double weightedCampaignDisclosureLag = 0.0;
 		for (InterestClient client : world.clients()) {
 			double clientGain = client.privateGainByPolicy().getOrDefault(contest.issueDomain(), contest.privateGain());
 			double exposure = exposureFor(client, contest);
@@ -99,9 +101,22 @@ public final class ClientFundingModel
 				FundingSource source = fundingSource(client, world);
 				double traceability = traceabilityFor(source, contest.issueDomain(), world);
 				double largeDonorDependence = largeDonorDependenceFor(source, contest.issueDomain(), world);
+				double lobbyingDisclosureLag = Values.clamp(
+						0.18
+								+ (0.48 * world.calibratedDisclosureLag(contest.issueDomain()))
+								+ (0.06 * world.evasionProfile().disclosureLag()),
+						0.0,
+						1.0
+				);
+				double campaignDisclosureLag = Values.clamp(
+						world.calibratedCampaignDisclosureLag(contest.issueDomain())
+								+ (0.12 * world.evasionProfile().disclosureLag()),
+						0.0,
+						1.0
+				);
 				double disclosureLag = Values.clamp(
-						(0.70 * world.calibratedDisclosureLag(contest.issueDomain()))
-								+ (0.30 * world.evasionProfile().disclosureLag())
+						(0.70 * lobbyingDisclosureLag)
+								+ (0.30 * campaignDisclosureLag)
 								- (0.10 * world.reformRegime().realTimeDisclosure()),
 						0.0,
 						1.0
@@ -125,9 +140,19 @@ public final class ClientFundingModel
 				));
 				totalFunding += amount;
 				weightedDisclosureLag += amount * disclosureLag;
+				weightedLobbyingDisclosureLag += amount * lobbyingDisclosureLag;
+				weightedCampaignDisclosureLag += amount * campaignDisclosureLag;
 			}
 		}
 		double averageDisclosureLag = totalFunding == 0.0 ? 0.0 : weightedDisclosureLag / totalFunding;
-		return new ClientFundingResult(totalFunding, world.contributionLedger().donorInfluenceGini(), averageDisclosureLag);
+		double averageLobbyingDisclosureLag = totalFunding == 0.0 ? 0.0 : weightedLobbyingDisclosureLag / totalFunding;
+		double averageCampaignDisclosureLag = totalFunding == 0.0 ? 0.0 : weightedCampaignDisclosureLag / totalFunding;
+		return new ClientFundingResult(
+				totalFunding,
+				world.contributionLedger().donorInfluenceGini(),
+				averageDisclosureLag,
+				averageLobbyingDisclosureLag,
+				averageCampaignDisclosureLag
+		);
 	}
 }

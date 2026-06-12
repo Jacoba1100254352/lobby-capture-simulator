@@ -13,7 +13,7 @@ The model compares how organized interests allocate influence budgets under ordi
 Lobby organizations are the central adaptive actors.
 
 - Identity and scope: `id`, name, issue-domain preferences, baseline influence intensity.
-- Budget state: total budget, channel-specific accounts, donor/client replenishment, defensive reform budget, disclosure lag, traceability.
+- Budget state: total budget, channel-specific accounts, donor/client replenishment, defensive reform budget, operational disclosure lag, source-specific lobbying and campaign visibility lags, traceability.
 - Capability state: direct access capital, technical expertise, public campaign skill, information-bias skill, astroturf skill, litigation skill, revolving-door network strength, disclosure-avoidance skill.
 - Adaptation state: channel return memory, issue-specific funding multipliers, evasion profile, reform-threat sensitivity, defensive spending multiplier.
 - Output state: spend records, money-flow records, influence-network paths, observed capture, hidden capture, total influence distortion, hidden influence, influence preservation, messenger substitution, venue substitution, evasion shift, defensive spending, and administrative burden.
@@ -106,7 +106,7 @@ Each report manifest records the command, seed, run count, contest count, runtim
 
 External data constrain plausible ranges and schema behavior. They do not identify causal reform effects.
 
-- LDA rows constrain issue funding scale, registrant/client concentration, issue-domain mix, and disclosure lag.
+- LDA rows constrain issue funding scale, registrant/client concentration, issue-domain mix, and the source timing input for the lobbying visibility-lag component. The model applies a public-visibility transform to avoid treating archived LDA row age as the same object as current public visibility. FEC, public-financing, and dark-money rows constrain a separate campaign visibility-lag component; the operational report metric keeps a blended lag for money-flow accounting.
 - FEC rows constrain donor concentration, Schedule E outside-spending pressure, electioneering/communication-cost coverage, traceability, and large-donor dependence. Public-financing and dark-money bridge panels are loaded separately when present, so voucher, matching-fund, opaque-capacity, and Schedule I nonprofit-routing rows do not disappear into ordinary campaign receipts. Schedule I nonprofit-routing rows remain separate from super PAC, electioneering, communication-cost, capacity-proxy, and other outside-spending rows, and they are not treated as hidden-donor identity evidence.
 - Federal Register and Regulations.gov rows constrain docket volume, comment authenticity, template saturation, and technical-claim credibility.
 - USAspending rows constrain procurement-recipient and awarding-agency concentration. The normalized procurement-action schema also carries UEI, PIID, action date, competition type, number of offers, initial-award versus modification status, price-only, protest, exclusion, and firewall flags when USAspending transaction rows or the optional separate SAM.gov Contract Awards panel provide SAM/FPDS-style fields. The SAM path can use non-adjacent offset page-index strata for bounded synchronous refreshes or asynchronous JSON/CSV extract downloads for larger pulls, but those rows support stronger claims only after the frozen snapshot archives the resulting action-history panel.

@@ -9,7 +9,7 @@ The simulator now has a lobbying-centered model core with calibration fixtures, 
 - `ClientFundingModel` replenishes lobby budgets from `InterestClient` exposure and writes client-to-lobby flows into `ContributionLedger`.
 - Rulemaking comments are represented by `Docket`, `PublicComment`, and `CommentCampaign` records.
 - Evasion now has explicit opacity, disclosure-lag, and legal-risk parameters.
-- Scenario reports include client funding, donor concentration, disclosure lag, comment authenticity, template saturation, technical credibility, and evasion penalties.
+- Scenario reports include client funding, donor concentration, an operational disclosure-lag blend, separate lobbying and campaign visibility lags, comment authenticity, template saturation, technical credibility, and evasion penalties.
 - Scenario reports also include client-funding adaptation, regulator attention, and watchdog focus.
 - `make sensitivity` sweeps enforcement, disclosure, public financing, cooling-off, and evasion freedom.
 - `make mechanism-comparison` compares the visible single-channel baseline, multi-channel/no-substitution model, and substitution-enabled model for the same reform-heavy contest family.

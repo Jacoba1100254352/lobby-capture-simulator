@@ -37,11 +37,11 @@ public record CalibrationProfile(
 						new LdaRecord("Federal Services Contractors", "Federal Contractor Alliance", "procurement", 5.4, 0.42, 0.27)
 				),
 				List.of(
-						new FecRecord("Finance Leadership PAC", "incumbent-a", "finance", 6.8, FundingSource.PAC, 0.72, 0.84),
-						new FecRecord("Energy Independent Expenditure", "incumbent-a", "energy", 4.6, FundingSource.SUPER_PAC, 0.58, 0.76),
-						new FecRecord("Platform Civic Fund", "challenger-b", "technology", 3.9, FundingSource.DARK_MONEY, 0.24, 0.69),
-						new FecRecord("Small Donor Match Pool", "challenger-b", "democracy", 3.1, FundingSource.PUBLIC_MATCH, 0.96, 0.18),
-						new FecRecord("Voucher Participants", "challenger-b", "democracy", 2.4, FundingSource.DEMOCRACY_VOUCHER, 0.98, 0.08)
+						new FecRecord("Finance Leadership PAC", "incumbent-a", "finance", 6.8, FundingSource.PAC, 0.72, 0.84, 0.28),
+						new FecRecord("Energy Independent Expenditure", "incumbent-a", "energy", 4.6, FundingSource.SUPER_PAC, 0.58, 0.76, 0.28),
+						new FecRecord("Platform Civic Fund", "challenger-b", "technology", 3.9, FundingSource.DARK_MONEY, 0.24, 0.69, 0.28),
+						new FecRecord("Small Donor Match Pool", "challenger-b", "democracy", 3.1, FundingSource.PUBLIC_MATCH, 0.96, 0.18, 0.24),
+						new FecRecord("Voucher Participants", "challenger-b", "democracy", 2.4, FundingSource.DEMOCRACY_VOUCHER, 0.98, 0.08, 0.24)
 				),
 				List.of(
 						new RegulatoryDocketRecord("TECH-2026-001", "technology", "market-agency", 1800, 0.34, 0.52, 0.46, 0.28),
@@ -124,11 +124,30 @@ public record CalibrationProfile(
 	}
 	
 	public double disclosureLag(String issueDomain) {
+		double average = ldaRecords.stream()
+		                           .mapToDouble(LdaRecord::disclosureLag)
+		                           .average()
+		                           .orElse(0.45);
 		return ldaRecords.stream()
 		                 .filter(record -> record.issueDomain().equals(issueDomain))
 		                 .mapToDouble(LdaRecord::disclosureLag)
 		                 .average()
-		                 .orElse(0.45);
+		                 .orElse(average);
+	}
+
+	public double campaignDisclosureLag(String issueDomain) {
+		List<FecRecord> records = fecRecordsFor(issueDomain);
+		double total = records.stream().mapToDouble(FecRecord::amount).sum();
+		if (total <= 0.0) {
+			return records.stream().mapToDouble(FecRecord::disclosureLag).average().orElse(0.28);
+		}
+		return Values.clamp(
+				records.stream()
+				       .mapToDouble(record -> record.disclosureLag() * record.amount())
+				       .sum() / total,
+				0.0,
+				1.0
+		);
 	}
 	
 	public double largeDonorShare(String issueDomain) {

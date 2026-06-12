@@ -26,14 +26,15 @@ public final class CalibrationLoaderTest
 		try {
 			Files.writeString(
 					source,
-					"source,recipient,issueDomain,amount,flowType,traceability,largeDonorShare\n"
-							+ "Electioneering Filer,Candidate A,democracy,0.2500,ELECTIONEERING,0.5000,0.7400\n"
-							+ "Communication Spender,Candidate B,democracy,0.0100,COMMUNICATION_COST,0.6400,0.6600\n"
+					"source,recipient,issueDomain,amount,flowType,traceability,largeDonorShare,disclosureLag\n"
+							+ "Electioneering Filer,Candidate A,democracy,0.2500,ELECTIONEERING,0.5000,0.7400,0.2800\n"
+							+ "Communication Spender,Candidate B,democracy,0.0100,COMMUNICATION_COST,0.6400,0.6600,0.1800\n"
 			);
 			List<FecRecord> records = CalibrationDataLoader.readFec(source);
 			require(records.size() == 2, "FEC loader should read both electoral-communication rows");
 			require(records.get(0).flowType() == FundingSource.ELECTIONEERING, "FEC loader should preserve electioneering rows");
 			require(records.get(1).flowType() == FundingSource.COMMUNICATION_COST, "FEC loader should preserve communication-cost rows");
+			require(records.get(0).disclosureLag() == 0.2800, "FEC loader should preserve disclosure lag rows");
 		} finally {
 			Files.deleteIfExists(source);
 		}

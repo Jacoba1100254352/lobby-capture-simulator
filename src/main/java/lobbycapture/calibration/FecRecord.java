@@ -12,7 +12,8 @@ public record FecRecord(
 		double amount,
 		FundingSource flowType,
 		double traceability,
-		double largeDonorShare
+		double largeDonorShare,
+		double disclosureLag
 )
 {
 	public FecRecord {
@@ -25,6 +26,7 @@ public record FecRecord(
 		}
 		Values.requireRange("traceability", traceability, 0.0, 1.0);
 		Values.requireRange("largeDonorShare", largeDonorShare, 0.0, 1.0);
+		Values.requireRange("disclosureLag", disclosureLag, 0.0, 1.0);
 	}
 	
 	private static void requireText(String name, String value) {
@@ -33,4 +35,3 @@ public record FecRecord(
 		}
 	}
 }
-

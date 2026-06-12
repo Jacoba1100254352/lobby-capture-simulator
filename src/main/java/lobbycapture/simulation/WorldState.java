@@ -123,6 +123,10 @@ public final class WorldState
 		return cachedCalibration("disclosureLag", issueDomain, spec.calibrationProfile()::disclosureLag);
 	}
 
+	public double calibratedCampaignDisclosureLag(String issueDomain) {
+		return cachedCalibration("campaignDisclosureLag", issueDomain, spec.calibrationProfile()::campaignDisclosureLag);
+	}
+
 	public double calibratedAverageTraceability(String issueDomain) {
 		return cachedCalibration("averageTraceability", issueDomain, spec.calibrationProfile()::averageTraceability);
 	}

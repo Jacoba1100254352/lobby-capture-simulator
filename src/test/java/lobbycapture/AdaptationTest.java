@@ -147,6 +147,8 @@ public final class AdaptationTest
 				0.12,
 				0.22,
 				0.38,
+				0.34,
+				0.28,
 				1,
 				evasionShifts,
 				List.of()
