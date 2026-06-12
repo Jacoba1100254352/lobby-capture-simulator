@@ -14,7 +14,9 @@ import multiprocessing
 import os
 import queue
 import re
+import shutil
 import socket
+import subprocess
 import sys
 import time
 import tempfile
@@ -2801,6 +2803,8 @@ def fetch_url_text_with_hard_timeout(
         process.terminate()
         process.join(2.0)
         output_path.unlink(missing_ok=True)
+        if curl_fallback_enabled(method, body):
+            return fetch_url_text_with_curl(method, url, headers, body, timeout, hard_timeout)
         raise TimeoutError(f"source fetch exceeded hard timeout ({hard_timeout:.1f}s)")
     try:
         result = result_queue.get_nowait()
@@ -2818,6 +2822,75 @@ def fetch_url_text_with_hard_timeout(
         raise SourceHttpStatus(int(result.get("code", 0)), str(result.get("detail", "")), result.get("headers", {}))
     reason = str(result.get("reason", result.get("type", "unknown source fetch error")))
     raise OSError(reason)
+
+
+def curl_fallback_enabled(method: str, body: bytes | None) -> bool:
+    setting = os.environ.get("SOURCE_FETCH_CURL_FALLBACK", "1").strip().lower()
+    return (
+        setting not in {"0", "false", "no", "n"}
+        and method.upper() == "GET"
+        and body is None
+        and shutil.which("curl") is not None
+    )
+
+
+def fetch_url_text_with_curl(
+        method: str,
+        url: str,
+        headers: dict[str, str],
+        body: bytes | None,
+        timeout: float,
+        hard_timeout: float,
+) -> str:
+    """Fallback for endpoints that hang under urllib but respond to curl."""
+    if method.upper() != "GET" or body is not None:
+        raise TimeoutError(f"source fetch exceeded hard timeout ({hard_timeout:.1f}s)")
+    fd, output_name = tempfile.mkstemp(prefix="lobby-source-curl-", suffix=".txt")
+    os.close(fd)
+    output_path = Path(output_name)
+    command = [
+        "curl",
+        "-sS",
+        "-L",
+        "--compressed",
+        "--connect-timeout",
+        f"{min(timeout, hard_timeout):.1f}",
+        "--max-time",
+        f"{hard_timeout:.1f}",
+        "-o",
+        output_name,
+        "-w",
+        "%{http_code}",
+    ]
+    for key, value in headers.items():
+        command.extend(["-H", f"{key}: {value}"])
+    command.append(url)
+    try:
+        completed = subprocess.run(
+            command,
+            check=False,
+            capture_output=True,
+            text=True,
+            timeout=hard_timeout + 2.0,
+        )
+        status_text = completed.stdout.strip() or "000"
+        try:
+            status_code = int(status_text[-3:])
+        except ValueError:
+            status_code = 0
+        if completed.returncode != 0:
+            detail = completed.stderr.strip().replace(url, redact_url(url))[:500]
+            raise OSError(f"curl fallback failed with exit {completed.returncode}: {detail}")
+        text = output_path.read_text(encoding="utf-8")
+        if status_code >= 400:
+            raise SourceHttpStatus(status_code, text[:500], {})
+        if status_code == 0:
+            raise OSError("curl fallback did not report an HTTP status")
+        return text
+    except subprocess.TimeoutExpired as error:
+        raise TimeoutError(f"curl fallback exceeded hard timeout ({hard_timeout:.1f}s)") from error
+    finally:
+        output_path.unlink(missing_ok=True)
 
 
 def multiprocessing_context() -> multiprocessing.context.BaseContext:

@@ -31,6 +31,7 @@ def main() -> int:
     assert_irs_dark_money_capacity(fetchers)
     assert_propublica_nonprofit_routing(fetchers)
     assert_irs_527(fetchers)
+    assert_curl_fallback_toggle(fetchers)
     assert fetchers.redact_url("https://example.test/path?api_key=SECRET&x=1").endswith("api_key=REDACTED&x=1")
     print("Source-native parser fixture tests passed.")
     return 0
@@ -417,6 +418,22 @@ def assert_sam_contract_awards(fetchers) -> None:
     assert rows[1]["numberOfOffers"] == "1", rows[1]
     assert rows[1]["priceOnlyAward"] == "true", rows[1]
     assert rows[1]["exPostModification"] == "true", rows[1]
+
+
+def assert_curl_fallback_toggle(fetchers) -> None:
+    previous = os.environ.get("SOURCE_FETCH_CURL_FALLBACK")
+    try:
+        os.environ["SOURCE_FETCH_CURL_FALLBACK"] = "0"
+        assert fetchers.curl_fallback_enabled("GET", None) is False
+        os.environ["SOURCE_FETCH_CURL_FALLBACK"] = "1"
+        assert fetchers.curl_fallback_enabled("POST", None) is False
+        assert fetchers.curl_fallback_enabled("GET", b"payload") is False
+        assert fetchers.curl_fallback_enabled("GET", None) is (fetchers.shutil.which("curl") is not None)
+    finally:
+        if previous is None:
+            os.environ.pop("SOURCE_FETCH_CURL_FALLBACK", None)
+        else:
+            os.environ["SOURCE_FETCH_CURL_FALLBACK"] = previous
 
 
 def assert_nyc_public_financing(fetchers) -> None:
