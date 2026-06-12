@@ -18,8 +18,8 @@ jobs:
       - uses: actions/setup-python@v6.2.0
         with:
           python-version: "3.12"
-      - name: Compile Python scripts
-        run: python3 -m py_compile scripts/*.py
+      - name: Check scripts
+        run: make script-checks
       - name: Run tests
         run: make test
       - name: Install paper build dependencies

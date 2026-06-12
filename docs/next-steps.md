@@ -30,6 +30,8 @@ The simulator now has a lobbying-centered model core with calibration fixtures, 
 - `--live` fetch modes can normalize caller-provided CSVs or query LDA, OpenFEC, Regulations.gov, and Federal Register APIs directly.
 - Source-native parser fixtures exercise LDA, OpenFEC contribution, OpenFEC electioneering, OpenFEC communication-cost, Regulations.gov, Federal Register, USAspending award JSON, USAspending transaction JSON, and SAM.gov Contract Awards JSON without network access.
 - The procurement action fetchers now honor the documented `USASPENDING_PROCUREMENT_ACTIONS_*` aliases directly, use non-overlapping SAM.gov Contract Awards offsets, and bound optional SAM attempts with retry/timeout controls before falling back to USAspending action rows.
+- The procurement denominator audit now reports row-count balance versus amount concentration, making clear that a stratified action sample can support schema and mechanism diagnostics without clearing volume-representative SAM/FPDS calibration.
+- `make test` now includes Python compilation plus `bash -n` shell-script checks through `make script-checks`, and CI uses the same target before simulator and paper-package gates.
 - Live source fetches retry transient `429` and `5xx` responses and redact API keys from error URLs.
 - `make source-moments` records direct source-level top-k concentration, traceability, Schedule E outside-spending, direct dark-money visibility, public-financing, procurement bridge, revolving-door, and comment-record moments.
 - `make calibration-queue` classifies validation misses and partial overlaps into actionable work categories.

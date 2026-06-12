@@ -89,6 +89,8 @@ def audit_source(source: dict[str, object], statuses: dict[str, dict[str, str]])
     rows = read_rows(path)
     agency_amount = grouped_amount(rows, "agency")
     recipient_amount = grouped_amount(rows, "recipient")
+    agency_count = grouped_count(rows, "agency")
+    recipient_count = grouped_count(rows, "recipient")
     modified_rows = [row for row in rows if is_modified(row)]
     initial_rows = [row for row in rows if not is_modified(row)]
     amount_total = sum(number(row.get("amount")) for row in rows)
@@ -109,7 +111,10 @@ def audit_source(source: dict[str, object], statuses: dict[str, dict[str, str]])
         "modifiedActionShare": format_float(safe_divide(len(modified_rows), len(rows))),
         "amountWeightedModificationShare": format_float(safe_divide(amount_modified, amount_total)),
         "topAgencyAmountShare": format_float(top_share(agency_amount, 1)),
+        "topAgencyRowShare": format_float(top_share(agency_count, 1)),
+        "topAgencyAmountRowGap": format_float(top_share(agency_amount, 1) - top_share(agency_count, 1)),
         "topRecipientAmountShare": format_float(top_share(recipient_amount, 1)),
+        "topRecipientRowShare": format_float(top_share(recipient_count, 1)),
         "claimBoundary": str(source["claimBoundary"]),
         "statusNote": status.get("notes", ""),
     }
@@ -130,6 +135,13 @@ def grouped_amount(rows: list[dict[str, str]], key: str) -> dict[str, float]:
     grouped: dict[str, float] = defaultdict(float)
     for row in rows:
         grouped[row.get(key, "") or "unknown"] += number(row.get("amount"))
+    return dict(grouped)
+
+
+def grouped_count(rows: list[dict[str, str]], key: str) -> dict[str, float]:
+    grouped: dict[str, float] = defaultdict(float)
+    for row in rows:
+        grouped[row.get(key, "") or "unknown"] += 1.0
     return dict(grouped)
 
 
@@ -192,7 +204,10 @@ def write_csv(path: Path, rows: list[dict[str, str]]) -> None:
         "modifiedActionShare",
         "amountWeightedModificationShare",
         "topAgencyAmountShare",
+        "topAgencyRowShare",
+        "topAgencyAmountRowGap",
         "topRecipientAmountShare",
+        "topRecipientRowShare",
         "claimBoundary",
         "statusNote",
     ]
@@ -223,20 +238,26 @@ def write_markdown(path: Path, rows: list[dict[str, str]]) -> None:
             f"The active action denominator is `{primary.get('source', 'none')}` with "
             f"{primary.get('rows', '0')} rows across {primary.get('agencyCount', '0')} agencies. "
             f"Its modified-action share is {primary.get('modifiedActionShare', '0.0000')}. "
+            f"The largest agency accounts for {primary.get('topAgencyRowShare', '0.0000')} of rows "
+            f"but {primary.get('topAgencyAmountShare', '0.0000')} of amount, a row-to-amount gap "
+            f"of {primary.get('topAgencyAmountRowGap', '0.0000')}. "
             f"SAM.gov Contract Awards status is `{sam.get('snapshotStatus', 'missing')}` with "
             f"{sam.get('rows', '0')} committed rows. The procurement-modification claim remains "
-            "bounded until a representative SAM/FPDS action-history denominator is archived."
+            "bounded until a representative SAM/FPDS action-history denominator is archived; the "
+            "balanced row-count sample is useful for schema checks, but not volume-representative "
+            "calibration."
         ),
         "",
-        "| Source | Status | Role | Rows | Agencies | PIID | UEI | Initial | Modified | Amt-wtd mod. | Top agency | Top recipient | Boundary |",
-        "| --- | --- | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | --- |",
+        "| Source | Status | Role | Rows | Agencies | PIID | UEI | Initial | Modified | Amt-wtd mod. | Top agency amount | Top agency rows | Top recipient amount | Boundary |",
+        "| --- | --- | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | --- |",
     ]
     for row in rows:
         lines.append(
             "| {source} | {snapshotStatus} | {role} | {rows} | {agencyCount} | "
             "{knownPiidShare} | {knownUeiShare} | {initialActionShare} | "
             "{modifiedActionShare} | {amountWeightedModificationShare} | "
-            "{topAgencyAmountShare} | {topRecipientAmountShare} | {claimBoundary} |".format(
+            "{topAgencyAmountShare} | {topAgencyRowShare} | {topRecipientAmountShare} | "
+            "{claimBoundary} |".format(
                 **{key: markdown_cell(value) for key, value in row.items()}
             )
         )
