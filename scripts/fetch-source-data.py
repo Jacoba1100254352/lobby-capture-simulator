@@ -761,7 +761,7 @@ def fetch_sam_contract_awards(output: Path) -> int:
     for filter_key, filter_value in sam_contract_awards_filters():
         total_records = 0
         for offset in offsets:
-            if total_records > 0 and offset >= total_records:
+            if total_records > 0 and offset * limit >= total_records:
                 break
             params = dict(base_params)
             params[filter_key] = filter_value
@@ -818,7 +818,13 @@ def sam_contract_awards_base_params(api_key: str, limit: int) -> dict[str, str]:
 
 
 def sam_contract_awards_offset(offset_start: int, page_index: int, limit: int) -> int:
-    return offset_start + (page_index * limit)
+    offset = offset_start + page_index
+    if offset * limit > 400000:
+        raise SystemExit(
+            "SAM.gov Contract Awards rejects requests where offset * limit exceeds 400000; "
+            f"got offset={offset}, limit={limit}."
+        )
+    return offset
 
 
 def sam_contract_awards_offset_starts() -> list[int]:
@@ -830,9 +836,9 @@ def sam_contract_awards_offset_starts() -> list[int]:
         try:
             offset = int(start)
         except ValueError as error:
-            raise SystemExit(f"SAM_CONTRACT_AWARDS_OFFSET_STARTS contains a non-integer offset: {start}") from error
+            raise SystemExit(f"SAM_CONTRACT_AWARDS_OFFSET_STARTS contains a non-integer page index: {start}") from error
         if offset < 0 or offset > 400000:
-            raise SystemExit(f"SAM_CONTRACT_AWARDS_OFFSET_STARTS offset out of range 0..400000: {start}")
+            raise SystemExit(f"SAM_CONTRACT_AWARDS_OFFSET_STARTS page index out of range 0..400000: {start}")
         parsed.append(offset)
     return sorted(dict.fromkeys(parsed))
 
@@ -862,6 +868,12 @@ def sam_contract_awards_date(value: str) -> str:
 
 
 def sam_contract_awards_filters() -> list[tuple[str, str]]:
+    piid_subtier_codes = split_csv_env("SAM_CONTRACT_AWARDS_PIID_SUBTIER_CODES", "")
+    if piid_subtier_codes:
+        return [("piidSubtierCode", code) for code in piid_subtier_codes]
+    piid_subtier_names = split_csv_env("SAM_CONTRACT_AWARDS_PIID_SUBTIER_NAMES", "")
+    if piid_subtier_names:
+        return [("piidSubtierName", name) for name in piid_subtier_names]
     department_codes = split_csv_env("SAM_CONTRACT_AWARDS_DEPARTMENT_CODES", "")
     if department_codes:
         return [("contractingDepartmentCode", code) for code in department_codes]

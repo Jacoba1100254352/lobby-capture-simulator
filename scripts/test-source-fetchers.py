@@ -279,17 +279,24 @@ def assert_sam_contract_awards(fetchers) -> None:
     assert len(records) == 2, records
     assert fetchers.sam_contract_awards_total_records(payload) == 2
     assert fetchers.sam_contract_awards_offset(0, 0, 100) == 0
-    assert fetchers.sam_contract_awards_offset(0, 1, 100) == 100
-    assert fetchers.sam_contract_awards_offset(10, 2, 25) == 60
+    assert fetchers.sam_contract_awards_offset(0, 1, 100) == 1
+    assert fetchers.sam_contract_awards_offset(10, 2, 25) == 12
     os.environ.pop("SAM_CONTRACT_AWARDS_OFFSET_STARTS", None)
     os.environ.pop("SAM_CONTRACT_AWARDS_OFFSET_START", None)
     assert fetchers.sam_contract_awards_offset_starts() == [0]
     os.environ["SAM_CONTRACT_AWARDS_OFFSET_START"] = "200"
     assert fetchers.sam_contract_awards_offset_starts() == [200]
-    assert fetchers.sam_contract_awards_offsets(2, 50) == [200, 250]
-    os.environ["SAM_CONTRACT_AWARDS_OFFSET_STARTS"] = "1000,0,1000,250"
-    assert fetchers.sam_contract_awards_offset_starts() == [0, 250, 1000]
-    assert fetchers.sam_contract_awards_offsets(2, 100) == [0, 100, 250, 350, 1000, 1100]
+    assert fetchers.sam_contract_awards_offsets(2, 50) == [200, 201]
+    os.environ["SAM_CONTRACT_AWARDS_OFFSET_STARTS"] = "10,0,10,50"
+    assert fetchers.sam_contract_awards_offset_starts() == [0, 10, 50]
+    assert fetchers.sam_contract_awards_offsets(2, 100) == [0, 1, 10, 11, 50, 51]
+    os.environ["SAM_CONTRACT_AWARDS_OFFSET_STARTS"] = "5000"
+    try:
+        fetchers.sam_contract_awards_offsets(1, 100)
+    except SystemExit as exc:
+        assert "offset * limit" in str(exc), exc
+    else:
+        raise AssertionError("SAM offset page index beyond the 400000-row window did not fail")
     os.environ["SAM_CONTRACT_AWARDS_OFFSET_STARTS"] = "bad"
     try:
         fetchers.sam_contract_awards_offset_starts()
@@ -299,6 +306,34 @@ def assert_sam_contract_awards(fetchers) -> None:
         raise AssertionError("invalid SAM offset starts did not fail")
     os.environ.pop("SAM_CONTRACT_AWARDS_OFFSET_STARTS", None)
     os.environ.pop("SAM_CONTRACT_AWARDS_OFFSET_START", None)
+    for name in (
+        "SAM_CONTRACT_AWARDS_PIID_SUBTIER_CODES",
+        "SAM_CONTRACT_AWARDS_PIID_SUBTIER_NAMES",
+        "SAM_CONTRACT_AWARDS_DEPARTMENT_CODES",
+        "SAM_CONTRACT_AWARDS_AGENCIES",
+        "USASPENDING_PROCUREMENT_ACTIONS_AGENCIES",
+        "USASPENDING_AGENCIES",
+        "USASPENDING_AGENCY",
+    ):
+        os.environ.pop(name, None)
+    os.environ["SAM_CONTRACT_AWARDS_PIID_SUBTIER_CODES"] = "8000,4732"
+    assert fetchers.sam_contract_awards_filters() == [("piidSubtierCode", "8000"), ("piidSubtierCode", "4732")]
+    os.environ.pop("SAM_CONTRACT_AWARDS_PIID_SUBTIER_CODES", None)
+    os.environ["SAM_CONTRACT_AWARDS_PIID_SUBTIER_NAMES"] = "NASA,Public Buildings Service"
+    assert fetchers.sam_contract_awards_filters() == [
+        ("piidSubtierName", "NASA"),
+        ("piidSubtierName", "Public Buildings Service"),
+    ]
+    os.environ.pop("SAM_CONTRACT_AWARDS_PIID_SUBTIER_NAMES", None)
+    os.environ["SAM_CONTRACT_AWARDS_DEPARTMENT_CODES"] = "9700,4700"
+    assert fetchers.sam_contract_awards_filters() == [
+        ("contractingDepartmentCode", "9700"),
+        ("contractingDepartmentCode", "4700"),
+    ]
+    os.environ.pop("SAM_CONTRACT_AWARDS_DEPARTMENT_CODES", None)
+    os.environ["SAM_CONTRACT_AWARDS_AGENCIES"] = "General Services Administration"
+    assert fetchers.sam_contract_awards_filters() == [("contractingDepartmentName", "General Services Administration")]
+    os.environ.pop("SAM_CONTRACT_AWARDS_AGENCIES", None)
     rows = fetchers.normalize_sam_contract_award_records(records)
     assert rows[0] == {
         "awardId": "68HERH24F0001",
