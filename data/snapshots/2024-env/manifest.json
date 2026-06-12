@@ -1,7 +1,7 @@
 {
   "snapshot": "2024-env",
-  "generatedAt": "2026-06-12T15:42:53.790931+00:00",
-  "gitCommit": "0144984",
+  "generatedAt": "2026-06-12T22:53:54.742315+00:00",
+  "gitCommit": "b4bac43",
   "gitTreeState": "clean",
   "gitTreeStateScope": "working tree status excluding generated 2024-env snapshot, reports, paper tables, and paper figures",
   "scope": {
@@ -94,6 +94,16 @@
       "statusNotes": "usaspending-procurement-actions: ok (normalized expanded USAspending procurement action rows written; agencies=12; periodBuckets=quarterly; pageSize=100; maxPages=2; sortSpecs=Mod:asc;Transaction Amount:desc;Action Date:asc)"
     },
     {
+      "source": "usaspending-procurement-national-actions",
+      "description": "National-volume no-agency-filtered USAspending fiscal-year 2024 transaction/action panel for agency and recipient concentration diagnostics; kept separate from the balanced action panel and SAM.gov Contract Awards modification-incidence route.",
+      "requestTemplate": "USASPENDING_PROCUREMENT_ACTIONS_AGENCIES=ALL USASPENDING_ACTION_PERIOD_BUCKETS=annual USASPENDING_ACTION_TRANSACTION_PAGE_SIZE=100 USASPENDING_ACTION_TRANSACTION_MAX_PAGES=5 USASPENDING_ACTION_TRANSACTION_SORT_SPECS='Transaction Amount:desc;Mod:asc;Action Date:asc' python3 scripts/fetch-source-data.py usaspending-actions --output data/raw/usaspending-procurement-national-actions.csv",
+      "normalizedFile": "data/snapshots/2024-env/normalized/usaspending-procurement-national-actions.csv",
+      "rowCount": 1500,
+      "sha256": "193c1ff92a9d0f327bf4ec9014ea7266686881ad0b4a0c229fee73a0eccfa29e",
+      "status": "live",
+      "statusNotes": "usaspending-procurement-national-actions: ok (normalized national-volume USAspending procurement action rows written; agencyFilter=ALL; periodBuckets=annual; pageSize=100; maxPages=5; sortSpecs=Transaction Amount:desc;Mod:asc;Action Date:asc)"
+    },
+    {
       "source": "sam-contract-awards",
       "description": "Optional SAM.gov Contract Awards action panel for PIID/UEI, competition, modification, award-date, and contracting-department diagnostics; kept separate from USAspending action rows so procurement provenance remains auditable.",
       "requestTemplate": "SAM_CONTRACT_AWARDS_SOURCE_NATIVE=1 SAM_CONTRACT_AWARDS_EXTRACT_MODE=1 SAM_API_KEY=... python3 scripts/fetch-source-data.py sam-contract-awards --output data/raw/sam-contract-awards.csv",
@@ -126,6 +136,6 @@
   ],
   "liveRunStatus": {
     "file": "data/snapshots/2024-env/live-run-status.csv",
-    "sha256": "224646eb5b2e21979f363817d90d0a2db9482dfad806d35811cb3d2c15226fe8"
+    "sha256": "078ede094288519042496cfa9068fea7b9e709a614fdbd3f85befd7588f7a85e"
   }
 }

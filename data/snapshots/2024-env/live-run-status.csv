@@ -18,5 +18,6 @@ federal-register,ok,normalized rows appended
 usaspending,ok,normalized EPA award rows written
 usaspending-procurement-bridge,ok,normalized multi-agency procurement bridge rows written
 usaspending-procurement-actions,ok,normalized expanded USAspending procurement action rows written; agencies=12; periodBuckets=quarterly; pageSize=100; maxPages=2; sortSpecs=Mod:asc;Transaction Amount:desc;Action Date:asc
+usaspending-procurement-national-actions,ok,normalized national-volume USAspending procurement action rows written; agencyFilter=ALL; periodBuckets=annual; pageSize=100; maxPages=5; sortSpecs=Transaction Amount:desc;Mod:asc;Action Date:asc
 revolving-door,ok,derived normalized covered-position rows from LDA source
 intermediary,ok,NYC CFB intermediary rows; IRS EO BMF nonprofit/association capacity rows; IRS POFD Form 8872 527 rows

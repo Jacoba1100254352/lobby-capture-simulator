@@ -5,15 +5,13 @@ This queue classifies validation misses and partial overlaps into concrete follo
 ## Category Counts
 
 - `benchmark-review`: `12`
-- `direct-source-moment`: `3`
+- `direct-source-moment`: `1`
 - `scenario-coverage`: `5`
 - `scenario-family-split`: `1`
 
 | Priority | Category | Report | Metric | Status | Observed | Benchmark | Source Moment | Action |
 | --- | --- | --- | --- | --- | ---: | ---: | ---: | --- |
-| P1 | direct-source-moment | source-moments.csv | `procurementAgencyTop1Share` | source_gap | 0.4609-0.4609 | 0.55-0.65 | procurementAgencyTop1Share=0.4609 | replace the bounded USAspending concentration panel with representative SAM/FPDS action-level extracts before treating agency concentration as calibrated |
 | P1 | direct-source-moment | source-moments.csv | `procurementExPostModificationShare` | source_gap | 0.4220-0.4220 | 0.01-0.05 | procurementExPostModificationShare=0.4220 | broaden the bounded USAspending action panel with representative SAM/FPDS action histories that support transaction-row, distinct-award, and amount-weighted denominators before treating modification incidence as calibrated |
-| P1 | direct-source-moment | source-moments.csv | `procurementRecipientTop3Share` | source_gap | 0.1876-0.1876 | 0.25-0.40 | procurementRecipientTop3Share=0.1876 | compare recipient concentration against the bounded procurement concentration panel, then broaden by award type and fiscal year before treating it as calibrated |
 | P3 | benchmark-review | lobby-capture-interactions.csv | `crossVenueDetectionIndex` | partial | 0.0754-0.9403 | 0.00-0.90 |  | treat as a synthetic portfolio capability until linked source coverage is measured |
 | P3 | scenario-coverage | lobby-capture-campaign.csv | `hiddenInfluenceShare` | partial | 0.3378-0.6708 | 0.60-0.80 |  | add or isolate higher-pressure substitution scenarios so the scoped validation family reaches the benchmark floor |
 | P3 | scenario-family-split | lobby-capture-campaign.csv | `hiddenInfluenceShare` | partial | 0.2423-0.6708 | 0.30-0.60 |  | split baseline, substitution-stress, and extreme-stress scenarios before using this benchmark as a single calibration target |
