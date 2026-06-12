@@ -55,8 +55,8 @@ SOURCES = {
     },
     "usaspending-procurement-actions": {
         "input": RAW / "usaspending-procurement-actions.csv",
-        "description": "USAspending transaction/action panel for action-level procurement modification diagnostics; kept separate from award rows and top-award concentration bridge rows.",
-        "request": "USASPENDING_ACTION_PERIOD_BUCKETS=monthly USASPENDING_ACTION_TRANSACTION_PAGE_SIZE=100 USASPENDING_ACTION_TRANSACTION_MAX_PAGES=1 USASPENDING_ACTION_TRANSACTION_SORT='Transaction Amount' USASPENDING_ACTION_TRANSACTION_ORDER=desc python3 scripts/fetch-source-data.py usaspending-actions --output data/raw/usaspending-procurement-actions.csv",
+        "description": "Stratified six-agency USAspending transaction/action panel for action-level procurement modification diagnostics; initial-action and high-value transaction strata are deduplicated and kept separate from award rows and top-award concentration bridge rows.",
+        "request": "USASPENDING_AGENCIES='Environmental Protection Agency,Department of Energy,Department of the Interior,Department of Agriculture,Department of Transportation,Department of Defense' USASPENDING_ACTION_PERIOD_BUCKETS=monthly USASPENDING_ACTION_TRANSACTION_PAGE_SIZE=25 USASPENDING_ACTION_TRANSACTION_MAX_PAGES=1 USASPENDING_ACTION_TRANSACTION_SORT_SPECS='Mod:asc;Transaction Amount:desc' python3 scripts/fetch-source-data.py usaspending-actions --output data/raw/usaspending-procurement-actions.csv",
     },
     "revolving-door": {
         "input": RAW / "revolving-door.csv",
@@ -246,7 +246,7 @@ def write_readme(root: Path, entries: list[dict[str, object]]) -> None:
         "- Dark-money bridge: configured source export rows or IRS EO BMF 501(c)(4)/(c)(6) opaque-capacity proxy rows; super PAC rows remain separate.",
         "- USAspending fiscal year: 2024, Environmental Protection Agency awards.",
         "- USAspending procurement bridge: multi-agency fiscal-year 2024 top-award rows for procurement concentration diagnostics, kept separate from the EPA calibration slice.",
-        "- USAspending procurement actions: transaction/action rows for modification-incidence diagnostics when present, kept separate from award rows and concentration rows.",
+        "- USAspending procurement actions: stratified six-agency transaction/action rows for modification-incidence diagnostics when present, combining initial-action and high-value transaction strata and kept separate from award rows and concentration rows.",
         "- Revolving-door panel: licensed/source export or LDA covered-position derivation when available; fixture otherwise.",
         "- Intermediary panel: NYC CFB intermediary rows, IRS EO BMF nonprofit/association capacity rows, IRS POFD Form 8872 527 political-organization rows, or configured nonprofit, 527, association, and think-tank export when available; fixture otherwise.",
         "",

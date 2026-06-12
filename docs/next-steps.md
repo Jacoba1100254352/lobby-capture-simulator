@@ -67,11 +67,11 @@ Deliverables:
 
 ## 3. Broaden SAM/FPDS, revolving-door, and intermediary source panels
 
-The source-moment layer now covers LDA, OpenFEC party/Schedule E/electioneering/communication-cost rows, regulatory dockets, USAspending award, bridge, and action-panel fields, public-financing bridge rows, and LDA-derived covered-position rows. Procurement, revolving-door, intermediary, and electoral-communication validation still need richer representative data rather than narrow or fixture-backed panels.
+The source-moment layer now covers LDA, OpenFEC party/Schedule E/electioneering/communication-cost rows, regulatory dockets, USAspending award, multi-agency bridge, and stratified action-panel fields, public-financing bridge rows, and LDA-derived covered-position rows. Procurement, revolving-door, intermediary, and electoral-communication validation still need richer representative data rather than narrow or fixture-backed panels.
 
 Deliverables:
 
-- expand the USAspending action-panel bridge into representative SAM/FPDS UEI, PIID, action-level modification, exclusion, award-action, and protest coverage;
+- expand the stratified USAspending action-panel bridge into representative SAM/FPDS UEI, PIID, action-level modification, exclusion, award-action, and protest coverage;
 - add source moments for single-bid exposure, ex-post modification risk, price-only awards, award concentration, and procurement firewall coverage;
 - expand the revolving-door import path beyond covered-position indicators and keep headcount share separate from influence intensity;
 - update `data/calibration/parameter-map.csv` so procurement and revolving-door rows point at direct source moments where possible.

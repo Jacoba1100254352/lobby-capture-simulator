@@ -202,7 +202,14 @@ def assert_usaspending(fetchers) -> None:
         ("2024-02-01", "2024-02-29"),
         ("2024-03-01", "2024-03-05"),
     ]
-    for name in ("USASPENDING_DATE_FROM", "USASPENDING_DATE_TO", "USASPENDING_ACTION_PERIOD_BUCKETS"):
+    os.environ["USASPENDING_ACTION_TRANSACTION_SORT_SPECS"] = "Mod:asc; Transaction Amount:desc; Action Date:sideways"
+    os.environ["USASPENDING_ACTION_TRANSACTION_ORDER"] = "asc"
+    assert fetchers.usaspending_action_transaction_sort_specs() == [
+        ("Mod", "asc"),
+        ("Transaction Amount", "desc"),
+        ("Action Date", "asc"),
+    ]
+    for name in ("USASPENDING_DATE_FROM", "USASPENDING_DATE_TO", "USASPENDING_ACTION_PERIOD_BUCKETS", "USASPENDING_ACTION_TRANSACTION_SORT_SPECS", "USASPENDING_ACTION_TRANSACTION_ORDER"):
         os.environ.pop(name, None)
 
 

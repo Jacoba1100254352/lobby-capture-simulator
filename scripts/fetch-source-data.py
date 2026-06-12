@@ -601,39 +601,47 @@ def fetch_usaspending_actions(output: Path) -> int:
     limit = int_env("USASPENDING_ACTION_TRANSACTION_PAGE_SIZE", int_env("USASPENDING_ACTION_AWARD_PAGE_SIZE", int_env("USASPENDING_PAGE_SIZE", 50, 1, 100), 1, 100), 1, 100)
     max_pages = int_env("USASPENDING_ACTION_TRANSACTION_MAX_PAGES", int_env("USASPENDING_ACTION_AWARD_MAX_PAGES", int_env("USASPENDING_MAX_PAGES", 1, 1, 20), 1, 20), 1, 20)
     periods = usaspending_action_periods()
+    sort_specs = usaspending_action_transaction_sort_specs()
     rows: list[dict[str, object]] = []
+    seen_rows: set[tuple[object, ...]] = set()
     for agency_filter in usaspending_agency_filters():
         for start_date, end_date in periods:
-            for page in range(1, max_pages + 1):
-                payload = {
-                    "filters": {
-                        "time_period": [{"start_date": start_date, "end_date": end_date}],
-                        "agencies": [agency_filter],
-                        "award_type_codes": split_csv_env("USASPENDING_AWARD_TYPE_CODES", "A,B,C,D"),
-                    },
-                    "fields": [
-                        "Award ID",
-                        "Action Date",
-                        "Action Type",
-                        "Mod",
-                        "Transaction Amount",
-                        "Recipient Name",
-                        "Recipient UEI",
-                        "Awarding Agency",
-                        "Awarding Sub Agency",
-                        "Award Type",
-                        "generated_internal_id",
-                    ],
-                    "page": page,
-                    "limit": limit,
-                    "sort": os.environ.get("USASPENDING_ACTION_TRANSACTION_SORT", "Action Date"),
-                    "order": os.environ.get("USASPENDING_ACTION_TRANSACTION_ORDER", "desc"),
-                }
-                response = post_json(f"{base}/search/spending_by_transaction/", payload)
-                rows.extend(normalize_usaspending_direct_transaction_records(response.get("results", [])))
-                metadata = response.get("page_metadata", {})
-                if not metadata.get("hasNext"):
-                    break
+            for sort_field, sort_order in sort_specs:
+                for page in range(1, max_pages + 1):
+                    payload = {
+                        "filters": {
+                            "time_period": [{"start_date": start_date, "end_date": end_date}],
+                            "agencies": [agency_filter],
+                            "award_type_codes": split_csv_env("USASPENDING_AWARD_TYPE_CODES", "A,B,C,D"),
+                        },
+                        "fields": [
+                            "Award ID",
+                            "Action Date",
+                            "Action Type",
+                            "Mod",
+                            "Transaction Amount",
+                            "Recipient Name",
+                            "Recipient UEI",
+                            "Awarding Agency",
+                            "Awarding Sub Agency",
+                            "Award Type",
+                            "generated_internal_id",
+                        ],
+                        "page": page,
+                        "limit": limit,
+                        "sort": sort_field,
+                        "order": sort_order,
+                    }
+                    response = post_json(f"{base}/search/spending_by_transaction/", payload)
+                    for row in normalize_usaspending_direct_transaction_records(response.get("results", [])):
+                        row_key = usaspending_action_row_key(row)
+                        if row_key in seen_rows:
+                            continue
+                        seen_rows.add(row_key)
+                        rows.append(row)
+                    metadata = response.get("page_metadata", {})
+                    if not metadata.get("hasNext"):
+                        break
     write_rows(
         output,
         USASPENDING_FIELDS,
@@ -738,6 +746,45 @@ def usaspending_action_periods() -> list[tuple[str, str]]:
         periods.append((period_start.isoformat(), period_end.isoformat()))
         cursor = next_month
     return periods
+
+
+def usaspending_action_transaction_sort_specs() -> list[tuple[str, str]]:
+    """Return transaction sort/order pairs for stratified action sampling."""
+    default_order = os.environ.get("USASPENDING_ACTION_TRANSACTION_ORDER", "desc").strip().lower()
+    if default_order not in {"asc", "desc"}:
+        default_order = "desc"
+    raw_specs = os.environ.get("USASPENDING_ACTION_TRANSACTION_SORT_SPECS", "").strip()
+    if not raw_specs:
+        return [(os.environ.get("USASPENDING_ACTION_TRANSACTION_SORT", "Action Date"), default_order)]
+    specs: list[tuple[str, str]] = []
+    for token in re.split(r"[;\n]+", raw_specs):
+        token = token.strip()
+        if not token:
+            continue
+        if ":" in token:
+            sort_field, sort_order = token.rsplit(":", 1)
+            sort_field = sort_field.strip()
+            sort_order = sort_order.strip().lower()
+        else:
+            sort_field = token
+            sort_order = default_order
+        if not sort_field:
+            continue
+        if sort_order not in {"asc", "desc"}:
+            sort_order = default_order
+        specs.append((sort_field, sort_order))
+    return specs or [(os.environ.get("USASPENDING_ACTION_TRANSACTION_SORT", "Action Date"), default_order)]
+
+
+def usaspending_action_row_key(row: dict[str, object]) -> tuple[object, ...]:
+    return (
+        row.get("awardId", ""),
+        row.get("agency", ""),
+        row.get("actionDate", ""),
+        row.get("modificationNumber", ""),
+        row.get("amount", ""),
+        row.get("recipient", ""),
+    )
 
 
 USASPENDING_FIELDS = [

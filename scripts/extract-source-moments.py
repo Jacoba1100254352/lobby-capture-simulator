@@ -175,6 +175,7 @@ def usaspending_moments(scope: str, path: Path, bridge_path: Path, action_path: 
     by_recipient = grouped_amount(concentration_rows, "recipient")
     by_agency = grouped_amount(concentration_rows, "agency")
     by_sub_agency = grouped_amount(concentration_rows, "subAgency")
+    action_agency_count = len({row.get("agency", "") for row in action_rows if row.get("agency", "").strip()})
     concentration_total = sum(number(row.get("amount")) for row in concentration_rows)
     competition_total = sum(number(row.get("amount")) for row in competition_rows)
     modification_total = sum(number(row.get("amount")) for row in modification_rows_source)
@@ -208,6 +209,7 @@ def usaspending_moments(scope: str, path: Path, bridge_path: Path, action_path: 
         moment(scope, "usaspending", "procurementCompetitionPanelRows", len(competition_rows), "diagnostic", f"rows used for competition moments from {competition_note}"),
         moment(scope, "usaspending", "procurementModificationPanelRows", len(modification_rows_source), "diagnostic", f"rows used for modification moments from {modification_note}"),
         moment(scope, "usaspending", "procurementBridgeAgencyCount", agency_count, "observed", "distinct awarding agencies in procurement source moment panel"),
+        moment(scope, "usaspending", "procurementActionAgencyCount", action_agency_count, "diagnostic", "distinct awarding agencies in the transaction/action modification panel"),
         moment(scope, "usaspending", "procurementBridgeTopAwardSample", 1.0 if bridge_rows else 0.0, "diagnostic", "1 when procurement concentration moments use a multi-agency top-award bridge"),
         moment(scope, "usaspending", "procurementLatestTransactionModificationProxy", 1.0 if bridge_rows else 0.0, "diagnostic", "1 when latest-transaction enrichment exists but is kept separate from action-level modification incidence"),
         moment(scope, "usaspending", "procurementTotalAwards", concentration_total, "observed", f"sum of {concentration_note} amount"),

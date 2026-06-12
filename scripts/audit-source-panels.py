@@ -123,7 +123,9 @@ PANELS = [
         "minimum": 0.0,
         "good": 0.05,
         "maximum": 0.40,
+        "lowerIsBetter": True,
         "missing": "modification-action share is outside the benchmark range, likely reflecting bounded action-sample scope or nonrepresentative transaction coverage",
+        "thin": "stratified transaction-action rows are present, but modification incidence remains too high for calibration-grade national inference",
         "warningMetric": "procurementLatestTransactionModificationProxy",
         "warningAbsentMetric": "procurementActionRows",
         "warning": "latest-transaction modification enrichment is available but an action-level transaction denominator is still absent",
@@ -185,6 +187,9 @@ def panel_row(panel: dict[str, object], moments: dict[str, dict[str, float]]) ->
     elif "maximum" in panel and value > float(panel["maximum"]):
         status = "warning"
         note = str(panel["missing"])
+    elif panel.get("lowerIsBetter") and value > float(panel["good"]):
+        status = "thin"
+        note = str(panel.get("thin", "coverage is present, but the observed diagnostic remains too high for article-level calibration"))
     elif value >= float(panel["good"]):
         status = "usable"
         note = "coverage is usable for mechanism diagnostics, subject to source-scope limits"

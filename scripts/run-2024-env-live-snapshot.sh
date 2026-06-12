@@ -119,6 +119,7 @@ elif [ "${PUBLIC_FINANCING_SOURCE_NATIVE:-1}" = "1" ]; then
   else
     public_financing_notes="${public_financing_notes}Seattle Democracy Voucher source-native request failed; "
   fi
+  public_financing_notes="${public_financing_notes%; }"
   if [ "$public_financing_written" = "1" ]; then
     printf "public-financing,ok,%s\n" "$public_financing_notes" >> "$status_file"
   else
@@ -225,12 +226,13 @@ if [ -n "${USASPENDING_PROCUREMENT_ACTIONS_LIVE_CSV:-}" ] || [ -n "${USASPENDING
 elif [ "${USASPENDING_PROCUREMENT_ACTIONS_SOURCE_NATIVE:-1}" = "1" ]; then
   if SOURCE_RAW_DIR="$raw_dir/usaspending-procurement-actions" \
     USASPENDING_FISCAL_YEAR="${USASPENDING_FISCAL_YEAR:-2024}" \
-    USASPENDING_AGENCIES="${USASPENDING_PROCUREMENT_ACTIONS_AGENCIES:-Environmental Protection Agency}" \
+    USASPENDING_AGENCIES="${USASPENDING_PROCUREMENT_ACTIONS_AGENCIES:-Environmental Protection Agency,Department of Energy,Department of the Interior,Department of Agriculture,Department of Transportation,Department of Defense}" \
     USASPENDING_ACTION_PERIOD_BUCKETS="${USASPENDING_PROCUREMENT_ACTIONS_PERIOD_BUCKETS:-monthly}" \
-    USASPENDING_ACTION_TRANSACTION_PAGE_SIZE="${USASPENDING_PROCUREMENT_ACTIONS_TRANSACTION_PAGE_SIZE:-100}" \
+    USASPENDING_ACTION_TRANSACTION_PAGE_SIZE="${USASPENDING_PROCUREMENT_ACTIONS_TRANSACTION_PAGE_SIZE:-25}" \
     USASPENDING_ACTION_TRANSACTION_MAX_PAGES="${USASPENDING_PROCUREMENT_ACTIONS_TRANSACTION_MAX_PAGES:-1}" \
     USASPENDING_ACTION_TRANSACTION_SORT="${USASPENDING_PROCUREMENT_ACTIONS_TRANSACTION_SORT:-Transaction Amount}" \
     USASPENDING_ACTION_TRANSACTION_ORDER="${USASPENDING_PROCUREMENT_ACTIONS_TRANSACTION_ORDER:-desc}" \
+    USASPENDING_ACTION_TRANSACTION_SORT_SPECS="${USASPENDING_PROCUREMENT_ACTIONS_TRANSACTION_SORT_SPECS:-Mod:asc;Transaction Amount:desc}" \
       python3 scripts/fetch-source-data.py usaspending-actions --output data/raw/usaspending-procurement-actions.csv; then
     printf "usaspending-procurement-actions,ok,normalized USAspending procurement action rows written\n" >> "$status_file"
   else
@@ -301,6 +303,7 @@ else
       intermediary_sources=$((intermediary_sources + 1))
       intermediary_notes="${intermediary_notes}IRS POFD Form 8872 527 rows; "
     fi
+    intermediary_notes="${intermediary_notes%; }"
     if [ "$intermediary_sources" -gt 0 ]; then
       printf "intermediary,ok,%s\n" "$intermediary_notes" >> "$status_file"
     else

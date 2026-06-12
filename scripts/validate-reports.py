@@ -294,8 +294,8 @@ def source_scope_gap(metric: str, value: float, source_moments: dict[str, float]
         return "award-level procurement snapshot is dominated by initial awards; action-level FPDS/SAM modification transactions are needed"
     if metric == "procurementExPostModificationShare" and latest_transaction_mod_proxy and procurement_action_rows <= 0:
         return "latest-transaction modification enrichment is kept separate from action-level incidence; representative FPDS/SAM transaction denominators are still needed"
-    if metric == "procurementExPostModificationShare" and procurement_action_rows > 0 and value > 0.40:
-        return "bounded USAspending transaction-action panel is present, but the modification-action share is outside the benchmark range and still needs representative SAM/FPDS validation"
+    if metric == "procurementExPostModificationShare" and procurement_action_rows > 0 and value > 0.05:
+        return "bounded USAspending transaction-action panel is present, but the modification-action share remains above the benchmark range and still needs representative SAM/FPDS validation"
     if metric == "darkMoneyDirectVisibility" and thin_dark_money_panel:
         return "dark-money source panel is thin and proxy-backed; direct hidden-donor or nonprofit-routing records are needed, while electioneering rows remain separate electoral-communication evidence"
     return ""
