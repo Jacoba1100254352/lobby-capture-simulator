@@ -614,13 +614,23 @@ def fetch_usaspending_actions(output: Path) -> int:
         return fetch_usaspending_actions_by_award(output)
 
     base = os.environ.get("USASPENDING_API_BASE", "https://api.usaspending.gov/api/v2").rstrip("/")
-    limit = int_env("USASPENDING_ACTION_TRANSACTION_PAGE_SIZE", int_env("USASPENDING_ACTION_AWARD_PAGE_SIZE", int_env("USASPENDING_PAGE_SIZE", 50, 1, 100), 1, 100), 1, 100)
-    max_pages = int_env("USASPENDING_ACTION_TRANSACTION_MAX_PAGES", int_env("USASPENDING_ACTION_AWARD_MAX_PAGES", int_env("USASPENDING_MAX_PAGES", 1, 1, 20), 1, 20), 1, 20)
+    limit = int_env_any(
+        ("USASPENDING_ACTION_TRANSACTION_PAGE_SIZE", "USASPENDING_PROCUREMENT_ACTIONS_TRANSACTION_PAGE_SIZE"),
+        int_env("USASPENDING_ACTION_AWARD_PAGE_SIZE", int_env("USASPENDING_PAGE_SIZE", 50, 1, 100), 1, 100),
+        1,
+        100,
+    )
+    max_pages = int_env_any(
+        ("USASPENDING_ACTION_TRANSACTION_MAX_PAGES", "USASPENDING_PROCUREMENT_ACTIONS_TRANSACTION_MAX_PAGES"),
+        int_env("USASPENDING_ACTION_AWARD_MAX_PAGES", int_env("USASPENDING_MAX_PAGES", 1, 1, 20), 1, 20),
+        1,
+        20,
+    )
     periods = usaspending_action_periods()
     sort_specs = usaspending_action_transaction_sort_specs()
     rows: list[dict[str, object]] = []
     seen_rows: set[tuple[object, ...]] = set()
-    for agency_filter in usaspending_agency_filters():
+    for agency_filter in usaspending_agency_filters(allow_procurement_actions_alias=True):
         for start_date, end_date in periods:
             for sort_field, sort_order in sort_specs:
                 for page in range(1, max_pages + 1):
@@ -669,11 +679,21 @@ def fetch_usaspending_actions(output: Path) -> int:
 
 def fetch_usaspending_actions_by_award(output: Path) -> int:
     base = os.environ.get("USASPENDING_API_BASE", "https://api.usaspending.gov/api/v2").rstrip("/")
-    limit = int_env("USASPENDING_ACTION_AWARD_PAGE_SIZE", int_env("USASPENDING_PAGE_SIZE", 50, 1, 100), 1, 100)
-    max_pages = int_env("USASPENDING_ACTION_AWARD_MAX_PAGES", int_env("USASPENDING_MAX_PAGES", 1, 1, 20), 1, 20)
+    limit = int_env_any(
+        ("USASPENDING_ACTION_AWARD_PAGE_SIZE", "USASPENDING_PROCUREMENT_ACTIONS_AWARD_PAGE_SIZE"),
+        int_env("USASPENDING_PAGE_SIZE", 50, 1, 100),
+        1,
+        100,
+    )
+    max_pages = int_env_any(
+        ("USASPENDING_ACTION_AWARD_MAX_PAGES", "USASPENDING_PROCUREMENT_ACTIONS_AWARD_MAX_PAGES"),
+        int_env("USASPENDING_MAX_PAGES", 1, 1, 20),
+        1,
+        20,
+    )
     start_date, end_date = usaspending_time_period()
     rows: list[dict[str, object]] = []
-    for agency_filter in usaspending_agency_filters():
+    for agency_filter in usaspending_agency_filters(allow_procurement_actions_alias=True):
         for page in range(1, max_pages + 1):
             payload = {
                 "filters": {
@@ -735,7 +755,7 @@ def fetch_sam_contract_awards(output: Path) -> int:
         for page_index in range(max_pages):
             params = dict(base_params)
             params[filter_key] = filter_value
-            params["offset"] = str(offset_start + page_index)
+            params["offset"] = str(sam_contract_awards_offset(offset_start, page_index, limit))
             payload = get_json(f"{base}/contract-awards/v1/search?{urlencode(params)}")
             page_records = sam_contract_award_records(payload)
             for row in normalize_sam_contract_award_records(page_records):
@@ -787,6 +807,10 @@ def sam_contract_awards_base_params(api_key: str, limit: int) -> dict[str, str]:
         if value:
             params[parameter_name] = value
     return params
+
+
+def sam_contract_awards_offset(offset_start: int, page_index: int, limit: int) -> int:
+    return offset_start + (page_index * limit)
 
 
 def sam_contract_awards_range_param(prefix: str) -> str:
@@ -955,10 +979,18 @@ def sam_contract_awards_competition_type(record: dict[str, object]) -> str:
     )
 
 
-def usaspending_agency_filters() -> list[dict[str, str]]:
+def usaspending_agency_filters(allow_procurement_actions_alias: bool = False) -> list[dict[str, str]]:
     agency_type = os.environ.get("USASPENDING_AGENCY_TYPE", "awarding")
     agency_tier = os.environ.get("USASPENDING_AGENCY_TIER", "toptier")
-    agencies = split_csv_env("USASPENDING_AGENCIES", "")
+    agency_alias_default = (
+        os.environ.get("USASPENDING_PROCUREMENT_ACTIONS_AGENCIES", "")
+        if allow_procurement_actions_alias
+        else ""
+    )
+    agencies = split_csv_env(
+        "USASPENDING_AGENCIES",
+        agency_alias_default,
+    )
     if not agencies:
         agencies = [os.environ.get("USASPENDING_AGENCY", "Environmental Protection Agency")]
     return [
@@ -981,7 +1013,11 @@ def usaspending_time_period() -> tuple[str, str]:
 
 def usaspending_action_periods() -> list[tuple[str, str]]:
     start_text, end_text = usaspending_time_period()
-    bucket = os.environ.get("USASPENDING_ACTION_PERIOD_BUCKETS", "").strip().lower()
+    bucket = env_first(
+        "USASPENDING_ACTION_PERIOD_BUCKETS",
+        "USASPENDING_PROCUREMENT_ACTIONS_PERIOD_BUCKETS",
+        default="",
+    ).strip().lower()
     if bucket in {"", "year", "yearly", "annual", "full", "full-year"}:
         return [(start_text, end_text)]
     if bucket not in {"month", "monthly", "quarter", "quarterly"}:
@@ -1020,12 +1056,29 @@ def usaspending_action_periods() -> list[tuple[str, str]]:
 
 def usaspending_action_transaction_sort_specs() -> list[tuple[str, str]]:
     """Return transaction sort/order pairs for stratified action sampling."""
-    default_order = os.environ.get("USASPENDING_ACTION_TRANSACTION_ORDER", "desc").strip().lower()
+    default_order = env_first(
+        "USASPENDING_ACTION_TRANSACTION_ORDER",
+        "USASPENDING_PROCUREMENT_ACTIONS_TRANSACTION_ORDER",
+        default="desc",
+    ).strip().lower()
     if default_order not in {"asc", "desc"}:
         default_order = "desc"
-    raw_specs = os.environ.get("USASPENDING_ACTION_TRANSACTION_SORT_SPECS", "").strip()
+    raw_specs = env_first(
+        "USASPENDING_ACTION_TRANSACTION_SORT_SPECS",
+        "USASPENDING_PROCUREMENT_ACTIONS_TRANSACTION_SORT_SPECS",
+        default="",
+    ).strip()
     if not raw_specs:
-        return [(os.environ.get("USASPENDING_ACTION_TRANSACTION_SORT", "Action Date"), default_order)]
+        return [
+            (
+                env_first(
+                    "USASPENDING_ACTION_TRANSACTION_SORT",
+                    "USASPENDING_PROCUREMENT_ACTIONS_TRANSACTION_SORT",
+                    default="Action Date",
+                ),
+                default_order,
+            )
+        ]
     specs: list[tuple[str, str]] = []
     for token in re.split(r"[;\n]+", raw_specs):
         token = token.strip()
@@ -2549,6 +2602,27 @@ def price_only_procurement_flag(number_of_offers: str, pricing_type: str, compet
 
 def bounded_int_env(name: str, default: int, minimum: int, maximum: int) -> str:
     return str(int_env(name, default, minimum, maximum))
+
+
+def env_first(*names: str, default: str = "") -> str:
+    for name in names:
+        value = os.environ.get(name, "").strip()
+        if value:
+            return value
+    return default
+
+
+def int_env_any(names: tuple[str, ...], default: int, minimum: int, maximum: int) -> int:
+    for name in names:
+        value = os.environ.get(name, "").strip()
+        if not value:
+            continue
+        try:
+            parsed = int(value)
+        except ValueError:
+            continue
+        return max(minimum, min(maximum, parsed))
+    return max(minimum, min(maximum, default))
 
 
 def int_env(name: str, default: int, minimum: int, maximum: int) -> int:

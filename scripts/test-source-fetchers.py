@@ -203,6 +203,14 @@ def assert_usaspending(fetchers) -> None:
         ("2024-02-01", "2024-02-29"),
         ("2024-03-01", "2024-03-05"),
     ]
+    os.environ.pop("USASPENDING_ACTION_PERIOD_BUCKETS", None)
+    os.environ["USASPENDING_PROCUREMENT_ACTIONS_PERIOD_BUCKETS"] = "monthly"
+    assert fetchers.usaspending_action_periods() == [
+        ("2024-01-15", "2024-01-31"),
+        ("2024-02-01", "2024-02-29"),
+        ("2024-03-01", "2024-03-05"),
+    ]
+    os.environ.pop("USASPENDING_PROCUREMENT_ACTIONS_PERIOD_BUCKETS", None)
     os.environ["USASPENDING_ACTION_PERIOD_BUCKETS"] = "quarterly"
     assert fetchers.usaspending_action_periods() == [
         ("2024-01-15", "2024-03-05"),
@@ -232,7 +240,34 @@ def assert_usaspending(fetchers) -> None:
         ("Transaction Amount", "desc"),
         ("Action Date", "asc"),
     ]
-    for name in ("USASPENDING_DATE_FROM", "USASPENDING_DATE_TO", "USASPENDING_ACTION_PERIOD_BUCKETS", "USASPENDING_ACTION_TRANSACTION_SORT_SPECS", "USASPENDING_ACTION_TRANSACTION_ORDER"):
+    os.environ.pop("USASPENDING_ACTION_TRANSACTION_SORT_SPECS", None)
+    os.environ.pop("USASPENDING_ACTION_TRANSACTION_ORDER", None)
+    os.environ["USASPENDING_PROCUREMENT_ACTIONS_TRANSACTION_SORT_SPECS"] = "Mod:asc; Transaction Amount:desc"
+    os.environ["USASPENDING_PROCUREMENT_ACTIONS_TRANSACTION_ORDER"] = "desc"
+    assert fetchers.usaspending_action_transaction_sort_specs() == [
+        ("Mod", "asc"),
+        ("Transaction Amount", "desc"),
+    ]
+    os.environ["USASPENDING_PROCUREMENT_ACTIONS_AGENCIES"] = "Environmental Protection Agency,Department of Energy"
+    os.environ.pop("USASPENDING_AGENCIES", None)
+    assert [agency["name"] for agency in fetchers.usaspending_agency_filters()] == [
+        "Environmental Protection Agency",
+    ]
+    assert [agency["name"] for agency in fetchers.usaspending_agency_filters(allow_procurement_actions_alias=True)] == [
+        "Environmental Protection Agency",
+        "Department of Energy",
+    ]
+    for name in (
+        "USASPENDING_DATE_FROM",
+        "USASPENDING_DATE_TO",
+        "USASPENDING_ACTION_PERIOD_BUCKETS",
+        "USASPENDING_PROCUREMENT_ACTIONS_PERIOD_BUCKETS",
+        "USASPENDING_ACTION_TRANSACTION_SORT_SPECS",
+        "USASPENDING_ACTION_TRANSACTION_ORDER",
+        "USASPENDING_PROCUREMENT_ACTIONS_TRANSACTION_SORT_SPECS",
+        "USASPENDING_PROCUREMENT_ACTIONS_TRANSACTION_ORDER",
+        "USASPENDING_PROCUREMENT_ACTIONS_AGENCIES",
+    ):
         os.environ.pop(name, None)
 
 
@@ -241,6 +276,9 @@ def assert_sam_contract_awards(fetchers) -> None:
     records = fetchers.sam_contract_award_records(payload)
     assert len(records) == 2, records
     assert fetchers.sam_contract_awards_total_records(payload) == 2
+    assert fetchers.sam_contract_awards_offset(0, 0, 100) == 0
+    assert fetchers.sam_contract_awards_offset(0, 1, 100) == 100
+    assert fetchers.sam_contract_awards_offset(10, 2, 25) == 60
     rows = fetchers.normalize_sam_contract_award_records(records)
     assert rows[0] == {
         "awardId": "68HERH24F0001",
