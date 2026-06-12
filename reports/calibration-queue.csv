@@ -3,7 +3,7 @@ P1,direct-source-moment,source-moments.csv,procurementAgencyTop1Share,source_gap
 P1,direct-source-moment,source-moments.csv,procurementExPostModificationShare,source_gap,observed,0.3111-0.3111,0.01-0.05,procurementExPostModificationShare,0.3111,broaden the bounded USAspending action panel with representative SAM/FPDS action histories before treating modification incidence as calibrated
 P2,direct-source-moment,source-moments.csv,darkMoneyDirectVisibility,source_gap,inferred,0.2043-0.2043,0.00-0.10,darkMoneyDirectVisibility,0.2043,replace thin proxy rows with direct hidden-donor or nonprofit-routing source records; keep electioneering rows separate from hidden-donor evidence
 P3,scale-alignment,lobby-capture-campaign.csv,averageDisclosureLag,partial,observed,0.2312-0.5230,0.20-0.45,,,separate current-public-visibility lag from historical age of archived filings
-P3,model-tuning,lobby-capture-campaign.csv,commentCompressionRate,partial,judgmental,0.3103-0.8316,0.50-0.99,commentTemplateShareMean,0.4600,raise compression under anti-astroturf and duplicate-detection tooling
+P3,model-tuning,lobby-capture-campaign.csv,commentCompressionRate,partial,judgmental,0.3103-0.8318,0.50-0.99,commentTemplateShareMean,0.4600,raise compression under anti-astroturf and duplicate-detection tooling
 P3,model-tuning,lobby-capture-mechanism-comparison.csv,commentCompressionRate,partial,judgmental,0.4524-0.5853,0.50-0.99,commentTemplateShareMean,0.4600,raise compression under anti-astroturf and duplicate-detection tooling
 P3,benchmark-review,lobby-capture-interactions.csv,crossVenueDetectionIndex,partial,synthetic,0.0754-0.9403,0.00-0.90,,,treat as a synthetic portfolio capability until linked source coverage is measured
 P3,model-tuning,lobby-capture-ablation.csv,detectionRate,partial,observed,0.1147-0.3413,0.05-0.21,,,increase detection response under enforcement-heavy regimes
@@ -13,11 +13,11 @@ P3,model-tuning,lobby-capture-mechanism-comparison.csv,detectionRate,partial,obs
 P3,model-tuning,lobby-capture-portfolio.csv,detectionRate,partial,observed,0.1465-0.3747,0.05-0.21,,,increase detection response under enforcement-heavy regimes
 P3,model-tuning,lobby-capture-sensitivity.csv,detectionRate,partial,observed,0.1162-0.3900,0.05-0.21,,,increase detection response under enforcement-heavy regimes
 P3,scenario-coverage,lobby-capture-campaign.csv,hiddenInfluenceShare,partial,inferred,0.3378-0.6708,0.60-0.80,,,add stress cases where reforms bind enough to force hidden substitution
-P3,scenario-coverage,lobby-capture-campaign.csv,hiddenInfluenceShare,partial,proxy,0.2421-0.6708,0.30-0.60,,,add stress cases where reforms bind enough to force hidden substitution
+P3,scenario-coverage,lobby-capture-campaign.csv,hiddenInfluenceShare,partial,proxy,0.2423-0.6708,0.30-0.60,,,add stress cases where reforms bind enough to force hidden substitution
 P3,benchmark-review,lobby-capture-campaign.csv,influencePreservationRate,partial,proxy,0.1674-0.4727,0.20-1.50,,,decide whether the benchmark applies to this scenario family
 P3,benchmark-review,lobby-capture-mechanism-comparison.csv,influencePreservationRate,partial,proxy,0.0000-0.4256,0.20-1.50,,,decide whether the benchmark applies to this scenario family
 P3,model-tuning,lobby-capture-campaign.csv,largeDonorDependence,partial,observed,0.5585-0.6923,0.60-0.80,fecLargeDonorWeightedShare,0.9457,inspect remaining campaign/outside rows and tune allocation-to-source concentration only where high-end outside spending is intended
-P3,benchmark-review,lobby-capture-campaign.csv,observedCaptureRate,partial,synthetic,0.0100-1.0000,0.00-0.80,,,decide whether the benchmark applies to this scenario family
+P3,benchmark-review,lobby-capture-campaign.csv,observedCaptureRate,partial,synthetic,0.0094-1.0000,0.00-0.80,,,decide whether the benchmark applies to this scenario family
 P3,benchmark-review,lobby-capture-mechanism-comparison.csv,observedCaptureRate,partial,synthetic,0.0000-0.8916,0.00-0.80,,,decide whether the benchmark applies to this scenario family
 P3,benchmark-review,lobby-capture-campaign.csv,publicFinancingCandidateUptake,partial,observed,0.4726-0.6889,0.57-0.86,,,decide whether the benchmark applies to this scenario family
 P3,benchmark-review,lobby-capture-interactions.csv,publicFinancingCandidateUptake,partial,observed,0.4699-0.7028,0.57-0.86,,,decide whether the benchmark applies to this scenario family

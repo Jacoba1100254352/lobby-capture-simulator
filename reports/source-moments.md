@@ -83,7 +83,7 @@ These are direct moments from normalized calibration tables. They are source dia
 | snapshot | usaspending | `procurementExPostModificationShare` | 0.3111 | observed_proxy | share of normalized USAspending transaction/action rows marked as ex-post modifications or nonzero modification sequence |
 | snapshot | usaspending | `procurementAmountWeightedModificationShare` | 0.7517 | observed_proxy | award-amount share of normalized USAspending transaction/action rows marked as ex-post modifications |
 | snapshot | usaspending | `procurementActionModificationRows` | 1113.0000 | diagnostic | transaction/action rows marked as ex-post modifications |
-| snapshot | usaspending | `procurementPriceOnlyAwardShare` | 0.6050 | observed_proxy | share among normalized USAspending award rows with competition fields marked as price-only or one-offer awards |
+| snapshot | usaspending | `procurementPriceOnlyAwardShare` | 0.2400 | observed_proxy | share among normalized USAspending award rows with competition fields marked as price-only or one-offer awards |
 | snapshot | usaspending | `procurementLimitedCompetitionShare` | 0.4600 | observed_proxy | share among normalized USAspending award rows with competition fields with limited competition, exclusions, or one known offer |
 | snapshot | usaspending | `procurementProtestShare` | 0.0000 | observed_proxy | share of normalized award rows marked with a protest flag |
 | snapshot | usaspending | `procurementExclusionShare` | 0.2500 | observed_proxy | share among normalized USAspending award rows with competition fields marked as exclusions or after-exclusion competition |
