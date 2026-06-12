@@ -40,6 +40,8 @@ REVOLVING_DOOR_BRIDGE_AUDIT_MD = ROOT / "reports" / "revolving-door-bridge-audit
 REVOLVING_DOOR_BRIDGE_AUDIT_CSV = ROOT / "reports" / "revolving-door-bridge-audit.csv"
 PROCUREMENT_DENOMINATOR_AUDIT_MD = ROOT / "reports" / "procurement-denominator-audit.md"
 PROCUREMENT_DENOMINATOR_AUDIT_CSV = ROOT / "reports" / "procurement-denominator-audit.csv"
+PROCUREMENT_MODIFICATION_COMPOSITION_AUDIT_MD = ROOT / "reports" / "procurement-modification-composition-audit.md"
+PROCUREMENT_MODIFICATION_COMPOSITION_AUDIT_CSV = ROOT / "reports" / "procurement-modification-composition-audit.csv"
 LAYOUT_AUDIT = ROOT / "reports" / "paper-layout-audit.md"
 MANUAL_VISUAL_AUDIT = ROOT / "reports" / "manual-visual-audit.md"
 CLAIM_BOUNDARY_AUDIT_MD = ROOT / "reports" / "claim-boundary-audit.md"
@@ -48,7 +50,7 @@ CLAIM_SOURCE_DEPENDENCY_MD = ROOT / "reports" / "claim-source-dependency.md"
 CLAIM_SOURCE_DEPENDENCY_CSV = ROOT / "reports" / "claim-source-dependency.csv"
 CLAIM_POSTURE_AUDIT_MD = ROOT / "reports" / "claim-posture-audit.md"
 CLAIM_POSTURE_AUDIT_CSV = ROOT / "reports" / "claim-posture-audit.csv"
-RELEASE_TAG = "paper-publication-readiness-2026-06-12-r48"
+RELEASE_TAG = "paper-publication-readiness-2026-06-12-r49"
 CITATION_CFF = ROOT / "CITATION.cff"
 ZENODO_JSON = ROOT / ".zenodo.json"
 FORBIDDEN_LOCAL_ARTIFACTS = [
@@ -132,6 +134,7 @@ EXPECTED_ZIP_MEMBERS = {
     "supporting-information/intermediary-bridge-audit.md",
     "supporting-information/revolving-door-bridge-audit.md",
     "supporting-information/procurement-denominator-audit.md",
+    "supporting-information/procurement-modification-composition-audit.md",
     "supporting-information/claim-boundary-audit.md",
     "supporting-information/claim-source-dependency.md",
     "supporting-information/claim-posture-audit.md",
@@ -159,6 +162,7 @@ def main() -> int:
     failures.extend(check_intermediary_bridge_audit())
     failures.extend(check_revolving_door_bridge_audit())
     failures.extend(check_procurement_denominator_audit())
+    failures.extend(check_procurement_modification_composition_audit())
     failures.extend(check_claim_boundary_audit())
     failures.extend(check_claim_source_dependency_audit())
     failures.extend(check_claim_posture_audit())
@@ -277,6 +281,7 @@ def submission_inputs() -> list[Path]:
         INTERMEDIARY_BRIDGE_AUDIT_MD,
         REVOLVING_DOOR_BRIDGE_AUDIT_MD,
         PROCUREMENT_DENOMINATOR_AUDIT_MD,
+        PROCUREMENT_MODIFICATION_COMPOSITION_AUDIT_MD,
         ROOT / "reports" / "claim-boundary-audit.md",
         ROOT / "reports" / "claim-source-dependency.md",
         ROOT / "reports" / "claim-posture-audit.md",
@@ -765,6 +770,105 @@ def check_procurement_denominator_audit() -> list[str]:
     return failures
 
 
+def check_procurement_modification_composition_audit() -> list[str]:
+    failures: list[str] = []
+    missing = [
+        path.relative_to(ROOT)
+        for path in (
+            PROCUREMENT_MODIFICATION_COMPOSITION_AUDIT_MD,
+            PROCUREMENT_MODIFICATION_COMPOSITION_AUDIT_CSV,
+        )
+        if not path.exists()
+    ]
+    if missing:
+        return [f"missing procurement modification composition audit artifact: {path}" for path in missing]
+
+    with PROCUREMENT_MODIFICATION_COMPOSITION_AUDIT_CSV.open(newline="", encoding="utf-8") as source:
+        rows = list(csv.DictReader(source))
+    source_rows = {
+        row.get("source", ""): row
+        for row in rows
+        if row.get("groupType") == "source"
+    }
+    primary = source_rows.get("usaspending-procurement-actions")
+    if not primary:
+        failures.append("procurement modification composition audit missing USAspending source summary")
+    else:
+        if audit_number(primary.get("rows")) <= 0:
+            failures.append("procurement modification composition audit should include USAspending action rows")
+        if audit_number(primary.get("modifiedRows")) <= 0:
+            failures.append("procurement modification composition audit should include modified action rows")
+        if audit_number(primary.get("modifiedActionShare")) <= 0.20:
+            failures.append("procurement modification composition audit should preserve a nontrivial modified-action share")
+        if audit_number(primary.get("knownPiidShare")) < 0.99:
+            failures.append("procurement modification composition audit should show near-complete PIID coverage")
+        if audit_number(primary.get("knownUeiShare")) < 0.99:
+            failures.append("procurement modification composition audit should show near-complete UEI coverage")
+        if audit_number(primary.get("knownCompetitionShare")) > 0.01:
+            failures.append("procurement modification composition audit should keep competition fields separate from this panel")
+        if "not representative SAM/FPDS" not in primary.get("claimBoundary", ""):
+            failures.append("procurement modification composition audit should keep the USAspending panel bounded")
+
+    sam = source_rows.get("sam-contract-awards")
+    if not sam:
+        failures.append("procurement modification composition audit missing SAM Contract Awards source summary")
+    elif audit_number(sam.get("rows")) != 0:
+        failures.append("procurement modification composition audit should report zero committed SAM Contract Awards rows")
+
+    group_types = {row.get("groupType", "") for row in rows}
+    for group_type in ("agency", "awardType", "recipient"):
+        if group_type not in group_types:
+            failures.append(f"procurement modification composition audit missing group type: {group_type}")
+
+    defense = next(
+        (
+            row for row in rows
+            if row.get("groupType") == "agency" and row.get("groupValue") == "Department of Defense"
+        ),
+        None,
+    )
+    if not defense or audit_number(defense.get("modifiedAmount")) <= 0:
+        failures.append("procurement modification composition audit should include Defense modified-amount composition")
+
+    definitive = next(
+        (
+            row for row in rows
+            if row.get("groupType") == "awardType" and row.get("groupValue") == "DEFINITIVE CONTRACT"
+        ),
+        None,
+    )
+    if not definitive:
+        failures.append("procurement modification composition audit should include DEFINITIVE CONTRACT composition")
+    else:
+        if audit_number(definitive.get("modifiedRows")) <= 0:
+            failures.append("DEFINITIVE CONTRACT composition should include modified rows")
+        if audit_number(definitive.get("amountWeightedModificationShare")) <= 0.50:
+            failures.append("DEFINITIVE CONTRACT composition should preserve the high amount-weighted modification share")
+
+    text = PROCUREMENT_MODIFICATION_COMPOSITION_AUDIT_MD.read_text(encoding="utf-8")
+    required_text = [
+        "Procurement Modification Composition Audit",
+        "bounded sample diagnostic",
+        "SAM.gov Contract Awards has 0 committed rows",
+        "does not clear the procurement-modification source gap",
+    ]
+    for phrase in required_text:
+        if phrase not in text:
+            failures.append(f"procurement modification composition audit markdown missing phrase: {phrase}")
+    if SUPPLEMENT_BODY.exists():
+        supplement = SUPPLEMENT_BODY.read_text(encoding="utf-8")
+        if "procurement-modification composition audit" not in supplement:
+            failures.append("supplement does not disclose the procurement-modification composition audit")
+    return failures
+
+
+def audit_number(value: object) -> float:
+    try:
+        return float(str(value or "0").replace(",", ""))
+    except ValueError:
+        return 0.0
+
+
 def check_claim_boundary_audit() -> list[str]:
     failures: list[str] = []
     if not SOURCE_PANEL_INVENTORY.exists():
@@ -1138,6 +1242,10 @@ def package_byte_checks() -> list[tuple[Path, str]]:
         (INTERMEDIARY_BRIDGE_AUDIT_MD, "supporting-information/intermediary-bridge-audit.md"),
         (REVOLVING_DOOR_BRIDGE_AUDIT_MD, "supporting-information/revolving-door-bridge-audit.md"),
         (PROCUREMENT_DENOMINATOR_AUDIT_MD, "supporting-information/procurement-denominator-audit.md"),
+        (
+            PROCUREMENT_MODIFICATION_COMPOSITION_AUDIT_MD,
+            "supporting-information/procurement-modification-composition-audit.md",
+        ),
         (ROOT / "reports" / "claim-boundary-audit.md", "supporting-information/claim-boundary-audit.md"),
         (ROOT / "reports" / "claim-source-dependency.md", "supporting-information/claim-source-dependency.md"),
         (ROOT / "reports" / "claim-posture-audit.md", "supporting-information/claim-posture-audit.md"),
