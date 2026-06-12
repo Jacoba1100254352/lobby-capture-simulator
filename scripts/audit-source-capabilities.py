@@ -71,6 +71,18 @@ CAPABILITIES = [
         ),
     },
     {
+        "capability": "usaspending-national-action-panel",
+        "mechanism": "National-volume agency and recipient concentration diagnostics",
+        "implementedRoute": "source-native USAspending transaction/action fetcher with agency filter omitted by USASPENDING_PROCUREMENT_ACTIONS_AGENCIES=ALL",
+        "snapshotSource": "usaspending-procurement-national-actions",
+        "panel": "Procurement concentration panel",
+        "neededFor": "Stronger public procurement concentration diagnostics",
+        "nextAction": (
+            "Use this no-key national-volume panel for concentration only; keep "
+            "modification incidence blocked on representative SAM/FPDS action histories."
+        ),
+    },
+    {
         "capability": "lda-covered-position-revolving-door",
         "mechanism": "Covered-position exposure and cooling-off diagnostics",
         "implementedRoute": "source-native LDA covered-position derivation",

@@ -44,7 +44,20 @@ fetch_usaspending_procurement_actions() {
     python3 scripts/fetch-source-data.py usaspending-actions --output data/raw/usaspending-procurement-actions.csv
 }
 
-rm -f data/raw/lda-lobbying.csv data/raw/fec-campaign-finance.csv data/raw/public-financing.csv data/raw/dark-money.csv data/raw/regulatory-dockets.csv data/raw/usaspending-awards.csv data/raw/usaspending-procurement-bridge.csv data/raw/usaspending-procurement-actions.csv data/raw/sam-contract-awards.csv data/raw/revolving-door.csv data/raw/intermediaries.csv
+fetch_usaspending_procurement_national_actions() {
+  SOURCE_RAW_DIR="$raw_dir/usaspending-procurement-national-actions" \
+  USASPENDING_FISCAL_YEAR="${USASPENDING_FISCAL_YEAR:-2024}" \
+  USASPENDING_PROCUREMENT_ACTIONS_AGENCIES=ALL \
+  USASPENDING_ACTION_PERIOD_BUCKETS="${USASPENDING_PROCUREMENT_NATIONAL_ACTIONS_PERIOD_BUCKETS:-annual}" \
+  USASPENDING_ACTION_TRANSACTION_PAGE_SIZE="${USASPENDING_PROCUREMENT_NATIONAL_ACTIONS_TRANSACTION_PAGE_SIZE:-100}" \
+  USASPENDING_ACTION_TRANSACTION_MAX_PAGES="${USASPENDING_PROCUREMENT_NATIONAL_ACTIONS_TRANSACTION_MAX_PAGES:-5}" \
+  USASPENDING_ACTION_TRANSACTION_SORT="${USASPENDING_PROCUREMENT_NATIONAL_ACTIONS_TRANSACTION_SORT:-Transaction Amount}" \
+  USASPENDING_ACTION_TRANSACTION_ORDER="${USASPENDING_PROCUREMENT_NATIONAL_ACTIONS_TRANSACTION_ORDER:-desc}" \
+  USASPENDING_ACTION_TRANSACTION_SORT_SPECS="${USASPENDING_PROCUREMENT_NATIONAL_ACTIONS_TRANSACTION_SORT_SPECS:-Transaction Amount:desc;Mod:asc;Action Date:asc}" \
+    python3 scripts/fetch-source-data.py usaspending-actions --output data/raw/usaspending-procurement-national-actions.csv
+}
+
+rm -f data/raw/lda-lobbying.csv data/raw/fec-campaign-finance.csv data/raw/public-financing.csv data/raw/dark-money.csv data/raw/regulatory-dockets.csv data/raw/usaspending-awards.csv data/raw/usaspending-procurement-bridge.csv data/raw/usaspending-procurement-actions.csv data/raw/usaspending-procurement-national-actions.csv data/raw/sam-contract-awards.csv data/raw/revolving-door.csv data/raw/intermediaries.csv
 
 for period in first_quarter second_quarter third_quarter fourth_quarter; do
   SOURCE_RAW_DIR="$raw_dir/lda-$period" \
@@ -245,6 +258,16 @@ if [ "${USASPENDING_PROCUREMENT_BRIDGE_SOURCE_NATIVE:-1}" = "1" ]; then
   fi
 else
   printf "usaspending-procurement-bridge,missing,multi-agency procurement bridge disabled\n" >> "$status_file"
+fi
+
+if [ "${USASPENDING_PROCUREMENT_NATIONAL_ACTIONS_SOURCE_NATIVE:-1}" = "1" ]; then
+  if fetch_usaspending_procurement_national_actions; then
+    printf "usaspending-procurement-national-actions,ok,normalized national-volume USAspending procurement action rows written; agencyFilter=ALL; periodBuckets=%s; pageSize=%s; maxPages=%s; sortSpecs=%s\n" "${USASPENDING_PROCUREMENT_NATIONAL_ACTIONS_PERIOD_BUCKETS:-annual}" "${USASPENDING_PROCUREMENT_NATIONAL_ACTIONS_TRANSACTION_PAGE_SIZE:-100}" "${USASPENDING_PROCUREMENT_NATIONAL_ACTIONS_TRANSACTION_MAX_PAGES:-5}" "${USASPENDING_PROCUREMENT_NATIONAL_ACTIONS_TRANSACTION_SORT_SPECS:-Transaction Amount:desc;Mod:asc;Action Date:asc}" >> "$status_file"
+  else
+    printf "usaspending-procurement-national-actions,unavailable,upstream USAspending national-volume transaction/action request returned no rows or failed\n" >> "$status_file"
+  fi
+else
+  printf "usaspending-procurement-national-actions,missing,national-volume procurement action panel disabled\n" >> "$status_file"
 fi
 
 if [ -n "${USASPENDING_PROCUREMENT_ACTIONS_LIVE_CSV:-}" ] || [ -n "${USASPENDING_PROCUREMENT_ACTIONS_LIVE_URL:-}" ]; then

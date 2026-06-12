@@ -46,6 +46,11 @@ REQUIRED_ENV_VARS = [
     "SAM_CONTRACT_AWARDS_PREFLIGHT_TIMEOUT_SECONDS",
     "SAM_CONTRACT_AWARDS_PREFLIGHT_HARD_TIMEOUT_SECONDS",
     "SAM_CONTRACT_AWARDS_PREFLIGHT_EXTRACT_MODE",
+    "USASPENDING_PROCUREMENT_NATIONAL_ACTIONS_SOURCE_NATIVE",
+    "USASPENDING_PROCUREMENT_NATIONAL_ACTIONS_PERIOD_BUCKETS",
+    "USASPENDING_PROCUREMENT_NATIONAL_ACTIONS_TRANSACTION_PAGE_SIZE",
+    "USASPENDING_PROCUREMENT_NATIONAL_ACTIONS_TRANSACTION_MAX_PAGES",
+    "USASPENDING_PROCUREMENT_NATIONAL_ACTIONS_TRANSACTION_SORT_SPECS",
     "SOURCE_FETCH_CURL_FALLBACK",
 ]
 
@@ -81,6 +86,7 @@ def readiness_rows(reports: Path, snapshot: Path, env_example: Path) -> list[dic
     sam_status = statuses.get("sam-contract-awards", {})
     sam_capability = capabilities.get("sam-contract-awards-action-history", {})
     usa_action = denominators.get("usaspending-procurement-actions", {})
+    usa_national_action = denominators.get("usaspending-procurement-national-actions", {})
     sam_denominator = denominators.get("sam-contract-awards", {})
     p1_procurement = [
         row for row in queue
@@ -91,6 +97,7 @@ def readiness_rows(reports: Path, snapshot: Path, env_example: Path) -> list[dic
     missing_env = [name for name in REQUIRED_ENV_VARS if name not in env_vars]
     sam_rows = int_value(sam_capability.get("snapshotRows") or sam_denominator.get("rows"))
     usa_rows = int_value(usa_action.get("rows"))
+    usa_national_rows = int_value(usa_national_action.get("rows"))
     quota_reset = next_access_time(sam_status.get("notes", "") or sam_capability.get("snapshotPlan", ""))
 
     rows = [
@@ -129,6 +136,16 @@ def readiness_rows(reports: Path, snapshot: Path, env_example: Path) -> list[dic
                 "Archive a representative SAM/FPDS action-history panel before clearing procurement modification capture."
                 if sam_rows == 0 else
                 "Compare SAM modification, concentration, and denominator moments against the bounded USAspending panel."
+            ),
+        },
+        {
+            "item": "national-usaspending-concentration-panel",
+            "status": "ready" if usa_national_rows > 0 else "missing",
+            "evidence": (
+                f"National-volume USAspending action rows for concentration diagnostics: {usa_national_rows}"
+            ),
+            "nextAction": (
+                "Use this panel for agency and recipient concentration diagnostics only; do not use it to clear SAM/FPDS modification-incidence claims."
             ),
         },
         {

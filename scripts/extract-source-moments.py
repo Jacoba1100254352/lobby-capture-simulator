@@ -48,6 +48,7 @@ def extract_scope(scope: str, root: Path, prefix: str) -> list[dict[str, str]]:
         root / f"{prefix}usaspending-awards.csv",
         root / f"{prefix}usaspending-procurement-bridge.csv",
         root / f"{prefix}usaspending-procurement-actions.csv",
+        root / f"{prefix}usaspending-procurement-national-actions.csv",
         root / f"{prefix}sam-contract-awards.csv",
     ))
     rows.extend(revolving_door_moments(scope, root / f"{prefix}revolving-door.csv"))
@@ -164,15 +165,30 @@ def regulatory_moments(scope: str, path: Path) -> list[dict[str, str]]:
     ]
 
 
-def usaspending_moments(scope: str, path: Path, bridge_path: Path, action_path: Path, sam_path: Path) -> list[dict[str, str]]:
+def usaspending_moments(
+        scope: str,
+        path: Path,
+        bridge_path: Path,
+        action_path: Path,
+        national_action_path: Path,
+        sam_path: Path,
+) -> list[dict[str, str]]:
     rows = read_rows(path)
     bridge_rows = read_rows(bridge_path)
     usaspending_action_rows = read_rows(action_path)
+    national_action_rows = read_rows(national_action_path)
     sam_action_rows = read_rows(sam_path)
     action_rows, action_note, action_source = procurement_action_panel(usaspending_action_rows, sam_action_rows)
-    if not rows and not bridge_rows and not usaspending_action_rows and not sam_action_rows:
+    if not rows and not bridge_rows and not usaspending_action_rows and not national_action_rows and not sam_action_rows:
         return [moment(scope, "usaspending", "procurementRows", 0.0, "observed", f"{path} missing or empty")]
-    concentration_rows, concentration_note, concentration_source = concentration_panel(rows, bridge_rows, action_rows, action_note, action_source)
+    concentration_rows, concentration_note, concentration_source = concentration_panel(
+        rows,
+        bridge_rows,
+        action_rows,
+        action_note,
+        action_source,
+        national_action_rows,
+    )
     award_rows = rows if rows else concentration_rows
     competition_rows = [row for row in award_rows if has_competition_data(row)] or award_rows
     modification_rows_source = action_rows or [row for row in award_rows if has_modification_data(row)] or award_rows
@@ -183,6 +199,7 @@ def usaspending_moments(scope: str, path: Path, bridge_path: Path, action_path: 
     by_agency_count = grouped_count(concentration_rows, "agency")
     by_sub_agency = grouped_amount(concentration_rows, "subAgency")
     action_agency_count = len({row.get("agency", "") for row in action_rows if row.get("agency", "").strip()})
+    national_action_agency_count = len({row.get("agency", "") for row in national_action_rows if row.get("agency", "").strip()})
     concentration_agency_count = len({row.get("agency", "") for row in concentration_rows if row.get("agency", "").strip()})
     concentration_total = sum(number(row.get("amount")) for row in concentration_rows)
     competition_total = sum(number(row.get("amount")) for row in competition_rows)
@@ -223,12 +240,15 @@ def usaspending_moments(scope: str, path: Path, bridge_path: Path, action_path: 
         moment(scope, "usaspending", "procurementBridgeRows", len(bridge_rows), "observed", "multi-agency USAspending bridge rows, if available"),
         moment(scope, "usaspending", "procurementActionRows", len(action_rows), "observed", f"primary procurement action denominator from {action_note}"),
         moment(scope, "usaspending", "procurementUsaspendingActionRows", len(usaspending_action_rows), "observed", "normalized USAspending transaction/action rows, if available"),
+        moment(scope, "usaspending", "procurementNationalActionRows", len(national_action_rows), "observed", "national-volume no-agency-filtered USAspending transaction/action rows, if available"),
+        moment(scope, "usaspending", "procurementNationalActionAgencyCount", national_action_agency_count, "diagnostic", "distinct awarding agencies in the national-volume USAspending transaction/action panel"),
         moment(scope, "sam", "procurementSamContractAwardRows", len(sam_action_rows), "observed", "normalized SAM.gov Contract Awards rows, if available"),
         moment(scope, "usaspending", "procurementActionPanelUsaspendingSample", 1.0 if action_source == "usaspending-action" else 0.0, "diagnostic", "1 when the primary procurement action denominator uses USAspending transaction/action rows"),
         moment(scope, "sam", "procurementActionPanelSamSample", 1.0 if action_source == "sam-contract-awards" else 0.0, "diagnostic", "1 when the primary procurement action denominator uses SAM.gov Contract Awards rows"),
         moment(scope, "usaspending", "procurementConcentrationPanelRows", len(concentration_rows), "diagnostic", f"rows used for concentration moments from {concentration_note}"),
         moment(scope, "usaspending", "procurementConcentrationPanelAgencyCount", concentration_agency_count, "observed", "distinct awarding agencies in the procurement concentration panel"),
-        moment(scope, "usaspending", "procurementConcentrationPanelActionSample", 1.0 if concentration_source in {"usaspending-action", "sam-contract-awards"} else 0.0, "diagnostic", "1 when procurement concentration moments use a transaction/action panel"),
+        moment(scope, "usaspending", "procurementConcentrationPanelActionSample", 1.0 if concentration_source in {"usaspending-action", "usaspending-national-action", "sam-contract-awards"} else 0.0, "diagnostic", "1 when procurement concentration moments use a transaction/action panel"),
+        moment(scope, "usaspending", "procurementConcentrationPanelNationalVolumeSample", 1.0 if concentration_source == "usaspending-national-action" else 0.0, "diagnostic", "1 when procurement concentration moments use the national-volume no-agency-filtered USAspending action panel"),
         moment(scope, "usaspending", "procurementConcentrationPanelTopAwardSample", 1.0 if concentration_source == "bridge" else 0.0, "diagnostic", "1 when procurement concentration moments use the multi-agency top-award bridge"),
         moment(scope, "usaspending", "procurementCompetitionPanelRows", len(competition_rows), "diagnostic", f"rows used for competition moments from {competition_note}"),
         moment(scope, "usaspending", "procurementModificationPanelRows", len(modification_rows_source), "diagnostic", f"rows used for modification moments from {modification_note}"),
@@ -271,16 +291,25 @@ def concentration_panel(
         action_rows: list[dict[str, str]],
         action_note: str,
         action_source: str,
+        national_action_rows: list[dict[str, str]],
 ) -> tuple[list[dict[str, str]], str, str]:
     """Choose the least-narrow available denominator for concentration moments."""
-    action_agencies = {row.get("agency", "").strip() for row in action_rows if row.get("agency", "").strip()}
-    if len(action_rows) >= 500 and len(action_agencies) >= 2:
+    if sufficient_action_panel(action_rows) and action_source == "sam-contract-awards":
+        return action_rows, action_note, action_source
+    if sufficient_action_panel(national_action_rows):
+        return national_action_rows, "national-volume no-agency-filtered USAspending transaction/action rows", "usaspending-national-action"
+    if sufficient_action_panel(action_rows):
         return action_rows, action_note, action_source
     if bridge_rows:
         return bridge_rows, "multi-agency procurement top-award bridge rows", "bridge"
     if award_rows:
         return award_rows, "normalized USAspending award rows", "award"
     return action_rows, action_note, action_source
+
+
+def sufficient_action_panel(rows: list[dict[str, str]]) -> bool:
+    agencies = {row.get("agency", "").strip() for row in rows if row.get("agency", "").strip()}
+    return len(rows) >= 500 and len(agencies) >= 2
 
 
 def procurement_action_panel(
@@ -604,6 +633,11 @@ def representativeness_warnings(rows: list[dict[str, str]]) -> list[str]:
     if metric_value(rows, "snapshot", "sam", "procurementActionPanelSamSample") >= 0.5:
         warnings.append(
             "Snapshot procurement concentration uses SAM.gov Contract Awards rows; this is stronger source provenance than the top-award bridge but remains a bounded diagnostic rather than a representative SAM/FPDS panel."
+        )
+    elif metric_value(rows, "snapshot", "usaspending", "procurementConcentrationPanelNationalVolumeSample") >= 0.5:
+        national_rows = metric_value(rows, "snapshot", "usaspending", "procurementNationalActionRows")
+        warnings.append(
+            f"Snapshot procurement concentration uses a national-volume no-agency-filtered USAspending transaction/action panel ({national_rows:.0f} rows); this is stronger for concentration than the balanced action panel, but modification incidence still needs representative SAM/FPDS action-history validation."
         )
     elif metric_value(rows, "snapshot", "usaspending", "procurementConcentrationPanelActionSample") >= 0.5:
         action_rows = metric_value(rows, "snapshot", "usaspending", "procurementActionRows")

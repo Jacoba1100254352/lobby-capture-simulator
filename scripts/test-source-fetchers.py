@@ -260,6 +260,12 @@ def assert_usaspending(fetchers) -> None:
         "Environmental Protection Agency",
         "Department of Energy",
     ]
+    os.environ["USASPENDING_AGENCIES"] = "ALL"
+    assert fetchers.usaspending_agency_filters() == [{}]
+    assert "agencies" not in fetchers.usaspending_filters("2023-10-01", "2024-09-30", {})
+    os.environ.pop("USASPENDING_AGENCIES", None)
+    os.environ["USASPENDING_PROCUREMENT_ACTIONS_AGENCIES"] = "ALL"
+    assert fetchers.usaspending_agency_filters(allow_procurement_actions_alias=True) == [{}]
     for name in (
         "USASPENDING_DATE_FROM",
         "USASPENDING_DATE_TO",
@@ -270,6 +276,7 @@ def assert_usaspending(fetchers) -> None:
         "USASPENDING_PROCUREMENT_ACTIONS_TRANSACTION_SORT_SPECS",
         "USASPENDING_PROCUREMENT_ACTIONS_TRANSACTION_ORDER",
         "USASPENDING_PROCUREMENT_ACTIONS_AGENCIES",
+        "USASPENDING_AGENCIES",
     ):
         os.environ.pop(name, None)
 

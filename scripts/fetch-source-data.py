@@ -32,6 +32,7 @@ from urllib.request import Request, urlopen
 
 MODEL_DOMAINS = ("energy", "technology", "finance", "procurement", "democracy")
 RAW_SEQUENCE = 0
+USASPENDING_ALL_AGENCIES = {"*", "all", "all-federal", "all_federal", "federal", "none"}
 
 
 class SourceHttpStatus(Exception):
@@ -579,11 +580,7 @@ def fetch_usaspending(output: Path) -> int:
     for agency_filter in usaspending_agency_filters():
         for page in range(1, max_pages + 1):
             payload = {
-                "filters": {
-                    "time_period": [{"start_date": start_date, "end_date": end_date}],
-                    "agencies": [agency_filter],
-                    "award_type_codes": split_csv_env("USASPENDING_AWARD_TYPE_CODES", "A,B,C,D"),
-                },
+                "filters": usaspending_filters(start_date, end_date, agency_filter),
                 "fields": [
                     "Award ID",
                     "Recipient Name",
@@ -644,11 +641,7 @@ def fetch_usaspending_actions(output: Path) -> int:
             for sort_field, sort_order in sort_specs:
                 for page in range(1, max_pages + 1):
                     payload = {
-                        "filters": {
-                            "time_period": [{"start_date": start_date, "end_date": end_date}],
-                            "agencies": [agency_filter],
-                            "award_type_codes": split_csv_env("USASPENDING_AWARD_TYPE_CODES", "A,B,C,D"),
-                        },
+                        "filters": usaspending_filters(start_date, end_date, agency_filter),
                         "fields": [
                             "Award ID",
                             "Action Date",
@@ -705,11 +698,7 @@ def fetch_usaspending_actions_by_award(output: Path) -> int:
     for agency_filter in usaspending_agency_filters(allow_procurement_actions_alias=True):
         for page in range(1, max_pages + 1):
             payload = {
-                "filters": {
-                    "time_period": [{"start_date": start_date, "end_date": end_date}],
-                    "agencies": [agency_filter],
-                    "award_type_codes": split_csv_env("USASPENDING_AWARD_TYPE_CODES", "A,B,C,D"),
-                },
+                "filters": usaspending_filters(start_date, end_date, agency_filter),
                 "fields": [
                     "Award ID",
                     "Recipient Name",
@@ -1167,6 +1156,16 @@ def sam_contract_awards_competition_type(record: dict[str, object]) -> str:
     )
 
 
+def usaspending_filters(start_date: str, end_date: str, agency_filter: dict[str, str]) -> dict[str, object]:
+    filters: dict[str, object] = {
+        "time_period": [{"start_date": start_date, "end_date": end_date}],
+        "award_type_codes": split_csv_env("USASPENDING_AWARD_TYPE_CODES", "A,B,C,D"),
+    }
+    if agency_filter:
+        filters["agencies"] = [agency_filter]
+    return filters
+
+
 def usaspending_agency_filters(allow_procurement_actions_alias: bool = False) -> list[dict[str, str]]:
     agency_type = os.environ.get("USASPENDING_AGENCY_TYPE", "awarding")
     agency_tier = os.environ.get("USASPENDING_AGENCY_TIER", "toptier")
@@ -1181,6 +1180,8 @@ def usaspending_agency_filters(allow_procurement_actions_alias: bool = False) ->
     )
     if not agencies:
         agencies = [os.environ.get("USASPENDING_AGENCY", "Environmental Protection Agency")]
+    if any(agency.strip().lower() in USASPENDING_ALL_AGENCIES for agency in agencies):
+        return [{}]
     return [
         {
             "type": agency_type,

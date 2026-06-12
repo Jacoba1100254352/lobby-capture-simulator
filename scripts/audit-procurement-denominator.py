@@ -29,6 +29,12 @@ SOURCES = [
         "claimBoundary": "bounded transaction/action diagnostics; not representative SAM/FPDS calibration",
     },
     {
+        "source": "usaspending-procurement-national-actions",
+        "path": NORMALIZED / "usaspending-procurement-national-actions.csv",
+        "role": "national-volume concentration denominator",
+        "claimBoundary": "national USAspending action concentration diagnostic; not a modification-incidence denominator",
+    },
+    {
         "source": "sam-contract-awards",
         "path": NORMALIZED / "sam-contract-awards.csv",
         "role": "optional SAM/FPDS-style action route",
@@ -257,6 +263,10 @@ def write_markdown(path: Path, rows: list[dict[str, str]]) -> None:
         (row for row in rows if row["source"] == "usaspending-procurement-actions"),
         {},
     )
+    national = next(
+        (row for row in rows if row["source"] == "usaspending-procurement-national-actions"),
+        {},
+    )
     sam = next((row for row in rows if row["source"] == "sam-contract-awards"), {})
     lines = [
         "# Procurement Denominator Audit",
@@ -274,21 +284,23 @@ def write_markdown(path: Path, rows: list[dict[str, str]]) -> None:
         "## Claim Boundary",
         "",
         (
-            f"The active action denominator is `{primary.get('source', 'none')}` with "
+            f"The modification denominator is `{primary.get('source', 'none')}` with "
             f"{primary.get('rows', '0')} rows across {primary.get('agencyCount', '0')} agencies. "
             f"Its modified-action share is {primary.get('modifiedActionShare', '0.0000')}; "
             f"{primary.get('modifiedAwardCount', '0')} of {primary.get('distinctAwardCount', '0')} "
             f"distinct PIID/award identifiers have at least one modification "
             f"({primary.get('modifiedAwardShare', '0.0000')}), with "
             f"{primary.get('modificationRowsPerModifiedAward', '0.0000')} modified rows per modified award. "
-            f"The largest agency accounts for {primary.get('topAgencyRowShare', '0.0000')} of rows "
-            f"but {primary.get('topAgencyAmountShare', '0.0000')} of amount, a row-to-amount gap "
-            f"of {primary.get('topAgencyAmountRowGap', '0.0000')}. "
+            f"The national concentration panel is `{national.get('source', 'none')}` with "
+            f"{national.get('rows', '0')} rows across {national.get('agencyCount', '0')} agencies. "
+            f"In that panel, the largest agency accounts for {national.get('topAgencyRowShare', '0.0000')} "
+            f"of rows but {national.get('topAgencyAmountShare', '0.0000')} of amount, and the largest "
+            f"recipient accounts for {national.get('topRecipientAmountShare', '0.0000')} of amount. "
             f"SAM.gov Contract Awards status is `{sam.get('snapshotStatus', 'missing')}` with "
             f"{sam.get('rows', '0')} committed rows. The procurement-modification claim remains "
             "bounded until a representative SAM/FPDS action-history denominator is archived; the "
-            "balanced row-count sample is useful for schema checks, but not volume-representative "
-            "calibration."
+            "national panel improves concentration diagnostics but is not used as a representative "
+            "modification-incidence denominator."
         ),
         "",
         "| Source | Status | Role | Rows | Agencies | PIID | UEI | Initial actions | Modified actions | Modified award share | Rows/mod. award | Amt-wtd mod. | Top agency amount | Top agency rows | Top recipient amount | Boundary |",

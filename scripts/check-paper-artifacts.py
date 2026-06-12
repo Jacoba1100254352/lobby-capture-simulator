@@ -481,6 +481,7 @@ def check_source_capability_audit() -> list[str]:
         "direct-dark-money-routing",
         "sam-contract-awards-action-history",
         "usaspending-stratified-action-panel",
+        "usaspending-national-action-panel",
         "lda-covered-position-revolving-door",
         "irs-527-political-organizations",
         "licensed-access-overlays",
@@ -512,6 +513,13 @@ def check_source_capability_audit() -> list[str]:
         failures.append(
             "USAspending action panel capability should be active in the committed snapshot"
         )
+    if rows["usaspending-national-action-panel"].get("capabilityStatus") not in {
+        "active-usable",
+        "active-bounded",
+    }:
+        failures.append(
+            "USAspending national action panel capability should be active in the committed snapshot"
+        )
     if rows["lda-covered-position-revolving-door"].get("capabilityStatus") != "active-usable":
         failures.append(
             "LDA covered-position revolving-door capability should be active and usable"
@@ -524,6 +532,7 @@ def check_source_capability_audit() -> list[str]:
     for phrase in (
             "Source Capability Audit",
             "SAM/FPDS action-history",
+            "National-volume agency and recipient concentration",
             "Direct hidden-donor",
             "SAM_CONTRACT_AWARDS_OFFSET_STARTS",
             "SAM_CONTRACT_AWARDS_EXTRACT_MODE",
@@ -751,6 +760,7 @@ def check_procurement_denominator_audit() -> list[str]:
         rows = {row.get("source", ""): row for row in csv.DictReader(source)}
     required = {
         "usaspending-procurement-actions",
+        "usaspending-procurement-national-actions",
         "sam-contract-awards",
         "usaspending-procurement-bridge",
         "usaspending-awards",
@@ -769,6 +779,12 @@ def check_procurement_denominator_audit() -> list[str]:
         failures.append(
             "procurement denominator audit should show an active multi-agency USAspending action panel"
         )
+    national_rows = int(float(rows["usaspending-procurement-national-actions"].get("rows", "0") or "0"))
+    national_agencies = int(float(rows["usaspending-procurement-national-actions"].get("agencyCount", "0") or "0"))
+    if national_rows <= 0 or national_agencies < 2:
+        failures.append(
+            "procurement denominator audit should show an active multi-agency national-volume USAspending concentration panel"
+        )
     if rows["sam-contract-awards"].get("snapshotStatus") == "ok" and int(float(rows["sam-contract-awards"].get("rows", "0") or "0")) <= 0:
         failures.append(
             "SAM Contract Awards cannot be marked ok without committed action rows"
@@ -777,6 +793,7 @@ def check_procurement_denominator_audit() -> list[str]:
     required_text = [
         "Procurement Denominator Audit",
         "representative SAM/FPDS action-history denominator",
+        "national concentration panel",
         "modified-action share",
     ]
     for phrase in required_text:

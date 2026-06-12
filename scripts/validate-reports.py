@@ -291,6 +291,7 @@ def source_scope_gap(metric: str, value: float, source_moments: dict[str, float]
     procurement_bridge_agencies = source_moments.get("procurementBridgeAgencyCount", 0.0)
     concentration_panel_agencies = source_moments.get("procurementConcentrationPanelAgencyCount", 0.0)
     concentration_action_panel = source_moments.get("procurementConcentrationPanelActionSample", 0.0) >= 0.5
+    concentration_national_action_panel = source_moments.get("procurementConcentrationPanelNationalVolumeSample", 0.0) >= 0.5
     concentration_sam_action_panel = source_moments.get("procurementActionPanelSamSample", 0.0) >= 0.5
     concentration_top_award_panel = source_moments.get("procurementConcentrationPanelTopAwardSample", 0.0) >= 0.5
     top_award_bridge_available = source_moments.get("procurementBridgeTopAwardSample", 0.0) >= 0.5
@@ -311,6 +312,8 @@ def source_scope_gap(metric: str, value: float, source_moments: dict[str, float]
     if metric == "procurementAgencyTop1Share" and concentration_action_panel and concentration_panel_agencies > 1:
         if concentration_sam_action_panel:
             return "bounded SAM.gov Contract Awards panel is present, but it is not representative enough for agency-concentration calibration"
+        if concentration_national_action_panel:
+            return "national-volume USAspending action panel is present, but the agency-concentration moment remains outside benchmark and still needs representative SAM/FPDS validation"
         return "bounded stratified USAspending action panel is present, but it is not representative enough for agency-concentration calibration"
     if metric == "procurementAgencyTop1Share" and concentration_top_award_panel and procurement_bridge_agencies > 1:
         return "multi-agency procurement bridge is present but top-award sampling is not representative enough for agency-concentration calibration"
@@ -319,6 +322,8 @@ def source_scope_gap(metric: str, value: float, source_moments: dict[str, float]
     if metric == "procurementRecipientTop3Share" and concentration_action_panel and concentration_panel_agencies > 1:
         if concentration_sam_action_panel:
             return "bounded SAM.gov Contract Awards panel is present, but it is not representative enough for recipient-concentration calibration"
+        if concentration_national_action_panel:
+            return "national-volume USAspending action panel is present, but the recipient-concentration moment remains outside benchmark and still needs representative SAM/FPDS validation"
         return "bounded stratified USAspending action panel is present, but it is not representative enough for recipient-concentration calibration"
     if metric == "procurementSingleBidShare" and concentration_top_award_panel:
         return "competition moments come from a limited top-award procurement slice, not representative SAM/FPDS action-level competition coverage"
