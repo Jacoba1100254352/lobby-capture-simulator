@@ -16,30 +16,30 @@ snapshot,fec,fecDonorGini,0.8032,observed,donor amount Gini across normalized FE
 snapshot,fec,fecRecipientTop3Share,0.7505,observed,top three recipient share of normalized FEC amount
 snapshot,fec,fecLargeDonorWeightedShare,0.9457,observed_proxy,amount-weighted normalized large donor share
 snapshot,fec,moneyFlowTraceability,0.6183,observed_proxy,amount-weighted traceability across all normalized FEC rows
-snapshot,fec,darkMoneyRows,250.0000,observed_proxy,DARK_MONEY rows from FEC or explicit dark-money/opaque-capacity bridge panels
+snapshot,fec,darkMoneyRows,330.0000,observed_proxy,DARK_MONEY rows from FEC or explicit dark-money/opaque-capacity bridge panels
 snapshot,fec,darkMoneyCapacityProxyRows,250.0000,observed_proxy,DARK_MONEY rows marked as IRS EO BMF opaque-capacity proxies
-snapshot,fec,darkMoneyDirectRoutingRows,0.0000,observed,non-proxy DARK_MONEY rows that can support direct hidden-donor or nonprofit-routing evidence
-snapshot,fec,darkMoneyDirectRoutingSourceShare,0.0000,observed,non-proxy DARK_MONEY share of normalized campaign-finance plus bridge amount
-snapshot,fec,darkMoneyDirectVisibility,0.0000,inferred,amount-weighted traceability among non-proxy DARK_MONEY routing rows only
-snapshot,fec,darkMoneySourceShare,0.0245,observed_proxy,DARK_MONEY or opaque-capacity bridge share of normalized campaign-finance plus bridge amount
-snapshot,fec,superPacSourceShare,0.0075,observed_proxy,SUPER_PAC share of normalized campaign-finance plus bridge amount
-snapshot,fec,opaqueElectoralSourceShare,0.0321,observed_proxy,DARK_MONEY plus SUPER_PAC share of normalized campaign-finance plus bridge amount
+snapshot,fec,darkMoneyDirectRoutingRows,80.0000,observed,non-proxy DARK_MONEY rows that can support direct hidden-donor or nonprofit-routing evidence
+snapshot,fec,darkMoneyDirectRoutingSourceShare,0.0779,observed,non-proxy DARK_MONEY share of normalized campaign-finance plus bridge amount
+snapshot,fec,darkMoneyDirectVisibility,0.0607,inferred,amount-weighted traceability among non-proxy DARK_MONEY routing rows only
+snapshot,fec,darkMoneySourceShare,0.1005,observed_proxy,DARK_MONEY or opaque-capacity bridge share of normalized campaign-finance plus bridge amount
+snapshot,fec,superPacSourceShare,0.0070,observed_proxy,SUPER_PAC share of normalized campaign-finance plus bridge amount
+snapshot,fec,opaqueElectoralSourceShare,0.1075,observed_proxy,DARK_MONEY plus SUPER_PAC share of normalized campaign-finance plus bridge amount
 snapshot,fec,electioneeringRows,68.0000,observed,normalized OpenFEC electioneering communication rows
 snapshot,fec,communicationCostRows,200.0000,observed,normalized OpenFEC communication-cost rows
 snapshot,fec,electoralCommunicationRows,268.0000,observed,normalized electioneering plus communication-cost rows
-snapshot,fec,electoralCommunicationSourceShare,0.0112,observed_proxy,electioneering and communication-cost share of normalized campaign-finance plus bridge amount
+snapshot,fec,electoralCommunicationSourceShare,0.0103,observed_proxy,electioneering and communication-cost share of normalized campaign-finance plus bridge amount
 snapshot,fec,electoralCommunicationTraceabilityMean,0.5238,observed_proxy,amount-weighted traceability among electioneering and communication-cost rows
-snapshot,fec,outsideSpendingRows,918.0000,observed,"normalized independent expenditure, super PAC, dark-money, association, electioneering, or communication-cost rows"
-snapshot,fec,outsideSpendingSourceShare,0.0433,observed_proxy,outside-spending bridge share of normalized campaign-finance plus bridge amount
-snapshot,fec,outsideSpendingTop3SourceShare,0.1900,observed_proxy,top three outside spenders by normalized amount
-snapshot,fec,outsideSpendingDisclosureLagMean,0.4896,observed_proxy,amount-weighted reporting lag among outside-spending rows
+snapshot,fec,outsideSpendingRows,998.0000,observed,"normalized independent expenditure, super PAC, dark-money, association, electioneering, or communication-cost rows"
+snapshot,fec,outsideSpendingSourceShare,0.1178,observed_proxy,outside-spending bridge share of normalized campaign-finance plus bridge amount
+snapshot,fec,outsideSpendingTop3SourceShare,0.6638,observed_proxy,top three outside spenders by normalized amount
+snapshot,fec,outsideSpendingDisclosureLagMean,0.4833,observed_proxy,amount-weighted reporting lag among outside-spending rows
 snapshot,fec,publicFinancingRows,135.0000,observed_proxy,public-match or voucher rows from FEC or explicit public-financing panel
 snapshot,fec,publicFinancingProgramCount,2.0000,observed_proxy,distinct public-financing program sources represented
 snapshot,fec,publicFinancingVoucherRows,3.0000,observed,democracy-voucher rows from explicit public-financing panels
 snapshot,fec,publicFinancingMatchingRows,132.0000,observed,public matching-fund rows from explicit public-financing panels
 snapshot,fec,publicFinancingVoucherAmount,0.0968,observed_proxy,sum of normalized democracy-voucher amount
 snapshot,fec,publicFinancingProgramAmount,87.0526,observed_proxy,sum of public-match and voucher bridge amount
-snapshot,fec,publicFinancingSourceShare,0.0822,observed_proxy,public-match or voucher share of normalized campaign-finance plus bridge amount
+snapshot,fec,publicFinancingSourceShare,0.0758,observed_proxy,public-match or voucher share of normalized campaign-finance plus bridge amount
 snapshot,fec,publicFinancingTraceabilityMean,0.9600,observed_proxy,amount-weighted traceability among public-financing rows
 snapshot,fec,publicFinancingLargeDonorWeightedShare,0.0999,observed_proxy,amount-weighted large-donor share among public-financing rows
 snapshot,regulatory,regulatoryRows,200.0000,observed,normalized regulatory rows

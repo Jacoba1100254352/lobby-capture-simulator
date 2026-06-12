@@ -1,7 +1,7 @@
 {
   "snapshot": "2024-env",
-  "generatedAt": "2026-06-12T08:47:39.448416+00:00",
-  "gitCommit": "8bab983",
+  "generatedAt": "2026-06-12T13:22:25.387233+00:00",
+  "gitCommit": "5b42956",
   "gitTreeState": "clean",
   "gitTreeStateScope": "working tree status excluding generated 2024-env snapshot, reports, paper tables, and paper figures",
   "scope": {
@@ -45,13 +45,13 @@
     },
     {
       "source": "dark-money",
-      "description": "Explicit dark-money rows from a configured source export or IRS EO BMF 501(c)(4)/(c)(6) opaque-capacity proxy rows; donor identities remain unobserved.",
-      "requestTemplate": "DARK_MONEY_SOURCE_NATIVE=1 python3 scripts/fetch-source-data.py irs-dark-money-capacity --output data/raw/dark-money.csv or DARK_MONEY_LIVE_CSV=/path/to/export.csv ./scripts/fetch-dark-money.sh --live",
+      "description": "Explicit dark-money rows from a configured source export, ProPublica/IRS Form 990 Schedule I nonprofit-routing rows, or IRS EO BMF 501(c)(4)/(c)(6) opaque-capacity proxy rows; donor identities remain unobserved.",
+      "requestTemplate": "DARK_MONEY_SOURCE_NATIVE=1 python3 scripts/fetch-source-data.py irs-dark-money-capacity --output data/raw/dark-money.csv followed by PROPUBLICA_NONPROFIT_ROUTING_SOURCE_NATIVE=1 python3 scripts/fetch-source-data.py propublica-nonprofit-routing --output /tmp/propublica-nonprofit-routing.csv and append, or DARK_MONEY_LIVE_CSV=/path/to/export.csv ./scripts/fetch-dark-money.sh --live",
       "normalizedFile": "data/snapshots/2024-env/normalized/dark-money.csv",
-      "rowCount": 250,
-      "sha256": "377c2778f29a0042023a8a5222f6c4f8675e57e13cac94eccb17b4426ee84135",
+      "rowCount": 330,
+      "sha256": "6260db28eb21c3e89e35317b71bd4815d506d44b712e69eaf9e5658a37aee53c",
       "status": "live",
-      "statusNotes": "dark-money: ok (normalized IRS EO BMF opaque-capacity proxy rows written)"
+      "statusNotes": "dark-money: ok (normalized IRS EO BMF opaque-capacity proxy rows written; ProPublica Nonprofit Explorer Schedule I nonprofit-routing rows appended)"
     },
     {
       "source": "regulatory",
@@ -79,7 +79,7 @@
       "requestTemplate": "USASPENDING_AGENCIES='Environmental Protection Agency,Department of Energy,Department of the Interior,Department of Agriculture,Department of Transportation,Department of Defense' USASPENDING_PAGE_SIZE=25 USASPENDING_MAX_PAGES=1 USASPENDING_TREAT_LATEST_TRANSACTION_AS_MODIFICATION=1 python3 scripts/fetch-source-data.py usaspending --output data/raw/usaspending-procurement-bridge.csv",
       "normalizedFile": "data/snapshots/2024-env/normalized/usaspending-procurement-bridge.csv",
       "rowCount": 150,
-      "sha256": "5888b12d73850fc6f0768ed8db041b0a2b405a6d8e2eb1bacdef9be4ac7f01dd",
+      "sha256": "93c68f69e2e59b0ccf5b6936e9d05e970676545afdd94d7c2f4fc227997fe3a0",
       "status": "live",
       "statusNotes": "usaspending-procurement-bridge: ok (normalized multi-agency procurement bridge rows written)"
     },
@@ -89,7 +89,7 @@
       "requestTemplate": "USASPENDING_AGENCIES='Environmental Protection Agency,Department of Energy,Department of the Interior,Department of Agriculture,Department of Transportation,Department of Defense,Department of Health and Human Services,Department of Veterans Affairs,Department of Homeland Security,National Aeronautics and Space Administration,General Services Administration,Department of Commerce' USASPENDING_ACTION_PERIOD_BUCKETS=quarterly USASPENDING_ACTION_TRANSACTION_PAGE_SIZE=25 USASPENDING_ACTION_TRANSACTION_MAX_PAGES=1 USASPENDING_ACTION_TRANSACTION_SORT_SPECS='Mod:asc;Transaction Amount:desc' python3 scripts/fetch-source-data.py usaspending-actions --output data/raw/usaspending-procurement-actions.csv",
       "normalizedFile": "data/snapshots/2024-env/normalized/usaspending-procurement-actions.csv",
       "rowCount": 2399,
-      "sha256": "422da2001ba9ddb75c763a0928fc1cfdc41bd33e5c42312e90e4cf88db9cadb1",
+      "sha256": "27dcaa9cd33312a63bb21d32c92f48921459bac1021cd8849136249ea5cd6da7",
       "status": "live",
       "statusNotes": "usaspending-procurement-actions: ok (normalized USAspending procurement action rows written)"
     },
@@ -126,6 +126,6 @@
   ],
   "liveRunStatus": {
     "file": "data/snapshots/2024-env/live-run-status.csv",
-    "sha256": "265a6201702d3136e6ed90939ae163248e511c4cf3f10f6bacf4e1ca00857624"
+    "sha256": "41e3e3e16d9586435c8a13909892e5ef18733ec86c9e019bc531e569d9e03247"
   }
 }

@@ -208,11 +208,11 @@ awardId,recipient,agency,subAgency,awardType,amount,issueDomain,awardCount,uei,p
 89503624FSW400305,"THE OTTERY GROUP, INC",Department of Energy,Department of Energy,DELIVERY ORDER,0.0987,procurement,1,GLBSJ6W818D1,89503624FSW400305,0,2023-12-22,unknown,0,false,false,false,false,false
 89303024PIG000115,"WOLTERS KLUWER FINANCIAL SERVICES, INC.",Department of Energy,Department of Energy,PURCHASE ORDER,0.1042,procurement,1,DBKSJMTTQJA1,89303024PIG000115,0,2023-12-13,unknown,0,false,false,false,false,false
 89303024PED000056,CARAHSOFT TECHNOLOGY CORP,Department of Energy,Department of Energy,PURCHASE ORDER,0.0157,procurement,1,DT8KJHZXVJH5,89303024PED000056,0,2023-12-05,unknown,0,false,false,false,false,false
-89303924FEM000254,STREET LEGAL INDUSTRIES LLC,Department of Energy,Department of Energy,BPA CALL,0.2059,procurement,1,MFUMMJLS2DX1,89303924FEM000254,0,2023-11-02,unknown,0,false,false,false,false,false
 89303924FEM000273,STREET LEGAL INDUSTRIES LLC,Department of Energy,Department of Energy,BPA CALL,0.0690,procurement,1,MFUMMJLS2DX1,89303924FEM000273,0,2023-11-15,unknown,0,false,false,false,false,false
-89303924FEM000258,STREET LEGAL INDUSTRIES LLC,Department of Energy,Department of Energy,BPA CALL,0.1500,procurement,1,MFUMMJLS2DX1,89303924FEM000258,0,2023-11-15,unknown,0,false,false,false,false,false
-89503424PWA001714,"SATELLITE SHELTERS, INC.",Department of Energy,Department of Energy,PURCHASE ORDER,0.0128,procurement,1,KMX8EDKLF771,89503424PWA001714,0,2023-11-27,unknown,0,false,false,false,false,false
 89303924FEM000277,STREET LEGAL INDUSTRIES LLC,Department of Energy,Department of Energy,BPA CALL,0.0920,procurement,1,MFUMMJLS2DX1,89303924FEM000277,0,2023-12-08,unknown,0,false,false,false,false,false
+89303924FEM000254,STREET LEGAL INDUSTRIES LLC,Department of Energy,Department of Energy,BPA CALL,0.2059,procurement,1,MFUMMJLS2DX1,89303924FEM000254,0,2023-11-02,unknown,0,false,false,false,false,false
+89503424PWA001714,"SATELLITE SHELTERS, INC.",Department of Energy,Department of Energy,PURCHASE ORDER,0.0128,procurement,1,KMX8EDKLF771,89503424PWA001714,0,2023-11-27,unknown,0,false,false,false,false,false
+89303924FEM000258,STREET LEGAL INDUSTRIES LLC,Department of Energy,Department of Energy,BPA CALL,0.1500,procurement,1,MFUMMJLS2DX1,89303924FEM000258,0,2023-11-15,unknown,0,false,false,false,false,false
 89503224FWA400450,PELICAN SALES INC,Department of Energy,Department of Energy,DELIVERY ORDER,0.0248,procurement,1,KMEQKMPV2JN1,89503224FWA400450,0,2023-12-12,unknown,0,false,false,false,false,false
 89243624PCD000009,SBN PARTNERS LIMITED PARTNERSHIP,Department of Energy,Department of Energy,PURCHASE ORDER,0.0555,procurement,1,RG72HM4J9LF2,89243624PCD000009,0,2023-12-14,unknown,0,false,false,false,false,false
 89243324PFE000693,SPENCER GROUP INC,Department of Energy,Department of Energy,PURCHASE ORDER,0.0118,procurement,1,KUTYQ4LG2KJ3,89243324PFE000693,0,2023-11-08,unknown,0,false,false,false,false,false
@@ -220,10 +220,10 @@ awardId,recipient,agency,subAgency,awardType,amount,issueDomain,awardCount,uei,p
 89503624FSW400299,G4S SECURE SOLUTIONS (USA) INC.,Department of Energy,Department of Energy,DELIVERY ORDER,0.0720,procurement,1,H5M2KCZCA9M3,89503624FSW400299,0,2023-11-30,unknown,0,false,false,false,false,false
 89303024FEI400148,"EXECUTIVE INFORMATION SYSTEMS, L.L.C.",Department of Energy,Department of Energy,DELIVERY ORDER,0.5625,procurement,1,MKF6VA9NZLR8,89303024FEI400148,0,2023-12-04,unknown,0,false,false,false,false,false
 89303024FHC400031,"LRP PUBLICATIONS, INC.",Department of Energy,Department of Energy,DELIVERY ORDER,0.0263,procurement,1,UCMPFP9EH2R5,89303024FHC400031,0,2023-11-02,unknown,0,false,false,false,false,false
+89303024FMA400753,WITS SOLUTIONS INC.,Department of Energy,Department of Energy,DELIVERY ORDER,0.0000,procurement,1,T2F7NSL7DQA4,89303024FMA400753,0,2023-12-19,unknown,0,false,false,false,false,false
 89303924FEM000265,SALMON GROUP INC,Department of Energy,Department of Energy,BPA CALL,0.0315,procurement,1,N358T5EYS3G5,89303924FEM000265,0,2023-11-16,unknown,0,false,false,false,false,false
 89233124FNA400566,"COVENANT PARK INTEGRATED INITIATIVES, INC.",Department of Energy,Department of Energy,DELIVERY ORDER,2.2524,procurement,1,L8MDF96UBEE3,89233124FNA400566,0,2023-10-31,unknown,0,false,false,false,false,false
 89303324CEM000119,PIKE NATURAL GAS CO,Department of Energy,Department of Energy,DEFINITIVE CONTRACT,0.0100,procurement,1,EFHHJ1D4UQE3,89303324CEM000119,0,2023-12-29,unknown,0,false,false,false,false,false
-89303024FMA400753,WITS SOLUTIONS INC.,Department of Energy,Department of Energy,DELIVERY ORDER,0.0000,procurement,1,T2F7NSL7DQA4,89303024FMA400753,0,2023-12-19,unknown,0,false,false,false,false,false
 89233218CNA000001,"TRIAD NATIONAL SECURITY, LLC",Department of Energy,Department of Energy,DEFINITIVE CONTRACT,768.4433,procurement,1,X7WUS5LRBQU3,89233218CNA000001,P00158,2023-12-28,unknown,0,false,true,false,false,false
 89233218CNA000001,"TRIAD NATIONAL SECURITY, LLC",Department of Energy,Department of Energy,DEFINITIVE CONTRACT,582.9897,procurement,1,X7WUS5LRBQU3,89233218CNA000001,P00154,2023-10-31,unknown,0,false,true,false,false,false
 DENA0001942,"CONSOLIDATED NUCLEAR SECURITY, LLC",Department of Energy,Department of Energy,DEFINITIVE CONTRACT,569.9688,procurement,1,EWV8QKG1JUV7,DENA0001942,308,2023-12-28,unknown,0,false,true,false,false,false
@@ -317,9 +317,9 @@ DEAC0206CH11357,"UCHICAGO ARGONNE, LLC",Department of Energy,Department of Energ
 89233124FNA400628,CARAHSOFT TECHNOLOGY CORP,Department of Energy,Department of Energy,DELIVERY ORDER,0.0133,procurement,1,DT8KJHZXVJH5,89233124FNA400628,0,2024-06-27,unknown,0,false,false,false,false,false
 89243324FFE400573,"LYME COMPUTER SYSTEMS, INC.",Department of Energy,Department of Energy,DELIVERY ORDER,0.8498,procurement,1,F1UZPBD1VBH9,89243324FFE400573,0,2024-06-28,unknown,0,false,false,false,false,false
 89243124FSC400640,AURORA SYSTEMS CONSULTING INC,Department of Energy,Department of Energy,DELIVERY ORDER,0.0147,procurement,1,C1NMTBMS4KG5,89243124FSC400640,0,2024-04-11,unknown,0,false,false,false,false,false
-89303024CIG000007,BLOCS LLC,Department of Energy,Department of Energy,DEFINITIVE CONTRACT,1.2452,procurement,1,NT6PGD53ZHJ5,89303024CIG000007,0,2024-06-26,unknown,0,false,false,false,false,false
 89603024F0029,CARAHSOFT TECHNOLOGY CORP,Department of Energy,Federal Energy Regulatory Commission,DELIVERY ORDER,0.1470,procurement,1,DT8KJHZXVJH5,89603024F0029,0,2024-04-10,unknown,0,false,false,false,false,false
 89303924FEM000298,STREET LEGAL INDUSTRIES LLC,Department of Energy,Department of Energy,BPA CALL,0.7726,procurement,1,MFUMMJLS2DX1,89303924FEM000298,0,2024-04-24,unknown,0,false,false,false,false,false
+89303024CIG000007,BLOCS LLC,Department of Energy,Department of Energy,DEFINITIVE CONTRACT,1.2452,procurement,1,NT6PGD53ZHJ5,89303024CIG000007,0,2024-06-26,unknown,0,false,false,false,false,false
 89233124FNA400602,CARAHSOFT TECHNOLOGY CORP,Department of Energy,Department of Energy,DELIVERY ORDER,7.9637,procurement,1,DT8KJHZXVJH5,89233124FNA400602,0,2024-04-01,unknown,0,false,false,false,false,false
 89303924FEM000309,"KATMAI INTEGRATED SOLUTIONS, LLC",Department of Energy,Department of Energy,BPA CALL,0.1540,procurement,1,GHLJX6LSQET8,89303924FEM000309,0,2024-06-26,unknown,0,false,false,false,false,false
 89503024FWA400875,BAHFED CORP,Department of Energy,Department of Energy,DELIVERY ORDER,0.2137,procurement,1,TQ2KDQLRL8F1,89503024FWA400875,0,2024-04-18,unknown,0,false,false,false,false,false

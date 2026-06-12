@@ -5,14 +5,13 @@ This queue classifies validation misses and partial overlaps into concrete follo
 ## Category Counts
 
 - `benchmark-review`: `12`
-- `direct-source-moment`: `4`
+- `direct-source-moment`: `3`
 - `model-tuning`: `15`
 - `scale-alignment`: `1`
 - `scenario-coverage`: `6`
 
 | Priority | Category | Report | Metric | Status | Observed | Benchmark | Source Moment | Action |
 | --- | --- | --- | --- | --- | ---: | ---: | ---: | --- |
-| P1 | direct-source-moment | source-moments.csv | `darkMoneyDirectRoutingRows` | source_gap | 0.0000-0.0000 | 1-50 | darkMoneyDirectRoutingRows=0.0000 | add non-proxy direct hidden-donor, transfer, or nonprofit-routing records; keep IRS EO BMF capacity proxies and electoral-communication rows separate |
 | P1 | direct-source-moment | source-moments.csv | `procurementAgencyTop1Share` | source_gap | 0.3866-0.3866 | 0.55-0.65 | procurementAgencyTop1Share=0.3866 | replace the bounded USAspending concentration panel with representative SAM/FPDS action-level extracts before treating agency concentration as calibrated |
 | P1 | direct-source-moment | source-moments.csv | `procurementExPostModificationShare` | source_gap | 0.3297-0.3297 | 0.01-0.05 | procurementExPostModificationShare=0.3297 | broaden the bounded USAspending action panel with representative SAM/FPDS action histories before treating modification incidence as calibrated |
 | P1 | direct-source-moment | source-moments.csv | `procurementRecipientTop3Share` | source_gap | 0.2457-0.2457 | 0.25-0.40 | procurementRecipientTop3Share=0.2457 | compare recipient concentration against the bounded procurement concentration panel, then broaden by award type and fiscal year before treating it as calibrated |
@@ -30,14 +29,14 @@ This queue classifies validation misses and partial overlaps into concrete follo
 | P3 | scenario-coverage | lobby-capture-campaign.csv | `hiddenInfluenceShare` | partial | 0.2423-0.6708 | 0.30-0.60 |  | add stress cases where reforms bind enough to force hidden substitution |
 | P3 | benchmark-review | lobby-capture-campaign.csv | `influencePreservationRate` | partial | 0.1674-0.4727 | 0.20-1.50 |  | decide whether the benchmark applies to this scenario family |
 | P3 | benchmark-review | lobby-capture-mechanism-comparison.csv | `influencePreservationRate` | partial | 0.0000-0.4256 | 0.20-1.50 |  | decide whether the benchmark applies to this scenario family |
-| P3 | model-tuning | lobby-capture-campaign.csv | `largeDonorDependence` | partial | 0.5585-0.6923 | 0.60-0.80 | fecLargeDonorWeightedShare=0.9457 | inspect remaining campaign/outside rows and tune allocation-to-source concentration only where high-end outside spending is intended |
+| P3 | model-tuning | lobby-capture-campaign.csv | `largeDonorDependence` | partial | 0.5576-0.6916 | 0.60-0.80 | fecLargeDonorWeightedShare=0.9457 | inspect remaining campaign/outside rows and tune allocation-to-source concentration only where high-end outside spending is intended |
 | P3 | benchmark-review | lobby-capture-campaign.csv | `observedCaptureRate` | partial | 0.0094-1.0000 | 0.00-0.80 |  | decide whether the benchmark applies to this scenario family |
 | P3 | benchmark-review | lobby-capture-mechanism-comparison.csv | `observedCaptureRate` | partial | 0.0000-0.8916 | 0.00-0.80 |  | decide whether the benchmark applies to this scenario family |
-| P3 | benchmark-review | lobby-capture-campaign.csv | `publicFinancingCandidateUptake` | partial | 0.4726-0.6889 | 0.57-0.86 |  | decide whether the benchmark applies to this scenario family |
-| P3 | benchmark-review | lobby-capture-interactions.csv | `publicFinancingCandidateUptake` | partial | 0.4699-0.7028 | 0.57-0.86 |  | decide whether the benchmark applies to this scenario family |
-| P3 | benchmark-review | lobby-capture-mechanism-comparison.csv | `publicFinancingCandidateUptake` | partial | 0.5673-0.5813 | 0.57-0.86 |  | decide whether the benchmark applies to this scenario family |
-| P3 | benchmark-review | lobby-capture-portfolio.csv | `publicFinancingCandidateUptake` | partial | 0.4397-0.7019 | 0.57-0.86 |  | decide whether the benchmark applies to this scenario family |
-| P3 | benchmark-review | lobby-capture-sensitivity.csv | `publicFinancingCandidateUptake` | partial | 0.4834-0.7028 | 0.57-0.86 |  | decide whether the benchmark applies to this scenario family |
+| P3 | benchmark-review | lobby-capture-campaign.csv | `publicFinancingCandidateUptake` | partial | 0.4728-0.6890 | 0.57-0.86 |  | decide whether the benchmark applies to this scenario family |
+| P3 | benchmark-review | lobby-capture-interactions.csv | `publicFinancingCandidateUptake` | partial | 0.4701-0.7029 | 0.57-0.86 |  | decide whether the benchmark applies to this scenario family |
+| P3 | benchmark-review | lobby-capture-mechanism-comparison.csv | `publicFinancingCandidateUptake` | partial | 0.5675-0.5814 | 0.57-0.86 |  | decide whether the benchmark applies to this scenario family |
+| P3 | benchmark-review | lobby-capture-portfolio.csv | `publicFinancingCandidateUptake` | partial | 0.4399-0.7020 | 0.57-0.86 |  | decide whether the benchmark applies to this scenario family |
+| P3 | benchmark-review | lobby-capture-sensitivity.csv | `publicFinancingCandidateUptake` | partial | 0.4836-0.7029 | 0.57-0.86 |  | decide whether the benchmark applies to this scenario family |
 | P3 | benchmark-review | lobby-capture-campaign.csv | `regulatorQueueBacklog` | partial | 0.2361-0.6674 | 0.50-0.75 |  | decide whether the benchmark applies to this scenario family |
 | P3 | benchmark-review | lobby-capture-mechanism-comparison.csv | `regulatorQueueBacklog` | partial | 0.2361-0.6686 | 0.50-0.75 |  | decide whether the benchmark applies to this scenario family |
 | P3 | model-tuning | lobby-capture-ablation.csv | `sanctionRate` | partial | 0.0006-0.0219 | 0.003-0.015 |  | raise sanction incidence after detection or narrow benchmark to campaign filer cases |

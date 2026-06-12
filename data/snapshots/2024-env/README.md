@@ -11,7 +11,7 @@ Scope:
 - Outside-spending bridge: OpenFEC Schedule E independent expenditures.
 - Electoral-communication bridge: OpenFEC electioneering communications and communication-cost rows when available.
 - Public-financing bridge: NYC CFB public-funds payments, Seattle Democracy Voucher rows, or configured program export rows carried as a separate bridge panel.
-- Dark-money bridge: configured source export rows or IRS EO BMF 501(c)(4)/(c)(6) opaque-capacity proxy rows; super PAC rows remain separate.
+- Dark-money bridge: configured source export rows, ProPublica/IRS Form 990 Schedule I nonprofit-routing transfer rows, or IRS EO BMF 501(c)(4)/(c)(6) opaque-capacity proxy rows; super PAC rows remain separate and nonprofit-routing rows do not identify underlying donors.
 - USAspending fiscal year: 2024, Environmental Protection Agency awards.
 - USAspending procurement bridge: multi-agency fiscal-year 2024 top-award rows for high-value procurement diagnostics, kept separate from the EPA calibration slice and action-panel denominator.
 - USAspending procurement actions: stratified 12-agency quarterly transaction/action rows for concentration and modification-incidence diagnostics when present, combining initial-action and high-value transaction strata and kept separate from award rows and top-award bridge rows.
@@ -26,7 +26,7 @@ The current command freezes whatever normalized files are present under `data/ra
 | lda | 121 | live | `data/snapshots/2024-env/normalized/lda-lobbying.csv` |
 | fec | 1268 | live | `data/snapshots/2024-env/normalized/fec-campaign-finance.csv` |
 | public-financing | 135 | live | `data/snapshots/2024-env/normalized/public-financing.csv` |
-| dark-money | 250 | live | `data/snapshots/2024-env/normalized/dark-money.csv` |
+| dark-money | 330 | live | `data/snapshots/2024-env/normalized/dark-money.csv` |
 | regulatory | 200 | live | `data/snapshots/2024-env/normalized/regulatory-dockets.csv` |
 | usaspending | 200 | live | `data/snapshots/2024-env/normalized/usaspending-awards.csv` |
 | usaspending-procurement-bridge | 150 | live | `data/snapshots/2024-env/normalized/usaspending-procurement-bridge.csv` |
