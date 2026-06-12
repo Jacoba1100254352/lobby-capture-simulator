@@ -276,7 +276,7 @@ elif [ "${REVOLVING_DOOR_SOURCE_NATIVE:-1}" = "1" ]; then
     LDA_YEAR="${LDA_YEAR:-2024}" \
     LDA_ISSUE_CODE= \
     REVOLVING_DOOR_LDA_PAGE_SIZE="${REVOLVING_DOOR_LDA_PAGE_SIZE:-100}" \
-    REVOLVING_DOOR_LDA_MAX_PAGES="${REVOLVING_DOOR_LDA_MAX_PAGES:-10}" \
+    REVOLVING_DOOR_LDA_MAX_PAGES="${REVOLVING_DOOR_LDA_MAX_PAGES:-25}" \
       python3 scripts/fetch-source-data.py revolving-door; then
     printf "revolving-door,ok,derived normalized covered-position rows from LDA source\n" >> "$status_file"
   else

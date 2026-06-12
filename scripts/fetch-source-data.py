@@ -413,7 +413,7 @@ def fetch_revolving_door(output: Path) -> int:
 
     records = []
     next_url = f"{base}/filings/?{urlencode(params)}"
-    max_pages = int_env("REVOLVING_DOOR_LDA_MAX_PAGES", 5, 1, 50)
+    max_pages = int_env("REVOLVING_DOOR_LDA_MAX_PAGES", 25, 1, 50)
     for _ in range(max_pages):
         payload = get_json(next_url, headers)
         records.extend(payload.get("results", payload if isinstance(payload, list) else []))
