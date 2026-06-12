@@ -256,6 +256,8 @@ elif [ "${USASPENDING_PROCUREMENT_ACTIONS_SOURCE_NATIVE:-1}" = "1" ]; then
   if [ "${SAM_CONTRACT_AWARDS_SOURCE_NATIVE:-0}" = "1" ] && [ -n "${SAM_API_KEY:-}" ]; then
     sam_page_size="${SAM_CONTRACT_AWARDS_PAGE_SIZE:-100}"
     sam_max_pages="${SAM_CONTRACT_AWARDS_MAX_PAGES:-1}"
+    sam_extract_mode="${SAM_CONTRACT_AWARDS_EXTRACT_MODE:-0}"
+    sam_extract_format="${SAM_CONTRACT_AWARDS_EXTRACT_FORMAT:-${SAM_CONTRACT_AWARDS_FORMAT:-json}}"
     sam_offset_starts="${SAM_CONTRACT_AWARDS_OFFSET_STARTS:-${SAM_CONTRACT_AWARDS_OFFSET_START:-0}}"
     sam_offset_note="${sam_offset_starts//,/+}"
     sam_filter_count="$(python3 - <<'PY'
@@ -282,13 +284,18 @@ PY
       SAM_CONTRACT_AWARDS_DEPARTMENT_CODES="${SAM_CONTRACT_AWARDS_DEPARTMENT_CODES:-}" \
       SAM_CONTRACT_AWARDS_PAGE_SIZE="$sam_page_size" \
       SAM_CONTRACT_AWARDS_MAX_PAGES="$sam_max_pages" \
+      SAM_CONTRACT_AWARDS_EXTRACT_MODE="$sam_extract_mode" \
+      SAM_CONTRACT_AWARDS_EXTRACT_FORMAT="$sam_extract_format" \
+      SAM_CONTRACT_AWARDS_EXTRACT_EMAIL_ID="${SAM_CONTRACT_AWARDS_EXTRACT_EMAIL_ID:-}" \
+      SAM_CONTRACT_AWARDS_EXTRACT_POLL_ATTEMPTS="${SAM_CONTRACT_AWARDS_EXTRACT_POLL_ATTEMPTS:-8}" \
+      SAM_CONTRACT_AWARDS_EXTRACT_POLL_SECONDS="${SAM_CONTRACT_AWARDS_EXTRACT_POLL_SECONDS:-10}" \
       SAM_CONTRACT_AWARDS_OFFSET_STARTS="$sam_offset_starts" \
       SAM_CONTRACT_AWARDS_INCLUDE_SECTIONS="${SAM_CONTRACT_AWARDS_INCLUDE_SECTIONS:-contractId,coreData,awardDetails,awardeeData}" \
         python3 scripts/fetch-source-data.py sam-contract-awards --output data/raw/sam-contract-awards.csv; then
-      printf "sam-contract-awards,ok,normalized SAM.gov Contract Awards rows written to separate procurement action schema; filterCount=%s; pageSize=%s; maxPages=%s; offsetPageStarts=%s\n" "$sam_filter_count" "$sam_page_size" "$sam_max_pages" "$sam_offset_note" >> "$status_file"
+      printf "sam-contract-awards,ok,normalized SAM.gov Contract Awards rows written to separate procurement action schema; mode=%s; format=%s; filterCount=%s; pageSize=%s; maxPages=%s; offsetPageStarts=%s\n" "$sam_extract_mode" "$sam_extract_format" "$sam_filter_count" "$sam_page_size" "$sam_max_pages" "$sam_offset_note" >> "$status_file"
       printf "usaspending-procurement-actions,skipped,SAM.gov Contract Awards selected as the primary procurement action source for this live run\n" >> "$status_file"
     else
-      printf "sam-contract-awards,unavailable,SAM.gov Contract Awards request failed; fallback=USAspending action rows; filterCount=%s; pageSize=%s; maxPages=%s; offsetPageStarts=%s\n" "$sam_filter_count" "$sam_page_size" "$sam_max_pages" "$sam_offset_note" >> "$status_file"
+      printf "sam-contract-awards,unavailable,SAM.gov Contract Awards request failed; fallback=USAspending action rows; mode=%s; format=%s; filterCount=%s; pageSize=%s; maxPages=%s; offsetPageStarts=%s\n" "$sam_extract_mode" "$sam_extract_format" "$sam_filter_count" "$sam_page_size" "$sam_max_pages" "$sam_offset_note" >> "$status_file"
       if fetch_usaspending_procurement_actions; then
         printf "usaspending-procurement-actions,ok,normalized USAspending procurement action rows written after SAM fallback\n" >> "$status_file"
       else

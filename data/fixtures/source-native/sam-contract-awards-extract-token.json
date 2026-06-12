@@ -1,0 +1,5 @@
+{
+  "presignedUrl": "https://api.sam.gov/contract-awards/v1/download?api_key=REPLACE_WITH_API_KEY&token=fixtureToken",
+  "exportToken": "fixtureToken",
+  "message": "File generation is in progress."
+}

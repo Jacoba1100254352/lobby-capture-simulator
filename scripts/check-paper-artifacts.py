@@ -50,7 +50,7 @@ CLAIM_SOURCE_DEPENDENCY_MD = ROOT / "reports" / "claim-source-dependency.md"
 CLAIM_SOURCE_DEPENDENCY_CSV = ROOT / "reports" / "claim-source-dependency.csv"
 CLAIM_POSTURE_AUDIT_MD = ROOT / "reports" / "claim-posture-audit.md"
 CLAIM_POSTURE_AUDIT_CSV = ROOT / "reports" / "claim-posture-audit.csv"
-RELEASE_TAG = "paper-publication-readiness-2026-06-12-r56"
+RELEASE_TAG = "paper-publication-readiness-2026-06-12-r57"
 CITATION_CFF = ROOT / "CITATION.cff"
 ZENODO_JSON = ROOT / ".zenodo.json"
 FORBIDDEN_LOCAL_ARTIFACTS = [
@@ -515,7 +515,13 @@ def check_source_capability_audit() -> list[str]:
             "IRS 527 political-organization capability should be active and usable"
         )
     text = SOURCE_CAPABILITY_AUDIT_MD.read_text(encoding="utf-8")
-    for phrase in ("Source Capability Audit", "SAM/FPDS action-history", "Direct hidden-donor", "SAM_CONTRACT_AWARDS_OFFSET_STARTS"):
+    for phrase in (
+            "Source Capability Audit",
+            "SAM/FPDS action-history",
+            "Direct hidden-donor",
+            "SAM_CONTRACT_AWARDS_OFFSET_STARTS",
+            "SAM_CONTRACT_AWARDS_EXTRACT_MODE",
+    ):
         if phrase not in text:
             failures.append(f"source capability audit markdown missing phrase: {phrase}")
     return failures

@@ -24,7 +24,7 @@ from http.client import RemoteDisconnected
 from datetime import date, datetime
 from pathlib import Path
 from urllib.error import HTTPError, URLError
-from urllib.parse import parse_qsl, urlencode, urlsplit, urlunsplit
+from urllib.parse import parse_qsl, quote_plus, urlencode, urlsplit, urlunsplit
 from urllib.request import Request, urlopen
 
 
@@ -752,6 +752,8 @@ def fetch_sam_contract_awards(output: Path) -> int:
     if not api_key:
         raise SystemExit("Set SAM_API_KEY before running the SAM.gov Contract Awards source-native fetcher.")
     base = os.environ.get("SAM_API_BASE", "https://api.sam.gov").rstrip("/")
+    if sam_contract_awards_extract_mode():
+        return fetch_sam_contract_awards_extract(output, base, api_key)
     limit = int_env("SAM_CONTRACT_AWARDS_PAGE_SIZE", 100, 1, 100)
     max_pages = int_env("SAM_CONTRACT_AWARDS_MAX_PAGES", 1, 1, 20)
     offsets = sam_contract_awards_offsets(max_pages, limit)
@@ -786,6 +788,131 @@ def fetch_sam_contract_awards(output: Path) -> int:
     return 0
 
 
+def fetch_sam_contract_awards_extract(output: Path, base: str, api_key: str) -> int:
+    extract_format = sam_contract_awards_extract_format()
+    base_params = sam_contract_awards_extract_params(api_key, extract_format)
+    rows: list[dict[str, object]] = []
+    seen_rows: set[tuple[object, ...]] = set()
+    for filter_key, filter_value in sam_contract_awards_filters():
+        params = dict(base_params)
+        params[filter_key] = filter_value
+        token_payload = get_json(f"{base}/contract-awards/v1/search?{urlencode(params)}")
+        for row in normalize_sam_contract_award_records(
+            sam_contract_awards_extract_records(token_payload, api_key, extract_format)
+        ):
+            row_key = usaspending_action_row_key(row)
+            if row_key in seen_rows:
+                continue
+            seen_rows.add(row_key)
+            rows.append(row)
+    write_rows(
+        output,
+        USASPENDING_FIELDS,
+        rows,
+        "SAM.gov Contract Awards extract",
+    )
+    return 0
+
+
+def sam_contract_awards_extract_mode() -> bool:
+    mode = os.environ.get("SAM_CONTRACT_AWARDS_EXTRACT_MODE", "").strip().lower()
+    if mode in {"1", "true", "yes", "y"}:
+        return True
+    if mode in {"0", "false", "no", "n"}:
+        return False
+    return bool(os.environ.get("SAM_CONTRACT_AWARDS_EXTRACT_FORMAT", os.environ.get("SAM_CONTRACT_AWARDS_FORMAT", "")).strip())
+
+
+def sam_contract_awards_extract_format() -> str:
+    value = os.environ.get("SAM_CONTRACT_AWARDS_EXTRACT_FORMAT", os.environ.get("SAM_CONTRACT_AWARDS_FORMAT", "json")).strip().lower()
+    if value not in {"json", "csv"}:
+        raise SystemExit(f"SAM_CONTRACT_AWARDS_EXTRACT_FORMAT must be json or csv, got: {value}")
+    return value
+
+
+def sam_contract_awards_extract_params(api_key: str, extract_format: str) -> dict[str, str]:
+    params = sam_contract_awards_base_params(api_key, int_env("SAM_CONTRACT_AWARDS_PAGE_SIZE", 100, 1, 100))
+    params.pop("limit", None)
+    params["format"] = extract_format
+    email_id = os.environ.get("SAM_CONTRACT_AWARDS_EXTRACT_EMAIL_ID", "").strip()
+    if email_id:
+        params["emailId"] = email_id
+    return params
+
+
+def sam_contract_awards_extract_records(
+        token_payload: dict[str, object] | list[object],
+        api_key: str,
+        extract_format: str,
+) -> list[dict[str, object]]:
+    direct_records = sam_contract_award_records(token_payload)
+    if direct_records:
+        return direct_records
+    if not isinstance(token_payload, dict):
+        return []
+    download_url = sam_contract_awards_download_url(token_payload, api_key)
+    if not download_url:
+        return []
+    attempts = int_env("SAM_CONTRACT_AWARDS_EXTRACT_POLL_ATTEMPTS", 8, 1, 40)
+    wait_seconds = float_env("SAM_CONTRACT_AWARDS_EXTRACT_POLL_SECONDS", 10.0, 0.0, 300.0)
+    last_message = first_text(token_payload, "message", default="extract not ready")
+    for attempt in range(1, attempts + 1):
+        if extract_format == "json":
+            payload = get_json(download_url)
+            records = sam_contract_award_records(payload)
+            if records:
+                return records
+            if isinstance(payload, dict):
+                last_message = first_text(payload, "message", "status", default=last_message)
+        else:
+            text = get_text(download_url)
+            records = sam_contract_awards_records_from_csv_or_message(text)
+            if records:
+                return records
+            message = sam_contract_awards_extract_message(text)
+            if message:
+                last_message = message
+        if attempt < attempts:
+            time.sleep(wait_seconds)
+    raise SystemExit(
+        f"SAM.gov Contract Awards extract did not become ready after {attempts} poll attempts: {last_message}"
+    )
+
+
+def sam_contract_awards_download_url(token_payload: dict[str, object], api_key: str) -> str:
+    url = first_text(token_payload, "presignedUrl", "downloadUrl", "url", default="")
+    if not url:
+        token = first_text(token_payload, "exportToken", "token", default="")
+        if not token:
+            return ""
+        base = os.environ.get("SAM_API_BASE", "https://api.sam.gov").rstrip("/")
+        url = f"{base}/contract-awards/v1/download?api_key=REPLACE_WITH_API_KEY&token={quote_plus(token)}"
+    return url.replace("REPLACE_WITH_API_KEY", quote_plus(api_key))
+
+
+def sam_contract_awards_records_from_csv_or_message(text: str) -> list[dict[str, object]]:
+    stripped = text.strip()
+    if not stripped:
+        return []
+    if stripped.startswith("{") or stripped.startswith("["):
+        payload = json.loads(stripped)
+        return sam_contract_award_records(payload)
+    return [row for row in csv.DictReader(StringIO(text)) if any(str(value).strip() for value in row.values())]
+
+
+def sam_contract_awards_extract_message(text: str) -> str:
+    stripped = text.strip()
+    if not stripped or not stripped.startswith("{"):
+        return ""
+    try:
+        payload = json.loads(stripped)
+    except json.JSONDecodeError:
+        return ""
+    if not isinstance(payload, dict):
+        return ""
+    return first_text(payload, "message", "status", default="")
+
+
 def sam_contract_awards_base_params(api_key: str, limit: int) -> dict[str, str]:
     params = {
         "api_key": api_key,
@@ -810,6 +937,7 @@ def sam_contract_awards_base_params(api_key: str, limit: int) -> dict[str, str]:
         ("SAM_CONTRACT_AWARDS_PRODUCT_OR_SERVICE_TYPE", "productOrServiceType"),
         ("SAM_CONTRACT_AWARDS_EXTENT_COMPETED", "extentCompetedName"),
         ("SAM_CONTRACT_AWARDS_MIN_MAX_DOLLARS", "dollarsObligated"),
+        ("SAM_CONTRACT_AWARDS_MODIFICATION_NUMBER", "modificationNumber"),
     ):
         value = os.environ.get(env_name, "").strip()
         if value:
@@ -909,7 +1037,7 @@ def normalize_sam_contract_award_records(records: list[dict[str, object]]) -> li
     rows: list[dict[str, object]] = []
     for record in records:
         piid = first_text(record, "contractId.piid", "piid", "PIID", "awardDetails.contractId.piid", default="UNKNOWN")
-        modification_number = first_text(record, "contractId.modificationNumber", "modificationNumber", "Mod", "mod", default="0")
+        modification_number = first_text(record, "contractId.modificationNumber", "modificationNumber", "Modification Number", "Mod", "mod", default="0")
         transaction_number = first_text(record, "contractId.transactionNumber", "transactionNumber", default="")
         award_id = first_text(record, "awardId", "Award ID", "generated_internal_id", default=piid)
         if award_id == "UNKNOWN" and transaction_number:
@@ -921,6 +1049,8 @@ def normalize_sam_contract_award_records(records: list[dict[str, object]]) -> li
             "awardDetails.acquisitionData.typeOfContractPricing.name",
             "typeOfContractPricingName",
             "typeOfContractPricing",
+            "Type Of Contract Pricing",
+            "Type of Contract Pricing",
             default="",
         )
         number_of_offers = first_text(
@@ -930,6 +1060,8 @@ def normalize_sam_contract_award_records(records: list[dict[str, object]]) -> li
             "coreData.competitionInformation.numberOfOffersReceived",
             "coreData.competitionInformation.idvNumberOfOffersReceived",
             "numberOfOffersReceived",
+            "Number Of Offers Received",
+            "Number of Offers Received",
             "numberOfOffers",
             default="0",
         )
@@ -945,6 +1077,8 @@ def normalize_sam_contract_award_records(records: list[dict[str, object]]) -> li
                     "awardeeData.awardeeHeader.legalBusinessName",
                     "awardeeData.awardeeHeader.awardeeName",
                     "awardeeLegalBusinessName",
+                    "Awardee Legal Business Name",
+                    "Awardee Name",
                     "recipient",
                     default="Unknown recipient",
                 ),
@@ -953,6 +1087,7 @@ def normalize_sam_contract_award_records(records: list[dict[str, object]]) -> li
                     "coreData.federalOrganization.contractingInformation.contractingDepartment.name",
                     "awardDetails.federalOrganization.contractingInformation.contractingDepartment.name",
                     "contractingDepartmentName",
+                    "Contracting Department Name",
                     "contractId.subtier.name",
                     default="Unknown agency",
                 ),
@@ -961,10 +1096,11 @@ def normalize_sam_contract_award_records(records: list[dict[str, object]]) -> li
                     "coreData.federalOrganization.contractingInformation.contractingSubtier.name",
                     "awardDetails.federalOrganization.contractingInformation.contractingSubtier.name",
                     "contractingSubtierName",
+                    "Contracting Subtier Name",
                     "contractId.subtier.name",
                     default="Unknown agency",
                 ),
-                "awardType": first_text(record, "coreData.awardOrIDVType.name", "awardOrIDVTypeName", "awardType", default="contract"),
+                "awardType": first_text(record, "coreData.awardOrIDVType.name", "awardOrIDVTypeName", "Award or IDV Type", "awardType", default="contract"),
                 "amount": money_millions(first_text(
                     record,
                     "awardDetails.dollars.actionObligation",
@@ -974,6 +1110,7 @@ def normalize_sam_contract_award_records(records: list[dict[str, object]]) -> li
                     "awardDetails.totalContractDollars.totalActionObligation",
                     "dollarsObligated",
                     "actionObligation",
+                    "Action Obligation",
                     "totalDollarsObligated",
                     default="0",
                 )),
@@ -984,6 +1121,7 @@ def normalize_sam_contract_award_records(records: list[dict[str, object]]) -> li
                     "awardDetails.awardeeData.awardeeUEIInformation.uniqueEntityId",
                     "awardeeData.awardeeUEIInformation.uniqueEntityId",
                     "awardeeUEI",
+                    "Unique Entity ID",
                     "uei",
                     "UEI",
                     default="",
@@ -995,7 +1133,9 @@ def normalize_sam_contract_award_records(records: list[dict[str, object]]) -> li
                     "awardDetails.transactionData.approvedDate",
                     "coreData.dateSigned",
                     "dateSigned",
+                    "Date Signed",
                     "approvedDate",
+                    "Approved Date",
                     "actionDate",
                     default="",
                 ),
@@ -1019,6 +1159,7 @@ def sam_contract_awards_competition_type(record: dict[str, object]) -> str:
         "awardDetails.competitionInformation.extentCompetedForReferencedIdv.name",
         "coreData.competitionInformation.extentCompetedForReferencedIdv.name",
         "extentCompetedName",
+        "Extent Competed",
         "Competition Type",
         default="unknown",
     )

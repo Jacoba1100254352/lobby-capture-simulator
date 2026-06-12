@@ -1,0 +1,113 @@
+{
+  "limit": "10",
+  "offset": "null",
+  "totalRecords": "2",
+  "awardSummary": [
+    {
+      "contractId": {
+        "subtier": {
+          "code": "8000",
+          "name": "NATIONAL AERONAUTICS AND SPACE ADMINISTRATION"
+        },
+        "piid": "80GSFC24C0001",
+        "modificationNumber": "0",
+        "transactionNumber": "0"
+      },
+      "coreData": {
+        "awardOrIDVType": {
+          "name": "DEFINITIVE CONTRACT"
+        },
+        "federalOrganization": {
+          "contractingInformation": {
+            "contractingDepartment": {
+              "code": "8000",
+              "name": "NATIONAL AERONAUTICS AND SPACE ADMINISTRATION"
+            },
+            "contractingSubtier": {
+              "code": "8000",
+              "name": "NATIONAL AERONAUTICS AND SPACE ADMINISTRATION"
+            }
+          }
+        },
+        "acquisitionData": {
+          "typeOfContractPricing": {
+            "name": "FIRM FIXED PRICE"
+          }
+        },
+        "competitionInformation": {
+          "extentCompeted": {
+            "name": "FULL AND OPEN COMPETITION"
+          },
+          "numberOfOffersReceived": "4"
+        },
+        "dateSigned": "2024-02-02"
+      },
+      "awardDetails": {
+        "awardeeData": {
+          "awardeeHeader": {
+            "legalBusinessName": "EXAMPLE SPACE SYSTEMS INC"
+          },
+          "awardeeUEIInformation": {
+            "uniqueEntityId": "SPACEUEI12345"
+          }
+        },
+        "dollars": {
+          "actionObligation": "1250000"
+        }
+      }
+    },
+    {
+      "contractId": {
+        "subtier": {
+          "code": "8000",
+          "name": "NATIONAL AERONAUTICS AND SPACE ADMINISTRATION"
+        },
+        "piid": "80GSFC24C0001",
+        "modificationNumber": "P00002",
+        "transactionNumber": "2"
+      },
+      "coreData": {
+        "awardOrIDVType": {
+          "name": "DEFINITIVE CONTRACT"
+        },
+        "federalOrganization": {
+          "contractingInformation": {
+            "contractingDepartment": {
+              "code": "8000",
+              "name": "NATIONAL AERONAUTICS AND SPACE ADMINISTRATION"
+            },
+            "contractingSubtier": {
+              "code": "8000",
+              "name": "NATIONAL AERONAUTICS AND SPACE ADMINISTRATION"
+            }
+          }
+        },
+        "acquisitionData": {
+          "typeOfContractPricing": {
+            "name": "COST PLUS FIXED FEE"
+          }
+        },
+        "competitionInformation": {
+          "extentCompeted": {
+            "name": "NOT COMPETED"
+          },
+          "numberOfOffersReceived": "1"
+        },
+        "dateSigned": "2024-08-10"
+      },
+      "awardDetails": {
+        "awardeeData": {
+          "awardeeHeader": {
+            "legalBusinessName": "EXAMPLE SPACE SYSTEMS INC"
+          },
+          "awardeeUEIInformation": {
+            "uniqueEntityId": "SPACEUEI12345"
+          }
+        },
+        "dollars": {
+          "actionObligation": "250000"
+        }
+      }
+    }
+  ]
+}

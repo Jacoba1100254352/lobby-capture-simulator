@@ -61,7 +61,7 @@ SOURCES = {
     "sam-contract-awards": {
         "input": RAW / "sam-contract-awards.csv",
         "description": "Optional SAM.gov Contract Awards action panel for PIID/UEI, competition, modification, award-date, and contracting-department diagnostics; kept separate from USAspending action rows so procurement provenance remains auditable.",
-        "request": "SAM_CONTRACT_AWARDS_SOURCE_NATIVE=1 SAM_API_KEY=... python3 scripts/fetch-source-data.py sam-contract-awards --output data/raw/sam-contract-awards.csv",
+        "request": "SAM_CONTRACT_AWARDS_SOURCE_NATIVE=1 SAM_CONTRACT_AWARDS_EXTRACT_MODE=1 SAM_API_KEY=... python3 scripts/fetch-source-data.py sam-contract-awards --output data/raw/sam-contract-awards.csv",
     },
     "revolving-door": {
         "input": RAW / "revolving-door.csv",

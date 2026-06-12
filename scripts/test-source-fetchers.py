@@ -334,6 +334,61 @@ def assert_sam_contract_awards(fetchers) -> None:
     os.environ["SAM_CONTRACT_AWARDS_AGENCIES"] = "General Services Administration"
     assert fetchers.sam_contract_awards_filters() == [("contractingDepartmentName", "General Services Administration")]
     os.environ.pop("SAM_CONTRACT_AWARDS_AGENCIES", None)
+    for name in (
+        "SAM_CONTRACT_AWARDS_EXTRACT_MODE",
+        "SAM_CONTRACT_AWARDS_EXTRACT_FORMAT",
+        "SAM_CONTRACT_AWARDS_FORMAT",
+        "SAM_CONTRACT_AWARDS_EXTRACT_EMAIL_ID",
+    ):
+        os.environ.pop(name, None)
+    assert fetchers.sam_contract_awards_extract_mode() is False
+    os.environ["SAM_CONTRACT_AWARDS_EXTRACT_MODE"] = "1"
+    assert fetchers.sam_contract_awards_extract_mode() is True
+    assert fetchers.sam_contract_awards_extract_format() == "json"
+    os.environ["SAM_CONTRACT_AWARDS_EXTRACT_FORMAT"] = "csv"
+    os.environ["SAM_CONTRACT_AWARDS_EXTRACT_EMAIL_ID"] = "yes"
+    os.environ["SAM_CONTRACT_AWARDS_MODIFICATION_NUMBER"] = "0"
+    params = fetchers.sam_contract_awards_extract_params("KEY", "csv")
+    assert params["api_key"] == "KEY", params
+    assert params["format"] == "csv", params
+    assert params["emailId"] == "yes", params
+    assert params["modificationNumber"] == "0", params
+    assert "limit" not in params, params
+    token_payload = read_json("sam-contract-awards-extract-token.json")
+    download_url = fetchers.sam_contract_awards_download_url(token_payload, "KEY WITH SPACE")
+    assert "REPLACE_WITH_API_KEY" not in download_url, download_url
+    assert "KEY+WITH+SPACE" in download_url, download_url
+    extract_payload = read_json("sam-contract-awards-extract-response.json")
+    extract_records = fetchers.sam_contract_award_records(extract_payload)
+    assert len(extract_records) == 2, extract_records
+    extract_rows = fetchers.normalize_sam_contract_award_records(extract_records)
+    assert extract_rows[0]["awardId"] == "80GSFC24C0001", extract_rows[0]
+    assert extract_rows[0]["amount"] == 1.25, extract_rows[0]
+    assert extract_rows[1]["modificationNumber"] == "P00002", extract_rows[1]
+    assert extract_rows[1]["exPostModification"] == "true", extract_rows[1]
+    csv_records = fetchers.sam_contract_awards_records_from_csv_or_message(
+        "\n".join(
+            [
+                "PIID,Modification Number,Awardee Legal Business Name,Contracting Department Name,Contracting Subtier Name,Award or IDV Type,Action Obligation,Unique Entity ID,Date Signed,Extent Competed,Number Of Offers Received,Type Of Contract Pricing",
+                "68HERH24C0002,P00003,CSV CONTRACTOR LLC,ENVIRONMENTAL PROTECTION AGENCY,ENVIRONMENTAL PROTECTION AGENCY,DEFINITIVE CONTRACT,750000,CSVUEI123456,2024-09-01,NOT COMPETED,1,FIRM FIXED PRICE",
+            ]
+        )
+    )
+    csv_rows = fetchers.normalize_sam_contract_award_records(csv_records)
+    assert csv_rows[0]["recipient"] == "CSV CONTRACTOR LLC", csv_rows[0]
+    assert csv_rows[0]["amount"] == 0.75, csv_rows[0]
+    assert csv_rows[0]["competitionType"] == "NOT COMPETED", csv_rows[0]
+    assert csv_rows[0]["numberOfOffers"] == "1", csv_rows[0]
+    assert csv_rows[0]["exPostModification"] == "true", csv_rows[0]
+    assert fetchers.sam_contract_awards_extract_message('{"message":"File generation is in progress."}') == "File generation is in progress."
+    for name in (
+        "SAM_CONTRACT_AWARDS_EXTRACT_MODE",
+        "SAM_CONTRACT_AWARDS_EXTRACT_FORMAT",
+        "SAM_CONTRACT_AWARDS_FORMAT",
+        "SAM_CONTRACT_AWARDS_EXTRACT_EMAIL_ID",
+        "SAM_CONTRACT_AWARDS_MODIFICATION_NUMBER",
+    ):
+        os.environ.pop(name, None)
     rows = fetchers.normalize_sam_contract_award_records(records)
     assert rows[0] == {
         "awardId": "68HERH24F0001",

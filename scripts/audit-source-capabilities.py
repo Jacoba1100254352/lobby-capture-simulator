@@ -45,8 +45,9 @@ CAPABILITIES = [
         "implementedRoute": (
             "optional SAM.gov Contract Awards importer behind "
             "SAM_CONTRACT_AWARDS_SOURCE_NATIVE=1 and SAM_API_KEY; supports "
-            "department-code and PIID-subtier filters plus "
-            "non-adjacent offset page-index strata through SAM_CONTRACT_AWARDS_OFFSET_STARTS"
+            "synchronous page fetches or SAM_CONTRACT_AWARDS_EXTRACT_MODE extract downloads, "
+            "department-code and PIID-subtier filters, plus non-adjacent offset page-index "
+            "strata through SAM_CONTRACT_AWARDS_OFFSET_STARTS for synchronous runs"
         ),
         "snapshotSource": "sam-contract-awards",
         "panel": "Procurement modification risk",
@@ -214,8 +215,9 @@ def snapshot_plan(capability: str, live_status: dict[str, str], row_count: int) 
             return "SAM.gov Contract Awards rows are present, but the live status note is missing."
         return (
             "Not active in the committed snapshot. Enable SAM_CONTRACT_AWARDS_SOURCE_NATIVE=1 "
-            "with SAM_API_KEY; use department-code or PIID-subtier filters plus "
-            "SAM_CONTRACT_AWARDS_OFFSET_STARTS for non-adjacent page-index slices."
+            "with SAM_API_KEY; use SAM_CONTRACT_AWARDS_EXTRACT_MODE=1 for asynchronous "
+            "extracts or department-code/PIID-subtier filters plus SAM_CONTRACT_AWARDS_OFFSET_STARTS "
+            "for synchronous non-adjacent page-index slices."
         )
     if note:
         return note
