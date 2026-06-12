@@ -27,15 +27,16 @@ CAPABILITIES = [
         "mechanism": "Direct hidden-donor or nonprofit-routing evidence",
         "implementedRoute": (
             "configured DARK_MONEY_LIVE_CSV/DARK_MONEY_LIVE_URL; "
-            "source-native IRS EO BMF is an opaque-capacity proxy"
+            "source-native ProPublica Nonprofit Explorer Schedule I grant-routing; "
+            "IRS EO BMF remains an opaque-capacity proxy"
         ),
         "snapshotSource": "dark-money",
         "panel": "Direct dark money",
         "neededFor": "Hidden-channel magnitude and calibrated policy-simulation claims",
         "nextAction": (
-            "Add curated direct dark-money, nonprofit-routing, or hidden-donor source rows "
-            "and keep them separate from Schedule E, electioneering, communication-cost, "
-            "and IRS BMF capacity proxies."
+            "Broaden nonprofit-routing beyond the bounded top-EIN Schedule I slice and keep "
+            "these transfer rows separate from Schedule E, electioneering, communication-cost, "
+            "IRS BMF capacity proxies, and hidden-donor identity claims."
         ),
     },
     {
@@ -185,6 +186,8 @@ def classify_capability(
     if capability == "direct-dark-money-routing":
         if panel_status == "usable":
             return "active-usable"
+        if panel_status == "thin":
+            return "active-bounded"
         if row_count > 0:
             return "proxy-only"
         return panel_status or "missing"

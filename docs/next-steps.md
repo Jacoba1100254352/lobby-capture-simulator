@@ -58,9 +58,9 @@ The latest key-backed live run now completes the LDA, six-committee OpenFEC, Sch
 
 Deliverables:
 
-- add direct dark-money identifiers and lobbyist-bundling rows rather than treating Schedule E, electioneering, communication-cost, or IRS opaque-capacity proxy rows as observed hidden-donor routing;
+- add hidden-donor identity evidence and lobbyist-bundling rows rather than treating Schedule E, electioneering, communication-cost, IRS opaque-capacity proxy rows, or public Schedule I nonprofit-transfer rows as observed hidden-donor routing;
 - broaden the public-financing bridge from NYC matching-fund and Seattle voucher rows into representative federal, state, and additional local voucher and matching-fund source panels;
-- broaden the IRS 8871/8872 bridge beyond the default A-G Form 8872 slice and add TEOS/Form 990 XML rows for 501(c)(4)s, 501(c)(6)s, think tanks, associations, and nonprofit intermediaries;
+- broaden the IRS 8871/8872 bridge beyond the default A-G Form 8872 slice and expand TEOS/Form 990 coverage beyond the bounded top-EIN Schedule I importer for 501(c)(4)s, 501(c)(6)s, think tanks, associations, and nonprofit intermediaries;
 - add FACA, House witness disclosure, and OGE panels for sponsored-expert, advisory-committee, and official-access bridges;
 - expand the LDA-derived revolving-door bridge with documented post-employment movement, advisory-committee, witness, OGE, or licensed personnel panels;
 - preserve raw source payloads outside git if they are too large;
@@ -70,7 +70,7 @@ Deliverables:
 
 ## 3. Broaden SAM/FPDS, revolving-door, and intermediary source panels
 
-The source-moment layer now covers LDA, OpenFEC party/Schedule E/electioneering/communication-cost rows, regulatory dockets, USAspending award, multi-agency bridge, and stratified action-panel fields, an optional SAM.gov Contract Awards procurement-action importer, public-financing bridge rows, and LDA-derived covered-position rows. Procurement modification, non-proxy direct dark-money routing, intermediary, electoral-communication, and revolving-door validation still need richer representative data before the model can claim calibrated national hidden-channel magnitudes.
+The source-moment layer now covers LDA, OpenFEC party/Schedule E/electioneering/communication-cost rows, regulatory dockets, USAspending award, multi-agency bridge, and stratified action-panel fields, an optional SAM.gov Contract Awards procurement-action importer, public-financing bridge rows, bounded ProPublica/IRS Schedule I nonprofit-routing rows, and LDA-derived covered-position rows. Procurement modification, hidden-donor identity, representative nonprofit/intermediary routing, electoral-communication, and revolving-door validation still need richer representative data before the model can claim calibrated national hidden-channel magnitudes.
 
 Deliverables:
 

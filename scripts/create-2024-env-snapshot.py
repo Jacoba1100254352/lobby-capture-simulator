@@ -35,8 +35,8 @@ SOURCES = {
     },
     "dark-money": {
         "input": RAW / "dark-money.csv",
-        "description": "Explicit dark-money rows from a configured source export or IRS EO BMF 501(c)(4)/(c)(6) opaque-capacity proxy rows; donor identities remain unobserved.",
-        "request": "DARK_MONEY_SOURCE_NATIVE=1 python3 scripts/fetch-source-data.py irs-dark-money-capacity --output data/raw/dark-money.csv or DARK_MONEY_LIVE_CSV=/path/to/export.csv ./scripts/fetch-dark-money.sh --live",
+        "description": "Explicit dark-money rows from a configured source export, ProPublica/IRS Form 990 Schedule I nonprofit-routing rows, or IRS EO BMF 501(c)(4)/(c)(6) opaque-capacity proxy rows; donor identities remain unobserved.",
+        "request": "DARK_MONEY_SOURCE_NATIVE=1 python3 scripts/fetch-source-data.py irs-dark-money-capacity --output data/raw/dark-money.csv followed by PROPUBLICA_NONPROFIT_ROUTING_SOURCE_NATIVE=1 python3 scripts/fetch-source-data.py propublica-nonprofit-routing --output /tmp/propublica-nonprofit-routing.csv and append, or DARK_MONEY_LIVE_CSV=/path/to/export.csv ./scripts/fetch-dark-money.sh --live",
     },
     "regulatory": {
         "input": RAW / "regulatory-dockets.csv",
@@ -249,7 +249,7 @@ def write_readme(root: Path, entries: list[dict[str, object]]) -> None:
         "- Outside-spending bridge: OpenFEC Schedule E independent expenditures.",
         "- Electoral-communication bridge: OpenFEC electioneering communications and communication-cost rows when available.",
         "- Public-financing bridge: NYC CFB public-funds payments, Seattle Democracy Voucher rows, or configured program export rows carried as a separate bridge panel.",
-        "- Dark-money bridge: configured source export rows or IRS EO BMF 501(c)(4)/(c)(6) opaque-capacity proxy rows; super PAC rows remain separate.",
+        "- Dark-money bridge: configured source export rows, ProPublica/IRS Form 990 Schedule I nonprofit-routing transfer rows, or IRS EO BMF 501(c)(4)/(c)(6) opaque-capacity proxy rows; super PAC rows remain separate and nonprofit-routing rows do not identify underlying donors.",
         "- USAspending fiscal year: 2024, Environmental Protection Agency awards.",
         "- USAspending procurement bridge: multi-agency fiscal-year 2024 top-award rows for high-value procurement diagnostics, kept separate from the EPA calibration slice and action-panel denominator.",
         "- USAspending procurement actions: stratified 12-agency quarterly transaction/action rows for concentration and modification-incidence diagnostics when present, combining initial-action and high-value transaction strata and kept separate from award rows and top-award bridge rows.",

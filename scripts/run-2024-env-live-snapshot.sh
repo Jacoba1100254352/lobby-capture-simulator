@@ -163,7 +163,22 @@ elif [ "${DARK_MONEY_SOURCE_NATIVE:-1}" = "1" ]; then
     IRS_DARK_MONEY_CAPACITY_MAX_ROWS="${IRS_DARK_MONEY_CAPACITY_MAX_ROWS:-800}" \
     IRS_DARK_MONEY_CAPACITY_OUTPUT_ROWS="${IRS_DARK_MONEY_CAPACITY_OUTPUT_ROWS:-250}" \
       python3 scripts/fetch-source-data.py irs-dark-money-capacity --output data/raw/dark-money.csv; then
-    printf "dark-money,ok,normalized IRS EO BMF opaque-capacity proxy rows written\n" >> "$status_file"
+    dark_money_notes="normalized IRS EO BMF opaque-capacity proxy rows written"
+    if [ "${PROPUBLICA_NONPROFIT_ROUTING_SOURCE_NATIVE:-1}" = "1" ]; then
+      if SOURCE_RAW_DIR="$raw_dir/propublica-nonprofit-routing" \
+        PROPUBLICA_NONPROFIT_ROUTING_INPUT="${PROPUBLICA_NONPROFIT_ROUTING_INPUT:-data/raw/dark-money.csv}" \
+        PROPUBLICA_NONPROFIT_ROUTING_MAX_ORGS="${PROPUBLICA_NONPROFIT_ROUTING_MAX_ORGS:-12}" \
+        PROPUBLICA_NONPROFIT_ROUTING_OUTPUT_ROWS="${PROPUBLICA_NONPROFIT_ROUTING_OUTPUT_ROWS:-80}" \
+          python3 scripts/fetch-source-data.py propublica-nonprofit-routing --output "$tmpdir/propublica-nonprofit-routing.csv"; then
+        append_csv "$tmpdir/propublica-nonprofit-routing.csv" data/raw/dark-money.csv
+        dark_money_notes="${dark_money_notes}; ProPublica Nonprofit Explorer Schedule I nonprofit-routing rows appended"
+      else
+        dark_money_notes="${dark_money_notes}; ProPublica Nonprofit Explorer Schedule I nonprofit-routing request failed"
+      fi
+    else
+      dark_money_notes="${dark_money_notes}; ProPublica Nonprofit Explorer Schedule I nonprofit-routing disabled"
+    fi
+    printf "dark-money,ok,%s\n" "$dark_money_notes" >> "$status_file"
   else
     printf "dark-money,unavailable,IRS EO BMF opaque-capacity request failed; no dark-money bridge rows written\n" >> "$status_file"
   fi

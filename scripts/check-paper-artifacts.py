@@ -50,7 +50,7 @@ CLAIM_SOURCE_DEPENDENCY_MD = ROOT / "reports" / "claim-source-dependency.md"
 CLAIM_SOURCE_DEPENDENCY_CSV = ROOT / "reports" / "claim-source-dependency.csv"
 CLAIM_POSTURE_AUDIT_MD = ROOT / "reports" / "claim-posture-audit.md"
 CLAIM_POSTURE_AUDIT_CSV = ROOT / "reports" / "claim-posture-audit.csv"
-RELEASE_TAG = "paper-publication-readiness-2026-06-12-r52"
+RELEASE_TAG = "paper-publication-readiness-2026-06-12-r53"
 CITATION_CFF = ROOT / "CITATION.cff"
 ZENODO_JSON = ROOT / ".zenodo.json"
 FORBIDDEN_LOCAL_ARTIFACTS = [
@@ -488,9 +488,9 @@ def check_source_capability_audit() -> list[str]:
     if missing_capabilities:
         return failures
 
-    if rows["direct-dark-money-routing"].get("capabilityStatus") != "proxy-only":
+    if rows["direct-dark-money-routing"].get("capabilityStatus") != "active-usable":
         failures.append(
-            "direct dark-money capability should remain proxy-only until direct source-routing rows are present"
+            "direct dark-money capability should be active-usable after the Schedule I nonprofit-routing bridge is present"
         )
     if rows["sam-contract-awards-action-history"].get("capabilityStatus") not in {
         "implemented-not-active",
@@ -535,6 +535,7 @@ def check_dark_money_bridge_audit() -> list[str]:
         rows = {row.get("source", ""): row for row in csv.DictReader(source)}
     required = {
         "dark-money-capacity-proxy",
+        "propublica-nonprofit-routing",
         "openfec-super-pac",
         "openfec-electoral-communications",
         "irs-527-political-organizations",
@@ -558,6 +559,11 @@ def check_dark_money_bridge_audit() -> list[str]:
         failures.append(
             "dark-money bridge audit should not promote capacity proxies as direct hidden-donor routing"
         )
+    nonprofit_routing = rows["propublica-nonprofit-routing"]
+    if int(float(nonprofit_routing.get("directRoutingRows", "0") or "0")) <= 0:
+        failures.append("dark-money bridge audit should include Schedule I nonprofit-routing rows")
+    if "not donor identity evidence" not in nonprofit_routing.get("claimBoundary", ""):
+        failures.append("Schedule I nonprofit-routing rows must not be promoted as donor identity evidence")
     if int(float(rows["openfec-super-pac"].get("rows", "0") or "0")) <= 0:
         failures.append("dark-money bridge audit should include adjacent OpenFEC Super PAC rows")
     if int(float(rows["openfec-electoral-communications"].get("rows", "0") or "0")) <= 0:
@@ -569,8 +575,9 @@ def check_dark_money_bridge_audit() -> list[str]:
     text = DARK_MONEY_BRIDGE_AUDIT_MD.read_text(encoding="utf-8")
     required_text = [
         "Dark-Money Bridge Audit",
-        "0 direct hidden-donor routing rows",
-        "not hidden-donor routing",
+        "non-proxy nonprofit-routing",
+        "zero observed hidden-donor identity rows",
+        "not donor identity evidence",
     ]
     for phrase in required_text:
         if phrase not in text:
@@ -994,6 +1001,8 @@ def check_claim_source_dependency_audit() -> list[str]:
         failures.append("lobbying disclosure source dependency should be cleared")
     if rows["rulemaking-comment-record"].get("status") != "cleared":
         failures.append("rulemaking comment source dependency should be cleared")
+    if rows["hidden-channel-magnitude"].get("status") != "bounded":
+        failures.append("hidden-channel magnitude source dependency should stay bounded until donor identities and representative routing coverage exist")
     if weak_panels:
         bounded_expected = set()
         if "Direct dark money" in weak_panel_names or "Revolving door" in weak_panel_names:
@@ -1004,7 +1013,6 @@ def check_claim_source_dependency_audit() -> list[str]:
             if rows[claim].get("status") != "bounded":
                 failures.append(f"claim-source dependency should be bounded while weak panels remain: {claim}")
         not_cleared_expected = {
-            "hidden-channel-magnitude",
             "procurement-modification-capture",
             "calibrated-policy-simulation",
         }

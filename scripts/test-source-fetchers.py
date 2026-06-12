@@ -4,6 +4,7 @@
 from __future__ import annotations
 
 import importlib.util
+import gzip
 import json
 import os
 from pathlib import Path
@@ -28,6 +29,7 @@ def main() -> int:
     assert_nyc_intermediaries(fetchers)
     assert_irs_eo_bmf(fetchers)
     assert_irs_dark_money_capacity(fetchers)
+    assert_propublica_nonprofit_routing(fetchers)
     assert_irs_527(fetchers)
     assert fetchers.redact_url("https://example.test/path?api_key=SECRET&x=1").endswith("api_key=REDACTED&x=1")
     print("Source-native parser fixture tests passed.")
@@ -479,6 +481,41 @@ def assert_irs_dark_money_capacity(fetchers) -> None:
     ], rows
 
 
+def assert_propublica_nonprofit_routing(fetchers) -> None:
+    html = read_text("propublica-schedule-i.html")
+    assert fetchers.decode_response_text(gzip.compress(html.encode("utf-8")), "gzip") == html
+    organization = {
+        "name": "Example Policy Association",
+        "ein": "123456789",
+        "subsection_code": "6",
+        "tax_period": "202412",
+    }
+    rows = fetchers.normalize_propublica_schedule_i_rows(
+        organization,
+        html,
+        "https://projects.propublica.org/nonprofits/full_text/202499999999999999/IRS990ScheduleI",
+    )
+    assert rows == [
+        {
+            "source": "Example Policy Association",
+            "recipient": "Example Research Institute",
+            "issueDomain": "technology",
+            "amount": 0.12,
+            "flowType": "DARK_MONEY",
+            "traceability": 0.08,
+            "largeDonorShare": 0.58,
+            "sourceRecordId": "123456789-202412-schedule-i-1",
+            "sourceUrl": "https://projects.propublica.org/nonprofits/full_text/202499999999999999/IRS990ScheduleI",
+            "committeeType": "501(c)(6) Schedule I nonprofit routing",
+            "spendingPurpose": "TECHNOLOGY POLICY RESEARCH",
+            "supportOppose": "",
+            "disclosureLag": 0.48,
+        }
+    ], rows
+    assert fetchers.propublica_recipient_is_specific("SEE ATTACHED SCHEDULE") is False
+    assert fetchers.propublica_recipient_is_specific("Example Research Institute") is True
+
+
 def assert_irs_527(fetchers) -> None:
     os.environ["IRS_POFD_OUTPUT_ROWS"] = "10"
     source_rows = [
@@ -547,6 +584,10 @@ def assert_irs_527(fetchers) -> None:
 def read_json(name: str):
     with (FIXTURES / name).open(encoding="utf-8") as source:
         return json.load(source)
+
+
+def read_text(name: str) -> str:
+    return (FIXTURES / name).read_text(encoding="utf-8")
 
 
 def write_minimal_xlsx(destination, sheet_name: str, rows: list[list[str]]) -> None:

@@ -5,6 +5,7 @@ from __future__ import annotations
 
 import argparse
 import csv
+import gzip
 import hashlib
 import html
 from io import StringIO
@@ -18,6 +19,7 @@ import sys
 import time
 import tempfile
 import zipfile
+import zlib
 from http.client import RemoteDisconnected
 from datetime import date, datetime
 from pathlib import Path
@@ -78,6 +80,9 @@ def main() -> int:
     irs_dark_money_capacity = subparsers.add_parser("irs-dark-money-capacity", help="Fetch IRS EO BMF 501(c)(4)/(c)(6) opaque-capacity proxy rows.")
     irs_dark_money_capacity.add_argument("--output", type=Path, default=Path("data/raw/dark-money.csv"))
 
+    propublica_nonprofit_routing = subparsers.add_parser("propublica-nonprofit-routing", help="Fetch ProPublica Nonprofit Explorer Form 990 Schedule I grant-routing rows.")
+    propublica_nonprofit_routing.add_argument("--output", type=Path, default=Path("data/raw/dark-money.csv"))
+
     irs_527 = subparsers.add_parser("irs-527", help="Fetch IRS POFD Form 8872 political-organization rows.")
     irs_527.add_argument("--output", type=Path, default=Path("data/raw/intermediaries.csv"))
 
@@ -106,6 +111,8 @@ def main() -> int:
         return fetch_irs_eo_bmf(args.output)
     if args.kind == "irs-dark-money-capacity":
         return fetch_irs_dark_money_capacity(args.output)
+    if args.kind == "propublica-nonprofit-routing":
+        return fetch_propublica_nonprofit_routing(args.output)
     if args.kind == "irs-527":
         return fetch_irs_527(args.output)
     raise AssertionError(args.kind)
@@ -1553,6 +1560,206 @@ def normalize_irs_dark_money_capacity_records(source_rows: list[dict[str, str]])
     return rows[: int_env("IRS_DARK_MONEY_CAPACITY_OUTPUT_ROWS", 250, 1, 5000)]
 
 
+PROPUBLICA_NONPROFIT_API_BASE = "https://projects.propublica.org/nonprofits/api/v2"
+PROPUBLICA_NONPROFIT_PUBLIC_BASE = "https://projects.propublica.org/nonprofits"
+
+
+def fetch_propublica_nonprofit_routing(output: Path) -> int:
+    rows = propublica_nonprofit_routing_rows()
+    write_rows(output, FEC_FIELDS, rows, "ProPublica Nonprofit Explorer Schedule I routing rows")
+    return 0
+
+
+def propublica_nonprofit_routing_rows() -> list[dict[str, object]]:
+    api_base = os.environ.get("PROPUBLICA_NONPROFIT_API_BASE", PROPUBLICA_NONPROFIT_API_BASE).rstrip("/")
+    public_base = os.environ.get("PROPUBLICA_NONPROFIT_PUBLIC_BASE", PROPUBLICA_NONPROFIT_PUBLIC_BASE).rstrip("/")
+    rows: list[dict[str, object]] = []
+    max_rows = int_env("PROPUBLICA_NONPROFIT_ROUTING_OUTPUT_ROWS", 100, 1, 5000)
+    for ein in propublica_nonprofit_routing_eins():
+        if len(rows) >= max_rows:
+            break
+        organization_payload = get_json(f"{api_base}/organizations/{ein}.json")
+        if not isinstance(organization_payload, dict):
+            continue
+        organization = organization_payload.get("organization")
+        if not isinstance(organization, dict):
+            continue
+        if not propublica_organization_allowed(organization):
+            continue
+        object_id = first_text(organization, "latest_object_id", default="")
+        if not object_id:
+            continue
+        schedule_url = f"{public_base}/full_text/{object_id}/IRS990ScheduleI"
+        try:
+            schedule_html = get_text(schedule_url, {"Accept": "text/html"})
+        except SystemExit:
+            if os.environ.get("PROPUBLICA_NONPROFIT_ROUTING_STRICT", "0") == "1":
+                raise
+            continue
+        rows.extend(normalize_propublica_schedule_i_rows(organization, schedule_html, schedule_url))
+    rows.sort(key=lambda row: (float(row["amount"]), str(row["source"]), str(row["recipient"])), reverse=True)
+    return rows[:max_rows]
+
+
+def propublica_nonprofit_routing_eins() -> list[str]:
+    explicit = split_csv_env("PROPUBLICA_NONPROFIT_ROUTING_EINS", "")
+    if explicit:
+        return [normalize_ein(ein) for ein in explicit if normalize_ein(ein)]
+    input_path = Path(os.environ.get("PROPUBLICA_NONPROFIT_ROUTING_INPUT", "data/raw/dark-money.csv"))
+    rows = read_csv_rows(input_path)
+    rows.sort(key=lambda row: number_for_sort(row.get("amount", "")), reverse=True)
+    max_orgs = int_env("PROPUBLICA_NONPROFIT_ROUTING_MAX_ORGS", 12, 1, 250)
+    eins: list[str] = []
+    seen: set[str] = set()
+    for row in rows:
+        ein = normalize_ein(row.get("sourceRecordId", ""))
+        if not ein or ein in seen:
+            continue
+        if is_dark_money_capacity_proxy(row):
+            seen.add(ein)
+            eins.append(ein)
+        if len(eins) >= max_orgs:
+            break
+    return eins
+
+
+def read_csv_rows(path: Path) -> list[dict[str, str]]:
+    if not path.exists():
+        return []
+    with path.open(newline="", encoding="utf-8") as source:
+        return list(csv.DictReader(source))
+
+
+def number_for_sort(value: object) -> float:
+    try:
+        return float(str(value).replace(",", "").strip())
+    except ValueError:
+        return 0.0
+
+
+def is_dark_money_capacity_proxy(row: dict[str, str]) -> bool:
+    text = " ".join(
+        [
+            row.get("committeeType", ""),
+            row.get("spendingPurpose", ""),
+            row.get("sourceUrl", ""),
+        ]
+    ).lower()
+    return "capacity proxy" in text or ("eo_" in text and "irs-soi" in text)
+
+
+def normalize_ein(value: str) -> str:
+    digits = "".join(character for character in value if character.isdigit())
+    return digits if len(digits) == 9 else ""
+
+
+def propublica_organization_allowed(organization: dict[str, object]) -> bool:
+    allowed = {normalize_subsection(value) for value in split_csv_env("PROPUBLICA_NONPROFIT_ROUTING_SUBSECTIONS", "04,06")}
+    subsection = normalize_subsection(first_text(organization, "subsection_code", "subseccd", default=""))
+    return not allowed or subsection in allowed
+
+
+def normalize_propublica_schedule_i_rows(
+        organization: dict[str, object],
+        schedule_html: str,
+        schedule_url: str,
+) -> list[dict[str, object]]:
+    recipient_tables: dict[int, dict[str, str]] = {}
+    for match in re.finditer(r'id="([^"]*RecipientTable\[(\d+)\][^"]*)"[^>]*>(.*?)</span>', schedule_html, flags=re.IGNORECASE | re.DOTALL):
+        path, index_text, raw_value = match.groups()
+        value = clean_html_cell(raw_value)
+        if not value:
+            continue
+        field = propublica_schedule_i_field(path)
+        if not field:
+            continue
+        recipient_tables.setdefault(int(index_text), {})[field] = value
+    rows: list[dict[str, object]] = []
+    source = first_text(organization, "name", default="Unknown nonprofit")
+    source_ein = normalize_ein(first_text(organization, "ein", default=""))
+    subsection = irs_subsection_label(first_text(organization, "subsection_code", "subseccd", default=""))
+    tax_period = first_text(organization, "tax_period", default="")
+    for index in sorted(recipient_tables):
+        record = recipient_tables[index]
+        recipient = record.get("recipient", "").strip()
+        amount = money_millions(record.get("cashGrant", "0"))
+        if amount <= 0.0 or not propublica_recipient_is_specific(recipient):
+            continue
+        rows.append(
+            {
+                "source": source,
+                "recipient": recipient,
+                "issueDomain": classify_domain(" ".join([source, recipient, record.get("purpose", ""), record.get("ircSection", "")])),
+                "amount": amount,
+                "flowType": "DARK_MONEY",
+                "traceability": propublica_nonprofit_routing_traceability(subsection),
+                "largeDonorShare": propublica_nonprofit_routing_large_donor_share(subsection),
+                "sourceRecordId": "-".join(part for part in [source_ein, tax_period, f"schedule-i-{index}"] if part),
+                "sourceUrl": schedule_url,
+                "committeeType": f"{subsection} Schedule I nonprofit routing",
+                "spendingPurpose": record.get("purpose", "reported Form 990 Schedule I grant"),
+                "supportOppose": "",
+                "disclosureLag": 0.48,
+            }
+        )
+    return rows
+
+
+def propublica_schedule_i_field(path: str) -> str:
+    if "RecipientBusinessName" in path and "BusinessNameLine1Txt" in path:
+        return "recipient"
+    if "RecipientEIN" in path:
+        return "recipientEin"
+    if "IRCSectionDesc" in path:
+        return "ircSection"
+    if "CashGrantAmt" in path:
+        return "cashGrant"
+    if "NonCashAssistanceAmt" in path:
+        return "noncashAssistance"
+    if "PurposeOfGrantTxt" in path or "PurposeOfGrantOrAssistanceDesc" in path:
+        return "purpose"
+    return ""
+
+
+def clean_html_cell(raw_value: str) -> str:
+    text = html.unescape(re.sub(r"<[^>]+>", " ", raw_value))
+    text = text.replace("\xa0", " ")
+    return re.sub(r"\s+", " ", text).strip()
+
+
+def propublica_recipient_is_specific(recipient: str) -> bool:
+    normalized = re.sub(r"[^a-z0-9]+", " ", recipient.lower()).strip()
+    if not normalized:
+        return False
+    generic = {
+        "see attached schedule",
+        "see schedule",
+        "attached schedule",
+        "various",
+        "various recipients",
+        "miscellaneous",
+    }
+    return normalized not in generic
+
+
+def propublica_nonprofit_routing_traceability(subsection: str) -> float:
+    code = normalize_subsection(subsection)
+    if code == "04":
+        return 0.06
+    if code == "06":
+        return 0.08
+    return 0.07
+
+
+def propublica_nonprofit_routing_large_donor_share(subsection: str) -> float:
+    code = normalize_subsection(subsection)
+    if code == "04":
+        return 0.68
+    if code == "06":
+        return 0.58
+    return 0.62
+
+
 IRS_POFD_DOWNLOAD_BASE = "https://forms.irs.gov/app/pod/dataDownload"
 IRS_POFD_FILE_ENDPOINTS = {
     "FULL": "fullData",
@@ -2455,7 +2662,8 @@ def fetch_url_text_child(
         socket.setdefaulttimeout(timeout)
         request = Request(url, data=body, headers=headers, method=method)
         with urlopen(request, timeout=timeout) as response:
-            text = response.read().decode("utf-8")
+            data = response.read()
+            text = decode_response_text(data, response.headers.get("Content-Encoding", ""))
         Path(output_name).write_text(text, encoding="utf-8")
         result_queue.put({"status": "ok"})
     except HTTPError as error:
@@ -2466,6 +2674,15 @@ def fetch_url_text_child(
         result_queue.put({"status": "error", "type": type(error).__name__, "reason": str(reason)})
     finally:
         socket.setdefaulttimeout(previous_timeout)
+
+
+def decode_response_text(data: bytes, content_encoding: str = "") -> str:
+    encoding = content_encoding.lower()
+    if "gzip" in encoding or data.startswith(b"\x1f\x8b"):
+        data = gzip.decompress(data)
+    elif "deflate" in encoding:
+        data = zlib.decompress(data)
+    return data.decode("utf-8", errors="replace")
 
 
 def first_text(record: dict[str, object], *paths: str, default: str = "") -> str:

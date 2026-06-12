@@ -1,10 +1,11 @@
 #!/usr/bin/env python3
 """Audit the dark-money bridge and adjacent hidden-channel source rows.
 
-The paper uses public rows to bound hidden-channel mechanisms, but the current
-snapshot does not observe hidden donor routing directly. This report makes that
-boundary explicit by separating IRS EO BMF opaque-capacity proxy rows from
-OpenFEC outside-spending rows, electoral-communication rows, and IRS 527 rows.
+The paper uses public rows to bound hidden-channel mechanisms, but public
+nonprofit filings do not reveal underlying donor identities. This report makes
+that boundary explicit by separating IRS EO BMF opaque-capacity proxy rows,
+ProPublica/IRS Schedule I nonprofit-routing rows, OpenFEC outside-spending
+rows, electoral-communication rows, and IRS 527 rows.
 """
 
 from __future__ import annotations
@@ -29,6 +30,8 @@ def main() -> int:
     normalized = args.snapshot / "normalized"
     statuses = read_live_status(args.snapshot / LIVE_STATUS.name)
     dark_rows = read_rows(normalized / "dark-money.csv")
+    capacity_rows = [row for row in dark_rows if is_capacity_proxy(row)]
+    nonprofit_routing_rows = [row for row in dark_rows if is_direct_hidden_routing(row)]
     fec_rows = read_rows(normalized / "fec-campaign-finance.csv")
     intermediary_rows = read_rows(normalized / "intermediaries.csv")
 
@@ -37,10 +40,19 @@ def main() -> int:
             "dark-money-capacity-proxy",
             "dark-money",
             statuses,
-            dark_rows,
+            capacity_rows,
             "IRS EO BMF 501(c)(4)/(c)(6) opaque-capacity bridge",
             "proxy",
             "capacity proxy for opaque nonprofit advocacy; not direct hidden-donor routing",
+        ),
+        audit_money_rows(
+            "propublica-nonprofit-routing",
+            "dark-money",
+            statuses,
+            nonprofit_routing_rows,
+            "ProPublica Nonprofit Explorer and IRS Form 990 Schedule I grant-routing rows",
+            "direct nonprofit-routing",
+            "public nonprofit transfer evidence; not donor identity evidence",
         ),
         audit_money_rows(
             "openfec-super-pac",
@@ -280,6 +292,7 @@ def write_csv(path: Path, rows: list[dict[str, str]]) -> None:
 
 def write_markdown(path: Path, rows: list[dict[str, str]]) -> None:
     dark = next((row for row in rows if row["source"] == "dark-money-capacity-proxy"), {})
+    nonprofit_routing = next((row for row in rows if row["source"] == "propublica-nonprofit-routing"), {})
     super_pac = next((row for row in rows if row["source"] == "openfec-super-pac"), {})
     electoral = next((row for row in rows if row["source"] == "openfec-electoral-communications"), {})
     section_527 = next((row for row in rows if row["source"] == "irs-527-political-organizations"), {})
@@ -288,9 +301,10 @@ def write_markdown(path: Path, rows: list[dict[str, str]]) -> None:
         "",
         (
             "This audit separates proxy capacity rows from adjacent observed electoral and "
-            "intermediary rows. It is a guardrail against treating opaque nonprofit capacity, "
-            "Super PAC spending, electioneering, communication-cost, or IRS 527 rows as direct "
-            "hidden-donor routing evidence."
+            "intermediary rows. It also separates public Form 990 Schedule I nonprofit-routing "
+            "transfers from hidden-donor identity evidence. It is a guardrail against treating "
+            "opaque nonprofit capacity, Super PAC spending, electioneering, communication-cost, "
+            "or IRS 527 rows as direct hidden-donor evidence."
         ),
         "",
         "## Claim Boundary",
@@ -299,12 +313,14 @@ def write_markdown(path: Path, rows: list[dict[str, str]]) -> None:
             f"The committed dark-money bridge contains {dark.get('rows', '0')} IRS EO BMF "
             f"capacity-proxy rows, including {dark.get('c4Rows', '0')} 501(c)(4) rows and "
             f"{dark.get('c6Rows', '0')} 501(c)(6) rows. It contains "
-            f"{dark.get('directRoutingRows', '0')} direct hidden-donor routing rows. "
+            f"{nonprofit_routing.get('directRoutingRows', '0')} non-proxy nonprofit-routing "
+            "transfer rows from public Schedule I filings, but zero observed hidden-donor "
+            "identity rows. "
             f"Adjacent observed panels include {super_pac.get('rows', '0')} Super PAC rows, "
             f"{electoral.get('rows', '0')} electioneering or communication-cost rows, and "
-            f"{section_527.get('rows', '0')} IRS 527 political-organization rows. Hidden-channel "
-            "magnitude claims remain not cleared until direct routing, donor, transfer, or "
-            "nonprofit-expenditure records are archived."
+            f"{section_527.get('rows', '0')} IRS 527 political-organization rows. Hidden-donor "
+            "magnitude claims remain bounded until donor, transfer, or nonprofit-expenditure "
+            "coverage is broadened beyond this top-EIN routing slice."
         ),
         "",
         "| Source | Status | Evidence | Role | Rows | Amount | Share | Traceability | Donor disclosure | Direct routing | Proxy rows | C4 | C6 | Distinct sources | Boundary |",

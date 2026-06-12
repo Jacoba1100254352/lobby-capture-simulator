@@ -61,7 +61,7 @@ CLAIMS = [
         "boundWeakPanels": True,
         "permitted": "Mechanism tests and source-aware stress diagnostics for channel substitution.",
         "avoid": "Do not present hidden substitution magnitudes as empirically validated.",
-        "next": "Replace thin hidden-channel panels with direct routing, personnel, and transaction exports.",
+        "next": "Broaden bounded nonprofit-routing, personnel, and transaction exports.",
     },
     {
         "key": "public-financing-counterweight",
@@ -87,9 +87,11 @@ CLAIMS = [
         "panels": ["Direct dark money", "Electoral communications", "Revolving door"],
         "moments": [("darkMoneyDirectRoutingRows", 1.0), ("electoralCommunicationRows", 1.0)],
         "strict": True,
-        "permitted": "Missingness and proxy-gap diagnosis for hidden-channel mechanisms.",
-        "avoid": "Do not treat bounded electoral-communication rows as hidden-donor or hidden-channel magnitude evidence.",
-        "next": "Add direct hidden-donor or nonprofit-routing evidence plus broader electoral-communication coverage.",
+        "maxStatus": "bounded",
+        "boundedSupport": "Bounded by top-EIN Schedule I routing coverage and unobserved donor identities.",
+        "permitted": "Bounded nonprofit-routing and missingness diagnostics for hidden-channel mechanisms.",
+        "avoid": "Do not treat the top-EIN Schedule I slice or bounded electoral-communication rows as representative hidden-channel magnitude or donor-identity evidence.",
+        "next": "Broaden nonprofit-routing, direct donor, and electoral-communication coverage beyond the current top-EIN slice.",
     },
     {
         "key": "procurement-modification-capture",
@@ -186,6 +188,9 @@ def claim_row(
         status = "bounded"
     else:
         status = "cleared"
+    max_status = str(claim.get("maxStatus", ""))
+    if max_status == "bounded" and status == "cleared":
+        status = "bounded"
 
     strong_dependencies = [row.get("panel", "") for row in panel_rows if row.get("status") == "usable"]
     weak_dependencies = [
@@ -197,6 +202,8 @@ def claim_row(
         for item in failed_moments
     ]
     source_support = support_sentence(status, strong_dependencies, weak_dependencies, missing_dependencies)
+    if status == "bounded" and claim.get("boundedSupport"):
+        source_support = str(claim["boundedSupport"])
     return {
         "claimKey": str(claim["key"]),
         "claimFamily": str(claim["family"]),
@@ -359,12 +366,12 @@ def posture_label(status: str) -> str:
 
 def table_support(row: dict[str, str]) -> str:
     return {
-        "strategic-substitution-mechanism": "No non-proxy direct dark-money routing rows; other substitution panels usable.",
+        "strategic-substitution-mechanism": "Nonprofit-routing and other substitution panels usable within source limits.",
         "public-financing-counterweight": "Bounded local public-financing program panel.",
         "revolving-door-cooling-off": "LDA-derived covered-position bridge.",
-        "hidden-channel-magnitude": "No non-proxy direct dark-money routing rows; electoral and covered-position bridges present.",
+        "hidden-channel-magnitude": "Top-EIN Schedule I nonprofit-routing rows present; donor identities remain unobserved.",
         "procurement-modification-capture": "Action rows present; modification incidence remains thin.",
-        "calibrated-policy-simulation": "Direct dark-money routing and procurement-modification dependencies not cleared.",
+        "calibrated-policy-simulation": "Direct nonprofit-routing rows present; procurement-modification dependencies not cleared.",
     }.get(row["claimKey"], row["sourceSupport"])
 
 
@@ -373,7 +380,7 @@ def table_use(row: dict[str, str]) -> str:
         "strategic-substitution-mechanism": "Mechanism stress tests.",
         "public-financing-counterweight": "Bounded countervailing-finance anchor.",
         "revolving-door-cooling-off": "Proxy-backed cooling-off diagnostics.",
-        "hidden-channel-magnitude": "Missingness and proxy-gap diagnosis only.",
+        "hidden-channel-magnitude": "Bounded routing and missingness diagnostics only.",
         "procurement-modification-capture": "Coverage warning and schema check.",
         "calibrated-policy-simulation": "Not a policy-effect claim.",
     }.get(row["claimKey"], row["permittedUse"])
@@ -381,12 +388,12 @@ def table_use(row: dict[str, str]) -> str:
 
 def table_next(row: dict[str, str]) -> str:
     return {
-        "strategic-substitution-mechanism": "Direct routing, personnel, and action exports.",
+        "strategic-substitution-mechanism": "Broader routing, personnel, and action exports.",
         "public-financing-counterweight": "Federal, state, and additional local rows.",
         "revolving-door-cooling-off": "OGE, FACA, witness, or personnel exports.",
-        "hidden-channel-magnitude": "Direct hidden-donor/nonprofit-routing rows plus broader electoral-communication coverage.",
+        "hidden-channel-magnitude": "Broader routing and donor-identity coverage.",
         "procurement-modification-capture": "Representative SAM/FPDS action rows.",
-        "calibrated-policy-simulation": "Clear P1/P2 source gaps.",
+        "calibrated-policy-simulation": "Clear procurement P1 source gaps.",
     }.get(row["claimKey"], row["nextEvidence"])
 
 
