@@ -34,6 +34,8 @@ SOURCE_CAPABILITY_AUDIT_MD = ROOT / "reports" / "source-capability-audit.md"
 SOURCE_CAPABILITY_AUDIT_CSV = ROOT / "reports" / "source-capability-audit.csv"
 DARK_MONEY_BRIDGE_AUDIT_MD = ROOT / "reports" / "dark-money-bridge-audit.md"
 DARK_MONEY_BRIDGE_AUDIT_CSV = ROOT / "reports" / "dark-money-bridge-audit.csv"
+REVOLVING_DOOR_BRIDGE_AUDIT_MD = ROOT / "reports" / "revolving-door-bridge-audit.md"
+REVOLVING_DOOR_BRIDGE_AUDIT_CSV = ROOT / "reports" / "revolving-door-bridge-audit.csv"
 PROCUREMENT_DENOMINATOR_AUDIT_MD = ROOT / "reports" / "procurement-denominator-audit.md"
 PROCUREMENT_DENOMINATOR_AUDIT_CSV = ROOT / "reports" / "procurement-denominator-audit.csv"
 LAYOUT_AUDIT = ROOT / "reports" / "paper-layout-audit.md"
@@ -44,7 +46,7 @@ CLAIM_SOURCE_DEPENDENCY_MD = ROOT / "reports" / "claim-source-dependency.md"
 CLAIM_SOURCE_DEPENDENCY_CSV = ROOT / "reports" / "claim-source-dependency.csv"
 CLAIM_POSTURE_AUDIT_MD = ROOT / "reports" / "claim-posture-audit.md"
 CLAIM_POSTURE_AUDIT_CSV = ROOT / "reports" / "claim-posture-audit.csv"
-RELEASE_TAG = "paper-publication-readiness-2026-06-12-r46"
+RELEASE_TAG = "paper-publication-readiness-2026-06-12-r47"
 CITATION_CFF = ROOT / "CITATION.cff"
 ZENODO_JSON = ROOT / ".zenodo.json"
 FORBIDDEN_LOCAL_ARTIFACTS = [
@@ -125,6 +127,7 @@ EXPECTED_ZIP_MEMBERS = {
     "supporting-information/source-panel-inventory.md",
     "supporting-information/source-capability-audit.md",
     "supporting-information/dark-money-bridge-audit.md",
+    "supporting-information/revolving-door-bridge-audit.md",
     "supporting-information/procurement-denominator-audit.md",
     "supporting-information/claim-boundary-audit.md",
     "supporting-information/claim-source-dependency.md",
@@ -150,6 +153,7 @@ def main() -> int:
     failures.extend(check_claim_alignment())
     failures.extend(check_source_capability_audit())
     failures.extend(check_dark_money_bridge_audit())
+    failures.extend(check_revolving_door_bridge_audit())
     failures.extend(check_procurement_denominator_audit())
     failures.extend(check_claim_boundary_audit())
     failures.extend(check_claim_source_dependency_audit())
@@ -266,6 +270,7 @@ def submission_inputs() -> list[Path]:
         ROOT / "reports" / "source-panel-inventory.md",
         SOURCE_CAPABILITY_AUDIT_MD,
         DARK_MONEY_BRIDGE_AUDIT_MD,
+        REVOLVING_DOOR_BRIDGE_AUDIT_MD,
         PROCUREMENT_DENOMINATOR_AUDIT_MD,
         ROOT / "reports" / "claim-boundary-audit.md",
         ROOT / "reports" / "claim-source-dependency.md",
@@ -564,6 +569,65 @@ def check_dark_money_bridge_audit() -> list[str]:
         supplement = SUPPLEMENT_BODY.read_text(encoding="utf-8")
         if "dark-money bridge audit" not in supplement:
             failures.append("supplement does not disclose the dark-money bridge audit")
+    return failures
+
+
+def check_revolving_door_bridge_audit() -> list[str]:
+    failures: list[str] = []
+    missing = [
+        path.relative_to(ROOT)
+        for path in (REVOLVING_DOOR_BRIDGE_AUDIT_MD, REVOLVING_DOOR_BRIDGE_AUDIT_CSV)
+        if not path.exists()
+    ]
+    if missing:
+        return [f"missing revolving-door bridge audit artifact: {path}" for path in missing]
+
+    with REVOLVING_DOOR_BRIDGE_AUDIT_CSV.open(newline="", encoding="utf-8") as source:
+        rows = {row.get("source", ""): row for row in csv.DictReader(source)}
+    required = {
+        "lda-covered-position-access-proxy",
+        "documented-post-employment-movement",
+        "fixture-schema-rows",
+        "cooling-off-under-one-year",
+        "procurement-linked-roles",
+    }
+    missing_sources = sorted(required - set(rows))
+    failures.extend(
+        f"revolving-door bridge audit missing source: {source_name}"
+        for source_name in missing_sources
+    )
+    if missing_sources:
+        return failures
+
+    lda = rows["lda-covered-position-access-proxy"]
+    if int(float(lda.get("rows", "0") or "0")) <= 0:
+        failures.append("revolving-door bridge audit should include committed LDA covered-position rows")
+    if int(float(lda.get("coveredPositionRows", "0") or "0")) <= 0:
+        failures.append("revolving-door bridge audit should classify LDA rows as covered-position proxies")
+    if int(float(lda.get("documentedMovementRows", "0") or "0")) != 0:
+        failures.append(
+            "LDA covered-position rows should not be promoted as documented post-employment movement"
+        )
+    documented = rows["documented-post-employment-movement"]
+    if int(float(documented.get("rows", "0") or "0")) != int(float(documented.get("documentedMovementRows", "0") or "0")):
+        failures.append(
+            "documented post-employment movement audit row should only count documented movement rows"
+        )
+    if int(float(rows["fixture-schema-rows"].get("fixtureRows", "0") or "0")) != int(float(rows["fixture-schema-rows"].get("rows", "0") or "0")):
+        failures.append("fixture schema audit row should only contain fixture rows")
+    text = REVOLVING_DOOR_BRIDGE_AUDIT_MD.read_text(encoding="utf-8")
+    required_text = [
+        "Revolving-Door Bridge Audit",
+        "documented post-employment movement rows",
+        "LDA-derived covered-position rows",
+    ]
+    for phrase in required_text:
+        if phrase not in text:
+            failures.append(f"revolving-door bridge audit markdown missing phrase: {phrase}")
+    if SUPPLEMENT_BODY.exists():
+        supplement = SUPPLEMENT_BODY.read_text(encoding="utf-8")
+        if "revolving-door bridge audit" not in supplement:
+            failures.append("supplement does not disclose the revolving-door bridge audit")
     return failures
 
 
@@ -989,6 +1053,7 @@ def package_byte_checks() -> list[tuple[Path, str]]:
         (ROOT / "reports" / "source-panel-inventory.md", "supporting-information/source-panel-inventory.md"),
         (SOURCE_CAPABILITY_AUDIT_MD, "supporting-information/source-capability-audit.md"),
         (DARK_MONEY_BRIDGE_AUDIT_MD, "supporting-information/dark-money-bridge-audit.md"),
+        (REVOLVING_DOOR_BRIDGE_AUDIT_MD, "supporting-information/revolving-door-bridge-audit.md"),
         (PROCUREMENT_DENOMINATOR_AUDIT_MD, "supporting-information/procurement-denominator-audit.md"),
         (ROOT / "reports" / "claim-boundary-audit.md", "supporting-information/claim-boundary-audit.md"),
         (ROOT / "reports" / "claim-source-dependency.md", "supporting-information/claim-source-dependency.md"),
