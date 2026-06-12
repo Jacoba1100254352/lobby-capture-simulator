@@ -153,6 +153,8 @@ def benchmark_scope(rows: list[dict[str, str]], benchmark: dict[str, str]) -> tu
         return filter_rows(rows, shadow_lobbying_scope), "shadow-lobbying stress scenarios"
     if key == "cooling_off_shadow_lobbying":
         return filter_rows(rows, cooling_or_venue_scope), "cooling-off and venue-shift scenarios"
+    if key == "comment_duplicate_compression":
+        return filter_rows(rows, comment_deduplication_scope), "comment-authentication and deduplication scenarios"
     if metric_name in {"procurementNetworkExposure", "procurementBias"}:
         return filter_rows(rows, procurement_scope), "procurement scenarios"
     return rows, "all scenarios"
@@ -210,6 +212,24 @@ def cooling_or_venue_scope(row: dict[str, str]) -> bool:
     text = row_text(row)
     markers = ("cooling", "revolving", "door", "advisory", "venue", "procurement-venue", "hard-budget")
     return any(marker in text for marker in markers) or metric(row, "venueSubstitutionRate") >= 0.10
+
+
+def comment_deduplication_scope(row: dict[str, str]) -> bool:
+    text = row_text(row)
+    markers = (
+        "comment-authenticity",
+        "comment authentication",
+        "anti-astroturf",
+        "public advocate",
+        "rulemaking integrity",
+        "full anti-capture",
+        "full anti-substitution",
+        "full bundle",
+        "strong reform",
+        "bundle",
+        "ablation",
+    )
+    return any(marker in text for marker in markers)
 
 
 def procurement_scope(row: dict[str, str]) -> bool:
