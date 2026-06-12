@@ -32,6 +32,8 @@ VALIDATION_SUMMARY = ROOT / "reports" / "validation-summary.md"
 SOURCE_PANEL_INVENTORY = ROOT / "reports" / "source-panel-inventory.csv"
 SOURCE_CAPABILITY_AUDIT_MD = ROOT / "reports" / "source-capability-audit.md"
 SOURCE_CAPABILITY_AUDIT_CSV = ROOT / "reports" / "source-capability-audit.csv"
+DARK_MONEY_BRIDGE_AUDIT_MD = ROOT / "reports" / "dark-money-bridge-audit.md"
+DARK_MONEY_BRIDGE_AUDIT_CSV = ROOT / "reports" / "dark-money-bridge-audit.csv"
 PROCUREMENT_DENOMINATOR_AUDIT_MD = ROOT / "reports" / "procurement-denominator-audit.md"
 PROCUREMENT_DENOMINATOR_AUDIT_CSV = ROOT / "reports" / "procurement-denominator-audit.csv"
 LAYOUT_AUDIT = ROOT / "reports" / "paper-layout-audit.md"
@@ -42,7 +44,7 @@ CLAIM_SOURCE_DEPENDENCY_MD = ROOT / "reports" / "claim-source-dependency.md"
 CLAIM_SOURCE_DEPENDENCY_CSV = ROOT / "reports" / "claim-source-dependency.csv"
 CLAIM_POSTURE_AUDIT_MD = ROOT / "reports" / "claim-posture-audit.md"
 CLAIM_POSTURE_AUDIT_CSV = ROOT / "reports" / "claim-posture-audit.csv"
-RELEASE_TAG = "paper-publication-readiness-2026-06-12-r45"
+RELEASE_TAG = "paper-publication-readiness-2026-06-12-r46"
 CITATION_CFF = ROOT / "CITATION.cff"
 ZENODO_JSON = ROOT / ".zenodo.json"
 FORBIDDEN_LOCAL_ARTIFACTS = [
@@ -122,6 +124,7 @@ EXPECTED_ZIP_MEMBERS = {
     "supporting-information/source-moments.md",
     "supporting-information/source-panel-inventory.md",
     "supporting-information/source-capability-audit.md",
+    "supporting-information/dark-money-bridge-audit.md",
     "supporting-information/procurement-denominator-audit.md",
     "supporting-information/claim-boundary-audit.md",
     "supporting-information/claim-source-dependency.md",
@@ -146,6 +149,7 @@ def main() -> int:
     failures.extend(check_submission_statements())
     failures.extend(check_claim_alignment())
     failures.extend(check_source_capability_audit())
+    failures.extend(check_dark_money_bridge_audit())
     failures.extend(check_procurement_denominator_audit())
     failures.extend(check_claim_boundary_audit())
     failures.extend(check_claim_source_dependency_audit())
@@ -261,6 +265,7 @@ def submission_inputs() -> list[Path]:
         ROOT / "reports" / "source-moments.md",
         ROOT / "reports" / "source-panel-inventory.md",
         SOURCE_CAPABILITY_AUDIT_MD,
+        DARK_MONEY_BRIDGE_AUDIT_MD,
         PROCUREMENT_DENOMINATOR_AUDIT_MD,
         ROOT / "reports" / "claim-boundary-audit.md",
         ROOT / "reports" / "claim-source-dependency.md",
@@ -498,6 +503,67 @@ def check_source_capability_audit() -> list[str]:
     for phrase in ("Source Capability Audit", "SAM/FPDS action-history", "Direct hidden-donor"):
         if phrase not in text:
             failures.append(f"source capability audit markdown missing phrase: {phrase}")
+    return failures
+
+
+def check_dark_money_bridge_audit() -> list[str]:
+    failures: list[str] = []
+    missing = [
+        path.relative_to(ROOT)
+        for path in (DARK_MONEY_BRIDGE_AUDIT_MD, DARK_MONEY_BRIDGE_AUDIT_CSV)
+        if not path.exists()
+    ]
+    if missing:
+        return [f"missing dark-money bridge audit artifact: {path}" for path in missing]
+
+    with DARK_MONEY_BRIDGE_AUDIT_CSV.open(newline="", encoding="utf-8") as source:
+        rows = {row.get("source", ""): row for row in csv.DictReader(source)}
+    required = {
+        "dark-money-capacity-proxy",
+        "openfec-super-pac",
+        "openfec-electoral-communications",
+        "irs-527-political-organizations",
+        "nonprofit-association-capacity",
+        "nyc-cfb-campaign-intermediaries",
+    }
+    missing_sources = sorted(required - set(rows))
+    failures.extend(
+        f"dark-money bridge audit missing source: {source_name}"
+        for source_name in missing_sources
+    )
+    if missing_sources:
+        return failures
+
+    dark = rows["dark-money-capacity-proxy"]
+    if int(float(dark.get("rows", "0") or "0")) <= 0:
+        failures.append("dark-money bridge audit should include committed opaque-capacity rows")
+    if int(float(dark.get("capacityProxyRows", "0") or "0")) <= 0:
+        failures.append("dark-money bridge audit should classify IRS EO BMF rows as capacity proxies")
+    if int(float(dark.get("directRoutingRows", "0") or "0")) != 0:
+        failures.append(
+            "dark-money bridge audit should not promote capacity proxies as direct hidden-donor routing"
+        )
+    if int(float(rows["openfec-super-pac"].get("rows", "0") or "0")) <= 0:
+        failures.append("dark-money bridge audit should include adjacent OpenFEC Super PAC rows")
+    if int(float(rows["openfec-electoral-communications"].get("rows", "0") or "0")) <= 0:
+        failures.append(
+            "dark-money bridge audit should include adjacent electioneering or communication-cost rows"
+        )
+    if int(float(rows["irs-527-political-organizations"].get("rows", "0") or "0")) <= 0:
+        failures.append("dark-money bridge audit should include adjacent IRS 527 rows")
+    text = DARK_MONEY_BRIDGE_AUDIT_MD.read_text(encoding="utf-8")
+    required_text = [
+        "Dark-Money Bridge Audit",
+        "0 direct hidden-donor routing rows",
+        "not hidden-donor routing",
+    ]
+    for phrase in required_text:
+        if phrase not in text:
+            failures.append(f"dark-money bridge audit markdown missing phrase: {phrase}")
+    if SUPPLEMENT_BODY.exists():
+        supplement = SUPPLEMENT_BODY.read_text(encoding="utf-8")
+        if "dark-money bridge audit" not in supplement:
+            failures.append("supplement does not disclose the dark-money bridge audit")
     return failures
 
 
@@ -922,6 +988,7 @@ def package_byte_checks() -> list[tuple[Path, str]]:
         (ROOT / "reports" / "source-moments.md", "supporting-information/source-moments.md"),
         (ROOT / "reports" / "source-panel-inventory.md", "supporting-information/source-panel-inventory.md"),
         (SOURCE_CAPABILITY_AUDIT_MD, "supporting-information/source-capability-audit.md"),
+        (DARK_MONEY_BRIDGE_AUDIT_MD, "supporting-information/dark-money-bridge-audit.md"),
         (PROCUREMENT_DENOMINATOR_AUDIT_MD, "supporting-information/procurement-denominator-audit.md"),
         (ROOT / "reports" / "claim-boundary-audit.md", "supporting-information/claim-boundary-audit.md"),
         (ROOT / "reports" / "claim-source-dependency.md", "supporting-information/claim-source-dependency.md"),

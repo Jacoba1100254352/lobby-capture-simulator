@@ -41,11 +41,11 @@ This audit checks generated PDFs for sparse float pages, large whitespace gaps, 
 | paper/regulation-governance-wiley.pdf | 13 | 64 | 4907 | 0.943 | 0.055 | no | pass | layout density acceptable |
 | paper/regulation-governance-wiley.pdf | 14 | 85 | 4041 | 0.943 | 0.043 | no | pass | references/declarations page |
 | paper/regulation-governance-wiley.pdf | 15 | 30 | 1599 | 0.942 | 0.650 | no | pass | references/declarations page |
-| paper/supplement.pdf | 1 | 37 | 2096 | 0.827 | 0.094 | no | pass | title/front-matter page |
-| paper/supplement.pdf | 2 | 58 | 2833 | 0.879 | 0.053 | no | pass | layout density acceptable |
-| paper/supplement.pdf | 3 | 232 | 2509 | 0.880 | 0.075 | yes | pass | layout density acceptable |
-| paper/supplement.pdf | 4 | 84 | 2864 | 0.845 | 0.075 | yes | pass | layout density acceptable |
-| paper/supplement.pdf | 5 | 84 | 2498 | 0.879 | 0.042 | yes | pass | layout density acceptable |
-| paper/supplement.pdf | 6 | 56 | 3913 | 0.876 | 0.044 | yes | pass | layout density acceptable |
-| paper/supplement.pdf | 7 | 102 | 3083 | 0.876 | 0.044 | yes | pass | references/declarations page |
-| paper/supplement.pdf | 8 | 60 | 2651 | 0.876 | 0.062 | yes | pass | references/declarations page |
+| paper/supplement.pdf | 1 | 37 | 2129 | 0.838 | 0.089 | no | pass | title/front-matter page |
+| paper/supplement.pdf | 2 | 65 | 3047 | 0.891 | 0.036 | no | pass | layout density acceptable |
+| paper/supplement.pdf | 3 | 248 | 2393 | 0.891 | 0.035 | yes | pass | layout density acceptable |
+| paper/supplement.pdf | 4 | 104 | 3333 | 0.887 | 0.069 | yes | pass | layout density acceptable |
+| paper/supplement.pdf | 5 | 52 | 2856 | 0.891 | 0.057 | no | pass | layout density acceptable |
+| paper/supplement.pdf | 6 | 56 | 3491 | 0.891 | 0.141 | yes | pass | layout density acceptable |
+| paper/supplement.pdf | 7 | 97 | 3203 | 0.891 | 0.036 | yes | pass | references/declarations page |
+| paper/supplement.pdf | 8 | 55 | 2430 | 0.891 | 0.152 | yes | pass | references/declarations page |
