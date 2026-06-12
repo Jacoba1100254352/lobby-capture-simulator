@@ -8,28 +8,28 @@ snapshot,lda,lobbyingSectorTopShare,0.5551,observed,largest issue-domain share o
 snapshot,lda,lobbyingDisclosureLagMean,0.1000,observed,mean normalized LDA disclosure lag
 snapshot,lda,coveredOfficialShareMean,0.2000,observed_proxy,mean share of covered-official contact visibility
 snapshot,lda,lobbyingClientHerfindahl,0.2885,observed,client concentration Herfindahl over normalized LDA amount
-snapshot,fec,fecRows,1269.0000,observed,normalized OpenFEC rows
-snapshot,fec,fecTotalReceipts,945.9298,observed,sum of normalized FEC amount
-snapshot,fec,fecDonorTop1Share,0.1437,observed,largest donor share of normalized FEC amount
-snapshot,fec,fecDonorTop3Share,0.3671,observed,top three donor share of normalized FEC amount
-snapshot,fec,fecDonorGini,0.8042,observed,donor amount Gini across normalized FEC rows
-snapshot,fec,fecRecipientTop3Share,0.7510,observed,top three recipient share of normalized FEC amount
-snapshot,fec,fecLargeDonorWeightedShare,0.9459,observed_proxy,amount-weighted normalized large donor share
+snapshot,fec,fecRows,1268.0000,observed,normalized OpenFEC rows
+snapshot,fec,fecTotalReceipts,946.5268,observed,sum of normalized FEC amount
+snapshot,fec,fecDonorTop1Share,0.1436,observed,largest donor share of normalized FEC amount
+snapshot,fec,fecDonorTop3Share,0.3668,observed,top three donor share of normalized FEC amount
+snapshot,fec,fecDonorGini,0.8032,observed,donor amount Gini across normalized FEC rows
+snapshot,fec,fecRecipientTop3Share,0.7505,observed,top three recipient share of normalized FEC amount
+snapshot,fec,fecLargeDonorWeightedShare,0.9457,observed_proxy,amount-weighted normalized large donor share
 snapshot,fec,moneyFlowTraceability,0.6183,observed_proxy,amount-weighted traceability across all normalized FEC rows
 snapshot,fec,darkMoneyRows,250.0000,observed_proxy,DARK_MONEY rows from FEC or explicit dark-money/opaque-capacity bridge panels
-snapshot,fec,darkMoneyDirectVisibility,0.2028,inferred,amount-weighted traceability among DARK_MONEY bridge rows only
-snapshot,fec,darkMoneySourceShare,0.0247,observed_proxy,DARK_MONEY or opaque-capacity bridge share of normalized campaign-finance plus bridge amount
-snapshot,fec,superPacSourceShare,0.0076,observed_proxy,SUPER_PAC share of normalized campaign-finance plus bridge amount
-snapshot,fec,opaqueElectoralSourceShare,0.0322,observed_proxy,DARK_MONEY plus SUPER_PAC share of normalized campaign-finance plus bridge amount
-snapshot,fec,electioneeringRows,69.0000,observed,normalized OpenFEC electioneering communication rows
+snapshot,fec,darkMoneyDirectVisibility,0.2043,inferred,amount-weighted traceability among DARK_MONEY bridge rows only
+snapshot,fec,darkMoneySourceShare,0.0245,observed_proxy,DARK_MONEY or opaque-capacity bridge share of normalized campaign-finance plus bridge amount
+snapshot,fec,superPacSourceShare,0.0075,observed_proxy,SUPER_PAC share of normalized campaign-finance plus bridge amount
+snapshot,fec,opaqueElectoralSourceShare,0.0321,observed_proxy,DARK_MONEY plus SUPER_PAC share of normalized campaign-finance plus bridge amount
+snapshot,fec,electioneeringRows,68.0000,observed,normalized OpenFEC electioneering communication rows
 snapshot,fec,communicationCostRows,200.0000,observed,normalized OpenFEC communication-cost rows
-snapshot,fec,electoralCommunicationRows,269.0000,observed,normalized electioneering plus communication-cost rows
-snapshot,fec,electoralCommunicationSourceShare,0.0106,observed_proxy,electioneering and communication-cost share of normalized campaign-finance plus bridge amount
-snapshot,fec,electoralCommunicationTraceabilityMean,0.5177,observed_proxy,amount-weighted traceability among electioneering and communication-cost rows
-snapshot,fec,outsideSpendingRows,919.0000,observed,"normalized independent expenditure, super PAC, dark-money, association, electioneering, or communication-cost rows"
-snapshot,fec,outsideSpendingSourceShare,0.0428,observed_proxy,outside-spending bridge share of normalized campaign-finance plus bridge amount
-snapshot,fec,outsideSpendingTop3SourceShare,0.1920,observed_proxy,top three outside spenders by normalized amount
-snapshot,fec,outsideSpendingDisclosureLagMean,0.4925,observed_proxy,amount-weighted reporting lag among outside-spending rows
+snapshot,fec,electoralCommunicationRows,268.0000,observed,normalized electioneering plus communication-cost rows
+snapshot,fec,electoralCommunicationSourceShare,0.0112,observed_proxy,electioneering and communication-cost share of normalized campaign-finance plus bridge amount
+snapshot,fec,electoralCommunicationTraceabilityMean,0.5238,observed_proxy,amount-weighted traceability among electioneering and communication-cost rows
+snapshot,fec,outsideSpendingRows,918.0000,observed,"normalized independent expenditure, super PAC, dark-money, association, electioneering, or communication-cost rows"
+snapshot,fec,outsideSpendingSourceShare,0.0433,observed_proxy,outside-spending bridge share of normalized campaign-finance plus bridge amount
+snapshot,fec,outsideSpendingTop3SourceShare,0.1900,observed_proxy,top three outside spenders by normalized amount
+snapshot,fec,outsideSpendingDisclosureLagMean,0.4896,observed_proxy,amount-weighted reporting lag among outside-spending rows
 snapshot,fec,publicFinancingRows,135.0000,observed_proxy,public-match or voucher rows from FEC or explicit public-financing panel
 snapshot,fec,publicFinancingProgramCount,2.0000,observed_proxy,distinct public-financing program sources represented
 snapshot,fec,publicFinancingVoucherRows,3.0000,observed,democracy-voucher rows from explicit public-financing panels
@@ -48,13 +48,14 @@ snapshot,regulatory,commentFloodingIndex,0.3072,proxy,"combined top-docket conce
 snapshot,regulatory,technicalClaimCredibilityMean,0.5000,proxy,mean normalized technical claim credibility
 snapshot,usaspending,procurementRows,200.0000,observed,normalized USAspending award rows
 snapshot,usaspending,procurementBridgeRows,150.0000,observed,"multi-agency USAspending bridge rows, if available"
-snapshot,usaspending,procurementActionRows,1200.0000,observed,"normalized USAspending transaction/action rows, if available"
+snapshot,usaspending,procurementActionRows,3578.0000,observed,"normalized USAspending transaction/action rows, if available"
 snapshot,usaspending,procurementCompetitionPanelRows,200.0000,diagnostic,rows used for competition moments from normalized USAspending award rows with competition fields
-snapshot,usaspending,procurementModificationPanelRows,1200.0000,diagnostic,rows used for modification moments from normalized USAspending transaction/action rows
+snapshot,usaspending,procurementModificationPanelRows,3578.0000,diagnostic,rows used for modification moments from normalized USAspending transaction/action rows
 snapshot,usaspending,procurementBridgeAgencyCount,6.0000,observed,distinct awarding agencies in procurement source moment panel
+snapshot,usaspending,procurementActionAgencyCount,6.0000,diagnostic,distinct awarding agencies in the transaction/action modification panel
 snapshot,usaspending,procurementBridgeTopAwardSample,1.0000,diagnostic,1 when procurement concentration moments use a multi-agency top-award bridge
 snapshot,usaspending,procurementLatestTransactionModificationProxy,1.0000,diagnostic,1 when latest-transaction enrichment exists but is kept separate from action-level modification incidence
-snapshot,usaspending,procurementTotalAwards,1139155.0102,observed,sum of multi-agency procurement bridge rows amount
+snapshot,usaspending,procurementTotalAwards,1139331.0402,observed,sum of multi-agency procurement bridge rows amount
 snapshot,usaspending,procurementRecipientTop1Share,0.1196,observed,largest recipient share of multi-agency procurement bridge rows amount
 snapshot,usaspending,procurementRecipientTop3Share,0.2852,observed,top three recipients share of multi-agency procurement bridge rows amount
 snapshot,usaspending,procurementRecipientHerfindahl,0.0485,observed,recipient award-amount Herfindahl over multi-agency procurement bridge rows
@@ -63,11 +64,11 @@ snapshot,usaspending,procurementAgencyHerfindahl,0.4765,observed,awarding-agency
 snapshot,usaspending,procurementSubAgencyTop3Share,0.7934,observed,top three sub-agencies share of multi-agency procurement bridge rows amount
 snapshot,usaspending,procurementAwardCount,150.0000,observed,sum of normalized award or transaction counts in multi-agency procurement bridge rows
 snapshot,usaspending,procurementSingleBidShare,0.2350,observed_proxy,share among normalized USAspending award rows with competition fields that have one known offer
-snapshot,usaspending,procurementAmountWeightedSingleBidShare,0.2131,observed_proxy,award-amount share among normalized USAspending award rows with competition fields with one known offer
-snapshot,usaspending,procurementInitialAwardShare,0.3350,observed_proxy,share of normalized USAspending transaction/action rows that appear to be initial awards
-snapshot,usaspending,procurementExPostModificationShare,0.6650,observed_proxy,share of normalized USAspending transaction/action rows marked as ex-post modifications or nonzero modification sequence
-snapshot,usaspending,procurementAmountWeightedModificationShare,0.4396,observed_proxy,award-amount share of normalized USAspending transaction/action rows marked as ex-post modifications
-snapshot,usaspending,procurementActionModificationRows,798.0000,diagnostic,transaction/action rows marked as ex-post modifications
+snapshot,usaspending,procurementAmountWeightedSingleBidShare,0.2108,observed_proxy,award-amount share among normalized USAspending award rows with competition fields with one known offer
+snapshot,usaspending,procurementInitialAwardShare,0.6889,observed_proxy,share of normalized USAspending transaction/action rows that appear to be initial awards
+snapshot,usaspending,procurementExPostModificationShare,0.3111,observed_proxy,share of normalized USAspending transaction/action rows marked as ex-post modifications or nonzero modification sequence
+snapshot,usaspending,procurementAmountWeightedModificationShare,0.7517,observed_proxy,award-amount share of normalized USAspending transaction/action rows marked as ex-post modifications
+snapshot,usaspending,procurementActionModificationRows,1113.0000,diagnostic,transaction/action rows marked as ex-post modifications
 snapshot,usaspending,procurementPriceOnlyAwardShare,0.6050,observed_proxy,share among normalized USAspending award rows with competition fields marked as price-only or one-offer awards
 snapshot,usaspending,procurementLimitedCompetitionShare,0.4600,observed_proxy,"share among normalized USAspending award rows with competition fields with limited competition, exclusions, or one known offer"
 snapshot,usaspending,procurementProtestShare,0.0000,observed_proxy,share of normalized award rows marked with a protest flag
@@ -86,18 +87,18 @@ snapshot,revolving-door,revolvingDoorInfluenceWeightedFormerOfficialShare,1.0000
 snapshot,revolving-door,revolvingDoorInfluenceMean,0.3400,proxy,mean normalized influence share from source panel
 snapshot,revolving-door,revolvingDoorConfidenceMean,0.7400,diagnostic,mean source-match confidence for revolving-door records
 snapshot,intermediary,intermediaryRows,1353.0000,observed,"normalized nonprofit, 527, association, or think-tank intermediary rows"
-snapshot,intermediary,intermediaryTotalRevenue,5843.3172,observed_proxy,sum of normalized intermediary revenue
-snapshot,intermediary,intermediaryPoliticalSpendShare,0.1542,observed_proxy,political spend share of normalized intermediary revenue
-snapshot,intermediary,intermediaryTop3RevenueShare,0.1740,observed_proxy,top three intermediary organizations by revenue
-snapshot,intermediary,intermediaryDonorDisclosureMean,0.6715,observed_proxy,mean donor/source disclosure score
-snapshot,intermediary,intermediaryAssociationShare,0.0939,observed_proxy,share of rows marked 501(c)(6) association
-snapshot,intermediary,intermediaryC4Share,0.0259,observed_proxy,share of rows marked 501(c)(4) social welfare
+snapshot,intermediary,intermediaryTotalRevenue,6095.4205,observed_proxy,sum of normalized intermediary revenue
+snapshot,intermediary,intermediaryPoliticalSpendShare,0.1482,observed_proxy,political spend share of normalized intermediary revenue
+snapshot,intermediary,intermediaryTop3RevenueShare,0.1668,observed_proxy,top three intermediary organizations by revenue
+snapshot,intermediary,intermediaryDonorDisclosureMean,0.6716,observed_proxy,mean donor/source disclosure score
+snapshot,intermediary,intermediaryAssociationShare,0.0946,observed_proxy,share of rows marked 501(c)(6) association
+snapshot,intermediary,intermediaryC4Share,0.0251,observed_proxy,share of rows marked 501(c)(4) social welfare
 snapshot,intermediary,intermediaryC3Share,0.2498,observed_proxy,share of rows marked 501(c)(3) nonprofit
 snapshot,intermediary,intermediary527Rows,500.0000,observed,normalized IRS 527/Form 8872 intermediary rows
 snapshot,intermediary,intermediary527PoliticalSpend,857.0814,observed_proxy,sum of normalized 527/IRS 8872 political spending
-snapshot,intermediary,intermediary527PoliticalSpendShare,0.9515,observed_proxy,527/IRS 8872 share of intermediary political spending
+snapshot,intermediary,intermediary527PoliticalSpendShare,0.9488,observed_proxy,527/IRS 8872 share of intermediary political spending
 snapshot,intermediary,intermediary527DonorDisclosureMean,0.7148,observed_proxy,mean donor/source disclosure among 527/IRS 8872 rows
-snapshot,intermediary,intermediaryGrantmakingShare,0.0085,observed_proxy,grantmaking share of normalized intermediary revenue
+snapshot,intermediary,intermediaryGrantmakingShare,0.0087,observed_proxy,grantmaking share of normalized intermediary revenue
 fixture,lda,ldaRows,4.0000,observed,normalized LDA rows
 fixture,lda,ldaTotalSpend,30.5000,observed,sum of normalized LDA amount
 fixture,lda,lobbyingClientTop1Share,0.2984,observed,largest client share of normalized LDA amount
@@ -151,6 +152,7 @@ fixture,usaspending,procurementActionRows,5.0000,observed,"normalized USAspendin
 fixture,usaspending,procurementCompetitionPanelRows,5.0000,diagnostic,rows used for competition moments from normalized USAspending award rows with competition fields
 fixture,usaspending,procurementModificationPanelRows,5.0000,diagnostic,rows used for modification moments from normalized USAspending transaction/action rows
 fixture,usaspending,procurementBridgeAgencyCount,0.0000,observed,distinct awarding agencies in procurement source moment panel
+fixture,usaspending,procurementActionAgencyCount,1.0000,diagnostic,distinct awarding agencies in the transaction/action modification panel
 fixture,usaspending,procurementBridgeTopAwardSample,0.0000,diagnostic,1 when procurement concentration moments use a multi-agency top-award bridge
 fixture,usaspending,procurementLatestTransactionModificationProxy,0.0000,diagnostic,1 when latest-transaction enrichment exists but is kept separate from action-level modification incidence
 fixture,usaspending,procurementTotalAwards,700.0000,observed,sum of normalized USAspending award rows amount

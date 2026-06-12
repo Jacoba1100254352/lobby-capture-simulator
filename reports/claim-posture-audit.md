@@ -26,7 +26,7 @@ This audit summarizes which claim posture is cleared by the current source panel
 - `Direct dark money` (thin): coverage is present but thin for article-level calibration
 - `Revolving door` (thin): coverage is present but thin for article-level calibration
 - `Procurement concentration bridge` (thin): multi-agency top-award bridge is present, but top-award sampling is not representative enough for calibration
-- `Procurement modification risk` (warning): modification-action share is outside the benchmark range, likely reflecting bounded action-sample scope or nonrepresentative transaction coverage
+- `Procurement modification risk` (thin): stratified transaction-action rows are present, but modification incidence remains too high for calibration-grade national inference
 
 ## Claim-Source Dependencies
 
@@ -36,8 +36,8 @@ This audit summarizes which claim posture is cleared by the current source panel
 - `Strategic substitution mechanism` (bounded): Bounded by weak panels: Direct dark money (thin), Revolving door (thin).
 - `Revolving-door access` (bounded): Bounded by weak panels: Revolving door (thin).
 - `Hidden-channel magnitude` (not_cleared): Not cleared because of weak panels: Direct dark money (thin), Revolving door (thin).
-- `Procurement modification capture` (not_cleared): Not cleared because of weak panels: Procurement concentration bridge (thin), Procurement modification risk (warning).
-- `Calibrated policy simulation` (not_cleared): Not cleared because of weak panels: Direct dark money (thin), Revolving door (thin), Procurement concentration bridge (thin), Procurement modification risk (warning).
+- `Procurement modification capture` (not_cleared): Not cleared because of weak panels: Procurement concentration bridge (thin), Procurement modification risk (thin).
+- `Calibrated policy simulation` (not_cleared): Not cleared because of weak panels: Direct dark money (thin), Revolving door (thin), Procurement concentration bridge (thin), Procurement modification risk (thin).
 
 ## P1/P2 Calibration Actions
 

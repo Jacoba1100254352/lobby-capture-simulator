@@ -1,7 +1,7 @@
 {
   "snapshot": "2024-env",
-  "generatedAt": "2026-06-12T05:15:18.588106+00:00",
-  "gitCommit": "df08c97",
+  "generatedAt": "2026-06-12T06:13:13.871043+00:00",
+  "gitCommit": "de81997",
   "gitTreeState": "clean",
   "gitTreeStateScope": "working tree status excluding generated 2024-env snapshot, reports, paper tables, and paper figures",
   "scope": {
@@ -19,7 +19,7 @@
       "requestTemplate": "LDA_YEAR=2024 LDA_PERIOD={first_quarter,second_quarter,third_quarter,fourth_quarter} ./scripts/fetch-lda.sh --live",
       "normalizedFile": "data/snapshots/2024-env/normalized/lda-lobbying.csv",
       "rowCount": 121,
-      "sha256": "fced0548f22df640db7bb0d2e8dcad66fa364e65d91c26872755347332729e16",
+      "sha256": "fe37656d150925dc930559d8be74001f368ecf8a0d6ca0230cb2c5b46c2c044a",
       "status": "live",
       "statusNotes": "lda-first_quarter: ok (normalized rows appended); lda-second_quarter: ok (normalized rows appended); lda-third_quarter: ok (normalized rows appended); lda-fourth_quarter: ok (normalized rows appended)"
     },
@@ -28,8 +28,8 @@
       "description": "FEC 2024 cycle party committee contributions, OpenFEC Schedule E independent expenditures, electioneering communications, and communication-cost rows when available. Public-financing and opaque-capacity bridge rows are stored in separate panels.",
       "requestTemplate": "FEC_CYCLE=2024 FEC_COMMITTEE_ID in C00010603,C00042366,C00000935,C00003418,C00027466,C00075820 plus FEC_ONLY_SCHEDULE_E=1 FEC_INCLUDE_SCHEDULE_E=1 for Schedule E plus FEC_INCLUDE_SCHEDULE_E=0 FEC_INCLUDE_ELECTIONEERING=1 FEC_INCLUDE_COMMUNICATION_COSTS=1 for electoral-communication rows",
       "normalizedFile": "data/snapshots/2024-env/normalized/fec-campaign-finance.csv",
-      "rowCount": 1269,
-      "sha256": "607b37df5195b7c64e604991dd8fb86d31c6db0d1760868a74e2d99f0cdf3e54",
+      "rowCount": 1268,
+      "sha256": "7bf24dc7512f622b1348cd774a687d45a88fd4bfa58c3a8b86acf40e308e4760",
       "status": "live",
       "statusNotes": "fec-C00010603: ok (normalized rows appended); fec-C00042366: ok (normalized rows appended); fec-C00000935: ok (normalized rows appended); fec-C00003418: ok (normalized rows appended); fec-C00027466: ok (normalized rows appended); fec-C00075820: ok (normalized rows appended); fec-schedule-e: ok (normalized independent-expenditure rows appended); fec-electoral-communications: ok (normalized electioneering and communication-cost rows appended)"
     },
@@ -41,7 +41,7 @@
       "rowCount": 135,
       "sha256": "e83b30ab8dff2247d4be37409ce328bae5963e6eb21d624e54d5a80d5d79aa7d",
       "status": "live",
-      "statusNotes": "public-financing: ok (NYC CFB public-financing rows; Seattle Democracy Voucher rows;)"
+      "statusNotes": "public-financing: ok (NYC CFB public-financing rows; Seattle Democracy Voucher rows)"
     },
     {
       "source": "dark-money",
@@ -49,7 +49,7 @@
       "requestTemplate": "DARK_MONEY_SOURCE_NATIVE=1 python3 scripts/fetch-source-data.py irs-dark-money-capacity --output data/raw/dark-money.csv or DARK_MONEY_LIVE_CSV=/path/to/export.csv ./scripts/fetch-dark-money.sh --live",
       "normalizedFile": "data/snapshots/2024-env/normalized/dark-money.csv",
       "rowCount": 250,
-      "sha256": "25c1877c3e2e11eb55bb6e6310104d558b98b73d86e0285045b36e78a378f797",
+      "sha256": "377c2778f29a0042023a8a5222f6c4f8675e57e13cac94eccb17b4426ee84135",
       "status": "live",
       "statusNotes": "dark-money: ok (normalized IRS EO BMF opaque-capacity proxy rows written)"
     },
@@ -59,7 +59,7 @@
       "requestTemplate": "REGULATORY_AGENCY=EPA REGULATORY_DATE_FROM=2024-01-01 REGULATORY_DATE_TO=2024-12-31 ./scripts/fetch-regulatory.sh --live",
       "normalizedFile": "data/snapshots/2024-env/normalized/regulatory-dockets.csv",
       "rowCount": 200,
-      "sha256": "2be43d46882d1211c734281ba7e18b0bb133a2a2ab5ef6f8341f0814890e4654",
+      "sha256": "b26e7797586e1e00048e265c0c850a239f09fd5268c8b2b42e4e8e278978c4b7",
       "status": "live",
       "statusNotes": "regulations-gov: ok (normalized rows appended); federal-register: ok (normalized rows appended)"
     },
@@ -69,7 +69,7 @@
       "requestTemplate": "USASPENDING_FISCAL_YEAR=2024 USASPENDING_AGENCY='Environmental Protection Agency' ./scripts/fetch-usaspending.sh --live",
       "normalizedFile": "data/snapshots/2024-env/normalized/usaspending-awards.csv",
       "rowCount": 200,
-      "sha256": "95f50d8163ed6391f1213167fab55dbd2c7471cc934a7bb5f9f00eac24a59da8",
+      "sha256": "ad92f74fb6fd901d864005b7b720d07ba3e1f38c193a672982a4a041c5033e49",
       "status": "live",
       "statusNotes": "usaspending: ok (normalized EPA award rows written)"
     },
@@ -79,19 +79,19 @@
       "requestTemplate": "USASPENDING_AGENCIES='Environmental Protection Agency,Department of Energy,Department of the Interior,Department of Agriculture,Department of Transportation,Department of Defense' USASPENDING_PAGE_SIZE=25 USASPENDING_MAX_PAGES=1 USASPENDING_TREAT_LATEST_TRANSACTION_AS_MODIFICATION=1 python3 scripts/fetch-source-data.py usaspending --output data/raw/usaspending-procurement-bridge.csv",
       "normalizedFile": "data/snapshots/2024-env/normalized/usaspending-procurement-bridge.csv",
       "rowCount": 150,
-      "sha256": "f6082c17f121c58153f72729d95e5541d62a69804fbc6269450f09517586b324",
+      "sha256": "7c49ef378c88def26d998d9d2653a6a5741fb3ef997b7a75bd748f39784d4cdc",
       "status": "live",
       "statusNotes": "usaspending-procurement-bridge: ok (normalized multi-agency procurement bridge rows written)"
     },
     {
       "source": "usaspending-procurement-actions",
-      "description": "USAspending transaction/action panel for action-level procurement modification diagnostics; kept separate from award rows and top-award concentration bridge rows.",
-      "requestTemplate": "USASPENDING_ACTION_PERIOD_BUCKETS=monthly USASPENDING_ACTION_TRANSACTION_PAGE_SIZE=100 USASPENDING_ACTION_TRANSACTION_MAX_PAGES=1 USASPENDING_ACTION_TRANSACTION_SORT='Transaction Amount' USASPENDING_ACTION_TRANSACTION_ORDER=desc python3 scripts/fetch-source-data.py usaspending-actions --output data/raw/usaspending-procurement-actions.csv",
+      "description": "Stratified six-agency USAspending transaction/action panel for action-level procurement modification diagnostics; initial-action and high-value transaction strata are deduplicated and kept separate from award rows and top-award concentration bridge rows.",
+      "requestTemplate": "USASPENDING_AGENCIES='Environmental Protection Agency,Department of Energy,Department of the Interior,Department of Agriculture,Department of Transportation,Department of Defense' USASPENDING_ACTION_PERIOD_BUCKETS=monthly USASPENDING_ACTION_TRANSACTION_PAGE_SIZE=25 USASPENDING_ACTION_TRANSACTION_MAX_PAGES=1 USASPENDING_ACTION_TRANSACTION_SORT_SPECS='Mod:asc;Transaction Amount:desc' python3 scripts/fetch-source-data.py usaspending-actions --output data/raw/usaspending-procurement-actions.csv",
       "normalizedFile": "data/snapshots/2024-env/normalized/usaspending-procurement-actions.csv",
-      "rowCount": 1200,
-      "sha256": "0198b2201a57b83c5bc8034a33113ca7696579e1bb793a565b1c7992615bf6c0",
+      "rowCount": 3578,
+      "sha256": "33155448bf655b953da106906721387699375c1f03db07485900e5d1726dbffc",
       "status": "live",
-      "statusNotes": "usaspending-procurement-actions: ok (normalized monthly amount-sorted EPA procurement action rows written)"
+      "statusNotes": "usaspending-procurement-actions: ok (normalized USAspending procurement action rows written)"
     },
     {
       "source": "revolving-door",
@@ -109,13 +109,13 @@
       "requestTemplate": "INTERMEDIARY_SOURCE_NATIVE=1 with nyc-intermediaries, irs-eo-bmf, and irs-527 source-native fetchers, or INTERMEDIARY_LIVE_CSV=/path/to/export.csv ./scripts/fetch-intermediaries.sh --live",
       "normalizedFile": "data/snapshots/2024-env/normalized/intermediaries.csv",
       "rowCount": 1353,
-      "sha256": "f39dd404111cc70d2870fdf6168e46f373a521c6aeca3bb6453f8bc8ed703e7d",
+      "sha256": "a2f2afd0ea7fc1717901c35d43266d2c2d0661b32bdbf4b463bffeaed0743a18",
       "status": "live",
-      "statusNotes": "intermediary: ok (NYC CFB intermediary rows; IRS EO BMF nonprofit/association capacity rows; IRS POFD Form 8872 527 rows;)"
+      "statusNotes": "intermediary: ok (NYC CFB intermediary rows; IRS EO BMF nonprofit/association capacity rows; IRS POFD Form 8872 527 rows)"
     }
   ],
   "liveRunStatus": {
     "file": "data/snapshots/2024-env/live-run-status.csv",
-    "sha256": "4d94aa686a3dedbfe5cfb358fa13ae922101f3a031892e21e008dad09da667ac"
+    "sha256": "265a6201702d3136e6ed90939ae163248e511c4cf3f10f6bacf4e1ca00857624"
   }
 }

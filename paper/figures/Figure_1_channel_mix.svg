@@ -62,9 +62,9 @@ text { font-family: Helvetica, Arial, sans-serif; font-size: 34px; fill: #111; }
 <text x="70" y="749" text-anchor="start">Vouchers</text>
 <rect x="440" y="720" width="150.3" height="38" fill="#d0d0d0" class="segment"/>
 <rect x="590.3" y="720" width="285.5" height="38" fill="#9e9e9e" class="segment"/>
-<rect x="875.8" y="720" width="273.4" height="38" fill="#595959" class="segment"/>
-<rect x="1149.2" y="720" width="259.0" height="38" fill="#1f4e79" class="segment"/>
-<rect x="1408.1" y="720" width="71.8" height="38" fill="#000000" class="segment"/>
+<rect x="875.8" y="720" width="273.2" height="38" fill="#595959" class="segment"/>
+<rect x="1149.0" y="720" width="259.1" height="38" fill="#1f4e79" class="segment"/>
+<rect x="1408.0" y="720" width="71.9" height="38" fill="#000000" class="segment"/>
 <text x="70" y="831" text-anchor="start">Full bundle</text>
 <rect x="440" y="802" width="146.5" height="38" fill="#d0d0d0" class="segment"/>
 <rect x="586.5" y="802" width="335.8" height="38" fill="#9e9e9e" class="segment"/>
@@ -72,11 +72,11 @@ text { font-family: Helvetica, Arial, sans-serif; font-size: 34px; fill: #111; }
 <rect x="1123.9" y="802" width="293.3" height="38" fill="#1f4e79" class="segment"/>
 <rect x="1417.2" y="802" width="62.8" height="38" fill="#000000" class="segment"/>
 <text x="70" y="913" text-anchor="start">Bundle+evasion</text>
-<rect x="440" y="884" width="144.0" height="38" fill="#d0d0d0" class="segment"/>
-<rect x="584.0" y="884" width="349.3" height="38" fill="#9e9e9e" class="segment"/>
-<rect x="933.4" y="884" width="202.6" height="38" fill="#595959" class="segment"/>
-<rect x="1136.0" y="884" width="287.2" height="38" fill="#1f4e79" class="segment"/>
-<rect x="1423.2" y="884" width="56.9" height="38" fill="#000000" class="segment"/>
+<rect x="440" y="884" width="144.1" height="38" fill="#d0d0d0" class="segment"/>
+<rect x="584.1" y="884" width="348.9" height="38" fill="#9e9e9e" class="segment"/>
+<rect x="933.1" y="884" width="202.5" height="38" fill="#595959" class="segment"/>
+<rect x="1135.6" y="884" width="287.4" height="38" fill="#1f4e79" class="segment"/>
+<rect x="1422.9" y="884" width="57.1" height="38" fill="#000000" class="segment"/>
 <line x1="440" y1="290" x2="440" y2="984" class="axis"/>
 <line x1="440" y1="984" x2="1480" y2="984" class="axis"/>
 <text x="960" y="1076" text-anchor="middle">Share of lobby spending by channel</text>
