@@ -36,4 +36,4 @@ This audit summarizes which claim posture is cleared by the current source panel
 
 ## P1/P2 Calibration Actions
 
-- `procurementExPostModificationShare` (P1, direct-source-moment): broaden the bounded USAspending action panel with representative SAM/FPDS action histories that support transaction-row, distinct-award, and amount-weighted denominators before treating modification incidence as calibrated
+- `procurementExPostModificationShare` (P1, direct-source-moment): broaden the bounded USAspending action panel with representative SAM/FPDS action histories or archived USAspending bulk transaction downloads that support transaction-row, distinct-award, and amount-weighted denominators before treating modification incidence as calibrated

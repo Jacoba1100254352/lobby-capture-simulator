@@ -14,7 +14,7 @@ MAIN_CLASS := lobbycapture.Main
 TEST_CLASSES := lobbycapture.SimulatorTests
 PAPER_BASENAME := strategic-channel-substitution-regulatory-capture
 
-.PHONY: compile script-checks test run campaign mechanism-comparison sensitivity ablation interactions portfolio source-moments source-panel-inventory source-capability-audit dark-money-bridge-audit intermediary-bridge-audit revolving-door-bridge-audit procurement-denominator-audit procurement-modification-composition-audit procurement-refresh-readiness sam-contract-awards-preflight sam-contract-awards-export-audit sam-procurement-refresh claim-boundary-audit claim-source-dependency-audit claim-posture-audit calibration-readiness-audit calibration-queue validate snapshot-2024-env tables figures paper paper-build paper-supplement-build paper-supplement paper-word-count wiley-template wiley-tex-deps paper-wiley paper-wiley-build submission-package submission-package-build submission-package-check paper-layout-audit visual-review-checklist paper-artifacts paper-artifacts-check clean
+.PHONY: compile script-checks test run campaign mechanism-comparison sensitivity ablation interactions portfolio source-moments source-panel-inventory source-capability-audit dark-money-bridge-audit intermediary-bridge-audit revolving-door-bridge-audit procurement-denominator-audit procurement-modification-composition-audit procurement-refresh-readiness sam-contract-awards-preflight sam-contract-awards-export-audit usaspending-transaction-download-strata sam-procurement-refresh claim-boundary-audit claim-source-dependency-audit claim-posture-audit calibration-readiness-audit calibration-queue validate snapshot-2024-env tables figures paper paper-build paper-supplement-build paper-supplement paper-word-count wiley-template wiley-tex-deps paper-wiley paper-wiley-build submission-package submission-package-build submission-package-check paper-layout-audit visual-review-checklist paper-artifacts paper-artifacts-check clean
 
 compile:
 	@mkdir -p out/classes
@@ -87,6 +87,9 @@ sam-contract-awards-preflight:
 
 sam-contract-awards-export-audit:
 	@. ./scripts/load-env.sh; python3 scripts/audit-sam-contract-awards-export.py
+
+usaspending-transaction-download-strata:
+	@. ./scripts/load-env.sh; python3 scripts/audit-usaspending-transaction-download-strata.py
 
 sam-procurement-refresh:
 	./scripts/refresh-sam-procurement-panel.sh

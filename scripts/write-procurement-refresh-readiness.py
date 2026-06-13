@@ -2,9 +2,9 @@
 """Write a no-network readiness plan for the procurement source refresh.
 
 This report is operational evidence, not empirical evidence. It exists so a
-future SAM/FPDS refresh can be run deliberately after quota reset without
-promoting partial payloads or confusing the bounded USAspending action panel
-with representative procurement calibration.
+future SAM/FPDS or public bulk-transaction refresh can be run deliberately
+without promoting partial payloads or confusing the bounded USAspending action
+panel with representative procurement calibration.
 """
 
 from __future__ import annotations
@@ -61,6 +61,11 @@ REQUIRED_ENV_VARS = [
     "USASPENDING_PROCUREMENT_NATIONAL_ACTIONS_TRANSACTION_PAGE_SIZE",
     "USASPENDING_PROCUREMENT_NATIONAL_ACTIONS_TRANSACTION_MAX_PAGES",
     "USASPENDING_PROCUREMENT_NATIONAL_ACTIONS_TRANSACTION_SORT_SPECS",
+    "USASPENDING_TRANSACTION_DOWNLOAD_FISCAL_YEAR",
+    "USASPENDING_TRANSACTION_DOWNLOAD_AGENCIES",
+    "USASPENDING_TRANSACTION_DOWNLOAD_MAX_ROWS",
+    "USASPENDING_TRANSACTION_DOWNLOAD_POLL_ATTEMPTS",
+    "USASPENDING_TRANSACTION_DOWNLOAD_POLL_SECONDS",
     "SOURCE_FETCH_CURL_FALLBACK",
 ]
 
@@ -171,6 +176,22 @@ def readiness_rows(reports: Path, snapshot: Path, env_example: Path) -> list[dic
             ),
         },
         {
+            "item": "usaspending-bulk-transaction-strata",
+            "status": "ready" if all(name in env_vars for name in (
+                "USASPENDING_TRANSACTION_DOWNLOAD_FISCAL_YEAR",
+                "USASPENDING_TRANSACTION_DOWNLOAD_AGENCIES",
+                "USASPENDING_TRANSACTION_DOWNLOAD_MAX_ROWS",
+                "USASPENDING_TRANSACTION_DOWNLOAD_POLL_ATTEMPTS",
+                "USASPENDING_TRANSACTION_DOWNLOAD_POLL_SECONDS",
+            )) else "missing",
+            "evidence": (
+                "No-key USAspending download/count and download/transactions controls are documented for representative transaction-history strata."
+            ),
+            "nextAction": (
+                "Run make usaspending-transaction-download-strata to audit row-limit-safe strata; use --download only when intentionally archiving normalized transaction rows."
+            ),
+        },
+        {
             "item": "p1-procurement-calibration-actions",
             "status": "blocked" if p1_procurement else "clear",
             "evidence": f"P1 procurement source-gap actions: {len(p1_procurement)}",
@@ -246,7 +267,7 @@ def readiness_rows(reports: Path, snapshot: Path, env_example: Path) -> list[dic
             "item": "claim-boundary",
             "status": "blocked" if sam_panel_status != "ready" or p1_procurement else "ready",
             "evidence": (
-                "Calibrated policy-simulation claims remain blocked until representative SAM/FPDS action-history coverage clears the procurement P1 gaps."
+                "Calibrated policy-simulation claims remain blocked until representative SAM/FPDS action-history coverage or archived USAspending bulk transaction downloads clear the procurement P1 gaps."
             ),
             "nextAction": (
                 "Keep the manuscript framed as a mechanism-model article with bounded empirical bridges."
@@ -397,8 +418,18 @@ def write_markdown(path: Path, rows: list[dict[str, str]]) -> None:
             "USAspending action panel."
         ),
         (
-            "4. Fallback path: keep the USAspending transaction/action panel as a schema and "
-            "directional diagnostic if SAM is unavailable, quota-blocked, or returns no rows."
+            "4. No-key USAspending bulk transaction route: run "
+            "`make usaspending-transaction-download-strata` to audit row-limit-safe "
+            "download/count strata, then rerun "
+            "`python3 scripts/audit-usaspending-transaction-download-strata.py --download` "
+            "only when intentionally archiving normalized transaction rows. This can "
+            "strengthen the public transaction-history denominator while preserving the "
+            "SAM/FPDS claim boundary until validation is rerun."
+        ),
+        (
+            "5. Fallback path: keep the bounded USAspending transaction/action panel as a "
+            "schema and directional diagnostic if SAM is unavailable, quota-blocked, or "
+            "returns no rows."
         ),
         "",
         "## Safety Rules",
