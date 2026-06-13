@@ -16,7 +16,7 @@ This report complements the scripted layout audit. Figure rows check generated S
 | `interaction_tradeoffs.tex` | scripted pass | scripted pass | scripted pass | scripted pass | layout pass | 4 label boxes; 4 leader lines |
 | `model_architecture.tex` | n/a | n/a | n/a | scripted pass | layout pass | no point-callout labels in this figure |
 | `scenario_tradeoffs.tex` | scripted pass | scripted pass | scripted pass | scripted pass | layout pass | 12 label boxes; 12 leader lines |
-| `substitution_warning_map.tex` | scripted pass | scripted pass | scripted pass | scripted pass | layout pass | 5 label boxes; 5 leader lines |
+| `substitution_warning_map.tex` | scripted pass | scripted pass | scripted pass | scripted pass | layout pass | 10 label boxes; 10 leader lines |
 
 ## Table Checks
 
