@@ -58,7 +58,7 @@ CLAIM_POSTURE_AUDIT_MD = ROOT / "reports" / "claim-posture-audit.md"
 CLAIM_POSTURE_AUDIT_CSV = ROOT / "reports" / "claim-posture-audit.csv"
 CALIBRATION_READINESS_MD = ROOT / "reports" / "calibration-readiness.md"
 CALIBRATION_READINESS_CSV = ROOT / "reports" / "calibration-readiness.csv"
-RELEASE_TAG = "paper-publication-readiness-2026-06-13-r83"
+RELEASE_TAG = "paper-publication-readiness-2026-06-13-r84"
 CITATION_CFF = ROOT / "CITATION.cff"
 ZENODO_JSON = ROOT / ".zenodo.json"
 FORBIDDEN_LOCAL_ARTIFACTS = [
@@ -392,6 +392,25 @@ def check_claim_alignment() -> list[str]:
         failures.append(
             "manuscript still refers to benchmark misses even though validation-summary.md reports Miss: 0",
         )
+    if CALIBRATION_READINESS_MD.exists():
+        readiness = CALIBRATION_READINESS_MD.read_text(encoding="utf-8")
+        p3_cleared = "- Calibration P3: `0`" in readiness and "No P3 calibration-scope rows remain" in readiness
+        if p3_cleared:
+            stale_p3_phrases = [
+                "Remaining P3 partial overlaps",
+                "remaining P3 partial overlaps",
+                "P3 partial overlaps concentrate",
+            ]
+            checked_texts = {
+                REGGOV_BODY: body,
+                SUPPLEMENT_BODY: SUPPLEMENT_BODY.read_text(encoding="utf-8") if SUPPLEMENT_BODY.exists() else "",
+            }
+            for path, text in checked_texts.items():
+                for phrase in stale_p3_phrases:
+                    if phrase in text:
+                        failures.append(
+                            f"{path.relative_to(ROOT)} describes unresolved P3 partials although calibration-readiness.md reports P3=0"
+                        )
     if SOURCE_PANEL_INVENTORY.exists():
         with SOURCE_PANEL_INVENTORY.open(newline="", encoding="utf-8") as source:
             panels = {row["panel"]: row for row in csv.DictReader(source)}

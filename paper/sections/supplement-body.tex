@@ -1,6 +1,6 @@
 \section{Purpose of the Supporting Information}
 
-This supplement records implementation details that should not carry the main article's narrative burden. It makes the model schedule, scenario catalog, validation artifacts, source-panel gaps, source-capability status, dark-money bridge limits, intermediary bridge limits, revolving-door bridge limits, procurement-denominator limits, procurement-modification composition limits, procurement-benchmark crosswalk, causal-calibration target audit, and procurement-refresh readiness easy to inspect.
+This supplement records implementation details that should not carry the main article's narrative burden. It makes the model schedule, scenario catalog, validation artifacts, source-panel boundaries, source-capability status, dark-money bridge limits, intermediary bridge limits, revolving-door bridge limits, procurement-denominator limits, procurement-modification composition limits, procurement-benchmark crosswalk, causal-calibration target audit, and procurement-refresh readiness easy to inspect.
 
 \section{Model Schedule and State}
 
@@ -160,22 +160,22 @@ Paper figures are generated as SVGs and converted to Wiley-preferred PDF graphic
 
 \section{Calibration Priorities}
 
-The model remains a mechanism article until the following source panels and tuning loops improve:
+The model remains a mechanism article until the following source panels and causal-design loops improve:
 
 \begin{itemize}
   \item hidden-donor identity evidence and representative nonprofit or intermediary routing panels beyond the top-EIN Schedule I slice;
   \item representative national public-financing and voucher participation records beyond the local NYC and Seattle program rows;
   \item SAM/FPDS procurement crosswalks covering modification coding, offer counts, exclusions, protests, and firewalls;
   \item richer revolving-door and advisory-access records;
-  \item comment-authenticity, duplicate-compression, regulator-backlog calibration, and continued tuning of the split between narrow reporting-error or campaign-sanction diagnostics and broader modeled enforcement events;
-  \item scenario-specific benchmarks for high-end outside spending, opaque electoral routing, broader shadow-lobbying substitution, and cooling-off evasion, with mixed baseline/stress/extreme-stress families separated before one range is treated as a calibration target;
-  \item public-financing uptake and regulator-backlog panels that can distinguish partial program strength, full program uptake, ordinary enforcement workload, and stressed referral queues.
+  \item comment-authenticity and duplicate-compression panels linked to agency response text, plus enforcement-event panels that measure audit, referral, sanction, and backlog effects;
+  \item scenario-specific causal designs for high-end outside spending, opaque electoral routing, broader shadow-lobbying substitution, cooling-off evasion, and cross-venue detection;
+  \item public-financing uptake and regulator-workload panels that support causal comparisons rather than only benchmark-scope plausibility checks.
 \end{itemize}
 
 The calibration queue in \texttt{reports/calibration-queue.md} records the classified work list.
 
 \section{How to Read the Bundle}
 
-The supporting files are organized to make the boundary between model assumptions and evidence visible. The source moments and source-panel inventory should be read first when assessing empirical scope. They state which panels are direct, proxy, thin, fixture-supported, or missing. The mechanism-comparison report should be read next because it shows the consequence of enabling substitution relative to simpler model modes. The campaign, sensitivity, ablation, interaction, and portfolio reports are then best interpreted as stress tests under those model assumptions.
+The supporting files are organized to make the boundary between model assumptions and evidence visible. The source moments and source-panel inventory should be read first when assessing empirical scope. They state which panels are direct or proxy-backed, which are usable within scope, and whether any panels are thin, fixture-supported, or missing. The mechanism-comparison report should be read next because it shows the consequence of enabling substitution relative to simpler model modes. The campaign, sensitivity, ablation, interaction, and portfolio reports are then best interpreted as stress tests under those model assumptions.
 
 Replication uses \texttt{make paper-artifacts-check}, which regenerates reports, tables, figures, PDFs, layout and visual audits, and the submission ZIP from checked-in sources. Live-source refreshes are separate so exploratory API output cannot silently alter the review bundle.
