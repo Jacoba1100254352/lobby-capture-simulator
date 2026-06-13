@@ -4,12 +4,12 @@ This audit maps each empirical source panel to the strongest manuscript claim it
 
 ## Validation Status Summary
 
-- Fit: `336`
-- Partial: `9`
+- Fit: `337`
+- Partial: `0`
 - Miss: `0`
 - Source gap: `0`
 - Unknown: `0`
-- Not applicable: `13`
+- Not applicable: `21`
 
 ## Claim Rules
 

@@ -13,12 +13,12 @@ This audit summarizes which claim posture is cleared by the current source panel
 
 ## Validation Counts
 
-- Fit: `336`
-- Partial: `9`
+- Fit: `337`
+- Partial: `0`
 - Miss: `0`
 - Source gap: `0`
 - Unknown: `0`
-- Not applicable: `13`
+- Not applicable: `21`
 
 ## Weak Source Panels
 

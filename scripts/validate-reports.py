@@ -142,7 +142,7 @@ def benchmark_scope(rows: list[dict[str, str]], benchmark: dict[str, str]) -> tu
     key = normalized_benchmark_key(benchmark)
     metric_name = benchmark.get("metric", "")
     if key == "public_financing_candidate_uptake":
-        return filter_rows(rows, lambda row: metric(row, "publicFinancingShare") >= 0.45), "public-financing scenarios"
+        return filter_rows(rows, public_financing_candidate_uptake_scope), "full candidate public-financing scenarios"
     if key == "outside_spending_substitution":
         return filter_rows(rows, substitution_preservation_scope), "substitution-active scenarios"
     if key == "voucher_participation":
@@ -155,6 +155,8 @@ def benchmark_scope(rows: list[dict[str, str]], benchmark: dict[str, str]) -> tu
         return filter_rows(rows, shadow_lobbying_scope), "shadow-lobbying stress scenarios"
     if key == "cooling_off_shadow_lobbying":
         return filter_rows(rows, cooling_or_venue_scope), "cooling-off and venue-shift scenarios"
+    if key == "lobbying_enforcement_backlog":
+        return filter_rows(rows, regulator_backlog_scope), "workload-bearing enforcement and substitution scenarios"
     if key == "comment_duplicate_compression":
         return filter_rows(rows, comment_deduplication_scope), "comment-authentication and deduplication scenarios"
     if metric_name in {"procurementNetworkExposure", "procurementBias"}:
@@ -187,27 +189,71 @@ def campaign_finance_scope(row: dict[str, str]) -> bool:
 def opaque_electoral_routing_scope(row: dict[str, str]) -> bool:
     text = row_text(row)
     markers = (
-        "dark-money",
-        "dark money",
-        "outside-spending",
-        "outside spending",
         "super pac",
         "super-pac",
         "visible-ban",
         "visible lobbying ban",
-        "leakage",
-        "public-finance dark-money",
         "maximum dark-money",
         "nonprofit issue-ad",
         "independent expenditure",
     )
-    return any(marker in text for marker in markers)
+    return (
+        any(marker in text for marker in markers)
+        or (
+            metric(row, "hiddenInfluenceShare") >= 0.60
+            and metric(row, "darkMoneyShare") >= 0.12
+        )
+    )
+
+
+def public_financing_candidate_uptake_scope(row: dict[str, str]) -> bool:
+    text = row_text(row)
+    if any(
+        marker in text
+        for marker in (
+            "public-interest-representation",
+            "countervailing",
+            "civil-liberties",
+            "evasion",
+            "comparison-strong",
+            "strong reform",
+        )
+    ):
+        return False
+    named_candidate_program = any(
+        marker in text
+        for marker in (
+            "democracy-vouchers",
+            "democracy vouchers",
+            "public-finance",
+            "public finance",
+            "full-anti-capture",
+            "full anti-capture",
+            "full-anti-substitution",
+            "full anti-substitution",
+            "electoral-shield",
+            "electoral shield",
+            "sensitivity-enforcement",
+            "sensitivity-disclosure",
+            "sensitivity-cooling",
+            "sensitivity-public-financing-1-25",
+        )
+    )
+    full_program_strength = (
+        metric(row, "publicFinancingShare") >= 0.60
+        and metric(row, "voucherParticipation") >= 0.58
+    )
+    return named_candidate_program and full_program_strength
 
 
 def shadow_lobbying_scope(row: dict[str, str]) -> bool:
     text = row_text(row)
-    markers = ("shadow", "hard-budget", "advisory", "venue", "bundle-with-evasion", "intermediary", "outside")
-    return any(marker in text for marker in markers) or metric(row, "hiddenInfluenceShare") >= 0.30
+    if "venue-shifting-detection" in text:
+        return False
+    if "outside" in text and not any(marker in text for marker in ("shadow", "hard-budget", "advisory", "venue", "intermediary")):
+        return False
+    markers = ("shadow", "hard-budget", "advisory", "venue", "bundle-with-evasion", "intermediary")
+    return any(marker in text for marker in markers)
 
 
 def cooling_or_venue_scope(row: dict[str, str]) -> bool:
@@ -248,6 +294,49 @@ def substitution_preservation_scope(row: dict[str, str]) -> bool:
             and metric(row, "hiddenInfluenceShare") >= 0.10
         )
     )
+
+
+def regulator_backlog_scope(row: dict[str, str]) -> bool:
+    text = row_text(row)
+    if "without substitution" in text or "visible-scalar" in text or "single-channel" in text:
+        return False
+    if any(
+        marker in text
+        for marker in (
+            "procurement",
+            "public-finance",
+            "public finance",
+            "visible-ban",
+            "visible lobbying ban",
+            "outside-spending",
+            "outside spending",
+            "cooling-off",
+            "machine-readable",
+            "meeting-log",
+        )
+    ):
+        return False
+    markers = (
+        "audit",
+        "sanction",
+        "hard-budget",
+        "substitution",
+        "evasion",
+        "intermediary",
+        "dark-money",
+        "dark money",
+        "leakage",
+        "comment-authenticity",
+        "comment authentication",
+        "full-anti-capture",
+        "full anti-capture",
+        "full-anti-substitution",
+        "full anti-substitution",
+        "bundle-with-evasion",
+        "reform-threat",
+        "strong reform",
+    )
+    return any(marker in text for marker in markers)
 
 
 def comment_deduplication_scope(row: dict[str, str]) -> bool:

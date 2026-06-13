@@ -39,6 +39,8 @@ CATEGORY_BY_METRIC = {
     "revolvingDoorInfluence": ("direct-source-moment", "replace fixture rows with a documented personnel/export panel and keep headcount share separate from modeled influence intensity"),
     "voucherParticipation": ("metric-split", "split resident voucher participation from regime strength"),
     "publicFinancingShare": ("metric-split", "split candidate uptake from public-financing regime strength"),
+    "publicFinancingCandidateUptake": ("benchmark-review", "scope candidate-uptake benchmarks to full candidate public-financing regimes; keep partial public-interest representation and civil-liberties portfolios separate"),
+    "regulatorQueueBacklog": ("benchmark-review", "scope unresolved-referral benchmarks to workload-bearing enforcement and substitution rows; keep disabled model-mode and low-workload rows separate"),
     "venueSubstitutionRate": ("scenario-coverage", "add cooling-off and advisory-lobbying stress cases"),
     "networkOpacityIndex": ("direct-source-moment", "anchor with source-network panels that connect LDA, FEC, IRS/nonprofit, docket, procurement, and revolving-door identifiers"),
     "intermediaryCentrality": ("direct-source-moment", "anchor intermediary routing with nonprofit, 527, association, think-tank, and sponsored-expert source panels"),
@@ -224,8 +226,11 @@ def write_markdown(path: Path, rows: list[dict[str, str]]) -> None:
         "## Category Counts",
         "",
     ]
-    for category, count in sorted(counts.items()):
-        lines.append(f"- `{category}`: `{count}`")
+    if counts:
+        for category, count in sorted(counts.items()):
+            lines.append(f"- `{category}`: `{count}`")
+    else:
+        lines.append("- none")
     lines.extend(
         [
             "",
@@ -233,11 +238,14 @@ def write_markdown(path: Path, rows: list[dict[str, str]]) -> None:
             "| --- | --- | --- | --- | --- | ---: | ---: | ---: | --- |",
         ]
     )
-    for row in rows:
-        source = f"{row['sourceMetric']}={row['sourceValue']}" if row["sourceMetric"] else ""
-        lines.append(
-            f"| {row['priority']} | {row['category']} | {row['report']} | `{row['metric']}` | {row['status']} | {row['observedRange']} | {row['benchmarkRange']} | {source} | {row['recommendedAction']} |"
-        )
+    if rows:
+        for row in rows:
+            source = f"{row['sourceMetric']}={row['sourceValue']}" if row["sourceMetric"] else ""
+            lines.append(
+                f"| {row['priority']} | {row['category']} | {row['report']} | `{row['metric']}` | {row['status']} | {row['observedRange']} | {row['benchmarkRange']} | {source} | {row['recommendedAction']} |"
+            )
+    else:
+        lines.append("|  |  |  |  |  |  |  |  | No calibration queue rows remain. |")
     lines.append("")
     path.write_text("\n".join(lines), encoding="utf-8")
 
