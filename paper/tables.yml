@@ -744,7 +744,7 @@
           "format": "label",
           "labels": {
             "proxy/thin": "proxy/thin",
-            "direct/proxy gap": "direct gap",
+            "direct/proxy gap": "direct/proxy",
             "direct": "direct",
             "direct program rows when present": "direct rows",
             "direct when present": "direct rows",
