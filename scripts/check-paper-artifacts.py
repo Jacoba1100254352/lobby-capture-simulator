@@ -58,7 +58,7 @@ CLAIM_POSTURE_AUDIT_MD = ROOT / "reports" / "claim-posture-audit.md"
 CLAIM_POSTURE_AUDIT_CSV = ROOT / "reports" / "claim-posture-audit.csv"
 CALIBRATION_READINESS_MD = ROOT / "reports" / "calibration-readiness.md"
 CALIBRATION_READINESS_CSV = ROOT / "reports" / "calibration-readiness.csv"
-RELEASE_TAG = "paper-publication-readiness-2026-06-13-r84"
+RELEASE_TAG = "paper-publication-readiness-2026-06-13-r85"
 CITATION_CFF = ROOT / "CITATION.cff"
 ZENODO_JSON = ROOT / ".zenodo.json"
 FORBIDDEN_LOCAL_ARTIFACTS = [
@@ -1173,6 +1173,14 @@ def check_claim_source_dependency_audit() -> list[str]:
         panels = list(csv.DictReader(source))
     with CLAIM_SOURCE_DEPENDENCY_CSV.open(newline="", encoding="utf-8") as source:
         rows = {row.get("claimKey", ""): row for row in csv.DictReader(source)}
+    causal_blocking_targets: set[str] = set()
+    if CAUSAL_CALIBRATION_TARGETS_CSV.exists():
+        with CAUSAL_CALIBRATION_TARGETS_CSV.open(newline="", encoding="utf-8") as source:
+            causal_blocking_targets = {
+                row.get("targetKey", "")
+                for row in csv.DictReader(source)
+                if row.get("blocksPolicySimulation") == "yes"
+            }
 
     required_claims = {
         "lobbying-disclosure-surface",
@@ -1200,6 +1208,20 @@ def check_claim_source_dependency_audit() -> list[str]:
         failures.append("rulemaking comment source dependency should be cleared")
     if rows["hidden-channel-magnitude"].get("status") != "bounded":
         failures.append("hidden-channel magnitude source dependency should stay bounded until donor identities and representative routing coverage exist")
+    if causal_blocking_targets:
+        if rows["calibrated-policy-simulation"].get("status") == "cleared":
+            failures.append(
+                "calibrated-policy source dependency cannot be cleared while causal calibration targets block policy simulation"
+            )
+        target_claim_guards = {
+            "hidden-donor-routing-magnitude": "hidden-channel-magnitude",
+            "procurement-modification-causal-capture": "procurement-modification-capture",
+        }
+        for target, claim in target_claim_guards.items():
+            if target in causal_blocking_targets and rows[claim].get("status") == "cleared":
+                failures.append(
+                    f"{claim} source dependency cannot be cleared while causal target remains blocked: {target}"
+                )
     if weak_panels:
         bounded_expected = set()
         if "Direct dark money" in weak_panel_names or "Revolving door" in weak_panel_names:
@@ -1256,7 +1278,7 @@ def check_causal_calibration_targets() -> list[str]:
 
     with CAUSAL_CALIBRATION_TARGETS_CSV.open(newline="", encoding="utf-8") as source:
         rows = list(csv.DictReader(source))
-    if len(rows) < 8:
+    if len(rows) < 10:
         failures.append("causal calibration target audit should enumerate the main hidden-channel and reform-effect target classes")
     required_targets = {
         "hidden-donor-routing-magnitude",
@@ -1266,6 +1288,7 @@ def check_causal_calibration_targets() -> list[str]:
         "public-financing-countervailing-effect",
         "comment-authenticity-and-uptake-effect",
         "enforcement-deterrence-effect",
+        "meeting-disclosure-and-access-effect",
         "intermediary-network-effect",
         "venue-shifting-detection-effect",
     }
@@ -1323,6 +1346,13 @@ def check_claim_posture_audit() -> list[str]:
         panels = list(csv.DictReader(source))
     with CLAIM_POSTURE_AUDIT_CSV.open(newline="", encoding="utf-8") as source:
         rows = {row.get("gate", ""): row for row in csv.DictReader(source)}
+    causal_blockers: list[dict[str, str]] = []
+    if CAUSAL_CALIBRATION_TARGETS_CSV.exists():
+        with CAUSAL_CALIBRATION_TARGETS_CSV.open(newline="", encoding="utf-8") as source:
+            causal_blockers = [
+                row for row in csv.DictReader(source)
+                if row.get("blocksPolicySimulation") == "yes"
+            ]
 
     required_gates = {
         "Mechanism-model article",
@@ -1341,6 +1371,10 @@ def check_claim_posture_audit() -> list[str]:
         failures.append("mechanism-model claim posture is not cleared")
     if rows["Reproducibility and layout bundle"].get("status") != "cleared":
         failures.append("reproducibility/layout claim posture is not cleared")
+    if causal_blockers and rows["Calibrated policy-simulation claim"].get("status") != "not_cleared":
+        failures.append(
+            "calibrated policy-simulation posture must remain not_cleared while causal calibration blockers remain"
+        )
     if weak_panels:
         if rows["Empirical bridge"].get("status") != "bounded":
             failures.append("empirical bridge should be bounded while weak panels remain")
