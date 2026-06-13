@@ -67,16 +67,21 @@ def readiness_rows(
         row for row in causal_rows
         if row.get("blocksPolicySimulation", "yes") == "yes"
     ]
+    causal_by_priority = Counter(row.get("priority", "") for row in causal_blockers)
 
     hard_evidence = (
-        f"P0={by_priority.get('P0', 0)}; P1={by_priority.get('P1', 0)}; "
-        f"P2={by_priority.get('P2', 0)}; misses={len(miss_rows)}; "
-        f"unknown={len(unknown_rows)}; source_gaps={len(source_gap_rows)}"
+        f"validation_queue P0={by_priority.get('P0', 0)}; "
+        f"validation_queue P1={by_priority.get('P1', 0)}; "
+        f"validation_queue P2={by_priority.get('P2', 0)}; "
+        f"misses={len(miss_rows)}; unknown={len(unknown_rows)}; "
+        f"source_gaps={len(source_gap_rows)}; "
+        f"causal_targets P1={causal_by_priority.get('P1', 0)}; "
+        f"causal_targets P2={causal_by_priority.get('P2', 0)}"
     )
     if hard_rows:
         hard_next = "; ".join(compact_action(row) for row in hard_rows[:4])
     elif policy_posture != "cleared":
-        hard_next = "Clear the generated causal-calibration target matrix and add stronger source panels before using calibrated policy-simulation language."
+        hard_next = "Clear the causal-calibration target matrix and add stronger source panels before using calibrated policy-simulation language."
     else:
         hard_next = "No hard calibration actions remain."
 
@@ -114,7 +119,7 @@ def readiness_rows(
             "calibrated-policy-readiness",
             "blocked" if hard_rows or policy_posture != "cleared" else "cleared",
             f"claimPosture={policy_posture or 'missing'}; {hard_evidence}; open_causal_targets={len(causal_blockers)}",
-            "Calibrated policy-simulation claims require all P0/P1/P2 calibration and source gaps to clear.",
+            "Calibrated policy-simulation claims require both the validation-calibration queue and the independent causal-calibration target matrix to clear.",
             hard_next,
         ),
         row(
@@ -193,6 +198,7 @@ def write_markdown(
         row for row in causal_rows
         if row.get("blocksPolicySimulation", "yes") == "yes"
     ]
+    causal_by_priority = Counter(row.get("priority", "") for row in causal_blockers)
     lines = [
         "# Calibration Readiness Audit",
         "",
@@ -219,11 +225,13 @@ def write_markdown(
             f"- Validation misses: `{validation.get('miss', 0)}`",
             f"- Validation source gaps: `{validation.get('source_gap', 0)}`",
             f"- Validation unknowns: `{validation.get('unknown', 0)}`",
-            f"- Calibration P0: `{by_priority.get('P0', 0)}`",
-            f"- Calibration P1: `{by_priority.get('P1', 0)}`",
-            f"- Calibration P2: `{by_priority.get('P2', 0)}`",
-            f"- Calibration P3: `{by_priority.get('P3', 0)}`",
+            f"- Validation-queue P0: `{by_priority.get('P0', 0)}`",
+            f"- Validation-queue P1: `{by_priority.get('P1', 0)}`",
+            f"- Validation-queue P2: `{by_priority.get('P2', 0)}`",
+            f"- Validation-queue P3: `{by_priority.get('P3', 0)}`",
             f"- Open causal calibration targets: `{len(causal_blockers)}`",
+            f"- Open causal P1 targets: `{causal_by_priority.get('P1', 0)}`",
+            f"- Open causal P2 targets: `{causal_by_priority.get('P2', 0)}`",
             "",
             "## P3 Work Queue",
             "",

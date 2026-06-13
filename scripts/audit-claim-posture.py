@@ -71,8 +71,8 @@ def posture_rows(
         row for row in claim_rows
         if row.get("status") == "usable" and row.get("supportLevel") != "direct-bounded"
     ]
-    p1_actions = [row for row in calibration_rows if field(row, "priority", "Priority") == "P1"]
-    p2_actions = [row for row in calibration_rows if field(row, "priority", "Priority") == "P2"]
+    p1_queue_actions = [row for row in calibration_rows if field(row, "priority", "Priority") == "P1"]
+    p2_queue_actions = [row for row in calibration_rows if field(row, "priority", "Priority") == "P2"]
     source_gaps = counts.get("source_gap", 0)
     dependency_counts = claim_dependency_counts(dependency_rows)
     layout_pass = "- Failures: `0`" in layout
@@ -97,6 +97,7 @@ def posture_rows(
         row for row in causal_rows
         if row.get("blocksPolicySimulation", "yes") == "yes"
     ]
+    causal_priority_counts = priority_counts(causal_blockers)
     policy_status = "cleared" if calibrated_dependency.get("status") == "cleared" and not causal_blockers else "not_cleared"
 
     return [
@@ -129,13 +130,15 @@ def posture_rows(
             "Calibrated policy-simulation claim",
             policy_status,
             (
-                f"{len(p1_actions)} P1 and {len(p2_actions)} P2 calibration/source actions remain; "
+                f"validation queue P1={len(p1_queue_actions)}, P2={len(p2_queue_actions)}; "
+                f"causal targets P1={causal_priority_counts.get('P1', 0)}, "
+                f"P2={causal_priority_counts.get('P2', 0)}; "
                 f"{dependency_counts.get('not_cleared', 0)} claim dependencies not cleared; "
                 f"calibrated-policy dependency={calibrated_dependency.get('status', 'missing')}; "
                 f"open causal targets={len(causal_blockers)}"
             ),
             "The current artifact should not claim calibrated reform effects or representative national hidden-channel magnitudes.",
-            "Clear the generated causal-calibration target matrix and rerun validation before using calibrated policy-simulation language.",
+            "Clear the causal-calibration target matrix, add stronger source panels, and rerun validation before using calibrated policy-simulation language.",
         ),
         row(
             "Reproducibility and layout bundle",
@@ -165,6 +168,15 @@ def claim_dependency_counts(rows: list[dict[str, str]]) -> dict[str, int]:
         status = row.get("status", "")
         if status in counts:
             counts[status] += 1
+    return counts
+
+
+def priority_counts(rows: list[dict[str, str]]) -> dict[str, int]:
+    counts: dict[str, int] = {}
+    for row in rows:
+        priority = field(row, "priority", "Priority")
+        if priority:
+            counts[priority] = counts.get(priority, 0) + 1
     return counts
 
 
@@ -211,6 +223,7 @@ def write_markdown(
         row for row in causal_rows
         if row.get("blocksPolicySimulation", "yes") == "yes"
     ]
+    causal_priority_counts = priority_counts(causal_blockers)
     lines = [
         "# Claim Posture Audit",
         "",
@@ -281,6 +294,8 @@ def write_markdown(
             "## Causal Calibration Targets",
             "",
             f"- Blocking targets: `{len(causal_blockers)}`",
+            f"- Blocking P1 targets: `{causal_priority_counts.get('P1', 0)}`",
+            f"- Blocking P2 targets: `{causal_priority_counts.get('P2', 0)}`",
         ]
     )
     if causal_blockers:
@@ -295,9 +310,9 @@ def write_markdown(
             )
     else:
         lines.append("- None")
-    lines.extend(["", "## P1/P2 Calibration Actions", ""])
+    lines.extend(["", "## Validation-Queue P1/P2 Actions", ""])
     if not p1_p2:
-        lines.append("- None")
+        lines.append("- None. The validation-calibration queue is clear; calibrated policy-simulation remains blocked by the causal-calibration targets above.")
     for item in p1_p2:
         lines.append(
             "- `{metric}` ({priority}, {category}): {action}".format(

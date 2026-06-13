@@ -59,7 +59,7 @@ CLAIM_POSTURE_AUDIT_MD = ROOT / "reports" / "claim-posture-audit.md"
 CLAIM_POSTURE_AUDIT_CSV = ROOT / "reports" / "claim-posture-audit.csv"
 CALIBRATION_READINESS_MD = ROOT / "reports" / "calibration-readiness.md"
 CALIBRATION_READINESS_CSV = ROOT / "reports" / "calibration-readiness.csv"
-RELEASE_TAG = "paper-publication-readiness-2026-06-13-r88"
+RELEASE_TAG = "paper-publication-readiness-2026-06-13-r89"
 CITATION_CFF = ROOT / "CITATION.cff"
 ZENODO_JSON = ROOT / ".zenodo.json"
 FORBIDDEN_LOCAL_ARTIFACTS = [
@@ -395,7 +395,7 @@ def check_claim_alignment() -> list[str]:
         )
     if CALIBRATION_READINESS_MD.exists():
         readiness = CALIBRATION_READINESS_MD.read_text(encoding="utf-8")
-        p3_cleared = "- Calibration P3: `0`" in readiness and "No P3 calibration-scope rows remain" in readiness
+        p3_cleared = "- Validation-queue P3: `0`" in readiness and "No P3 calibration-scope rows remain" in readiness
         if "empirical-bridge-readiness" not in readiness:
             failures.append("calibration-readiness audit does not expose empirical-bridge readiness")
         if p3_cleared:
@@ -1444,6 +1444,23 @@ def check_claim_posture_audit() -> list[str]:
         failures.append(
             "calibrated policy-simulation posture must remain not_cleared while causal calibration blockers remain"
         )
+    if causal_blockers:
+        policy_evidence = rows["Calibrated policy-simulation claim"].get("evidence", "")
+        required_evidence = [
+            "validation queue P1=",
+            "causal targets P1=",
+            "open causal targets=",
+        ]
+        for phrase in required_evidence:
+            if phrase not in policy_evidence:
+                failures.append(f"calibrated policy-simulation evidence missing distinction: {phrase}")
+        stale_evidence_phrases = [
+            "calibration/source actions remain",
+            "0 P1 and 0 P2",
+        ]
+        for phrase in stale_evidence_phrases:
+            if phrase in policy_evidence:
+                failures.append(f"calibrated policy-simulation evidence uses stale queue wording: {phrase}")
     if bounded_dependencies and rows["Empirical bridge"].get("status") != "bounded":
         failures.append(
             "empirical bridge posture should remain bounded while bounded claim-source dependencies remain"
@@ -1463,6 +1480,8 @@ def check_claim_posture_audit() -> list[str]:
         "Weak Source Panels",
         "Claim-Source Dependencies",
         "Causal Calibration Targets",
+        "Validation-Queue P1/P2 Actions",
+        "Blocking P1 targets",
         "open causal targets",
     ]
     for phrase in required_text:
