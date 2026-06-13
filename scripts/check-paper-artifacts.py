@@ -58,7 +58,7 @@ CLAIM_POSTURE_AUDIT_MD = ROOT / "reports" / "claim-posture-audit.md"
 CLAIM_POSTURE_AUDIT_CSV = ROOT / "reports" / "claim-posture-audit.csv"
 CALIBRATION_READINESS_MD = ROOT / "reports" / "calibration-readiness.md"
 CALIBRATION_READINESS_CSV = ROOT / "reports" / "calibration-readiness.csv"
-RELEASE_TAG = "paper-publication-readiness-2026-06-13-r85"
+RELEASE_TAG = "paper-publication-readiness-2026-06-13-r86"
 CITATION_CFF = ROOT / "CITATION.cff"
 ZENODO_JSON = ROOT / ".zenodo.json"
 FORBIDDEN_LOCAL_ARTIFACTS = [
@@ -395,6 +395,8 @@ def check_claim_alignment() -> list[str]:
     if CALIBRATION_READINESS_MD.exists():
         readiness = CALIBRATION_READINESS_MD.read_text(encoding="utf-8")
         p3_cleared = "- Calibration P3: `0`" in readiness and "No P3 calibration-scope rows remain" in readiness
+        if "empirical-bridge-readiness" not in readiness:
+            failures.append("calibration-readiness audit does not expose empirical-bridge readiness")
         if p3_cleared:
             stale_p3_phrases = [
                 "Remaining P3 partial overlaps",
@@ -1346,6 +1348,10 @@ def check_claim_posture_audit() -> list[str]:
         panels = list(csv.DictReader(source))
     with CLAIM_POSTURE_AUDIT_CSV.open(newline="", encoding="utf-8") as source:
         rows = {row.get("gate", ""): row for row in csv.DictReader(source)}
+    dependency_rows: list[dict[str, str]] = []
+    if CLAIM_SOURCE_DEPENDENCY_CSV.exists():
+        with CLAIM_SOURCE_DEPENDENCY_CSV.open(newline="", encoding="utf-8") as source:
+            dependency_rows = list(csv.DictReader(source))
     causal_blockers: list[dict[str, str]] = []
     if CAUSAL_CALIBRATION_TARGETS_CSV.exists():
         with CAUSAL_CALIBRATION_TARGETS_CSV.open(newline="", encoding="utf-8") as source:
@@ -1367,6 +1373,10 @@ def check_claim_posture_audit() -> list[str]:
 
     weak_statuses = {"thin", "warning", "fixture-only", "missing"}
     weak_panels = [panel for panel in panels if panel.get("status") in weak_statuses]
+    bounded_dependencies = [
+        row for row in dependency_rows
+        if row.get("status") == "bounded"
+    ]
     if rows["Mechanism-model article"].get("status") != "cleared":
         failures.append("mechanism-model claim posture is not cleared")
     if rows["Reproducibility and layout bundle"].get("status") != "cleared":
@@ -1374,6 +1384,10 @@ def check_claim_posture_audit() -> list[str]:
     if causal_blockers and rows["Calibrated policy-simulation claim"].get("status") != "not_cleared":
         failures.append(
             "calibrated policy-simulation posture must remain not_cleared while causal calibration blockers remain"
+        )
+    if bounded_dependencies and rows["Empirical bridge"].get("status") != "bounded":
+        failures.append(
+            "empirical bridge posture should remain bounded while bounded claim-source dependencies remain"
         )
     if weak_panels:
         if rows["Empirical bridge"].get("status") != "bounded":

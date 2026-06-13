@@ -60,6 +60,8 @@ def readiness_rows(
     miss_rows = [row for row in validation_rows if row.get("status") == "miss"]
     source_gap_rows = [row for row in validation_rows if row.get("status") == "source_gap"]
     mechanism_posture = claim_status(claim_rows, "Mechanism-model article")
+    empirical_posture = claim_status(claim_rows, "Empirical bridge")
+    empirical_evidence = claim_field(claim_rows, "Empirical bridge", "evidence")
     policy_posture = claim_status(claim_rows, "Calibrated policy-simulation claim")
     causal_blockers = [
         row for row in causal_rows
@@ -100,6 +102,15 @@ def readiness_rows(
             "Keep synthetic results framed as mechanism diagnostics under explicit source limits.",
         ),
         row(
+            "empirical-bridge-readiness",
+            "bounded" if empirical_posture == "bounded" else (
+                "cleared" if empirical_posture == "cleared" else "needs_revision"
+            ),
+            f"claimPosture={empirical_posture or 'missing'}; {empirical_evidence or 'no empirical-bridge evidence row'}",
+            "Empirical bridge rows can support distributional anchors and validation-gap diagnostics; bounded status means stronger hidden-channel, procurement-capture, or policy-effect claims remain outside scope.",
+            "Clear bounded claim-source dependencies before describing the empirical bridge as fully cleared.",
+        ),
+        row(
             "calibrated-policy-readiness",
             "blocked" if hard_rows or policy_posture != "cleared" else "cleared",
             f"claimPosture={policy_posture or 'missing'}; {hard_evidence}; open_causal_targets={len(causal_blockers)}",
@@ -128,9 +139,13 @@ def validation_counts(rows: list[dict[str, str]]) -> Counter[str]:
 
 
 def claim_status(rows: list[dict[str, str]], gate: str) -> str:
+    return claim_field(rows, gate, "status")
+
+
+def claim_field(rows: list[dict[str, str]], gate: str, field: str) -> str:
     for row in rows:
         if row.get("gate") == gate:
-            return row.get("status", "")
+            return row.get(field, "")
     return ""
 
 

@@ -75,6 +75,7 @@ def posture_rows(
     visual_pass = bool(visual) and "needs review" not in visual and "Layout audit has not been generated yet" not in visual
     claim_audit_complete = len(claim_rows) == len(panels) and bool(claim_rows)
     dependency_audit_complete = bool(dependency_rows)
+    bounded_dependencies = dependency_counts.get("bounded", 0)
 
     mechanism_status = "cleared" if (
         counts.get("miss", 0) == 0
@@ -83,7 +84,7 @@ def posture_rows(
         and dependency_audit_complete
     ) else "needs_revision"
     reproducibility_status = "cleared" if layout_pass and visual_pass else "needs_revision"
-    empirical_status = "bounded" if weak_panels or source_gaps else "cleared"
+    empirical_status = "bounded" if weak_panels or source_gaps or bounded_dependencies else "cleared"
     calibrated_dependency = next(
         (row for row in dependency_rows if row.get("claimKey") == "calibrated-policy-simulation"),
         {},
