@@ -61,7 +61,9 @@ CALIBRATION_READINESS_MD = ROOT / "reports" / "calibration-readiness.md"
 CALIBRATION_READINESS_CSV = ROOT / "reports" / "calibration-readiness.csv"
 POLICY_CLAIM_LANGUAGE_AUDIT_MD = ROOT / "reports" / "policy-claim-language-audit.md"
 POLICY_CLAIM_LANGUAGE_AUDIT_CSV = ROOT / "reports" / "policy-claim-language-audit.csv"
-RELEASE_TAG = "paper-publication-readiness-2026-06-13-r94"
+SUBMISSION_READINESS_MD = ROOT / "reports" / "submission-readiness.md"
+SUBMISSION_READINESS_CSV = ROOT / "reports" / "submission-readiness.csv"
+RELEASE_TAG = "paper-publication-readiness-2026-06-13-r95"
 CITATION_CFF = ROOT / "CITATION.cff"
 ZENODO_JSON = ROOT / ".zenodo.json"
 FORBIDDEN_LOCAL_ARTIFACTS = [
@@ -153,6 +155,7 @@ EXPECTED_ZIP_MEMBERS = {
     "supporting-information/causal-calibration-targets.md",
     "supporting-information/claim-posture-audit.md",
     "supporting-information/policy-claim-language-audit.md",
+    "supporting-information/submission-readiness.md",
     "supporting-information/validation-summary.md",
     "supporting-information/substitution-audit.md",
     "supporting-information/portfolio-screen.md",
@@ -186,6 +189,7 @@ def main() -> int:
     failures.extend(check_causal_calibration_targets())
     failures.extend(check_claim_posture_audit())
     failures.extend(check_policy_claim_language_audit())
+    failures.extend(check_submission_readiness_audit())
     failures.extend(check_layout_and_visual_reports())
     failures.extend(check_archive_metadata())
     failures.extend(check_release_tag_exactness())
@@ -314,6 +318,7 @@ def submission_inputs() -> list[Path]:
         ROOT / "reports" / "calibration-queue.md",
         ROOT / "reports" / "calibration-readiness.md",
         POLICY_CLAIM_LANGUAGE_AUDIT_MD,
+        SUBMISSION_READINESS_MD,
         ROOT / "reports" / "paper-layout-audit.md",
         ROOT / "reports" / "manual-visual-audit.md",
         *report_bundle_inputs(),
@@ -1548,6 +1553,56 @@ def check_policy_claim_language_audit() -> list[str]:
     return failures
 
 
+def check_submission_readiness_audit() -> list[str]:
+    failures: list[str] = []
+    missing = [
+        path.relative_to(ROOT)
+        for path in (SUBMISSION_READINESS_MD, SUBMISSION_READINESS_CSV)
+        if not path.exists()
+    ]
+    if missing:
+        return [f"missing submission-readiness audit artifact: {path}" for path in missing]
+
+    with SUBMISSION_READINESS_CSV.open(newline="", encoding="utf-8") as source:
+        rows = {row.get("gate", ""): row for row in csv.DictReader(source)}
+    required = {
+        "mechanism-manuscript": "ready",
+        "empirical-bridge-scope": "bounded",
+        "calibrated-policy-claims": "blocked",
+        "claim-source-dependencies": "bounded",
+        "policy-language-audit": "ready",
+        "layout-and-visual-audit": "ready",
+        "reproducible-review-bundle": "ready",
+        "overall-submission-posture": "ready_for_mechanism_review",
+    }
+    for gate_name, expected_status in required.items():
+        if gate_name not in rows:
+            failures.append(f"submission-readiness audit missing gate: {gate_name}")
+            continue
+        if rows[gate_name].get("status") != expected_status:
+            failures.append(
+                "submission-readiness audit gate has unexpected status: "
+                f"{gate_name}={rows[gate_name].get('status', '')}, expected {expected_status}"
+            )
+
+    text = SUBMISSION_READINESS_MD.read_text(encoding="utf-8")
+    required_text = [
+        "ready_for_mechanism_review",
+        "bounded empirical bridge",
+        "not a calibrated policy-effect submission",
+        "calibrated policy-effect claims",
+        "final human read-through",
+    ]
+    for phrase in required_text:
+        if phrase not in text:
+            failures.append(f"submission-readiness audit markdown missing phrase: {phrase}")
+    if SUPPLEMENT_BODY.exists():
+        supplement = SUPPLEMENT_BODY.read_text(encoding="utf-8")
+        if "submission-readiness audit" not in supplement:
+            failures.append("supplement does not disclose the submission-readiness audit")
+    return failures
+
+
 def check_layout_and_visual_reports() -> list[str]:
     failures: list[str] = []
     if not LAYOUT_AUDIT.exists():
@@ -1706,6 +1761,8 @@ def package_byte_checks() -> list[tuple[Path, str]]:
         (ROOT / "reports" / "lobby-capture-portfolio.md", "supporting-information/portfolio-screen.md"),
         (ROOT / "reports" / "calibration-queue.md", "supporting-information/calibration-queue.md"),
         (CALIBRATION_READINESS_MD, "supporting-information/calibration-readiness.md"),
+        (POLICY_CLAIM_LANGUAGE_AUDIT_MD, "supporting-information/policy-claim-language-audit.md"),
+        (SUBMISSION_READINESS_MD, "supporting-information/submission-readiness.md"),
         (ROOT / "reports" / "paper-layout-audit.md", "supporting-information/paper-layout-audit.md"),
         (ROOT / "reports" / "manual-visual-audit.md", "supporting-information/manual-visual-audit.md"),
         (CITATION_CFF, "supporting-information/CITATION.cff"),

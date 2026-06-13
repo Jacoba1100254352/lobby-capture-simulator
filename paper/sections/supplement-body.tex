@@ -106,6 +106,7 @@ The reproducible report pipeline writes:
   \item validation summary, classified calibration queue, and calibration-readiness audit;
   \item substitution audit with distortion-failure, warning, and channel-shift tradeoff labels;
   \item generated paper tables, figures, local PDF, Wiley PDF, supplement PDF, and Wiley submission archive.
+  \item submission-readiness audit synthesizing claim posture, empirical-bridge scope, policy-language, layout, visual, and reproducibility gates.
 \end{itemize}
 
 The Wiley submission archive includes the generated CSV, Markdown, and manifest report files under \texttt{supporting-information/report-data/}. The artifact checker compares those packaged files against the repository copies so the reviewer bundle cannot silently omit or stale-copy a generated report.
@@ -141,6 +142,8 @@ The causal-calibration target audit in \texttt{reports/causal-calibration-target
 The claim-posture audit in \texttt{reports/claim-posture-audit.md} summarizes the same evidence at the manuscript level. It clears the mechanism-model article posture, bounds the empirical bridge, and keeps calibrated policy-simulation claims outside the present manuscript scope until the causal-calibration target audit and source panels justify that stronger claim.
 
 The policy-claim language audit in \texttt{reports/policy-claim-language-audit.md} mechanically scans the manuscript, supplement, generated-table sources, and paper-facing documentation for calibrated-policy, causal-effect, policy-ranking, and representativeness language. The audit flags any such phrase that does not appear with local claim-boundary language, providing a reproducible check against accidental scope and policy-effect overclaims.
+
+The submission-readiness audit in \texttt{reports/submission-readiness.md} summarizes the review package posture. Its expected state for this manuscript is \texttt{ready\_for\_mechanism\_review}: the bundle is suitable for mechanism-model review with a bounded empirical bridge, while calibrated policy-effect claims remain blocked.
 
 \section{Decision Rules and Parameters}
 
@@ -178,6 +181,6 @@ The calibration queue in \texttt{reports/calibration-queue.md} records classifie
 
 \section{How to Read the Bundle}
 
-The supporting files are organized to make the boundary between model assumptions and evidence visible. The source moments and source-panel inventory should be read first when assessing empirical scope. They state which panels are direct or proxy-backed, which are usable within scope, and whether any panels are thin, fixture-supported, or missing. The mechanism-comparison report should be read next because it shows the consequence of enabling substitution relative to simpler model modes. The campaign, sensitivity, ablation, interaction, and portfolio reports are then best interpreted as stress tests under those model assumptions.
+The supporting files are organized to make the boundary between model assumptions and evidence visible. The source moments and source-panel inventory should be read first when assessing empirical scope. They state which panels are direct or proxy-backed, which are usable within scope, and whether any panels are thin, fixture-supported, or missing. The mechanism-comparison report should be read next because it shows the consequence of enabling substitution relative to simpler model modes. The campaign, sensitivity, ablation, interaction, and portfolio reports are then best interpreted as stress tests under those model assumptions. The submission-readiness audit should be read last because it summarizes which claim posture the complete bundle supports.
 
 Replication uses \texttt{make paper-artifacts-check}, which regenerates reports, tables, figures, PDFs, layout and visual audits, and the submission ZIP from checked-in sources. Live-source refreshes are separate so exploratory API output cannot silently alter the review bundle.
