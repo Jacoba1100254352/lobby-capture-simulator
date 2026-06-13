@@ -80,6 +80,7 @@ cp "$ROOT_DIR/reports/substitution-audit.md" "$STAGING_DIR/supporting-informatio
 cp "$ROOT_DIR/reports/lobby-capture-portfolio.md" "$STAGING_DIR/supporting-information/portfolio-screen.md"
 cp "$ROOT_DIR/reports/calibration-queue.md" "$STAGING_DIR/supporting-information/calibration-queue.md"
 cp "$ROOT_DIR/reports/calibration-readiness.md" "$STAGING_DIR/supporting-information/calibration-readiness.md"
+cp "$ROOT_DIR/reports/policy-claim-language-audit.md" "$STAGING_DIR/supporting-information/policy-claim-language-audit.md"
 cp "$ROOT_DIR/reports/paper-layout-audit.md" "$STAGING_DIR/supporting-information/paper-layout-audit.md"
 cp "$ROOT_DIR/reports/manual-visual-audit.md" "$STAGING_DIR/supporting-information/manual-visual-audit.md"
 cp "$ROOT_DIR/CITATION.cff" "$STAGING_DIR/supporting-information/CITATION.cff"

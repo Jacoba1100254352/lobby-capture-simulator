@@ -23,15 +23,15 @@ This audit maps manuscript claim families to the source panels and source moment
 
 ## Dependency Details
 
-| Claim family | Usable/bounded dependencies | Weak dependencies | Moment checks |
-| --- | --- | --- | --- |
-| Lobbying disclosure surface | none | none | ldaRows=121 (ok); lobbyingClientTop3Share=0.8898 (ok) |
-| Visible electoral money | Outside spending | none | fecRows=1268 (ok); outsideSpendingRows=998 (ok) |
-| Rulemaking comments | none | none | regulatoryRows=200 (ok); commentTemplateShareMean=0.46 (ok); commentAuthenticationShareMean=0.32 (ok) |
-| Procurement identifiers | Procurement identifiers | none | procurementRows=200 (ok); procurementKnownPiidShare=1 (ok); procurementSingleBidShare=0.1098 (ok) |
-| Strategic substitution mechanism | Direct dark money; Outside spending; Intermediaries; IRS 527 political organizations; Revolving door; Procurement identifiers | none | outsideSpendingRows=998 (ok); intermediaryRows=1353 (ok); intermediary527Rows=500 (ok); revolvingDoorRows=803 (ok) |
-| Public-financing counterweight | Public financing | none | publicFinancingRows=135 (ok); publicFinancingProgramCount=2 (ok) |
-| Revolving-door access | Revolving door | none | revolvingDoorRows=803 (ok); revolvingDoorConfidenceMean=0.74 (ok) |
-| Hidden-channel magnitude | Direct dark money; Electoral communications; Revolving door | none | darkMoneyDirectRoutingRows=80 (ok); electoralCommunicationRows=268 (ok) |
-| Procurement modification capture | Procurement concentration panel; Procurement action history; Procurement modification risk | none | procurementConcentrationPanelAgencyCount=12 (ok); procurementNationalActionRows=1500 (ok); procurementActionRows=6.449e+06 (ok); procurementExPostModificationShare=0.1702 (ok); procurementModifiedAwardShare=0.1067 (ok) |
-| Calibrated policy simulation | Direct dark money; Electoral communications; Public financing; IRS 527 political organizations; Revolving door; Procurement concentration panel; Procurement action history; Procurement modification risk | none | darkMoneyDirectRoutingRows=80 (ok); electoralCommunicationRows=268 (ok); intermediary527Rows=500 (ok); procurementNationalActionRows=1500 (ok); procurementActionRows=6.449e+06 (ok) |
+| Claim family | Status | Usable/bounded dependencies | Weak dependencies | Moment checks |
+| --- | --- | --- | --- | --- |
+| Lobbying disclosure surface | cleared | none | none | ldaRows=121 (ok); lobbyingClientTop3Share=0.8898 (ok) |
+| Visible electoral money | cleared | Outside spending | none | fecRows=1268 (ok); outsideSpendingRows=998 (ok) |
+| Rulemaking comments | cleared | none | none | regulatoryRows=200 (ok); commentTemplateShareMean=0.46 (ok); commentAuthenticationShareMean=0.32 (ok) |
+| Procurement identifiers | cleared | Procurement identifiers | none | procurementRows=200 (ok); procurementKnownPiidShare=1 (ok); procurementSingleBidShare=0.1098 (ok) |
+| Strategic substitution mechanism | cleared | Direct dark money; Outside spending; Intermediaries; IRS 527 political organizations; Revolving door; Procurement identifiers | none | outsideSpendingRows=998 (ok); intermediaryRows=1353 (ok); intermediary527Rows=500 (ok); revolvingDoorRows=803 (ok) |
+| Public-financing counterweight | cleared | Public financing | none | publicFinancingRows=135 (ok); publicFinancingProgramCount=2 (ok) |
+| Revolving-door access | cleared | Revolving door | none | revolvingDoorRows=803 (ok); revolvingDoorConfidenceMean=0.74 (ok) |
+| Hidden-channel magnitude | bounded | Direct dark money; Electoral communications; Revolving door | none | darkMoneyDirectRoutingRows=80 (ok); electoralCommunicationRows=268 (ok) |
+| Procurement modification capture | bounded | Procurement concentration panel; Procurement action history; Procurement modification risk | none | procurementConcentrationPanelAgencyCount=12 (ok); procurementNationalActionRows=1500 (ok); procurementActionRows=6.449e+06 (ok); procurementExPostModificationShare=0.1702 (ok); procurementModifiedAwardShare=0.1067 (ok) |
+| Calibrated policy simulation | not_cleared | Direct dark money; Electoral communications; Public financing; IRS 527 political organizations; Revolving door; Procurement concentration panel; Procurement action history; Procurement modification risk | none | darkMoneyDirectRoutingRows=80 (ok); electoralCommunicationRows=268 (ok); intermediary527Rows=500 (ok); procurementNationalActionRows=1500 (ok); procurementActionRows=6.449e+06 (ok) |

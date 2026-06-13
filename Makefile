@@ -14,7 +14,7 @@ MAIN_CLASS := lobbycapture.Main
 TEST_CLASSES := lobbycapture.SimulatorTests
 PAPER_BASENAME := strategic-channel-substitution-regulatory-capture
 
-.PHONY: compile script-checks test run campaign mechanism-comparison sensitivity ablation interactions portfolio source-moments source-panel-inventory source-capability-audit dark-money-bridge-audit intermediary-bridge-audit revolving-door-bridge-audit procurement-denominator-audit procurement-modification-composition-audit procurement-benchmark-crosswalk procurement-refresh-readiness sam-contract-awards-preflight sam-contract-awards-export-audit usaspending-transaction-download-strata sam-procurement-refresh claim-boundary-audit claim-source-dependency-audit causal-calibration-targets claim-posture-audit calibration-readiness-audit calibration-queue validate snapshot-2024-env tables figures paper paper-build paper-supplement-build paper-supplement paper-word-count wiley-template wiley-tex-deps paper-wiley paper-wiley-build submission-package submission-package-build submission-package-check paper-layout-audit visual-review-checklist paper-artifacts paper-artifacts-check clean
+.PHONY: compile script-checks test run campaign mechanism-comparison sensitivity ablation interactions portfolio source-moments source-panel-inventory source-capability-audit dark-money-bridge-audit intermediary-bridge-audit revolving-door-bridge-audit procurement-denominator-audit procurement-modification-composition-audit procurement-benchmark-crosswalk procurement-refresh-readiness sam-contract-awards-preflight sam-contract-awards-export-audit usaspending-transaction-download-strata sam-procurement-refresh claim-boundary-audit claim-source-dependency-audit causal-calibration-targets claim-posture-audit calibration-readiness-audit policy-claim-language-audit calibration-queue validate snapshot-2024-env tables figures paper paper-build paper-supplement-build paper-supplement paper-word-count wiley-template wiley-tex-deps paper-wiley paper-wiley-build submission-package submission-package-build submission-package-check paper-layout-audit visual-review-checklist paper-artifacts paper-artifacts-check clean
 
 compile:
 	@mkdir -p out/classes
@@ -159,7 +159,7 @@ submission-package-build:
 submission-package-check: submission-package-build
 	./scripts/check-submission-package.sh
 
-submission-package: paper-wiley paper-supplement paper-word-count visual-review-checklist submission-package-build submission-package-check
+submission-package: paper-wiley paper-supplement paper-word-count visual-review-checklist policy-claim-language-audit submission-package-build submission-package-check
 
 paper-layout-audit: paper-build paper-wiley-build paper-supplement-build
 	python3 scripts/audit-paper-layout.py
@@ -173,7 +173,10 @@ claim-posture-audit: claim-boundary-audit claim-source-dependency-audit causal-c
 calibration-readiness-audit: claim-posture-audit
 	python3 scripts/audit-calibration-readiness.py
 
-paper-artifacts: campaign mechanism-comparison sensitivity ablation interactions portfolio source-moments source-panel-inventory source-capability-audit dark-money-bridge-audit intermediary-bridge-audit revolving-door-bridge-audit procurement-denominator-audit procurement-modification-composition-audit procurement-benchmark-crosswalk validate claim-boundary-audit claim-source-dependency-audit causal-calibration-targets calibration-queue procurement-refresh-readiness tables figures paper-build paper-wiley-build paper-supplement-build paper-word-count paper-layout-audit visual-review-checklist claim-posture-audit calibration-readiness-audit submission-package-build submission-package-check
+policy-claim-language-audit: calibration-readiness-audit
+	python3 scripts/audit-policy-claim-language.py
+
+paper-artifacts: campaign mechanism-comparison sensitivity ablation interactions portfolio source-moments source-panel-inventory source-capability-audit dark-money-bridge-audit intermediary-bridge-audit revolving-door-bridge-audit procurement-denominator-audit procurement-modification-composition-audit procurement-benchmark-crosswalk validate claim-boundary-audit claim-source-dependency-audit causal-calibration-targets calibration-queue procurement-refresh-readiness tables figures paper-build paper-wiley-build paper-supplement-build paper-word-count paper-layout-audit visual-review-checklist claim-posture-audit calibration-readiness-audit policy-claim-language-audit submission-package-build submission-package-check
 
 paper-artifacts-check: paper-artifacts
 	python3 scripts/check-paper-artifacts.py
@@ -184,6 +187,7 @@ clean:
 	rm -f reports/validation-summary.csv reports/validation-summary.md reports/substitution-audit.csv reports/substitution-audit.md
 	rm -f reports/source-moments.csv reports/source-moments.md reports/source-panel-inventory.csv reports/source-panel-inventory.md reports/source-capability-audit.csv reports/source-capability-audit.md reports/dark-money-bridge-audit.csv reports/dark-money-bridge-audit.md reports/intermediary-bridge-audit.csv reports/intermediary-bridge-audit.md reports/revolving-door-bridge-audit.csv reports/revolving-door-bridge-audit.md reports/procurement-denominator-audit.csv reports/procurement-denominator-audit.md reports/procurement-modification-composition-audit.csv reports/procurement-modification-composition-audit.md reports/procurement-benchmark-crosswalk.csv reports/procurement-benchmark-crosswalk.md reports/procurement-refresh-readiness.csv reports/procurement-refresh-readiness.md reports/claim-boundary-audit.csv reports/claim-boundary-audit.md reports/claim-source-dependency.csv reports/claim-source-dependency.md reports/causal-calibration-targets.csv reports/causal-calibration-targets.md reports/claim-posture-audit.csv reports/claim-posture-audit.md reports/paper-layout-audit.md reports/calibration-queue.csv reports/calibration-queue.md
 	rm -f reports/calibration-readiness.csv reports/calibration-readiness.md
+	rm -f reports/policy-claim-language-audit.csv reports/policy-claim-language-audit.md
 	rm -f reports/sam-contract-awards-export-audit.csv reports/sam-contract-awards-export-audit.md
 	rm -f reports/lobby-capture-mechanism-comparison.csv reports/lobby-capture-mechanism-comparison.md reports/lobby-capture-mechanism-comparison.manifest.json
 	rm -f reports/manual-visual-audit.md

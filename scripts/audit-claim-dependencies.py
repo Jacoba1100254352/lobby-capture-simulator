@@ -331,12 +331,12 @@ def write_markdown(path: Path, rows: list[dict[str, str]]) -> None:
         "",
         "## Dependency Details",
         "",
-        "| Claim family | Usable/bounded dependencies | Weak dependencies | Moment checks |",
-        "| --- | --- | --- | --- |",
+        "| Claim family | Status | Usable/bounded dependencies | Weak dependencies | Moment checks |",
+        "| --- | --- | --- | --- | --- |",
     ])
     for row in rows:
         lines.append(
-            "| {claimFamily} | {usableDependencies} | {weakDependencies} | {momentChecks} |".format(
+            "| {claimFamily} | {status} | {usableDependencies} | {weakDependencies} | {momentChecks} |".format(
                 **{key: markdown_cell(value) for key, value in row.items()}
             )
         )

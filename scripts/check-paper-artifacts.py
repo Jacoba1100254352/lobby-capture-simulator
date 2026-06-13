@@ -59,7 +59,9 @@ CLAIM_POSTURE_AUDIT_MD = ROOT / "reports" / "claim-posture-audit.md"
 CLAIM_POSTURE_AUDIT_CSV = ROOT / "reports" / "claim-posture-audit.csv"
 CALIBRATION_READINESS_MD = ROOT / "reports" / "calibration-readiness.md"
 CALIBRATION_READINESS_CSV = ROOT / "reports" / "calibration-readiness.csv"
-RELEASE_TAG = "paper-publication-readiness-2026-06-13-r90"
+POLICY_CLAIM_LANGUAGE_AUDIT_MD = ROOT / "reports" / "policy-claim-language-audit.md"
+POLICY_CLAIM_LANGUAGE_AUDIT_CSV = ROOT / "reports" / "policy-claim-language-audit.csv"
+RELEASE_TAG = "paper-publication-readiness-2026-06-13-r91"
 CITATION_CFF = ROOT / "CITATION.cff"
 ZENODO_JSON = ROOT / ".zenodo.json"
 FORBIDDEN_LOCAL_ARTIFACTS = [
@@ -150,6 +152,7 @@ EXPECTED_ZIP_MEMBERS = {
     "supporting-information/claim-source-dependency.md",
     "supporting-information/causal-calibration-targets.md",
     "supporting-information/claim-posture-audit.md",
+    "supporting-information/policy-claim-language-audit.md",
     "supporting-information/validation-summary.md",
     "supporting-information/substitution-audit.md",
     "supporting-information/portfolio-screen.md",
@@ -182,6 +185,7 @@ def main() -> int:
     failures.extend(check_claim_source_dependency_audit())
     failures.extend(check_causal_calibration_targets())
     failures.extend(check_claim_posture_audit())
+    failures.extend(check_policy_claim_language_audit())
     failures.extend(check_layout_and_visual_reports())
     failures.extend(check_archive_metadata())
     failures.extend(check_release_tag_exactness())
@@ -308,6 +312,8 @@ def submission_inputs() -> list[Path]:
         ROOT / "reports" / "substitution-audit.md",
         ROOT / "reports" / "lobby-capture-portfolio.md",
         ROOT / "reports" / "calibration-queue.md",
+        ROOT / "reports" / "calibration-readiness.md",
+        POLICY_CLAIM_LANGUAGE_AUDIT_MD,
         ROOT / "reports" / "paper-layout-audit.md",
         ROOT / "reports" / "manual-visual-audit.md",
         *report_bundle_inputs(),
@@ -1493,6 +1499,49 @@ def check_claim_posture_audit() -> list[str]:
         supplement = SUPPLEMENT_BODY.read_text(encoding="utf-8")
         if "claim-posture audit" not in supplement:
             failures.append("supplement does not disclose the claim-posture audit")
+    return failures
+
+
+def check_policy_claim_language_audit() -> list[str]:
+    failures: list[str] = []
+    missing = [
+        path.relative_to(ROOT)
+        for path in (POLICY_CLAIM_LANGUAGE_AUDIT_MD, POLICY_CLAIM_LANGUAGE_AUDIT_CSV)
+        if not path.exists()
+    ]
+    if missing:
+        return [f"missing policy-claim language audit artifact: {path}" for path in missing]
+
+    with POLICY_CLAIM_LANGUAGE_AUDIT_CSV.open(newline="", encoding="utf-8") as source:
+        rows = list(csv.DictReader(source))
+    if not rows:
+        failures.append("policy-claim language audit has no rows")
+        return failures
+
+    blocking_statuses = {"overclaim", "missing_required_boundary", "missing"}
+    for item in rows:
+        if item.get("status") in blocking_statuses:
+            failures.append(
+                "policy-claim language audit has blocking row: "
+                f"{item.get('file', '')}:{item.get('line', '')} "
+                f"{item.get('auditKey', '')} ({item.get('status', '')})"
+            )
+
+    text = POLICY_CLAIM_LANGUAGE_AUDIT_MD.read_text(encoding="utf-8")
+    required_text = [
+        "Policy-Claim Language Audit",
+        "Overclaim hits: `0`",
+        "Missing required boundary phrases: `0`",
+        "calibrated-policy dependency=not_cleared",
+        "not a representative empirical panel",
+    ]
+    for phrase in required_text:
+        if phrase not in text:
+            failures.append(f"policy-claim language audit markdown missing phrase: {phrase}")
+    if SUPPLEMENT_BODY.exists():
+        supplement = SUPPLEMENT_BODY.read_text(encoding="utf-8")
+        if "policy-claim language audit" not in supplement:
+            failures.append("supplement does not disclose the policy-claim language audit")
     return failures
 
 

@@ -56,6 +56,8 @@ reports/*.md
 !reports/calibration-queue.md
 !reports/calibration-readiness.csv
 !reports/calibration-readiness.md
+!reports/policy-claim-language-audit.csv
+!reports/policy-claim-language-audit.md
 !reports/paper-layout-audit.md
 !reports/manual-visual-audit.md
 paper/*.aux
