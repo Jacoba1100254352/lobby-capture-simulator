@@ -20,6 +20,7 @@ LAYOUT_AUDIT = REPORTS / "paper-layout-audit.md"
 VISUAL_AUDIT = REPORTS / "manual-visual-audit.md"
 
 WEAK_STATUSES = {"thin", "warning", "fixture-only", "missing"}
+OUT_OF_SCOPE_POLICY_DEPENDENCIES = {"calibrated-policy-simulation"}
 
 
 def main() -> int:
@@ -75,6 +76,7 @@ def posture_rows(
     p2_queue_actions = [row for row in calibration_rows if field(row, "priority", "Priority") == "P2"]
     source_gaps = counts.get("source_gap", 0)
     dependency_counts = claim_dependency_counts(dependency_rows)
+    article_blocking_dependencies = article_blocking_dependency_rows(dependency_rows)
     layout_pass = "- Failures: `0`" in layout
     visual_pass = bool(visual) and "needs review" not in visual and "Layout audit has not been generated yet" not in visual
     claim_audit_complete = len(claim_rows) == len(panels) and bool(claim_rows)
@@ -109,7 +111,7 @@ def posture_rows(
                 f"{counts.get('unknown', 0)} unknown validations, "
                 f"{len(weak_panels)} weak-status source panels, "
                 f"{len(bounded_support_panels)} bounded-support source panels, "
-                f"{dependency_counts.get('not_cleared', 0)} dependency claims not cleared"
+                f"{len(article_blocking_dependencies)} article-blocking dependency claims not cleared"
             ),
             "The manuscript can present a transparent mechanism model and synthetic stress tests under explicit source limits.",
             "Keep empirical language tied to source moments, source gaps, and model diagnostics.",
@@ -169,6 +171,14 @@ def claim_dependency_counts(rows: list[dict[str, str]]) -> dict[str, int]:
         if status in counts:
             counts[status] += 1
     return counts
+
+
+def article_blocking_dependency_rows(rows: list[dict[str, str]]) -> list[dict[str, str]]:
+    return [
+        row for row in rows
+        if row.get("status") == "not_cleared"
+        and row.get("claimKey") not in OUT_OF_SCOPE_POLICY_DEPENDENCIES
+    ]
 
 
 def priority_counts(rows: list[dict[str, str]]) -> dict[str, int]:

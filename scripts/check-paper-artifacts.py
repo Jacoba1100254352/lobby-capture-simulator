@@ -59,7 +59,7 @@ CLAIM_POSTURE_AUDIT_MD = ROOT / "reports" / "claim-posture-audit.md"
 CLAIM_POSTURE_AUDIT_CSV = ROOT / "reports" / "claim-posture-audit.csv"
 CALIBRATION_READINESS_MD = ROOT / "reports" / "calibration-readiness.md"
 CALIBRATION_READINESS_CSV = ROOT / "reports" / "calibration-readiness.csv"
-RELEASE_TAG = "paper-publication-readiness-2026-06-13-r89"
+RELEASE_TAG = "paper-publication-readiness-2026-06-13-r90"
 CITATION_CFF = ROOT / "CITATION.cff"
 ZENODO_JSON = ROOT / ".zenodo.json"
 FORBIDDEN_LOCAL_ARTIFACTS = [
@@ -1270,9 +1270,9 @@ def check_claim_source_dependency_audit() -> list[str]:
     if rows["hidden-channel-magnitude"].get("status") != "bounded":
         failures.append("hidden-channel magnitude source dependency should stay bounded until donor identities and representative routing coverage exist")
     if causal_blocking_targets:
-        if rows["calibrated-policy-simulation"].get("status") == "cleared":
+        if rows["calibrated-policy-simulation"].get("status") != "not_cleared":
             failures.append(
-                "calibrated-policy source dependency cannot be cleared while causal calibration targets block policy simulation"
+                "calibrated-policy source dependency must remain not_cleared while causal calibration targets block policy simulation"
             )
         target_claim_guards = {
             "hidden-donor-routing-magnitude": "hidden-channel-magnitude",
@@ -1311,6 +1311,8 @@ def check_claim_source_dependency_audit() -> list[str]:
         "Claim-Source Dependency Audit",
         "Calibrated policy simulation",
         "bounded",
+        "not_cleared",
+        "causal-calibration targets block policy simulation",
     ]
     for phrase in required_text:
         if phrase not in dependency_md:

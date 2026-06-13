@@ -12,6 +12,7 @@ REPORTS = Path("reports")
 TABLES = Path("paper/tables")
 SOURCE_PANEL_INVENTORY = REPORTS / "source-panel-inventory.csv"
 SOURCE_MOMENTS = REPORTS / "source-moments.csv"
+CAUSAL_CALIBRATION_TARGETS = REPORTS / "causal-calibration-targets.csv"
 
 WEAK_STATUSES = {"thin", "warning", "fixture-only", "missing"}
 BLOCKING_STATUSES = {"warning", "fixture-only", "missing"}
@@ -137,7 +138,8 @@ def main() -> int:
 
     panels = read_panels(args.reports / SOURCE_PANEL_INVENTORY.name)
     moments = read_moments(args.reports / SOURCE_MOMENTS.name)
-    rows = [claim_row(claim, panels, moments) for claim in CLAIMS]
+    causal_blockers = read_causal_blockers(args.reports / CAUSAL_CALIBRATION_TARGETS.name)
+    rows = [claim_row(claim, panels, moments, causal_blockers) for claim in CLAIMS]
 
     args.reports.mkdir(parents=True, exist_ok=True)
     args.tables.mkdir(parents=True, exist_ok=True)
@@ -172,10 +174,21 @@ def read_moments(path: Path) -> dict[str, float]:
     return moments
 
 
+def read_causal_blockers(path: Path) -> list[dict[str, str]]:
+    if not path.exists():
+        return []
+    with path.open(newline="", encoding="utf-8") as source:
+        return [
+            row for row in csv.DictReader(source)
+            if row.get("blocksPolicySimulation", "yes") == "yes"
+        ]
+
+
 def claim_row(
         claim: dict[str, object],
         panels: dict[str, dict[str, str]],
         moments: dict[str, float],
+        causal_blockers: list[dict[str, str]],
 ) -> dict[str, str]:
     panel_names = list(claim.get("panels", []))
     panel_rows = [panels.get(name, {"panel": name, "status": "missing", "note": "panel absent from inventory"}) for name in panel_names]
@@ -195,6 +208,8 @@ def claim_row(
     max_status = str(claim.get("maxStatus", ""))
     if max_status == "bounded" and status == "cleared":
         status = "bounded"
+    if claim.get("key") == "calibrated-policy-simulation" and causal_blockers:
+        status = "not_cleared"
 
     usable_dependencies = [row.get("panel", "") for row in panel_rows if row.get("status") == "usable"]
     weak_dependencies = [
@@ -208,6 +223,11 @@ def claim_row(
     source_support = support_sentence(status, usable_dependencies, weak_dependencies, missing_dependencies)
     if status == "bounded" and claim.get("boundedSupport"):
         source_support = str(claim["boundedSupport"])
+    if claim.get("key") == "calibrated-policy-simulation" and causal_blockers:
+        source_support = (
+            f"Not cleared while {len(causal_blockers)} causal-calibration targets block policy simulation; "
+            "current source panels support only mechanism diagnostics and bounded source moments."
+        )
     return {
         "claimKey": str(claim["key"]),
         "claimFamily": str(claim["family"]),
@@ -375,7 +395,7 @@ def table_support(row: dict[str, str]) -> str:
         "revolving-door-cooling-off": "LDA-derived covered-position bridge.",
         "hidden-channel-magnitude": "Top-EIN Schedule I nonprofit-routing rows present; donor identities remain unobserved.",
         "procurement-modification-capture": "Denominator-mapped bulk and action rows present; causal capture validation remains future work.",
-        "calibrated-policy-simulation": "Source panels support mechanism diagnostics; causal calibration of policy effects remains future work.",
+        "calibrated-policy-simulation": "Causal-calibration target matrix still blocks policy-effect claims; source panels support only mechanism diagnostics.",
     }.get(row["claimKey"], row["sourceSupport"])
 
 

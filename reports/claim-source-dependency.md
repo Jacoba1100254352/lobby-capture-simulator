@@ -5,8 +5,8 @@ This audit maps manuscript claim families to the source panels and source moment
 ## Summary
 
 - Cleared claim families: `7`
-- Bounded claim families: `3`
-- Not-cleared claim families: `0`
+- Bounded claim families: `2`
+- Not-cleared claim families: `1`
 
 | Claim family | Status | Source support | Permitted use | Claim to avoid | Next evidence |
 | --- | --- | --- | --- | --- | --- |
@@ -19,7 +19,7 @@ This audit maps manuscript claim families to the source panels and source moment
 | Revolving-door access | cleared | Source dependencies are usable for the stated mechanism or distributional diagnostic. | Proxy-backed stress diagnostics for covered-position and cooling-off exposure. | Do not treat LDA covered-position rows as representative post-employment movement. | Add OGE, FACA, witness, LegiStorm/OpenSecrets, or archived personnel movement exports. |
 | Hidden-channel magnitude | bounded | Bounded by top-EIN Schedule I routing coverage and unobserved donor identities. | Bounded nonprofit-routing and missingness diagnostics for hidden-channel mechanisms. | Do not treat the top-EIN Schedule I slice or bounded electoral-communication rows as representative hidden-channel magnitude or donor-identity evidence. | Broaden nonprofit-routing, direct donor, and electoral-communication coverage beyond the current top-EIN slice. |
 | Procurement modification capture | bounded | Denominator-mapped USAspending bulk rows support distributional diagnostics; SAM/FPDS coding reconciliation and causal capture validation remain future work. | Denominator-mapped distributional diagnostics for modification and concentration pathways. | Do not claim causal procurement-modification capture rates or representative policy effects. | Crosswalk USAspending modification coding against SAM/FPDS action-history definitions and add protest, exclusion, and firewall overlays. |
-| Calibrated policy simulation | bounded | Cleared source panels support the mechanism article, but calibrated policy simulation still lacks causal calibration of hidden-channel and reform-effect magnitudes. | Not cleared; the current article can only use mechanism diagnostics and bounded source moments. | Do not describe the artifact as a calibrated policy-effect simulator. | Add causal calibration targets and independent validation before using calibrated policy-simulation language. |
+| Calibrated policy simulation | not_cleared | Not cleared while 10 causal-calibration targets block policy simulation; current source panels support only mechanism diagnostics and bounded source moments. | Not cleared; the current article can only use mechanism diagnostics and bounded source moments. | Do not describe the artifact as a calibrated policy-effect simulator. | Add causal calibration targets and independent validation before using calibrated policy-simulation language. |
 
 ## Dependency Details
 

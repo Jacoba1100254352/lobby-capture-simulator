@@ -6,9 +6,9 @@ This audit summarizes which claim posture is cleared by the current source panel
 
 | Gate | Status | Evidence | Claim boundary | Next action |
 | --- | --- | --- | --- | --- |
-| Mechanism-model article | cleared | 0 validation misses, 0 unknown validations, 0 weak-status source panels, 7 bounded-support source panels, 0 dependency claims not cleared | The manuscript can present a transparent mechanism model and synthetic stress tests under explicit source limits. | Keep empirical language tied to source moments, source gaps, and model diagnostics. |
-| Empirical bridge | bounded | 0 source-gap validations, 0 thin, warning, fixture-only, or missing panels, 7 bounded-support source panels; 3 bounded claim dependencies | The bridge constrains plausible ranges and flags evidence gaps; it does not validate hidden-channel magnitudes. | Prioritize SAM/FPDS coding reconciliation, protest/exclusion/firewall overlays, nonprofit-routing beyond the top-EIN Schedule I slice, and post-employment revolving-door overlays; broaden electoral-communication and public-financing rows as secondary coverage upgrades. |
-| Calibrated policy-simulation claim | not_cleared | validation queue P1=0, P2=0; causal targets P1=4, P2=6; 0 claim dependencies not cleared; calibrated-policy dependency=bounded; open causal targets=10 | The current artifact should not claim calibrated reform effects or representative national hidden-channel magnitudes. | Clear the causal-calibration target matrix, add stronger source panels, and rerun validation before using calibrated policy-simulation language. |
+| Mechanism-model article | cleared | 0 validation misses, 0 unknown validations, 0 weak-status source panels, 7 bounded-support source panels, 0 article-blocking dependency claims not cleared | The manuscript can present a transparent mechanism model and synthetic stress tests under explicit source limits. | Keep empirical language tied to source moments, source gaps, and model diagnostics. |
+| Empirical bridge | bounded | 0 source-gap validations, 0 thin, warning, fixture-only, or missing panels, 7 bounded-support source panels; 2 bounded claim dependencies | The bridge constrains plausible ranges and flags evidence gaps; it does not validate hidden-channel magnitudes. | Prioritize SAM/FPDS coding reconciliation, protest/exclusion/firewall overlays, nonprofit-routing beyond the top-EIN Schedule I slice, and post-employment revolving-door overlays; broaden electoral-communication and public-financing rows as secondary coverage upgrades. |
+| Calibrated policy-simulation claim | not_cleared | validation queue P1=0, P2=0; causal targets P1=4, P2=6; 1 claim dependencies not cleared; calibrated-policy dependency=not_cleared; open causal targets=10 | The current artifact should not claim calibrated reform effects or representative national hidden-channel magnitudes. | Clear the causal-calibration target matrix, add stronger source panels, and rerun validation before using calibrated policy-simulation language. |
 | Reproducibility and layout bundle | cleared | layout failures=0, visual checklist=pass | The generated review bundle is reproducible when the paper artifact gate passes. | Rerun the full artifact gate after any source, table, figure, LaTeX, or package change. |
 
 ## Validation Counts
@@ -38,11 +38,11 @@ This audit summarizes which claim posture is cleared by the current source panel
 ## Claim-Source Dependencies
 
 - Cleared claim dependencies: `7`
-- Bounded claim dependencies: `3`
-- Not-cleared claim dependencies: `0`
+- Bounded claim dependencies: `2`
+- Not-cleared claim dependencies: `1`
 - `Hidden-channel magnitude` (bounded): Bounded by top-EIN Schedule I routing coverage and unobserved donor identities.
 - `Procurement modification capture` (bounded): Denominator-mapped USAspending bulk rows support distributional diagnostics; SAM/FPDS coding reconciliation and causal capture validation remain future work.
-- `Calibrated policy simulation` (bounded): Cleared source panels support the mechanism article, but calibrated policy simulation still lacks causal calibration of hidden-channel and reform-effect magnitudes.
+- `Calibrated policy simulation` (not_cleared): Not cleared while 10 causal-calibration targets block policy simulation; current source panels support only mechanism diagnostics and bounded source moments.
 
 ## Causal Calibration Targets
 

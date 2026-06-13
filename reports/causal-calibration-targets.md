@@ -9,7 +9,7 @@ This audit names the independent causal evidence required before the project can
 - P1 targets: `4`
 - P2 targets: `6`
 - Cleared targets: `0`
-- Policy claim status: `bounded`
+- Policy claim status: `not_cleared`
 
 ## Target Matrix
 
