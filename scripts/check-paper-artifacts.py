@@ -52,7 +52,7 @@ CLAIM_SOURCE_DEPENDENCY_MD = ROOT / "reports" / "claim-source-dependency.md"
 CLAIM_SOURCE_DEPENDENCY_CSV = ROOT / "reports" / "claim-source-dependency.csv"
 CLAIM_POSTURE_AUDIT_MD = ROOT / "reports" / "claim-posture-audit.md"
 CLAIM_POSTURE_AUDIT_CSV = ROOT / "reports" / "claim-posture-audit.csv"
-RELEASE_TAG = "paper-publication-readiness-2026-06-12-r74"
+RELEASE_TAG = "paper-publication-readiness-2026-06-12-r75"
 CITATION_CFF = ROOT / "CITATION.cff"
 ZENODO_JSON = ROOT / ".zenodo.json"
 FORBIDDEN_LOCAL_ARTIFACTS = [
@@ -944,6 +944,8 @@ def check_procurement_refresh_readiness() -> list[str]:
         failures.append("procurement refresh readiness must document the partial-payload guardrail")
     if "SAM_CONTRACT_AWARDS_EXTRACT_MODE=1" not in rows["extract-mode-path"].get("evidence", ""):
         failures.append("procurement refresh readiness must document the SAM extract-mode path")
+    if "SAM_CONTRACT_AWARDS_EXTRACT_EMAIL_ID=Yes" not in rows["extract-mode-path"].get("evidence", ""):
+        failures.append("procurement refresh readiness must document SAM extract emailId=Yes")
     if "SAM_CONTRACT_AWARDS_OFFSET_STARTS" not in rows["offset-strata-path"].get("evidence", ""):
         failures.append("procurement refresh readiness must document the offset-strata path")
     if rows["representative-sam-fpds-action-history"].get("status") == "ready":
@@ -962,6 +964,7 @@ def check_procurement_refresh_readiness() -> list[str]:
         "Do not promote partial SAM payloads",
         "Calibrated policy-simulation claims remain blocked",
         "SAM_CONTRACT_AWARDS_EXTRACT_MODE=1",
+        "SAM_CONTRACT_AWARDS_EXTRACT_EMAIL_ID=Yes",
         "SAM_CONTRACT_AWARDS_OFFSET_STARTS",
     ]
     for phrase in required_text:

@@ -215,10 +215,11 @@ def readiness_rows(reports: Path, snapshot: Path, env_example: Path) -> list[dic
             "item": "extract-mode-path",
             "status": "ready",
             "evidence": (
-                "SAM_CONTRACT_AWARDS_EXTRACT_MODE=1 supports asynchronous JSON/CSV extract downloads."
+                "SAM_CONTRACT_AWARDS_EXTRACT_MODE=1 supports asynchronous JSON/CSV extract downloads; "
+                "SAM_CONTRACT_AWARDS_EXTRACT_EMAIL_ID=Yes supplies the SAM.gov-required emailId parameter."
             ),
             "nextAction": (
-                "Use extract mode for the next representative keyed refresh after make sam-contract-awards-preflight reports ok."
+                "Use extract mode for the next representative keyed refresh after make sam-contract-awards-preflight reports ok and quota is available."
             ),
         },
         {
@@ -386,7 +387,7 @@ def write_markdown(path: Path, rows: list[dict[str, str]]) -> None:
         (
             "2. Preferred keyed API run: set `SAM_CONTRACT_AWARDS_SOURCE_NATIVE=1`, "
             "`SAM_CONTRACT_AWARDS_EXTRACT_MODE=1`, `SAM_CONTRACT_AWARDS_EXTRACT_FORMAT=json`, "
-            "`SAM_API_KEY`, and `SAM_CONTRACT_AWARDS_EXTRACT_EMAIL_ID`, then run "
+            "`SAM_CONTRACT_AWARDS_EXTRACT_EMAIL_ID=Yes`, and `SAM_API_KEY`, then run "
             "`scripts/run-2024-env-live-snapshot.sh` after quota/access is available."
         ),
         (

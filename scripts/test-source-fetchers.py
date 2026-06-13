@@ -353,6 +353,8 @@ def assert_sam_contract_awards(fetchers) -> None:
     os.environ["SAM_CONTRACT_AWARDS_EXTRACT_MODE"] = "1"
     assert fetchers.sam_contract_awards_extract_mode() is True
     assert fetchers.sam_contract_awards_extract_format() == "json"
+    default_params = fetchers.sam_contract_awards_extract_params("KEY", "json")
+    assert default_params["emailId"] == "Yes", default_params
     os.environ["SAM_CONTRACT_AWARDS_EXTRACT_FORMAT"] = "csv"
     os.environ["SAM_CONTRACT_AWARDS_EXTRACT_EMAIL_ID"] = "yes"
     os.environ["SAM_CONTRACT_AWARDS_MODIFICATION_NUMBER"] = "0"

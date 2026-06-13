@@ -843,9 +843,7 @@ def sam_contract_awards_extract_params(api_key: str, extract_format: str) -> dic
     params = sam_contract_awards_base_params(api_key, int_env("SAM_CONTRACT_AWARDS_PAGE_SIZE", 100, 1, 100))
     params.pop("limit", None)
     params["format"] = extract_format
-    email_id = os.environ.get("SAM_CONTRACT_AWARDS_EXTRACT_EMAIL_ID", "").strip()
-    if email_id:
-        params["emailId"] = email_id
+    params["emailId"] = os.environ.get("SAM_CONTRACT_AWARDS_EXTRACT_EMAIL_ID", "Yes").strip() or "Yes"
     return params
 
 
