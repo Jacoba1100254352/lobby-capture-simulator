@@ -6,20 +6,20 @@ This audit separates hard blockers for calibrated policy-simulation claims from 
 
 | Gate | Status | Evidence | Claim boundary | Next action |
 | --- | --- | --- | --- | --- |
-| mechanism-model-readiness | cleared | claimPosture=cleared; fit=325; partial=18; miss=0; unknown=0 | Mechanism-model manuscript claims can proceed when misses and unknowns are zero and claim posture is cleared. | Keep synthetic results framed as mechanism diagnostics under explicit source limits. |
-| calibrated-policy-readiness | blocked | claimPosture=not_cleared; P0=0; P1=2; P2=0; misses=0; unknown=0; source_gaps=2 | Calibrated policy-simulation claims require all P0/P1/P2 calibration and source gaps to clear. | P1 procurementExPostModificationShare: use the archived USAspending bulk action-row, distinct-award, and amount-weighted modification diagnostics to remap the benchmark; add SAM/FPDS action-history exports only to crosswalk USAspending modification coding before treating modification incidence as calibrated; P1 procurementRecipientTop3Share: use the archived USAspending bulk summary for public concentration diagnostics, then remap the top-contractor benchmark by award type, agency mix, and fiscal year before treating recipient concentration as calibrated |
+| mechanism-model-readiness | cleared | claimPosture=cleared; fit=327; partial=18; miss=0; unknown=0 | Mechanism-model manuscript claims can proceed when misses and unknowns are zero and claim posture is cleared. | Keep synthetic results framed as mechanism diagnostics under explicit source limits. |
+| calibrated-policy-readiness | blocked | claimPosture=not_cleared; P0=0; P1=0; P2=0; misses=0; unknown=0; source_gaps=0 | Calibrated policy-simulation claims require all P0/P1/P2 calibration and source gaps to clear. | Add independent causal calibration targets and stronger source panels before using calibrated policy-simulation language. |
 | soft-validation-scope | nonblocking | P3=18; benchmark-review=12; scenario-coverage=5; scenario-family-split=1 | P3 partials are validation-scope, scenario-family, or benchmark-review work; they do not by themselves clear or block calibrated empirical claims. | Resolve P3 rows by documenting benchmark scope, splitting scenario families, or adding targeted stress scenarios before treating them as calibration evidence. |
-| source-gap-boundary | blocked | source_gaps=2; metrics=procurementRecipientTop3Share, procurementExPostModificationShare | Source gaps identify evidence panels that cannot test a benchmark directly. | Do not upgrade bounded source moments into empirical validation without representative source rows. |
+| source-gap-boundary | cleared | source_gaps=0 | Source gaps identify evidence panels that cannot test a benchmark directly. | Do not upgrade bounded source moments into empirical validation without representative source rows. |
 
 ## Counts
 
-- Validation fits: `325`
+- Validation fits: `327`
 - Validation partials: `18`
 - Validation misses: `0`
-- Validation source gaps: `2`
+- Validation source gaps: `0`
 - Validation unknowns: `0`
 - Calibration P0: `0`
-- Calibration P1: `2`
+- Calibration P1: `0`
 - Calibration P2: `0`
 - Calibration P3: `18`
 

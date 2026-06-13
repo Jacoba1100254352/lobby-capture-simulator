@@ -417,9 +417,8 @@ def write_markdown(path: Path, rows: list[dict[str, str]]) -> None:
             f"the largest modified-amount award-type group is `{top_award_type.get('groupValue', 'none')}` "
             f"with {top_award_type.get('panelModifiedAmountShare', '0.0000')} of modified amount. "
             f"SAM.gov Contract Awards has {sam.get('rows', '0')} committed rows. This composition audit "
-            "does not clear the procurement-modification source gap; it explains why the current "
-            "modified-action share remains a bounded sample diagnostic rather than a representative "
-            "SAM/FPDS modification-incidence estimate."
+            "keeps modified-action, distinct-award, and amount-weighted denominators separate; it supports "
+            "denominator-mapped diagnostics rather than a causal SAM/FPDS modification-capture estimate."
         ),
         "",
         "## Source Route Summary",

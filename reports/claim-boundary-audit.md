@@ -4,10 +4,10 @@ This audit maps each empirical source panel to the strongest manuscript claim it
 
 ## Validation Status Summary
 
-- Fit: `325`
+- Fit: `327`
 - Partial: `18`
 - Miss: `0`
-- Source gap: `2`
+- Source gap: `0`
 - Unknown: `0`
 - Not applicable: `13`
 
@@ -23,11 +23,10 @@ This audit maps each empirical source panel to the strongest manuscript claim it
 | IRS 527 political organizations | Political-organization receipts and disbursements for campaign-adjacent intermediaries | direct observed 527 filings | usable | stronger | May support mechanism diagnostics and distributional anchoring within the stated source scope. | Do not present as a causal estimate or nationally representative policy effect. | Broaden beyond the default bounded IRS POFD alphabetic slice, preserve the electronic-filing scope note, and keep 527 political-organization rows separate from 501(c)(4)/(c)(6) hidden-donor evidence. |
 | Revolving door | Post-government access, covered-position links, and cooling-off exposure | proxy/thin | usable | stronger | May support mechanism diagnostics and distributional anchoring within the stated source scope. | Do not present as a causal estimate or nationally representative policy effect. | Supplement LDA covered-position rows with OGE, FACA, witness, LegiStorm/OpenSecrets, or archived personnel movement exports. |
 | Procurement identifiers | Vendor and award-path matching for procurement influence | direct identifier coverage | usable | stronger | May support mechanism diagnostics and distributional anchoring within the stated source scope. | Do not present as a causal estimate or nationally representative policy effect. | Broaden SAM/FPDS and USAspending enrichment with PIID, UEI, action-date, modification, competition, exclusion, and protest fields. |
-| Procurement concentration panel | Multi-agency vendor and agency concentration diagnostics | bounded national action panel | usable | stronger | May support mechanism diagnostics and distributional anchoring within the stated source scope. | Do not present as a causal estimate or nationally representative policy effect. | Use the archived USAspending bulk summary for public concentration diagnostics and remap the benchmark by award type, agency mix, and fiscal year before treating concentration as calibrated. |
+| Procurement concentration panel | Multi-agency vendor and agency concentration diagnostics | denominator-mapped public bulk panel | usable | stronger | May support mechanism diagnostics and distributional anchoring within the stated source scope. | Do not present as a causal estimate or nationally representative policy effect. | Use the procurement benchmark crosswalk for aggregate, agency, award-type, and agency-award-type concentration diagnostics; retain SAM/FPDS exports for exclusions, protests, and coding overlays. |
 | Procurement action history | Transaction/action denominator for post-award modification incidence | direct primary SAM/USAspending action rows when present | usable | stronger | May support mechanism diagnostics and distributional anchoring within the stated source scope. | Do not present as a causal estimate or nationally representative policy effect. | Use the archived USAspending bulk summary for action-row, distinct-award, and amount-weighted denominators; add SAM/FPDS action-history extracts to crosswalk modification coding before treating modification incidence as calibration-grade. |
-| Procurement modification risk | Post-award modification and specification-change pressure | proxy/thin | thin | limited | May support source-aware plausibility checks only; magnitude claims must be phrased as proxy-backed or thin. | Do not present as article-level calibration or validation of hidden-channel magnitude. | Crosswalk USAspending modification coding against SAM/FPDS action-history definitions and separate action-row, distinct-award, and amount-weighted denominators before treating modification incidence as calibrated. |
+| Procurement modification risk | Post-award modification and specification-change pressure | denominator-mapped observed proxy | usable | stronger | May support mechanism diagnostics and distributional anchoring within the stated source scope. | Do not present as a causal estimate or nationally representative policy effect. | Use the procurement benchmark crosswalk for action-row, distinct-award, and amount-weighted denominators; add SAM/FPDS exports to reconcile coding before claiming causal procurement-modification effects. |
 
 ## Weak-Panel Gate
 
-- Weak panels requiring explicit claim limits: `1`
-- `Procurement modification risk` (thin): May support source-aware plausibility checks only; magnitude claims must be phrased as proxy-backed or thin.
+- Weak panels requiring explicit claim limits: `0`

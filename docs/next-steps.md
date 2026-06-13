@@ -30,7 +30,7 @@ The simulator now has a lobbying-centered model core with calibration fixtures, 
 - `--live` fetch modes can normalize caller-provided CSVs or query LDA, OpenFEC, Regulations.gov, and Federal Register APIs directly.
 - Source-native parser fixtures exercise LDA, OpenFEC contribution, OpenFEC electioneering, OpenFEC communication-cost, Regulations.gov, Federal Register, USAspending award JSON, USAspending transaction JSON, and SAM.gov Contract Awards JSON without network access.
 - The procurement action fetchers now honor the documented `USASPENDING_PROCUREMENT_ACTIONS_*` aliases directly, normalize downloaded SAM.gov Contract Awards CSV/JSON/ZIP exports through `SAM_CONTRACT_AWARDS_LIVE_CSV` or `SAM_CONTRACT_AWARDS_LIVE_URL`, use non-overlapping SAM.gov Contract Awards offset page-index slices plus optional non-adjacent `SAM_CONTRACT_AWARDS_OFFSET_STARTS`, support asynchronous `SAM_CONTRACT_AWARDS_EXTRACT_MODE` JSON/CSV downloads, and bound optional SAM attempts with retry/timeout controls before falling back to USAspending action rows. `make sam-contract-awards-preflight` performs a one-row redacted access/quota check before keyed API refreshes, and `make sam-procurement-refresh` wraps export, extract, and artifact-gate paths behind that guardrail.
-- The procurement denominator audit now reports archived bulk-summary, action-row, distinct-award, amount-weighted, agency-mix, fiscal-year, and award-type diagnostics separately, making clear that the public denominator is present while benchmark/coding reconciliation remains unresolved.
+- The procurement denominator audit now reports archived bulk-summary, action-row, distinct-award, amount-weighted, agency-mix, fiscal-year, and award-type diagnostics separately, and the procurement benchmark crosswalk remaps concentration and modification ranges to the observed denominators.
 - `make test` now includes Python compilation plus `bash -n` shell-script checks through `make script-checks`, and CI uses the same target before simulator and paper-package gates.
 - Live source fetches retry transient `429` and `5xx` responses and redact API keys from error URLs.
 - `make source-moments` records direct source-level top-k concentration, traceability, Schedule E outside-spending, non-proxy direct dark-money routing row coverage, direct dark-money visibility, public-financing, procurement bridge, revolving-door, and comment-record moments.
@@ -70,7 +70,7 @@ Deliverables:
 
 ## 3. Broaden SAM/FPDS, revolving-door, and intermediary source panels
 
-The source-moment layer now covers LDA, OpenFEC party/Schedule E/electioneering/communication-cost rows, regulatory dockets, USAspending award, multi-agency bridge, stratified action-panel fields, an archived USAspending bulk transaction summary, an optional SAM.gov Contract Awards procurement-action importer, public-financing bridge rows, bounded ProPublica/IRS Schedule I nonprofit-routing rows, and LDA-derived covered-position rows. Procurement modification now has a public bulk denominator, but its benchmark still needs action-row, distinct-award, amount-weighted, agency-mix, fiscal-year, award-type, and SAM/FPDS coding reconciliation before calibrated national procurement-modification claims are available. Hidden-donor identity, representative nonprofit/intermediary routing, electoral-communication, and revolving-door validation still need richer representative data before the model can claim calibrated national hidden-channel magnitudes.
+The source-moment layer now covers LDA, OpenFEC party/Schedule E/electioneering/communication-cost rows, regulatory dockets, USAspending award, multi-agency bridge, stratified action-panel fields, an archived USAspending bulk transaction summary, a procurement benchmark crosswalk, an optional SAM.gov Contract Awards procurement-action importer, public-financing bridge rows, bounded ProPublica/IRS Schedule I nonprofit-routing rows, and LDA-derived covered-position rows. Procurement modification now has a public bulk denominator and denominator-mapped benchmark ranges; causal procurement-modification capture claims still need SAM/FPDS coding reconciliation, protest/exclusion/firewall overlays, and independent calibration targets. Hidden-donor identity, representative nonprofit/intermediary routing, electoral-communication, and revolving-door validation still need richer representative data before the model can claim calibrated national hidden-channel magnitudes.
 
 Deliverables:
 
@@ -80,14 +80,14 @@ Deliverables:
 - expand the revolving-door import path beyond covered-position indicators and keep headcount share separate from influence intensity;
 - update `data/calibration/parameter-map.csv` so procurement and revolving-door rows point at direct source moments where possible.
 
-## 4. Work down the P1 calibration queue
+## 4. Work down the remaining calibration queue
 
 `reports/calibration-queue.md` now identifies the highest-priority remaining gaps.
 
 Deliverables:
 
-- treat the remaining P1 procurement source gap as benchmark/crosswalk work, not model tuning: agency and recipient concentration plus ex-post modification incidence now use the archived USAspending bulk summary, but the target ranges must be remapped by agency mix, fiscal year, award type, action-row versus distinct-award denominators, and SAM/FPDS-style modification coding before calibrated policy-simulation claims are available;
+- extend procurement evidence beyond the denominator-mapped crosswalk with SAM/FPDS coding reconciliation, protest/exclusion/firewall overlays, and independent calibration targets before any calibrated policy-simulation claim;
 - keep the cleared campaign/outside-spending `largeDonorDependence` regression covered by tests, while treating broader hidden-donor identity evidence as a separate source-panel expansion rather than a model-tuning item;
 - keep venue-substitution and hidden-influence partials as scenario-coverage or scenario-family-split work rather than collapsing baseline, stress, and extreme-stress rows into one benchmark;
 - replace synthetic influence-network diagnostics with direct network panels where sources permit;
-- preserve the current claim boundary in the paper until the procurement P1 rows clear in `reports/calibration-queue.md`.
+- preserve the current claim boundary in the paper until the calibrated-policy posture clears in `reports/claim-posture-audit.md`.

@@ -5,8 +5,8 @@ This audit maps manuscript claim families to the source panels and source moment
 ## Summary
 
 - Cleared claim families: `7`
-- Bounded claim families: `1`
-- Not-cleared claim families: `2`
+- Bounded claim families: `3`
+- Not-cleared claim families: `0`
 
 | Claim family | Status | Source support | Permitted use | Claim to avoid | Next evidence |
 | --- | --- | --- | --- | --- | --- |
@@ -18,8 +18,8 @@ This audit maps manuscript claim families to the source panels and source moment
 | Public-financing counterweight | cleared | Source dependencies are usable for the stated mechanism or distributional diagnostic. | Bounded local-program anchor for countervailing campaign-finance mechanisms. | Do not claim representative national public-financing uptake. | Add federal, state, and additional local program rows with archived source files. |
 | Revolving-door access | cleared | Source dependencies are usable for the stated mechanism or distributional diagnostic. | Proxy-backed stress diagnostics for covered-position and cooling-off exposure. | Do not treat LDA covered-position rows as representative post-employment movement. | Add OGE, FACA, witness, LegiStorm/OpenSecrets, or archived personnel movement exports. |
 | Hidden-channel magnitude | bounded | Bounded by top-EIN Schedule I routing coverage and unobserved donor identities. | Bounded nonprofit-routing and missingness diagnostics for hidden-channel mechanisms. | Do not treat the top-EIN Schedule I slice or bounded electoral-communication rows as representative hidden-channel magnitude or donor-identity evidence. | Broaden nonprofit-routing, direct donor, and electoral-communication coverage beyond the current top-EIN slice. |
-| Procurement modification capture | not_cleared | Not cleared because of weak panels: Procurement modification risk (thin). | Coverage warning and schema check for modification and concentration pathways. | Do not claim calibrated national procurement-modification incidence or capture rates. | Crosswalk USAspending modification coding against SAM/FPDS action-history definitions and remap benchmark denominators. |
-| Calibrated policy simulation | not_cleared | Not cleared because of weak panels: Procurement modification risk (thin). | Not cleared; the current article can only use mechanism diagnostics and bounded source moments. | Do not describe the artifact as a calibrated policy-effect simulator. | Clear the P1/P2 source gaps and rerun validation before using calibrated policy language. |
+| Procurement modification capture | bounded | Denominator-mapped USAspending bulk rows support distributional diagnostics; SAM/FPDS coding reconciliation and causal capture validation remain future work. | Denominator-mapped distributional diagnostics for modification and concentration pathways. | Do not claim causal procurement-modification capture rates or representative policy effects. | Crosswalk USAspending modification coding against SAM/FPDS action-history definitions and add protest, exclusion, and firewall overlays. |
+| Calibrated policy simulation | bounded | Cleared source panels support the mechanism article, but calibrated policy simulation still lacks causal calibration of hidden-channel and reform-effect magnitudes. | Not cleared; the current article can only use mechanism diagnostics and bounded source moments. | Do not describe the artifact as a calibrated policy-effect simulator. | Add causal calibration targets and independent validation before using calibrated policy-simulation language. |
 
 ## Dependency Details
 
@@ -33,5 +33,5 @@ This audit maps manuscript claim families to the source panels and source moment
 | Public-financing counterweight | Public financing | none | publicFinancingRows=135 (ok); publicFinancingProgramCount=2 (ok) |
 | Revolving-door access | Revolving door | none | revolvingDoorRows=803 (ok); revolvingDoorConfidenceMean=0.74 (ok) |
 | Hidden-channel magnitude | Direct dark money; Electoral communications; Revolving door | none | darkMoneyDirectRoutingRows=80 (ok); electoralCommunicationRows=268 (ok) |
-| Procurement modification capture | Procurement concentration panel; Procurement action history | Procurement modification risk (thin) | procurementConcentrationPanelAgencyCount=12 (ok); procurementNationalActionRows=1500 (ok); procurementActionRows=6.449e+06 (ok); procurementExPostModificationShare=0.1702 (ok); procurementModifiedAwardShare=0.1067 (ok) |
-| Calibrated policy simulation | Direct dark money; Electoral communications; Public financing; IRS 527 political organizations; Revolving door; Procurement concentration panel; Procurement action history | Procurement modification risk (thin) | darkMoneyDirectRoutingRows=80 (ok); electoralCommunicationRows=268 (ok); intermediary527Rows=500 (ok); procurementNationalActionRows=1500 (ok); procurementActionRows=6.449e+06 (ok) |
+| Procurement modification capture | Procurement concentration panel; Procurement action history; Procurement modification risk | none | procurementConcentrationPanelAgencyCount=12 (ok); procurementNationalActionRows=1500 (ok); procurementActionRows=6.449e+06 (ok); procurementExPostModificationShare=0.1702 (ok); procurementModifiedAwardShare=0.1067 (ok) |
+| Calibrated policy simulation | Direct dark money; Electoral communications; Public financing; IRS 527 political organizations; Revolving door; Procurement concentration panel; Procurement action history; Procurement modification risk | none | darkMoneyDirectRoutingRows=80 (ok); electoralCommunicationRows=268 (ok); intermediary527Rows=500 (ok); procurementNationalActionRows=1500 (ok); procurementActionRows=6.449e+06 (ok) |

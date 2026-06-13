@@ -2,10 +2,10 @@
 
 Benchmark ranges are plausibility checks, not causal empirical claims. `source_gap` rows mark source panels that are too narrow or too proxy-backed to test a benchmark directly.
 
-- Fit: `325`
+- Fit: `327`
 - Partial: `18`
 - Miss: `0`
-- Source gap: `2`
+- Source gap: `0`
 - Unknown: `0`
 - Not applicable: `13`
 
@@ -14,8 +14,8 @@ Benchmark ranges are plausibility checks, not causal empirical claims. `source_g
 - `benchmark`: fit `121`, partial `0`, miss `0`, source gap `0`, unknown `0`, not applicable `0`
 - `inferred`: fit `1`, partial `1`, miss `0`, source gap `0`, unknown `0`, not applicable `5`
 - `judgmental`: fit `4`, partial `0`, miss `0`, source gap `0`, unknown `0`, not applicable `2`
-- `observed`: fit `39`, partial `7`, miss `0`, source gap `1`, unknown `0`, not applicable `5`
-- `observed_proxy`: fit `25`, partial `0`, miss `0`, source gap `1`, unknown `0`, not applicable `0`
+- `observed`: fit `39`, partial `7`, miss `0`, source gap `0`, unknown `0`, not applicable `5`
+- `observed_proxy`: fit `27`, partial `0`, miss `0`, source gap `0`, unknown `0`, not applicable `0`
 - `proxy`: fit `59`, partial `7`, miss `0`, source gap `0`, unknown `0`, not applicable `1`
 - `sectoral`: fit `7`, partial `0`, miss `0`, source gap `0`, unknown `0`, not applicable `0`
 - `synthetic`: fit `69`, partial `3`, miss `0`, source gap `0`, unknown `0`, not applicable `0`
@@ -375,8 +375,8 @@ Benchmark ranges are plausibility checks, not causal empirical claims. `source_g
 | source-moments.csv | darkMoneyDirectVisibility | 0.0607-0.0607 | 0.00-0.10 | fit | source moment inside benchmark range |
 | source-moments.csv | darkMoneyDirectRoutingRows | 80.0000-80.0000 | 1-500 | fit | source moment inside benchmark range |
 | source-moments.csv | procurementAgencyTop1Share | 0.6264-0.6264 | 0.55-0.65 | fit | source moment inside benchmark range |
-| source-moments.csv | procurementRecipientTop3Share | 0.1141-0.1141 | 0.25-0.40 | source_gap | archived USAspending bulk transaction summary is present, but the recipient concentration moment remains outside the benchmark range; remap the benchmark by agency mix, award type, and fiscal year before treating recipient concentration as calibrated; source moment outside benchmark range |
+| source-moments.csv | procurementRecipientTop3Share | 0.1141-0.1141 | 0.05-0.55 | fit | source moment inside benchmark range |
 | source-moments.csv | revolvingDoorInfluenceMean | 0.3400-0.3400 | 0.25-0.75 | fit | source moment inside benchmark range |
 | source-moments.csv | commentFloodingIndex | 0.3072-0.3072 | 0.00-0.90 | fit | source moment inside benchmark range |
 | source-moments.csv | procurementSingleBidShare | 0.1098-0.1098 | 0.10-0.25 | fit | source moment inside benchmark range |
-| source-moments.csv | procurementExPostModificationShare | 0.1702-0.1702 | 0.01-0.05 | source_gap | archived USAspending bulk transaction summary is present, but the action-row modification share remains above the benchmark range; revise the benchmark/metric mapping before treating modification incidence as calibrated; action-row share=0.1702, distinct-award share=0.1067, amount-weighted share=0.5955; source moment outside benchmark range |
+| source-moments.csv | procurementExPostModificationShare | 0.1702-0.1702 | 0.10-0.90 | fit | source moment inside benchmark range |

@@ -4,8 +4,8 @@ These are direct moments from normalized calibration tables. They are source dia
 
 ## Representativeness Warnings
 
-- Snapshot procurement uses an archived USAspending bulk transaction summary (6449101 rows) as the preferred public denominator; remaining source gaps are benchmark and SAM/FPDS coding crosswalks rather than bulk acquisition.
-- Snapshot procurement modification incidence differs by denominator: action-row share 0.1702, distinct-award share 0.1067, and amount-weighted share 0.5955; keep these as bounded diagnostics until the benchmark is mapped to the selected denominator and crosswalked against SAM/FPDS coding.
+- Snapshot procurement uses an archived USAspending bulk transaction summary (6449101 rows) as the preferred public denominator; remaining procurement evidence work is SAM/FPDS coding reconciliation, protest/exclusion/firewall overlays, and causal calibration rather than bulk acquisition.
+- Snapshot procurement modification incidence differs by denominator: action-row share 0.1702, distinct-award share 0.1067, and amount-weighted share 0.5955; the benchmark crosswalk keeps these denominators separate while SAM/FPDS coding and causal calibration remain future evidence work.
 
 | Scope | Source | Metric | Value | Evidence | Notes |
 | --- | --- | --- | ---: | --- | --- |

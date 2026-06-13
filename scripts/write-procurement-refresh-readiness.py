@@ -205,7 +205,7 @@ def readiness_rows(reports: Path, snapshot: Path, env_example: Path) -> list[dic
             "nextAction": (
                 "; ".join(row.get("recommendedAction", "") for row in p1_procurement)
                 if p1_procurement else
-                "No P1 procurement source-gap actions remain."
+                "No P1 procurement source-gap actions remain; next procurement work is SAM/FPDS coding reconciliation, protest/exclusion/firewall overlays, and independent causal calibration."
             ),
         },
         {
@@ -272,9 +272,9 @@ def readiness_rows(reports: Path, snapshot: Path, env_example: Path) -> list[dic
         },
         {
             "item": "claim-boundary",
-            "status": "blocked" if p1_procurement else "ready",
+            "status": "bounded",
             "evidence": (
-                "Calibrated policy-simulation claims remain blocked until archived USAspending bulk diagnostics are benchmark-mapped and crosswalked against SAM/FPDS action-history definitions."
+                "Procurement benchmarks are denominator-mapped against the archived USAspending bulk diagnostics; calibrated policy-simulation claims remain outside scope until causal calibration and SAM/FPDS action-history coding are reconciled."
             ),
             "nextAction": (
                 "Keep the manuscript framed as a mechanism-model article with bounded empirical bridges."
@@ -387,6 +387,7 @@ def write_markdown(path: Path, rows: list[dict[str, str]]) -> None:
         f"- {claim_boundary['evidence']}",
         f"- Representative SAM/FPDS action-history status: `{sam_rows['status']}` ({sam_rows['evidence']}).",
         f"- P1 procurement source-gap status: `{p1['status']}` ({p1['evidence']}).",
+        f"- Next procurement evidence: {p1['nextAction']}",
         "",
         "## Current SAM Status",
         "",
@@ -432,7 +433,8 @@ def write_markdown(path: Path, rows: list[dict[str, str]]) -> None:
             "only when intentionally archiving normalized transaction rows. When the compact "
             "summary is present in the frozen snapshot, use it as a public transaction-history "
             "denominator while preserving the calibrated-claim boundary until USAspending "
-            "modification coding is benchmark-mapped and crosswalked against SAM/FPDS definitions."
+            "modification coding is crosswalked against SAM/FPDS definitions and causal "
+            "calibration targets are available."
         ),
         (
             "5. Fallback path: keep the bounded USAspending transaction/action panel as a "

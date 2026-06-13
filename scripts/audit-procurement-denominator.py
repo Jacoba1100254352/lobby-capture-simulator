@@ -485,10 +485,10 @@ def write_markdown(path: Path, rows: list[dict[str, str]]) -> None:
             f"`{sam.get('promotionReadiness', 'blocked')}`. The USAspending bulk summary has "
             f"{bulk.get('rows', '0')} summarized rows and promotion readiness "
             f"`{bulk.get('promotionReadiness', 'not-active')}`. The procurement-modification claim remains "
-            "bounded until the selected denominator is benchmark-mapped across action-row, distinct-award, "
-            "amount-weighted, agency-mix, fiscal-year, award-type, and SAM/FPDS coding definitions; "
-            "the archived bulk summary improves public transaction-history coverage but does not by itself "
-            "settle the benchmark mapping."
+            "bounded to denominator-mapped diagnostics until SAM/FPDS coding definitions, protest, "
+            "exclusion, firewall, and independent causal calibration evidence are added; the archived "
+            "bulk summary improves public transaction-history coverage but does not by itself estimate "
+            "causal procurement capture."
         ),
         "",
         "| Source | Status | Role | Rows | Agencies | Awards | Dates | PIID | UEI | Competition | Modified actions | Modified award share | Amt-wtd mod. | Promotion | Boundary |",

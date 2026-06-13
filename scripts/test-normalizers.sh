@@ -126,7 +126,7 @@ test -s "$tmpdir/reports/procurement-refresh-readiness.md"
 grep -q "Procurement Refresh Readiness" "$tmpdir/reports/procurement-refresh-readiness.md"
 grep -q "archived USAspending bulk diagnostics" "$tmpdir/reports/procurement-refresh-readiness.md"
 grep -q "Do not promote partial SAM payloads" "$tmpdir/reports/procurement-refresh-readiness.md"
-grep -q "Calibrated policy-simulation claims remain blocked" "$tmpdir/reports/procurement-refresh-readiness.md"
+grep -q "calibrated policy-simulation claims remain outside scope" "$tmpdir/reports/procurement-refresh-readiness.md"
 grep -q "SAM_CONTRACT_AWARDS_EXTRACT_MODE=1" "$tmpdir/reports/procurement-refresh-readiness.md"
 grep -q "SAM_CONTRACT_AWARDS_OFFSET_STARTS" "$tmpdir/reports/procurement-refresh-readiness.md"
 

@@ -66,6 +66,8 @@ def readiness_rows(
     )
     if hard_rows:
         hard_next = "; ".join(compact_action(row) for row in hard_rows[:4])
+    elif policy_posture != "cleared":
+        hard_next = "Add independent causal calibration targets and stronger source panels before using calibrated policy-simulation language."
     else:
         hard_next = "No hard calibration actions remain."
 

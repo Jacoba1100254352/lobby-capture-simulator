@@ -99,9 +99,11 @@ CLAIMS = [
         "panels": ["Procurement concentration panel", "Procurement action history", "Procurement modification risk"],
         "moments": [("procurementConcentrationPanelAgencyCount", 2.0), ("procurementNationalActionRows", 1.0), ("procurementActionRows", 1.0), ("procurementExPostModificationShare", 0.01), ("procurementModifiedAwardShare", 0.01)],
         "strict": True,
-        "permitted": "Coverage warning and schema check for modification and concentration pathways.",
-        "avoid": "Do not claim calibrated national procurement-modification incidence or capture rates.",
-        "next": "Crosswalk USAspending modification coding against SAM/FPDS action-history definitions and remap benchmark denominators.",
+        "maxStatus": "bounded",
+        "boundedSupport": "Denominator-mapped USAspending bulk rows support distributional diagnostics; SAM/FPDS coding reconciliation and causal capture validation remain future work.",
+        "permitted": "Denominator-mapped distributional diagnostics for modification and concentration pathways.",
+        "avoid": "Do not claim causal procurement-modification capture rates or representative policy effects.",
+        "next": "Crosswalk USAspending modification coding against SAM/FPDS action-history definitions and add protest, exclusion, and firewall overlays.",
     },
     {
         "key": "calibrated-policy-simulation",
@@ -118,9 +120,11 @@ CLAIMS = [
         ],
         "moments": [("darkMoneyDirectRoutingRows", 1.0), ("electoralCommunicationRows", 1.0), ("intermediary527Rows", 1.0), ("procurementNationalActionRows", 1.0), ("procurementActionRows", 1.0)],
         "strict": True,
+        "maxStatus": "bounded",
+        "boundedSupport": "Cleared source panels support the mechanism article, but calibrated policy simulation still lacks causal calibration of hidden-channel and reform-effect magnitudes.",
         "permitted": "Not cleared; the current article can only use mechanism diagnostics and bounded source moments.",
         "avoid": "Do not describe the artifact as a calibrated policy-effect simulator.",
-        "next": "Clear the P1/P2 source gaps and rerun validation before using calibrated policy language.",
+        "next": "Add causal calibration targets and independent validation before using calibrated policy-simulation language.",
     },
 ]
 
@@ -370,8 +374,8 @@ def table_support(row: dict[str, str]) -> str:
         "public-financing-counterweight": "Bounded local public-financing program panel.",
         "revolving-door-cooling-off": "LDA-derived covered-position bridge.",
         "hidden-channel-magnitude": "Top-EIN Schedule I nonprofit-routing rows present; donor identities remain unobserved.",
-        "procurement-modification-capture": "Bulk and action rows present; benchmark mapping remains thin.",
-        "calibrated-policy-simulation": "Direct nonprofit-routing rows present; procurement-modification dependencies not cleared.",
+        "procurement-modification-capture": "Denominator-mapped bulk and action rows present; causal capture validation remains future work.",
+        "calibrated-policy-simulation": "Source panels support mechanism diagnostics; causal calibration of policy effects remains future work.",
     }.get(row["claimKey"], row["sourceSupport"])
 
 
@@ -381,7 +385,7 @@ def table_use(row: dict[str, str]) -> str:
         "public-financing-counterweight": "Bounded countervailing-finance anchor.",
         "revolving-door-cooling-off": "Proxy-backed cooling-off diagnostics.",
         "hidden-channel-magnitude": "Bounded routing and missingness diagnostics only.",
-        "procurement-modification-capture": "Coverage warning and schema check.",
+        "procurement-modification-capture": "Denominator-mapped diagnostics.",
         "calibrated-policy-simulation": "Not a policy-effect claim.",
     }.get(row["claimKey"], row["permittedUse"])
 
@@ -392,8 +396,8 @@ def table_next(row: dict[str, str]) -> str:
         "public-financing-counterweight": "Federal, state, and additional local rows.",
         "revolving-door-cooling-off": "OGE, FACA, witness, or personnel exports.",
         "hidden-channel-magnitude": "Broader routing and donor-identity coverage.",
-        "procurement-modification-capture": "SAM/FPDS coding crosswalk.",
-        "calibrated-policy-simulation": "Clear procurement P1 source gaps.",
+        "procurement-modification-capture": "SAM/FPDS coding and protest/firewall overlays.",
+        "calibrated-policy-simulation": "Independent causal calibration targets.",
     }.get(row["claimKey"], row["nextEvidence"])
 
 

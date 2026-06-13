@@ -17,6 +17,7 @@ Scope:
 - USAspending procurement actions: expanded stratified 12-agency quarterly transaction/action rows for concentration and modification-incidence diagnostics when present, combining initial-action, high-value, and action-date strata and kept separate from award rows and top-award bridge rows.
 - USAspending national procurement actions: no-agency-filtered fiscal-year 2024 transaction/action rows for national-volume agency and recipient concentration diagnostics, kept separate from modification-incidence denominators.
 - USAspending bulk transaction summary: checksumed summary of the public download/count and download/transactions route when full normalized rows are archived outside git.
+- USAspending procurement benchmark crosswalk: derived denominator map from the archived bulk transaction rows, used to keep aggregate, agency, award-type, agency-award-type, action-row, distinct-award, and amount-weighted benchmark ranges separate.
 - SAM.gov Contract Awards: optional source-native action rows for PIID/UEI, competition, modification, award-date, and contracting-department diagnostics, kept separate from USAspending action rows so source provenance remains visible.
 - Revolving-door panel: licensed/source export or LDA covered-position derivation when available; fixture otherwise.
 - Intermediary panel: NYC CFB intermediary rows, IRS EO BMF nonprofit/association capacity rows, IRS POFD Form 8872 527 political-organization rows, or configured nonprofit, 527, association, and think-tank export when available; fixture otherwise.
@@ -35,6 +36,7 @@ The current command freezes whatever normalized files are present under `data/ra
 | usaspending-procurement-actions | 28115 | live | `data/snapshots/2024-env/normalized/usaspending-procurement-actions.csv` |
 | usaspending-procurement-national-actions | 1500 | live | `data/snapshots/2024-env/normalized/usaspending-procurement-national-actions.csv` |
 | usaspending-procurement-bulk-summary | 6449101 | copied | `data/snapshots/2024-env/normalized/usaspending-procurement-bulk-summary.json` |
+| usaspending-procurement-benchmark-crosswalk | derived | generated | `data/snapshots/2024-env/normalized/usaspending-procurement-benchmark-crosswalk.json` |
 | sam-contract-awards | 0 | missing | `data/snapshots/2024-env/normalized/sam-contract-awards.csv` |
 | revolving-door | 803 | live | `data/snapshots/2024-env/normalized/revolving-door.csv` |
 | intermediary | 1353 | live | `data/snapshots/2024-env/normalized/intermediaries.csv` |

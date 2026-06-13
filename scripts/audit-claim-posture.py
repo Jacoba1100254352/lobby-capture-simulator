@@ -81,7 +81,11 @@ def posture_rows(
     ) else "needs_revision"
     reproducibility_status = "cleared" if layout_pass and visual_pass else "needs_revision"
     empirical_status = "bounded" if weak_panels or source_gaps else "cleared"
-    policy_status = "not_cleared" if weak_panels or source_gaps or p1_actions or p2_actions else "cleared"
+    calibrated_dependency = next(
+        (row for row in dependency_rows if row.get("claimKey") == "calibrated-policy-simulation"),
+        {},
+    )
+    policy_status = "cleared" if calibrated_dependency.get("status") == "cleared" else "not_cleared"
 
     return [
         row(
@@ -104,17 +108,18 @@ def posture_rows(
                 f"; {dependency_counts.get('bounded', 0)} bounded claim dependencies"
             ),
             "The bridge constrains plausible ranges and flags evidence gaps; it does not validate hidden-channel magnitudes.",
-            "Prioritize procurement benchmark/coding crosswalks, broaden nonprofit-routing beyond the top-EIN Schedule I slice, and add post-employment revolving-door overlays; broaden electoral-communication and public-financing rows as secondary coverage upgrades.",
+            "Prioritize SAM/FPDS coding reconciliation, protest/exclusion/firewall overlays, nonprofit-routing beyond the top-EIN Schedule I slice, and post-employment revolving-door overlays; broaden electoral-communication and public-financing rows as secondary coverage upgrades.",
         ),
         row(
             "Calibrated policy-simulation claim",
             policy_status,
             (
                 f"{len(p1_actions)} P1 and {len(p2_actions)} P2 calibration/source actions remain; "
-                f"{dependency_counts.get('not_cleared', 0)} claim dependencies not cleared"
+                f"{dependency_counts.get('not_cleared', 0)} claim dependencies not cleared; "
+                f"calibrated-policy dependency={calibrated_dependency.get('status', 'missing')}"
             ),
             "The current artifact should not claim calibrated reform effects or representative national hidden-channel magnitudes.",
-            "Clear P1/P2 source gaps and rerun calibration before using calibrated policy-simulation language.",
+            "Add independent causal calibration targets and rerun validation before using calibrated policy-simulation language.",
         ),
         row(
             "Reproducibility and layout bundle",

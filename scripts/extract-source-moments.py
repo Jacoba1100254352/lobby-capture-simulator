@@ -696,7 +696,7 @@ def representativeness_warnings(rows: list[dict[str, str]]) -> list[str]:
     if metric_value(rows, "snapshot", "usaspending-bulk", "procurementActionPanelBulkSample") >= 0.5:
         bulk_rows = metric_value(rows, "snapshot", "usaspending-bulk", "procurementBulkTransactionRows")
         warnings.append(
-            f"Snapshot procurement uses an archived USAspending bulk transaction summary ({bulk_rows:.0f} rows) as the preferred public denominator; remaining source gaps are benchmark and SAM/FPDS coding crosswalks rather than bulk acquisition."
+            f"Snapshot procurement uses an archived USAspending bulk transaction summary ({bulk_rows:.0f} rows) as the preferred public denominator; remaining procurement evidence work is SAM/FPDS coding reconciliation, protest/exclusion/firewall overlays, and causal calibration rather than bulk acquisition."
         )
     elif metric_value(rows, "snapshot", "sam", "procurementActionPanelSamSample") >= 0.5:
         warnings.append(
@@ -721,7 +721,7 @@ def representativeness_warnings(rows: list[dict[str, str]]) -> list[str]:
     active_rows = bulk_rows if bulk_rows > 0 else action_rows
     if metric_value(rows, "snapshot", "usaspending", "procurementLatestTransactionModificationProxy") >= 0.5 and active_rows <= 0:
         warnings.append(
-            "Snapshot procurement latest-transaction modification enrichment is available, but modification incidence is reported from the award/action panel or bulk summary; benchmark mapping is still needed before calibration."
+            "Snapshot procurement latest-transaction modification enrichment is available, but modification incidence is reported from the award/action panel or bulk summary; denominator mapping is handled separately from SAM/FPDS coding and causal calibration."
         )
     if active_rows <= 0 and metric_value(rows, "snapshot", "usaspending", "procurementInitialAwardShare") >= 0.95 and metric_value(rows, "snapshot", "usaspending", "procurementExPostModificationShare") <= 0.05:
         warnings.append(
@@ -736,7 +736,7 @@ def representativeness_warnings(rows: list[dict[str, str]]) -> list[str]:
     amount_mod_share = metric_value(rows, "snapshot", "usaspending-bulk", "procurementAmountWeightedModificationShare") or metric_value(rows, "snapshot", "usaspending", "procurementAmountWeightedModificationShare")
     if active_rows > 0 and award_mod_share > 0.0 and abs(action_mod_share - award_mod_share) >= 0.05:
         warnings.append(
-            f"Snapshot procurement modification incidence differs by denominator: action-row share {action_mod_share:.4f}, distinct-award share {award_mod_share:.4f}, and amount-weighted share {amount_mod_share:.4f}; keep these as bounded diagnostics until the benchmark is mapped to the selected denominator and crosswalked against SAM/FPDS coding."
+            f"Snapshot procurement modification incidence differs by denominator: action-row share {action_mod_share:.4f}, distinct-award share {award_mod_share:.4f}, and amount-weighted share {amount_mod_share:.4f}; the benchmark crosswalk keeps these denominators separate while SAM/FPDS coding and causal calibration remain future evidence work."
         )
     return warnings
 

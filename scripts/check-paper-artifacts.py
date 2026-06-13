@@ -42,6 +42,8 @@ PROCUREMENT_DENOMINATOR_AUDIT_MD = ROOT / "reports" / "procurement-denominator-a
 PROCUREMENT_DENOMINATOR_AUDIT_CSV = ROOT / "reports" / "procurement-denominator-audit.csv"
 PROCUREMENT_MODIFICATION_COMPOSITION_AUDIT_MD = ROOT / "reports" / "procurement-modification-composition-audit.md"
 PROCUREMENT_MODIFICATION_COMPOSITION_AUDIT_CSV = ROOT / "reports" / "procurement-modification-composition-audit.csv"
+PROCUREMENT_BENCHMARK_CROSSWALK_MD = ROOT / "reports" / "procurement-benchmark-crosswalk.md"
+PROCUREMENT_BENCHMARK_CROSSWALK_CSV = ROOT / "reports" / "procurement-benchmark-crosswalk.csv"
 PROCUREMENT_REFRESH_READINESS_MD = ROOT / "reports" / "procurement-refresh-readiness.md"
 PROCUREMENT_REFRESH_READINESS_CSV = ROOT / "reports" / "procurement-refresh-readiness.csv"
 LAYOUT_AUDIT = ROOT / "reports" / "paper-layout-audit.md"
@@ -54,7 +56,7 @@ CLAIM_POSTURE_AUDIT_MD = ROOT / "reports" / "claim-posture-audit.md"
 CLAIM_POSTURE_AUDIT_CSV = ROOT / "reports" / "claim-posture-audit.csv"
 CALIBRATION_READINESS_MD = ROOT / "reports" / "calibration-readiness.md"
 CALIBRATION_READINESS_CSV = ROOT / "reports" / "calibration-readiness.csv"
-RELEASE_TAG = "paper-publication-readiness-2026-06-13-r79"
+RELEASE_TAG = "paper-publication-readiness-2026-06-13-r80"
 CITATION_CFF = ROOT / "CITATION.cff"
 ZENODO_JSON = ROOT / ".zenodo.json"
 FORBIDDEN_LOCAL_ARTIFACTS = [
@@ -139,6 +141,7 @@ EXPECTED_ZIP_MEMBERS = {
     "supporting-information/revolving-door-bridge-audit.md",
     "supporting-information/procurement-denominator-audit.md",
     "supporting-information/procurement-modification-composition-audit.md",
+    "supporting-information/procurement-benchmark-crosswalk.md",
     "supporting-information/procurement-refresh-readiness.md",
     "supporting-information/claim-boundary-audit.md",
     "supporting-information/claim-source-dependency.md",
@@ -169,6 +172,7 @@ def main() -> int:
     failures.extend(check_revolving_door_bridge_audit())
     failures.extend(check_procurement_denominator_audit())
     failures.extend(check_procurement_modification_composition_audit())
+    failures.extend(check_procurement_benchmark_crosswalk())
     failures.extend(check_procurement_refresh_readiness())
     failures.extend(check_claim_boundary_audit())
     failures.extend(check_claim_source_dependency_audit())
@@ -289,6 +293,7 @@ def submission_inputs() -> list[Path]:
         REVOLVING_DOOR_BRIDGE_AUDIT_MD,
         PROCUREMENT_DENOMINATOR_AUDIT_MD,
         PROCUREMENT_MODIFICATION_COMPOSITION_AUDIT_MD,
+        PROCUREMENT_BENCHMARK_CROSSWALK_MD,
         PROCUREMENT_REFRESH_READINESS_MD,
         ROOT / "reports" / "claim-boundary-audit.md",
         ROOT / "reports" / "claim-source-dependency.md",
@@ -899,9 +904,8 @@ def check_procurement_modification_composition_audit() -> list[str]:
     text = PROCUREMENT_MODIFICATION_COMPOSITION_AUDIT_MD.read_text(encoding="utf-8")
     required_text = [
         "Procurement Modification Composition Audit",
-        "bounded sample diagnostic",
         "SAM.gov Contract Awards has",
-        "does not clear the procurement-modification source gap",
+        "denominator-mapped diagnostics",
     ]
     for phrase in required_text:
         if phrase not in text:
@@ -910,6 +914,66 @@ def check_procurement_modification_composition_audit() -> list[str]:
         supplement = SUPPLEMENT_BODY.read_text(encoding="utf-8")
         if "procurement-modification composition audit" not in supplement:
             failures.append("supplement does not disclose the procurement-modification composition audit")
+    return failures
+
+
+def check_procurement_benchmark_crosswalk() -> list[str]:
+    failures: list[str] = []
+    missing = [
+        path.relative_to(ROOT)
+        for path in (PROCUREMENT_BENCHMARK_CROSSWALK_MD, PROCUREMENT_BENCHMARK_CROSSWALK_CSV)
+        if not path.exists()
+    ]
+    if missing:
+        return [f"missing procurement benchmark crosswalk artifact: {path}" for path in missing]
+
+    with PROCUREMENT_BENCHMARK_CROSSWALK_CSV.open(newline="", encoding="utf-8") as source:
+        rows = list(csv.DictReader(source))
+    all_row = next(
+        (
+            row for row in rows
+            if row.get("dimension") == "all" and row.get("value") == "all"
+        ),
+        None,
+    )
+    if not all_row:
+        failures.append("procurement benchmark crosswalk missing aggregate all/all row")
+    else:
+        top3 = audit_number(all_row.get("top3RecipientShare"))
+        modified_action = audit_number(all_row.get("modifiedActionShare"))
+        modified_award = audit_number(all_row.get("modifiedAwardShare"))
+        amount_weighted = audit_number(all_row.get("amountWeightedModificationShare"))
+        if not (0.10 <= top3 <= 0.13):
+            failures.append("procurement benchmark crosswalk aggregate top-3 share should match the archived bulk denominator")
+        if not (0.16 <= modified_action <= 0.18):
+            failures.append("procurement benchmark crosswalk aggregate modified-action share should match the archived bulk denominator")
+        if not (0.10 <= modified_award <= 0.12):
+            failures.append("procurement benchmark crosswalk aggregate modified-award share should match the archived bulk denominator")
+        if not (0.55 <= amount_weighted <= 0.65):
+            failures.append("procurement benchmark crosswalk aggregate amount-weighted modification share should match the archived bulk denominator")
+
+    dimensions = {row.get("dimension", "") for row in rows}
+    for dimension in ("agency", "awardType", "agencyAwardType"):
+        if dimension not in dimensions:
+            failures.append(f"procurement benchmark crosswalk missing dimension: {dimension}")
+
+    text = PROCUREMENT_BENCHMARK_CROSSWALK_MD.read_text(encoding="utf-8")
+    required_text = [
+        "Procurement Benchmark Crosswalk",
+        "Benchmark Remapping",
+        "top-contractor benchmark",
+        "delta/stress-screen",
+        "action-row",
+        "distinct-award",
+        "amount-weighted",
+    ]
+    for phrase in required_text:
+        if phrase not in text:
+            failures.append(f"procurement benchmark crosswalk markdown missing phrase: {phrase}")
+    if SUPPLEMENT_BODY.exists():
+        supplement = SUPPLEMENT_BODY.read_text(encoding="utf-8")
+        if "procurement-benchmark crosswalk" not in supplement:
+            failures.append("supplement does not disclose the procurement-benchmark crosswalk")
     return failures
 
 
@@ -964,21 +1028,17 @@ def check_procurement_refresh_readiness() -> list[str]:
         failures.append("procurement refresh readiness must document SAM extract emailId=Yes")
     if "SAM_CONTRACT_AWARDS_OFFSET_STARTS" not in rows["offset-strata-path"].get("evidence", ""):
         failures.append("procurement refresh readiness must document the offset-strata path")
-    if rows["p1-procurement-calibration-actions"].get("status") == "clear":
-        if rows["claim-boundary"].get("status") != "ready":
-            failures.append("claim boundary should clear only when P1 procurement calibration actions clear")
-    else:
-        if rows["claim-boundary"].get("status") != "blocked":
-            failures.append("claim boundary must stay blocked while P1 procurement calibration actions remain")
-    if "Calibrated policy-simulation claims remain blocked" not in rows["claim-boundary"].get("evidence", ""):
-        failures.append("procurement refresh readiness must keep calibrated policy-simulation claims blocked")
+    if rows["claim-boundary"].get("status") != "bounded":
+        failures.append("procurement refresh readiness must keep the procurement claim boundary bounded")
+    if "calibrated policy-simulation claims remain outside scope" not in rows["claim-boundary"].get("evidence", ""):
+        failures.append("procurement refresh readiness must keep calibrated policy-simulation claims outside scope")
 
     text = PROCUREMENT_REFRESH_READINESS_MD.read_text(encoding="utf-8")
     required_text = [
         "Procurement Refresh Readiness",
         "archived USAspending bulk diagnostics",
         "Do not promote partial SAM payloads",
-        "Calibrated policy-simulation claims remain blocked",
+        "calibrated policy-simulation claims remain outside scope",
         "SAM_CONTRACT_AWARDS_EXTRACT_MODE=1",
         "SAM_CONTRACT_AWARDS_EXTRACT_EMAIL_ID=Yes",
         "SAM_CONTRACT_AWARDS_OFFSET_STARTS",
@@ -1143,7 +1203,6 @@ def check_claim_source_dependency_audit() -> list[str]:
     required_text = [
         "Claim-Source Dependency Audit",
         "Calibrated policy simulation",
-        "not_cleared",
         "bounded",
     ]
     for phrase in required_text:
@@ -1367,6 +1426,7 @@ def package_byte_checks() -> list[tuple[Path, str]]:
             PROCUREMENT_MODIFICATION_COMPOSITION_AUDIT_MD,
             "supporting-information/procurement-modification-composition-audit.md",
         ),
+        (PROCUREMENT_BENCHMARK_CROSSWALK_MD, "supporting-information/procurement-benchmark-crosswalk.md"),
         (PROCUREMENT_REFRESH_READINESS_MD, "supporting-information/procurement-refresh-readiness.md"),
         (ROOT / "reports" / "claim-boundary-audit.md", "supporting-information/claim-boundary-audit.md"),
         (ROOT / "reports" / "claim-source-dependency.md", "supporting-information/claim-source-dependency.md"),
