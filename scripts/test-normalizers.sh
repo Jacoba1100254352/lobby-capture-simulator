@@ -121,6 +121,28 @@ grep -q "Calibrated policy-simulation claims remain blocked" "$tmpdir/reports/pr
 grep -q "SAM_CONTRACT_AWARDS_EXTRACT_MODE=1" "$tmpdir/reports/procurement-refresh-readiness.md"
 grep -q "SAM_CONTRACT_AWARDS_OFFSET_STARTS" "$tmpdir/reports/procurement-refresh-readiness.md"
 
+cat > "$tmpdir/sam-export.csv" <<'CSV'
+contractId.piid,modification_number,recipientName,contractingDepartmentName,contractingSubtierName,awardOrIDVTypeName,Federal Action Obligation,Recipient UEI,actionDate,extentCompetedName,numberOfOffers,typeOfContractPricingName
+68HERH24C0004,0,MANUAL EXPORT CONTRACTOR,ENVIRONMENTAL PROTECTION AGENCY,EPA OFFICE,DEFINITIVE CONTRACT,1250000,EXPORTUEI1234,2024-01-15,FULL AND OPEN COMPETITION,5,FIRM FIXED PRICE
+68HERH24C0004,P00004,MANUAL EXPORT CONTRACTOR,ENVIRONMENTAL PROTECTION AGENCY,EPA OFFICE,DEFINITIVE CONTRACT,250000,EXPORTUEI1234,2024-09-15,FULL AND OPEN COMPETITION,5,FIRM FIXED PRICE
+CSV
+python3 scripts/audit-sam-contract-awards-export.py \
+  --input "$tmpdir/sam-export.csv" \
+  --reports "$tmpdir/reports" \
+  --min-rows 2 \
+  --min-awards 1 \
+  --min-agencies 1 \
+  --min-date-span-days 0 \
+  --min-piid-share 1.0 \
+  --min-uei-share 1.0 \
+  --min-action-date-share 1.0 \
+  --min-competition-share 1.0 >/dev/null
+test -s "$tmpdir/reports/sam-contract-awards-export-audit.csv"
+test -s "$tmpdir/reports/sam-contract-awards-export-audit.md"
+grep -q "SAM Contract Awards Export Audit" "$tmpdir/reports/sam-contract-awards-export-audit.md"
+grep -q "promotion-readiness,candidate" "$tmpdir/reports/sam-contract-awards-export-audit.csv"
+grep -q "Modified action share" "$tmpdir/reports/sam-contract-awards-export-audit.md"
+
 python3 scripts/test-source-fetchers.py
 
 printf 'GET https://api.sam.gov/contract-awards/v1/search?api_key=REDACTED failed with HTTP 429: {"code":"900804","message":"Message throttled out","description":"You have exceeded your quota .","nextAccessTime":"2026-Jun-13 00:00:00+0000 UTC"}\n' > "$tmpdir/sam-quota.log"

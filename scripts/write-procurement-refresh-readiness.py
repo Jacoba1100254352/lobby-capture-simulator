@@ -31,6 +31,14 @@ REQUIRED_ENV_VARS = [
     "SAM_CONTRACT_AWARDS_SOURCE_NATIVE",
     "SAM_CONTRACT_AWARDS_LIVE_CSV",
     "SAM_CONTRACT_AWARDS_LIVE_URL",
+    "SAM_CONTRACT_AWARDS_EXPORT_MIN_ROWS",
+    "SAM_CONTRACT_AWARDS_EXPORT_MIN_AWARDS",
+    "SAM_CONTRACT_AWARDS_EXPORT_MIN_AGENCIES",
+    "SAM_CONTRACT_AWARDS_EXPORT_MIN_DATE_SPAN_DAYS",
+    "SAM_CONTRACT_AWARDS_EXPORT_MIN_PIID_SHARE",
+    "SAM_CONTRACT_AWARDS_EXPORT_MIN_UEI_SHARE",
+    "SAM_CONTRACT_AWARDS_EXPORT_MIN_ACTION_DATE_SHARE",
+    "SAM_CONTRACT_AWARDS_EXPORT_MIN_COMPETITION_SHARE",
     "SAM_CONTRACT_AWARDS_EXTRACT_MODE",
     "SAM_CONTRACT_AWARDS_EXTRACT_FORMAT",
     "SAM_CONTRACT_AWARDS_EXTRACT_EMAIL_ID",
@@ -179,7 +187,26 @@ def readiness_rows(reports: Path, snapshot: Path, env_example: Path) -> list[dic
                 else "Manual SAM Contract Awards export variables are not both documented in .env.example"
             ),
             "nextAction": (
-                "Use this path when SAM API quota or extract polling blocks a representative export; archive the normalized snapshot only after paper-artifacts-check passes."
+                "Use this path when SAM API quota or extract polling blocks a representative export; run make sam-contract-awards-export-audit before snapshot promotion."
+            ),
+        },
+        {
+            "item": "manual-export-audit",
+            "status": "ready" if all(name in env_vars for name in (
+                "SAM_CONTRACT_AWARDS_EXPORT_MIN_ROWS",
+                "SAM_CONTRACT_AWARDS_EXPORT_MIN_AWARDS",
+                "SAM_CONTRACT_AWARDS_EXPORT_MIN_AGENCIES",
+                "SAM_CONTRACT_AWARDS_EXPORT_MIN_DATE_SPAN_DAYS",
+                "SAM_CONTRACT_AWARDS_EXPORT_MIN_PIID_SHARE",
+                "SAM_CONTRACT_AWARDS_EXPORT_MIN_UEI_SHARE",
+                "SAM_CONTRACT_AWARDS_EXPORT_MIN_ACTION_DATE_SHARE",
+                "SAM_CONTRACT_AWARDS_EXPORT_MIN_COMPETITION_SHARE",
+            )) else "missing",
+            "evidence": (
+                "Downloaded SAM export promotion thresholds are documented for row count, award breadth, agency breadth, date span, PIID/UEI coverage, action-date coverage, and competition-field coverage."
+            ),
+            "nextAction": (
+                "Treat a candidate audit as a pre-promotion screen only; claim clearance still requires snapshot regeneration, validation, and paper-artifacts-check."
             ),
         },
         {
@@ -317,9 +344,11 @@ def write_markdown(path: Path, rows: list[dict[str, str]]) -> None:
         (
             "1. Manual representative export: set `SAM_CONTRACT_AWARDS_LIVE_CSV` or "
             "`SAM_CONTRACT_AWARDS_LIVE_URL` to a downloaded SAM.gov Contract Awards "
-            "CSV/JSON/ZIP export, then run `scripts/run-2024-env-live-snapshot.sh`. "
-            "This path bypasses API quota during normalization while still writing "
-            "`data/raw/sam-contract-awards.csv` into the standard procurement action schema."
+            "CSV/JSON/ZIP export, then run `make sam-contract-awards-export-audit`. "
+            "Only after the audit clears hard breadth checks should the export be promoted "
+            "through `scripts/run-2024-env-live-snapshot.sh`. This path bypasses API quota "
+            "during normalization while still writing `data/raw/sam-contract-awards.csv` "
+            "into the standard procurement action schema."
         ),
         (
             "2. Preferred keyed API run: set `SAM_CONTRACT_AWARDS_SOURCE_NATIVE=1`, "
