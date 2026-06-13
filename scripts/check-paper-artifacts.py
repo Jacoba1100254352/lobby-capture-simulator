@@ -70,7 +70,7 @@ SUBMISSION_READINESS_MD = ROOT / "reports" / "submission-readiness.md"
 SUBMISSION_READINESS_CSV = ROOT / "reports" / "submission-readiness.csv"
 LATEX_LOG_AUDIT_MD = ROOT / "reports" / "latex-log-audit.md"
 LATEX_LOG_AUDIT_CSV = ROOT / "reports" / "latex-log-audit.csv"
-RELEASE_TAG = "paper-publication-readiness-2026-06-13-r97"
+RELEASE_TAG = "paper-publication-readiness-2026-06-13-r98"
 CITATION_CFF = ROOT / "CITATION.cff"
 ZENODO_JSON = ROOT / ".zenodo.json"
 FORBIDDEN_LOCAL_ARTIFACTS = [
@@ -1585,23 +1585,24 @@ def check_submission_readiness_audit() -> list[str]:
     with SUBMISSION_READINESS_CSV.open(newline="", encoding="utf-8") as source:
         rows = {row.get("gate", ""): row for row in csv.DictReader(source)}
     required = {
-        "mechanism-manuscript": "ready",
-        "empirical-bridge-scope": "bounded",
-        "calibrated-policy-claims": "blocked",
-        "claim-source-dependencies": "bounded",
-        "policy-language-audit": "ready",
-        "layout-and-visual-audit": "ready",
-        "reproducible-review-bundle": "ready",
-        "overall-submission-posture": "ready_for_mechanism_review",
+        "mechanism-manuscript": {"ready"},
+        "empirical-bridge-scope": {"bounded"},
+        "calibrated-policy-claims": {"blocked"},
+        "claim-source-dependencies": {"bounded"},
+        "policy-language-audit": {"ready"},
+        "layout-and-visual-audit": {"ready"},
+        "reproducible-review-bundle": {"ready"},
+        "final-journal-submission": {"manual_required", "ready"},
+        "overall-submission-posture": {"ready_for_mechanism_review"},
     }
-    for gate_name, expected_status in required.items():
+    for gate_name, expected_statuses in required.items():
         if gate_name not in rows:
             failures.append(f"submission-readiness audit missing gate: {gate_name}")
             continue
-        if rows[gate_name].get("status") != expected_status:
+        if rows[gate_name].get("status") not in expected_statuses:
             failures.append(
                 "submission-readiness audit gate has unexpected status: "
-                f"{gate_name}={rows[gate_name].get('status', '')}, expected {expected_status}"
+                f"{gate_name}={rows[gate_name].get('status', '')}, expected one of {sorted(expected_statuses)}"
             )
 
     text = SUBMISSION_READINESS_MD.read_text(encoding="utf-8")
@@ -1611,6 +1612,9 @@ def check_submission_readiness_audit() -> list[str]:
         "not a calibrated policy-effect submission",
         "calibrated policy-effect claims",
         "final human read-through",
+        "final-journal-submission",
+        "DOI archive",
+        "human scholarly read-through",
         "latex unresolved=0",
     ]
     for phrase in required_text:

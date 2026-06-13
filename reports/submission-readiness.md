@@ -6,8 +6,8 @@ This audit synthesizes the generated claim, validation, layout, visual, and poli
 
 - Status: `ready_for_mechanism_review`
 - Evidence: open causal-calibration targets=10
-- Submission implication: The review bundle is ready to circulate as a mechanism-model package with a bounded empirical bridge; it is not a calibrated policy-effect submission.
-- Next action: Before final journal submission, complete a human scholarly read-through and add a DOI archive if the venue requires one.
+- Submission implication: The review bundle is ready to circulate as a mechanism-model package with a bounded empirical bridge; it is not a calibrated policy-effect submission or a final journal-submission signoff.
+- Next action: Before final journal submission, clear the final-journal-submission gate.
 
 ## Gate Summary
 
@@ -20,7 +20,12 @@ This audit synthesizes the generated claim, validation, layout, visual, and poli
 | policy-language-audit | ready | overclaim or missing-boundary hits=0 | The manuscript and supplement should not contain unbounded causal, calibrated-policy, ranking, or representativeness language. | Revise flagged language and rerun the policy-claim audit. |
 | layout-and-visual-audit | ready | layout failures=0; visual checklist=pass; latex unresolved=0 | Figures, tables, generated PDFs, and final LaTeX logs pass the automated layout, label-readability, and unresolved-log checks. | Inspect and rerun the visual/layout audits after any figure, table, or LaTeX change. |
 | reproducible-review-bundle | ready | layout failures=0, visual checklist=pass | The release bundle is suitable for review only after the full paper artifact gate passes. | Rerun the full artifact gate after any source, table, figure, LaTeX, or package change. |
+| final-journal-submission | manual_required | release metadata=present; DOI archive=not detected; human scholarly read-through=not signed off | Final journal submission requires archive and human editorial signoff; mechanism-review circulation can proceed without treating this gate as cleared. | mint or record a DOI archive, such as Zenodo or OSF; complete and sign off a human scholarly read-through in reports/final-human-readthrough.md |
 
 ## Claim Boundary
 
 A `ready_for_mechanism_review` posture means the release can be read as a mechanism-model manuscript with bounded source bridges. It does not clear calibrated policy-effect claims, representative hidden-channel magnitudes, or final venue-specific editorial acceptance.
+
+## Final Journal Submission Boundary
+
+The `final-journal-submission` gate records external submission requirements that cannot be cleared by simulator tests alone: DOI archiving and a human scholarly read-through. This gate is deliberately separate from mechanism-review readiness so the bundle can circulate for review without implying final journal-submission signoff.

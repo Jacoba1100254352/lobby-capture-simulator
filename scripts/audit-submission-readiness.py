@@ -4,11 +4,17 @@
 from __future__ import annotations
 
 import csv
+import re
 from pathlib import Path
 
 
 ROOT = Path(__file__).resolve().parents[1]
 REPORTS = ROOT / "reports"
+CITATION_CFF = ROOT / "CITATION.cff"
+ZENODO_JSON = ROOT / ".zenodo.json"
+SUBMISSION_DECLARATIONS = ROOT / "paper" / "sections" / "submission-declarations.tex"
+FINAL_HUMAN_READTHROUGH = REPORTS / "final-human-readthrough.md"
+DOI_PATTERN = re.compile(r"\b10\.\d{4,9}/[-._;()/:A-Za-z0-9]+\b")
 
 
 def main() -> int:
@@ -114,6 +120,7 @@ def readiness_rows() -> list[dict[str, str]]:
             "The release bundle is suitable for review only after the full paper artifact gate passes.",
             reproducibility.get("nextAction", "Rerun make paper-artifacts-check."),
         ),
+        final_journal_submission_gate(),
     ]
     rows.append(overall_row(rows, len(open_causal)))
     return rows
@@ -145,7 +152,8 @@ def overall_row(rows: list[dict[str, str]], open_causal_targets: int) -> dict[st
         status = "ready_for_mechanism_review"
         implication = (
             "The review bundle is ready to circulate as a mechanism-model package "
-            "with a bounded empirical bridge; it is not a calibrated policy-effect submission."
+            "with a bounded empirical bridge; it is not a calibrated policy-effect submission "
+            "or a final journal-submission signoff."
         )
     else:
         status = "blocked"
@@ -155,8 +163,60 @@ def overall_row(rows: list[dict[str, str]], open_causal_targets: int) -> dict[st
         status,
         f"open causal-calibration targets={open_causal_targets}",
         implication,
-        "Before final journal submission, complete a human scholarly read-through and add a DOI archive if the venue requires one.",
+        "Before final journal submission, clear the final-journal-submission gate.",
     )
+
+
+def final_journal_submission_gate() -> dict[str, str]:
+    archive_doi = find_archive_doi()
+    release_metadata_present = release_metadata_present_in_archival_files()
+    human_signoff = final_human_readthrough_complete()
+    status = "ready" if archive_doi and human_signoff else "manual_required"
+    missing_actions: list[str] = []
+    if not archive_doi:
+        missing_actions.append("mint or record a DOI archive, such as Zenodo or OSF")
+    if not human_signoff:
+        missing_actions.append(
+            f"complete and sign off a human scholarly read-through in {FINAL_HUMAN_READTHROUGH.relative_to(ROOT)}"
+        )
+    next_action = "; ".join(missing_actions) if missing_actions else "Final submission externalities are cleared."
+    return gate(
+        "final-journal-submission",
+        status,
+        (
+            f"release metadata={'present' if release_metadata_present else 'missing'}; "
+            f"DOI archive={'present: ' + archive_doi if archive_doi else 'not detected'}; "
+            f"human scholarly read-through={'complete' if human_signoff else 'not signed off'}"
+        ),
+        (
+            "Final journal submission requires archive and human editorial signoff; "
+            "mechanism-review circulation can proceed without treating this gate as cleared."
+        ),
+        next_action,
+    )
+
+
+def find_archive_doi() -> str:
+    for path in (CITATION_CFF, ZENODO_JSON, SUBMISSION_DECLARATIONS):
+        match = DOI_PATTERN.search(read_text(path))
+        if match:
+            return match.group(0)
+    return ""
+
+
+def release_metadata_present_in_archival_files() -> bool:
+    citation = read_text(CITATION_CFF)
+    zenodo = read_text(ZENODO_JSON)
+    return "github.com/Jacoba1100254352/lobby-capture-simulator/releases/tag/" in citation and (
+        "github.com/Jacoba1100254352/lobby-capture-simulator/releases/tag/" in zenodo
+    )
+
+
+def final_human_readthrough_complete() -> bool:
+    text = read_text(FINAL_HUMAN_READTHROUGH)
+    status_complete = re.search(r"^\s*status\s*:\s*complete\s*$", text, re.IGNORECASE | re.MULTILINE)
+    signed_off_by = re.search(r"^\s*signed-off-by\s*:\s*\S.+$", text, re.IGNORECASE | re.MULTILINE)
+    return bool(status_complete and signed_off_by)
 
 
 def keyed_rows(path: Path, key: str) -> dict[str, dict[str, str]]:
@@ -223,6 +283,10 @@ def write_markdown(path: Path, rows: list[dict[str, str]]) -> None:
             "## Claim Boundary",
             "",
             "A `ready_for_mechanism_review` posture means the release can be read as a mechanism-model manuscript with bounded source bridges. It does not clear calibrated policy-effect claims, representative hidden-channel magnitudes, or final venue-specific editorial acceptance.",
+            "",
+            "## Final Journal Submission Boundary",
+            "",
+            "The `final-journal-submission` gate records external submission requirements that cannot be cleared by simulator tests alone: DOI archiving and a human scholarly read-through. This gate is deliberately separate from mechanism-review readiness so the bundle can circulate for review without implying final journal-submission signoff.",
             "",
         ]
     )
