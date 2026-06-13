@@ -2,9 +2,9 @@
 """Write a no-network readiness plan for the procurement source refresh.
 
 This report is operational evidence, not empirical evidence. It exists so a
-future SAM/FPDS or public bulk-transaction refresh can be run deliberately
-without promoting partial payloads or confusing the bounded USAspending action
-panel with representative procurement calibration.
+    future SAM/FPDS or public bulk-transaction refresh can be run deliberately
+    without promoting partial payloads or confusing public transaction-history
+    coverage with calibrated procurement-modification claims.
 """
 
 from __future__ import annotations
@@ -102,6 +102,7 @@ def readiness_rows(reports: Path, snapshot: Path, env_example: Path) -> list[dic
     sam_capability = capabilities.get("sam-contract-awards-action-history", {})
     usa_action = denominators.get("usaspending-procurement-actions", {})
     usa_national_action = denominators.get("usaspending-procurement-national-actions", {})
+    usa_bulk = denominators.get("usaspending-procurement-bulk-summary", {})
     sam_denominator = denominators.get("sam-contract-awards", {})
     p1_procurement = [
         row for row in queue
@@ -116,6 +117,14 @@ def readiness_rows(reports: Path, snapshot: Path, env_example: Path) -> list[dic
     quota_reset = next_access_time(sam_status.get("notes", "") or sam_capability.get("snapshotPlan", ""))
     sam_panel_status = representative_sam_status(sam_denominator)
     sam_panel_evidence = representative_sam_evidence(sam_denominator, sam_rows)
+    usa_bulk_rows = int_value(usa_bulk.get("rows"))
+    bulk_route_configured = all(name in env_vars for name in (
+        "USASPENDING_TRANSACTION_DOWNLOAD_FISCAL_YEAR",
+        "USASPENDING_TRANSACTION_DOWNLOAD_AGENCIES",
+        "USASPENDING_TRANSACTION_DOWNLOAD_MAX_ROWS",
+        "USASPENDING_TRANSACTION_DOWNLOAD_POLL_ATTEMPTS",
+        "USASPENDING_TRANSACTION_DOWNLOAD_POLL_SECONDS",
+    ))
 
     rows = [
         {
@@ -150,9 +159,9 @@ def readiness_rows(reports: Path, snapshot: Path, env_example: Path) -> list[dic
             "status": sam_panel_status,
             "evidence": sam_panel_evidence,
             "nextAction": (
-                "Archive a representative SAM/FPDS action-history panel that clears row-count, award-breadth, agency-breadth, date-span, PIID, and action-date checks before clearing procurement modification capture."
+                "Use SAM/FPDS action-history exports to crosswalk USAspending modification coding and add exclusions, offer counts, protests, and firewall overlays before clearing procurement modification capture."
                 if sam_panel_status != "ready" else
-                "Compare SAM modification, concentration, and denominator moments against the bounded USAspending panel."
+                "Compare SAM modification, concentration, and denominator moments against the archived USAspending bulk summary."
             ),
         },
         {
@@ -162,7 +171,7 @@ def readiness_rows(reports: Path, snapshot: Path, env_example: Path) -> list[dic
                 f"National-volume USAspending action rows for concentration diagnostics: {usa_national_rows}"
             ),
             "nextAction": (
-                "Use this panel for agency and recipient concentration diagnostics only; do not use it to clear SAM/FPDS modification-incidence claims."
+                "Keep this panel as a fallback concentration diagnostic; prefer the archived bulk summary when present."
             ),
         },
         {
@@ -177,17 +186,15 @@ def readiness_rows(reports: Path, snapshot: Path, env_example: Path) -> list[dic
         },
         {
             "item": "usaspending-bulk-transaction-strata",
-            "status": "ready" if all(name in env_vars for name in (
-                "USASPENDING_TRANSACTION_DOWNLOAD_FISCAL_YEAR",
-                "USASPENDING_TRANSACTION_DOWNLOAD_AGENCIES",
-                "USASPENDING_TRANSACTION_DOWNLOAD_MAX_ROWS",
-                "USASPENDING_TRANSACTION_DOWNLOAD_POLL_ATTEMPTS",
-                "USASPENDING_TRANSACTION_DOWNLOAD_POLL_SECONDS",
-            )) else "missing",
+            "status": "ready" if usa_bulk_rows > 0 else ("configured" if bulk_route_configured else "missing"),
             "evidence": (
-                "No-key USAspending download/count and download/transactions controls are documented for representative transaction-history strata."
+                f"Archived USAspending bulk summary rows: {usa_bulk_rows}; agencies: {int_value(usa_bulk.get('agencyCount'))}; promotion readiness: {usa_bulk.get('promotionReadiness', 'not-active')}"
+                if usa_bulk_rows > 0 else
+                "No-key USAspending download/count and download/transactions controls are documented for public transaction-history strata."
             ),
             "nextAction": (
+                "Use the archived summary as the public transaction-history denominator; rerun the bulk download only when refreshing or expanding the archive."
+                if usa_bulk_rows > 0 else
                 "Run make usaspending-transaction-download-strata to audit row-limit-safe strata; use --download only when intentionally archiving normalized transaction rows."
             ),
         },
@@ -265,9 +272,9 @@ def readiness_rows(reports: Path, snapshot: Path, env_example: Path) -> list[dic
         },
         {
             "item": "claim-boundary",
-            "status": "blocked" if sam_panel_status != "ready" or p1_procurement else "ready",
+            "status": "blocked" if p1_procurement else "ready",
             "evidence": (
-                "Calibrated policy-simulation claims remain blocked until representative SAM/FPDS action-history coverage or archived USAspending bulk transaction downloads clear the procurement P1 gaps."
+                "Calibrated policy-simulation claims remain blocked until archived USAspending bulk diagnostics are benchmark-mapped and crosswalked against SAM/FPDS action-history definitions."
             ),
             "nextAction": (
                 "Keep the manuscript framed as a mechanism-model article with bounded empirical bridges."
@@ -414,17 +421,18 @@ def write_markdown(path: Path, rows: list[dict[str, str]]) -> None:
         (
             "3. Bounded diagnostic run: set `SAM_CONTRACT_AWARDS_SOURCE_NATIVE=1`, "
             "`SAM_CONTRACT_AWARDS_OFFSET_STARTS`, and either department-code or "
-            "PIID-subtier filters, then compare the resulting rows against the bounded "
-            "USAspending action panel."
+            "PIID-subtier filters, then compare the resulting rows against the archived "
+            "USAspending bulk summary and the smaller fallback action panel."
         ),
         (
             "4. No-key USAspending bulk transaction route: run "
             "`make usaspending-transaction-download-strata` to audit row-limit-safe "
             "download/count strata, then rerun "
             "`python3 scripts/audit-usaspending-transaction-download-strata.py --download` "
-            "only when intentionally archiving normalized transaction rows. This can "
-            "strengthen the public transaction-history denominator while preserving the "
-            "SAM/FPDS claim boundary until validation is rerun."
+            "only when intentionally archiving normalized transaction rows. When the compact "
+            "summary is present in the frozen snapshot, use it as a public transaction-history "
+            "denominator while preserving the calibrated-claim boundary until USAspending "
+            "modification coding is benchmark-mapped and crosswalked against SAM/FPDS definitions."
         ),
         (
             "5. Fallback path: keep the bounded USAspending transaction/action panel as a "

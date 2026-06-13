@@ -314,7 +314,7 @@ def source_scope_gap(metric: str, value: float, source_moments: dict[str, float]
         if concentration_sam_action_panel:
             return "bounded SAM.gov Contract Awards panel is present, but it is not representative enough for agency-concentration calibration"
         if concentration_national_action_panel:
-            return "national-volume USAspending action panel is present, but the agency-concentration moment remains outside benchmark and still needs representative SAM/FPDS validation"
+            return "national-volume USAspending action panel is present, but the agency-concentration moment remains outside benchmark; remap by agency mix, award type, and fiscal year before treating it as calibrated"
         return "bounded stratified USAspending action panel is present, but it is not representative enough for agency-concentration calibration"
     if metric == "procurementAgencyTop1Share" and concentration_top_award_panel and procurement_bridge_agencies > 1:
         return "multi-agency procurement bridge is present but top-award sampling is not representative enough for agency-concentration calibration"
@@ -323,8 +323,10 @@ def source_scope_gap(metric: str, value: float, source_moments: dict[str, float]
     if metric == "procurementRecipientTop3Share" and concentration_action_panel and concentration_panel_agencies > 1:
         if concentration_sam_action_panel:
             return "bounded SAM.gov Contract Awards panel is present, but it is not representative enough for recipient-concentration calibration"
+        if bulk_action_panel:
+            return "archived USAspending bulk transaction summary is present, but the recipient concentration moment remains outside the benchmark range; remap the benchmark by agency mix, award type, and fiscal year before treating recipient concentration as calibrated"
         if concentration_national_action_panel:
-            return "national-volume USAspending action panel is present, but the recipient-concentration moment remains outside benchmark and still needs representative SAM/FPDS validation"
+            return "national-volume USAspending action panel is present, but the recipient-concentration moment remains outside benchmark; remap by agency mix, award type, and fiscal year before treating it as calibrated"
         return "bounded stratified USAspending action panel is present, but it is not representative enough for recipient-concentration calibration"
     if metric == "procurementSingleBidShare" and concentration_top_award_panel:
         return "competition moments come from a limited top-award procurement slice, not representative SAM/FPDS action-level competition coverage"
@@ -340,10 +342,10 @@ def source_scope_gap(metric: str, value: float, source_moments: dict[str, float]
             f"amount-weighted share={amount_share:.4f}"
         )
         if concentration_sam_action_panel:
-            return "bounded SAM.gov Contract Awards panel is present, but the modification-action share remains above the benchmark range and still needs representative SAM/FPDS validation;" + denominator_note
+            return "bounded SAM.gov Contract Awards panel is present, but the modification-action share remains above the benchmark range; revise the benchmark/metric mapping before treating modification incidence as calibrated;" + denominator_note
         if bulk_action_panel:
             return "archived USAspending bulk transaction summary is present, but the action-row modification share remains above the benchmark range; revise the benchmark/metric mapping before treating modification incidence as calibrated;" + denominator_note
-        return "bounded USAspending transaction-action panel is present, but the modification-action share remains above the benchmark range and still needs representative SAM/FPDS validation;" + denominator_note
+        return "bounded USAspending transaction-action panel is present, but the modification-action share remains above the benchmark range; revise the benchmark/metric mapping before treating modification incidence as calibrated;" + denominator_note
     if metric == "darkMoneyDirectRoutingRows" and thin_dark_money_panel:
         return "dark-money source panel has opaque-capacity and adjacent outside-spending rows but no non-proxy direct hidden-donor or nonprofit-routing rows"
     if metric == "darkMoneyDirectVisibility" and thin_dark_money_panel:

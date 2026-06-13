@@ -88,6 +88,14 @@ NORMALIZED_FIELDS = (
 )
 
 
+def display_path(path: Path) -> str:
+    """Return repo-relative paths in portable JSON/CSV reports when possible."""
+    try:
+        return str(path.resolve().relative_to(ROOT))
+    except ValueError:
+        return str(path)
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--reports", type=Path, default=REPORTS)
@@ -260,7 +268,7 @@ def download_strata(args: argparse.Namespace, strata: list[dict[str, str]]) -> i
             normalized = write_normalized_zip_rows(zip_path, writer, summary)
             if normalized != zip_rows:
                 raise RuntimeError(f"Validated {zip_rows} rows in {zip_path}, but wrote {normalized} rows.")
-            row["downloadFile"] = str(zip_path)
+            row["downloadFile"] = display_path(zip_path)
             row["zipSha256"] = sha256(zip_path)
             row["expectedRows"] = str(expected_rows)
             row["validatedRows"] = str(zip_rows)
@@ -824,7 +832,7 @@ class BulkSummary:
             "acceptedRowCountDrift": sum(int(row.get("rowCountDrift") or "0") for row in self.strata),
             "acceptedRowCountDriftAbs": sum(abs(int(row.get("rowCountDrift") or "0")) for row in self.strata),
             "acceptedRowCountDriftStrata": sum(1 for row in self.strata if int(row.get("rowCountDrift") or "0") != 0),
-            "normalizedOutput": str(normalized_output),
+            "normalizedOutput": display_path(normalized_output),
             "normalizedOutputSha256": sha256(normalized_output),
             "dateFrom": self.date_from,
             "dateTo": self.date_to,

@@ -104,7 +104,7 @@ def posture_rows(
                 f"; {dependency_counts.get('bounded', 0)} bounded claim dependencies"
             ),
             "The bridge constrains plausible ranges and flags evidence gaps; it does not validate hidden-channel magnitudes.",
-            "Prioritize representative SAM/FPDS procurement action histories, broaden nonprofit-routing beyond the top-EIN Schedule I slice, and add post-employment revolving-door overlays; broaden electoral-communication and public-financing rows as secondary coverage upgrades.",
+            "Prioritize procurement benchmark/coding crosswalks, broaden nonprofit-routing beyond the top-EIN Schedule I slice, and add post-employment revolving-door overlays; broaden electoral-communication and public-financing rows as secondary coverage upgrades.",
         ),
         row(
             "Calibrated policy-simulation claim",

@@ -104,7 +104,7 @@ PANELS = [
         "good": 10.0,
         "missing": "multi-agency procurement concentration panel is absent",
         "thin": "bounded procurement concentration panel is present, but it is not representative enough for calibration-grade claims",
-        "action": "Use the no-agency-filtered USAspending national action panel for concentration diagnostics and representative SAM/FPDS action-level extracts before treating modification incidence as calibrated.",
+        "action": "Use the archived USAspending bulk summary for public concentration diagnostics and remap the benchmark by award type, agency mix, and fiscal year before treating concentration as calibrated.",
     },
     {
         "panel": "Procurement action history",
@@ -114,7 +114,7 @@ PANELS = [
         "minimum": 1.0,
         "good": 50.0,
         "missing": "no USAspending/SAM/FPDS transaction/action rows in the pinned snapshot",
-        "action": "Broaden the selected SAM/USAspending action panel with representative SAM/FPDS action-history extracts before treating modification incidence as calibration-grade.",
+        "action": "Use the archived USAspending bulk summary for action-row, distinct-award, and amount-weighted denominators; add SAM/FPDS action-history extracts to crosswalk modification coding before treating modification incidence as calibration-grade.",
     },
     {
         "panel": "Procurement modification risk",
@@ -126,7 +126,7 @@ PANELS = [
         "maximum": 0.40,
         "lowerIsBetter": True,
         "missing": "modification-action share is outside the benchmark range, likely reflecting bounded action-sample scope or nonrepresentative transaction coverage",
-        "thin": "stratified transaction-action rows are present, but modification incidence remains too high for calibration-grade national inference",
+        "thin": "archived USAspending bulk rows are present, but modification incidence remains outside the benchmark until denominator and coding definitions are remapped",
         "warningMetric": "procurementLatestTransactionModificationProxy",
         "warningAbsentMetric": "procurementActionRows",
         "warning": "latest-transaction modification enrichment is available but an action-level transaction denominator is still absent",
@@ -134,7 +134,7 @@ PANELS = [
             ("procurementModifiedAwardShare", "distinct-award share"),
             ("procurementAmountWeightedModificationShare", "amount-weighted share"),
         ],
-        "action": "Validate nonzero modification numbers against representative SAM/FPDS action histories and separate transaction-action incidence from award-level modification incidence.",
+        "action": "Crosswalk USAspending modification coding against SAM/FPDS action-history definitions and separate action-row, distinct-award, and amount-weighted denominators before treating modification incidence as calibrated.",
     },
 ]
 

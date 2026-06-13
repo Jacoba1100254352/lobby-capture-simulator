@@ -54,7 +54,7 @@ CLAIM_POSTURE_AUDIT_MD = ROOT / "reports" / "claim-posture-audit.md"
 CLAIM_POSTURE_AUDIT_CSV = ROOT / "reports" / "claim-posture-audit.csv"
 CALIBRATION_READINESS_MD = ROOT / "reports" / "calibration-readiness.md"
 CALIBRATION_READINESS_CSV = ROOT / "reports" / "calibration-readiness.csv"
-RELEASE_TAG = "paper-publication-readiness-2026-06-12-r78"
+RELEASE_TAG = "paper-publication-readiness-2026-06-13-r79"
 CITATION_CFF = ROOT / "CITATION.cff"
 ZENODO_JSON = ROOT / ".zenodo.json"
 FORBIDDEN_LOCAL_ARTIFACTS = [
@@ -805,7 +805,7 @@ def check_procurement_denominator_audit() -> list[str]:
     text = PROCUREMENT_DENOMINATOR_AUDIT_MD.read_text(encoding="utf-8")
     required_text = [
         "Procurement Denominator Audit",
-        "representative SAM/FPDS action-history denominator",
+        "archived USAspending bulk summary",
         "national concentration panel",
         "modified-action share",
     ]
@@ -882,7 +882,9 @@ def check_procurement_modification_composition_audit() -> list[str]:
     definitive = next(
         (
             row for row in rows
-            if row.get("groupType") == "awardType" and row.get("groupValue") == "DEFINITIVE CONTRACT"
+            if row.get("source") == "usaspending-procurement-actions"
+            and row.get("groupType") == "awardType"
+            and row.get("groupValue") == "DEFINITIVE CONTRACT"
         ),
         None,
     )
@@ -962,19 +964,19 @@ def check_procurement_refresh_readiness() -> list[str]:
         failures.append("procurement refresh readiness must document SAM extract emailId=Yes")
     if "SAM_CONTRACT_AWARDS_OFFSET_STARTS" not in rows["offset-strata-path"].get("evidence", ""):
         failures.append("procurement refresh readiness must document the offset-strata path")
-    if rows["representative-sam-fpds-action-history"].get("status") == "ready":
+    if rows["p1-procurement-calibration-actions"].get("status") == "clear":
         if rows["claim-boundary"].get("status") != "ready":
-            failures.append("claim boundary should clear only when representative SAM/FPDS rows are ready")
+            failures.append("claim boundary should clear only when P1 procurement calibration actions clear")
     else:
         if rows["claim-boundary"].get("status") != "blocked":
-            failures.append("claim boundary must stay blocked until representative SAM/FPDS rows are archived")
+            failures.append("claim boundary must stay blocked while P1 procurement calibration actions remain")
     if "Calibrated policy-simulation claims remain blocked" not in rows["claim-boundary"].get("evidence", ""):
         failures.append("procurement refresh readiness must keep calibrated policy-simulation claims blocked")
 
     text = PROCUREMENT_REFRESH_READINESS_MD.read_text(encoding="utf-8")
     required_text = [
         "Procurement Refresh Readiness",
-        "representative SAM/FPDS action-history",
+        "archived USAspending bulk diagnostics",
         "Do not promote partial SAM payloads",
         "Calibrated policy-simulation claims remain blocked",
         "SAM_CONTRACT_AWARDS_EXTRACT_MODE=1",

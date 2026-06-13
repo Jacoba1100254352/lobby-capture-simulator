@@ -15,6 +15,7 @@ from pathlib import Path
 RAW = Path("data/raw")
 OUTPUT = Path("data/snapshots/2024-env")
 NORMALIZED = OUTPUT / "normalized"
+ROOT = Path(__file__).resolve().parents[1]
 
 
 SOURCES = {
@@ -102,7 +103,7 @@ def main() -> int:
         destination = normalized / source_path.name
         if source_path.exists():
             if source.get("format") == "json-summary":
-                copy_text_file(source_path, destination)
+                copy_json_summary(source_path, destination)
                 row_count = summary_row_count(destination)
             else:
                 copy_normalized_csv(source_path, destination)
@@ -176,9 +177,33 @@ def copy_normalized_csv(source: Path, destination: Path) -> None:
     destination.write_text(text.rstrip() + "\n", encoding="utf-8")
 
 
-def copy_text_file(source: Path, destination: Path) -> None:
-    text = source.read_text(encoding="utf-8")
-    destination.write_text(text.rstrip() + "\n", encoding="utf-8")
+def copy_json_summary(source: Path, destination: Path) -> None:
+    payload = json.loads(source.read_text(encoding="utf-8"))
+    payload = scrub_local_paths(payload)
+    destination.write_text(json.dumps(payload, indent=2, sort_keys=True) + "\n", encoding="utf-8")
+
+
+def scrub_local_paths(value):
+    if isinstance(value, dict):
+        return {key: scrub_local_paths(item) for key, item in value.items()}
+    if isinstance(value, list):
+        return [scrub_local_paths(item) for item in value]
+    if isinstance(value, str):
+        return portable_path_string(value)
+    return value
+
+
+def portable_path_string(value: str) -> str:
+    try:
+        path = Path(value)
+    except (OSError, ValueError):
+        return value
+    if not path.is_absolute():
+        return value
+    try:
+        return str(path.resolve().relative_to(ROOT))
+    except (OSError, ValueError):
+        return value
 
 
 def summary_row_count(path: Path) -> int:

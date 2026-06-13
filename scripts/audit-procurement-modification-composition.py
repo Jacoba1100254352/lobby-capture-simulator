@@ -39,7 +39,7 @@ SOURCES = [
         "source": "sam-contract-awards",
         "path": "sam-contract-awards.csv",
         "role": "optional SAM/FPDS-style action panel",
-        "claimBoundary": "calibration-grade only after representative SAM/FPDS action-history rows are archived",
+        "claimBoundary": "use for SAM/FPDS coding crosswalks, exclusions, offer counts, protests, and firewalls before upgrading procurement modification claims",
     },
 ]
 
@@ -396,9 +396,9 @@ def write_markdown(path: Path, rows: list[dict[str, str]]) -> None:
         "",
         (
             "This audit decomposes the procurement modification source moment by source route, "
-            "agency, award type, and recipient concentration. It is designed to keep the "
-            "bounded USAspending action panel separate from any future representative SAM/FPDS "
-            "action-history denominator."
+            "agency, award type, and recipient concentration. It is designed to keep action-row, "
+            "distinct-award, amount-weighted, USAspending bulk, and optional SAM/FPDS-style "
+            "denominators visibly separate."
         ),
         "",
         "## Claim Boundary",

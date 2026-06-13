@@ -693,14 +693,19 @@ def representativeness_warnings(rows: list[dict[str, str]]) -> list[str]:
         warnings.append(
             "Snapshot procurement rows have weak PIID coverage; SAM/FPDS-style bridge diagnostics remain incomplete."
         )
-    if metric_value(rows, "snapshot", "sam", "procurementActionPanelSamSample") >= 0.5:
+    if metric_value(rows, "snapshot", "usaspending-bulk", "procurementActionPanelBulkSample") >= 0.5:
+        bulk_rows = metric_value(rows, "snapshot", "usaspending-bulk", "procurementBulkTransactionRows")
+        warnings.append(
+            f"Snapshot procurement uses an archived USAspending bulk transaction summary ({bulk_rows:.0f} rows) as the preferred public denominator; remaining source gaps are benchmark and SAM/FPDS coding crosswalks rather than bulk acquisition."
+        )
+    elif metric_value(rows, "snapshot", "sam", "procurementActionPanelSamSample") >= 0.5:
         warnings.append(
             "Snapshot procurement concentration uses SAM.gov Contract Awards rows; this is stronger source provenance than the top-award bridge but remains a bounded diagnostic rather than a representative SAM/FPDS panel."
         )
     elif metric_value(rows, "snapshot", "usaspending", "procurementConcentrationPanelNationalVolumeSample") >= 0.5:
         national_rows = metric_value(rows, "snapshot", "usaspending", "procurementNationalActionRows")
         warnings.append(
-            f"Snapshot procurement concentration uses a national-volume no-agency-filtered USAspending transaction/action panel ({national_rows:.0f} rows); this is stronger for concentration than the balanced action panel, but modification incidence still needs representative SAM/FPDS action-history validation."
+            f"Snapshot procurement concentration uses a national-volume no-agency-filtered USAspending transaction/action panel ({national_rows:.0f} rows); this is stronger for concentration than the balanced action panel, but the benchmark still needs denominator and SAM/FPDS coding reconciliation."
         )
     elif metric_value(rows, "snapshot", "usaspending", "procurementConcentrationPanelActionSample") >= 0.5:
         action_rows = metric_value(rows, "snapshot", "usaspending", "procurementActionRows")
@@ -712,11 +717,13 @@ def representativeness_warnings(rows: list[dict[str, str]]) -> list[str]:
             "Snapshot procurement concentration uses a multi-agency top-award bridge; this improves agency coverage but remains a sampling diagnostic rather than a representative SAM/FPDS panel."
         )
     action_rows = metric_value(rows, "snapshot", "usaspending", "procurementActionRows")
-    if metric_value(rows, "snapshot", "usaspending", "procurementLatestTransactionModificationProxy") >= 0.5 and action_rows <= 0:
+    bulk_rows = metric_value(rows, "snapshot", "usaspending-bulk", "procurementActionRows")
+    active_rows = bulk_rows if bulk_rows > 0 else action_rows
+    if metric_value(rows, "snapshot", "usaspending", "procurementLatestTransactionModificationProxy") >= 0.5 and active_rows <= 0:
         warnings.append(
-            "Snapshot procurement latest-transaction modification enrichment is available, but modification incidence is reported from the award/action panel; representative SAM/FPDS transaction denominators are still needed before calibration."
+            "Snapshot procurement latest-transaction modification enrichment is available, but modification incidence is reported from the award/action panel or bulk summary; benchmark mapping is still needed before calibration."
         )
-    if action_rows <= 0 and metric_value(rows, "snapshot", "usaspending", "procurementInitialAwardShare") >= 0.95 and metric_value(rows, "snapshot", "usaspending", "procurementExPostModificationShare") <= 0.05:
+    if active_rows <= 0 and metric_value(rows, "snapshot", "usaspending", "procurementInitialAwardShare") >= 0.95 and metric_value(rows, "snapshot", "usaspending", "procurementExPostModificationShare") <= 0.05:
         warnings.append(
             "Snapshot procurement modification incidence is dominated by initial-award rows; use it as a coverage warning rather than an observed national modification rate."
         )
@@ -724,12 +731,12 @@ def representativeness_warnings(rows: list[dict[str, str]]) -> list[str]:
         warnings.append(
             "Snapshot procurement rows are dominated by post-award modification transactions; award and modification effects should be reported separately."
         )
-    action_mod_share = metric_value(rows, "snapshot", "usaspending", "procurementExPostModificationShare")
-    award_mod_share = metric_value(rows, "snapshot", "usaspending", "procurementModifiedAwardShare")
-    amount_mod_share = metric_value(rows, "snapshot", "usaspending", "procurementAmountWeightedModificationShare")
-    if action_rows > 0 and award_mod_share > 0.0 and abs(action_mod_share - award_mod_share) >= 0.05:
+    action_mod_share = metric_value(rows, "snapshot", "usaspending-bulk", "procurementExPostModificationShare") or metric_value(rows, "snapshot", "usaspending", "procurementExPostModificationShare")
+    award_mod_share = metric_value(rows, "snapshot", "usaspending-bulk", "procurementModifiedAwardShare") or metric_value(rows, "snapshot", "usaspending", "procurementModifiedAwardShare")
+    amount_mod_share = metric_value(rows, "snapshot", "usaspending-bulk", "procurementAmountWeightedModificationShare") or metric_value(rows, "snapshot", "usaspending", "procurementAmountWeightedModificationShare")
+    if active_rows > 0 and award_mod_share > 0.0 and abs(action_mod_share - award_mod_share) >= 0.05:
         warnings.append(
-            f"Snapshot procurement modification incidence differs by denominator: action-row share {action_mod_share:.4f}, distinct-award share {award_mod_share:.4f}, and amount-weighted share {amount_mod_share:.4f}; keep these as bounded diagnostics until representative SAM/FPDS action histories are archived."
+            f"Snapshot procurement modification incidence differs by denominator: action-row share {action_mod_share:.4f}, distinct-award share {award_mod_share:.4f}, and amount-weighted share {amount_mod_share:.4f}; keep these as bounded diagnostics until the benchmark is mapped to the selected denominator and crosswalked against SAM/FPDS coding."
         )
     return warnings
 

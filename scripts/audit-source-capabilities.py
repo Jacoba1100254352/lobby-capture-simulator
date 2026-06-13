@@ -72,8 +72,8 @@ CAPABILITIES = [
         "panel": "Procurement modification risk",
         "neededFor": "Procurement modification capture and calibrated policy-simulation claims",
         "nextAction": (
-            "Archive a representative SAM/FPDS action-history pull or configured export; "
-            "compare modification incidence against the bounded USAspending action panel."
+            "Use the archived USAspending bulk summary for public modification diagnostics; "
+            "add a SAM/FPDS pull or configured export to crosswalk modification coding, exclusions, offer counts, protests, and firewalls."
         ),
     },
     {
@@ -96,8 +96,8 @@ CAPABILITIES = [
         "panel": "Procurement concentration panel",
         "neededFor": "Stronger public procurement concentration diagnostics",
         "nextAction": (
-            "Use this no-key national-volume panel for concentration only; keep "
-            "modification incidence blocked on representative SAM/FPDS action histories."
+            "Use this no-key national-volume panel as a fallback concentration diagnostic; "
+            "prefer the archived bulk summary when present and keep modification incidence blocked on benchmark/coding reconciliation."
         ),
     },
     {
@@ -115,9 +115,7 @@ CAPABILITIES = [
         "panel": "Procurement modification risk",
         "neededFor": "Procurement modification denominator robustness and calibrated policy-simulation claim review",
         "nextAction": (
-            "Archive the full normalized CSV/ZIP payloads as release assets or external archive files, "
-            "freeze the compact summary into the 2024-env snapshot, then rerun source moments, validation, "
-            "calibration readiness, and the paper artifact gate."
+            "Use the compact frozen summary for public transaction-history diagnostics; archive the full normalized CSV/ZIP payloads externally only when full byte-for-byte reproduction is required."
         ),
     },
     {
@@ -215,6 +213,7 @@ def capability_row(
     sam_quality = sam_quality_status(file_path) if capability["capability"] == "sam-contract-awards-action-history" else ""
     live_status = statuses.get(source, {})
     source_status = live_status.get("status", "")
+    snapshot_status = source_status or ("present" if row_count > 0 else ("not-promoted" if not source else "missing"))
     panel_status = panel.get("status", "")
     capability_status = classify_capability(
         capability["capability"], row_count, source_status, panel_status, sam_quality
@@ -224,7 +223,7 @@ def capability_row(
         "mechanism": capability["mechanism"],
         "implementedRoute": capability["implementedRoute"],
         "snapshotSource": source or "not-promoted",
-        "snapshotStatus": source_status or ("not-promoted" if not source else "missing"),
+        "snapshotStatus": snapshot_status,
         "snapshotRows": str(row_count),
         "snapshotQuality": sam_quality or "not-applicable",
         "snapshotPlan": snapshot_plan(capability["capability"], live_status, row_count),

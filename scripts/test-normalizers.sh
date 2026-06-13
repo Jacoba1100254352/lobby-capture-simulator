@@ -124,7 +124,7 @@ python3 scripts/write-procurement-refresh-readiness.py --reports "$tmpdir/report
 test -s "$tmpdir/reports/procurement-refresh-readiness.csv"
 test -s "$tmpdir/reports/procurement-refresh-readiness.md"
 grep -q "Procurement Refresh Readiness" "$tmpdir/reports/procurement-refresh-readiness.md"
-grep -q "representative SAM/FPDS action-history" "$tmpdir/reports/procurement-refresh-readiness.md"
+grep -q "archived USAspending bulk diagnostics" "$tmpdir/reports/procurement-refresh-readiness.md"
 grep -q "Do not promote partial SAM payloads" "$tmpdir/reports/procurement-refresh-readiness.md"
 grep -q "Calibrated policy-simulation claims remain blocked" "$tmpdir/reports/procurement-refresh-readiness.md"
 grep -q "SAM_CONTRACT_AWARDS_EXTRACT_MODE=1" "$tmpdir/reports/procurement-refresh-readiness.md"

@@ -456,12 +456,13 @@ def write_markdown(path: Path, rows: list[dict[str, str]]) -> None:
         "",
         (
             "This audit explains the denominator behind procurement modification and concentration "
-            "moments. It separates the active USAspending action panel from the optional SAM.gov "
-            "Contract Awards route and from award-level bridge rows. The SAM.gov route supports "
+            "moments. It separates the archived USAspending bulk summary, active USAspending action "
+            "panels, optional SAM.gov Contract Awards route, and award-level bridge rows. The SAM.gov route supports "
             "synchronous non-adjacent offset page-index strata through "
             "`SAM_CONTRACT_AWARDS_OFFSET_STARTS` and asynchronous extract downloads through "
-            "`SAM_CONTRACT_AWARDS_EXTRACT_MODE`; those rows strengthen the snapshot only "
-            "when the resulting action-history panel is archived."
+            "`SAM_CONTRACT_AWARDS_EXTRACT_MODE`; those rows are now most useful for "
+            "crosswalking USAspending modification coding and adding exclusions, offer counts, "
+            "protests, and firewall overlays."
         ),
         "",
         "## Claim Boundary",
@@ -484,9 +485,10 @@ def write_markdown(path: Path, rows: list[dict[str, str]]) -> None:
             f"`{sam.get('promotionReadiness', 'blocked')}`. The USAspending bulk summary has "
             f"{bulk.get('rows', '0')} summarized rows and promotion readiness "
             f"`{bulk.get('promotionReadiness', 'not-active')}`. The procurement-modification claim remains "
-            "bounded until a representative action-history denominator is archived and its metric mapping is validated; "
-            "the national panel improves concentration diagnostics but is not used as a representative "
-            "modification-incidence denominator."
+            "bounded until the selected denominator is benchmark-mapped across action-row, distinct-award, "
+            "amount-weighted, agency-mix, fiscal-year, award-type, and SAM/FPDS coding definitions; "
+            "the archived bulk summary improves public transaction-history coverage but does not by itself "
+            "settle the benchmark mapping."
         ),
         "",
         "| Source | Status | Role | Rows | Agencies | Awards | Dates | PIID | UEI | Competition | Modified actions | Modified award share | Amt-wtd mod. | Promotion | Boundary |",

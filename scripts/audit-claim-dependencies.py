@@ -101,7 +101,7 @@ CLAIMS = [
         "strict": True,
         "permitted": "Coverage warning and schema check for modification and concentration pathways.",
         "avoid": "Do not claim calibrated national procurement-modification incidence or capture rates.",
-        "next": "Populate representative SAM/FPDS action-level transaction denominators and validate modifications.",
+        "next": "Crosswalk USAspending modification coding against SAM/FPDS action-history definitions and remap benchmark denominators.",
     },
     {
         "key": "calibrated-policy-simulation",
@@ -370,7 +370,7 @@ def table_support(row: dict[str, str]) -> str:
         "public-financing-counterweight": "Bounded local public-financing program panel.",
         "revolving-door-cooling-off": "LDA-derived covered-position bridge.",
         "hidden-channel-magnitude": "Top-EIN Schedule I nonprofit-routing rows present; donor identities remain unobserved.",
-        "procurement-modification-capture": "Action rows present; modification incidence remains thin.",
+        "procurement-modification-capture": "Bulk and action rows present; benchmark mapping remains thin.",
         "calibrated-policy-simulation": "Direct nonprofit-routing rows present; procurement-modification dependencies not cleared.",
     }.get(row["claimKey"], row["sourceSupport"])
 
@@ -392,7 +392,7 @@ def table_next(row: dict[str, str]) -> str:
         "public-financing-counterweight": "Federal, state, and additional local rows.",
         "revolving-door-cooling-off": "OGE, FACA, witness, or personnel exports.",
         "hidden-channel-magnitude": "Broader routing and donor-identity coverage.",
-        "procurement-modification-capture": "Representative SAM/FPDS action rows.",
+        "procurement-modification-capture": "SAM/FPDS coding crosswalk.",
         "calibrated-policy-simulation": "Clear procurement P1 source gaps.",
     }.get(row["claimKey"], row["nextEvidence"])
 
