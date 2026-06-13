@@ -25,6 +25,11 @@ LOCAL_PDF = PAPER / f"{LOCAL_BASENAME}.pdf"
 WILEY_PDF = PAPER / "regulation-governance-wiley.pdf"
 SUPPLEMENT_PDF = PAPER / "supplement.pdf"
 SUBMISSION_ZIP = DIST / "lobby-capture-wiley-submission.zip"
+LATEX_LOGS = [
+    PAPER / f"{LOCAL_BASENAME}.log",
+    PAPER / "regulation-governance-wiley.log",
+    PAPER / "supplement.log",
+]
 SUBMISSION_DECLARATIONS = PAPER / "sections" / "submission-declarations.tex"
 REGGOV_BODY = PAPER / "sections" / "reggov-body.tex"
 SUPPLEMENT_BODY = PAPER / "sections" / "supplement-body.tex"
@@ -63,7 +68,9 @@ POLICY_CLAIM_LANGUAGE_AUDIT_MD = ROOT / "reports" / "policy-claim-language-audit
 POLICY_CLAIM_LANGUAGE_AUDIT_CSV = ROOT / "reports" / "policy-claim-language-audit.csv"
 SUBMISSION_READINESS_MD = ROOT / "reports" / "submission-readiness.md"
 SUBMISSION_READINESS_CSV = ROOT / "reports" / "submission-readiness.csv"
-RELEASE_TAG = "paper-publication-readiness-2026-06-13-r95"
+LATEX_LOG_AUDIT_MD = ROOT / "reports" / "latex-log-audit.md"
+LATEX_LOG_AUDIT_CSV = ROOT / "reports" / "latex-log-audit.csv"
+RELEASE_TAG = "paper-publication-readiness-2026-06-13-r96"
 CITATION_CFF = ROOT / "CITATION.cff"
 ZENODO_JSON = ROOT / ".zenodo.json"
 FORBIDDEN_LOCAL_ARTIFACTS = [
@@ -156,6 +163,7 @@ EXPECTED_ZIP_MEMBERS = {
     "supporting-information/claim-posture-audit.md",
     "supporting-information/policy-claim-language-audit.md",
     "supporting-information/submission-readiness.md",
+    "supporting-information/latex-log-audit.md",
     "supporting-information/validation-summary.md",
     "supporting-information/substitution-audit.md",
     "supporting-information/portfolio-screen.md",
@@ -190,6 +198,7 @@ def main() -> int:
     failures.extend(check_claim_posture_audit())
     failures.extend(check_policy_claim_language_audit())
     failures.extend(check_submission_readiness_audit())
+    failures.extend(check_latex_log_audit())
     failures.extend(check_layout_and_visual_reports())
     failures.extend(check_archive_metadata())
     failures.extend(check_release_tag_exactness())
@@ -237,6 +246,8 @@ def check_freshness() -> list[str]:
         (LOCAL_PDF, local_pdf_inputs()),
         (WILEY_PDF, wiley_pdf_inputs()),
         (SUPPLEMENT_PDF, supplement_pdf_inputs()),
+        (LATEX_LOG_AUDIT_MD, latex_log_audit_inputs()),
+        (LATEX_LOG_AUDIT_CSV, latex_log_audit_inputs()),
         (SUBMISSION_ZIP, submission_inputs()),
     ]
     for artifact, inputs in checks:
@@ -319,6 +330,7 @@ def submission_inputs() -> list[Path]:
         ROOT / "reports" / "calibration-readiness.md",
         POLICY_CLAIM_LANGUAGE_AUDIT_MD,
         SUBMISSION_READINESS_MD,
+        LATEX_LOG_AUDIT_MD,
         ROOT / "reports" / "paper-layout-audit.md",
         ROOT / "reports" / "manual-visual-audit.md",
         *report_bundle_inputs(),
@@ -330,6 +342,13 @@ def submission_inputs() -> list[Path]:
         *sorted((PAPER / "figures").glob("*.tex")),
         *sorted((PAPER / "figures").glob("Figure_*.pdf")),
         *sorted((PAPER / "figures").glob("Figure_*.svg")),
+    ]
+
+
+def latex_log_audit_inputs() -> list[Path]:
+    return [
+        ROOT / "scripts" / "audit-latex-logs.py",
+        *LATEX_LOGS,
     ]
 
 
@@ -1592,6 +1611,7 @@ def check_submission_readiness_audit() -> list[str]:
         "not a calibrated policy-effect submission",
         "calibrated policy-effect claims",
         "final human read-through",
+        "latex unresolved=0",
     ]
     for phrase in required_text:
         if phrase not in text:
@@ -1600,6 +1620,45 @@ def check_submission_readiness_audit() -> list[str]:
         supplement = SUPPLEMENT_BODY.read_text(encoding="utf-8")
         if "submission-readiness audit" not in supplement:
             failures.append("supplement does not disclose the submission-readiness audit")
+    return failures
+
+
+def check_latex_log_audit() -> list[str]:
+    failures: list[str] = []
+    missing = [
+        path.relative_to(ROOT)
+        for path in (LATEX_LOG_AUDIT_MD, LATEX_LOG_AUDIT_CSV)
+        if not path.exists()
+    ]
+    if missing:
+        return [f"missing LaTeX log audit artifact: {path}" for path in missing]
+
+    with LATEX_LOG_AUDIT_CSV.open(newline="", encoding="utf-8") as source:
+        rows = list(csv.DictReader(source))
+    if not rows:
+        failures.append("LaTeX log audit has no rows")
+    for row in rows:
+        document = row.get("document", "<missing document>")
+        if row.get("status") != "pass":
+            failures.append(
+                "LaTeX log audit has unresolved compile state: "
+                f"{document} status={row.get('status', '')} unresolved={row.get('unresolvedKinds', '')}"
+            )
+        if row.get("unresolvedCount") not in {"0", ""}:
+            failures.append(
+                "LaTeX log audit reports unresolved markers: "
+                f"{document} unresolvedCount={row.get('unresolvedCount', '')}"
+            )
+    text = LATEX_LOG_AUDIT_MD.read_text(encoding="utf-8")
+    required_text = [
+        "Unresolved states: `0`",
+        "local-manuscript",
+        "wiley-manuscript",
+        "supplement",
+    ]
+    for phrase in required_text:
+        if phrase not in text:
+            failures.append(f"LaTeX log audit markdown missing phrase: {phrase}")
     return failures
 
 
@@ -1763,6 +1822,7 @@ def package_byte_checks() -> list[tuple[Path, str]]:
         (CALIBRATION_READINESS_MD, "supporting-information/calibration-readiness.md"),
         (POLICY_CLAIM_LANGUAGE_AUDIT_MD, "supporting-information/policy-claim-language-audit.md"),
         (SUBMISSION_READINESS_MD, "supporting-information/submission-readiness.md"),
+        (LATEX_LOG_AUDIT_MD, "supporting-information/latex-log-audit.md"),
         (ROOT / "reports" / "paper-layout-audit.md", "supporting-information/paper-layout-audit.md"),
         (ROOT / "reports" / "manual-visual-audit.md", "supporting-information/manual-visual-audit.md"),
         (CITATION_CFF, "supporting-information/CITATION.cff"),

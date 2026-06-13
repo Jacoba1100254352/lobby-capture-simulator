@@ -141,3 +141,7 @@ TEXINPUTS=".wiley-build//:.wiley-template/Optimal-Design-layout//:" \
 BIBINPUTS=".:.wiley-template/Optimal-Design-layout//:" \
 BSTINPUTS=".wiley-build//:.wiley-template/Optimal-Design-layout//:" \
 "$PDFLATEX" -interaction=nonstopmode regulation-governance-wiley.tex
+TEXINPUTS=".wiley-build//:.wiley-template/Optimal-Design-layout//:" \
+BIBINPUTS=".:.wiley-template/Optimal-Design-layout//:" \
+BSTINPUTS=".wiley-build//:.wiley-template/Optimal-Design-layout//:" \
+"$PDFLATEX" -interaction=nonstopmode regulation-governance-wiley.tex

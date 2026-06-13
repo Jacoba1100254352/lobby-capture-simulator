@@ -82,6 +82,7 @@ cp "$ROOT_DIR/reports/calibration-queue.md" "$STAGING_DIR/supporting-information
 cp "$ROOT_DIR/reports/calibration-readiness.md" "$STAGING_DIR/supporting-information/calibration-readiness.md"
 cp "$ROOT_DIR/reports/policy-claim-language-audit.md" "$STAGING_DIR/supporting-information/policy-claim-language-audit.md"
 cp "$ROOT_DIR/reports/submission-readiness.md" "$STAGING_DIR/supporting-information/submission-readiness.md"
+cp "$ROOT_DIR/reports/latex-log-audit.md" "$STAGING_DIR/supporting-information/latex-log-audit.md"
 cp "$ROOT_DIR/reports/paper-layout-audit.md" "$STAGING_DIR/supporting-information/paper-layout-audit.md"
 cp "$ROOT_DIR/reports/manual-visual-audit.md" "$STAGING_DIR/supporting-information/manual-visual-audit.md"
 cp "$ROOT_DIR/CITATION.cff" "$STAGING_DIR/supporting-information/CITATION.cff"

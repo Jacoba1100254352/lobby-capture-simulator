@@ -26,6 +26,7 @@ def readiness_rows() -> list[dict[str, str]]:
     claim_dependencies = keyed_rows(REPORTS / "claim-source-dependency.csv", "claimKey")
     causal_targets = read_csv(REPORTS / "causal-calibration-targets.csv")
     policy_hits = read_csv(REPORTS / "policy-claim-language-audit.csv")
+    latex_logs = read_csv(REPORTS / "latex-log-audit.csv")
     layout = read_text(REPORTS / "paper-layout-audit.md")
     visual = read_text(REPORTS / "manual-visual-audit.md")
 
@@ -51,6 +52,8 @@ def readiness_rows() -> list[dict[str, str]]:
 
     layout_ok = "- Failures: `0`" in layout
     visual_ok = "scripted pass" in visual and "layout pass" in visual
+    latex_logs_ok = bool(latex_logs) and all(row.get("status") == "pass" for row in latex_logs)
+    unresolved_latex = sum(int(row.get("unresolvedCount", "0") or "0") for row in latex_logs)
     policy_language_ok = len(overclaims) == 0
 
     policy_evidence = policy.get("evidence", "missing policy posture")
@@ -95,9 +98,13 @@ def readiness_rows() -> list[dict[str, str]]:
         ),
         gate(
             "layout-and-visual-audit",
-            "ready" if layout_ok and visual_ok else "blocked",
-            f"layout failures={'0' if layout_ok else 'unknown/nonzero'}; visual checklist={'pass' if visual_ok else 'check'}",
-            "Figures, tables, and generated PDFs pass the automated layout and label-readability checks.",
+            "ready" if layout_ok and visual_ok and latex_logs_ok else "blocked",
+            (
+                f"layout failures={'0' if layout_ok else 'unknown/nonzero'}; "
+                f"visual checklist={'pass' if visual_ok else 'check'}; "
+                f"latex unresolved={unresolved_latex}"
+            ),
+            "Figures, tables, generated PDFs, and final LaTeX logs pass the automated layout, label-readability, and unresolved-log checks.",
             "Inspect and rerun the visual/layout audits after any figure, table, or LaTeX change.",
         ),
         gate(
