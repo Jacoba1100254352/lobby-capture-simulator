@@ -72,6 +72,8 @@ The source acquisition roadmap in `docs/source-data-roadmap.md` records the inte
 
 `make sam-contract-awards-preflight` writes ignored operational reports under `reports/sam-contract-awards-preflight.*`. It reads the local `.env`, makes a one-row redacted Contract Awards probe, and reports `ok`, `missing`, `quota_blocked`, or `unavailable` without promoting raw payloads or adding live state to deterministic paper builds. Use it immediately before `scripts/run-2024-env-live-snapshot.sh`; if SAM.gov returns a `nextAccessTime`, wait for that UTC reset before spending the full refresh.
 
+`make sam-procurement-refresh` is the guarded one-command wrapper for that refresh. It prefers a configured downloaded export, otherwise requires an `ok` preflight before running the keyed SAM.gov Contract Awards extract path. If the preflight reports `quota_blocked`, it exits before running the live snapshot or regenerating paper artifacts. A successful run regenerates the live snapshot and then runs `make paper-artifacts-check` so source rows, reports, tables, figures, PDFs, and the submission package stay synchronized.
+
 The next paper-grade snapshot is fixed to a closed 2024 environmental slice:
 
 - LDA: 2024 Q1-Q4 LD-2 activity reports, post-filtered to `ENV` and EPA-facing contacts where possible.
