@@ -11,6 +11,7 @@ from __future__ import annotations
 
 import argparse
 import csv
+import json
 from collections import defaultdict
 from datetime import datetime
 from pathlib import Path
@@ -38,6 +39,7 @@ SAM_REPRESENTATIVE_WARNINGS = {
 ACTION_HISTORY_DATE_SPAN_SOURCES = {
     "usaspending-procurement-actions",
     "usaspending-procurement-national-actions",
+    "usaspending-procurement-bulk-summary",
     "sam-contract-awards",
 }
 
@@ -54,6 +56,12 @@ SOURCES = [
         "path": NORMALIZED / "usaspending-procurement-national-actions.csv",
         "role": "national-volume concentration denominator",
         "claimBoundary": "national USAspending action concentration diagnostic; not a modification-incidence denominator",
+    },
+    {
+        "source": "usaspending-procurement-bulk-summary",
+        "path": NORMALIZED / "usaspending-procurement-bulk-summary.json",
+        "role": "archived public transaction-history summary",
+        "claimBoundary": "representative public USAspending transaction summary for configured agencies; raw CSV/ZIP archive required for full reproduction",
     },
     {
         "source": "sam-contract-awards",
@@ -114,6 +122,8 @@ def audit_source(source: dict[str, object], statuses: dict[str, dict[str, str]])
     path = source["path"]
     assert isinstance(path, Path)
     source_name = str(source["source"])
+    if path.suffix == ".json":
+        return audit_summary_source(source, statuses)
     rows = read_rows(path)
     agency_amount = grouped_amount(rows, "agency")
     recipient_amount = grouped_amount(rows, "recipient")
@@ -181,6 +191,58 @@ def read_rows(path: Path) -> list[dict[str, str]]:
         return []
     with path.open(newline="", encoding="utf-8") as source:
         return list(csv.DictReader(source))
+
+
+def audit_summary_source(source: dict[str, object], statuses: dict[str, dict[str, str]]) -> dict[str, str]:
+    path = source["path"]
+    assert isinstance(path, Path)
+    source_name = str(source["source"])
+    summary = read_json(path)
+    rows = int(number(summary.get("downloadedNormalizedRows")))
+    status = statuses.get(str(source.get("statusKey", source["source"])), {})
+    readiness = bulk_representative_readiness(summary)
+    date_span_days = int(number(summary.get("dateSpanDays")))
+    return {
+        "source": source_name,
+        "snapshotStatus": status.get("status", "missing" if rows <= 0 else "copied"),
+        "role": str(source["role"]),
+        "rows": str(rows),
+        "agencyCount": str(int(number(summary.get("agencyCount")))),
+        "recipientCount": str(int(number(summary.get("recipientCount")))),
+        "knownPiidShare": format_float(number(summary.get("knownPiidShare"))),
+        "knownUeiShare": format_float(number(summary.get("knownUeiShare"))),
+        "actionDateShare": format_float(number(summary.get("actionDateShare"))),
+        "knownCompetitionShare": format_float(number(summary.get("knownCompetitionShare"))),
+        "dateFrom": str(summary.get("dateFrom", "")),
+        "dateTo": str(summary.get("dateTo", "")),
+        "dateSpanDays": str(date_span_days),
+        "dateSpanDisplay": f"{date_span_days}d" if rows else "0d",
+        "initialActionShare": format_float(number(summary.get("initialActionShare"))),
+        "modifiedActionShare": format_float(number(summary.get("modifiedActionShare"))),
+        "distinctAwardCount": str(int(number(summary.get("distinctAwardCount")))),
+        "modifiedAwardCount": str(int(number(summary.get("modifiedAwardCount")))),
+        "modifiedAwardShare": format_float(number(summary.get("modifiedAwardShare"))),
+        "modificationRowsPerModifiedAward": format_float(number(summary.get("modificationRowsPerModifiedAward"))),
+        "amountWeightedModificationShare": format_float(number(summary.get("amountWeightedModificationShare"))),
+        "topAgencyAmountShare": format_float(number(summary.get("topAgencyAmountShare"))),
+        "topAgencyRowShare": format_float(number(summary.get("topAgencyRowShare"))),
+        "topAgencyAmountRowGap": format_float(number(summary.get("topAgencyAmountShare")) - number(summary.get("topAgencyRowShare"))),
+        "topRecipientAmountShare": format_float(number(summary.get("topRecipientAmountShare"))),
+        "topRecipientRowShare": format_float(number(summary.get("topRecipientRowShare"))),
+        "promotionReadiness": readiness,
+        "claimBoundary": str(source["claimBoundary"]),
+        "statusNote": status.get("notes", str(summary.get("normalizedOutputSha256", ""))),
+    }
+
+
+def read_json(path: Path) -> dict[str, object]:
+    if not path.exists():
+        return {}
+    try:
+        payload = json.loads(path.read_text(encoding="utf-8"))
+    except json.JSONDecodeError:
+        return {}
+    return payload if isinstance(payload, dict) else {}
 
 
 def is_modified(row: dict[str, str]) -> bool:
@@ -302,6 +364,33 @@ def sam_representative_readiness(source: str, metrics: dict[str, float | int]) -
     return "diagnostic" if warnings else "candidate"
 
 
+def bulk_representative_readiness(summary: dict[str, object]) -> str:
+    if not summary:
+        return "not-active"
+    thresholds = {
+        "downloadedNormalizedRows": 500000,
+        "distinctAwardCount": 100000,
+        "agencyCount": 6,
+        "dateSpanDays": 270,
+        "knownPiidShare": 0.95,
+        "actionDateShare": 0.80,
+    }
+    blockers = [
+        name for name, threshold in thresholds.items()
+        if number(summary.get(name)) < float(threshold)
+    ]
+    if blockers:
+        return "blocked"
+    warnings = [
+        name for name, threshold in {
+            "knownUeiShare": 0.50,
+            "knownCompetitionShare": 0.10,
+        }.items()
+        if number(summary.get(name)) < float(threshold)
+    ]
+    return "diagnostic" if warnings else "candidate"
+
+
 def date_span_display(source: str, dates: list[datetime]) -> str:
     if source not in ACTION_HISTORY_DATE_SPAN_SOURCES:
         return "n/a"
@@ -353,6 +442,10 @@ def write_markdown(path: Path, rows: list[dict[str, str]]) -> None:
         (row for row in rows if row["source"] == "usaspending-procurement-actions"),
         {},
     )
+    bulk = next(
+        (row for row in rows if row["source"] == "usaspending-procurement-bulk-summary"),
+        {},
+    )
     national = next(
         (row for row in rows if row["source"] == "usaspending-procurement-national-actions"),
         {},
@@ -388,9 +481,11 @@ def write_markdown(path: Path, rows: list[dict[str, str]]) -> None:
             f"recipient accounts for {national.get('topRecipientAmountShare', '0.0000')} of amount. "
             f"SAM.gov Contract Awards status is `{sam.get('snapshotStatus', 'missing')}` with "
             f"{sam.get('rows', '0')} committed rows and promotion readiness "
-            f"`{sam.get('promotionReadiness', 'blocked')}`. The procurement-modification claim remains "
-            "bounded until a representative SAM/FPDS action-history denominator is archived; the "
-            "national panel improves concentration diagnostics but is not used as a representative "
+            f"`{sam.get('promotionReadiness', 'blocked')}`. The USAspending bulk summary has "
+            f"{bulk.get('rows', '0')} summarized rows and promotion readiness "
+            f"`{bulk.get('promotionReadiness', 'not-active')}`. The procurement-modification claim remains "
+            "bounded until a representative action-history denominator is archived and its metric mapping is validated; "
+            "the national panel improves concentration diagnostics but is not used as a representative "
             "modification-incidence denominator."
         ),
         "",

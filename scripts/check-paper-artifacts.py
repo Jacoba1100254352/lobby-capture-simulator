@@ -485,6 +485,7 @@ def check_source_capability_audit() -> list[str]:
         "sam-contract-awards-action-history",
         "usaspending-stratified-action-panel",
         "usaspending-national-action-panel",
+        "usaspending-bulk-transaction-download-panel",
         "lda-covered-position-revolving-door",
         "irs-527-political-organizations",
         "licensed-access-overlays",
@@ -522,6 +523,14 @@ def check_source_capability_audit() -> list[str]:
     }:
         failures.append(
             "USAspending national action panel capability should be active in the committed snapshot"
+        )
+    if rows["usaspending-bulk-transaction-download-panel"].get("capabilityStatus") not in {
+        "implemented-not-active",
+        "active-bounded",
+        "active-representative",
+    }:
+        failures.append(
+            "USAspending bulk transaction download capability should be implemented and auditable"
         )
     if rows["lda-covered-position-revolving-door"].get("capabilityStatus") != "active-usable":
         failures.append(
@@ -764,6 +773,7 @@ def check_procurement_denominator_audit() -> list[str]:
     required = {
         "usaspending-procurement-actions",
         "usaspending-procurement-national-actions",
+        "usaspending-procurement-bulk-summary",
         "sam-contract-awards",
         "usaspending-procurement-bridge",
         "usaspending-awards",
@@ -925,6 +935,7 @@ def check_procurement_refresh_readiness() -> list[str]:
         "sam-live-status",
         "representative-sam-fpds-action-history",
         "bounded-usaspending-fallback",
+        "usaspending-bulk-transaction-strata",
         "p1-procurement-calibration-actions",
         "extract-mode-path",
         "offset-strata-path",

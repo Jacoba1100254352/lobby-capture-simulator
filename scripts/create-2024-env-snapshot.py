@@ -63,6 +63,12 @@ SOURCES = {
         "description": "National-volume no-agency-filtered USAspending fiscal-year 2024 transaction/action panel for agency and recipient concentration diagnostics; kept separate from the balanced action panel and SAM.gov Contract Awards modification-incidence route.",
         "request": "USASPENDING_PROCUREMENT_ACTIONS_AGENCIES=ALL USASPENDING_ACTION_PERIOD_BUCKETS=annual USASPENDING_ACTION_TRANSACTION_PAGE_SIZE=100 USASPENDING_ACTION_TRANSACTION_MAX_PAGES=5 USASPENDING_ACTION_TRANSACTION_SORT_SPECS='Transaction Amount:desc;Mod:asc;Action Date:asc' python3 scripts/fetch-source-data.py usaspending-actions --output data/raw/usaspending-procurement-national-actions.csv",
     },
+    "usaspending-procurement-bulk-summary": {
+        "input": RAW / "usaspending-procurement-bulk-summary.json",
+        "format": "json-summary",
+        "description": "Checksumed summary for the no-key USAspending fiscal-year 2024 bulk transaction download route; raw normalized CSV/ZIP payloads are kept outside git and can be archived as release assets.",
+        "request": "make usaspending-transaction-download-strata, then python3 scripts/audit-usaspending-transaction-download-strata.py --download",
+    },
     "sam-contract-awards": {
         "input": RAW / "sam-contract-awards.csv",
         "description": "Optional SAM.gov Contract Awards action panel for PIID/UEI, competition, modification, award-date, and contracting-department diagnostics; kept separate from USAspending action rows so procurement provenance remains auditable.",
@@ -95,8 +101,12 @@ def main() -> int:
         source_path = args.raw / source["input"].name
         destination = normalized / source_path.name
         if source_path.exists():
-            copy_normalized_csv(source_path, destination)
-            row_count = count_rows(destination)
+            if source.get("format") == "json-summary":
+                copy_text_file(source_path, destination)
+                row_count = summary_row_count(destination)
+            else:
+                copy_normalized_csv(source_path, destination)
+                row_count = count_rows(destination)
             checksum = sha256(destination)
             status, notes = source_status(key, live_status)
         else:
@@ -166,6 +176,19 @@ def copy_normalized_csv(source: Path, destination: Path) -> None:
     destination.write_text(text.rstrip() + "\n", encoding="utf-8")
 
 
+def copy_text_file(source: Path, destination: Path) -> None:
+    text = source.read_text(encoding="utf-8")
+    destination.write_text(text.rstrip() + "\n", encoding="utf-8")
+
+
+def summary_row_count(path: Path) -> int:
+    try:
+        payload = json.loads(path.read_text(encoding="utf-8"))
+    except json.JSONDecodeError:
+        return 0
+    return int(float(payload.get("downloadedNormalizedRows", payload.get("rowCount", 0)) or 0))
+
+
 def sha256(path: Path) -> str:
     digest = hashlib.sha256()
     with path.open("rb") as source:
@@ -194,6 +217,7 @@ def source_status(source: str, live_status: list[dict[str, str]]) -> tuple[str, 
         "usaspending-procurement-bridge": [row for row in live_status if row["source"] == "usaspending-procurement-bridge"],
         "usaspending-procurement-actions": [row for row in live_status if row["source"] == "usaspending-procurement-actions"],
         "usaspending-procurement-national-actions": [row for row in live_status if row["source"] == "usaspending-procurement-national-actions"],
+        "usaspending-procurement-bulk-summary": [row for row in live_status if row["source"] == "usaspending-procurement-bulk-summary"],
         "sam-contract-awards": [row for row in live_status if row["source"] == "sam-contract-awards"],
         "revolving-door": [row for row in live_status if row["source"] == "revolving-door"],
         "intermediary": [row for row in live_status if row["source"] == "intermediary"],
@@ -260,6 +284,7 @@ def write_readme(root: Path, entries: list[dict[str, object]]) -> None:
         "- USAspending procurement bridge: multi-agency fiscal-year 2024 top-award rows for high-value procurement diagnostics, kept separate from the EPA calibration slice and action-panel denominator.",
         "- USAspending procurement actions: expanded stratified 12-agency quarterly transaction/action rows for concentration and modification-incidence diagnostics when present, combining initial-action, high-value, and action-date strata and kept separate from award rows and top-award bridge rows.",
         "- USAspending national procurement actions: no-agency-filtered fiscal-year 2024 transaction/action rows for national-volume agency and recipient concentration diagnostics, kept separate from modification-incidence denominators.",
+        "- USAspending bulk transaction summary: checksumed summary of the public download/count and download/transactions route when full normalized rows are archived outside git.",
         "- SAM.gov Contract Awards: optional source-native action rows for PIID/UEI, competition, modification, award-date, and contracting-department diagnostics, kept separate from USAspending action rows so source provenance remains visible.",
         "- Revolving-door panel: licensed/source export or LDA covered-position derivation when available; fixture otherwise.",
         "- Intermediary panel: NYC CFB intermediary rows, IRS EO BMF nonprofit/association capacity rows, IRS POFD Form 8872 527 political-organization rows, or configured nonprofit, 527, association, and think-tank export when available; fixture otherwise.",

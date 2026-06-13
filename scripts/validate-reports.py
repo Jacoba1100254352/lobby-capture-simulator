@@ -293,6 +293,7 @@ def source_scope_gap(metric: str, value: float, source_moments: dict[str, float]
     concentration_action_panel = source_moments.get("procurementConcentrationPanelActionSample", 0.0) >= 0.5
     concentration_national_action_panel = source_moments.get("procurementConcentrationPanelNationalVolumeSample", 0.0) >= 0.5
     concentration_sam_action_panel = source_moments.get("procurementActionPanelSamSample", 0.0) >= 0.5
+    bulk_action_panel = source_moments.get("procurementActionPanelBulkSample", 0.0) >= 0.5
     concentration_top_award_panel = source_moments.get("procurementConcentrationPanelTopAwardSample", 0.0) >= 0.5
     top_award_bridge_available = source_moments.get("procurementBridgeTopAwardSample", 0.0) >= 0.5
     latest_transaction_mod_proxy = source_moments.get("procurementLatestTransactionModificationProxy", 0.0) >= 0.5
@@ -340,6 +341,8 @@ def source_scope_gap(metric: str, value: float, source_moments: dict[str, float]
         )
         if concentration_sam_action_panel:
             return "bounded SAM.gov Contract Awards panel is present, but the modification-action share remains above the benchmark range and still needs representative SAM/FPDS validation;" + denominator_note
+        if bulk_action_panel:
+            return "archived USAspending bulk transaction summary is present, but the action-row modification share remains above the benchmark range; revise the benchmark/metric mapping before treating modification incidence as calibrated;" + denominator_note
         return "bounded USAspending transaction-action panel is present, but the modification-action share remains above the benchmark range and still needs representative SAM/FPDS validation;" + denominator_note
     if metric == "darkMoneyDirectRoutingRows" and thin_dark_money_panel:
         return "dark-money source panel has opaque-capacity and adjacent outside-spending rows but no non-proxy direct hidden-donor or nonprofit-routing rows"

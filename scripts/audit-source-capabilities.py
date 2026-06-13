@@ -11,6 +11,7 @@ from __future__ import annotations
 
 import argparse
 import csv
+import json
 from datetime import datetime
 from pathlib import Path
 
@@ -97,6 +98,26 @@ CAPABILITIES = [
         "nextAction": (
             "Use this no-key national-volume panel for concentration only; keep "
             "modification incidence blocked on representative SAM/FPDS action histories."
+        ),
+    },
+    {
+        "capability": "usaspending-bulk-transaction-download-panel",
+        "mechanism": "Representative public procurement transaction-history denominator",
+        "implementedRoute": (
+            "no-key USAspending download/count and download/transactions route; "
+            "make usaspending-transaction-download-strata plans row-limit-safe strata, "
+            "and scripts/audit-usaspending-transaction-download-strata.py --download archives ZIPs, "
+            "a normalized CSV, and a compact checksumed summary"
+        ),
+        "snapshotSource": "usaspending-procurement-bulk-summary",
+        "snapshotFile": "usaspending-procurement-bulk-summary",
+        "snapshotFormat": "json-summary",
+        "panel": "Procurement modification risk",
+        "neededFor": "Procurement modification denominator robustness and calibrated policy-simulation claim review",
+        "nextAction": (
+            "Archive the full normalized CSV/ZIP payloads as release assets or external archive files, "
+            "freeze the compact summary into the 2024-env snapshot, then rerun source moments, validation, "
+            "calibration readiness, and the paper artifact gate."
         ),
     },
     {
@@ -188,8 +209,9 @@ def capability_row(
     panel = panels.get(capability["panel"], {})
     source = capability["snapshotSource"]
     file_source = capability.get("snapshotFile", source)
-    file_path = normalized / f"{file_source}.csv" if file_source else Path("")
-    row_count = csv_row_count(file_path) if source else 0
+    suffix = ".json" if capability.get("snapshotFormat") == "json-summary" else ".csv"
+    file_path = normalized / f"{file_source}{suffix}" if file_source else Path("")
+    row_count = snapshot_row_count(file_path, capability.get("snapshotFormat", "csv")) if source else 0
     sam_quality = sam_quality_status(file_path) if capability["capability"] == "sam-contract-awards-action-history" else ""
     live_status = statuses.get(source, {})
     source_status = live_status.get("status", "")
@@ -235,6 +257,12 @@ def classify_capability(
         if source_status == "quota_blocked":
             return "quota-blocked"
         return "implemented-not-active"
+    if capability == "usaspending-bulk-transaction-download-panel":
+        if row_count >= 500000:
+            return "active-representative"
+        if row_count > 0:
+            return "active-bounded"
+        return "implemented-not-active"
     if row_count > 0 and source_status == "ok" and panel_status == "usable":
         return "active-usable"
     if row_count > 0:
@@ -265,11 +293,27 @@ def snapshot_plan(capability: str, live_status: dict[str, str], row_count: int) 
     return "No active committed rows."
 
 
+def snapshot_row_count(path: Path, snapshot_format: str) -> int:
+    if snapshot_format == "json-summary":
+        return json_summary_row_count(path)
+    return csv_row_count(path)
+
+
 def csv_row_count(path: Path) -> int:
     if not path.exists():
         return 0
     with path.open(newline="", encoding="utf-8") as source:
         return sum(1 for _ in csv.DictReader(source))
+
+
+def json_summary_row_count(path: Path) -> int:
+    if not path.exists():
+        return 0
+    try:
+        payload = json.loads(path.read_text(encoding="utf-8"))
+    except json.JSONDecodeError:
+        return 0
+    return int(float(payload.get("downloadedNormalizedRows", payload.get("rowCount", 0)) or 0))
 
 
 def read_rows(path: Path) -> list[dict[str, str]]:

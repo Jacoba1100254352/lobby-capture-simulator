@@ -12,6 +12,7 @@ from __future__ import annotations
 
 import argparse
 import csv
+import json
 from collections import defaultdict
 from pathlib import Path
 
@@ -26,6 +27,13 @@ SOURCES = [
         "path": "usaspending-procurement-actions.csv",
         "role": "primary bounded action panel",
         "claimBoundary": "bounded USAspending transaction/action diagnostics; not representative SAM/FPDS modification calibration",
+    },
+    {
+        "source": "usaspending-procurement-bulk-summary",
+        "path": "usaspending-procurement-bulk-summary.json",
+        "role": "archived public transaction-history summary",
+        "claimBoundary": "representative public USAspending transaction summary for configured agencies; raw CSV/ZIP archive required for full reproduction",
+        "summary": True,
     },
     {
         "source": "sam-contract-awards",
@@ -49,6 +57,13 @@ def main() -> int:
     source_rows: dict[str, list[dict[str, str]]] = {}
     for source in SOURCES:
         path = normalized / str(source["path"])
+        if source.get("summary"):
+            summary = read_json(path)
+            rows.append(summary_composition_row(source, summary, statuses))
+            rows.extend(summary_group_rows(str(source["source"]), summary, "topModifiedAgencyAmount", "agency"))
+            rows.extend(summary_group_rows(str(source["source"]), summary, "topModifiedAwardTypeAmount", "awardType"))
+            rows.extend(summary_group_rows(str(source["source"]), summary, "topModifiedRecipientAmount", "recipient"))
+            continue
         current_rows = read_rows(path)
         source_rows[str(source["source"])] = current_rows
         rows.append(composition_row(source, "source", str(source["source"]), current_rows, current_rows, statuses))
@@ -78,6 +93,99 @@ def read_rows(path: Path) -> list[dict[str, str]]:
         return []
     with path.open(newline="", encoding="utf-8") as source:
         return list(csv.DictReader(source))
+
+
+def read_json(path: Path) -> dict[str, object]:
+    if not path.exists():
+        return {}
+    try:
+        payload = json.loads(path.read_text(encoding="utf-8"))
+    except json.JSONDecodeError:
+        return {}
+    return payload if isinstance(payload, dict) else {}
+
+
+def summary_composition_row(
+    source: dict[str, object],
+    summary: dict[str, object],
+    statuses: dict[str, dict[str, str]],
+) -> dict[str, str]:
+    source_name = str(source.get("source", ""))
+    rows = int(number(summary.get("downloadedNormalizedRows")))
+    modified_rows = int(round(number(summary.get("modifiedActionShare")) * rows))
+    modified_awards = int(number(summary.get("modifiedAwardCount")))
+    status = statuses.get(source_name, {})
+    return {
+        "source": source_name,
+        "snapshotStatus": status.get("status", "missing" if rows <= 0 else "copied"),
+        "role": str(source.get("role", "")),
+        "groupType": "source",
+        "groupValue": source_name,
+        "rows": str(rows),
+        "modifiedRows": str(modified_rows),
+        "initialRows": str(max(0, rows - modified_rows)),
+        "modifiedActionShare": format_float(number(summary.get("modifiedActionShare"))),
+        "distinctAwardCount": str(int(number(summary.get("distinctAwardCount")))),
+        "modifiedAwardCount": str(modified_awards),
+        "modifiedAwardShare": format_float(number(summary.get("modifiedAwardShare"))),
+        "modificationRowsPerModifiedAward": format_float(number(summary.get("modificationRowsPerModifiedAward"))),
+        "amount": format_float(number(summary.get("amount"))),
+        "modifiedAmount": format_float(number(summary.get("modifiedAmount"))),
+        "amountWeightedModificationShare": format_float(number(summary.get("amountWeightedModificationShare"))),
+        "panelAmountShare": "1.0000" if rows else "0.0000",
+        "panelModifiedAmountShare": "1.0000" if modified_rows else "0.0000",
+        "knownPiidShare": format_float(number(summary.get("knownPiidShare"))),
+        "knownUeiShare": format_float(number(summary.get("knownUeiShare"))),
+        "knownCompetitionShare": format_float(number(summary.get("knownCompetitionShare"))),
+        "singleKnownOfferRows": str(int(round(number(summary.get("singleKnownOfferShare")) * rows))),
+        "priceOnlyRows": str(int(round(number(summary.get("priceOnlyAwardShare")) * rows))),
+        "exclusionRows": str(int(round(number(summary.get("exclusionShare")) * rows))),
+        "protestRows": str(int(round(number(summary.get("protestShare")) * rows))),
+        "claimBoundary": str(source.get("claimBoundary", "")),
+        "statusNote": status.get("notes", str(summary.get("normalizedOutputSha256", ""))),
+    }
+
+
+def summary_group_rows(source_name: str, summary: dict[str, object], key: str, group_type: str) -> list[dict[str, str]]:
+    groups = summary.get(key, [])
+    if not isinstance(groups, list):
+        return []
+    modified_amount = number(summary.get("modifiedAmount"))
+    output = []
+    for item in groups[:12]:
+        if not isinstance(item, dict):
+            continue
+        value = number(item.get("value"))
+        output.append({
+            "source": source_name,
+            "snapshotStatus": "derived",
+            "role": f"{group_type} composition",
+            "groupType": group_type,
+            "groupValue": str(item.get("name", "unknown")),
+            "rows": "",
+            "modifiedRows": "",
+            "initialRows": "",
+            "modifiedActionShare": "",
+            "distinctAwardCount": "",
+            "modifiedAwardCount": "",
+            "modifiedAwardShare": "",
+            "modificationRowsPerModifiedAward": "",
+            "amount": "",
+            "modifiedAmount": format_float(value),
+            "amountWeightedModificationShare": "",
+            "panelAmountShare": "",
+            "panelModifiedAmountShare": format_float(safe_divide(value, modified_amount)),
+            "knownPiidShare": "",
+            "knownUeiShare": "",
+            "knownCompetitionShare": "",
+            "singleKnownOfferRows": "",
+            "priceOnlyRows": "",
+            "exclusionRows": "",
+            "protestRows": "",
+            "claimBoundary": "top modified-amount group from archived USAspending bulk summary",
+            "statusNote": "",
+        })
+    return output
 
 
 def grouped_rows(source_name: str, all_rows: list[dict[str, str]], group_key: str, limit: int) -> list[dict[str, str]]:
@@ -271,6 +379,7 @@ def write_markdown(path: Path, rows: list[dict[str, str]]) -> None:
         if row["groupType"] == "source"
     }
     primary = by_source.get("usaspending-procurement-actions", {})
+    bulk = by_source.get("usaspending-procurement-bulk-summary", {})
     sam = by_source.get("sam-contract-awards", {})
     top_agency = max(
         (row for row in rows if row["groupType"] == "agency"),
@@ -299,6 +408,10 @@ def write_markdown(path: Path, rows: list[dict[str, str]]) -> None:
             f"a modified-action share of {primary.get('modifiedActionShare', '0.0000')}, "
             f"a distinct-award modification share of {primary.get('modifiedAwardShare', '0.0000')}, "
             f"and an amount-weighted modification share of {primary.get('amountWeightedModificationShare', '0.0000')}. "
+            f"The archived USAspending bulk summary has {bulk.get('rows', '0')} rows, "
+            f"a modified-action share of {bulk.get('modifiedActionShare', '0.0000')}, "
+            f"a distinct-award modification share of {bulk.get('modifiedAwardShare', '0.0000')}, "
+            f"and an amount-weighted modification share of {bulk.get('amountWeightedModificationShare', '0.0000')}. "
             f"The largest modified-amount agency group is `{top_agency.get('groupValue', 'none')}` "
             f"with {top_agency.get('panelModifiedAmountShare', '0.0000')} of modified amount; "
             f"the largest modified-amount award-type group is `{top_award_type.get('groupValue', 'none')}` "

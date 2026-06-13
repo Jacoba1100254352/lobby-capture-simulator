@@ -5,6 +5,7 @@ from __future__ import annotations
 
 import argparse
 import csv
+import json
 import re
 from collections import defaultdict
 from pathlib import Path
@@ -49,6 +50,7 @@ def extract_scope(scope: str, root: Path, prefix: str) -> list[dict[str, str]]:
         root / f"{prefix}usaspending-procurement-bridge.csv",
         root / f"{prefix}usaspending-procurement-actions.csv",
         root / f"{prefix}usaspending-procurement-national-actions.csv",
+        root / f"{prefix}usaspending-procurement-bulk-summary.json",
         root / f"{prefix}sam-contract-awards.csv",
     ))
     rows.extend(revolving_door_moments(scope, root / f"{prefix}revolving-door.csv"))
@@ -171,15 +173,17 @@ def usaspending_moments(
         bridge_path: Path,
         action_path: Path,
         national_action_path: Path,
+        bulk_summary_path: Path,
         sam_path: Path,
 ) -> list[dict[str, str]]:
     rows = read_rows(path)
     bridge_rows = read_rows(bridge_path)
     usaspending_action_rows = read_rows(action_path)
     national_action_rows = read_rows(national_action_path)
+    bulk_summary = read_json(bulk_summary_path)
     sam_action_rows = read_rows(sam_path)
     action_rows, action_note, action_source = procurement_action_panel(usaspending_action_rows, sam_action_rows)
-    if not rows and not bridge_rows and not usaspending_action_rows and not national_action_rows and not sam_action_rows:
+    if not rows and not bridge_rows and not usaspending_action_rows and not national_action_rows and not bulk_summary and not sam_action_rows:
         return [moment(scope, "usaspending", "procurementRows", 0.0, "observed", f"{path} missing or empty")]
     concentration_rows, concentration_note, concentration_source = concentration_panel(
         rows,
@@ -235,7 +239,7 @@ def usaspending_moments(
     uei_rows = [row for row in award_rows if row.get("uei", "").strip()]
     piid_rows = [row for row in award_rows if row.get("piid", "").strip()]
     agency_count = len({row.get("agency", "") for row in bridge_rows if row.get("agency", "").strip()})
-    return [
+    output = [
         moment(scope, "usaspending", "procurementRows", len(rows), "observed", "normalized USAspending award rows"),
         moment(scope, "usaspending", "procurementBridgeRows", len(bridge_rows), "observed", "multi-agency USAspending bridge rows, if available"),
         moment(scope, "usaspending", "procurementActionRows", len(action_rows), "observed", f"primary procurement action denominator from {action_note}"),
@@ -282,6 +286,55 @@ def usaspending_moments(
         moment(scope, "usaspending", "procurementFirewallCoverageShare", safe_divide(len(firewall_rows), len(award_rows)), "observed_proxy", "share of normalized award rows covered by a procurement-firewall flag"),
         moment(scope, "usaspending", "procurementKnownUeiShare", safe_divide(len(uei_rows), len(award_rows)), "diagnostic", "share of normalized award rows carrying a recipient UEI"),
         moment(scope, "usaspending", "procurementKnownPiidShare", safe_divide(len(piid_rows), len(award_rows)), "diagnostic", "share of normalized award rows carrying a procurement instrument identifier"),
+    ]
+    if bulk_summary:
+        output.extend(bulk_procurement_moments(scope, bulk_summary))
+    return output
+
+
+def bulk_procurement_moments(scope: str, summary: dict[str, object]) -> list[dict[str, str]]:
+    note = "USAspending public bulk transaction download summary; normalized CSV/ZIP payloads are archived outside git"
+    rows = number(summary.get("downloadedNormalizedRows"))
+    return [
+        moment(scope, "usaspending-bulk", "procurementActionRows", rows, "observed", note),
+        moment(scope, "usaspending-bulk", "procurementBulkTransactionRows", rows, "observed", note),
+        moment(scope, "usaspending-bulk", "procurementUsaspendingBulkSummaryRows", rows, "diagnostic", note),
+        moment(scope, "usaspending-bulk", "procurementActionPanelBulkSample", 1.0, "diagnostic", "1 when the primary procurement action denominator uses the USAspending bulk transaction summary"),
+        moment(scope, "usaspending-bulk", "procurementActionPanelUsaspendingSample", 0.0, "diagnostic", "bounded USAspending action rows are superseded by the archived bulk summary for action-denominator moments"),
+        moment(scope, "usaspending-bulk", "procurementActionPanelSamSample", 0.0, "diagnostic", "SAM.gov Contract Awards is not the active primary action denominator"),
+        moment(scope, "usaspending-bulk", "procurementConcentrationPanelRows", rows, "diagnostic", "rows summarized in USAspending bulk transaction summary"),
+        moment(scope, "usaspending-bulk", "procurementConcentrationPanelAgencyCount", number(summary.get("agencyCount")), "observed", "distinct awarding agencies in USAspending bulk transaction summary"),
+        moment(scope, "usaspending-bulk", "procurementConcentrationPanelActionSample", 1.0, "diagnostic", "1 when procurement concentration moments use a transaction/action panel"),
+        moment(scope, "usaspending-bulk", "procurementConcentrationPanelNationalVolumeSample", 0.0, "diagnostic", "bulk summary is agency-scoped rather than no-filter national-volume"),
+        moment(scope, "usaspending-bulk", "procurementConcentrationPanelTopAwardSample", 0.0, "diagnostic", "bulk summary is not a top-award bridge"),
+        moment(scope, "usaspending-bulk", "procurementModificationPanelRows", rows, "diagnostic", "rows summarized in USAspending bulk transaction summary"),
+        moment(scope, "usaspending-bulk", "procurementActionAgencyCount", number(summary.get("agencyCount")), "diagnostic", "distinct awarding agencies in USAspending bulk transaction summary"),
+        moment(scope, "usaspending-bulk", "procurementBridgeTopAwardSample", 0.0, "diagnostic", "bulk summary supersedes top-award bridge for action-denominator moments"),
+        moment(scope, "usaspending-bulk", "procurementLatestTransactionModificationProxy", 0.0, "diagnostic", "bulk summary uses transaction rows rather than latest-transaction enrichment"),
+        moment(scope, "usaspending-bulk", "procurementTotalAwards", number(summary.get("amount")), "observed", "sum of USAspending bulk transaction amount"),
+        moment(scope, "usaspending-bulk", "procurementRecipientTop1Share", number(summary.get("topRecipientAmountShare")), "observed", "largest recipient amount share in USAspending bulk transaction summary"),
+        moment(scope, "usaspending-bulk", "procurementRecipientTop3Share", number(summary.get("top3RecipientAmountShare")), "observed", "top three recipient amount share in USAspending bulk transaction summary"),
+        moment(scope, "usaspending-bulk", "procurementRecipientHerfindahl", number(summary.get("recipientHerfindahl")), "observed", "recipient amount Herfindahl in USAspending bulk transaction summary"),
+        moment(scope, "usaspending-bulk", "procurementAgencyTop1Share", number(summary.get("topAgencyAmountShare")), "observed", "largest agency amount share in USAspending bulk transaction summary"),
+        moment(scope, "usaspending-bulk", "procurementAgencyTop1CountShare", number(summary.get("topAgencyRowShare")), "diagnostic", "largest agency row-count share in USAspending bulk transaction summary"),
+        moment(scope, "usaspending-bulk", "procurementAgencyHerfindahl", number(summary.get("agencyHerfindahl")), "observed", "agency amount Herfindahl in USAspending bulk transaction summary"),
+        moment(scope, "usaspending-bulk", "procurementSingleBidShare", number(summary.get("singleKnownOfferShare")), "observed_proxy", "single known-offer share in USAspending bulk transaction summary"),
+        moment(scope, "usaspending-bulk", "procurementAmountWeightedSingleBidShare", number(summary.get("singleKnownOfferShare")), "observed_proxy", "single known-offer amount share is unavailable in the compact summary and uses row share"),
+        moment(scope, "usaspending-bulk", "procurementInitialAwardShare", number(summary.get("initialActionShare")), "observed_proxy", "initial-action share in USAspending bulk transaction summary"),
+        moment(scope, "usaspending-bulk", "procurementExPostModificationShare", number(summary.get("modifiedActionShare")), "observed_proxy", "modified-action share in USAspending bulk transaction summary"),
+        moment(scope, "usaspending-bulk", "procurementActionDistinctAwards", number(summary.get("distinctAwardCount")), "diagnostic", "distinct PIID/award identifiers in USAspending bulk transaction summary"),
+        moment(scope, "usaspending-bulk", "procurementModifiedAwardCount", number(summary.get("modifiedAwardCount")), "diagnostic", "distinct PIID/award identifiers with at least one modified row in USAspending bulk transaction summary"),
+        moment(scope, "usaspending-bulk", "procurementModifiedAwardShare", number(summary.get("modifiedAwardShare")), "observed_proxy", "distinct-award modification share in USAspending bulk transaction summary"),
+        moment(scope, "usaspending-bulk", "procurementModificationActionsPerModifiedAward", number(summary.get("modificationRowsPerModifiedAward")), "diagnostic", "modified rows per modified PIID/award identifier in USAspending bulk transaction summary"),
+        moment(scope, "usaspending-bulk", "procurementAmountWeightedModificationShare", number(summary.get("amountWeightedModificationShare")), "observed_proxy", "amount-weighted modification share in USAspending bulk transaction summary"),
+        moment(scope, "usaspending-bulk", "procurementActionModificationRows", number(summary.get("modifiedActionShare")) * rows, "diagnostic", "modified action rows in USAspending bulk transaction summary"),
+        moment(scope, "usaspending-bulk", "procurementPriceOnlyAwardShare", number(summary.get("priceOnlyAwardShare")), "observed_proxy", "price-only or one-offer share in USAspending bulk transaction summary"),
+        moment(scope, "usaspending-bulk", "procurementLimitedCompetitionShare", number(summary.get("priceOnlyAwardShare")), "observed_proxy", "limited-competition proxy in compact USAspending bulk transaction summary"),
+        moment(scope, "usaspending-bulk", "procurementProtestShare", number(summary.get("protestShare")), "observed_proxy", "protest flag share in USAspending bulk transaction summary"),
+        moment(scope, "usaspending-bulk", "procurementExclusionShare", number(summary.get("exclusionShare")), "observed_proxy", "exclusion flag share in USAspending bulk transaction summary"),
+        moment(scope, "usaspending-bulk", "procurementFirewallCoverageShare", number(summary.get("firewallCoverageShare")), "observed_proxy", "firewall flag share in USAspending bulk transaction summary"),
+        moment(scope, "usaspending-bulk", "procurementKnownUeiShare", number(summary.get("knownUeiShare")), "diagnostic", "UEI coverage in USAspending bulk transaction summary"),
+        moment(scope, "usaspending-bulk", "procurementKnownPiidShare", number(summary.get("knownPiidShare")), "diagnostic", "PIID coverage in USAspending bulk transaction summary"),
     ]
 
 
@@ -403,6 +456,16 @@ def read_rows(path: Path) -> list[dict[str, str]]:
         return []
     with path.open(newline="", encoding="utf-8") as source:
         return list(csv.DictReader(source))
+
+
+def read_json(path: Path) -> dict[str, object]:
+    if not path.exists():
+        return {}
+    try:
+        payload = json.loads(path.read_text(encoding="utf-8"))
+    except json.JSONDecodeError:
+        return {}
+    return payload if isinstance(payload, dict) else {}
 
 
 def grouped_amount(rows: list[dict[str, str]], key: str, amount_key: str = "amount") -> dict[str, float]:
