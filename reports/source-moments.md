@@ -4,8 +4,8 @@ These are direct moments from normalized calibration tables. They are source dia
 
 ## Representativeness Warnings
 
-- Snapshot procurement concentration uses a national-volume no-agency-filtered USAspending transaction/action panel (1500 rows); this is stronger for concentration than the balanced action panel, but modification incidence still needs representative SAM/FPDS action-history validation.
-- Snapshot procurement modification incidence differs by denominator: action-row share 0.4220, distinct-award share 0.3442, and amount-weighted share 0.6344; keep these as bounded diagnostics until representative SAM/FPDS action histories are archived.
+- Snapshot procurement uses an archived USAspending bulk transaction summary (6449101 rows) as the preferred public denominator; remaining source gaps are benchmark and SAM/FPDS coding crosswalks rather than bulk acquisition.
+- Snapshot procurement modification incidence differs by denominator: action-row share 0.1702, distinct-award share 0.1067, and amount-weighted share 0.5955; keep these as bounded diagnostics until the benchmark is mapped to the selected denominator and crosswalked against SAM/FPDS coding.
 
 | Scope | Source | Metric | Value | Evidence | Notes |
 | --- | --- | --- | ---: | --- | --- |
@@ -105,6 +105,45 @@ These are direct moments from normalized calibration tables. They are source dia
 | snapshot | usaspending | `procurementFirewallCoverageShare` | 0.0000 | observed_proxy | share of normalized award rows covered by a procurement-firewall flag |
 | snapshot | usaspending | `procurementKnownUeiShare` | 1.0000 | diagnostic | share of normalized award rows carrying a recipient UEI |
 | snapshot | usaspending | `procurementKnownPiidShare` | 1.0000 | diagnostic | share of normalized award rows carrying a procurement instrument identifier |
+| snapshot | usaspending-bulk | `procurementActionRows` | 6449101.0000 | observed | USAspending public bulk transaction download summary; normalized CSV/ZIP payloads are archived outside git |
+| snapshot | usaspending-bulk | `procurementBulkTransactionRows` | 6449101.0000 | observed | USAspending public bulk transaction download summary; normalized CSV/ZIP payloads are archived outside git |
+| snapshot | usaspending-bulk | `procurementUsaspendingBulkSummaryRows` | 6449101.0000 | diagnostic | USAspending public bulk transaction download summary; normalized CSV/ZIP payloads are archived outside git |
+| snapshot | usaspending-bulk | `procurementActionPanelBulkSample` | 1.0000 | diagnostic | 1 when the primary procurement action denominator uses the USAspending bulk transaction summary |
+| snapshot | usaspending-bulk | `procurementActionPanelUsaspendingSample` | 0.0000 | diagnostic | bounded USAspending action rows are superseded by the archived bulk summary for action-denominator moments |
+| snapshot | usaspending-bulk | `procurementActionPanelSamSample` | 0.0000 | diagnostic | SAM.gov Contract Awards is not the active primary action denominator |
+| snapshot | usaspending-bulk | `procurementConcentrationPanelRows` | 6449101.0000 | diagnostic | rows summarized in USAspending bulk transaction summary |
+| snapshot | usaspending-bulk | `procurementConcentrationPanelAgencyCount` | 12.0000 | observed | distinct awarding agencies in USAspending bulk transaction summary |
+| snapshot | usaspending-bulk | `procurementConcentrationPanelActionSample` | 1.0000 | diagnostic | 1 when procurement concentration moments use a transaction/action panel |
+| snapshot | usaspending-bulk | `procurementConcentrationPanelNationalVolumeSample` | 0.0000 | diagnostic | bulk summary is agency-scoped rather than no-filter national-volume |
+| snapshot | usaspending-bulk | `procurementConcentrationPanelTopAwardSample` | 0.0000 | diagnostic | bulk summary is not a top-award bridge |
+| snapshot | usaspending-bulk | `procurementModificationPanelRows` | 6449101.0000 | diagnostic | rows summarized in USAspending bulk transaction summary |
+| snapshot | usaspending-bulk | `procurementActionAgencyCount` | 12.0000 | diagnostic | distinct awarding agencies in USAspending bulk transaction summary |
+| snapshot | usaspending-bulk | `procurementBridgeTopAwardSample` | 0.0000 | diagnostic | bulk summary supersedes top-award bridge for action-denominator moments |
+| snapshot | usaspending-bulk | `procurementLatestTransactionModificationProxy` | 0.0000 | diagnostic | bulk summary uses transaction rows rather than latest-transaction enrichment |
+| snapshot | usaspending-bulk | `procurementTotalAwards` | 774172.8475 | observed | sum of USAspending bulk transaction amount |
+| snapshot | usaspending-bulk | `procurementRecipientTop1Share` | 0.0552 | observed | largest recipient amount share in USAspending bulk transaction summary |
+| snapshot | usaspending-bulk | `procurementRecipientTop3Share` | 0.1141 | observed | top three recipient amount share in USAspending bulk transaction summary |
+| snapshot | usaspending-bulk | `procurementRecipientHerfindahl` | 0.0078 | observed | recipient amount Herfindahl in USAspending bulk transaction summary |
+| snapshot | usaspending-bulk | `procurementAgencyTop1Share` | 0.6264 | observed | largest agency amount share in USAspending bulk transaction summary |
+| snapshot | usaspending-bulk | `procurementAgencyTop1CountShare` | 0.6854 | diagnostic | largest agency row-count share in USAspending bulk transaction summary |
+| snapshot | usaspending-bulk | `procurementAgencyHerfindahl` | 0.4133 | observed | agency amount Herfindahl in USAspending bulk transaction summary |
+| snapshot | usaspending-bulk | `procurementSingleBidShare` | 0.1098 | observed_proxy | single known-offer share in USAspending bulk transaction summary |
+| snapshot | usaspending-bulk | `procurementAmountWeightedSingleBidShare` | 0.1098 | observed_proxy | single known-offer amount share is unavailable in the compact summary and uses row share |
+| snapshot | usaspending-bulk | `procurementInitialAwardShare` | 0.8298 | observed_proxy | initial-action share in USAspending bulk transaction summary |
+| snapshot | usaspending-bulk | `procurementExPostModificationShare` | 0.1702 | observed_proxy | modified-action share in USAspending bulk transaction summary |
+| snapshot | usaspending-bulk | `procurementActionDistinctAwards` | 5740062.0000 | diagnostic | distinct PIID/award identifiers in USAspending bulk transaction summary |
+| snapshot | usaspending-bulk | `procurementModifiedAwardCount` | 612402.0000 | diagnostic | distinct PIID/award identifiers with at least one modified row in USAspending bulk transaction summary |
+| snapshot | usaspending-bulk | `procurementModifiedAwardShare` | 0.1067 | observed_proxy | distinct-award modification share in USAspending bulk transaction summary |
+| snapshot | usaspending-bulk | `procurementModificationActionsPerModifiedAward` | 1.7920 | diagnostic | modified rows per modified PIID/award identifier in USAspending bulk transaction summary |
+| snapshot | usaspending-bulk | `procurementAmountWeightedModificationShare` | 0.5955 | observed_proxy | amount-weighted modification share in USAspending bulk transaction summary |
+| snapshot | usaspending-bulk | `procurementActionModificationRows` | 1097429.0000 | diagnostic | modified action rows in USAspending bulk transaction summary |
+| snapshot | usaspending-bulk | `procurementPriceOnlyAwardShare` | 0.1436 | observed_proxy | price-only or one-offer share in USAspending bulk transaction summary |
+| snapshot | usaspending-bulk | `procurementLimitedCompetitionShare` | 0.1436 | observed_proxy | limited-competition proxy in compact USAspending bulk transaction summary |
+| snapshot | usaspending-bulk | `procurementProtestShare` | 0.0000 | observed_proxy | protest flag share in USAspending bulk transaction summary |
+| snapshot | usaspending-bulk | `procurementExclusionShare` | 0.1031 | observed_proxy | exclusion flag share in USAspending bulk transaction summary |
+| snapshot | usaspending-bulk | `procurementFirewallCoverageShare` | 0.0000 | observed_proxy | firewall flag share in USAspending bulk transaction summary |
+| snapshot | usaspending-bulk | `procurementKnownUeiShare` | 1.0000 | diagnostic | UEI coverage in USAspending bulk transaction summary |
+| snapshot | usaspending-bulk | `procurementKnownPiidShare` | 1.0000 | diagnostic | PIID coverage in USAspending bulk transaction summary |
 | snapshot | revolving-door | `revolvingDoorRows` | 803.0000 | observed | normalized revolving-door rows |
 | snapshot | revolving-door | `revolvingDoorFixtureShare` | 0.0000 | diagnostic | share of rows marked as tracked fixture rather than live/exported source |
 | snapshot | revolving-door | `revolvingDoorFormerOfficialShare` | 1.0000 | observed_proxy | share of rows with former official role |

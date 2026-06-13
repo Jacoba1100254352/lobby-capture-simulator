@@ -9,6 +9,6 @@
   "workingTreeDirty": false,
   "workingTreeDirtyScope": "tracked status excluding generated reports, paper tables, paper figures, and 2024-env snapshot outputs",
   "javaVersion": "tracked-artifact-build",
-  "calibrationChecksum": "90830e7aa931bc07b049366d03215d7c5a9d5029f05fa0e09961c671446096d5",
+  "calibrationChecksum": "1bb7f54cca51bb96b2348a8a39ea620cc375baddcbe1b99acc78cc52b2eb043d",
   "reportFiles": ["lobby-capture-ablation.csv", "lobby-capture-ablation.md"]
 }

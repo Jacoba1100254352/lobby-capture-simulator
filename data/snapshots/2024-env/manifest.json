@@ -1,7 +1,7 @@
 {
   "snapshot": "2024-env",
-  "generatedAt": "2026-06-12T23:04:08.099832+00:00",
-  "gitCommit": "1bed4ea",
+  "generatedAt": "2026-06-13T08:47:01.567532+00:00",
+  "gitCommit": "0b80229",
   "gitTreeState": "clean",
   "gitTreeStateScope": "working tree status excluding generated 2024-env snapshot, reports, paper tables, and paper figures",
   "scope": {
@@ -104,9 +104,19 @@
       "statusNotes": "usaspending-procurement-national-actions: ok (normalized national-volume USAspending procurement action rows written; agencyFilter=ALL; periodBuckets=annual; pageSize=100; maxPages=5; sortSpecs=Transaction Amount:desc;Mod:asc;Action Date:asc)"
     },
     {
+      "source": "usaspending-procurement-bulk-summary",
+      "description": "Checksumed summary for the no-key USAspending fiscal-year 2024 bulk transaction download route; raw normalized CSV/ZIP payloads are kept outside git and can be archived as release assets.",
+      "requestTemplate": "make usaspending-transaction-download-strata, then python3 scripts/audit-usaspending-transaction-download-strata.py --download",
+      "normalizedFile": "data/snapshots/2024-env/normalized/usaspending-procurement-bulk-summary.json",
+      "rowCount": 6449101,
+      "sha256": "a1f241028cdabcb56af6f0961437029adaab19d02b1e94d397a20b8de15e0918",
+      "status": "copied",
+      "statusNotes": "normalized file copied from data/raw"
+    },
+    {
       "source": "sam-contract-awards",
       "description": "Optional SAM.gov Contract Awards action panel for PIID/UEI, competition, modification, award-date, and contracting-department diagnostics; kept separate from USAspending action rows so procurement provenance remains auditable.",
-      "requestTemplate": "SAM_CONTRACT_AWARDS_SOURCE_NATIVE=1 SAM_CONTRACT_AWARDS_EXTRACT_MODE=1 SAM_API_KEY=... python3 scripts/fetch-source-data.py sam-contract-awards --output data/raw/sam-contract-awards.csv",
+      "requestTemplate": "SAM_CONTRACT_AWARDS_LIVE_CSV=/path/to/export.csv python3 scripts/fetch-source-data.py sam-contract-awards-export --input /path/to/export.csv --output data/raw/sam-contract-awards.csv, or SAM_CONTRACT_AWARDS_SOURCE_NATIVE=1 SAM_CONTRACT_AWARDS_EXTRACT_MODE=1 SAM_API_KEY=... python3 scripts/fetch-source-data.py sam-contract-awards --output data/raw/sam-contract-awards.csv",
       "normalizedFile": "data/snapshots/2024-env/normalized/sam-contract-awards.csv",
       "rowCount": 0,
       "sha256": "missing",

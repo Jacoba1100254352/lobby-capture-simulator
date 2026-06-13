@@ -1,0 +1,1760 @@
+{
+  "acceptedRowCountDrift": -22,
+  "acceptedRowCountDriftAbs": 22,
+  "acceptedRowCountDriftStrata": 2,
+  "actionDateShare": 1.0,
+  "agencyCount": 12,
+  "agencyFilter": [
+    "Environmental Protection Agency",
+    "Department of Energy",
+    "Department of the Interior",
+    "Department of Agriculture",
+    "Department of Transportation",
+    "Department of Defense",
+    "Department of Health and Human Services",
+    "Department of Veterans Affairs",
+    "Department of Homeland Security",
+    "National Aeronautics and Space Administration",
+    "General Services Administration",
+    "Department of Commerce"
+  ],
+  "agencyHerfindahl": 0.41325502110536566,
+  "amount": 774172.8475322307,
+  "amountWeightedModificationShare": 0.5954536678245212,
+  "base": "https://api.usaspending.gov/api/v2",
+  "createdAt": "2026-06-13T08:06:00Z",
+  "dateFrom": "2023-10-01",
+  "dateSpanDays": 365,
+  "dateTo": "2024-09-30",
+  "distinctAwardCount": 5740062,
+  "downloadCompletenessShare": 0.9999965886834535,
+  "downloadedNormalizedRows": 6449101,
+  "exclusionShare": 0.10313639063801296,
+  "firewallCoverageShare": 0.0,
+  "fiscalYear": 2024,
+  "initialActionShare": 0.8298322510377804,
+  "knownCompetitionShare": 0.9982533999700113,
+  "knownPiidShare": 1.0,
+  "knownUeiShare": 1.0,
+  "modificationRowsPerModifiedAward": 1.7920075375325357,
+  "modifiedActionShare": 0.1701677489622197,
+  "modifiedAmount": 460984.0615932206,
+  "modifiedAwardCount": 612402,
+  "modifiedAwardShare": 0.1066890915115551,
+  "netAmount": 704337.4395850241,
+  "netModifiedAmount": 391509.8361618014,
+  "normalizedOutput": "data/raw/usaspending-procurement-bulk-transactions.csv",
+  "normalizedOutputSha256": "78322c3babe1a2b69ed2cc88a1c306f3344e97de96e2d8a81f8c4f4277dcee5b",
+  "plannedTransactionRows": 6449123,
+  "priceOnlyAwardShare": 0.1436372294370952,
+  "protestShare": 0.0,
+  "recipientCount": 90798,
+  "recipientHerfindahl": 0.0077529035792402055,
+  "schema": "usaspending-procurement-bulk-summary-v1",
+  "singleKnownOfferShare": 0.10977747130956703,
+  "source": "USAspending download/count and download/transactions",
+  "strata": [
+    {
+      "agency": "Environmental Protection Agency",
+      "downloadFile": "data/raw/usaspending-transaction-downloads/environmental-protection-agency-2023-10-01-2023-12-31.zip",
+      "downloadLimit": "500000",
+      "endDate": "2023-12-31",
+      "expectedRows": "2613",
+      "normalizedRows": "2613",
+      "notes": "count fits public download limit",
+      "period": "Q1",
+      "rowCountDrift": "0",
+      "startDate": "2023-10-01",
+      "status": "ready",
+      "transactionCount": "2613",
+      "validatedRows": "2613",
+      "zipSha256": "8f08f1cd654eafa02e1299f1c50ab289c7efbbd9edf9a15c1433982d84a503ba"
+    },
+    {
+      "agency": "Environmental Protection Agency",
+      "downloadFile": "data/raw/usaspending-transaction-downloads/environmental-protection-agency-2024-01-01-2024-03-31.zip",
+      "downloadLimit": "500000",
+      "endDate": "2024-03-31",
+      "expectedRows": "2999",
+      "normalizedRows": "2999",
+      "notes": "count fits public download limit",
+      "period": "Q2",
+      "rowCountDrift": "0",
+      "startDate": "2024-01-01",
+      "status": "ready",
+      "transactionCount": "2999",
+      "validatedRows": "2999",
+      "zipSha256": "e532501d106e236cdd6df1f7160c80e641b898c319b1acb29faf996b46eb71b3"
+    },
+    {
+      "agency": "Environmental Protection Agency",
+      "downloadFile": "data/raw/usaspending-transaction-downloads/environmental-protection-agency-2024-04-01-2024-06-30.zip",
+      "downloadLimit": "500000",
+      "endDate": "2024-06-30",
+      "expectedRows": "3506",
+      "normalizedRows": "3506",
+      "notes": "count fits public download limit",
+      "period": "Q3",
+      "rowCountDrift": "0",
+      "startDate": "2024-04-01",
+      "status": "ready",
+      "transactionCount": "3506",
+      "validatedRows": "3506",
+      "zipSha256": "85eea67bcdb41734a4a0334e1d6cd6b8cdf7a030acb05a3b161d58e07778c565"
+    },
+    {
+      "agency": "Environmental Protection Agency",
+      "downloadFile": "data/raw/usaspending-transaction-downloads/environmental-protection-agency-2024-07-01-2024-09-30.zip",
+      "downloadLimit": "500000",
+      "endDate": "2024-09-30",
+      "expectedRows": "4263",
+      "normalizedRows": "4263",
+      "notes": "count fits public download limit",
+      "period": "Q4",
+      "rowCountDrift": "0",
+      "startDate": "2024-07-01",
+      "status": "ready",
+      "transactionCount": "4263",
+      "validatedRows": "4263",
+      "zipSha256": "c9ff111e0110112abf2163cc06653023101ff225b34127335d39879edb36fd5c"
+    },
+    {
+      "agency": "Department of Energy",
+      "downloadFile": "data/raw/usaspending-transaction-downloads/department-of-energy-2023-10-01-2023-12-31.zip",
+      "downloadLimit": "500000",
+      "endDate": "2023-12-31",
+      "expectedRows": "2136",
+      "normalizedRows": "2136",
+      "notes": "count fits public download limit",
+      "period": "Q1",
+      "rowCountDrift": "0",
+      "startDate": "2023-10-01",
+      "status": "ready",
+      "transactionCount": "2136",
+      "validatedRows": "2136",
+      "zipSha256": "7c330586400e606f86961a1864bc3819ed8835a90c0d22a507aa2ccc7797d103"
+    },
+    {
+      "agency": "Department of Energy",
+      "downloadFile": "data/raw/usaspending-transaction-downloads/department-of-energy-2024-01-01-2024-03-31.zip",
+      "downloadLimit": "500000",
+      "endDate": "2024-03-31",
+      "expectedRows": "2768",
+      "normalizedRows": "2768",
+      "notes": "count fits public download limit",
+      "period": "Q2",
+      "rowCountDrift": "0",
+      "startDate": "2024-01-01",
+      "status": "ready",
+      "transactionCount": "2768",
+      "validatedRows": "2768",
+      "zipSha256": "36c1a1c364d4800b8eb87ff43208f4fa852d0bc167489abcacd6240afdfbf60d"
+    },
+    {
+      "agency": "Department of Energy",
+      "downloadFile": "data/raw/usaspending-transaction-downloads/department-of-energy-2024-04-01-2024-06-30.zip",
+      "downloadLimit": "500000",
+      "endDate": "2024-06-30",
+      "expectedRows": "3007",
+      "normalizedRows": "3007",
+      "notes": "count fits public download limit",
+      "period": "Q3",
+      "rowCountDrift": "0",
+      "startDate": "2024-04-01",
+      "status": "ready",
+      "transactionCount": "3007",
+      "validatedRows": "3007",
+      "zipSha256": "e13cf792ceb83e0890d1bb0bafa572349e9010d9c366bed274e0bf083681878c"
+    },
+    {
+      "agency": "Department of Energy",
+      "downloadFile": "data/raw/usaspending-transaction-downloads/department-of-energy-2024-07-01-2024-09-30.zip",
+      "downloadLimit": "500000",
+      "endDate": "2024-09-30",
+      "expectedRows": "3814",
+      "normalizedRows": "3814",
+      "notes": "count fits public download limit",
+      "period": "Q4",
+      "rowCountDrift": "0",
+      "startDate": "2024-07-01",
+      "status": "ready",
+      "transactionCount": "3814",
+      "validatedRows": "3814",
+      "zipSha256": "029c84be7db893d81c66667b992be3cd4a492259f17f06c1f583980fe805a106"
+    },
+    {
+      "agency": "Department of the Interior",
+      "downloadFile": "data/raw/usaspending-transaction-downloads/department-of-the-interior-2023-10-01-2023-12-31.zip",
+      "downloadLimit": "500000",
+      "endDate": "2023-12-31",
+      "expectedRows": "7684",
+      "normalizedRows": "7684",
+      "notes": "count fits public download limit",
+      "period": "Q1",
+      "rowCountDrift": "0",
+      "startDate": "2023-10-01",
+      "status": "ready",
+      "transactionCount": "7684",
+      "validatedRows": "7684",
+      "zipSha256": "e8c6236b179ef10da5f67543a8bbf3a883159ddfe336686b061161e73d9499f1"
+    },
+    {
+      "agency": "Department of the Interior",
+      "downloadFile": "data/raw/usaspending-transaction-downloads/department-of-the-interior-2024-01-01-2024-03-31.zip",
+      "downloadLimit": "500000",
+      "endDate": "2024-03-31",
+      "expectedRows": "11432",
+      "normalizedRows": "11432",
+      "notes": "count fits public download limit",
+      "period": "Q2",
+      "rowCountDrift": "0",
+      "startDate": "2024-01-01",
+      "status": "ready",
+      "transactionCount": "11432",
+      "validatedRows": "11432",
+      "zipSha256": "3123b708bcfce5892d389f2ee3da1054b683c4700ec2eb8054ab7bbf944bee21"
+    },
+    {
+      "agency": "Department of the Interior",
+      "downloadFile": "data/raw/usaspending-transaction-downloads/department-of-the-interior-2024-04-01-2024-06-30.zip",
+      "downloadLimit": "500000",
+      "endDate": "2024-06-30",
+      "expectedRows": "12058",
+      "normalizedRows": "12058",
+      "notes": "count fits public download limit",
+      "period": "Q3",
+      "rowCountDrift": "0",
+      "startDate": "2024-04-01",
+      "status": "ready",
+      "transactionCount": "12058",
+      "validatedRows": "12058",
+      "zipSha256": "65b7c7538bf0d3d0272831fc814285e8f72a9bace54b15271674ff4a8ebe22ef"
+    },
+    {
+      "agency": "Department of the Interior",
+      "downloadFile": "data/raw/usaspending-transaction-downloads/department-of-the-interior-2024-07-01-2024-09-30.zip",
+      "downloadLimit": "500000",
+      "endDate": "2024-09-30",
+      "expectedRows": "17628",
+      "normalizedRows": "17628",
+      "notes": "count fits public download limit",
+      "period": "Q4",
+      "rowCountDrift": "0",
+      "startDate": "2024-07-01",
+      "status": "ready",
+      "transactionCount": "17628",
+      "validatedRows": "17628",
+      "zipSha256": "d9baac0a48e2d6f0dabaf2813b7865e8fe6ec0c6c58dab28feadb5ebbc792c54"
+    },
+    {
+      "agency": "Department of Agriculture",
+      "downloadFile": "data/raw/usaspending-transaction-downloads/department-of-agriculture-2023-10-01-2023-12-31.zip",
+      "downloadLimit": "500000",
+      "endDate": "2023-12-31",
+      "expectedRows": "9852",
+      "normalizedRows": "9852",
+      "notes": "count fits public download limit",
+      "period": "Q1",
+      "rowCountDrift": "0",
+      "startDate": "2023-10-01",
+      "status": "ready",
+      "transactionCount": "9852",
+      "validatedRows": "9852",
+      "zipSha256": "db2852735b1c1786f2c7c1ad54a8a44957ed2994c32ebb4740af6a0759ab24aa"
+    },
+    {
+      "agency": "Department of Agriculture",
+      "downloadFile": "data/raw/usaspending-transaction-downloads/department-of-agriculture-2024-01-01-2024-03-31.zip",
+      "downloadLimit": "500000",
+      "endDate": "2024-03-31",
+      "expectedRows": "11572",
+      "normalizedRows": "11572",
+      "notes": "count fits public download limit",
+      "period": "Q2",
+      "rowCountDrift": "0",
+      "startDate": "2024-01-01",
+      "status": "ready",
+      "transactionCount": "11572",
+      "validatedRows": "11572",
+      "zipSha256": "2044eedd1d2d025b5f2a208f217c33eaf811c0bcb2689f9be66ff3778c0ac50f"
+    },
+    {
+      "agency": "Department of Agriculture",
+      "downloadFile": "data/raw/usaspending-transaction-downloads/department-of-agriculture-2024-04-01-2024-06-30.zip",
+      "downloadLimit": "500000",
+      "endDate": "2024-06-30",
+      "expectedRows": "19749",
+      "normalizedRows": "19749",
+      "notes": "count fits public download limit",
+      "period": "Q3",
+      "rowCountDrift": "0",
+      "startDate": "2024-04-01",
+      "status": "ready",
+      "transactionCount": "19749",
+      "validatedRows": "19749",
+      "zipSha256": "b576d7a76702054c5a02abe0bdfd4f5701622c81191c9a00f265c2895742874a"
+    },
+    {
+      "agency": "Department of Agriculture",
+      "downloadFile": "data/raw/usaspending-transaction-downloads/department-of-agriculture-2024-07-01-2024-09-30.zip",
+      "downloadLimit": "500000",
+      "endDate": "2024-09-30",
+      "expectedRows": "34678",
+      "normalizedRows": "34657",
+      "notes": "count fits public download limit; download row-count drift accepted: expected 34678, found 34657",
+      "period": "Q4",
+      "rowCountDrift": "-21",
+      "startDate": "2024-07-01",
+      "status": "ready",
+      "transactionCount": "34678",
+      "validatedRows": "34657",
+      "zipSha256": "1ba49bb27b50101c7333e13573aba42ecfccc082fbb6247bf13373cd2f408367"
+    },
+    {
+      "agency": "Department of Transportation",
+      "downloadFile": "data/raw/usaspending-transaction-downloads/department-of-transportation-2023-10-01-2023-12-31.zip",
+      "downloadLimit": "500000",
+      "endDate": "2023-12-31",
+      "expectedRows": "6002",
+      "normalizedRows": "6002",
+      "notes": "count fits public download limit",
+      "period": "Q1",
+      "rowCountDrift": "0",
+      "startDate": "2023-10-01",
+      "status": "ready",
+      "transactionCount": "6002",
+      "validatedRows": "6002",
+      "zipSha256": "dff6782e7e6e200457f3e08199faeeb0522e0ef8ca098cd0b108525e5197514f"
+    },
+    {
+      "agency": "Department of Transportation",
+      "downloadFile": "data/raw/usaspending-transaction-downloads/department-of-transportation-2024-01-01-2024-03-31.zip",
+      "downloadLimit": "500000",
+      "endDate": "2024-03-31",
+      "expectedRows": "8077",
+      "normalizedRows": "8077",
+      "notes": "count fits public download limit",
+      "period": "Q2",
+      "rowCountDrift": "0",
+      "startDate": "2024-01-01",
+      "status": "ready",
+      "transactionCount": "8077",
+      "validatedRows": "8077",
+      "zipSha256": "399eafa438b7f477aac190c411076a175ecd2a6ccfe6d5ad17cde813b11e182f"
+    },
+    {
+      "agency": "Department of Transportation",
+      "downloadFile": "data/raw/usaspending-transaction-downloads/department-of-transportation-2024-04-01-2024-06-30.zip",
+      "downloadLimit": "500000",
+      "endDate": "2024-06-30",
+      "expectedRows": "8285",
+      "normalizedRows": "8285",
+      "notes": "count fits public download limit",
+      "period": "Q3",
+      "rowCountDrift": "0",
+      "startDate": "2024-04-01",
+      "status": "ready",
+      "transactionCount": "8285",
+      "validatedRows": "8285",
+      "zipSha256": "d47d533a69331f17d11d48021f2bd04a866164e1da2aa80c311431fa968d6b32"
+    },
+    {
+      "agency": "Department of Transportation",
+      "downloadFile": "data/raw/usaspending-transaction-downloads/department-of-transportation-2024-07-01-2024-09-30.zip",
+      "downloadLimit": "500000",
+      "endDate": "2024-09-30",
+      "expectedRows": "11323",
+      "normalizedRows": "11323",
+      "notes": "count fits public download limit",
+      "period": "Q4",
+      "rowCountDrift": "0",
+      "startDate": "2024-07-01",
+      "status": "ready",
+      "transactionCount": "11323",
+      "validatedRows": "11323",
+      "zipSha256": "9301c62877e7d97607f6f0385648ed194ede64c848be6d46ee96dc88b1b9a68f"
+    },
+    {
+      "agency": "Department of Defense",
+      "downloadFile": "data/raw/usaspending-transaction-downloads/department-of-defense-2023-10-01-2023-10-31.zip",
+      "downloadLimit": "500000",
+      "endDate": "2023-10-31",
+      "expectedRows": "351531",
+      "normalizedRows": "351531",
+      "notes": "count fits public download limit",
+      "period": "Q1-2023-10",
+      "rowCountDrift": "0",
+      "startDate": "2023-10-01",
+      "status": "ready",
+      "transactionCount": "351531",
+      "validatedRows": "351531",
+      "zipSha256": "5dbdc70d91335ed5f56076b4b1a41a2afb43130d9b6ebce8df3f89114b7056c5"
+    },
+    {
+      "agency": "Department of Defense",
+      "downloadFile": "data/raw/usaspending-transaction-downloads/department-of-defense-2023-11-01-2023-11-30.zip",
+      "downloadLimit": "500000",
+      "endDate": "2023-11-30",
+      "expectedRows": "349343",
+      "normalizedRows": "349343",
+      "notes": "count fits public download limit",
+      "period": "Q1-2023-11",
+      "rowCountDrift": "0",
+      "startDate": "2023-11-01",
+      "status": "ready",
+      "transactionCount": "349343",
+      "validatedRows": "349343",
+      "zipSha256": "a27d726cf8b7339ef8fa79c7efc24e7fbc3ec0e91eea5f53f427d370126c7a1f"
+    },
+    {
+      "agency": "Department of Defense",
+      "downloadFile": "data/raw/usaspending-transaction-downloads/department-of-defense-2023-12-01-2023-12-31.zip",
+      "downloadLimit": "500000",
+      "endDate": "2023-12-31",
+      "expectedRows": "321418",
+      "normalizedRows": "321418",
+      "notes": "count fits public download limit",
+      "period": "Q1-2023-12",
+      "rowCountDrift": "0",
+      "startDate": "2023-12-01",
+      "status": "ready",
+      "transactionCount": "321418",
+      "validatedRows": "321418",
+      "zipSha256": "f520b67ded798b15a7ccc55a671c338791b870c5e791b9d769359c4558c5cc04"
+    },
+    {
+      "agency": "Department of Defense",
+      "downloadFile": "data/raw/usaspending-transaction-downloads/department-of-defense-2024-01-01-2024-01-31.zip",
+      "downloadLimit": "500000",
+      "endDate": "2024-01-31",
+      "expectedRows": "385186",
+      "normalizedRows": "385186",
+      "notes": "count fits public download limit",
+      "period": "Q2-2024-01",
+      "rowCountDrift": "0",
+      "startDate": "2024-01-01",
+      "status": "ready",
+      "transactionCount": "385186",
+      "validatedRows": "385186",
+      "zipSha256": "4f4034d92854526d7818ed585be0927fd83dfdaa14801ce917d24b82ad7cb958"
+    },
+    {
+      "agency": "Department of Defense",
+      "downloadFile": "data/raw/usaspending-transaction-downloads/department-of-defense-2024-02-01-2024-02-29.zip",
+      "downloadLimit": "500000",
+      "endDate": "2024-02-29",
+      "expectedRows": "382443",
+      "normalizedRows": "382443",
+      "notes": "count fits public download limit",
+      "period": "Q2-2024-02",
+      "rowCountDrift": "0",
+      "startDate": "2024-02-01",
+      "status": "ready",
+      "transactionCount": "382443",
+      "validatedRows": "382443",
+      "zipSha256": "81aac7f609d65673a9bb8cb678e90927b256746c8e11ca36b65997d69d5fb8e1"
+    },
+    {
+      "agency": "Department of Defense",
+      "downloadFile": "data/raw/usaspending-transaction-downloads/department-of-defense-2024-03-01-2024-03-31.zip",
+      "downloadLimit": "500000",
+      "endDate": "2024-03-31",
+      "expectedRows": "367930",
+      "normalizedRows": "367930",
+      "notes": "count fits public download limit",
+      "period": "Q2-2024-03",
+      "rowCountDrift": "0",
+      "startDate": "2024-03-01",
+      "status": "ready",
+      "transactionCount": "367930",
+      "validatedRows": "367930",
+      "zipSha256": "5553e86e409863264860b9ee18300187467f382e2fa97f5ccda19ff67284d95a"
+    },
+    {
+      "agency": "Department of Defense",
+      "downloadFile": "data/raw/usaspending-transaction-downloads/department-of-defense-2024-04-01-2024-04-30.zip",
+      "downloadLimit": "500000",
+      "endDate": "2024-04-30",
+      "expectedRows": "383843",
+      "normalizedRows": "383843",
+      "notes": "count fits public download limit",
+      "period": "Q3-2024-04",
+      "rowCountDrift": "0",
+      "startDate": "2024-04-01",
+      "status": "ready",
+      "transactionCount": "383843",
+      "validatedRows": "383843",
+      "zipSha256": "01444db0795d9002e465d5b67bc4e2bc76098dc51af65d9b1eabc4d3620901f1"
+    },
+    {
+      "agency": "Department of Defense",
+      "downloadFile": "data/raw/usaspending-transaction-downloads/department-of-defense-2024-05-01-2024-05-31.zip",
+      "downloadLimit": "500000",
+      "endDate": "2024-05-31",
+      "expectedRows": "387460",
+      "normalizedRows": "387459",
+      "notes": "count fits public download limit; download row-count drift accepted: expected 387460, found 387459",
+      "period": "Q3-2024-05",
+      "rowCountDrift": "-1",
+      "startDate": "2024-05-01",
+      "status": "ready",
+      "transactionCount": "387460",
+      "validatedRows": "387459",
+      "zipSha256": "5969762c0c2d36de360c9744b5f3b348a87026c9fb09acf1af30dac06e386bd9"
+    },
+    {
+      "agency": "Department of Defense",
+      "downloadFile": "data/raw/usaspending-transaction-downloads/department-of-defense-2024-06-01-2024-06-30.zip",
+      "downloadLimit": "500000",
+      "endDate": "2024-06-30",
+      "expectedRows": "300467",
+      "normalizedRows": "300467",
+      "notes": "count fits public download limit",
+      "period": "Q3-2024-06",
+      "rowCountDrift": "0",
+      "startDate": "2024-06-01",
+      "status": "ready",
+      "transactionCount": "300467",
+      "validatedRows": "300467",
+      "zipSha256": "4c5bc6d37d5e73ebcf1d756a9ad031e4f70936b264d2d9f302facf2fc95cb34f"
+    },
+    {
+      "agency": "Department of Defense",
+      "downloadFile": "data/raw/usaspending-transaction-downloads/department-of-defense-2024-07-01-2024-07-31.zip",
+      "downloadLimit": "500000",
+      "endDate": "2024-07-31",
+      "expectedRows": "338956",
+      "normalizedRows": "338956",
+      "notes": "count fits public download limit",
+      "period": "Q4-2024-07",
+      "rowCountDrift": "0",
+      "startDate": "2024-07-01",
+      "status": "ready",
+      "transactionCount": "338956",
+      "validatedRows": "338956",
+      "zipSha256": "079b923be5271eef37a87fa0264fd055aabdde501262b8fba76aff56439bfcb2"
+    },
+    {
+      "agency": "Department of Defense",
+      "downloadFile": "data/raw/usaspending-transaction-downloads/department-of-defense-2024-08-01-2024-08-31.zip",
+      "downloadLimit": "500000",
+      "endDate": "2024-08-31",
+      "expectedRows": "410477",
+      "normalizedRows": "410477",
+      "notes": "count fits public download limit",
+      "period": "Q4-2024-08",
+      "rowCountDrift": "0",
+      "startDate": "2024-08-01",
+      "status": "ready",
+      "transactionCount": "410477",
+      "validatedRows": "410477",
+      "zipSha256": "3001a0d11a929f78dfaa6d56482083985258dd3796e08741f7f6a6128f2cf3f9"
+    },
+    {
+      "agency": "Department of Defense",
+      "downloadFile": "data/raw/usaspending-transaction-downloads/department-of-defense-2024-09-01-2024-09-30.zip",
+      "downloadLimit": "500000",
+      "endDate": "2024-09-30",
+      "expectedRows": "441247",
+      "normalizedRows": "441247",
+      "notes": "count fits public download limit",
+      "period": "Q4-2024-09",
+      "rowCountDrift": "0",
+      "startDate": "2024-09-01",
+      "status": "ready",
+      "transactionCount": "441247",
+      "validatedRows": "441247",
+      "zipSha256": "b640e1260bf18b9f97df77e007a1199ca4071cad23b51497901bea8122c73ee2"
+    },
+    {
+      "agency": "Department of Health and Human Services",
+      "downloadFile": "data/raw/usaspending-transaction-downloads/department-of-health-and-human-services-2023-10-01-2023-12-31.zip",
+      "downloadLimit": "500000",
+      "endDate": "2023-12-31",
+      "expectedRows": "11039",
+      "normalizedRows": "11039",
+      "notes": "count fits public download limit",
+      "period": "Q1",
+      "rowCountDrift": "0",
+      "startDate": "2023-10-01",
+      "status": "ready",
+      "transactionCount": "11039",
+      "validatedRows": "11039",
+      "zipSha256": "c265ef9e3629239d3ada1962a9fdd8e62f87ab1c7af28b568f9a48390d8a22bd"
+    },
+    {
+      "agency": "Department of Health and Human Services",
+      "downloadFile": "data/raw/usaspending-transaction-downloads/department-of-health-and-human-services-2024-01-01-2024-03-31.zip",
+      "downloadLimit": "500000",
+      "endDate": "2024-03-31",
+      "expectedRows": "15063",
+      "normalizedRows": "15063",
+      "notes": "count fits public download limit",
+      "period": "Q2",
+      "rowCountDrift": "0",
+      "startDate": "2024-01-01",
+      "status": "ready",
+      "transactionCount": "15063",
+      "validatedRows": "15063",
+      "zipSha256": "41b7f86312544872b34acc0909e9d489da86491d358362fe3fbc6430e7f164fd"
+    },
+    {
+      "agency": "Department of Health and Human Services",
+      "downloadFile": "data/raw/usaspending-transaction-downloads/department-of-health-and-human-services-2024-04-01-2024-06-30.zip",
+      "downloadLimit": "500000",
+      "endDate": "2024-06-30",
+      "expectedRows": "17381",
+      "normalizedRows": "17381",
+      "notes": "count fits public download limit",
+      "period": "Q3",
+      "rowCountDrift": "0",
+      "startDate": "2024-04-01",
+      "status": "ready",
+      "transactionCount": "17381",
+      "validatedRows": "17381",
+      "zipSha256": "4e4734f7536a8f5215354f4fb1d93e2812a69407e9f90acbecf26482112e7373"
+    },
+    {
+      "agency": "Department of Health and Human Services",
+      "downloadFile": "data/raw/usaspending-transaction-downloads/department-of-health-and-human-services-2024-07-01-2024-09-30.zip",
+      "downloadLimit": "500000",
+      "endDate": "2024-09-30",
+      "expectedRows": "23312",
+      "normalizedRows": "23312",
+      "notes": "count fits public download limit",
+      "period": "Q4",
+      "rowCountDrift": "0",
+      "startDate": "2024-07-01",
+      "status": "ready",
+      "transactionCount": "23312",
+      "validatedRows": "23312",
+      "zipSha256": "c12d811688563fd686e59d6423e92b163e9c2365ec6de2d4c1192297f3c4a429"
+    },
+    {
+      "agency": "Department of Veterans Affairs",
+      "downloadFile": "data/raw/usaspending-transaction-downloads/department-of-veterans-affairs-2023-10-01-2023-12-31.zip",
+      "downloadLimit": "500000",
+      "endDate": "2023-12-31",
+      "expectedRows": "30135",
+      "normalizedRows": "30135",
+      "notes": "count fits public download limit",
+      "period": "Q1",
+      "rowCountDrift": "0",
+      "startDate": "2023-10-01",
+      "status": "ready",
+      "transactionCount": "30135",
+      "validatedRows": "30135",
+      "zipSha256": "431dff7c010921b93fa58363ef9b410a90b665a00a7d091945e0e41d426bf63c"
+    },
+    {
+      "agency": "Department of Veterans Affairs",
+      "downloadFile": "data/raw/usaspending-transaction-downloads/department-of-veterans-affairs-2024-01-01-2024-03-31.zip",
+      "downloadLimit": "500000",
+      "endDate": "2024-03-31",
+      "expectedRows": "30058",
+      "normalizedRows": "30058",
+      "notes": "count fits public download limit",
+      "period": "Q2",
+      "rowCountDrift": "0",
+      "startDate": "2024-01-01",
+      "status": "ready",
+      "transactionCount": "30058",
+      "validatedRows": "30058",
+      "zipSha256": "8976d3ace023ce7566845ee502e22611ee66a04a1339fbf0f73f3c736929c2f8"
+    },
+    {
+      "agency": "Department of Veterans Affairs",
+      "downloadFile": "data/raw/usaspending-transaction-downloads/department-of-veterans-affairs-2024-04-01-2024-06-30.zip",
+      "downloadLimit": "500000",
+      "endDate": "2024-06-30",
+      "expectedRows": "30080",
+      "normalizedRows": "30080",
+      "notes": "count fits public download limit",
+      "period": "Q3",
+      "rowCountDrift": "0",
+      "startDate": "2024-04-01",
+      "status": "ready",
+      "transactionCount": "30080",
+      "validatedRows": "30080",
+      "zipSha256": "9e114859a0dd24de1118cd87070d4811f4ac7522f2ad164fed531aac3b5fcaae"
+    },
+    {
+      "agency": "Department of Veterans Affairs",
+      "downloadFile": "data/raw/usaspending-transaction-downloads/department-of-veterans-affairs-2024-07-01-2024-09-30.zip",
+      "downloadLimit": "500000",
+      "endDate": "2024-09-30",
+      "expectedRows": "35930",
+      "normalizedRows": "35930",
+      "notes": "count fits public download limit",
+      "period": "Q4",
+      "rowCountDrift": "0",
+      "startDate": "2024-07-01",
+      "status": "ready",
+      "transactionCount": "35930",
+      "validatedRows": "35930",
+      "zipSha256": "1f2305035c55cbd709c727accfc3ba212883f64b6b033aad0be6fa29d3bbf3a0"
+    },
+    {
+      "agency": "Department of Homeland Security",
+      "downloadFile": "data/raw/usaspending-transaction-downloads/department-of-homeland-security-2023-10-01-2023-12-31.zip",
+      "downloadLimit": "500000",
+      "endDate": "2023-12-31",
+      "expectedRows": "10267",
+      "normalizedRows": "10267",
+      "notes": "count fits public download limit",
+      "period": "Q1",
+      "rowCountDrift": "0",
+      "startDate": "2023-10-01",
+      "status": "ready",
+      "transactionCount": "10267",
+      "validatedRows": "10267",
+      "zipSha256": "1a5d80e39bae1926a0682e8fad565c6a984095fd8f48a30ba2287aed4d2d31c4"
+    },
+    {
+      "agency": "Department of Homeland Security",
+      "downloadFile": "data/raw/usaspending-transaction-downloads/department-of-homeland-security-2024-01-01-2024-03-31.zip",
+      "downloadLimit": "500000",
+      "endDate": "2024-03-31",
+      "expectedRows": "15582",
+      "normalizedRows": "15582",
+      "notes": "count fits public download limit",
+      "period": "Q2",
+      "rowCountDrift": "0",
+      "startDate": "2024-01-01",
+      "status": "ready",
+      "transactionCount": "15582",
+      "validatedRows": "15582",
+      "zipSha256": "c231a57f8b637d5f58e67fe5c060796c05f38cacae478b8f268754bcfa3bfb9f"
+    },
+    {
+      "agency": "Department of Homeland Security",
+      "downloadFile": "data/raw/usaspending-transaction-downloads/department-of-homeland-security-2024-04-01-2024-06-30.zip",
+      "downloadLimit": "500000",
+      "endDate": "2024-06-30",
+      "expectedRows": "14908",
+      "normalizedRows": "14908",
+      "notes": "count fits public download limit",
+      "period": "Q3",
+      "rowCountDrift": "0",
+      "startDate": "2024-04-01",
+      "status": "ready",
+      "transactionCount": "14908",
+      "validatedRows": "14908",
+      "zipSha256": "09ece7d8697c66ca6a949ea365a793521a883ecdda9d607e8d12f5e715768beb"
+    },
+    {
+      "agency": "Department of Homeland Security",
+      "downloadFile": "data/raw/usaspending-transaction-downloads/department-of-homeland-security-2024-07-01-2024-09-30.zip",
+      "downloadLimit": "500000",
+      "endDate": "2024-09-30",
+      "expectedRows": "20048",
+      "normalizedRows": "20048",
+      "notes": "count fits public download limit",
+      "period": "Q4",
+      "rowCountDrift": "0",
+      "startDate": "2024-07-01",
+      "status": "ready",
+      "transactionCount": "20048",
+      "validatedRows": "20048",
+      "zipSha256": "ffa7764426d49247d0aaba4f1eaf026129f6a57edab0e293c6abb8b6b7fbcbc3"
+    },
+    {
+      "agency": "National Aeronautics and Space Administration",
+      "downloadFile": "data/raw/usaspending-transaction-downloads/national-aeronautics-and-space-administration-2023-10-01-2023-12-31.zip",
+      "downloadLimit": "500000",
+      "endDate": "2023-12-31",
+      "expectedRows": "4425",
+      "normalizedRows": "4425",
+      "notes": "count fits public download limit",
+      "period": "Q1",
+      "rowCountDrift": "0",
+      "startDate": "2023-10-01",
+      "status": "ready",
+      "transactionCount": "4425",
+      "validatedRows": "4425",
+      "zipSha256": "f85ddef0a71bbee341ea52c5fa643afc9defa953ce6f551e304662c1e41a3db3"
+    },
+    {
+      "agency": "National Aeronautics and Space Administration",
+      "downloadFile": "data/raw/usaspending-transaction-downloads/national-aeronautics-and-space-administration-2024-01-01-2024-03-31.zip",
+      "downloadLimit": "500000",
+      "endDate": "2024-03-31",
+      "expectedRows": "5095",
+      "normalizedRows": "5095",
+      "notes": "count fits public download limit",
+      "period": "Q2",
+      "rowCountDrift": "0",
+      "startDate": "2024-01-01",
+      "status": "ready",
+      "transactionCount": "5095",
+      "validatedRows": "5095",
+      "zipSha256": "467ed5a209326b9da6aee543ad81af4fb7c8c35d462656dc46736e0885597feb"
+    },
+    {
+      "agency": "National Aeronautics and Space Administration",
+      "downloadFile": "data/raw/usaspending-transaction-downloads/national-aeronautics-and-space-administration-2024-04-01-2024-06-30.zip",
+      "downloadLimit": "500000",
+      "endDate": "2024-06-30",
+      "expectedRows": "5642",
+      "normalizedRows": "5642",
+      "notes": "count fits public download limit",
+      "period": "Q3",
+      "rowCountDrift": "0",
+      "startDate": "2024-04-01",
+      "status": "ready",
+      "transactionCount": "5642",
+      "validatedRows": "5642",
+      "zipSha256": "6c488c6d043a17e9e5bb65e937fce7c89283f039416c5266c4a589849067b68e"
+    },
+    {
+      "agency": "National Aeronautics and Space Administration",
+      "downloadFile": "data/raw/usaspending-transaction-downloads/national-aeronautics-and-space-administration-2024-07-01-2024-09-30.zip",
+      "downloadLimit": "500000",
+      "endDate": "2024-09-30",
+      "expectedRows": "7994",
+      "normalizedRows": "7994",
+      "notes": "count fits public download limit",
+      "period": "Q4",
+      "rowCountDrift": "0",
+      "startDate": "2024-07-01",
+      "status": "ready",
+      "transactionCount": "7994",
+      "validatedRows": "7994",
+      "zipSha256": "423a3e6f74453f7bd846d95369b889847f8f8fe1773ae8deb724c32005d7f8cd"
+    },
+    {
+      "agency": "General Services Administration",
+      "downloadFile": "data/raw/usaspending-transaction-downloads/general-services-administration-2023-10-01-2023-12-31.zip",
+      "downloadLimit": "500000",
+      "endDate": "2023-12-31",
+      "expectedRows": "320898",
+      "normalizedRows": "320898",
+      "notes": "count fits public download limit",
+      "period": "Q1",
+      "rowCountDrift": "0",
+      "startDate": "2023-10-01",
+      "status": "ready",
+      "transactionCount": "320898",
+      "validatedRows": "320898",
+      "zipSha256": "58ac18b08b0d3f2f7984b964e25d704ed117fa0b400b733d8359f82cd51c68f9"
+    },
+    {
+      "agency": "General Services Administration",
+      "downloadFile": "data/raw/usaspending-transaction-downloads/general-services-administration-2024-01-01-2024-03-31.zip",
+      "downloadLimit": "500000",
+      "endDate": "2024-03-31",
+      "expectedRows": "382574",
+      "normalizedRows": "382574",
+      "notes": "count fits public download limit",
+      "period": "Q2",
+      "rowCountDrift": "0",
+      "startDate": "2024-01-01",
+      "status": "ready",
+      "transactionCount": "382574",
+      "validatedRows": "382574",
+      "zipSha256": "9ebd316cfe45161fe7f73c6efe2ae94cb5ea65fd573fb6f59f636e3ef8c513f9"
+    },
+    {
+      "agency": "General Services Administration",
+      "downloadFile": "data/raw/usaspending-transaction-downloads/general-services-administration-2024-04-01-2024-06-30.zip",
+      "downloadLimit": "500000",
+      "endDate": "2024-06-30",
+      "expectedRows": "396495",
+      "normalizedRows": "396495",
+      "notes": "count fits public download limit",
+      "period": "Q3",
+      "rowCountDrift": "0",
+      "startDate": "2024-04-01",
+      "status": "ready",
+      "transactionCount": "396495",
+      "validatedRows": "396495",
+      "zipSha256": "b6adfb6f3c4d5eea39ace67182ef73b5a5b3fc17e505b4381db17f5f41b5cad7"
+    },
+    {
+      "agency": "General Services Administration",
+      "downloadFile": "data/raw/usaspending-transaction-downloads/general-services-administration-2024-07-01-2024-09-30.zip",
+      "downloadLimit": "500000",
+      "endDate": "2024-09-30",
+      "expectedRows": "451857",
+      "normalizedRows": "451857",
+      "notes": "count fits public download limit",
+      "period": "Q4",
+      "rowCountDrift": "0",
+      "startDate": "2024-07-01",
+      "status": "ready",
+      "transactionCount": "451857",
+      "validatedRows": "451857",
+      "zipSha256": "c32d85fc4777e0921ffefb417b3121cecb3350450156f5142abdb2b8bdd27e85"
+    },
+    {
+      "agency": "Department of Commerce",
+      "downloadFile": "data/raw/usaspending-transaction-downloads/department-of-commerce-2023-10-01-2023-12-31.zip",
+      "downloadLimit": "500000",
+      "endDate": "2023-12-31",
+      "expectedRows": "1899",
+      "normalizedRows": "1899",
+      "notes": "count fits public download limit",
+      "period": "Q1",
+      "rowCountDrift": "0",
+      "startDate": "2023-10-01",
+      "status": "ready",
+      "transactionCount": "1899",
+      "validatedRows": "1899",
+      "zipSha256": "dcdf8c0d9b0fe4c9fe55b62058af9b5734a3b9eba8297f1c46184869782ed03a"
+    },
+    {
+      "agency": "Department of Commerce",
+      "downloadFile": "data/raw/usaspending-transaction-downloads/department-of-commerce-2024-01-01-2024-03-31.zip",
+      "downloadLimit": "500000",
+      "endDate": "2024-03-31",
+      "expectedRows": "3787",
+      "normalizedRows": "3787",
+      "notes": "count fits public download limit",
+      "period": "Q2",
+      "rowCountDrift": "0",
+      "startDate": "2024-01-01",
+      "status": "ready",
+      "transactionCount": "3787",
+      "validatedRows": "3787",
+      "zipSha256": "9035b2b651de94f040b159fb87a98b9d2f6cbdf530f8d1b53e3710ea9002e730"
+    },
+    {
+      "agency": "Department of Commerce",
+      "downloadFile": "data/raw/usaspending-transaction-downloads/department-of-commerce-2024-04-01-2024-06-30.zip",
+      "downloadLimit": "500000",
+      "endDate": "2024-06-30",
+      "expectedRows": "4290",
+      "normalizedRows": "4290",
+      "notes": "count fits public download limit",
+      "period": "Q3",
+      "rowCountDrift": "0",
+      "startDate": "2024-04-01",
+      "status": "ready",
+      "transactionCount": "4290",
+      "validatedRows": "4290",
+      "zipSha256": "3c33c6fb7071d21f13f91cb4220c19453c40a229f5d931b7bad58759c10b7df3"
+    },
+    {
+      "agency": "Department of Commerce",
+      "downloadFile": "data/raw/usaspending-transaction-downloads/department-of-commerce-2024-07-01-2024-09-30.zip",
+      "downloadLimit": "500000",
+      "endDate": "2024-09-30",
+      "expectedRows": "6617",
+      "normalizedRows": "6617",
+      "notes": "count fits public download limit",
+      "period": "Q4",
+      "rowCountDrift": "0",
+      "startDate": "2024-07-01",
+      "status": "ready",
+      "transactionCount": "6617",
+      "validatedRows": "6617",
+      "zipSha256": "fb1a97cde2d45a1bf70716625ff1e1fdb21014c3a1e5c084843a42202fd92754"
+    }
+  ],
+  "strataCount": 56,
+  "top3RecipientAmountShare": 0.11405046829397775,
+  "topAgencyAmount": [
+    {
+      "name": "Department of Defense",
+      "value": 484953.2905984884
+    },
+    {
+      "name": "Department of Veterans Affairs",
+      "value": 72143.37039472887
+    },
+    {
+      "name": "Department of Energy",
+      "value": 52490.75451513003
+    },
+    {
+      "name": "Department of Health and Human Services",
+      "value": 45282.73937495984
+    },
+    {
+      "name": "General Services Administration",
+      "value": 29592.378536314216
+    },
+    {
+      "name": "Department of Homeland Security",
+      "value": 27869.534807600066
+    },
+    {
+      "name": "National Aeronautics and Space Administration",
+      "value": 21071.92424061005
+    },
+    {
+      "name": "Department of Agriculture",
+      "value": 12693.198728460004
+    },
+    {
+      "name": "Department of Transportation",
+      "value": 10321.840183699966
+    },
+    {
+      "name": "Department of the Interior",
+      "value": 9271.912168590095
+    },
+    {
+      "name": "Department of Commerce",
+      "value": 5905.617388560005
+    },
+    {
+      "name": "Environmental Protection Agency",
+      "value": 2576.286595179995
+    }
+  ],
+  "topAgencyAmountShare": 0.6264147498123689,
+  "topAgencyRowShare": 0.6854133622655313,
+  "topAgencyRows": [
+    {
+      "name": "Department of Defense",
+      "value": 4420300
+    },
+    {
+      "name": "General Services Administration",
+      "value": 1551824
+    },
+    {
+      "name": "Department of Veterans Affairs",
+      "value": 126203
+    },
+    {
+      "name": "Department of Agriculture",
+      "value": 75830
+    },
+    {
+      "name": "Department of Health and Human Services",
+      "value": 66795
+    },
+    {
+      "name": "Department of Homeland Security",
+      "value": 60805
+    },
+    {
+      "name": "Department of the Interior",
+      "value": 48802
+    },
+    {
+      "name": "Department of Transportation",
+      "value": 33687
+    },
+    {
+      "name": "National Aeronautics and Space Administration",
+      "value": 23156
+    },
+    {
+      "name": "Department of Commerce",
+      "value": 16593
+    },
+    {
+      "name": "Environmental Protection Agency",
+      "value": 13381
+    },
+    {
+      "name": "Department of Energy",
+      "value": 11725
+    }
+  ],
+  "topAwardTypeAmount": [
+    {
+      "name": "DELIVERY ORDER",
+      "value": 429612.7032574647
+    },
+    {
+      "name": "DEFINITIVE CONTRACT",
+      "value": 285112.5616073089
+    },
+    {
+      "name": "BPA CALL",
+      "value": 24184.057265254327
+    },
+    {
+      "name": "PURCHASE ORDER",
+      "value": 19220.824695975727
+    },
+    {
+      "name": "contract",
+      "value": 16042.700706400428
+    }
+  ],
+  "topModifiedAgencyAmount": [
+    {
+      "name": "Department of Defense",
+      "value": 279320.0514884666
+    },
+    {
+      "name": "Department of Energy",
+      "value": 51613.94288319999
+    },
+    {
+      "name": "Department of Health and Human Services",
+      "value": 31932.609280679895
+    },
+    {
+      "name": "General Services Administration",
+      "value": 20595.693464009903
+    },
+    {
+      "name": "National Aeronautics and Space Administration",
+      "value": 19680.094430610035
+    },
+    {
+      "name": "Department of Veterans Affairs",
+      "value": 19443.946276500003
+    },
+    {
+      "name": "Department of Homeland Security",
+      "value": 18586.212472079955
+    },
+    {
+      "name": "Department of Transportation",
+      "value": 7055.642444599993
+    },
+    {
+      "name": "Department of the Interior",
+      "value": 4383.291627150019
+    },
+    {
+      "name": "Department of Commerce",
+      "value": 3573.240992910007
+    },
+    {
+      "name": "Department of Agriculture",
+      "value": 3438.5512543000027
+    },
+    {
+      "name": "Environmental Protection Agency",
+      "value": 1360.7849786900001
+    }
+  ],
+  "topModifiedAwardTypeAmount": [
+    {
+      "name": "DEFINITIVE CONTRACT",
+      "value": 221666.17304850966
+    },
+    {
+      "name": "DELIVERY ORDER",
+      "value": 207178.33495869616
+    },
+    {
+      "name": "contract",
+      "value": 14631.196820709984
+    },
+    {
+      "name": "BPA CALL",
+      "value": 12540.383762200203
+    },
+    {
+      "name": "PURCHASE ORDER",
+      "value": 4967.97300309017
+    }
+  ],
+  "topModifiedRecipientAmount": [
+    {
+      "name": "LOCKHEED MARTIN CORPORATION",
+      "value": 29369.870638149965
+    },
+    {
+      "name": "THE BOEING COMPANY",
+      "value": 19196.513597390032
+    },
+    {
+      "name": "RAYTHEON COMPANY",
+      "value": 11456.515149610004
+    },
+    {
+      "name": "NORTHROP GRUMMAN SYSTEMS CORPORATION",
+      "value": 10792.401416539988
+    },
+    {
+      "name": "ELECTRIC BOAT CORPORATION",
+      "value": 8718.890885979992
+    },
+    {
+      "name": "HUMANA GOVERNMENT BUSINESS INC",
+      "value": 8238.718613580002
+    },
+    {
+      "name": "BOOZ ALLEN HAMILTON INC",
+      "value": 7260.029445039993
+    },
+    {
+      "name": "LEIDOS, INC.",
+      "value": 6484.859662820032
+    },
+    {
+      "name": "LOCKHEED MARTIN CORP",
+      "value": 5775.324742999996
+    },
+    {
+      "name": "SAVANNAH RIVER NUCLEAR SOLUTIONS LLC",
+      "value": 5549.157145009999
+    },
+    {
+      "name": "TRIAD NATIONAL SECURITY, LLC",
+      "value": 5163.31124726
+    },
+    {
+      "name": "NATIONAL TECHNOLOGY & ENGINEERING SOLUTIONS OF SANDIA, LLC",
+      "value": 5011.80088283
+    },
+    {
+      "name": "SCIENCE APPLICATIONS INTERNATIONAL CORPORATION",
+      "value": 4485.742231470003
+    },
+    {
+      "name": "SIKORSKY AIRCRAFT CORPORATION",
+      "value": 4318.352064350006
+    },
+    {
+      "name": "CONSOLIDATED NUCLEAR SECURITY, LLC",
+      "value": 4269.709365559999
+    },
+    {
+      "name": "NORTHROP GRUMMAN SYSTEMS CORP",
+      "value": 4049.1840636099996
+    },
+    {
+      "name": "GENERAL DYNAMICS INFORMATION TECHNOLOGY, INC.",
+      "value": 4041.950964649998
+    },
+    {
+      "name": "RTX CORPORATION",
+      "value": 3973.555851219997
+    },
+    {
+      "name": "HEALTH NET FEDERAL SERVICES, LLC",
+      "value": 3640.0275405000016
+    },
+    {
+      "name": "AMENTUM SERVICES, INC.",
+      "value": 3574.10866899
+    },
+    {
+      "name": "HUNTINGTON INGALLS INCORPORATED",
+      "value": 3549.768097660003
+    },
+    {
+      "name": "FLUOR MARINE PROPULSION, LLC",
+      "value": 3516.87294301
+    },
+    {
+      "name": "HUNTINGTON INGALLS INC",
+      "value": 3362.751357690007
+    },
+    {
+      "name": "LAWRENCE LIVERMORE NATIONAL SECURITY, LLC",
+      "value": 3166.5142535600007
+    },
+    {
+      "name": "UT-BATTELLE LLC",
+      "value": 2546.28444845
+    },
+    {
+      "name": "CACI, INC. - FEDERAL",
+      "value": 2514.0295241199988
+    },
+    {
+      "name": "BAE SYSTEMS LAND & ARMAMENTS L.P.",
+      "value": 2379.5243663000015
+    },
+    {
+      "name": "SPACE EXPLORATION TECHNOLOGIES CORP.",
+      "value": 2343.7399565399996
+    },
+    {
+      "name": "CALIFORNIA INSTITUTE OF TECHNOLOGY",
+      "value": 2313.3506048699987
+    },
+    {
+      "name": "MERCK SHARP & DOHME LLC",
+      "value": 2244.0276494100003
+    },
+    {
+      "name": "QTC MEDICAL SERVICES INC",
+      "value": 2218.2579618100003
+    },
+    {
+      "name": "KBR WYLE SERVICES, LLC",
+      "value": 2211.9871542000005
+    },
+    {
+      "name": "ACCENTURE FEDERAL SERVICES LLC",
+      "value": 2134.896989310002
+    },
+    {
+      "name": "BATH IRON WORKS CORPORATION",
+      "value": 2076.71876129
+    },
+    {
+      "name": "AMENTUM TECHNOLOGY, INC.",
+      "value": 2017.7017296799995
+    },
+    {
+      "name": "HII MISSION TECHNOLOGIES CORP",
+      "value": 2015.9810027299986
+    },
+    {
+      "name": "DELOITTE CONSULTING LLP",
+      "value": 1976.570463089999
+    },
+    {
+      "name": "BATTELLE MEMORIAL INSTITUTE",
+      "value": 1928.9346785400012
+    },
+    {
+      "name": "BATTELLE ENERGY ALLIANCE, LLC",
+      "value": 1859.8454336200002
+    },
+    {
+      "name": "ADVANCED TECHNOLOGY INTERNATIONAL",
+      "value": 1833.3725239499997
+    },
+    {
+      "name": "HONEYWELL FEDERAL MANUFACTURING & TECHNOLOGIES, LLC",
+      "value": 1827.08109422
+    },
+    {
+      "name": "GENERAL ATOMICS AERONAUTICAL SYSTEMS, INC.",
+      "value": 1825.9039050799995
+    },
+    {
+      "name": "VECTRUS SYSTEMS LLC",
+      "value": 1815.07008926
+    },
+    {
+      "name": "PERATON INC.",
+      "value": 1752.2535587099997
+    },
+    {
+      "name": "THE JOHNS HOPKINS UNIVERSITY APPLIED PHYSICS LABORATORY LLC",
+      "value": 1750.1685676199972
+    },
+    {
+      "name": "THE MITRE CORPORATION",
+      "value": 1746.8484489999998
+    },
+    {
+      "name": "BECHTEL NATIONAL, INC.",
+      "value": 1705.87915829
+    },
+    {
+      "name": "GENERAL DYNAMICS LAND SYSTEMS INC.",
+      "value": 1660.1204617500007
+    },
+    {
+      "name": "DEPLOYED RESOURCES LLC",
+      "value": 1638.6989167800007
+    },
+    {
+      "name": "OPTUMSERVE HEALTH SERVICES, INC.",
+      "value": 1622.8079298899997
+    }
+  ],
+  "topRecipientAmount": [
+    {
+      "name": "LOCKHEED MARTIN CORPORATION",
+      "value": 42754.68042568019
+    },
+    {
+      "name": "THE BOEING COMPANY",
+      "value": 25391.12230503002
+    },
+    {
+      "name": "OPTUM PUBLIC SECTOR SOLUTIONS, INC.",
+      "value": 20148.973070840002
+    },
+    {
+      "name": "RAYTHEON COMPANY",
+      "value": 18762.74410902999
+    },
+    {
+      "name": "NORTHROP GRUMMAN SYSTEMS CORPORATION",
+      "value": 14666.844216999956
+    },
+    {
+      "name": "ELECTRIC BOAT CORPORATION",
+      "value": 9220.650680339997
+    },
+    {
+      "name": "MCKESSON CORPORATION",
+      "value": 8800.539399389998
+    },
+    {
+      "name": "TRIWEST HEALTHCARE ALLIANCE CORP",
+      "value": 8387.188736679998
+    },
+    {
+      "name": "HUMANA GOVERNMENT BUSINESS INC",
+      "value": 8238.718613580002
+    },
+    {
+      "name": "BOOZ ALLEN HAMILTON INC",
+      "value": 7832.387659839991
+    },
+    {
+      "name": "LEIDOS, INC.",
+      "value": 7831.931948320105
+    },
+    {
+      "name": "LOCKHEED MARTIN CORP",
+      "value": 6517.217180969999
+    },
+    {
+      "name": "AMERISOURCEBERGEN DRUG CORP",
+      "value": 6092.315834449939
+    },
+    {
+      "name": "SIKORSKY AIRCRAFT CORPORATION",
+      "value": 5708.607931699983
+    },
+    {
+      "name": "RTX CORPORATION",
+      "value": 5675.648717659992
+    },
+    {
+      "name": "SAVANNAH RIVER NUCLEAR SOLUTIONS LLC",
+      "value": 5549.157145009999
+    },
+    {
+      "name": "GENERAL DYNAMICS INFORMATION TECHNOLOGY, INC.",
+      "value": 5386.895196569996
+    },
+    {
+      "name": "TRIAD NATIONAL SECURITY, LLC",
+      "value": 5163.31124726
+    },
+    {
+      "name": "NATIONAL TECHNOLOGY & ENGINEERING SOLUTIONS OF SANDIA, LLC",
+      "value": 5011.80088283
+    },
+    {
+      "name": "SCIENCE APPLICATIONS INTERNATIONAL CORPORATION",
+      "value": 4964.650410449999
+    },
+    {
+      "name": "ATLANTIC DIVING SUPPLY, INC.",
+      "value": 4801.518139710106
+    },
+    {
+      "name": "NORTHROP GRUMMAN SYSTEMS CORP",
+      "value": 4509.678361279999
+    },
+    {
+      "name": "AMENTUM SERVICES, INC.",
+      "value": 4273.665456350002
+    },
+    {
+      "name": "CONSOLIDATED NUCLEAR SECURITY, LLC",
+      "value": 4269.709365559999
+    },
+    {
+      "name": "HUNTINGTON INGALLS INCORPORATED",
+      "value": 4154.134077660002
+    },
+    {
+      "name": "SPACE EXPLORATION TECHNOLOGIES CORP.",
+      "value": 3836.86690703
+    },
+    {
+      "name": "HEALTH NET FEDERAL SERVICES, LLC",
+      "value": 3640.0275405000016
+    },
+    {
+      "name": "HUNTINGTON INGALLS INC",
+      "value": 3635.015340730007
+    },
+    {
+      "name": "FLUOR MARINE PROPULSION, LLC",
+      "value": 3516.87294301
+    },
+    {
+      "name": "GENERAL ELECTRIC COMPANY",
+      "value": 3183.5593131000014
+    },
+    {
+      "name": "LAWRENCE LIVERMORE NATIONAL SECURITY, LLC",
+      "value": 3166.5142535600007
+    },
+    {
+      "name": "MERCK SHARP & DOHME LLC",
+      "value": 3078.9022752800015
+    },
+    {
+      "name": "CACI, INC. - FEDERAL",
+      "value": 2991.578938379998
+    },
+    {
+      "name": "BAE SYSTEMS LAND & ARMAMENTS L.P.",
+      "value": 2940.434283040007
+    },
+    {
+      "name": "GENERAL DYNAMICS LAND SYSTEMS INC.",
+      "value": 2918.7173657400012
+    },
+    {
+      "name": "OKINAWA IDEMITSU K.K.",
+      "value": 2792.6143905500007
+    },
+    {
+      "name": "ADVANCED TECHNOLOGY INTERNATIONAL",
+      "value": 2649.5267369499998
+    },
+    {
+      "name": "DELOITTE CONSULTING LLP",
+      "value": 2642.82708623
+    },
+    {
+      "name": "UT-BATTELLE LLC",
+      "value": 2546.28444845
+    },
+    {
+      "name": "L3HARRIS TECHNOLOGIES, INC.",
+      "value": 2524.2258941099954
+    },
+    {
+      "name": "KBR WYLE SERVICES, LLC",
+      "value": 2523.0963370400004
+    },
+    {
+      "name": "ACCENTURE FEDERAL SERVICES LLC",
+      "value": 2498.0607864099998
+    },
+    {
+      "name": "GENERAL ATOMICS AERONAUTICAL SYSTEMS, INC.",
+      "value": 2494.966711960001
+    },
+    {
+      "name": "L3HARRIS TECHNOLOGIES INTEGRATED SYSTEMS L.P.",
+      "value": 2364.8472709100024
+    },
+    {
+      "name": "CALIFORNIA INSTITUTE OF TECHNOLOGY",
+      "value": 2350.7706781200004
+    },
+    {
+      "name": "QTC MEDICAL SERVICES INC",
+      "value": 2322.1265016099997
+    },
+    {
+      "name": "HII MISSION TECHNOLOGIES CORP",
+      "value": 2206.2490063699993
+    },
+    {
+      "name": "AMENTUM TECHNOLOGY, INC.",
+      "value": 2188.1007745199995
+    },
+    {
+      "name": "BECHTEL PLANT MACHINERY, INC.",
+      "value": 2181.732373
+    },
+    {
+      "name": "BATH IRON WORKS CORPORATION",
+      "value": 2160.2336747000013
+    }
+  ],
+  "topRecipientAmountShare": 0.05522627222326077,
+  "topRecipientRowShare": 0.0766277346253377,
+  "topRecipientRows": [
+    {
+      "name": "AMERISOURCEBERGEN DRUG CORP",
+      "value": 494180
+    },
+    {
+      "name": "ASRC FEDERAL FACILITIES LOGISTICS, LLC",
+      "value": 341832
+    },
+    {
+      "name": "CARDINAL HEALTH 200, LLC",
+      "value": 290270
+    },
+    {
+      "name": "NATIONAL INDUSTRIES FOR THE BLIND",
+      "value": 279983
+    },
+    {
+      "name": "W.W. GRAINGER, INC.",
+      "value": 202555
+    },
+    {
+      "name": "NOBLE SUPPLY & LOGISTICS, LLC",
+      "value": 198331
+    },
+    {
+      "name": "OWENS & MINOR DISTRIBUTION INC",
+      "value": 153440
+    },
+    {
+      "name": "WRIGHT TOOL COMPANY, LLC",
+      "value": 80033
+    },
+    {
+      "name": "ATLANTIC DIVING SUPPLY, INC.",
+      "value": 76424
+    },
+    {
+      "name": "FRANK M. GARGIULO & SON, INC.",
+      "value": 73626
+    },
+    {
+      "name": "MONO MACHINES LLC",
+      "value": 71363
+    },
+    {
+      "name": "VERMILION VALLEY PRODUCE INC",
+      "value": 65302
+    },
+    {
+      "name": "SENN BROS., INC.",
+      "value": 61387
+    },
+    {
+      "name": "LC INDUSTRIES INC",
+      "value": 52926
+    },
+    {
+      "name": "BROTHERS PRODUCE INC",
+      "value": 52514
+    },
+    {
+      "name": "MSC INDUSTRIAL DIRECT CO., INC.",
+      "value": 48946
+    },
+    {
+      "name": "SEASHORE FRUIT & PRODUCE CO., INC.",
+      "value": 48751
+    },
+    {
+      "name": "PREMIER & COMPANIES, INC.",
+      "value": 47455
+    },
+    {
+      "name": "STERN PRODUCE COMPANY, INC.",
+      "value": 41678
+    },
+    {
+      "name": "AVFUEL CORP",
+      "value": 41532
+    },
+    {
+      "name": "SUPPLYCORE LLC",
+      "value": 39148
+    },
+    {
+      "name": "DMS PHARMACEUTICAL GROUP INC",
+      "value": 38916
+    },
+    {
+      "name": "GIGA, INC.",
+      "value": 38897
+    },
+    {
+      "name": "US FOODS INC",
+      "value": 37836
+    },
+    {
+      "name": "ROYAL FOOD SERVICE CO., LLC",
+      "value": 37084
+    },
+    {
+      "name": "TRIPLE B CORP",
+      "value": 36527
+    },
+    {
+      "name": "EASTERN CAROLINA VOCATIONAL CENTER INC",
+      "value": 36412
+    },
+    {
+      "name": "P.J.K. FOOD SERVICE, LLC",
+      "value": 34515
+    },
+    {
+      "name": "CREATION GARDENS, INC",
+      "value": 31822
+    },
+    {
+      "name": "HENRY SCHEIN, INC.",
+      "value": 30851
+    },
+    {
+      "name": "OAKES FARMS FOOD & DISTRIBUTION SERVICES, LLC",
+      "value": 30338
+    },
+    {
+      "name": "PACIFIC INK, INC.",
+      "value": 29879
+    },
+    {
+      "name": "DOCUMENT IMAGING DIMENSIONS INC.",
+      "value": 28535
+    },
+    {
+      "name": "KAUFMAN COMPANY, INC.",
+      "value": 28428
+    },
+    {
+      "name": "FISHER SCIENTIFIC COMPANY L.L.C.",
+      "value": 27945
+    },
+    {
+      "name": "A. J. WHOLESALE PRODUCE INC.",
+      "value": 27802
+    },
+    {
+      "name": "SIKORSKY AIRCRAFT CORPORATION",
+      "value": 25894
+    },
+    {
+      "name": "BROTHERS PRODUCE OF DALLAS, INC.",
+      "value": 25141
+    },
+    {
+      "name": "SIGNATURE FLIGHT SUPPORT LLC",
+      "value": 24518
+    },
+    {
+      "name": "FEDERAL PRISON INDUSTRIES, INC",
+      "value": 24210
+    },
+    {
+      "name": "DOVE MEDICAL SUPPLY LLC",
+      "value": 23081
+    },
+    {
+      "name": "PREMIER PRODUCE ONE, LLC",
+      "value": 21745
+    },
+    {
+      "name": "BENCO DENTAL SUPPLY CO.",
+      "value": 21486
+    },
+    {
+      "name": "MBA OFFICE SUPPLY, INC.",
+      "value": 19223
+    },
+    {
+      "name": "LEIDOS, INC.",
+      "value": 19195
+    },
+    {
+      "name": "LOFFREDO GARDENS, INC",
+      "value": 18528
+    },
+    {
+      "name": "KIPPER TOOL COMPANY",
+      "value": 18304
+    },
+    {
+      "name": "CHICO PRODUCE, INC.",
+      "value": 18242
+    },
+    {
+      "name": "F & M MICRO PRODUCTS INC",
+      "value": 17214
+    },
+    {
+      "name": "DENTAL HEALTH PRODUCTS INCORPORATED",
+      "value": 17199
+    }
+  ]
+}

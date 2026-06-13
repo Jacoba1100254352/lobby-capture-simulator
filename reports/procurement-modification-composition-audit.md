@@ -1,22 +1,52 @@
 # Procurement Modification Composition Audit
 
-This audit decomposes the procurement modification source moment by source route, agency, award type, and recipient concentration. It is designed to keep the bounded USAspending action panel separate from any future representative SAM/FPDS action-history denominator.
+This audit decomposes the procurement modification source moment by source route, agency, award type, and recipient concentration. It is designed to keep action-row, distinct-award, amount-weighted, USAspending bulk, and optional SAM/FPDS-style denominators visibly separate.
 
 ## Claim Boundary
 
-The active USAspending action panel has 28115 rows, a modified-action share of 0.4220, a distinct-award modification share of 0.3442, and an amount-weighted modification share of 0.6344. The largest modified-amount agency group is `Department of Defense` with 0.4695 of modified amount; the largest modified-amount award-type group is `DEFINITIVE CONTRACT` with 0.6523 of modified amount. SAM.gov Contract Awards has 0 committed rows. This composition audit does not clear the procurement-modification source gap; it explains why the current modified-action share remains a bounded sample diagnostic rather than a representative SAM/FPDS modification-incidence estimate.
+The active USAspending action panel has 28115 rows, a modified-action share of 0.4220, a distinct-award modification share of 0.3442, and an amount-weighted modification share of 0.6344. The archived USAspending bulk summary has 6449101 rows, a modified-action share of 0.1702, a distinct-award modification share of 0.1067, and an amount-weighted modification share of 0.5955. The largest modified-amount agency group is `Department of Defense` with 0.6059 of modified amount; the largest modified-amount award-type group is `DEFINITIVE CONTRACT` with 0.4809 of modified amount. SAM.gov Contract Awards has 0 committed rows. This composition audit does not clear the procurement-modification source gap; it explains why the current modified-action share remains a bounded sample diagnostic rather than a representative SAM/FPDS modification-incidence estimate.
 
 ## Source Route Summary
 
 | Source | Rows | Modified rows | Modified action share | Modified award share | Rows/mod. award | Amount-weighted modified share | PIID | UEI | Competition known | Boundary |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | --- |
 | usaspending-procurement-actions | 28115 | 11864 | 0.4220 | 0.3442 | 1.4470 | 0.6344 | 1.0000 | 1.0000 | 0.0000 | bounded USAspending transaction/action diagnostics; not representative SAM/FPDS modification calibration |
-| sam-contract-awards | 0 | 0 | 0.0000 | 0.0000 | 0.0000 | 0.0000 | 0.0000 | 0.0000 | 0.0000 | calibration-grade only after representative SAM/FPDS action-history rows are archived |
+| usaspending-procurement-bulk-summary | 6449101 | 1097429 | 0.1702 | 0.1067 | 1.7920 | 0.5955 | 1.0000 | 1.0000 | 0.9983 | representative public USAspending transaction summary for configured agencies; raw CSV/ZIP archive required for full reproduction |
+| sam-contract-awards | 0 | 0 | 0.0000 | 0.0000 | 0.0000 | 0.0000 | 0.0000 | 0.0000 | 0.0000 | use for SAM/FPDS coding crosswalks, exclusions, offer counts, protests, and firewalls before upgrading procurement modification claims |
 
 ## Composition Groups
 
 | Group type | Group | Rows | Modified rows | Modified action share | Modified award share | Modified amount share | Amount-weighted modified share |
 | --- | --- | ---: | ---: | ---: | ---: | ---: | ---: |
+| agency | Department of Defense |  |  |  |  | 0.6059 |  |
+| agency | Department of Energy |  |  |  |  | 0.1120 |  |
+| agency | Department of Health and Human Services |  |  |  |  | 0.0693 |  |
+| agency | General Services Administration |  |  |  |  | 0.0447 |  |
+| agency | National Aeronautics and Space Administration |  |  |  |  | 0.0427 |  |
+| agency | Department of Veterans Affairs |  |  |  |  | 0.0422 |  |
+| agency | Department of Homeland Security |  |  |  |  | 0.0403 |  |
+| agency | Department of Transportation |  |  |  |  | 0.0153 |  |
+| agency | Department of the Interior |  |  |  |  | 0.0095 |  |
+| agency | Department of Commerce |  |  |  |  | 0.0078 |  |
+| agency | Department of Agriculture |  |  |  |  | 0.0075 |  |
+| agency | Environmental Protection Agency |  |  |  |  | 0.0030 |  |
+| awardType | DEFINITIVE CONTRACT |  |  |  |  | 0.4809 |  |
+| awardType | DELIVERY ORDER |  |  |  |  | 0.4494 |  |
+| awardType | contract |  |  |  |  | 0.0317 |  |
+| awardType | BPA CALL |  |  |  |  | 0.0272 |  |
+| awardType | PURCHASE ORDER |  |  |  |  | 0.0108 |  |
+| recipient | LOCKHEED MARTIN CORPORATION |  |  |  |  | 0.0637 |  |
+| recipient | THE BOEING COMPANY |  |  |  |  | 0.0416 |  |
+| recipient | RAYTHEON COMPANY |  |  |  |  | 0.0249 |  |
+| recipient | NORTHROP GRUMMAN SYSTEMS CORPORATION |  |  |  |  | 0.0234 |  |
+| recipient | ELECTRIC BOAT CORPORATION |  |  |  |  | 0.0189 |  |
+| recipient | HUMANA GOVERNMENT BUSINESS INC |  |  |  |  | 0.0179 |  |
+| recipient | BOOZ ALLEN HAMILTON INC |  |  |  |  | 0.0157 |  |
+| recipient | LEIDOS, INC. |  |  |  |  | 0.0141 |  |
+| recipient | LOCKHEED MARTIN CORP |  |  |  |  | 0.0125 |  |
+| recipient | SAVANNAH RIVER NUCLEAR SOLUTIONS LLC |  |  |  |  | 0.0120 |  |
+| recipient | TRIAD NATIONAL SECURITY, LLC |  |  |  |  | 0.0112 |  |
+| recipient | NATIONAL TECHNOLOGY & ENGINEERING SOLUTIONS OF SANDIA, LLC |  |  |  |  | 0.0109 |  |
 | agency | Department of Defense | 2399 | 615 | 0.2564 | 0.1899 | 0.4695 | 0.6463 |
 | agency | Department of Veterans Affairs | 2386 | 612 | 0.2565 | 0.2028 | 0.0553 | 0.2169 |
 | agency | Department of Energy | 2319 | 1422 | 0.6132 | 0.4372 | 0.2108 | 0.9883 |
