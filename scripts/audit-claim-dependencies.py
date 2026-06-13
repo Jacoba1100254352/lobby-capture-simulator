@@ -60,6 +60,7 @@ CLAIMS = [
         "panels": ["Direct dark money", "Outside spending", "Intermediaries", "IRS 527 political organizations", "Revolving door", "Procurement identifiers"],
         "moments": [("outsideSpendingRows", 250.0), ("intermediaryRows", 50.0), ("intermediary527Rows", 1.0), ("revolvingDoorRows", 100.0)],
         "boundWeakPanels": True,
+        "boundLimitedSupport": True,
         "permitted": "Mechanism tests and source-aware stress diagnostics for channel substitution.",
         "avoid": "Do not present hidden substitution magnitudes as empirically validated.",
         "next": "Broaden bounded nonprofit-routing, personnel, and transaction exports.",
@@ -69,6 +70,7 @@ CLAIMS = [
         "family": "Public-financing counterweight",
         "panels": ["Public financing"],
         "moments": [("publicFinancingRows", 50.0), ("publicFinancingProgramCount", 2.0)],
+        "boundLimitedSupport": True,
         "permitted": "Bounded local-program anchor for countervailing campaign-finance mechanisms.",
         "avoid": "Do not claim representative national public-financing uptake.",
         "next": "Add federal, state, and additional local program rows with archived source files.",
@@ -78,6 +80,7 @@ CLAIMS = [
         "family": "Revolving-door access",
         "panels": ["Revolving door"],
         "moments": [("revolvingDoorRows", 100.0), ("revolvingDoorConfidenceMean", 0.50)],
+        "boundLimitedSupport": True,
         "permitted": "Proxy-backed stress diagnostics for covered-position and cooling-off exposure.",
         "avoid": "Do not treat LDA covered-position rows as representative post-employment movement.",
         "next": "Add OGE, FACA, witness, LegiStorm/OpenSecrets, or archived personnel movement exports.",
@@ -199,9 +202,15 @@ def claim_row(
 
     strict = bool(claim.get("strict", False))
     bound_weak_panels = bool(claim.get("boundWeakPanels", False))
+    bound_limited_support = bool(claim.get("boundLimitedSupport", False))
+    limited_support = [
+        row for row in panel_rows
+        if row.get("status") == "usable"
+        and row.get("supportLevel", support_level(row)) != "direct-bounded"
+    ]
     if failed_moments or (strict and (weak or blocking)) or (blocking and not bound_weak_panels):
         status = "not_cleared"
-    elif weak:
+    elif weak or (bound_limited_support and limited_support):
         status = "bounded"
     else:
         status = "cleared"
@@ -212,6 +221,10 @@ def claim_row(
         status = "not_cleared"
 
     usable_dependencies = [row.get("panel", "") for row in panel_rows if row.get("status") == "usable"]
+    limited_dependencies = [
+        f"{row.get('panel', '')} ({row.get('supportLevel', support_level(row))})"
+        for row in limited_support
+    ]
     weak_dependencies = [
         f"{row.get('panel', '')} ({row.get('status', 'missing')})"
         for row in weak
@@ -220,7 +233,7 @@ def claim_row(
         f"{item['metric']}<{item['minimum']:.4g}"
         for item in failed_moments
     ]
-    source_support = support_sentence(status, usable_dependencies, weak_dependencies, missing_dependencies)
+    source_support = support_sentence(status, usable_dependencies, weak_dependencies, missing_dependencies, limited_dependencies)
     if status == "bounded" and claim.get("boundedSupport"):
         source_support = str(claim["boundedSupport"])
     if claim.get("key") == "calibrated-policy-simulation" and causal_blockers:
@@ -234,6 +247,7 @@ def claim_row(
         "status": status,
         "sourceSupport": source_support,
         "usableDependencies": "; ".join(usable_dependencies) if usable_dependencies else "none",
+        "limitedDependencies": "; ".join(limited_dependencies) if limited_dependencies else "none",
         "weakDependencies": "; ".join(weak_dependencies) if weak_dependencies else "none",
         "momentChecks": "; ".join(format_moment(item) for item in moment_results) if moment_results else "none",
         "permittedUse": str(claim["permitted"]),
@@ -265,10 +279,13 @@ def support_sentence(
         strong: list[str],
         weak: list[str],
         missing: list[str],
+        limited: list[str],
 ) -> str:
     if status == "cleared":
         return "Source dependencies are usable for the stated mechanism or distributional diagnostic."
     issues = []
+    if limited:
+        issues.append("source-limited usable panels: " + ", ".join(limited))
     if weak:
         issues.append("weak panels: " + ", ".join(weak))
     if missing:
@@ -293,6 +310,7 @@ def write_csv(path: Path, rows: list[dict[str, str]]) -> None:
         "status",
         "sourceSupport",
         "usableDependencies",
+        "limitedDependencies",
         "weakDependencies",
         "momentChecks",
         "permittedUse",
@@ -331,12 +349,12 @@ def write_markdown(path: Path, rows: list[dict[str, str]]) -> None:
         "",
         "## Dependency Details",
         "",
-        "| Claim family | Status | Usable/bounded dependencies | Weak dependencies | Moment checks |",
-        "| --- | --- | --- | --- | --- |",
+        "| Claim family | Status | Usable dependencies | Source-limited usable dependencies | Weak dependencies | Moment checks |",
+        "| --- | --- | --- | --- | --- | --- |",
     ])
     for row in rows:
         lines.append(
-            "| {claimFamily} | {status} | {usableDependencies} | {weakDependencies} | {momentChecks} |".format(
+            "| {claimFamily} | {status} | {usableDependencies} | {limitedDependencies} | {weakDependencies} | {momentChecks} |".format(
                 **{key: markdown_cell(value) for key, value in row.items()}
             )
         )
@@ -390,7 +408,7 @@ def posture_label(status: str) -> str:
 
 def table_support(row: dict[str, str]) -> str:
     return {
-        "strategic-substitution-mechanism": "Nonprofit-routing and other substitution panels usable within source limits.",
+        "strategic-substitution-mechanism": "Substitution panels are usable but include direct/proxy, proxy, and proxy-thin limits.",
         "public-financing-counterweight": "Bounded local public-financing program panel.",
         "revolving-door-cooling-off": "LDA-derived covered-position bridge.",
         "hidden-channel-magnitude": "Top-EIN Schedule I nonprofit-routing rows present; donor identities remain unobserved.",
@@ -423,6 +441,33 @@ def table_next(row: dict[str, str]) -> str:
 
 def markdown_cell(value: str) -> str:
     return value.replace("|", "\\|").replace("\n", " ").strip()
+
+
+def support_level(panel: dict[str, str]) -> str:
+    status = panel.get("status", "missing")
+    if status in {"missing", "fixture-only"}:
+        return "schema-only"
+    if status in {"warning", "thin"}:
+        return status
+    if status != "usable":
+        return "limited"
+
+    evidence = panel.get("evidenceClass", "").lower()
+    if "proxy/thin" in evidence:
+        return "proxy-thin"
+    if "direct/proxy" in evidence:
+        return "direct-proxy-bounded"
+    if "denominator-mapped" in evidence:
+        return "denominator-bounded"
+    if "proxy" in evidence:
+        return "proxy-bounded"
+    if "program" in evidence:
+        return "program-bounded"
+    if "when present" in evidence:
+        return "conditional-direct"
+    if "direct" in evidence:
+        return "direct-bounded"
+    return "source-bounded"
 
 
 def latex_escape(value: str) -> str:

@@ -67,7 +67,7 @@ def posture_rows(
         visual: str,
 ) -> list[dict[str, str]]:
     counts = validation_counts(validation_rows)
-    weak_panels = [row for row in panels if row.get("status") in WEAK_STATUSES]
+    coverage_gap_panels = [row for row in panels if row.get("status") in WEAK_STATUSES]
     bounded_support_panels = [
         row for row in claim_rows
         if row.get("status") == "usable" and row.get("supportLevel") != "direct-bounded"
@@ -90,7 +90,7 @@ def posture_rows(
         and dependency_audit_complete
     ) else "needs_revision"
     reproducibility_status = "cleared" if layout_pass and visual_pass else "needs_revision"
-    empirical_status = "bounded" if weak_panels or source_gaps or bounded_dependencies else "cleared"
+    empirical_status = "bounded" if coverage_gap_panels or source_gaps or bounded_dependencies else "cleared"
     calibrated_dependency = next(
         (row for row in dependency_rows if row.get("claimKey") == "calibrated-policy-simulation"),
         {},
@@ -109,7 +109,7 @@ def posture_rows(
             (
                 f"{counts.get('miss', 0)} validation misses, "
                 f"{counts.get('unknown', 0)} unknown validations, "
-                f"{len(weak_panels)} weak-status source panels, "
+                f"{len(coverage_gap_panels)} coverage-gap source panels, "
                 f"{len(bounded_support_panels)} bounded-support source panels, "
                 f"{len(article_blocking_dependencies)} article-blocking dependency claims not cleared"
             ),
@@ -121,7 +121,7 @@ def posture_rows(
             empirical_status,
             (
                 f"{source_gaps} source-gap validations, "
-                f"{len(weak_panels)} thin, warning, fixture-only, or missing panels, "
+                f"{len(coverage_gap_panels)} thin, warning, fixture-only, or missing panels, "
                 f"{len(bounded_support_panels)} bounded-support source panels"
                 f"; {dependency_counts.get('bounded', 0)} bounded claim dependencies"
             ),
@@ -219,7 +219,7 @@ def write_markdown(
         calibration_rows: list[dict[str, str]],
 ) -> None:
     counts = validation_counts(validation_rows)
-    weak_panels = [row for row in panels if row.get("status") in WEAK_STATUSES]
+    coverage_gap_panels = [row for row in panels if row.get("status") in WEAK_STATUSES]
     bounded_support_panels = [
         row for row in claim_rows
         if row.get("status") == "usable" and row.get("supportLevel") != "direct-bounded"
@@ -262,12 +262,12 @@ def write_markdown(
             f"- Unknown: `{counts['unknown']}`",
             f"- Not applicable: `{counts['not_applicable']}`",
             "",
-            "## Weak Source Panels",
+            "## Coverage-Gap Source Panels",
             "",
-            f"- Weak panels: `{len(weak_panels)}`",
+            f"- Thin, warning, fixture-only, or missing panels: `{len(coverage_gap_panels)}`",
         ]
     )
-    for panel in weak_panels:
+    for panel in coverage_gap_panels:
         lines.append(
             f"- `{panel.get('panel', '')}` ({panel.get('status', '')}): {panel.get('note', '')}"
         )

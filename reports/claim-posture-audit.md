@@ -6,8 +6,8 @@ This audit summarizes which claim posture is cleared by the current source panel
 
 | Gate | Status | Evidence | Claim boundary | Next action |
 | --- | --- | --- | --- | --- |
-| Mechanism-model article | cleared | 0 validation misses, 0 unknown validations, 0 weak-status source panels, 7 bounded-support source panels, 0 article-blocking dependency claims not cleared | The manuscript can present a transparent mechanism model and synthetic stress tests under explicit source limits. | Keep empirical language tied to source moments, source gaps, and model diagnostics. |
-| Empirical bridge | bounded | 0 source-gap validations, 0 thin, warning, fixture-only, or missing panels, 7 bounded-support source panels; 2 bounded claim dependencies | The bridge constrains plausible ranges and flags evidence gaps; it does not validate hidden-channel magnitudes. | Prioritize SAM/FPDS coding reconciliation, protest/exclusion/firewall overlays, nonprofit-routing beyond the top-EIN Schedule I slice, and post-employment revolving-door overlays; broaden electoral-communication and public-financing rows as secondary coverage upgrades. |
+| Mechanism-model article | cleared | 0 validation misses, 0 unknown validations, 0 coverage-gap source panels, 7 bounded-support source panels, 0 article-blocking dependency claims not cleared | The manuscript can present a transparent mechanism model and synthetic stress tests under explicit source limits. | Keep empirical language tied to source moments, source gaps, and model diagnostics. |
+| Empirical bridge | bounded | 0 source-gap validations, 0 thin, warning, fixture-only, or missing panels, 7 bounded-support source panels; 5 bounded claim dependencies | The bridge constrains plausible ranges and flags evidence gaps; it does not validate hidden-channel magnitudes. | Prioritize SAM/FPDS coding reconciliation, protest/exclusion/firewall overlays, nonprofit-routing beyond the top-EIN Schedule I slice, and post-employment revolving-door overlays; broaden electoral-communication and public-financing rows as secondary coverage upgrades. |
 | Calibrated policy-simulation claim | not_cleared | validation queue P1=0, P2=0; causal targets P1=4, P2=6; 1 claim dependencies not cleared; calibrated-policy dependency=not_cleared; open causal targets=10 | The current artifact should not claim calibrated reform effects or representative national hidden-channel magnitudes. | Clear the causal-calibration target matrix, add stronger source panels, and rerun validation before using calibrated policy-simulation language. |
 | Reproducibility and layout bundle | cleared | layout failures=0, visual checklist=pass | The generated review bundle is reproducible when the paper artifact gate passes. | Rerun the full artifact gate after any source, table, figure, LaTeX, or package change. |
 
@@ -20,9 +20,9 @@ This audit summarizes which claim posture is cleared by the current source panel
 - Unknown: `0`
 - Not applicable: `21`
 
-## Weak Source Panels
+## Coverage-Gap Source Panels
 
-- Weak panels: `0`
+- Thin, warning, fixture-only, or missing panels: `0`
 
 ## Bounded Support Panels
 
@@ -37,9 +37,12 @@ This audit summarizes which claim posture is cleared by the current source panel
 
 ## Claim-Source Dependencies
 
-- Cleared claim dependencies: `7`
-- Bounded claim dependencies: `2`
+- Cleared claim dependencies: `4`
+- Bounded claim dependencies: `5`
 - Not-cleared claim dependencies: `1`
+- `Strategic substitution mechanism` (bounded): Bounded by source-limited usable panels: Direct dark money (direct-proxy-bounded), Intermediaries (proxy-bounded), Revolving door (proxy-thin).
+- `Public-financing counterweight` (bounded): Bounded by source-limited usable panels: Public financing (program-bounded).
+- `Revolving-door access` (bounded): Bounded by source-limited usable panels: Revolving door (proxy-thin).
 - `Hidden-channel magnitude` (bounded): Bounded by top-EIN Schedule I routing coverage and unobserved donor identities.
 - `Procurement modification capture` (bounded): Denominator-mapped USAspending bulk rows support distributional diagnostics; SAM/FPDS coding reconciliation and causal capture validation remain future work.
 - `Calibrated policy simulation` (not_cleared): Not cleared while 10 causal-calibration targets block policy simulation; current source panels support only mechanism diagnostics and bounded source moments.

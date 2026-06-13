@@ -61,7 +61,7 @@ CALIBRATION_READINESS_MD = ROOT / "reports" / "calibration-readiness.md"
 CALIBRATION_READINESS_CSV = ROOT / "reports" / "calibration-readiness.csv"
 POLICY_CLAIM_LANGUAGE_AUDIT_MD = ROOT / "reports" / "policy-claim-language-audit.md"
 POLICY_CLAIM_LANGUAGE_AUDIT_CSV = ROOT / "reports" / "policy-claim-language-audit.csv"
-RELEASE_TAG = "paper-publication-readiness-2026-06-13-r92"
+RELEASE_TAG = "paper-publication-readiness-2026-06-13-r93"
 CITATION_CFF = ROOT / "CITATION.cff"
 ZENODO_JSON = ROOT / ".zenodo.json"
 FORBIDDEN_LOCAL_ARTIFACTS = [
@@ -1306,11 +1306,13 @@ def check_claim_source_dependency_audit() -> list[str]:
             if rows[claim].get("status") != "not_cleared":
                 failures.append(f"claim-source dependency should not be cleared while weak panels remain: {claim}")
     revolving_panel = next((panel for panel in panels if panel.get("panel") == "Revolving door"), {})
-    if revolving_panel.get("status") == "usable" and rows["revolving-door-cooling-off"].get("status") != "cleared":
-        failures.append("revolving-door source dependency should be cleared when the revolving-door panel is usable")
+    if revolving_panel.get("status") == "usable" and rows["revolving-door-cooling-off"].get("status") != "bounded":
+        failures.append("revolving-door source dependency should remain bounded because the usable panel is LDA proxy/thin evidence")
     public_panel = next((panel for panel in panels if panel.get("panel") == "Public financing"), {})
-    if public_panel.get("status") == "usable" and rows["public-financing-counterweight"].get("status") != "cleared":
-        failures.append("public-financing source dependency should be cleared when the public-financing panel is usable")
+    if public_panel.get("status") == "usable" and rows["public-financing-counterweight"].get("status") != "bounded":
+        failures.append("public-financing source dependency should remain bounded because the usable panel is local program evidence")
+    if rows["strategic-substitution-mechanism"].get("status") != "bounded":
+        failures.append("strategic substitution source dependency should remain bounded while it depends on direct/proxy and proxy-thin panels")
 
     dependency_md = CLAIM_SOURCE_DEPENDENCY_MD.read_text(encoding="utf-8")
     required_text = [
@@ -1485,7 +1487,7 @@ def check_claim_posture_audit() -> list[str]:
     required_text = [
         "mechanism-model article",
         "calibrated policy-simulation claim",
-        "Weak Source Panels",
+        "Coverage-Gap Source Panels",
         "Claim-Source Dependencies",
         "Causal Calibration Targets",
         "Validation-Queue P1/P2 Actions",

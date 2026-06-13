@@ -203,7 +203,7 @@ def panel_row(panel: dict[str, object], moments: dict[str, dict[str, float]]) ->
     context_note = context_metrics_note(panel, moments)
     if context_note:
         note = f"{note}; {context_note}"
-    return {
+    row = {
         "panel": str(panel["panel"]),
         "mechanism": str(panel["mechanism"]),
         "evidenceClass": str(panel["evidenceClass"]),
@@ -215,6 +215,35 @@ def panel_row(panel: dict[str, object], moments: dict[str, dict[str, float]]) ->
         "note": note,
         "nextAction": str(panel["action"]),
     }
+    row["supportLevel"] = support_level(row)
+    return row
+
+
+def support_level(row: dict[str, str]) -> str:
+    status = row.get("status", "missing")
+    if status in {"missing", "fixture-only"}:
+        return "schema-only"
+    if status in {"warning", "thin"}:
+        return status
+    if status != "usable":
+        return "limited"
+
+    evidence = row.get("evidenceClass", "").lower()
+    if "proxy/thin" in evidence:
+        return "proxy-thin"
+    if "direct/proxy" in evidence:
+        return "direct-proxy-bounded"
+    if "denominator-mapped" in evidence:
+        return "denominator-bounded"
+    if "proxy" in evidence:
+        return "proxy-bounded"
+    if "program" in evidence:
+        return "program-bounded"
+    if "when present" in evidence:
+        return "conditional-direct"
+    if "direct" in evidence:
+        return "direct-bounded"
+    return "source-bounded"
 
 
 def fixture_supported(panel: dict[str, object], value: float | None) -> bool:
@@ -241,7 +270,19 @@ def context_metrics_note(panel: dict[str, object], moments: dict[str, dict[str, 
 
 
 def write_csv(path: Path, rows: list[dict[str, str]]) -> None:
-    fieldnames = ["panel", "mechanism", "evidenceClass", "metric", "value", "fixtureValue", "fixtureSupported", "status", "note", "nextAction"]
+    fieldnames = [
+        "panel",
+        "mechanism",
+        "evidenceClass",
+        "metric",
+        "value",
+        "fixtureValue",
+        "fixtureSupported",
+        "status",
+        "supportLevel",
+        "note",
+        "nextAction",
+    ]
     with path.open("w", newline="", encoding="utf-8") as destination:
         writer = csv.DictWriter(destination, fieldnames=fieldnames, lineterminator="\n")
         writer.writeheader()
@@ -250,10 +291,20 @@ def write_csv(path: Path, rows: list[dict[str, str]]) -> None:
 
 def write_markdown(path: Path, rows: list[dict[str, str]]) -> None:
     counts = {status: sum(1 for row in rows if row["status"] == status) for status in ("usable", "thin", "warning", "fixture-only", "missing")}
+    bounded_rows = [
+        row for row in rows
+        if row["status"] == "usable" and row["supportLevel"] != "direct-bounded"
+    ]
+    direct_rows = [
+        row for row in rows
+        if row["status"] == "usable" and row["supportLevel"] == "direct-bounded"
+    ]
     lines = [
         "# Source Panel Inventory",
         "",
-        "This inventory separates source coverage from simulated outcomes. A missing or thin panel is a validation gap, not evidence that the underlying form of influence is absent.",
+        "This inventory separates source coverage from simulated outcomes. `Usable` means the frozen snapshot clears a mechanism-diagnostic coverage threshold; it does not mean the panel is direct, representative, or calibration-grade. The `Claim support` column is the controlling strength label for manuscript claims.",
+        "",
+        "## Coverage Status",
         "",
         f"- Usable: `{counts['usable']}`",
         f"- Thin: `{counts['thin']}`",
@@ -261,13 +312,22 @@ def write_markdown(path: Path, rows: list[dict[str, str]]) -> None:
         f"- Fixture-only: `{counts['fixture-only']}`",
         f"- Missing: `{counts['missing']}`",
         "",
-        "| Panel | Mechanism constrained | Evidence | Moment | Snapshot | Fixture scaffold? | Status | Note | Next action |",
-        "| --- | --- | --- | --- | ---: | --- | --- | --- | --- |",
+        "## Claim-Support Limits",
+        "",
+        f"- Direct-bounded usable panels: `{len(direct_rows)}`",
+        f"- Usable panels with proxy, denominator, program, mixed, conditional, or otherwise bounded support: `{len(bounded_rows)}`",
     ]
+    for row in bounded_rows:
+        lines.append(f"- `{row['panel']}` ({row['supportLevel']}): {row['nextAction']}")
+    lines.extend([
+        "",
+        "| Panel | Mechanism constrained | Evidence | Moment | Snapshot | Fixture scaffold? | Status | Claim support | Note | Next action |",
+        "| --- | --- | --- | --- | ---: | --- | --- | --- | --- | --- |",
+    ])
     for row in rows:
         lines.append(
-            f"| {row['panel']} | {row['mechanism']} | {row['evidenceClass']} | `{row['metric']}` | {row['value'] or 'n/a'} | {row['fixtureSupported']} | {row['status']} | {row['note']} | {row['nextAction']} |"
-		)
+            f"| {row['panel']} | {row['mechanism']} | {row['evidenceClass']} | `{row['metric']}` | {row['value'] or 'n/a'} | {row['fixtureSupported']} | {row['status']} | {row['supportLevel']} | {row['note']} | {row['nextAction']} |"
+        )
     lines.append("")
     path.write_text("\n".join(lines), encoding="utf-8")
 

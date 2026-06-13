@@ -115,6 +115,10 @@ def claim_row(panel: dict[str, str]) -> dict[str, str]:
 
 
 def support_level(panel: dict[str, str]) -> str:
+    recorded = panel.get("supportLevel", "")
+    if recorded:
+        return recorded
+
     status = panel.get("status", "missing")
     if status in {"missing", "fixture-only"}:
         return "schema-only"
@@ -169,7 +173,7 @@ def write_markdown(path: Path, rows: list[dict[str, str]], validation_counts: di
     lines = [
         "# Claim Boundary Audit",
         "",
-        "This audit maps each empirical source panel to the manuscript claim boundary it can support. It is generated from `reports/source-panel-inventory.csv`, so source-coverage changes update the claim ledger before paper artifacts are rebuilt.",
+        "This audit maps each empirical source panel to the manuscript claim boundary it can support. It is generated from `reports/source-panel-inventory.csv`, so source-coverage and claim-strength changes update the claim ledger before paper artifacts are rebuilt. A usable source panel can still be proxy-bounded, denominator-bounded, program-bounded, or otherwise source-limited.",
         "",
         "## Validation Status Summary",
         "",
@@ -193,9 +197,9 @@ def write_markdown(path: Path, rows: list[dict[str, str]], validation_counts: di
         )
     lines.extend([
         "",
-        "## Weak-Panel Gate",
+        "## Coverage-Gap Gate",
         "",
-        f"- Weak panels requiring explicit claim limits: `{len(weak_rows)}`",
+        f"- Thin, warning, fixture-only, or missing panels requiring explicit coverage limits: `{len(weak_rows)}`",
     ])
     for row in weak_rows:
         lines.append(

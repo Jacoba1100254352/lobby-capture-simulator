@@ -1,6 +1,6 @@
 # Claim Boundary Audit
 
-This audit maps each empirical source panel to the manuscript claim boundary it can support. It is generated from `reports/source-panel-inventory.csv`, so source-coverage changes update the claim ledger before paper artifacts are rebuilt.
+This audit maps each empirical source panel to the manuscript claim boundary it can support. It is generated from `reports/source-panel-inventory.csv`, so source-coverage and claim-strength changes update the claim ledger before paper artifacts are rebuilt. A usable source panel can still be proxy-bounded, denominator-bounded, program-bounded, or otherwise source-limited.
 
 ## Validation Status Summary
 
@@ -27,9 +27,9 @@ This audit maps each empirical source panel to the manuscript claim boundary it 
 | Procurement action history | Transaction/action denominator for post-award modification incidence | direct primary SAM/USAspending action rows when present | usable | conditional-direct | May support mechanism diagnostics and distributional anchoring within the stated source scope. | Do not present as a causal estimate or nationally representative policy effect. | Use the archived USAspending bulk summary for action-row, distinct-award, and amount-weighted denominators; add SAM/FPDS action-history extracts to crosswalk modification coding before treating modification incidence as calibration-grade. |
 | Procurement modification risk | Post-award modification and specification-change pressure | denominator-mapped observed proxy | usable | denominator-bounded | May support mechanism diagnostics and distributional anchoring within the stated source scope. | Do not present as a causal estimate or nationally representative policy effect. | Use the procurement benchmark crosswalk for action-row, distinct-award, and amount-weighted denominators; add SAM/FPDS exports to reconcile coding before claiming causal procurement-modification effects. |
 
-## Weak-Panel Gate
+## Coverage-Gap Gate
 
-- Weak panels requiring explicit claim limits: `0`
+- Thin, warning, fixture-only, or missing panels requiring explicit coverage limits: `0`
 
 ## Bounded-Evidence Gate
 
