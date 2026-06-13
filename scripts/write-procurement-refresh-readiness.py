@@ -109,6 +109,8 @@ def readiness_rows(reports: Path, snapshot: Path, env_example: Path) -> list[dic
     usa_rows = int_value(usa_action.get("rows"))
     usa_national_rows = int_value(usa_national_action.get("rows"))
     quota_reset = next_access_time(sam_status.get("notes", "") or sam_capability.get("snapshotPlan", ""))
+    sam_panel_status = representative_sam_status(sam_denominator)
+    sam_panel_evidence = representative_sam_evidence(sam_denominator, sam_rows)
 
     rows = [
         {
@@ -140,11 +142,11 @@ def readiness_rows(reports: Path, snapshot: Path, env_example: Path) -> list[dic
         },
         {
             "item": "representative-sam-fpds-action-history",
-            "status": "ready" if sam_rows > 0 else "blocked",
-            "evidence": f"SAM/FPDS action-history rows in frozen snapshot: {sam_rows}",
+            "status": sam_panel_status,
+            "evidence": sam_panel_evidence,
             "nextAction": (
-                "Archive a representative SAM/FPDS action-history panel before clearing procurement modification capture."
-                if sam_rows == 0 else
+                "Archive a representative SAM/FPDS action-history panel that clears row-count, award-breadth, agency-breadth, date-span, PIID, and action-date checks before clearing procurement modification capture."
+                if sam_panel_status != "ready" else
                 "Compare SAM modification, concentration, and denominator moments against the bounded USAspending panel."
             ),
         },
@@ -241,7 +243,7 @@ def readiness_rows(reports: Path, snapshot: Path, env_example: Path) -> list[dic
         },
         {
             "item": "claim-boundary",
-            "status": "blocked" if sam_rows == 0 or p1_procurement else "ready",
+            "status": "blocked" if sam_panel_status != "ready" or p1_procurement else "ready",
             "evidence": (
                 "Calibrated policy-simulation claims remain blocked until representative SAM/FPDS action-history coverage clears the procurement P1 gaps."
             ),
@@ -291,6 +293,37 @@ def int_value(value: object) -> int:
         return int(float(str(value or "0").replace(",", "")))
     except ValueError:
         return 0
+
+
+def float_value(row: dict[str, str], key: str) -> float:
+    try:
+        return float(str(row.get(key, "0") or "0").replace(",", ""))
+    except ValueError:
+        return 0.0
+
+
+def representative_sam_status(row: dict[str, str]) -> str:
+    readiness = row.get("promotionReadiness", "")
+    if readiness == "candidate":
+        return "ready"
+    if readiness == "diagnostic":
+        return "warning"
+    return "blocked"
+
+
+def representative_sam_evidence(row: dict[str, str], fallback_rows: int) -> str:
+    rows = int_value(row.get("rows") or fallback_rows)
+    if not row:
+        return f"SAM/FPDS action-history rows in frozen snapshot: {rows}; promotion readiness: blocked"
+    return (
+        f"SAM/FPDS action-history rows in frozen snapshot: {rows}; "
+        f"promotion readiness: {row.get('promotionReadiness', 'blocked')}; "
+        f"distinct awards: {int_value(row.get('distinctAwardCount'))}; "
+        f"agencies: {int_value(row.get('agencyCount'))}; "
+        f"date span: {int_value(row.get('dateSpanDays'))} days; "
+        f"PIID coverage: {float_value(row, 'knownPiidShare'):.4f}; "
+        f"action-date coverage: {float_value(row, 'actionDateShare'):.4f}"
+    )
 
 
 def generated_at() -> str:

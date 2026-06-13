@@ -109,7 +109,16 @@ test -s "$tmpdir/reports/source-panel-inventory.csv"
 grep -q "Direct dark money" "$tmpdir/reports/source-panel-inventory.md"
 grep -q "Fixture scaffold?" "$tmpdir/reports/source-panel-inventory.md"
 python3 scripts/audit-source-capabilities.py --reports "$tmpdir/reports" --snapshot data/snapshots/2024-env >/dev/null
+test -s "$tmpdir/reports/source-capability-audit.csv"
+grep -q "snapshotQuality" "$tmpdir/reports/source-capability-audit.csv"
+grep -q "sam-contract-awards-action-history" "$tmpdir/reports/source-capability-audit.csv"
 python3 scripts/audit-procurement-denominator.py --reports "$tmpdir/reports" --snapshot data/snapshots/2024-env >/dev/null
+test -s "$tmpdir/reports/procurement-denominator-audit.csv"
+test -s "$tmpdir/reports/procurement-denominator-audit.md"
+grep -q "promotionReadiness" "$tmpdir/reports/procurement-denominator-audit.csv"
+grep -q "dateSpanDisplay" "$tmpdir/reports/procurement-denominator-audit.csv"
+grep -q "sam-contract-awards" "$tmpdir/reports/procurement-denominator-audit.csv"
+grep -q "promotion readiness" "$tmpdir/reports/procurement-denominator-audit.md"
 python3 scripts/classify-validation-misses.py --validation reports/validation-summary.csv --source-moments "$tmpdir/reports/source-moments.csv" --output "$tmpdir/reports" >/dev/null
 python3 scripts/write-procurement-refresh-readiness.py --reports "$tmpdir/reports" --snapshot data/snapshots/2024-env >/dev/null
 test -s "$tmpdir/reports/procurement-refresh-readiness.csv"

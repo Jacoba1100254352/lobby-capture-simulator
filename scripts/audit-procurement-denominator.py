@@ -12,6 +12,7 @@ from __future__ import annotations
 import argparse
 import csv
 from collections import defaultdict
+from datetime import datetime
 from pathlib import Path
 
 
@@ -19,6 +20,26 @@ REPORTS = Path("reports")
 SNAPSHOT = Path("data/snapshots/2024-env")
 NORMALIZED = SNAPSHOT / "normalized"
 LIVE_STATUS = SNAPSHOT / "live-run-status.csv"
+
+SAM_REPRESENTATIVE_THRESHOLDS = {
+    "rows": 5000,
+    "distinctAwardCount": 1000,
+    "agencyCount": 6,
+    "dateSpanDays": 270,
+    "knownPiidShare": 0.95,
+    "actionDateShare": 0.80,
+}
+
+SAM_REPRESENTATIVE_WARNINGS = {
+    "knownUeiShare": 0.50,
+    "knownCompetitionShare": 0.25,
+}
+
+ACTION_HISTORY_DATE_SPAN_SOURCES = {
+    "usaspending-procurement-actions",
+    "usaspending-procurement-national-actions",
+    "sam-contract-awards",
+}
 
 
 SOURCES = [
@@ -92,6 +113,7 @@ def read_live_status(path: Path) -> dict[str, dict[str, str]]:
 def audit_source(source: dict[str, object], statuses: dict[str, dict[str, str]]) -> dict[str, str]:
     path = source["path"]
     assert isinstance(path, Path)
+    source_name = str(source["source"])
     rows = read_rows(path)
     agency_amount = grouped_amount(rows, "agency")
     recipient_amount = grouped_amount(rows, "recipient")
@@ -105,13 +127,24 @@ def audit_source(source: dict[str, object], statuses: dict[str, dict[str, str]])
         for group in award_groups.values()
         if any(is_modified(row) for row in group)
     ]
+    dates = [parsed for parsed in (parse_date(row.get("actionDate", "")) for row in rows) if parsed]
     amount_total = sum(number(row.get("amount")) for row in rows)
     amount_modified = sum(number(row.get("amount")) for row in modified_rows)
     agencies = {row.get("agency", "").strip() for row in rows if row.get("agency", "").strip()}
     recipients = {row.get("recipient", "").strip() for row in rows if row.get("recipient", "").strip()}
     status = statuses.get(str(source.get("statusKey", source["source"])), {})
+    readiness = sam_representative_readiness(source_name, {
+        "rows": len(rows),
+        "agencyCount": len(agencies),
+        "distinctAwardCount": len(award_groups),
+        "dateSpanDays": (max(dates) - min(dates)).days if len(dates) >= 2 else 0,
+        "knownPiidShare": share_with_value(rows, "piid"),
+        "knownUeiShare": share_with_value(rows, "uei"),
+        "actionDateShare": share_with_value(rows, "actionDate"),
+        "knownCompetitionShare": known_competition_share(rows),
+    })
     return {
-        "source": str(source["source"]),
+        "source": source_name,
         "snapshotStatus": status.get("status", "missing" if not rows else "unknown"),
         "role": str(source["role"]),
         "rows": str(len(rows)),
@@ -119,6 +152,12 @@ def audit_source(source: dict[str, object], statuses: dict[str, dict[str, str]])
         "recipientCount": str(len(recipients)),
         "knownPiidShare": format_float(share_with_value(rows, "piid")),
         "knownUeiShare": format_float(share_with_value(rows, "uei")),
+        "actionDateShare": format_float(share_with_value(rows, "actionDate")),
+        "knownCompetitionShare": format_float(known_competition_share(rows)),
+        "dateFrom": min(dates).date().isoformat() if dates else "",
+        "dateTo": max(dates).date().isoformat() if dates else "",
+        "dateSpanDays": str((max(dates) - min(dates)).days if len(dates) >= 2 else 0),
+        "dateSpanDisplay": date_span_display(source_name, dates),
         "initialActionShare": format_float(safe_divide(len(initial_rows), len(rows))),
         "modifiedActionShare": format_float(safe_divide(len(modified_rows), len(rows))),
         "distinctAwardCount": str(len(award_groups)),
@@ -131,6 +170,7 @@ def audit_source(source: dict[str, object], statuses: dict[str, dict[str, str]])
         "topAgencyAmountRowGap": format_float(top_share(agency_amount, 1) - top_share(agency_count, 1)),
         "topRecipientAmountShare": format_float(top_share(recipient_amount, 1)),
         "topRecipientRowShare": format_float(top_share(recipient_count, 1)),
+        "promotionReadiness": readiness,
         "claimBoundary": str(source["claimBoundary"]),
         "statusNote": status.get("notes", ""),
     }
@@ -193,6 +233,14 @@ def share_with_value(rows: list[dict[str, str]], key: str) -> float:
     return safe_divide(sum(1 for row in rows if row.get(key, "").strip()), len(rows))
 
 
+def known_competition_share(rows: list[dict[str, str]]) -> float:
+    unknown = {"", "unknown", "none", "null"}
+    return safe_divide(
+        sum(1 for row in rows if row.get("competitionType", "").strip().lower() not in unknown),
+        len(rows),
+    )
+
+
 def safe_divide(numerator: float, denominator: float) -> float:
     return numerator / denominator if denominator else 0.0
 
@@ -227,6 +275,41 @@ def format_float(value: float) -> str:
     return f"{value:.4f}"
 
 
+def parse_date(value: str) -> datetime | None:
+    text = str(value or "").strip()
+    for candidate in (text, text[:10], text[:20]):
+        for fmt in ("%Y-%m-%d", "%m/%d/%Y", "%Y-%m-%dT%H:%M:%SZ"):
+            try:
+                return datetime.strptime(candidate, fmt)
+            except ValueError:
+                continue
+    return None
+
+
+def sam_representative_readiness(source: str, metrics: dict[str, float | int]) -> str:
+    if source != "sam-contract-awards":
+        return "not-applicable"
+    blockers = [
+        name for name, threshold in SAM_REPRESENTATIVE_THRESHOLDS.items()
+        if float(metrics.get(name, 0.0)) < float(threshold)
+    ]
+    if blockers:
+        return "blocked"
+    warnings = [
+        name for name, threshold in SAM_REPRESENTATIVE_WARNINGS.items()
+        if float(metrics.get(name, 0.0)) < float(threshold)
+    ]
+    return "diagnostic" if warnings else "candidate"
+
+
+def date_span_display(source: str, dates: list[datetime]) -> str:
+    if source not in ACTION_HISTORY_DATE_SPAN_SOURCES:
+        return "n/a"
+    if len(dates) < 2:
+        return "0d"
+    return f"{(max(dates) - min(dates)).days}d"
+
+
 def write_csv(path: Path, rows: list[dict[str, str]]) -> None:
     fieldnames = [
         "source",
@@ -237,6 +320,12 @@ def write_csv(path: Path, rows: list[dict[str, str]]) -> None:
         "recipientCount",
         "knownPiidShare",
         "knownUeiShare",
+        "actionDateShare",
+        "knownCompetitionShare",
+        "dateFrom",
+        "dateTo",
+        "dateSpanDays",
+        "dateSpanDisplay",
         "initialActionShare",
         "modifiedActionShare",
         "distinctAwardCount",
@@ -249,6 +338,7 @@ def write_csv(path: Path, rows: list[dict[str, str]]) -> None:
         "topAgencyAmountRowGap",
         "topRecipientAmountShare",
         "topRecipientRowShare",
+        "promotionReadiness",
         "claimBoundary",
         "statusNote",
     ]
@@ -297,23 +387,22 @@ def write_markdown(path: Path, rows: list[dict[str, str]]) -> None:
             f"of rows but {national.get('topAgencyAmountShare', '0.0000')} of amount, and the largest "
             f"recipient accounts for {national.get('topRecipientAmountShare', '0.0000')} of amount. "
             f"SAM.gov Contract Awards status is `{sam.get('snapshotStatus', 'missing')}` with "
-            f"{sam.get('rows', '0')} committed rows. The procurement-modification claim remains "
+            f"{sam.get('rows', '0')} committed rows and promotion readiness "
+            f"`{sam.get('promotionReadiness', 'blocked')}`. The procurement-modification claim remains "
             "bounded until a representative SAM/FPDS action-history denominator is archived; the "
             "national panel improves concentration diagnostics but is not used as a representative "
             "modification-incidence denominator."
         ),
         "",
-        "| Source | Status | Role | Rows | Agencies | PIID | UEI | Initial actions | Modified actions | Modified award share | Rows/mod. award | Amt-wtd mod. | Top agency amount | Top agency rows | Top recipient amount | Boundary |",
-        "| --- | --- | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | --- |",
+        "| Source | Status | Role | Rows | Agencies | Awards | Dates | PIID | UEI | Competition | Modified actions | Modified award share | Amt-wtd mod. | Promotion | Boundary |",
+        "| --- | --- | --- | ---: | ---: | ---: | --- | ---: | ---: | ---: | ---: | ---: | ---: | --- | --- |",
     ]
     for row in rows:
         lines.append(
             "| {source} | {snapshotStatus} | {role} | {rows} | {agencyCount} | "
-            "{knownPiidShare} | {knownUeiShare} | {initialActionShare} | "
-            "{modifiedActionShare} | {modifiedAwardShare} | {modificationRowsPerModifiedAward} | "
-            "{amountWeightedModificationShare} | "
-            "{topAgencyAmountShare} | {topAgencyRowShare} | {topRecipientAmountShare} | "
-            "{claimBoundary} |".format(
+            "{distinctAwardCount} | {dateSpanDisplay} | {knownPiidShare} | {knownUeiShare} | "
+            "{knownCompetitionShare} | {modifiedActionShare} | {modifiedAwardShare} | "
+            "{amountWeightedModificationShare} | {promotionReadiness} | {claimBoundary} |".format(
                 **{key: markdown_cell(value) for key, value in row.items()}
             )
         )

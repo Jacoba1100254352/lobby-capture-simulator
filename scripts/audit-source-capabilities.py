@@ -11,6 +11,7 @@ from __future__ import annotations
 
 import argparse
 import csv
+from datetime import datetime
 from pathlib import Path
 
 
@@ -19,6 +20,20 @@ REPORTS = ROOT / "reports"
 SNAPSHOT = ROOT / "data" / "snapshots" / "2024-env"
 SOURCE_PANEL_INVENTORY = REPORTS / "source-panel-inventory.csv"
 LIVE_STATUS = SNAPSHOT / "live-run-status.csv"
+
+SAM_REPRESENTATIVE_THRESHOLDS = {
+    "rows": 5000,
+    "distinctAwardCount": 1000,
+    "agencyCount": 6,
+    "dateSpanDays": 270,
+    "knownPiidShare": 0.95,
+    "actionDateShare": 0.80,
+}
+
+SAM_REPRESENTATIVE_WARNINGS = {
+    "knownUeiShare": 0.50,
+    "knownCompetitionShare": 0.25,
+}
 
 
 CAPABILITIES = [
@@ -175,11 +190,12 @@ def capability_row(
     file_source = capability.get("snapshotFile", source)
     file_path = normalized / f"{file_source}.csv" if file_source else Path("")
     row_count = csv_row_count(file_path) if source else 0
+    sam_quality = sam_quality_status(file_path) if capability["capability"] == "sam-contract-awards-action-history" else ""
     live_status = statuses.get(source, {})
     source_status = live_status.get("status", "")
     panel_status = panel.get("status", "")
     capability_status = classify_capability(
-        capability["capability"], row_count, source_status, panel_status
+        capability["capability"], row_count, source_status, panel_status, sam_quality
     )
     return {
         "capability": capability["capability"],
@@ -188,6 +204,7 @@ def capability_row(
         "snapshotSource": source or "not-promoted",
         "snapshotStatus": source_status or ("not-promoted" if not source else "missing"),
         "snapshotRows": str(row_count),
+        "snapshotQuality": sam_quality or "not-applicable",
         "snapshotPlan": snapshot_plan(capability["capability"], live_status, row_count),
         "panel": capability["panel"] or "not-promoted",
         "panelStatus": panel_status or "not-promoted",
@@ -198,7 +215,7 @@ def capability_row(
 
 
 def classify_capability(
-    capability: str, row_count: int, source_status: str, panel_status: str
+    capability: str, row_count: int, source_status: str, panel_status: str, sam_quality: str
 ) -> str:
     if capability == "licensed-access-overlays":
         return "planned-overlay"
@@ -211,6 +228,8 @@ def classify_capability(
             return "proxy-only"
         return panel_status or "missing"
     if capability == "sam-contract-awards-action-history":
+        if row_count > 0 and source_status == "ok" and sam_quality == "candidate":
+            return "active-representative"
         if row_count > 0 and source_status == "ok":
             return "active-bounded"
         if source_status == "quota_blocked":
@@ -253,6 +272,74 @@ def csv_row_count(path: Path) -> int:
         return sum(1 for _ in csv.DictReader(source))
 
 
+def read_rows(path: Path) -> list[dict[str, str]]:
+    if not path.exists():
+        return []
+    with path.open(newline="", encoding="utf-8") as source:
+        return list(csv.DictReader(source))
+
+
+def sam_quality_status(path: Path) -> str:
+    rows = read_rows(path)
+    if not rows:
+        return "blocked"
+    awards = {award_key(row) for row in rows if award_key(row)}
+    agencies = {row.get("agency", "").strip() for row in rows if row.get("agency", "").strip()}
+    dates = [parsed for parsed in (parse_date(row.get("actionDate", "")) for row in rows) if parsed]
+    metrics = {
+        "rows": len(rows),
+        "distinctAwardCount": len(awards),
+        "agencyCount": len(agencies),
+        "dateSpanDays": (max(dates) - min(dates)).days if len(dates) >= 2 else 0,
+        "knownPiidShare": share_with_value(rows, "piid"),
+        "knownUeiShare": share_with_value(rows, "uei"),
+        "actionDateShare": share_with_value(rows, "actionDate"),
+        "knownCompetitionShare": known_competition_share(rows),
+    }
+    blockers = [
+        name for name, threshold in SAM_REPRESENTATIVE_THRESHOLDS.items()
+        if float(metrics.get(name, 0.0)) < float(threshold)
+    ]
+    if blockers:
+        return "blocked"
+    warnings = [
+        name for name, threshold in SAM_REPRESENTATIVE_WARNINGS.items()
+        if float(metrics.get(name, 0.0)) < float(threshold)
+    ]
+    return "diagnostic" if warnings else "candidate"
+
+
+def award_key(row: dict[str, str]) -> str:
+    for key in ("piid", "awardId"):
+        value = row.get(key, "").strip()
+        if value:
+            return value
+    return ""
+
+
+def share_with_value(rows: list[dict[str, str]], key: str) -> float:
+    return sum(1 for row in rows if row.get(key, "").strip()) / len(rows) if rows else 0.0
+
+
+def known_competition_share(rows: list[dict[str, str]]) -> float:
+    unknown = {"", "unknown", "none", "null"}
+    return (
+        sum(1 for row in rows if row.get("competitionType", "").strip().lower() not in unknown) / len(rows)
+        if rows else 0.0
+    )
+
+
+def parse_date(value: str) -> datetime | None:
+    text = str(value or "").strip()
+    for candidate in (text, text[:10], text[:20]):
+        for fmt in ("%Y-%m-%d", "%m/%d/%Y", "%Y-%m-%dT%H:%M:%SZ"):
+            try:
+                return datetime.strptime(candidate, fmt)
+            except ValueError:
+                continue
+    return None
+
+
 def write_csv(path: Path, rows: list[dict[str, str]]) -> None:
     fieldnames = [
         "capability",
@@ -261,6 +348,7 @@ def write_csv(path: Path, rows: list[dict[str, str]]) -> None:
         "snapshotSource",
         "snapshotStatus",
         "snapshotRows",
+        "snapshotQuality",
         "snapshotPlan",
         "panel",
         "panelStatus",
@@ -299,16 +387,16 @@ def write_markdown(path: Path, rows: list[dict[str, str]]) -> None:
             "",
             (
                 "| Capability | Snapshot source | Rows | Panel status | Capability status | "
-                "Snapshot plan | Needed for | Next action |"
+                "Snapshot quality | Snapshot plan | Needed for | Next action |"
             ),
-            "| --- | --- | ---: | --- | --- | --- | --- | --- |",
+            "| --- | --- | ---: | --- | --- | --- | --- | --- | --- |",
         ]
     )
     for row in rows:
         escaped = {key: markdown_cell(value) for key, value in row.items()}
         lines.append(
             "| {capability} | {snapshotSource} ({snapshotStatus}) | {snapshotRows} | "
-            "{panelStatus} | {capabilityStatus} | {snapshotPlan} | {neededFor} | {nextAction} |".format(
+            "{panelStatus} | {capabilityStatus} | {snapshotQuality} | {snapshotPlan} | {neededFor} | {nextAction} |".format(
                 **escaped
             )
         )
