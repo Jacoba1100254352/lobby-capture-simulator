@@ -61,7 +61,7 @@ CALIBRATION_READINESS_MD = ROOT / "reports" / "calibration-readiness.md"
 CALIBRATION_READINESS_CSV = ROOT / "reports" / "calibration-readiness.csv"
 POLICY_CLAIM_LANGUAGE_AUDIT_MD = ROOT / "reports" / "policy-claim-language-audit.md"
 POLICY_CLAIM_LANGUAGE_AUDIT_CSV = ROOT / "reports" / "policy-claim-language-audit.csv"
-RELEASE_TAG = "paper-publication-readiness-2026-06-13-r91"
+RELEASE_TAG = "paper-publication-readiness-2026-06-13-r92"
 CITATION_CFF = ROOT / "CITATION.cff"
 ZENODO_JSON = ROOT / ".zenodo.json"
 FORBIDDEN_LOCAL_ARTIFACTS = [
@@ -1530,6 +1530,7 @@ def check_policy_claim_language_audit() -> list[str]:
     text = POLICY_CLAIM_LANGUAGE_AUDIT_MD.read_text(encoding="utf-8")
     required_text = [
         "Policy-Claim Language Audit",
+        "representative-scenario-language",
         "Overclaim hits: `0`",
         "Missing required boundary phrases: `0`",
         "calibrated-policy dependency=not_cleared",

@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Audit manuscript language for unbounded calibrated-policy overclaims."""
+"""Audit manuscript language for unbounded calibrated-policy or scope overclaims."""
 
 from __future__ import annotations
 
@@ -14,6 +14,9 @@ REPORTS = Path("reports")
 TARGET_FILES = [
     Path("paper/sections/reggov-body.tex"),
     Path("paper/sections/supplement-body.tex"),
+    Path("paper/tables.yml"),
+    Path("paper/tables/experiment_design.tex"),
+    Path("paper/tables/campaign_snapshot.tex"),
     Path("docs/scenario-catalog.md"),
     Path("docs/validation.md"),
     Path("docs/source-data-roadmap.md"),
@@ -30,6 +33,7 @@ WATCH_PATTERNS = [
     ("calibrated-reform-effects", re.compile(r"calibrated reform effects", re.IGNORECASE)),
     ("policy-effect-language", re.compile(r"policy[- ]effect", re.IGNORECASE)),
     ("representative-hidden-channel", re.compile(r"representative national hidden-channel magnitudes", re.IGNORECASE)),
+    ("representative-scenario-language", re.compile(r"representative (?:scenario|scenarios|baseline|campaign snapshot|results?)", re.IGNORECASE)),
     ("causal-effect-language", re.compile(r"causal (?:effect|effects|estimate|estimates)", re.IGNORECASE)),
     ("policy-ranking-language", re.compile(r"policy ranking", re.IGNORECASE)),
 ]
@@ -214,11 +218,12 @@ def write_markdown(path: Path, rows: list[dict[str, str]]) -> None:
     lines = [
         "# Policy-Claim Language Audit",
         "",
-        "This audit scans the manuscript, supplement, and paper-facing documentation for calibrated-policy and policy-effect language. Hits are acceptable only when the local sentence also carries claim-boundary language such as not, before, until, outside, blocked, blocking, not_cleared, or rather than. The audit is a mechanical guardrail; it does not replace substantive peer review.",
+        "This audit scans the manuscript, supplement, generated-table sources, and paper-facing documentation for calibrated-policy, policy-effect, and representativeness language. Hits are acceptable only when the local sentence also carries claim-boundary language such as not, before, until, outside, blocked, blocking, not_cleared, or rather than. The audit is a mechanical guardrail; it does not replace substantive peer review.",
         "",
         "## Summary",
         "",
-        f"- Bounded policy-language hits: `{counts['bounded_context']}`",
+        "- Watched keys: `calibrated-policy-simulation`, `calibrated-reform-effects`, `policy-effect-language`, `representative-hidden-channel`, `representative-scenario-language`, `causal-effect-language`, `policy-ranking-language`",
+        f"- Bounded watched-language hits: `{counts['bounded_context']}`",
         f"- Required boundary phrases present: `{counts['required_boundary_present']}`",
         f"- Overclaim hits: `{counts['overclaim']}`",
         f"- Missing required boundary phrases: `{counts['missing_required_boundary']}`",

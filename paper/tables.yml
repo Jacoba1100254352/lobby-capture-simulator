@@ -84,7 +84,7 @@
       "output": "campaign_snapshot.tex",
       "source": "lobby-capture-campaign.csv",
       "label": "tab:first-campaign",
-      "caption": "Selected campaign snapshot. The main table keeps representative baseline, dark-money, intermediary, public-finance, venue-detection, and reform-bundle rows from the full scenario table in the supporting information.",
+      "caption": "Selected campaign snapshot. The main table keeps baseline, dark-money, intermediary, public-finance, venue-detection, and reform-bundle archetypes from the full scenario table in the supporting information.",
       "size": "footnotesize",
       "environment": "inline-table",
       "width": "\\textwidth",
