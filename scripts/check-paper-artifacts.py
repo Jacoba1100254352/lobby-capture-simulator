@@ -52,7 +52,9 @@ CLAIM_SOURCE_DEPENDENCY_MD = ROOT / "reports" / "claim-source-dependency.md"
 CLAIM_SOURCE_DEPENDENCY_CSV = ROOT / "reports" / "claim-source-dependency.csv"
 CLAIM_POSTURE_AUDIT_MD = ROOT / "reports" / "claim-posture-audit.md"
 CLAIM_POSTURE_AUDIT_CSV = ROOT / "reports" / "claim-posture-audit.csv"
-RELEASE_TAG = "paper-publication-readiness-2026-06-12-r76"
+CALIBRATION_READINESS_MD = ROOT / "reports" / "calibration-readiness.md"
+CALIBRATION_READINESS_CSV = ROOT / "reports" / "calibration-readiness.csv"
+RELEASE_TAG = "paper-publication-readiness-2026-06-12-r77"
 CITATION_CFF = ROOT / "CITATION.cff"
 ZENODO_JSON = ROOT / ".zenodo.json"
 FORBIDDEN_LOCAL_ARTIFACTS = [
@@ -145,6 +147,7 @@ EXPECTED_ZIP_MEMBERS = {
     "supporting-information/substitution-audit.md",
     "supporting-information/portfolio-screen.md",
     "supporting-information/calibration-queue.md",
+    "supporting-information/calibration-readiness.md",
     "supporting-information/paper-layout-audit.md",
     "supporting-information/manual-visual-audit.md",
     "supporting-information/CITATION.cff",
@@ -1359,6 +1362,7 @@ def package_byte_checks() -> list[tuple[Path, str]]:
         (ROOT / "reports" / "substitution-audit.md", "supporting-information/substitution-audit.md"),
         (ROOT / "reports" / "lobby-capture-portfolio.md", "supporting-information/portfolio-screen.md"),
         (ROOT / "reports" / "calibration-queue.md", "supporting-information/calibration-queue.md"),
+        (CALIBRATION_READINESS_MD, "supporting-information/calibration-readiness.md"),
         (ROOT / "reports" / "paper-layout-audit.md", "supporting-information/paper-layout-audit.md"),
         (ROOT / "reports" / "manual-visual-audit.md", "supporting-information/manual-visual-audit.md"),
         (CITATION_CFF, "supporting-information/CITATION.cff"),

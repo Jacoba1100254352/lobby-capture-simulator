@@ -36,6 +36,8 @@ reports/*.md
 !reports/claim-posture-audit.md
 !reports/calibration-queue.csv
 !reports/calibration-queue.md
+!reports/calibration-readiness.csv
+!reports/calibration-readiness.md
 !reports/paper-layout-audit.md
 !reports/manual-visual-audit.md
 paper/*.aux
