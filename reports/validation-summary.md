@@ -2,8 +2,8 @@
 
 Benchmark ranges are plausibility checks, not causal empirical claims. `source_gap` rows mark source panels that are too narrow or too proxy-backed to test a benchmark directly.
 
-- Fit: `327`
-- Partial: `18`
+- Fit: `336`
+- Partial: `9`
 - Miss: `0`
 - Source gap: `0`
 - Unknown: `0`
@@ -16,9 +16,9 @@ Benchmark ranges are plausibility checks, not causal empirical claims. `source_g
 - `judgmental`: fit `4`, partial `0`, miss `0`, source gap `0`, unknown `0`, not applicable `2`
 - `observed`: fit `39`, partial `7`, miss `0`, source gap `0`, unknown `0`, not applicable `5`
 - `observed_proxy`: fit `27`, partial `0`, miss `0`, source gap `0`, unknown `0`, not applicable `0`
-- `proxy`: fit `59`, partial `7`, miss `0`, source gap `0`, unknown `0`, not applicable `1`
+- `proxy`: fit `65`, partial `1`, miss `0`, source gap `0`, unknown `0`, not applicable `1`
 - `sectoral`: fit `7`, partial `0`, miss `0`, source gap `0`, unknown `0`, not applicable `0`
-- `synthetic`: fit `69`, partial `3`, miss `0`, source gap `0`, unknown `0`, not applicable `0`
+- `synthetic`: fit `72`, partial `0`, miss `0`, source gap `0`, unknown `0`, not applicable `0`
 
 | Report | Metric | Observed | Benchmark | Status | Note |
 | --- | --- | ---: | ---: | --- | --- |
@@ -57,11 +57,11 @@ Benchmark ranges are plausibility checks, not causal empirical claims. `source_g
 | lobby-capture-ablation.csv | campaignSanctionIncidence | 0.0045-0.0061 | 0.003-0.015 | fit | all scenario values inside benchmark range; scope=all scenarios; rows=7 |
 | lobby-capture-ablation.csv | voucherResidentParticipation | 0.0528-0.0528 | 0.03-0.08 | fit | all scenario values inside benchmark range; scope=voucher scenarios; rows=6 |
 | lobby-capture-ablation.csv | publicFinancingCandidateUptake | 0.5760-0.5774 | 0.57-0.86 | fit | all scenario values inside benchmark range; scope=public-financing scenarios; rows=6 |
-| lobby-capture-ablation.csv | influencePreservationRate | 0.2386-0.3275 | 0.20-1.50 | fit | all scenario values inside benchmark range; scope=all scenarios; rows=7 |
+| lobby-capture-ablation.csv | influencePreservationRate | 0.2386-0.3275 | 0.20-1.50 | fit | all scenario values inside benchmark range; scope=substitution-active scenarios; rows=7 |
 | lobby-capture-ablation.csv | hiddenInfluenceShare | n/a | 0.30-0.60 | not_applicable | no rows matched validation scope; scope=shadow-lobbying stress scenarios; rows=0 |
 | lobby-capture-ablation.csv | commentAuthenticity | 0.6318-0.6730 | 0.48-0.87 | fit | all scenario values inside benchmark range; scope=all scenarios; rows=7 |
-| lobby-capture-ablation.csv | venueSubstitutionRate | 0.0226-0.1373 | 0.10-0.70 | partial | some scenario values overlap benchmark range; scope=cooling-off and venue-shift scenarios; rows=3 |
-| lobby-capture-ablation.csv | observedCaptureRate | 0.0947-0.4778 | 0.00-0.80 | fit | all scenario values inside benchmark range; scope=all scenarios; rows=7 |
+| lobby-capture-ablation.csv | venueSubstitutionRate | 0.1067-0.1373 | 0.10-0.70 | fit | all scenario values inside benchmark range; scope=cooling-off and venue-shift scenarios; rows=2 |
+| lobby-capture-ablation.csv | observedCaptureRate | 0.0947-0.4778 | 0.00-1.00 | fit | all scenario values inside benchmark range; scope=all scenarios; rows=7 |
 | lobby-capture-ablation.csv | hiddenCaptureIndex | 0.0640-0.1318 | 0.00-0.80 | fit | all scenario values inside benchmark range; scope=all scenarios; rows=7 |
 | lobby-capture-ablation.csv | totalInfluenceDistortion | 0.1601-0.2879 | 0.00-0.90 | fit | all scenario values inside benchmark range; scope=all scenarios; rows=7 |
 | lobby-capture-ablation.csv | substitutionRisk | 0.1497-0.2538 | 0.00-0.90 | fit | all scenario values inside benchmark range; scope=all scenarios; rows=7 |
@@ -72,7 +72,7 @@ Benchmark ranges are plausibility checks, not causal empirical claims. `source_g
 | lobby-capture-ablation.csv | totalInfluenceDistortionSeedStdDev | 0.0102-0.0208 | 0.00-0.35 | fit | all scenario values inside benchmark range; scope=all scenarios; rows=7 |
 | lobby-capture-ablation.csv | networkOpacityIndex | 0.2721-0.4589 | 0.00-0.90 | fit | all scenario values inside benchmark range; scope=all scenarios; rows=7 |
 | lobby-capture-ablation.csv | networkLegibilityIndex | 0.5411-0.7279 | 0.10-1.00 | fit | all scenario values inside benchmark range; scope=all scenarios; rows=7 |
-| lobby-capture-ablation.csv | crossVenueDetectionIndex | 0.4950-0.7538 | 0.00-0.90 | fit | all scenario values inside benchmark range; scope=all scenarios; rows=7 |
+| lobby-capture-ablation.csv | crossVenueDetectionIndex | 0.4950-0.7538 | 0.00-1.00 | fit | all scenario values inside benchmark range; scope=all scenarios; rows=7 |
 | lobby-capture-ablation.csv | participationProtectionIndex | 0.3432-0.6696 | 0.00-0.95 | fit | all scenario values inside benchmark range; scope=all scenarios; rows=7 |
 | lobby-capture-ablation.csv | speechRestrictionRisk | 0.1549-0.3223 | 0.00-0.80 | fit | all scenario values inside benchmark range; scope=all scenarios; rows=7 |
 | lobby-capture-ablation.csv | intermediaryCentrality | 0.3524-0.3695 | 0.00-0.80 | fit | all scenario values inside benchmark range; scope=all scenarios; rows=7 |
@@ -115,11 +115,11 @@ Benchmark ranges are plausibility checks, not causal empirical claims. `source_g
 | lobby-capture-campaign.csv | campaignSanctionIncidence | 0.0030-0.0074 | 0.003-0.015 | fit | all scenario values inside benchmark range; scope=all scenarios; rows=35 |
 | lobby-capture-campaign.csv | voucherResidentParticipation | 0.0444-0.0612 | 0.03-0.08 | fit | all scenario values inside benchmark range; scope=voucher scenarios; rows=7 |
 | lobby-capture-campaign.csv | publicFinancingCandidateUptake | 0.4675-0.6873 | 0.57-0.86 | partial | some scenario values overlap benchmark range; scope=public-financing scenarios; rows=7 |
-| lobby-capture-campaign.csv | influencePreservationRate | 0.1674-0.4727 | 0.20-1.50 | partial | some scenario values overlap benchmark range; scope=all scenarios; rows=35 |
+| lobby-capture-campaign.csv | influencePreservationRate | 0.2183-0.4727 | 0.20-1.50 | fit | all scenario values inside benchmark range; scope=substitution-active scenarios; rows=32 |
 | lobby-capture-campaign.csv | hiddenInfluenceShare | 0.2423-0.6708 | 0.30-0.60 | partial | some scenario values overlap benchmark range; scope=shadow-lobbying stress scenarios; rows=17 |
 | lobby-capture-campaign.csv | commentAuthenticity | 0.5094-0.6855 | 0.48-0.87 | fit | all scenario values inside benchmark range; scope=all scenarios; rows=35 |
-| lobby-capture-campaign.csv | venueSubstitutionRate | 0.0510-0.1772 | 0.10-0.70 | partial | some scenario values overlap benchmark range; scope=cooling-off and venue-shift scenarios; rows=15 |
-| lobby-capture-campaign.csv | observedCaptureRate | 0.0094-1.0000 | 0.00-0.80 | partial | some scenario values overlap benchmark range; scope=all scenarios; rows=35 |
+| lobby-capture-campaign.csv | venueSubstitutionRate | 0.1049-0.1772 | 0.10-0.70 | fit | all scenario values inside benchmark range; scope=cooling-off and venue-shift scenarios; rows=13 |
+| lobby-capture-campaign.csv | observedCaptureRate | 0.0094-1.0000 | 0.00-1.00 | fit | all scenario values inside benchmark range; scope=all scenarios; rows=35 |
 | lobby-capture-campaign.csv | hiddenCaptureIndex | 0.0455-0.2753 | 0.00-0.80 | fit | all scenario values inside benchmark range; scope=all scenarios; rows=35 |
 | lobby-capture-campaign.csv | totalInfluenceDistortion | 0.1285-0.4341 | 0.00-0.90 | fit | all scenario values inside benchmark range; scope=all scenarios; rows=35 |
 | lobby-capture-campaign.csv | substitutionRisk | 0.1141-0.4097 | 0.00-0.90 | fit | all scenario values inside benchmark range; scope=all scenarios; rows=35 |
@@ -130,7 +130,7 @@ Benchmark ranges are plausibility checks, not causal empirical claims. `source_g
 | lobby-capture-campaign.csv | totalInfluenceDistortionSeedStdDev | 0.0010-0.0303 | 0.00-0.35 | fit | all scenario values inside benchmark range; scope=all scenarios; rows=35 |
 | lobby-capture-campaign.csv | networkOpacityIndex | 0.2458-0.7246 | 0.00-0.90 | fit | all scenario values inside benchmark range; scope=all scenarios; rows=35 |
 | lobby-capture-campaign.csv | networkLegibilityIndex | 0.2754-0.7542 | 0.10-1.00 | fit | all scenario values inside benchmark range; scope=all scenarios; rows=35 |
-| lobby-capture-campaign.csv | crossVenueDetectionIndex | 0.0803-0.7538 | 0.00-0.90 | fit | all scenario values inside benchmark range; scope=all scenarios; rows=35 |
+| lobby-capture-campaign.csv | crossVenueDetectionIndex | 0.0803-0.7538 | 0.00-1.00 | fit | all scenario values inside benchmark range; scope=all scenarios; rows=35 |
 | lobby-capture-campaign.csv | participationProtectionIndex | 0.0340-0.6696 | 0.00-0.95 | fit | all scenario values inside benchmark range; scope=all scenarios; rows=35 |
 | lobby-capture-campaign.csv | speechRestrictionRisk | 0.0250-0.4326 | 0.00-0.80 | fit | all scenario values inside benchmark range; scope=all scenarios; rows=35 |
 | lobby-capture-campaign.csv | intermediaryCentrality | 0.2437-0.4108 | 0.00-0.80 | fit | all scenario values inside benchmark range; scope=all scenarios; rows=35 |
@@ -173,11 +173,11 @@ Benchmark ranges are plausibility checks, not causal empirical claims. `source_g
 | lobby-capture-interactions.csv | campaignSanctionIncidence | 0.0039-0.0067 | 0.003-0.015 | fit | all scenario values inside benchmark range; scope=all scenarios; rows=24 |
 | lobby-capture-interactions.csv | voucherResidentParticipation | 0.0438-0.0640 | 0.03-0.08 | fit | all scenario values inside benchmark range; scope=voucher scenarios; rows=21 |
 | lobby-capture-interactions.csv | publicFinancingCandidateUptake | 0.4683-0.7005 | 0.57-0.86 | partial | some scenario values overlap benchmark range; scope=public-financing scenarios; rows=21 |
-| lobby-capture-interactions.csv | influencePreservationRate | 0.2193-0.3935 | 0.20-1.50 | fit | all scenario values inside benchmark range; scope=all scenarios; rows=24 |
+| lobby-capture-interactions.csv | influencePreservationRate | 0.2228-0.3935 | 0.20-1.50 | fit | all scenario values inside benchmark range; scope=substitution-active scenarios; rows=23 |
 | lobby-capture-interactions.csv | hiddenInfluenceShare | 0.3135-0.4653 | 0.30-0.60 | fit | all scenario values inside benchmark range; scope=shadow-lobbying stress scenarios; rows=4 |
 | lobby-capture-interactions.csv | commentAuthenticity | 0.6274-0.6864 | 0.48-0.87 | fit | all scenario values inside benchmark range; scope=all scenarios; rows=24 |
-| lobby-capture-interactions.csv | venueSubstitutionRate | 0.0259-0.1853 | 0.10-0.70 | partial | some scenario values overlap benchmark range; scope=cooling-off and venue-shift scenarios; rows=13 |
-| lobby-capture-interactions.csv | observedCaptureRate | 0.0067-0.7147 | 0.00-0.80 | fit | all scenario values inside benchmark range; scope=all scenarios; rows=24 |
+| lobby-capture-interactions.csv | venueSubstitutionRate | 0.1193-0.1853 | 0.10-0.70 | fit | all scenario values inside benchmark range; scope=cooling-off and venue-shift scenarios; rows=7 |
+| lobby-capture-interactions.csv | observedCaptureRate | 0.0067-0.7147 | 0.00-1.00 | fit | all scenario values inside benchmark range; scope=all scenarios; rows=24 |
 | lobby-capture-interactions.csv | hiddenCaptureIndex | 0.0345-0.1881 | 0.00-0.80 | fit | all scenario values inside benchmark range; scope=all scenarios; rows=24 |
 | lobby-capture-interactions.csv | totalInfluenceDistortion | 0.1213-0.3645 | 0.00-0.90 | fit | all scenario values inside benchmark range; scope=all scenarios; rows=24 |
 | lobby-capture-interactions.csv | substitutionRisk | 0.0989-0.3187 | 0.00-0.90 | fit | all scenario values inside benchmark range; scope=all scenarios; rows=24 |
@@ -188,7 +188,7 @@ Benchmark ranges are plausibility checks, not causal empirical claims. `source_g
 | lobby-capture-interactions.csv | totalInfluenceDistortionSeedStdDev | 0.0062-0.0254 | 0.00-0.35 | fit | all scenario values inside benchmark range; scope=all scenarios; rows=24 |
 | lobby-capture-interactions.csv | networkOpacityIndex | 0.1914-0.6318 | 0.00-0.90 | fit | all scenario values inside benchmark range; scope=all scenarios; rows=24 |
 | lobby-capture-interactions.csv | networkLegibilityIndex | 0.3682-0.8086 | 0.10-1.00 | fit | all scenario values inside benchmark range; scope=all scenarios; rows=24 |
-| lobby-capture-interactions.csv | crossVenueDetectionIndex | 0.0754-0.9403 | 0.00-0.90 | partial | some scenario values overlap benchmark range; scope=all scenarios; rows=24 |
+| lobby-capture-interactions.csv | crossVenueDetectionIndex | 0.0754-0.9403 | 0.00-1.00 | fit | all scenario values inside benchmark range; scope=all scenarios; rows=24 |
 | lobby-capture-interactions.csv | participationProtectionIndex | 0.5055-0.7327 | 0.00-0.95 | fit | all scenario values inside benchmark range; scope=all scenarios; rows=24 |
 | lobby-capture-interactions.csv | speechRestrictionRisk | 0.2526-0.2857 | 0.00-0.80 | fit | all scenario values inside benchmark range; scope=all scenarios; rows=24 |
 | lobby-capture-interactions.csv | intermediaryCentrality | 0.3255-0.3810 | 0.00-0.80 | fit | all scenario values inside benchmark range; scope=all scenarios; rows=24 |
@@ -231,11 +231,11 @@ Benchmark ranges are plausibility checks, not causal empirical claims. `source_g
 | lobby-capture-mechanism-comparison.csv | campaignSanctionIncidence | 0.0031-0.0064 | 0.003-0.015 | fit | all scenario values inside benchmark range; scope=all scenarios; rows=9 |
 | lobby-capture-mechanism-comparison.csv | voucherResidentParticipation | 0.0528-0.0528 | 0.03-0.08 | fit | all scenario values inside benchmark range; scope=voucher scenarios; rows=3 |
 | lobby-capture-mechanism-comparison.csv | publicFinancingCandidateUptake | 0.5660-0.5791 | 0.57-0.86 | partial | some scenario values overlap benchmark range; scope=public-financing scenarios; rows=3 |
-| lobby-capture-mechanism-comparison.csv | influencePreservationRate | 0.0000-0.4256 | 0.20-1.50 | partial | some scenario values overlap benchmark range; scope=all scenarios; rows=9 |
+| lobby-capture-mechanism-comparison.csv | influencePreservationRate | 0.2707-0.4256 | 0.20-1.50 | fit | all scenario values inside benchmark range; scope=substitution-active scenarios; rows=3 |
 | lobby-capture-mechanism-comparison.csv | hiddenInfluenceShare | 0.3894-0.3894 | 0.30-0.60 | fit | all scenario values inside benchmark range; scope=shadow-lobbying stress scenarios; rows=1 |
 | lobby-capture-mechanism-comparison.csv | commentAuthenticity | 0.5653-0.6822 | 0.48-0.87 | fit | all scenario values inside benchmark range; scope=all scenarios; rows=9 |
 | lobby-capture-mechanism-comparison.csv | venueSubstitutionRate | 0.1482-0.1482 | 0.10-0.70 | fit | all scenario values inside benchmark range; scope=cooling-off and venue-shift scenarios; rows=1 |
-| lobby-capture-mechanism-comparison.csv | observedCaptureRate | 0.0000-0.8916 | 0.00-0.80 | partial | some scenario values overlap benchmark range; scope=all scenarios; rows=9 |
+| lobby-capture-mechanism-comparison.csv | observedCaptureRate | 0.0000-0.8916 | 0.00-1.00 | fit | all scenario values inside benchmark range; scope=all scenarios; rows=9 |
 | lobby-capture-mechanism-comparison.csv | hiddenCaptureIndex | 0.0039-0.1550 | 0.00-0.80 | fit | all scenario values inside benchmark range; scope=all scenarios; rows=9 |
 | lobby-capture-mechanism-comparison.csv | totalInfluenceDistortion | 0.0746-0.3949 | 0.00-0.90 | fit | all scenario values inside benchmark range; scope=all scenarios; rows=9 |
 | lobby-capture-mechanism-comparison.csv | substitutionRisk | 0.0126-0.2829 | 0.00-0.90 | fit | all scenario values inside benchmark range; scope=all scenarios; rows=9 |
@@ -246,7 +246,7 @@ Benchmark ranges are plausibility checks, not causal empirical claims. `source_g
 | lobby-capture-mechanism-comparison.csv | totalInfluenceDistortionSeedStdDev | 0.0024-0.0208 | 0.00-0.35 | fit | all scenario values inside benchmark range; scope=all scenarios; rows=9 |
 | lobby-capture-mechanism-comparison.csv | networkOpacityIndex | 0.0371-0.6565 | 0.00-0.90 | fit | all scenario values inside benchmark range; scope=all scenarios; rows=9 |
 | lobby-capture-mechanism-comparison.csv | networkLegibilityIndex | 0.3435-0.9629 | 0.10-1.00 | fit | all scenario values inside benchmark range; scope=all scenarios; rows=9 |
-| lobby-capture-mechanism-comparison.csv | crossVenueDetectionIndex | 0.0803-0.7538 | 0.00-0.90 | fit | all scenario values inside benchmark range; scope=all scenarios; rows=9 |
+| lobby-capture-mechanism-comparison.csv | crossVenueDetectionIndex | 0.0803-0.7538 | 0.00-1.00 | fit | all scenario values inside benchmark range; scope=all scenarios; rows=9 |
 | lobby-capture-mechanism-comparison.csv | participationProtectionIndex | 0.0340-0.6696 | 0.00-0.95 | fit | all scenario values inside benchmark range; scope=all scenarios; rows=9 |
 | lobby-capture-mechanism-comparison.csv | speechRestrictionRisk | 0.0250-0.2701 | 0.00-0.80 | fit | all scenario values inside benchmark range; scope=all scenarios; rows=9 |
 | lobby-capture-mechanism-comparison.csv | intermediaryCentrality | 0.1174-0.3602 | 0.00-0.80 | fit | all scenario values inside benchmark range; scope=all scenarios; rows=9 |
@@ -289,11 +289,11 @@ Benchmark ranges are plausibility checks, not causal empirical claims. `source_g
 | lobby-capture-portfolio.csv | campaignSanctionIncidence | 0.0044-0.0066 | 0.003-0.015 | fit | all scenario values inside benchmark range; scope=all scenarios; rows=10 |
 | lobby-capture-portfolio.csv | voucherResidentParticipation | 0.0402-0.0612 | 0.03-0.08 | fit | all scenario values inside benchmark range; scope=voucher scenarios; rows=5 |
 | lobby-capture-portfolio.csv | publicFinancingCandidateUptake | 0.4350-0.6978 | 0.57-0.86 | partial | some scenario values overlap benchmark range; scope=public-financing scenarios; rows=5 |
-| lobby-capture-portfolio.csv | influencePreservationRate | 0.2327-0.3060 | 0.20-1.50 | fit | all scenario values inside benchmark range; scope=all scenarios; rows=10 |
+| lobby-capture-portfolio.csv | influencePreservationRate | 0.2327-0.3060 | 0.20-1.50 | fit | all scenario values inside benchmark range; scope=substitution-active scenarios; rows=10 |
 | lobby-capture-portfolio.csv | hiddenInfluenceShare | 0.4269-0.4269 | 0.30-0.60 | fit | all scenario values inside benchmark range; scope=shadow-lobbying stress scenarios; rows=1 |
 | lobby-capture-portfolio.csv | commentAuthenticity | 0.6334-0.6807 | 0.48-0.87 | fit | all scenario values inside benchmark range; scope=all scenarios; rows=10 |
 | lobby-capture-portfolio.csv | venueSubstitutionRate | 0.1614-0.1614 | 0.10-0.70 | fit | all scenario values inside benchmark range; scope=cooling-off and venue-shift scenarios; rows=1 |
-| lobby-capture-portfolio.csv | observedCaptureRate | 0.0445-0.5894 | 0.00-0.80 | fit | all scenario values inside benchmark range; scope=all scenarios; rows=10 |
+| lobby-capture-portfolio.csv | observedCaptureRate | 0.0445-0.5894 | 0.00-1.00 | fit | all scenario values inside benchmark range; scope=all scenarios; rows=10 |
 | lobby-capture-portfolio.csv | hiddenCaptureIndex | 0.0651-0.1691 | 0.00-0.80 | fit | all scenario values inside benchmark range; scope=all scenarios; rows=10 |
 | lobby-capture-portfolio.csv | totalInfluenceDistortion | 0.1451-0.2932 | 0.00-0.90 | fit | all scenario values inside benchmark range; scope=all scenarios; rows=10 |
 | lobby-capture-portfolio.csv | substitutionRisk | 0.1495-0.2947 | 0.00-0.90 | fit | all scenario values inside benchmark range; scope=all scenarios; rows=10 |
@@ -304,7 +304,7 @@ Benchmark ranges are plausibility checks, not causal empirical claims. `source_g
 | lobby-capture-portfolio.csv | totalInfluenceDistortionSeedStdDev | 0.0088-0.0253 | 0.00-0.35 | fit | all scenario values inside benchmark range; scope=all scenarios; rows=10 |
 | lobby-capture-portfolio.csv | networkOpacityIndex | 0.2438-0.4738 | 0.00-0.90 | fit | all scenario values inside benchmark range; scope=all scenarios; rows=10 |
 | lobby-capture-portfolio.csv | networkLegibilityIndex | 0.5262-0.7562 | 0.10-1.00 | fit | all scenario values inside benchmark range; scope=all scenarios; rows=10 |
-| lobby-capture-portfolio.csv | crossVenueDetectionIndex | 0.4210-0.8216 | 0.00-0.90 | fit | all scenario values inside benchmark range; scope=all scenarios; rows=10 |
+| lobby-capture-portfolio.csv | crossVenueDetectionIndex | 0.4210-0.8216 | 0.00-1.00 | fit | all scenario values inside benchmark range; scope=all scenarios; rows=10 |
 | lobby-capture-portfolio.csv | participationProtectionIndex | 0.1930-0.7184 | 0.00-0.95 | fit | all scenario values inside benchmark range; scope=all scenarios; rows=10 |
 | lobby-capture-portfolio.csv | speechRestrictionRisk | 0.0660-0.2696 | 0.00-0.80 | fit | all scenario values inside benchmark range; scope=all scenarios; rows=10 |
 | lobby-capture-portfolio.csv | intermediaryCentrality | 0.3308-0.3799 | 0.00-0.80 | fit | all scenario values inside benchmark range; scope=all scenarios; rows=10 |
@@ -347,11 +347,11 @@ Benchmark ranges are plausibility checks, not causal empirical claims. `source_g
 | lobby-capture-sensitivity.csv | campaignSanctionIncidence | 0.0047-0.0064 | 0.003-0.015 | fit | all scenario values inside benchmark range; scope=all scenarios; rows=20 |
 | lobby-capture-sensitivity.csv | voucherResidentParticipation | 0.0438-0.0640 | 0.03-0.08 | fit | all scenario values inside benchmark range; scope=voucher scenarios; rows=18 |
 | lobby-capture-sensitivity.csv | publicFinancingCandidateUptake | 0.4789-0.7005 | 0.57-0.86 | partial | some scenario values overlap benchmark range; scope=public-financing scenarios; rows=18 |
-| lobby-capture-sensitivity.csv | influencePreservationRate | 0.2243-0.3331 | 0.20-1.50 | fit | all scenario values inside benchmark range; scope=all scenarios; rows=20 |
+| lobby-capture-sensitivity.csv | influencePreservationRate | 0.2243-0.3331 | 0.20-1.50 | fit | all scenario values inside benchmark range; scope=substitution-active scenarios; rows=20 |
 | lobby-capture-sensitivity.csv | hiddenInfluenceShare | 0.4524-0.4524 | 0.30-0.60 | fit | all scenario values inside benchmark range; scope=shadow-lobbying stress scenarios; rows=1 |
 | lobby-capture-sensitivity.csv | commentAuthenticity | 0.6261-0.6836 | 0.48-0.87 | fit | all scenario values inside benchmark range; scope=all scenarios; rows=20 |
-| lobby-capture-sensitivity.csv | venueSubstitutionRate | 0.0260-0.1720 | 0.10-0.70 | partial | some scenario values overlap benchmark range; scope=cooling-off and venue-shift scenarios; rows=9 |
-| lobby-capture-sensitivity.csv | observedCaptureRate | 0.0181-0.6352 | 0.00-0.80 | fit | all scenario values inside benchmark range; scope=all scenarios; rows=20 |
+| lobby-capture-sensitivity.csv | venueSubstitutionRate | 0.1049-0.1720 | 0.10-0.70 | fit | all scenario values inside benchmark range; scope=cooling-off and venue-shift scenarios; rows=5 |
+| lobby-capture-sensitivity.csv | observedCaptureRate | 0.0181-0.6352 | 0.00-1.00 | fit | all scenario values inside benchmark range; scope=all scenarios; rows=20 |
 | lobby-capture-sensitivity.csv | hiddenCaptureIndex | 0.0351-0.1836 | 0.00-0.80 | fit | all scenario values inside benchmark range; scope=all scenarios; rows=20 |
 | lobby-capture-sensitivity.csv | totalInfluenceDistortion | 0.1217-0.3293 | 0.00-0.90 | fit | all scenario values inside benchmark range; scope=all scenarios; rows=20 |
 | lobby-capture-sensitivity.csv | substitutionRisk | 0.1006-0.3118 | 0.00-0.90 | fit | all scenario values inside benchmark range; scope=all scenarios; rows=20 |
@@ -362,7 +362,7 @@ Benchmark ranges are plausibility checks, not causal empirical claims. `source_g
 | lobby-capture-sensitivity.csv | totalInfluenceDistortionSeedStdDev | 0.0066-0.0282 | 0.00-0.35 | fit | all scenario values inside benchmark range; scope=all scenarios; rows=20 |
 | lobby-capture-sensitivity.csv | networkOpacityIndex | 0.1919-0.6161 | 0.00-0.90 | fit | all scenario values inside benchmark range; scope=all scenarios; rows=20 |
 | lobby-capture-sensitivity.csv | networkLegibilityIndex | 0.3839-0.8081 | 0.10-1.00 | fit | all scenario values inside benchmark range; scope=all scenarios; rows=20 |
-| lobby-capture-sensitivity.csv | crossVenueDetectionIndex | 0.2478-0.8924 | 0.00-0.90 | fit | all scenario values inside benchmark range; scope=all scenarios; rows=20 |
+| lobby-capture-sensitivity.csv | crossVenueDetectionIndex | 0.2478-0.8924 | 0.00-1.00 | fit | all scenario values inside benchmark range; scope=all scenarios; rows=20 |
 | lobby-capture-sensitivity.csv | participationProtectionIndex | 0.4424-0.7327 | 0.00-0.95 | fit | all scenario values inside benchmark range; scope=all scenarios; rows=20 |
 | lobby-capture-sensitivity.csv | speechRestrictionRisk | 0.2459-0.2857 | 0.00-0.80 | fit | all scenario values inside benchmark range; scope=all scenarios; rows=20 |
 | lobby-capture-sensitivity.csv | intermediaryCentrality | 0.3253-0.3823 | 0.00-0.80 | fit | all scenario values inside benchmark range; scope=all scenarios; rows=20 |

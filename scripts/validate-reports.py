@@ -143,6 +143,8 @@ def benchmark_scope(rows: list[dict[str, str]], benchmark: dict[str, str]) -> tu
     metric_name = benchmark.get("metric", "")
     if key == "public_financing_candidate_uptake":
         return filter_rows(rows, lambda row: metric(row, "publicFinancingShare") >= 0.45), "public-financing scenarios"
+    if key == "outside_spending_substitution":
+        return filter_rows(rows, substitution_preservation_scope), "substitution-active scenarios"
     if key == "voucher_participation":
         return filter_rows(rows, lambda row: metric(row, "voucherParticipation") >= 0.45), "voucher scenarios"
     if key == "super_pac_large_donor_dependence":
@@ -210,8 +212,42 @@ def shadow_lobbying_scope(row: dict[str, str]) -> bool:
 
 def cooling_or_venue_scope(row: dict[str, str]) -> bool:
     text = row_text(row)
-    markers = ("cooling", "revolving", "door", "advisory", "venue", "procurement-venue", "hard-budget")
+    markers = (
+        "advisory",
+        "procurement-venue",
+        "hard-budget",
+        "visible-ban",
+        "visible lobbying ban",
+    )
     return any(marker in text for marker in markers) or metric(row, "venueSubstitutionRate") >= 0.10
+
+
+def substitution_preservation_scope(row: dict[str, str]) -> bool:
+    text = row_text(row)
+    if "without substitution" in text or "visible-scalar" in text or "single-channel" in text:
+        return False
+    markers = (
+        "outside",
+        "dark-money",
+        "dark money",
+        "visible-ban",
+        "visible lobbying ban",
+        "intermediary",
+        "advisory",
+        "venue-shift",
+        "venue shift",
+        "hard-budget",
+        "evasion",
+        "substitution",
+        "leakage",
+    )
+    return (
+        any(marker in text for marker in markers)
+        or (
+            metric(row, "substitutionPressure") >= 0.20
+            and metric(row, "hiddenInfluenceShare") >= 0.10
+        )
+    )
 
 
 def comment_deduplication_scope(row: dict[str, str]) -> bool:
