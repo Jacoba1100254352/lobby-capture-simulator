@@ -13,6 +13,7 @@ REPORTS = Path("reports")
 VALIDATION_SUMMARY = REPORTS / "validation-summary.csv"
 CALIBRATION_QUEUE = REPORTS / "calibration-queue.csv"
 CLAIM_POSTURE_AUDIT = REPORTS / "claim-posture-audit.csv"
+CAUSAL_CALIBRATION_TARGETS = REPORTS / "causal-calibration-targets.csv"
 
 
 def main() -> int:
@@ -23,11 +24,12 @@ def main() -> int:
     validation_rows = read_csv(args.reports / VALIDATION_SUMMARY.name)
     calibration_rows = read_csv(args.reports / CALIBRATION_QUEUE.name)
     claim_rows = read_csv(args.reports / CLAIM_POSTURE_AUDIT.name)
-    rows = readiness_rows(validation_rows, calibration_rows, claim_rows)
+    causal_rows = read_csv(args.reports / CAUSAL_CALIBRATION_TARGETS.name)
+    rows = readiness_rows(validation_rows, calibration_rows, claim_rows, causal_rows)
 
     args.reports.mkdir(parents=True, exist_ok=True)
     write_csv(args.reports / "calibration-readiness.csv", rows)
-    write_markdown(args.reports / "calibration-readiness.md", rows, validation_rows, calibration_rows)
+    write_markdown(args.reports / "calibration-readiness.md", rows, validation_rows, calibration_rows, causal_rows)
     print(f"Wrote {args.reports / 'calibration-readiness.csv'}")
     print(f"Wrote {args.reports / 'calibration-readiness.md'}")
     return 0
@@ -44,6 +46,7 @@ def readiness_rows(
         validation_rows: list[dict[str, str]],
         calibration_rows: list[dict[str, str]],
         claim_rows: list[dict[str, str]],
+        causal_rows: list[dict[str, str]],
 ) -> list[dict[str, str]]:
     validation = validation_counts(validation_rows)
     by_priority = Counter(row.get("priority", "") for row in calibration_rows)
@@ -58,6 +61,10 @@ def readiness_rows(
     source_gap_rows = [row for row in validation_rows if row.get("status") == "source_gap"]
     mechanism_posture = claim_status(claim_rows, "Mechanism-model article")
     policy_posture = claim_status(claim_rows, "Calibrated policy-simulation claim")
+    causal_blockers = [
+        row for row in causal_rows
+        if row.get("blocksPolicySimulation", "yes") == "yes"
+    ]
 
     hard_evidence = (
         f"P0={by_priority.get('P0', 0)}; P1={by_priority.get('P1', 0)}; "
@@ -67,7 +74,7 @@ def readiness_rows(
     if hard_rows:
         hard_next = "; ".join(compact_action(row) for row in hard_rows[:4])
     elif policy_posture != "cleared":
-        hard_next = "Add independent causal calibration targets and stronger source panels before using calibrated policy-simulation language."
+        hard_next = "Clear the generated causal-calibration target matrix and add stronger source panels before using calibrated policy-simulation language."
     else:
         hard_next = "No hard calibration actions remain."
 
@@ -95,7 +102,7 @@ def readiness_rows(
         row(
             "calibrated-policy-readiness",
             "blocked" if hard_rows or policy_posture != "cleared" else "cleared",
-            f"claimPosture={policy_posture or 'missing'}; {hard_evidence}",
+            f"claimPosture={policy_posture or 'missing'}; {hard_evidence}; open_causal_targets={len(causal_blockers)}",
             "Calibrated policy-simulation claims require all P0/P1/P2 calibration and source gaps to clear.",
             hard_next,
         ),
@@ -163,9 +170,14 @@ def write_markdown(
         rows: list[dict[str, str]],
         validation_rows: list[dict[str, str]],
         calibration_rows: list[dict[str, str]],
+        causal_rows: list[dict[str, str]],
 ) -> None:
     validation = validation_counts(validation_rows)
     by_priority = Counter(row.get("priority", "") for row in calibration_rows)
+    causal_blockers = [
+        row for row in causal_rows
+        if row.get("blocksPolicySimulation", "yes") == "yes"
+    ]
     lines = [
         "# Calibration Readiness Audit",
         "",
@@ -196,6 +208,7 @@ def write_markdown(
             f"- Calibration P1: `{by_priority.get('P1', 0)}`",
             f"- Calibration P2: `{by_priority.get('P2', 0)}`",
             f"- Calibration P3: `{by_priority.get('P3', 0)}`",
+            f"- Open causal calibration targets: `{len(causal_blockers)}`",
             "",
             "## P3 Work Queue",
             "",

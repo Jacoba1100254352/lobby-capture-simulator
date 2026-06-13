@@ -35,6 +35,7 @@ The simulator now has a lobbying-centered model core with calibration fixtures, 
 - Live source fetches retry transient `429` and `5xx` responses and redact API keys from error URLs.
 - `make source-moments` records direct source-level top-k concentration, traceability, Schedule E outside-spending, non-proxy direct dark-money routing row coverage, direct dark-money visibility, public-financing, procurement bridge, revolving-door, and comment-record moments.
 - `make calibration-queue` classifies validation misses and partial overlaps into actionable work categories, including scenario-family splits where one validation scope mixes baseline, stress, and extreme-stress rows.
+- `make causal-calibration-targets` generates the causal target matrix that must clear before the project can use calibrated policy-simulation language.
 - `make tables` regenerates paper table inputs from report CSV snapshots using `paper/tables.yml`.
 - `make figures` regenerates the paper's numbered SVG/PDF figure assets and LaTeX wrappers.
 - Adaptive institutions now include per-client/per-domain funding memory, regulator queue pressure, watchdog monitoring budget allocation, adaptation speed, and reform-decay pressure.
@@ -87,6 +88,7 @@ Deliverables:
 Deliverables:
 
 - extend procurement evidence beyond the denominator-mapped crosswalk with SAM/FPDS coding reconciliation, protest/exclusion/firewall overlays, and independent calibration targets before any calibrated policy-simulation claim;
+- use `reports/causal-calibration-targets.md` as the stricter policy-claim checklist; source panels that clear mechanism diagnostics still need an external causal design before they clear policy-simulation language;
 - keep the cleared campaign/outside-spending `largeDonorDependence` regression covered by tests, while treating broader hidden-donor identity evidence as a separate source-panel expansion rather than a model-tuning item;
 - keep venue-substitution and hidden-influence partials as scenario-coverage or scenario-family-split work rather than collapsing baseline, stress, and extreme-stress rows into one benchmark;
 - replace synthetic influence-network diagnostics with direct network panels where sources permit;

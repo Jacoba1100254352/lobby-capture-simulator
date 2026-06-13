@@ -2,7 +2,7 @@
 
 This audit checks generated PDFs for sparse float pages, large whitespace gaps, and figure or table pages without enough surrounding readable text. It is a regression guard, not a substitute for final visual inspection.
 
-- Pages checked: `44`
+- Pages checked: `45`
 - Failures: `0`
 
 | PDF | Page | Blocks | Chars | Coverage | Largest gap | Float label | Status | Note |
@@ -42,12 +42,13 @@ This audit checks generated PDFs for sparse float pages, large whitespace gaps, 
 | paper/regulation-governance-wiley.pdf | 13 | 145 | 4753 | 0.939 | 0.043 | no | pass | layout density acceptable |
 | paper/regulation-governance-wiley.pdf | 14 | 75 | 4090 | 0.942 | 0.043 | no | pass | references/declarations page |
 | paper/regulation-governance-wiley.pdf | 15 | 76 | 3869 | 0.942 | 0.234 | no | pass | references/declarations page |
-| paper/supplement.pdf | 1 | 35 | 2143 | 0.838 | 0.089 | no | pass | title/front-matter page |
+| paper/supplement.pdf | 1 | 35 | 2176 | 0.838 | 0.089 | no | pass | title/front-matter page |
 | paper/supplement.pdf | 2 | 61 | 2984 | 0.887 | 0.039 | no | pass | layout density acceptable |
 | paper/supplement.pdf | 3 | 236 | 2505 | 0.891 | 0.087 | yes | pass | layout density acceptable |
 | paper/supplement.pdf | 4 | 82 | 2862 | 0.857 | 0.091 | yes | pass | layout density acceptable |
-| paper/supplement.pdf | 5 | 89 | 2489 | 0.891 | 0.036 | yes | pass | layout density acceptable |
-| paper/supplement.pdf | 6 | 63 | 4190 | 0.891 | 0.039 | no | pass | layout density acceptable |
-| paper/supplement.pdf | 7 | 66 | 3799 | 0.887 | 0.104 | yes | pass | layout density acceptable |
-| paper/supplement.pdf | 8 | 98 | 3432 | 0.891 | 0.036 | yes | pass | references/declarations page |
-| paper/supplement.pdf | 9 | 58 | 2700 | 0.891 | 0.100 | yes | pass | references/declarations page |
+| paper/supplement.pdf | 5 | 86 | 2276 | 0.891 | 0.044 | yes | pass | layout density acceptable |
+| paper/supplement.pdf | 6 | 53 | 3903 | 0.887 | 0.039 | no | pass | layout density acceptable |
+| paper/supplement.pdf | 7 | 79 | 4229 | 0.887 | 0.039 | no | pass | layout density acceptable |
+| paper/supplement.pdf | 8 | 86 | 3309 | 0.887 | 0.042 | yes | pass | layout density acceptable |
+| paper/supplement.pdf | 9 | 68 | 2748 | 0.891 | 0.098 | yes | pass | references/declarations page |
+| paper/supplement.pdf | 10 | 14 | 859 | 0.891 | 0.694 | no | pass | short terminal references/declarations page |

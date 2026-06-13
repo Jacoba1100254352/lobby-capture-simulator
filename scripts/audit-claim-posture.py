@@ -13,6 +13,7 @@ REPORTS = Path("reports")
 SOURCE_PANEL_INVENTORY = REPORTS / "source-panel-inventory.csv"
 CLAIM_BOUNDARY_AUDIT = REPORTS / "claim-boundary-audit.csv"
 CLAIM_SOURCE_DEPENDENCY = REPORTS / "claim-source-dependency.csv"
+CAUSAL_CALIBRATION_TARGETS = REPORTS / "causal-calibration-targets.csv"
 VALIDATION_SUMMARY = REPORTS / "validation-summary.csv"
 CALIBRATION_QUEUE = REPORTS / "calibration-queue.csv"
 LAYOUT_AUDIT = REPORTS / "paper-layout-audit.md"
@@ -29,14 +30,15 @@ def main() -> int:
     panels = read_csv(args.reports / SOURCE_PANEL_INVENTORY.name)
     claim_rows = read_csv(args.reports / CLAIM_BOUNDARY_AUDIT.name)
     dependency_rows = read_csv(args.reports / CLAIM_SOURCE_DEPENDENCY.name)
+    causal_rows = read_csv(args.reports / CAUSAL_CALIBRATION_TARGETS.name)
     validation_rows = read_csv(args.reports / VALIDATION_SUMMARY.name)
     calibration_rows = read_csv(args.reports / CALIBRATION_QUEUE.name)
     layout = read_text(args.reports / LAYOUT_AUDIT.name)
     visual = read_text(args.reports / VISUAL_AUDIT.name)
 
-    rows = posture_rows(panels, claim_rows, dependency_rows, validation_rows, calibration_rows, layout, visual)
+    rows = posture_rows(panels, claim_rows, dependency_rows, causal_rows, validation_rows, calibration_rows, layout, visual)
     write_csv(args.reports / "claim-posture-audit.csv", rows)
-    write_markdown(args.reports / "claim-posture-audit.md", rows, panels, dependency_rows, validation_rows, calibration_rows)
+    write_markdown(args.reports / "claim-posture-audit.md", rows, panels, dependency_rows, causal_rows, validation_rows, calibration_rows)
     print(f"Wrote {args.reports / 'claim-posture-audit.csv'}")
     print(f"Wrote {args.reports / 'claim-posture-audit.md'}")
     return 0
@@ -57,6 +59,7 @@ def posture_rows(
         panels: list[dict[str, str]],
         claim_rows: list[dict[str, str]],
         dependency_rows: list[dict[str, str]],
+        causal_rows: list[dict[str, str]],
         validation_rows: list[dict[str, str]],
         calibration_rows: list[dict[str, str]],
         layout: str,
@@ -85,7 +88,11 @@ def posture_rows(
         (row for row in dependency_rows if row.get("claimKey") == "calibrated-policy-simulation"),
         {},
     )
-    policy_status = "cleared" if calibrated_dependency.get("status") == "cleared" else "not_cleared"
+    causal_blockers = [
+        row for row in causal_rows
+        if row.get("blocksPolicySimulation", "yes") == "yes"
+    ]
+    policy_status = "cleared" if calibrated_dependency.get("status") == "cleared" and not causal_blockers else "not_cleared"
 
     return [
         row(
@@ -116,10 +123,11 @@ def posture_rows(
             (
                 f"{len(p1_actions)} P1 and {len(p2_actions)} P2 calibration/source actions remain; "
                 f"{dependency_counts.get('not_cleared', 0)} claim dependencies not cleared; "
-                f"calibrated-policy dependency={calibrated_dependency.get('status', 'missing')}"
+                f"calibrated-policy dependency={calibrated_dependency.get('status', 'missing')}; "
+                f"open causal targets={len(causal_blockers)}"
             ),
             "The current artifact should not claim calibrated reform effects or representative national hidden-channel magnitudes.",
-            "Add independent causal calibration targets and rerun validation before using calibrated policy-simulation language.",
+            "Clear the generated causal-calibration target matrix and rerun validation before using calibrated policy-simulation language.",
         ),
         row(
             "Reproducibility and layout bundle",
@@ -175,6 +183,7 @@ def write_markdown(
         rows: list[dict[str, str]],
         panels: list[dict[str, str]],
         dependency_rows: list[dict[str, str]],
+        causal_rows: list[dict[str, str]],
         validation_rows: list[dict[str, str]],
         calibration_rows: list[dict[str, str]],
 ) -> None:
@@ -185,6 +194,10 @@ def write_markdown(
         if field(row, "priority", "Priority") in {"P1", "P2"}
     ]
     dependency_counts = claim_dependency_counts(dependency_rows)
+    causal_blockers = [
+        row for row in causal_rows
+        if row.get("blocksPolicySimulation", "yes") == "yes"
+    ]
     lines = [
         "# Claim Posture Audit",
         "",
@@ -237,6 +250,26 @@ def write_markdown(
             lines.append(
                 f"- `{item.get('claimFamily', '')}` ({item.get('status', '')}): {item.get('sourceSupport', '')}"
             )
+    lines.extend(
+        [
+            "",
+            "## Causal Calibration Targets",
+            "",
+            f"- Blocking targets: `{len(causal_blockers)}`",
+        ]
+    )
+    if causal_blockers:
+        for item in causal_blockers[:6]:
+            lines.append(
+                f"- `{item.get('targetKey', '')}` ({item.get('priority', '')}, {item.get('status', '')}): "
+                f"{item.get('nextAction', '')}"
+            )
+        if len(causal_blockers) > 6:
+            lines.append(
+                f"- Additional blocking targets: `{len(causal_blockers) - 6}`; see `reports/causal-calibration-targets.md`."
+            )
+    else:
+        lines.append("- None")
     lines.extend(["", "## P1/P2 Calibration Actions", ""])
     if not p1_p2:
         lines.append("- None")

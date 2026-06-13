@@ -48,6 +48,8 @@ reports/*.md
 !reports/claim-boundary-audit.md
 !reports/claim-source-dependency.csv
 !reports/claim-source-dependency.md
+!reports/causal-calibration-targets.csv
+!reports/causal-calibration-targets.md
 !reports/claim-posture-audit.csv
 !reports/claim-posture-audit.md
 !reports/calibration-queue.csv

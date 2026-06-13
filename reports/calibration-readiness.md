@@ -7,7 +7,7 @@ This audit separates hard blockers for calibrated policy-simulation claims from 
 | Gate | Status | Evidence | Claim boundary | Next action |
 | --- | --- | --- | --- | --- |
 | mechanism-model-readiness | cleared | claimPosture=cleared; fit=327; partial=18; miss=0; unknown=0 | Mechanism-model manuscript claims can proceed when misses and unknowns are zero and claim posture is cleared. | Keep synthetic results framed as mechanism diagnostics under explicit source limits. |
-| calibrated-policy-readiness | blocked | claimPosture=not_cleared; P0=0; P1=0; P2=0; misses=0; unknown=0; source_gaps=0 | Calibrated policy-simulation claims require all P0/P1/P2 calibration and source gaps to clear. | Add independent causal calibration targets and stronger source panels before using calibrated policy-simulation language. |
+| calibrated-policy-readiness | blocked | claimPosture=not_cleared; P0=0; P1=0; P2=0; misses=0; unknown=0; source_gaps=0; open_causal_targets=10 | Calibrated policy-simulation claims require all P0/P1/P2 calibration and source gaps to clear. | Clear the generated causal-calibration target matrix and add stronger source panels before using calibrated policy-simulation language. |
 | soft-validation-scope | nonblocking | P3=18; benchmark-review=12; scenario-coverage=5; scenario-family-split=1 | P3 partials are validation-scope, scenario-family, or benchmark-review work; they do not by themselves clear or block calibrated empirical claims. | Resolve P3 rows by documenting benchmark scope, splitting scenario families, or adding targeted stress scenarios before treating them as calibration evidence. |
 | source-gap-boundary | cleared | source_gaps=0 | Source gaps identify evidence panels that cannot test a benchmark directly. | Do not upgrade bounded source moments into empirical validation without representative source rows. |
 
@@ -22,6 +22,7 @@ This audit separates hard blockers for calibrated policy-simulation claims from 
 - Calibration P1: `0`
 - Calibration P2: `0`
 - Calibration P3: `18`
+- Open causal calibration targets: `10`
 
 ## P3 Work Queue
 

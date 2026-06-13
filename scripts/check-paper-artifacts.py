@@ -52,11 +52,13 @@ CLAIM_BOUNDARY_AUDIT_MD = ROOT / "reports" / "claim-boundary-audit.md"
 CLAIM_BOUNDARY_AUDIT_CSV = ROOT / "reports" / "claim-boundary-audit.csv"
 CLAIM_SOURCE_DEPENDENCY_MD = ROOT / "reports" / "claim-source-dependency.md"
 CLAIM_SOURCE_DEPENDENCY_CSV = ROOT / "reports" / "claim-source-dependency.csv"
+CAUSAL_CALIBRATION_TARGETS_MD = ROOT / "reports" / "causal-calibration-targets.md"
+CAUSAL_CALIBRATION_TARGETS_CSV = ROOT / "reports" / "causal-calibration-targets.csv"
 CLAIM_POSTURE_AUDIT_MD = ROOT / "reports" / "claim-posture-audit.md"
 CLAIM_POSTURE_AUDIT_CSV = ROOT / "reports" / "claim-posture-audit.csv"
 CALIBRATION_READINESS_MD = ROOT / "reports" / "calibration-readiness.md"
 CALIBRATION_READINESS_CSV = ROOT / "reports" / "calibration-readiness.csv"
-RELEASE_TAG = "paper-publication-readiness-2026-06-13-r80"
+RELEASE_TAG = "paper-publication-readiness-2026-06-13-r81"
 CITATION_CFF = ROOT / "CITATION.cff"
 ZENODO_JSON = ROOT / ".zenodo.json"
 FORBIDDEN_LOCAL_ARTIFACTS = [
@@ -145,6 +147,7 @@ EXPECTED_ZIP_MEMBERS = {
     "supporting-information/procurement-refresh-readiness.md",
     "supporting-information/claim-boundary-audit.md",
     "supporting-information/claim-source-dependency.md",
+    "supporting-information/causal-calibration-targets.md",
     "supporting-information/claim-posture-audit.md",
     "supporting-information/validation-summary.md",
     "supporting-information/substitution-audit.md",
@@ -176,6 +179,7 @@ def main() -> int:
     failures.extend(check_procurement_refresh_readiness())
     failures.extend(check_claim_boundary_audit())
     failures.extend(check_claim_source_dependency_audit())
+    failures.extend(check_causal_calibration_targets())
     failures.extend(check_claim_posture_audit())
     failures.extend(check_layout_and_visual_reports())
     failures.extend(check_archive_metadata())
@@ -297,6 +301,7 @@ def submission_inputs() -> list[Path]:
         PROCUREMENT_REFRESH_READINESS_MD,
         ROOT / "reports" / "claim-boundary-audit.md",
         ROOT / "reports" / "claim-source-dependency.md",
+        CAUSAL_CALIBRATION_TARGETS_MD,
         ROOT / "reports" / "claim-posture-audit.md",
         ROOT / "reports" / "validation-summary.md",
         ROOT / "reports" / "substitution-audit.md",
@@ -1220,6 +1225,69 @@ def check_claim_source_dependency_audit() -> list[str]:
     return failures
 
 
+def check_causal_calibration_targets() -> list[str]:
+    failures: list[str] = []
+    missing = [
+        path.relative_to(ROOT)
+        for path in (CAUSAL_CALIBRATION_TARGETS_MD, CAUSAL_CALIBRATION_TARGETS_CSV)
+        if not path.exists()
+    ]
+    if missing:
+        return [f"missing causal calibration target artifact: {path}" for path in missing]
+
+    with CAUSAL_CALIBRATION_TARGETS_CSV.open(newline="", encoding="utf-8") as source:
+        rows = list(csv.DictReader(source))
+    if len(rows) < 8:
+        failures.append("causal calibration target audit should enumerate the main hidden-channel and reform-effect target classes")
+    required_targets = {
+        "hidden-donor-routing-magnitude",
+        "substitution-elasticity",
+        "procurement-modification-causal-capture",
+        "revolving-door-access-effect",
+        "public-financing-countervailing-effect",
+        "comment-authenticity-and-uptake-effect",
+        "enforcement-deterrence-effect",
+        "intermediary-network-effect",
+        "venue-shifting-detection-effect",
+    }
+    present = {row.get("targetKey", "") for row in rows}
+    failures.extend(
+        f"causal calibration target audit missing target: {target}"
+        for target in sorted(required_targets - present)
+    )
+    blockers = [
+        row for row in rows
+        if row.get("blocksPolicySimulation") == "yes"
+    ]
+    if not blockers:
+        failures.append("causal calibration target audit should block calibrated policy-simulation claims until causal targets clear")
+    if any(row.get("policyClaimStatus") == "cleared" for row in rows) and blockers:
+        failures.append("causal calibration target audit cannot report cleared policy status while blocking targets remain")
+    if not any(row.get("priority") == "P1" for row in rows):
+        failures.append("causal calibration target audit should distinguish P1 targets")
+    if not any(row.get("priority") == "P2" for row in rows):
+        failures.append("causal calibration target audit should distinguish P2 targets")
+
+    text = CAUSAL_CALIBRATION_TARGETS_MD.read_text(encoding="utf-8")
+    required_text = [
+        "Causal Calibration Targets",
+        "independent causal evidence",
+        "Blocking calibrated policy-simulation claims",
+        "Target Matrix",
+        "hidden-donor-routing-magnitude",
+        "procurement-modification-causal-capture",
+        "substitution-elasticity",
+    ]
+    for phrase in required_text:
+        if phrase not in text:
+            failures.append(f"causal calibration target markdown missing phrase: {phrase}")
+    if SUPPLEMENT_BODY.exists():
+        supplement = SUPPLEMENT_BODY.read_text(encoding="utf-8")
+        if "causal-calibration target audit" not in supplement:
+            failures.append("supplement does not disclose the causal-calibration target audit")
+    return failures
+
+
 def check_claim_posture_audit() -> list[str]:
     failures: list[str] = []
     if not SOURCE_PANEL_INVENTORY.exists():
@@ -1268,6 +1336,8 @@ def check_claim_posture_audit() -> list[str]:
         "calibrated policy-simulation claim",
         "Weak Source Panels",
         "Claim-Source Dependencies",
+        "Causal Calibration Targets",
+        "open causal targets",
     ]
     for phrase in required_text:
         if phrase.lower() not in posture_md_lower:
@@ -1430,6 +1500,7 @@ def package_byte_checks() -> list[tuple[Path, str]]:
         (PROCUREMENT_REFRESH_READINESS_MD, "supporting-information/procurement-refresh-readiness.md"),
         (ROOT / "reports" / "claim-boundary-audit.md", "supporting-information/claim-boundary-audit.md"),
         (ROOT / "reports" / "claim-source-dependency.md", "supporting-information/claim-source-dependency.md"),
+        (CAUSAL_CALIBRATION_TARGETS_MD, "supporting-information/causal-calibration-targets.md"),
         (ROOT / "reports" / "claim-posture-audit.md", "supporting-information/claim-posture-audit.md"),
         (ROOT / "reports" / "validation-summary.md", "supporting-information/validation-summary.md"),
         (ROOT / "reports" / "substitution-audit.md", "supporting-information/substitution-audit.md"),
