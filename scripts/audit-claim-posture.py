@@ -38,7 +38,7 @@ def main() -> int:
 
     rows = posture_rows(panels, claim_rows, dependency_rows, causal_rows, validation_rows, calibration_rows, layout, visual)
     write_csv(args.reports / "claim-posture-audit.csv", rows)
-    write_markdown(args.reports / "claim-posture-audit.md", rows, panels, dependency_rows, causal_rows, validation_rows, calibration_rows)
+    write_markdown(args.reports / "claim-posture-audit.md", rows, panels, claim_rows, dependency_rows, causal_rows, validation_rows, calibration_rows)
     print(f"Wrote {args.reports / 'claim-posture-audit.csv'}")
     print(f"Wrote {args.reports / 'claim-posture-audit.md'}")
     return 0
@@ -67,6 +67,10 @@ def posture_rows(
 ) -> list[dict[str, str]]:
     counts = validation_counts(validation_rows)
     weak_panels = [row for row in panels if row.get("status") in WEAK_STATUSES]
+    bounded_support_panels = [
+        row for row in claim_rows
+        if row.get("status") == "usable" and row.get("supportLevel") != "direct-bounded"
+    ]
     p1_actions = [row for row in calibration_rows if field(row, "priority", "Priority") == "P1"]
     p2_actions = [row for row in calibration_rows if field(row, "priority", "Priority") == "P2"]
     source_gaps = counts.get("source_gap", 0)
@@ -102,7 +106,8 @@ def posture_rows(
             (
                 f"{counts.get('miss', 0)} validation misses, "
                 f"{counts.get('unknown', 0)} unknown validations, "
-                f"{len(weak_panels)} weak source panels bounded by claim audit, "
+                f"{len(weak_panels)} weak-status source panels, "
+                f"{len(bounded_support_panels)} bounded-support source panels, "
                 f"{dependency_counts.get('not_cleared', 0)} dependency claims not cleared"
             ),
             "The manuscript can present a transparent mechanism model and synthetic stress tests under explicit source limits.",
@@ -112,7 +117,9 @@ def posture_rows(
             "Empirical bridge",
             empirical_status,
             (
-                f"{source_gaps} source-gap validations and {len(weak_panels)} thin, warning, fixture-only, or missing panels"
+                f"{source_gaps} source-gap validations, "
+                f"{len(weak_panels)} thin, warning, fixture-only, or missing panels, "
+                f"{len(bounded_support_panels)} bounded-support source panels"
                 f"; {dependency_counts.get('bounded', 0)} bounded claim dependencies"
             ),
             "The bridge constrains plausible ranges and flags evidence gaps; it does not validate hidden-channel magnitudes.",
@@ -183,6 +190,7 @@ def write_markdown(
         path: Path,
         rows: list[dict[str, str]],
         panels: list[dict[str, str]],
+        claim_rows: list[dict[str, str]],
         dependency_rows: list[dict[str, str]],
         causal_rows: list[dict[str, str]],
         validation_rows: list[dict[str, str]],
@@ -190,6 +198,10 @@ def write_markdown(
 ) -> None:
     counts = validation_counts(validation_rows)
     weak_panels = [row for row in panels if row.get("status") in WEAK_STATUSES]
+    bounded_support_panels = [
+        row for row in claim_rows
+        if row.get("status") == "usable" and row.get("supportLevel") != "direct-bounded"
+    ]
     p1_p2 = [
         row for row in calibration_rows
         if field(row, "priority", "Priority") in {"P1", "P2"}
@@ -235,6 +247,18 @@ def write_markdown(
     for panel in weak_panels:
         lines.append(
             f"- `{panel.get('panel', '')}` ({panel.get('status', '')}): {panel.get('note', '')}"
+        )
+    lines.extend(
+        [
+            "",
+            "## Bounded Support Panels",
+            "",
+            f"- Bounded-support panels: `{len(bounded_support_panels)}`",
+        ]
+    )
+    for panel in bounded_support_panels:
+        lines.append(
+            f"- `{panel.get('panel', '')}` ({panel.get('supportLevel', '')}): {panel.get('claimBoundary', '')}"
         )
     lines.extend(
         [

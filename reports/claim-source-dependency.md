@@ -23,7 +23,7 @@ This audit maps manuscript claim families to the source panels and source moment
 
 ## Dependency Details
 
-| Claim family | Strong dependencies | Weak dependencies | Moment checks |
+| Claim family | Usable/bounded dependencies | Weak dependencies | Moment checks |
 | --- | --- | --- | --- |
 | Lobbying disclosure surface | none | none | ldaRows=121 (ok); lobbyingClientTop3Share=0.8898 (ok) |
 | Visible electoral money | Outside spending | none | fecRows=1268 (ok); outsideSpendingRows=998 (ok) |

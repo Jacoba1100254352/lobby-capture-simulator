@@ -102,21 +102,45 @@ def read_validation_counts(path: Path) -> dict[str, int]:
 def claim_row(panel: dict[str, str]) -> dict[str, str]:
     status = panel.get("status", "missing")
     rule = CLAIM_RULES.get(status, CLAIM_RULES["missing"])
-    support_level = "stronger" if status == "usable" else "limited"
-    if status in {"missing", "fixture-only"}:
-        support_level = "schema-only"
-    if status == "warning":
-        support_level = "warning"
     return {
         "panel": panel.get("panel", ""),
         "mechanism": panel.get("mechanism", ""),
         "evidenceClass": panel.get("evidenceClass", ""),
         "status": status,
-        "supportLevel": support_level,
+        "supportLevel": support_level(panel),
         "claimBoundary": rule["claimBoundary"],
         "forbiddenClaim": rule["forbiddenClaim"],
         "requiredNextEvidence": panel.get("nextAction", ""),
     }
+
+
+def support_level(panel: dict[str, str]) -> str:
+    status = panel.get("status", "missing")
+    if status in {"missing", "fixture-only"}:
+        return "schema-only"
+    if status == "warning":
+        return "warning"
+    if status == "thin":
+        return "thin"
+    if status != "usable":
+        return "limited"
+
+    evidence = panel.get("evidenceClass", "").lower()
+    if "proxy/thin" in evidence:
+        return "proxy-thin"
+    if "direct/proxy" in evidence:
+        return "direct-proxy-bounded"
+    if "denominator-mapped" in evidence:
+        return "denominator-bounded"
+    if "proxy" in evidence:
+        return "proxy-bounded"
+    if "program" in evidence:
+        return "program-bounded"
+    if "when present" in evidence:
+        return "conditional-direct"
+    if "direct" in evidence:
+        return "direct-bounded"
+    return "source-bounded"
 
 
 def write_csv(path: Path, rows: list[dict[str, str]]) -> None:
@@ -138,10 +162,14 @@ def write_csv(path: Path, rows: list[dict[str, str]]) -> None:
 
 def write_markdown(path: Path, rows: list[dict[str, str]], validation_counts: dict[str, int]) -> None:
     weak_rows = [row for row in rows if row["status"] in WEAK_STATUSES]
+    bounded_rows = [
+        row for row in rows
+        if row["status"] == "usable" and row["supportLevel"] != "direct-bounded"
+    ]
     lines = [
         "# Claim Boundary Audit",
         "",
-        "This audit maps each empirical source panel to the strongest manuscript claim it can support. It is generated from `reports/source-panel-inventory.csv`, so source-coverage changes update the claim ledger before paper artifacts are rebuilt.",
+        "This audit maps each empirical source panel to the manuscript claim boundary it can support. It is generated from `reports/source-panel-inventory.csv`, so source-coverage changes update the claim ledger before paper artifacts are rebuilt.",
         "",
         "## Validation Status Summary",
         "",
@@ -172,6 +200,16 @@ def write_markdown(path: Path, rows: list[dict[str, str]], validation_counts: di
     for row in weak_rows:
         lines.append(
             f"- `{row['panel']}` ({row['status']}): {row['claimBoundary']}"
+        )
+    lines.extend([
+        "",
+        "## Bounded-Evidence Gate",
+        "",
+        f"- Usable panels with proxy, denominator, program, or mixed evidence limits: `{len(bounded_rows)}`",
+    ])
+    for row in bounded_rows:
+        lines.append(
+            f"- `{row['panel']}` ({row['supportLevel']}): {row['claimBoundary']}"
         )
     lines.append("")
     path.write_text("\n".join(lines), encoding="utf-8")

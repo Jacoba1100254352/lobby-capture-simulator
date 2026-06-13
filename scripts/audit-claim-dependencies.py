@@ -196,7 +196,7 @@ def claim_row(
     if max_status == "bounded" and status == "cleared":
         status = "bounded"
 
-    strong_dependencies = [row.get("panel", "") for row in panel_rows if row.get("status") == "usable"]
+    usable_dependencies = [row.get("panel", "") for row in panel_rows if row.get("status") == "usable"]
     weak_dependencies = [
         f"{row.get('panel', '')} ({row.get('status', 'missing')})"
         for row in weak
@@ -205,7 +205,7 @@ def claim_row(
         f"{item['metric']}<{item['minimum']:.4g}"
         for item in failed_moments
     ]
-    source_support = support_sentence(status, strong_dependencies, weak_dependencies, missing_dependencies)
+    source_support = support_sentence(status, usable_dependencies, weak_dependencies, missing_dependencies)
     if status == "bounded" and claim.get("boundedSupport"):
         source_support = str(claim["boundedSupport"])
     return {
@@ -213,7 +213,7 @@ def claim_row(
         "claimFamily": str(claim["family"]),
         "status": status,
         "sourceSupport": source_support,
-        "strongDependencies": "; ".join(strong_dependencies) if strong_dependencies else "none",
+        "usableDependencies": "; ".join(usable_dependencies) if usable_dependencies else "none",
         "weakDependencies": "; ".join(weak_dependencies) if weak_dependencies else "none",
         "momentChecks": "; ".join(format_moment(item) for item in moment_results) if moment_results else "none",
         "permittedUse": str(claim["permitted"]),
@@ -272,7 +272,7 @@ def write_csv(path: Path, rows: list[dict[str, str]]) -> None:
         "claimFamily",
         "status",
         "sourceSupport",
-        "strongDependencies",
+        "usableDependencies",
         "weakDependencies",
         "momentChecks",
         "permittedUse",
@@ -311,12 +311,12 @@ def write_markdown(path: Path, rows: list[dict[str, str]]) -> None:
         "",
         "## Dependency Details",
         "",
-        "| Claim family | Strong dependencies | Weak dependencies | Moment checks |",
+        "| Claim family | Usable/bounded dependencies | Weak dependencies | Moment checks |",
         "| --- | --- | --- | --- |",
     ])
     for row in rows:
         lines.append(
-            "| {claimFamily} | {strongDependencies} | {weakDependencies} | {momentChecks} |".format(
+            "| {claimFamily} | {usableDependencies} | {weakDependencies} | {momentChecks} |".format(
                 **{key: markdown_cell(value) for key, value in row.items()}
             )
         )

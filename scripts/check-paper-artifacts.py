@@ -58,7 +58,7 @@ CLAIM_POSTURE_AUDIT_MD = ROOT / "reports" / "claim-posture-audit.md"
 CLAIM_POSTURE_AUDIT_CSV = ROOT / "reports" / "claim-posture-audit.csv"
 CALIBRATION_READINESS_MD = ROOT / "reports" / "calibration-readiness.md"
 CALIBRATION_READINESS_CSV = ROOT / "reports" / "calibration-readiness.csv"
-RELEASE_TAG = "paper-publication-readiness-2026-06-13-r86"
+RELEASE_TAG = "paper-publication-readiness-2026-06-13-r87"
 CITATION_CFF = ROOT / "CITATION.cff"
 ZENODO_JSON = ROOT / ".zenodo.json"
 FORBIDDEN_LOCAL_ARTIFACTS = [
@@ -1114,11 +1114,20 @@ def check_claim_boundary_audit() -> list[str]:
                 f"claim-boundary audit status mismatch for {panel_name}: "
                 f"{claim.get('status')} != {status}"
             )
+        expected_support = expected_claim_support_level(panel)
+        actual_support = claim.get("supportLevel", "")
+        if actual_support == "stronger":
+            failures.append(f"claim-boundary audit overstates support level as stronger: {panel_name}")
+        if actual_support != expected_support:
+            failures.append(
+                f"claim-boundary audit support-level mismatch for {panel_name}: "
+                f"{actual_support} != {expected_support}"
+            )
         if status in weak_statuses:
             if panel_name not in audit_md:
                 failures.append(f"claim-boundary audit markdown omits weak panel: {panel_name}")
-            if claim.get("supportLevel") == "stronger":
-                failures.append(f"weak panel has stronger support level: {panel_name}")
+    if "Bounded-Evidence Gate" not in audit_md:
+        failures.append("claim-boundary audit markdown omits bounded-evidence gate")
 
     if any(panel.get("status") in weak_statuses for panel in panels):
         required_phrases = [
@@ -1157,6 +1166,35 @@ def check_claim_boundary_audit() -> list[str]:
                     f"{path.relative_to(ROOT)} contains source-coverage overclaim: {pattern}"
                 )
     return failures
+
+
+def expected_claim_support_level(panel: dict[str, str]) -> str:
+    status = panel.get("status", "missing")
+    if status in {"missing", "fixture-only"}:
+        return "schema-only"
+    if status == "warning":
+        return "warning"
+    if status == "thin":
+        return "thin"
+    if status != "usable":
+        return "limited"
+
+    evidence = panel.get("evidenceClass", "").lower()
+    if "proxy/thin" in evidence:
+        return "proxy-thin"
+    if "direct/proxy" in evidence:
+        return "direct-proxy-bounded"
+    if "denominator-mapped" in evidence:
+        return "denominator-bounded"
+    if "proxy" in evidence:
+        return "proxy-bounded"
+    if "program" in evidence:
+        return "program-bounded"
+    if "when present" in evidence:
+        return "conditional-direct"
+    if "direct" in evidence:
+        return "direct-bounded"
+    return "source-bounded"
 
 
 def check_claim_source_dependency_audit() -> list[str]:
