@@ -7,24 +7,24 @@
 \setlength{\tabcolsep}{1pt}
 \begin{tabular*}{\textwidth}{@{\extracolsep{\fill}}llllll@{}}
 \toprule
-Panel & Mechanism & Evidence & Support & Scaffold & Status \\
+Panel & Mechanism & Evidence & Support & Scaffold & Claim support \\
 \midrule
-Direct DM & Opaque donor routing & direct gap & 0 direct rows & yes & usable \\
-Outside spending & Independent expenditures & direct & direct rows & no & usable \\
-Electoral comms. & Electioneering & direct & direct rows & no & usable \\
-Public fin. & Public financing & direct rows & NYC+Seattle rows & yes & usable \\
-Intermediaries & Intermediaries & proxy & proxy rows & yes & usable \\
-IRS 527 orgs. & 527 receipts/disbursements & direct 527 filings & bounded rows & yes & usable \\
-Rev. door & Revolving door & proxy/thin & LDA covered-position rows & no & usable \\
-Proc. IDs & Procurement matching & direct IDs & ID coverage & yes & usable \\
-Proc. conc. & Multi-agency conc. & denominator-mapped public bulk panel & bounded panel & no & usable \\
-Proc. actions & Action denominator & direct rows & action rows & yes & usable \\
-Proc. mods & Post-award pressure & denominator-mapped observed proxy & high mod share & yes & usable \\
+Direct DM & Opaque donor routing & direct gap & Schedule I routing & yes & direct/proxy bounded \\
+Outside spending & Independent expenditures & direct & direct rows & no & direct bounded \\
+Electoral comms. & Electioneering & direct & direct rows & no & direct bounded \\
+Public fin. & Public financing & direct rows & NYC+Seattle rows & yes & program bounded \\
+Intermediaries & Intermediaries & proxy & proxy rows & yes & proxy bounded \\
+IRS 527 orgs. & 527 receipts/disbursements & direct 527 filings & bounded rows & yes & direct bounded \\
+Rev. door & Revolving door & proxy/thin & LDA covered rows & no & proxy thin \\
+Proc. IDs & Procurement matching & direct IDs & ID coverage & yes & direct bounded \\
+Proc. conc. & Multi-agency conc. & denom. panel & bounded panel & no & denom. bounded \\
+Proc. actions & Action denominator & direct rows & action rows & yes & conditional direct \\
+Proc. mods & Post-award pressure & denom. proxy & modification proxy & yes & denom. bounded \\
 \bottomrule
 \end{tabular*}
 \par\smallskip
 \captionsetup{hypcap=false}
-\captionof{table}{Source-panel coverage for the 2024 EPA/ENV validation snapshot. Snapshot support is categorical in the main article; numeric source moments remain in the source-panel inventory report. Schema scaffold indicates whether a mechanism bridge exists outside representative source coverage. Thin, warning, fixture-only, or missing rows are validation gaps.}
+\captionof{table}{Source-panel coverage for the 2024 EPA/ENV validation snapshot. Snapshot support is categorical in the main article; numeric source moments remain in the source-panel inventory report. Schema scaffold indicates whether a mechanism bridge exists outside representative source coverage. Claim support uses the generated claim-boundary support labels, so usable panels can still be direct-bounded, proxy-bounded, denominator-bounded, conditional, or otherwise source-limited.}
 \label{tab:validation-gaps}
 \end{minipage}
 \end{center}

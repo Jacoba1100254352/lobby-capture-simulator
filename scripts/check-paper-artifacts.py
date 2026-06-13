@@ -50,6 +50,7 @@ LAYOUT_AUDIT = ROOT / "reports" / "paper-layout-audit.md"
 MANUAL_VISUAL_AUDIT = ROOT / "reports" / "manual-visual-audit.md"
 CLAIM_BOUNDARY_AUDIT_MD = ROOT / "reports" / "claim-boundary-audit.md"
 CLAIM_BOUNDARY_AUDIT_CSV = ROOT / "reports" / "claim-boundary-audit.csv"
+VALIDATION_GAP_TABLE = PAPER / "tables" / "validation_gap_snapshot.tex"
 CLAIM_SOURCE_DEPENDENCY_MD = ROOT / "reports" / "claim-source-dependency.md"
 CLAIM_SOURCE_DEPENDENCY_CSV = ROOT / "reports" / "claim-source-dependency.csv"
 CAUSAL_CALIBRATION_TARGETS_MD = ROOT / "reports" / "causal-calibration-targets.md"
@@ -58,7 +59,7 @@ CLAIM_POSTURE_AUDIT_MD = ROOT / "reports" / "claim-posture-audit.md"
 CLAIM_POSTURE_AUDIT_CSV = ROOT / "reports" / "claim-posture-audit.csv"
 CALIBRATION_READINESS_MD = ROOT / "reports" / "calibration-readiness.md"
 CALIBRATION_READINESS_CSV = ROOT / "reports" / "calibration-readiness.csv"
-RELEASE_TAG = "paper-publication-readiness-2026-06-13-r87"
+RELEASE_TAG = "paper-publication-readiness-2026-06-13-r88"
 CITATION_CFF = ROOT / "CITATION.cff"
 ZENODO_JSON = ROOT / ".zenodo.json"
 FORBIDDEN_LOCAL_ARTIFACTS = [
@@ -1128,6 +1129,26 @@ def check_claim_boundary_audit() -> list[str]:
                 failures.append(f"claim-boundary audit markdown omits weak panel: {panel_name}")
     if "Bounded-Evidence Gate" not in audit_md:
         failures.append("claim-boundary audit markdown omits bounded-evidence gate")
+    if VALIDATION_GAP_TABLE.exists():
+        table_text = VALIDATION_GAP_TABLE.read_text(encoding="utf-8")
+        required_table_phrases = [
+            "Claim support",
+            "direct/proxy bounded",
+            "proxy bounded",
+            "denom. bounded",
+            "conditional direct",
+        ]
+        for phrase in required_table_phrases:
+            if phrase not in table_text:
+                failures.append(f"source-panel table missing claim-support phrase: {phrase}")
+        stale_table_phrases = [
+            "0 direct rows",
+            "high mod share",
+            "Scaffold & Status",
+        ]
+        for phrase in stale_table_phrases:
+            if phrase in table_text:
+                failures.append(f"source-panel table contains stale source-support wording: {phrase}")
 
     if any(panel.get("status") in weak_statuses for panel in panels):
         required_phrases = [

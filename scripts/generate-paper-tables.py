@@ -26,6 +26,7 @@ def main() -> int:
     for table_config in config["tables"]:
         source_path = args.reports / table_config["source"]
         rows = read_report(source_path)
+        rows = join_reports(rows, table_config, args.reports)
         selected, baseline = select_rows(rows, table_config)
         content = render_configured_table(table_config, selected, baseline, source_path, args.config)
         write(args.output / table_config["output"], content)
@@ -343,6 +344,38 @@ def read_config(path: Path) -> dict[str, object]:
 def read_report(path: Path) -> list[dict[str, str]]:
     with path.open(newline="", encoding="utf-8") as source:
         return list(csv.DictReader(source))
+
+
+def join_reports(
+        rows: list[dict[str, str]],
+        table_config: dict[str, object],
+        reports_dir: Path,
+) -> list[dict[str, str]]:
+    joined = [dict(row) for row in rows]
+    for join_config in table_config.get("joinSources", []):
+        join_path = reports_dir / str(join_config["source"])
+        key = str(join_config["key"])
+        prefix = str(join_config.get("prefix", "join"))
+        joined_by_key = {
+            row.get(key, ""): row
+            for row in read_report(join_path)
+            if row.get(key, "")
+        }
+        for row in joined:
+            join_row = joined_by_key.get(row.get(key, ""))
+            if not join_row:
+                continue
+            for field, value in join_row.items():
+                if field == key:
+                    continue
+                row[prefixed_field(prefix, field)] = value
+    return joined
+
+
+def prefixed_field(prefix: str, field: str) -> str:
+    if not prefix:
+        return field
+    return f"{prefix}{field[:1].upper()}{field[1:]}"
 
 
 def f4(value: str) -> str:

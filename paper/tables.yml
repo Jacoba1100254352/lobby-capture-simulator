@@ -685,8 +685,15 @@
     {
       "output": "validation_gap_snapshot.tex",
       "source": "source-panel-inventory.csv",
+      "joinSources": [
+        {
+          "source": "claim-boundary-audit.csv",
+          "key": "panel",
+          "prefix": "claim"
+        }
+      ],
       "label": "tab:validation-gaps",
-      "caption": "Source-panel coverage for the 2024 EPA/ENV validation snapshot. Snapshot support is categorical in the main article; numeric source moments remain in the source-panel inventory report. Schema scaffold indicates whether a mechanism bridge exists outside representative source coverage. Thin, warning, fixture-only, or missing rows are validation gaps.",
+      "caption": "Source-panel coverage for the 2024 EPA/ENV validation snapshot. Snapshot support is categorical in the main article; numeric source moments remain in the source-panel inventory report. Schema scaffold indicates whether a mechanism bridge exists outside representative source coverage. Claim support uses the generated claim-boundary support labels, so usable panels can still be direct-bounded, proxy-bounded, denominator-bounded, conditional, or otherwise source-limited.",
       "size": "scriptsize",
       "environment": "inline-table",
       "width": "\\textwidth",
@@ -746,6 +753,8 @@
             "direct identifier coverage": "direct IDs",
             "direct bounded action/top-award panel": "bounded panel",
             "direct bounded SAM/USAspending action or top-award panel": "bounded panel",
+            "denominator-mapped public bulk panel": "denom. panel",
+            "denominator-mapped observed proxy": "denom. proxy",
             "direct top-award bridge": "top-award bridge",
             "direct action rows when present": "direct rows",
             "direct primary SAM/USAspending action rows when present": "direct rows"
@@ -757,17 +766,17 @@
           "align": "l",
           "format": "label",
           "labels": {
-            "Direct dark money": "0 direct rows",
+            "Direct dark money": "Schedule I routing",
             "Outside spending": "direct rows",
             "Electoral communications": "direct rows",
             "Public financing": "NYC+Seattle rows",
             "Intermediaries": "proxy rows",
             "IRS 527 political organizations": "bounded rows",
-            "Revolving door": "LDA covered-position rows",
+            "Revolving door": "LDA covered rows",
             "Procurement identifiers": "ID coverage",
             "Procurement concentration panel": "bounded panel",
             "Procurement action history": "action rows",
-            "Procurement modification risk": "high mod share"
+            "Procurement modification risk": "modification proxy"
           }
         },
         {
@@ -781,12 +790,19 @@
           }
         },
         {
-          "header": "Status",
-          "source": "status",
+          "header": "Claim support",
+          "source": "claimSupportLevel",
           "align": "l",
           "format": "label",
           "labels": {
-            "usable": "usable",
+            "direct-proxy-bounded": "direct/proxy bounded",
+            "direct-bounded": "direct bounded",
+            "program-bounded": "program bounded",
+            "proxy-bounded": "proxy bounded",
+            "proxy-thin": "proxy thin",
+            "denominator-bounded": "denom. bounded",
+            "conditional-direct": "conditional direct",
+            "source-bounded": "source bounded",
             "thin": "thin",
             "warning": "warning",
             "fixture-only": "fixture-only",
