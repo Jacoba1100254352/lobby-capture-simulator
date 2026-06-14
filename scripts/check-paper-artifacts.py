@@ -70,7 +70,8 @@ SUBMISSION_READINESS_MD = ROOT / "reports" / "submission-readiness.md"
 SUBMISSION_READINESS_CSV = ROOT / "reports" / "submission-readiness.csv"
 LATEX_LOG_AUDIT_MD = ROOT / "reports" / "latex-log-audit.md"
 LATEX_LOG_AUDIT_CSV = ROOT / "reports" / "latex-log-audit.csv"
-RELEASE_TAG = "paper-publication-readiness-2026-06-13-r98"
+FINAL_HUMAN_READTHROUGH = ROOT / "reports" / "final-human-readthrough.md"
+RELEASE_TAG = "paper-publication-readiness-2026-06-13-r99"
 CITATION_CFF = ROOT / "CITATION.cff"
 ZENODO_JSON = ROOT / ".zenodo.json"
 FORBIDDEN_LOCAL_ARTIFACTS = [
@@ -171,6 +172,7 @@ EXPECTED_ZIP_MEMBERS = {
     "supporting-information/calibration-readiness.md",
     "supporting-information/paper-layout-audit.md",
     "supporting-information/manual-visual-audit.md",
+    "supporting-information/final-human-readthrough.md",
     "supporting-information/CITATION.cff",
     "supporting-information/zenodo.json",
 }
@@ -197,6 +199,7 @@ def main() -> int:
     failures.extend(check_causal_calibration_targets())
     failures.extend(check_claim_posture_audit())
     failures.extend(check_policy_claim_language_audit())
+    failures.extend(check_final_human_readthrough())
     failures.extend(check_submission_readiness_audit())
     failures.extend(check_latex_log_audit())
     failures.extend(check_layout_and_visual_reports())
@@ -1627,6 +1630,54 @@ def check_submission_readiness_audit() -> list[str]:
     return failures
 
 
+def check_final_human_readthrough() -> list[str]:
+    failures: list[str] = []
+    if not FINAL_HUMAN_READTHROUGH.exists():
+        return [f"missing final human read-through artifact: {FINAL_HUMAN_READTHROUGH.relative_to(ROOT)}"]
+    text = FINAL_HUMAN_READTHROUGH.read_text(encoding="utf-8")
+    fields = {
+        "status": field_value(text, "status"),
+        "signed-off-by": field_value(text, "signed-off-by"),
+        "signed-off-date": field_value(text, "signed-off-date"),
+        "reviewed-release": field_value(text, "reviewed-release"),
+        "reviewed-commit": field_value(text, "reviewed-commit"),
+        "doi-archive": field_value(text, "doi-archive"),
+        "venue-target": field_value(text, "venue-target"),
+    }
+    for field_name, value in fields.items():
+        if field_name in {"signed-off-by", "signed-off-date", "reviewed-commit", "doi-archive"}:
+            continue
+        if not value:
+            failures.append(f"final human read-through missing {field_name}")
+    status = fields["status"].lower()
+    if status not in {"pending", "complete"}:
+        failures.append(f"final human read-through has unsupported status: {fields['status']}")
+    if fields["reviewed-release"] != RELEASE_TAG:
+        failures.append(
+            "final human read-through reviewed-release does not match current release tag: "
+            f"{fields['reviewed-release']} != {RELEASE_TAG}"
+        )
+    if status == "complete":
+        for field_name in ("signed-off-by", "signed-off-date", "reviewed-commit"):
+            if not fields[field_name]:
+                failures.append(f"completed final human read-through missing {field_name}")
+    required_phrases = [
+        "Scholarly Read-Through Checklist",
+        "Data and Code Availability",
+        "AI Use Disclosure",
+        "make paper-artifacts-check",
+    ]
+    for phrase in required_phrases:
+        if phrase not in text:
+            failures.append(f"final human read-through missing checklist phrase: {phrase}")
+    return failures
+
+
+def field_value(text: str, field_name: str) -> str:
+    match = re.search(rf"^\s*{re.escape(field_name)}\s*:\s*(.*?)\s*$", text, re.IGNORECASE | re.MULTILINE)
+    return match.group(1).strip() if match else ""
+
+
 def check_latex_log_audit() -> list[str]:
     failures: list[str] = []
     missing = [
@@ -1829,6 +1880,7 @@ def package_byte_checks() -> list[tuple[Path, str]]:
         (LATEX_LOG_AUDIT_MD, "supporting-information/latex-log-audit.md"),
         (ROOT / "reports" / "paper-layout-audit.md", "supporting-information/paper-layout-audit.md"),
         (ROOT / "reports" / "manual-visual-audit.md", "supporting-information/manual-visual-audit.md"),
+        (FINAL_HUMAN_READTHROUGH, "supporting-information/final-human-readthrough.md"),
         (CITATION_CFF, "supporting-information/CITATION.cff"),
         (ZENODO_JSON, "supporting-information/zenodo.json"),
     ]

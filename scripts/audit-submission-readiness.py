@@ -15,6 +15,7 @@ ZENODO_JSON = ROOT / ".zenodo.json"
 SUBMISSION_DECLARATIONS = ROOT / "paper" / "sections" / "submission-declarations.tex"
 FINAL_HUMAN_READTHROUGH = REPORTS / "final-human-readthrough.md"
 DOI_PATTERN = re.compile(r"\b10\.\d{4,9}/[-._;()/:A-Za-z0-9]+\b")
+VERSION_PATTERN = re.compile(r"^version:\s*[\"']?([^\"'\n]+)[\"']?\s*$", re.MULTILINE)
 
 
 def main() -> int:
@@ -170,7 +171,8 @@ def overall_row(rows: list[dict[str, str]], open_causal_targets: int) -> dict[st
 def final_journal_submission_gate() -> dict[str, str]:
     archive_doi = find_archive_doi()
     release_metadata_present = release_metadata_present_in_archival_files()
-    human_signoff = final_human_readthrough_complete()
+    readthrough = final_human_readthrough_state()
+    human_signoff = readthrough["complete"]
     status = "ready" if archive_doi and human_signoff else "manual_required"
     missing_actions: list[str] = []
     if not archive_doi:
@@ -186,7 +188,7 @@ def final_journal_submission_gate() -> dict[str, str]:
         (
             f"release metadata={'present' if release_metadata_present else 'missing'}; "
             f"DOI archive={'present: ' + archive_doi if archive_doi else 'not detected'}; "
-            f"human scholarly read-through={'complete' if human_signoff else 'not signed off'}"
+            f"human scholarly read-through={readthrough['evidence']}"
         ),
         (
             "Final journal submission requires archive and human editorial signoff; "
@@ -212,11 +214,44 @@ def release_metadata_present_in_archival_files() -> bool:
     )
 
 
-def final_human_readthrough_complete() -> bool:
+def final_human_readthrough_state() -> dict[str, str | bool]:
     text = read_text(FINAL_HUMAN_READTHROUGH)
-    status_complete = re.search(r"^\s*status\s*:\s*complete\s*$", text, re.IGNORECASE | re.MULTILINE)
-    signed_off_by = re.search(r"^\s*signed-off-by\s*:\s*\S.+$", text, re.IGNORECASE | re.MULTILINE)
-    return bool(status_complete and signed_off_by)
+    current_release = current_release_tag()
+    if not text:
+        return {
+            "complete": False,
+            "evidence": "not signed off; file missing",
+        }
+    status = field_value(text, "status").lower()
+    signed_off_by = field_value(text, "signed-off-by")
+    reviewed_release = field_value(text, "reviewed-release")
+    if status == "complete" and signed_off_by and reviewed_release == current_release:
+        return {
+            "complete": True,
+            "evidence": f"complete for {reviewed_release}",
+        }
+    details = [
+        f"status={status or 'missing'}",
+        f"reviewed-release={reviewed_release or 'missing'}",
+    ]
+    if reviewed_release and reviewed_release != current_release:
+        details.append(f"expected-release={current_release or 'missing'}")
+    if status == "complete" and not signed_off_by:
+        details.append("signer=missing")
+    return {
+        "complete": False,
+        "evidence": f"not signed off ({'; '.join(details)})",
+    }
+
+
+def field_value(text: str, field_name: str) -> str:
+    match = re.search(rf"^\s*{re.escape(field_name)}\s*:\s*(.*?)\s*$", text, re.IGNORECASE | re.MULTILINE)
+    return match.group(1).strip() if match else ""
+
+
+def current_release_tag() -> str:
+    match = VERSION_PATTERN.search(read_text(CITATION_CFF))
+    return match.group(1).strip() if match else ""
 
 
 def keyed_rows(path: Path, key: str) -> dict[str, dict[str, str]]:

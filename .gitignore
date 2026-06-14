@@ -60,6 +60,7 @@ reports/*.md
 !reports/policy-claim-language-audit.md
 !reports/paper-layout-audit.md
 !reports/manual-visual-audit.md
+!reports/final-human-readthrough.md
 paper/*.aux
 paper/*.bbl
 paper/*.blg
