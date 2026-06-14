@@ -1,6 +1,6 @@
 \section{Purpose of the Supporting Information}
 
-This supplement records implementation details that should not carry the main article's narrative burden. It makes the model schedule, scenario catalog, validation artifacts, source-panel boundaries, source-capability status, dark-money bridge limits, intermediary bridge limits, revolving-door bridge limits, procurement-denominator limits, procurement-modification composition limits, procurement-benchmark crosswalk, causal-calibration target audit, and procurement-refresh readiness easy to inspect.
+This supplement records implementation details that should not carry the main article's narrative burden. It makes the model schedule, scenario catalog, validation artifacts, source-panel boundaries, source-capability status, dark-money bridge limits, intermediary bridge limits, revolving-door bridge limits, procurement-denominator limits, procurement-modification composition limits, procurement-benchmark crosswalk, causal-calibration target audit, first-wave causal protocols, and procurement-refresh readiness easy to inspect.
 
 \section{Model Schedule and State}
 
@@ -103,6 +103,7 @@ The reproducible report pipeline writes:
   \item procurement-benchmark crosswalk remapping top-contractor concentration and ex-post modification ranges to the observed USAspending denominators;
   \item procurement-refresh readiness report documenting SAM/FPDS acquisition modes, quota handling, USAspending bulk-transaction strata fallback behavior, and the remaining calibrated-claim boundary;
   \item causal-calibration target audit naming the independent evidence classes required before calibrated policy-simulation claims can clear;
+  \item first-wave causal protocol report translating the shortest empirical upgrade path into units, shocks, comparison designs, linkage keys, and falsification checks;
   \item validation summary, classified calibration queue, and calibration-readiness audit;
   \item substitution audit with distortion-failure, warning, and channel-shift tradeoff labels;
   \item LaTeX log audit checking final manuscript, Wiley, and supplement logs for unresolved citation, reference, fatal error, or rerun-required states;
@@ -141,6 +142,10 @@ The claim-source dependency audit in \texttt{reports/claim-source-dependency.md}
 \input{tables/claim_source_dependency.tex}
 
 The causal-calibration target audit in \texttt{reports/causal-calibration-targets.md} names the independent causal estimands, required evidence designs, current source support, clearance criteria, and first-wave upgrade path that must be satisfied before the project can claim calibrated reform effects or representative national hidden-channel magnitudes. It covers hidden donor routing, substitution elasticity, procurement modification capture, revolving-door access, public financing, comment authenticity and uptake, enforcement deterrence, meeting disclosure, intermediary networks, and venue-shifting detection.
+
+The first-wave causal protocol report in \texttt{reports/first-wave-causal-protocols.md} operationalizes the shortest empirical upgrade path into units of analysis, treatment or shock definitions, comparison designs, linkage keys, minimum source products, falsification checks, sensitivity checks, and claim-upgrade boundaries. Table~\ref{tab:first-wave-causal-protocols} summarizes those protocols; the generated Markdown and CSV reports retain the full linkage and threat-model details.
+
+\input{tables/first_wave_causal_protocols.tex}
 
 The claim-posture audit in \texttt{reports/claim-posture-audit.md} summarizes the same evidence at the manuscript level. It clears the mechanism-model article posture, bounds the empirical bridge, and keeps calibrated policy-simulation claims outside the present manuscript scope until the causal-calibration target audit and source panels justify that stronger claim.
 

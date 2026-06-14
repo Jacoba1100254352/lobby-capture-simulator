@@ -74,6 +74,7 @@ cp "$ROOT_DIR/reports/procurement-refresh-readiness.md" "$STAGING_DIR/supporting
 cp "$ROOT_DIR/reports/claim-boundary-audit.md" "$STAGING_DIR/supporting-information/claim-boundary-audit.md"
 cp "$ROOT_DIR/reports/claim-source-dependency.md" "$STAGING_DIR/supporting-information/claim-source-dependency.md"
 cp "$ROOT_DIR/reports/causal-calibration-targets.md" "$STAGING_DIR/supporting-information/causal-calibration-targets.md"
+cp "$ROOT_DIR/reports/first-wave-causal-protocols.md" "$STAGING_DIR/supporting-information/first-wave-causal-protocols.md"
 cp "$ROOT_DIR/reports/claim-posture-audit.md" "$STAGING_DIR/supporting-information/claim-posture-audit.md"
 cp "$ROOT_DIR/reports/validation-summary.md" "$STAGING_DIR/supporting-information/validation-summary.md"
 cp "$ROOT_DIR/reports/substitution-audit.md" "$STAGING_DIR/supporting-information/substitution-audit.md"

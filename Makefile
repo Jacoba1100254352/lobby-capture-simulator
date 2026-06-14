@@ -14,7 +14,7 @@ MAIN_CLASS := lobbycapture.Main
 TEST_CLASSES := lobbycapture.SimulatorTests
 PAPER_BASENAME := strategic-channel-substitution-regulatory-capture
 
-.PHONY: compile script-checks test run campaign mechanism-comparison sensitivity ablation interactions portfolio source-moments source-panel-inventory source-capability-audit dark-money-bridge-audit intermediary-bridge-audit revolving-door-bridge-audit procurement-denominator-audit procurement-modification-composition-audit procurement-benchmark-crosswalk procurement-refresh-readiness sam-contract-awards-preflight sam-contract-awards-export-audit usaspending-transaction-download-strata sam-procurement-refresh claim-boundary-audit claim-source-dependency-audit causal-calibration-targets claim-posture-audit calibration-readiness-audit policy-claim-language-audit submission-readiness-audit archive-handoff-audit latex-log-audit calibration-queue validate snapshot-2024-env tables figures paper paper-build paper-supplement-build paper-supplement paper-word-count wiley-template wiley-tex-deps paper-wiley paper-wiley-build submission-package submission-package-build submission-package-check paper-layout-audit visual-review-checklist paper-artifacts paper-artifacts-check clean
+.PHONY: compile script-checks test run campaign mechanism-comparison sensitivity ablation interactions portfolio source-moments source-panel-inventory source-capability-audit dark-money-bridge-audit intermediary-bridge-audit revolving-door-bridge-audit procurement-denominator-audit procurement-modification-composition-audit procurement-benchmark-crosswalk procurement-refresh-readiness sam-contract-awards-preflight sam-contract-awards-export-audit usaspending-transaction-download-strata sam-procurement-refresh claim-boundary-audit claim-source-dependency-audit causal-calibration-targets first-wave-causal-protocols claim-posture-audit calibration-readiness-audit policy-claim-language-audit submission-readiness-audit archive-handoff-audit latex-log-audit calibration-queue validate snapshot-2024-env tables figures paper paper-build paper-supplement-build paper-supplement paper-word-count wiley-template wiley-tex-deps paper-wiley paper-wiley-build submission-package submission-package-build submission-package-check paper-layout-audit visual-review-checklist paper-artifacts paper-artifacts-check clean
 
 compile:
 	@mkdir -p out/classes
@@ -112,10 +112,13 @@ claim-source-dependency-audit: claim-boundary-audit
 causal-calibration-targets: claim-source-dependency-audit
 	python3 scripts/audit-causal-calibration-targets.py
 
+first-wave-causal-protocols: causal-calibration-targets
+	python3 scripts/write-first-wave-causal-protocols.py
+
 snapshot-2024-env:
 	python3 scripts/create-2024-env-snapshot.py
 
-tables: claim-source-dependency-audit
+tables: claim-source-dependency-audit first-wave-causal-protocols
 	python3 scripts/generate-paper-tables.py
 
 figures: claim-boundary-audit
@@ -159,7 +162,7 @@ submission-package-build:
 submission-package-check: submission-package-build
 	./scripts/check-submission-package.sh
 
-submission-package: paper-wiley paper-supplement paper-word-count visual-review-checklist latex-log-audit policy-claim-language-audit submission-readiness-audit submission-package-build submission-package-check archive-handoff-audit
+submission-package: paper-wiley paper-supplement paper-word-count visual-review-checklist latex-log-audit policy-claim-language-audit submission-readiness-audit first-wave-causal-protocols submission-package-build submission-package-check archive-handoff-audit
 
 paper-layout-audit: paper-build paper-wiley-build paper-supplement-build
 	python3 scripts/audit-paper-layout.py
@@ -170,7 +173,7 @@ visual-review-checklist: paper-layout-audit
 latex-log-audit: paper-build paper-wiley-build paper-supplement-build
 	python3 scripts/audit-latex-logs.py
 
-claim-posture-audit: claim-boundary-audit claim-source-dependency-audit causal-calibration-targets calibration-queue visual-review-checklist
+claim-posture-audit: claim-boundary-audit claim-source-dependency-audit causal-calibration-targets first-wave-causal-protocols calibration-queue visual-review-checklist
 	python3 scripts/audit-claim-posture.py
 
 calibration-readiness-audit: claim-posture-audit
@@ -185,7 +188,7 @@ submission-readiness-audit: policy-claim-language-audit
 archive-handoff-audit: submission-package-check
 	python3 scripts/write-archive-handoff-manifest.py
 
-paper-artifacts: campaign mechanism-comparison sensitivity ablation interactions portfolio source-moments source-panel-inventory source-capability-audit dark-money-bridge-audit intermediary-bridge-audit revolving-door-bridge-audit procurement-denominator-audit procurement-modification-composition-audit procurement-benchmark-crosswalk validate claim-boundary-audit claim-source-dependency-audit causal-calibration-targets calibration-queue procurement-refresh-readiness tables figures paper-build paper-wiley-build paper-supplement-build paper-word-count paper-layout-audit visual-review-checklist latex-log-audit claim-posture-audit calibration-readiness-audit policy-claim-language-audit submission-readiness-audit submission-package-build submission-package-check archive-handoff-audit
+paper-artifacts: campaign mechanism-comparison sensitivity ablation interactions portfolio source-moments source-panel-inventory source-capability-audit dark-money-bridge-audit intermediary-bridge-audit revolving-door-bridge-audit procurement-denominator-audit procurement-modification-composition-audit procurement-benchmark-crosswalk validate claim-boundary-audit claim-source-dependency-audit causal-calibration-targets first-wave-causal-protocols calibration-queue procurement-refresh-readiness tables figures paper-build paper-wiley-build paper-supplement-build paper-word-count paper-layout-audit visual-review-checklist latex-log-audit claim-posture-audit calibration-readiness-audit policy-claim-language-audit submission-readiness-audit submission-package-build submission-package-check archive-handoff-audit
 
 paper-artifacts-check: paper-artifacts
 	python3 scripts/check-paper-artifacts.py
@@ -194,7 +197,7 @@ clean:
 	rm -rf out
 	rm -f paper/*.aux paper/*.bbl paper/*.blg paper/*.log paper/*.out paper/*.pdf paper/*.pag paper/*.synctex.gz
 	rm -f reports/validation-summary.csv reports/validation-summary.md reports/substitution-audit.csv reports/substitution-audit.md
-	rm -f reports/source-moments.csv reports/source-moments.md reports/source-panel-inventory.csv reports/source-panel-inventory.md reports/source-capability-audit.csv reports/source-capability-audit.md reports/dark-money-bridge-audit.csv reports/dark-money-bridge-audit.md reports/intermediary-bridge-audit.csv reports/intermediary-bridge-audit.md reports/revolving-door-bridge-audit.csv reports/revolving-door-bridge-audit.md reports/procurement-denominator-audit.csv reports/procurement-denominator-audit.md reports/procurement-modification-composition-audit.csv reports/procurement-modification-composition-audit.md reports/procurement-benchmark-crosswalk.csv reports/procurement-benchmark-crosswalk.md reports/procurement-refresh-readiness.csv reports/procurement-refresh-readiness.md reports/claim-boundary-audit.csv reports/claim-boundary-audit.md reports/claim-source-dependency.csv reports/claim-source-dependency.md reports/causal-calibration-targets.csv reports/causal-calibration-targets.md reports/claim-posture-audit.csv reports/claim-posture-audit.md reports/paper-layout-audit.md reports/calibration-queue.csv reports/calibration-queue.md
+	rm -f reports/source-moments.csv reports/source-moments.md reports/source-panel-inventory.csv reports/source-panel-inventory.md reports/source-capability-audit.csv reports/source-capability-audit.md reports/dark-money-bridge-audit.csv reports/dark-money-bridge-audit.md reports/intermediary-bridge-audit.csv reports/intermediary-bridge-audit.md reports/revolving-door-bridge-audit.csv reports/revolving-door-bridge-audit.md reports/procurement-denominator-audit.csv reports/procurement-denominator-audit.md reports/procurement-modification-composition-audit.csv reports/procurement-modification-composition-audit.md reports/procurement-benchmark-crosswalk.csv reports/procurement-benchmark-crosswalk.md reports/procurement-refresh-readiness.csv reports/procurement-refresh-readiness.md reports/claim-boundary-audit.csv reports/claim-boundary-audit.md reports/claim-source-dependency.csv reports/claim-source-dependency.md reports/causal-calibration-targets.csv reports/causal-calibration-targets.md reports/first-wave-causal-protocols.csv reports/first-wave-causal-protocols.md reports/claim-posture-audit.csv reports/claim-posture-audit.md reports/paper-layout-audit.md reports/calibration-queue.csv reports/calibration-queue.md
 	rm -f reports/calibration-readiness.csv reports/calibration-readiness.md
 	rm -f reports/policy-claim-language-audit.csv reports/policy-claim-language-audit.md
 	rm -f reports/submission-readiness.csv reports/submission-readiness.md
