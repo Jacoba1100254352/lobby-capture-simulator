@@ -23,6 +23,7 @@ Use this before creating a journal submission archive or public release tag.
 - Confirm the Wiley submission archive includes `supporting-information/submission-package-manifest.json` and `.md`; `make paper-artifacts-check` must validate those checksums against the ZIP members.
 - Confirm the Wiley submission archive includes `supporting-information/final-human-readthrough.md`; this file records final human editorial signoff and must not be marked complete for an older release tag.
 - Confirm the Wiley submission archive includes `supporting-information/report-data/` with the generated CSV, Markdown, and manifest report files. `make paper-artifacts-check` byte-compares those package copies against the working tree.
+- Confirm `reports/archive-handoff-manifest.{csv,json,md}` was regenerated after the submission ZIP was built; attach it to the GitHub release and use it to verify DOI-deposit asset checksums. It is intentionally not copied into the Wiley ZIP.
 - Confirm the Wiley submission archive includes generated PDF graphics, SVG figure sources, and LaTeX figure wrappers under `figures/`.
 - Do not archive private credentials or raw API payloads that cannot be redistributed.
 - `make paper-artifacts-check` should fail if the submission declarations contain self-invalidating archive language such as `No external DOI` or `should be minted`.

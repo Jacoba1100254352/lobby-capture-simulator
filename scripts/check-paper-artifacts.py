@@ -72,7 +72,15 @@ SUBMISSION_READINESS_CSV = ROOT / "reports" / "submission-readiness.csv"
 LATEX_LOG_AUDIT_MD = ROOT / "reports" / "latex-log-audit.md"
 LATEX_LOG_AUDIT_CSV = ROOT / "reports" / "latex-log-audit.csv"
 FINAL_HUMAN_READTHROUGH = ROOT / "reports" / "final-human-readthrough.md"
-RELEASE_TAG = "paper-publication-readiness-2026-06-13-r100"
+ARCHIVE_HANDOFF_CSV = ROOT / "reports" / "archive-handoff-manifest.csv"
+ARCHIVE_HANDOFF_JSON = ROOT / "reports" / "archive-handoff-manifest.json"
+ARCHIVE_HANDOFF_MD = ROOT / "reports" / "archive-handoff-manifest.md"
+RELEASE_TAG = "paper-publication-readiness-2026-06-13-r101"
+ARCHIVE_HANDOFF_REPORT_NAMES = {
+    "archive-handoff-manifest.csv",
+    "archive-handoff-manifest.json",
+    "archive-handoff-manifest.md",
+}
 CITATION_CFF = ROOT / "CITATION.cff"
 ZENODO_JSON = ROOT / ".zenodo.json"
 FORBIDDEN_LOCAL_ARTIFACTS = [
@@ -91,6 +99,9 @@ FORBIDDEN_ZIP_MEMBERS = {
     "main.tex",
     "main.pdf",
     "supporting-information/submission-release-checklist.md",
+    "supporting-information/report-data/archive-handoff-manifest.csv",
+    "supporting-information/report-data/archive-handoff-manifest.json",
+    "supporting-information/report-data/archive-handoff-manifest.md",
 }
 TEX_BINARY_DIRS = [
     Path("/usr/local/texlive/2026basic/bin/universal-darwin"),
@@ -183,7 +194,17 @@ EXPECTED_ZIP_MEMBERS = {
 
 def main() -> int:
     failures: list[str] = []
-    failures.extend(check_exists([LOCAL_PDF, WILEY_PDF, SUPPLEMENT_PDF, SUBMISSION_ZIP]))
+    failures.extend(
+        check_exists([
+            LOCAL_PDF,
+            WILEY_PDF,
+            SUPPLEMENT_PDF,
+            SUBMISSION_ZIP,
+            ARCHIVE_HANDOFF_CSV,
+            ARCHIVE_HANDOFF_JSON,
+            ARCHIVE_HANDOFF_MD,
+        ])
+    )
     failures.extend(check_forbidden_local_artifacts())
     failures.extend(check_freshness())
     failures.extend(check_wiley_text())
@@ -207,6 +228,7 @@ def main() -> int:
     failures.extend(check_latex_log_audit())
     failures.extend(check_layout_and_visual_reports())
     failures.extend(check_archive_metadata())
+    failures.extend(check_archive_handoff_manifest())
     failures.extend(check_release_tag_exactness())
     failures.extend(check_submission_zip())
     failures.extend(check_submission_zip_compiles())
@@ -255,6 +277,9 @@ def check_freshness() -> list[str]:
         (LATEX_LOG_AUDIT_MD, latex_log_audit_inputs()),
         (LATEX_LOG_AUDIT_CSV, latex_log_audit_inputs()),
         (SUBMISSION_ZIP, submission_inputs()),
+        (ARCHIVE_HANDOFF_CSV, archive_handoff_inputs()),
+        (ARCHIVE_HANDOFF_JSON, archive_handoff_inputs()),
+        (ARCHIVE_HANDOFF_MD, archive_handoff_inputs()),
     ]
     for artifact, inputs in checks:
         if not artifact.exists():
@@ -360,9 +385,27 @@ def latex_log_audit_inputs() -> list[Path]:
 
 def report_bundle_inputs() -> list[Path]:
     return [
-        *sorted((ROOT / "reports").glob("*.csv")),
-        *sorted((ROOT / "reports").glob("*.md")),
-        *sorted((ROOT / "reports").glob("*.manifest.json")),
+        path
+        for path in [
+            *sorted((ROOT / "reports").glob("*.csv")),
+            *sorted((ROOT / "reports").glob("*.md")),
+            *sorted((ROOT / "reports").glob("*.manifest.json")),
+        ]
+        if path.name not in ARCHIVE_HANDOFF_REPORT_NAMES
+    ]
+
+
+def archive_handoff_inputs() -> list[Path]:
+    return [
+        SUBMISSION_ZIP,
+        WILEY_PDF,
+        LOCAL_PDF,
+        SUPPLEMENT_PDF,
+        CITATION_CFF,
+        ZENODO_JSON,
+        SUBMISSION_READINESS_MD,
+        FINAL_HUMAN_READTHROUGH,
+        ROOT / "scripts" / "write-archive-handoff-manifest.py",
     ]
 
 
@@ -1782,6 +1825,89 @@ def check_archive_metadata() -> list[str]:
             for item in related
         ):
             failures.append(".zenodo.json missing related identifier for the current release tag")
+    return failures
+
+
+def check_archive_handoff_manifest() -> list[str]:
+    failures: list[str] = []
+    required = [ARCHIVE_HANDOFF_CSV, ARCHIVE_HANDOFF_JSON, ARCHIVE_HANDOFF_MD]
+    for path in required:
+        if not path.exists():
+            failures.append(f"missing archive handoff manifest file: {path.relative_to(ROOT)}")
+    if failures:
+        return failures
+
+    try:
+        manifest = json.loads(ARCHIVE_HANDOFF_JSON.read_text(encoding="utf-8"))
+    except json.JSONDecodeError as error:
+        return [f"archive handoff JSON is not valid JSON: {error}"]
+    if manifest.get("schema") != "lobby-capture-archive-handoff-manifest-v1":
+        failures.append("archive handoff manifest has unexpected schema")
+    if manifest.get("releaseTag") != RELEASE_TAG:
+        failures.append(
+            f"archive handoff manifest releaseTag={manifest.get('releaseTag')!r} does not match {RELEASE_TAG}"
+        )
+    expected_url = f"https://github.com/Jacoba1100254352/lobby-capture-simulator/releases/tag/{RELEASE_TAG}"
+    if manifest.get("releaseUrl") != expected_url:
+        failures.append("archive handoff manifest releaseUrl does not match the current release tag")
+
+    try:
+        with ARCHIVE_HANDOFF_CSV.open(newline="", encoding="utf-8") as source:
+            csv_rows = list(csv.DictReader(source))
+    except OSError as error:
+        return [*failures, f"could not read archive handoff CSV: {error}"]
+    json_rows = manifest.get("rows")
+    if not isinstance(json_rows, list):
+        failures.append("archive handoff JSON rows field is not a list")
+        json_rows = []
+    if len(csv_rows) != len(json_rows):
+        failures.append("archive handoff CSV and JSON row counts differ")
+
+    rows_by_path = {
+        row.get("path", ""): row
+        for row in csv_rows
+        if row.get("path")
+    }
+    expected_paths = {
+        "dist/lobby-capture-wiley-submission.zip",
+        "paper/regulation-governance-wiley.pdf",
+        f"paper/{LOCAL_BASENAME}.pdf",
+        "paper/supplement.pdf",
+        "CITATION.cff",
+        ".zenodo.json",
+        "reports/submission-readiness.md",
+        "reports/final-human-readthrough.md",
+    }
+    for path in sorted(expected_paths - set(rows_by_path)):
+        failures.append(f"archive handoff manifest omits expected path: {path}")
+
+    for path, row in sorted(rows_by_path.items()):
+        if path in {f"reports/{name}" for name in ARCHIVE_HANDOFF_REPORT_NAMES}:
+            failures.append(f"archive handoff manifest should not checksum itself: {path}")
+            continue
+        source = ROOT / path
+        if not source.exists():
+            failures.append(f"archive handoff manifest lists missing file: {path}")
+            continue
+        data = source.read_bytes()
+        if row.get("sha256") != hashlib.sha256(data).hexdigest():
+            failures.append(f"archive handoff checksum mismatch for {path}")
+        if row.get("bytes") != str(len(data)):
+            failures.append(f"archive handoff byte count mismatch for {path}")
+
+    primary_assets = set(manifest.get("primaryReleaseAssets", []))
+    expected_assets = {
+        "lobby-capture-wiley-submission.zip",
+        "regulation-governance-wiley.pdf",
+        f"{LOCAL_BASENAME}.pdf",
+        "supplement.pdf",
+    }
+    if primary_assets != expected_assets:
+        failures.append("archive handoff primary release asset list is incomplete or unexpected")
+    markdown = ARCHIVE_HANDOFF_MD.read_text(encoding="utf-8")
+    for phrase in (RELEASE_TAG, "DOI status: not asserted by this manifest", "SHA-256"):
+        if phrase not in markdown:
+            failures.append(f"archive handoff markdown missing required phrase: {phrase}")
     return failures
 
 

@@ -91,6 +91,9 @@ cp "$ROOT_DIR/.zenodo.json" "$STAGING_DIR/supporting-information/zenodo.json"
 mkdir -p "$STAGING_DIR/supporting-information/report-data"
 for report_artifact in "$ROOT_DIR"/reports/*.csv "$ROOT_DIR"/reports/*.md "$ROOT_DIR"/reports/*.manifest.json; do
   if [ -e "$report_artifact" ]; then
+    case "$(basename "$report_artifact")" in
+      archive-handoff-manifest.*) continue ;;
+    esac
     cp "$report_artifact" "$STAGING_DIR/supporting-information/report-data/"
   fi
 done

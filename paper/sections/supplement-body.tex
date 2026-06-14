@@ -112,6 +112,8 @@ The reproducible report pipeline writes:
 
 The Wiley submission archive includes a package-member checksum manifest alongside its supporting-information files and generated report bundle. The artifact checker compares packaged report files against the repository copies and validates the package manifest against ZIP member bytes so the reviewer bundle cannot silently omit or stale-copy a generated report.
 
+The separate archive-handoff manifest is generated after the Wiley archive is built. It records checksums for the release ZIP, rendered PDFs, and metadata files used in DOI deposit, and it is kept outside the Wiley ZIP because it hashes that ZIP directly.
+
 The canonical local check is:
 
 \begin{verbatim}

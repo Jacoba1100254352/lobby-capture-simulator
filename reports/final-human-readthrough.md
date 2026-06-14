@@ -3,7 +3,7 @@
 status: pending
 signed-off-by:
 signed-off-date:
-reviewed-release: paper-publication-readiness-2026-06-13-r100
+reviewed-release: paper-publication-readiness-2026-06-13-r101
 reviewed-commit:
 doi-archive:
 venue-target: Regulation & Governance
@@ -27,6 +27,7 @@ Leave `status` as `pending` until a human scholarly read-through has checked the
 - [ ] Tables and figures are referenced in order, readable in the Wiley PDF, and not duplicative or misleading.
 - [ ] Limitations identify open source panels, causal-calibration targets, and construct-validity risks without self-rejecting submission language.
 - [ ] Data and Code Availability names the exact release, repository, license, DOI archive if available, and excluded private/raw credentialed payloads.
+- [ ] Archive-handoff manifest checksums match the final release assets and DOI-deposit asset set.
 - [ ] References are complete enough for the target venue and do not contain placeholder or "planned validation" entries.
 - [ ] AI Use Disclosure and declarations match journal expectations.
 - [ ] The final release ZIP, PDFs, supplement, reports, and metadata match the signed-off release tag.

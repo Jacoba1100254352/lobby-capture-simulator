@@ -58,6 +58,9 @@ reports/*.md
 !reports/calibration-readiness.md
 !reports/policy-claim-language-audit.csv
 !reports/policy-claim-language-audit.md
+!reports/archive-handoff-manifest.csv
+!reports/archive-handoff-manifest.json
+!reports/archive-handoff-manifest.md
 !reports/paper-layout-audit.md
 !reports/manual-visual-audit.md
 !reports/final-human-readthrough.md
