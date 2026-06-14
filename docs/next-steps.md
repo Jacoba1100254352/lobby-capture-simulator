@@ -84,9 +84,11 @@ Deliverables:
 ## 4. Work down the remaining calibration queue
 
 `reports/calibration-queue.md` now identifies the highest-priority remaining gaps.
+`reports/causal-calibration-targets.md` is stricter than the validation queue and now separates first-wave empirical upgrades from second-wave coverage work. Treat the first-wave rows as the next publication-grade empirical agenda because they are the shortest route from public/source panels to stronger manuscript claims without changing the current mechanism-model boundary.
 
 Deliverables:
 
+- prioritize the first-wave causal-calibration rows: a cross-source substitution event panel, a SAM/FPDS-style procurement action crosswalk with protest/exclusion/firewall overlays, a docket comment-authenticity and agency-response panel, and an auditable cross-venue entity-resolution spine;
 - extend procurement evidence beyond the denominator-mapped crosswalk with SAM/FPDS coding reconciliation, protest/exclusion/firewall overlays, and independent calibration targets before any calibrated policy-simulation claim;
 - use `reports/causal-calibration-targets.md` as the stricter policy-claim checklist; source panels that clear mechanism diagnostics still need an external causal design before they clear policy-simulation language;
 - keep the cleared campaign/outside-spending `largeDonorDependence` regression covered by tests, while treating broader hidden-donor identity evidence as a separate source-panel expansion rather than a model-tuning item;

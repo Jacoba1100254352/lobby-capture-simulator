@@ -25,6 +25,10 @@ TARGETS = [
         "permittedUse": "Bounded routing and missingness diagnostics",
         "clearanceCriterion": "Representative routing rows spanning multiple organization classes with donor-linkage metadata or an explicit defensible missingness model",
         "nextAction": "Broaden nonprofit-routing rows beyond the top-EIN slice and add donor-linkage or beneficial-owner coverage where public sources permit.",
+        "upgradeTier": "second-wave",
+        "firstStudyDesign": "Construct a multi-class nonprofit and 527 routing panel, then estimate missingness and transfer concentration rather than treating capacity proxies as hidden spending.",
+        "minimumDataProduct": "Form 990 Schedule I/R or equivalent transfer rows for more than the top-EIN slice, IRS 8871/8872 rows beyond the bounded alphabetic slice, and linkage flags separating observed transfers from donor-identity gaps.",
+        "manuscriptImpact": "Would strengthen hidden-channel magnitude bounds; it still would not by itself estimate reform effects without a design that links routing changes to a reform shock.",
     },
     {
         "targetKey": "substitution-elasticity",
@@ -38,6 +42,10 @@ TARGETS = [
         "permittedUse": "Mechanism stress tests and qualitative substitution warnings",
         "clearanceCriterion": "At least one external quasi-experimental or panel design that estimates cross-channel substitution direction for a named reform family",
         "nextAction": "Build a cross-source event panel around one reform shock and track visible, intermediary, dark-money, comment, and procurement channels by actor and issue.",
+        "upgradeTier": "first-wave",
+        "firstStudyDesign": "Use a named disclosure, access, finance, or cooling-off reform shock and compare pre/post channel activity for matched actors and issues against unaffected actors or jurisdictions.",
+        "minimumDataProduct": "Actor-issue-time panel linking at least three channels, such as LDA clients, OpenFEC spenders, docket submitters, procurement vendors, meeting-log participants, or nonprofit intermediaries.",
+        "manuscriptImpact": "Would directly test the paper's central substitution mechanism and could upgrade the article from a pure mechanism demonstration toward a source-anchored substitution diagnostic.",
     },
     {
         "targetKey": "procurement-modification-causal-capture",
@@ -51,6 +59,10 @@ TARGETS = [
         "permittedUse": "Denominator-mapped procurement diagnostics",
         "clearanceCriterion": "A reconciled SAM/FPDS action-history panel linked to exposure variables and at least one causal or matched comparison design",
         "nextAction": "Crosswalk USAspending and SAM/FPDS modification codes, then add protest, exclusion, offer-count, and firewall overlays.",
+        "upgradeTier": "first-wave",
+        "firstStudyDesign": "Create a matched award/action panel comparing exposed vendors or issue areas with otherwise similar awards, controlling for agency, award type, size, timing, and competition fields.",
+        "minimumDataProduct": "PIID/UEI action-history rows with modification coding, offer counts, competition flags, protest/exclusion overlays, and a documented crosswalk between USAspending and SAM/FPDS action definitions.",
+        "manuscriptImpact": "Would turn the procurement bridge from denominator-mapped diagnostics into the most concrete empirical domain for testing capture-adjacent outcomes.",
     },
     {
         "targetKey": "revolving-door-access-effect",
@@ -64,6 +76,10 @@ TARGETS = [
         "permittedUse": "Proxy-backed cooling-off and bridge diagnostics",
         "clearanceCriterion": "Documented personnel-movement panel with timing and outcome linkage, not only covered-position indicators",
         "nextAction": "Add OGE, FACA, witness, or personnel-movement exports and preserve person-entity identifiers for linkage.",
+        "upgradeTier": "second-wave",
+        "firstStudyDesign": "Link person-level movement into regulated entities, advisory committees, witnesses, or lobbying roles to later access, venue choice, enforcement, rulemaking, or procurement outcomes.",
+        "minimumDataProduct": "Person-entity-time records with covered-position metadata, movement dates, employer/client linkage, access or venue events, and outcome timing.",
+        "manuscriptImpact": "Would replace LDA covered-position proxies with a documented access bridge and reduce reviewer concern that revolving-door mechanisms are only synthetic.",
     },
     {
         "targetKey": "public-financing-countervailing-effect",
@@ -77,6 +93,10 @@ TARGETS = [
         "permittedUse": "Bounded countervailing-finance anchors",
         "clearanceCriterion": "Multi-program candidate-level panel with participant/non-participant comparison and donor-mix outcomes",
         "nextAction": "Add state and local public-financing panels and link them to candidate finance and election context.",
+        "upgradeTier": "second-wave",
+        "firstStudyDesign": "Compare participant and non-participant candidates across multiple public-financing programs with race, office, and election-cycle controls.",
+        "minimumDataProduct": "Candidate-level public-funds participation, public payment or voucher totals, private donor mix, spending, office, election cycle, and comparable non-participant rows.",
+        "manuscriptImpact": "Would strengthen countervailing-participation assumptions and clarify whether the public-financing mechanism is locally bounded or broader.",
     },
     {
         "targetKey": "comment-authenticity-and-uptake-effect",
@@ -90,6 +110,10 @@ TARGETS = [
         "permittedUse": "Comment-record and mechanism diagnostics",
         "clearanceCriterion": "Docket-level panel with observed duplicate clusters and agency response/final-rule linkage",
         "nextAction": "Add docket corpora with duplicate/template detection and link comments to agency response text or final-rule changes.",
+        "upgradeTier": "first-wave",
+        "firstStudyDesign": "Build docket-level before/after or treated/untreated comparisons around duplicate compression, authentication rules, or high-template comment campaigns, then link unique information to agency response text.",
+        "minimumDataProduct": "Comment corpus with duplicate/template clusters, submitter or authenticity fields where available, technical-content labels, agency response text, final-rule linkage, and docket timing.",
+        "manuscriptImpact": "Would provide a concrete rulemaking domain for information-distortion and comment-flooding mechanisms using public records rather than only synthetic diagnostics.",
     },
     {
         "targetKey": "enforcement-deterrence-effect",
@@ -103,6 +127,10 @@ TARGETS = [
         "permittedUse": "Disclosure/audit plausibility checks",
         "clearanceCriterion": "Linked enforcement-outcome panel with actor-level behavior before and after audits, referrals, or sanctions",
         "nextAction": "Add enforcement-event rows with actor identifiers, delay, penalty, and follow-on behavior measures.",
+        "upgradeTier": "second-wave",
+        "firstStudyDesign": "Track actor behavior before and after audits, referrals, sanctions, or enforcement delays and compare with similar actors not facing enforcement events.",
+        "minimumDataProduct": "Enforcement-event rows with actor identifiers, alleged violation or referral type, dates, delay, penalty, and follow-on lobbying, spending, disclosure, or procurement behavior.",
+        "manuscriptImpact": "Would strengthen enforcement-capacity and deterrence assumptions, especially where current model behavior depends on audit probability and sanction severity.",
     },
     {
         "targetKey": "meeting-disclosure-and-access-effect",
@@ -116,6 +144,10 @@ TARGETS = [
         "permittedUse": "Synthetic opacity and legibility diagnostics",
         "clearanceCriterion": "Observed meeting-log panel linked to actor networks and outcomes, with missingness or completeness diagnostics",
         "nextAction": "Add one machine-readable meeting-log panel and preserve actor, issue, date, and outcome linkage fields.",
+        "upgradeTier": "second-wave",
+        "firstStudyDesign": "Use one jurisdiction or agency with machine-readable meeting logs to test whether meeting disclosure changes access concentration, network opacity, or follow-on channel movement.",
+        "minimumDataProduct": "Meeting or contact rows with actor names, issue tags, dates, agency/office, completeness metadata, and linkage to lobbying, docket, procurement, or enforcement records.",
+        "manuscriptImpact": "Would give the cross-venue detection and access-opacity mechanisms an observed network surface rather than only synthetic legibility diagnostics.",
     },
     {
         "targetKey": "intermediary-network-effect",
@@ -129,6 +161,10 @@ TARGETS = [
         "permittedUse": "Intermediary capacity and routing diagnostics",
         "clearanceCriterion": "Representative intermediary network with routing, issue, and outcome linkage rather than capacity proxies alone",
         "nextAction": "Broaden Form 990 XML and 527 coverage, separate capacity from transfer routing, and link intermediaries to submissions or spending.",
+        "upgradeTier": "second-wave",
+        "firstStudyDesign": "Build an intermediary routing graph from transfers, filings, public submissions, and campaign activity, then test whether centrality predicts channel substitution or outcome pressure.",
+        "minimumDataProduct": "Intermediary-actor-transfer rows, 527 filings, Form 990 Schedule I/R rows, docket or campaign links, issue tags, and a separated capacity-versus-routing classification.",
+        "manuscriptImpact": "Would make the think-tank, association, and sponsored-messenger mechanisms more concrete and reduce reliance on capacity proxies.",
     },
     {
         "targetKey": "venue-shifting-detection-effect",
@@ -142,6 +178,10 @@ TARGETS = [
         "permittedUse": "Synthetic cross-venue detection diagnostics",
         "clearanceCriterion": "Entity-resolution spine linking at least three venues with audited false-positive/false-negative handling",
         "nextAction": "Build an identifier spine across LDA clients, FEC committees/spenders, docket submitters, vendors, and enforcement/protest actors.",
+        "upgradeTier": "first-wave",
+        "firstStudyDesign": "Create an auditable entity-resolution spine across three or more public venues and measure how much apparent substitution becomes visible when records are linked.",
+        "minimumDataProduct": "Canonical actor identifiers linking LDA clients/registrants, FEC committees or spenders, docket submitters, vendors/UEIs, enforcement or protest actors, plus false-match audit samples.",
+        "manuscriptImpact": "Would strengthen the venue-shifting detection claim and provide a practical measurement artifact for the model's cross-venue governance design argument.",
     },
 ]
 
@@ -187,6 +227,7 @@ def write_csv(path: Path, rows: list[dict[str, str]]) -> None:
     fieldnames = [
         "targetKey",
         "priority",
+        "upgradeTier",
         "mechanism",
         "estimand",
         "requiredEvidence",
@@ -196,6 +237,9 @@ def write_csv(path: Path, rows: list[dict[str, str]]) -> None:
         "permittedUse",
         "clearanceCriterion",
         "nextAction",
+        "firstStudyDesign",
+        "minimumDataProduct",
+        "manuscriptImpact",
         "policyClaimStatus",
         "blocksPolicySimulation",
     ]
@@ -208,7 +252,18 @@ def write_csv(path: Path, rows: list[dict[str, str]]) -> None:
 def write_markdown(path: Path, rows: list[dict[str, str]]) -> None:
     counts = Counter(row["status"] for row in rows)
     priorities = Counter(row["priority"] for row in rows)
+    tiers = Counter(row["upgradeTier"] for row in rows)
     blockers = [row for row in rows if row["blocksPolicySimulation"] == "yes"]
+    upgrade_order = {"first-wave": 0, "second-wave": 1, "later": 2}
+    row_order = {row["targetKey"]: index for index, row in enumerate(rows)}
+    first_wave = [row for row in rows if row.get("upgradeTier") == "first-wave"]
+    all_upgrades = sorted(
+        rows,
+        key=lambda row: (
+            upgrade_order.get(row.get("upgradeTier", "later"), 99),
+            row_order[row["targetKey"]],
+        ),
+    )
     lines = [
         "# Causal Calibration Targets",
         "",
@@ -220,17 +275,51 @@ def write_markdown(path: Path, rows: list[dict[str, str]]) -> None:
         f"- Blocking calibrated policy-simulation claims: `{len(blockers)}`",
         f"- P1 targets: `{priorities.get('P1', 0)}`",
         f"- P2 targets: `{priorities.get('P2', 0)}`",
+        f"- First-wave empirical upgrades: `{tiers.get('first-wave', 0)}`",
+        f"- Second-wave empirical upgrades: `{tiers.get('second-wave', 0)}`",
         f"- Cleared targets: `{counts.get('cleared', 0)}`",
         f"- Policy claim status: `{rows[0].get('policyClaimStatus', 'missing') if rows else 'missing'}`",
         "",
-        "## Target Matrix",
+        "## Minimum Viable Causal Upgrade Path",
         "",
-        "| Target | Priority | Status | Estimand | Current support | Clearance criterion | Next action |",
-        "| --- | --- | --- | --- | --- | --- | --- |",
+        "The first-wave rows are the shortest source-to-manuscript path for making the next version less dependent on synthetic stress tests. Clearing one of them would improve the empirical bridge for a specific mechanism; it would not clear calibrated policy-simulation claims unless the clearance criterion and claim-source dependencies also clear.",
+        "",
+        "| Target | Priority | First study design | Minimum data product | Manuscript impact |",
+        "| --- | --- | --- | --- | --- |",
     ]
+    for row in first_wave:
+        lines.append(
+            "| {targetKey} | {priority} | {firstStudyDesign} | {minimumDataProduct} | {manuscriptImpact} |".format(
+                **{key: md(value) for key, value in row.items()}
+            )
+        )
+    lines.extend(
+        [
+            "",
+            "## Full Upgrade Queue",
+            "",
+            "| Target | Tier | Priority | Current support | First study design |",
+            "| --- | --- | --- | --- | --- |",
+        ]
+    )
+    for row in all_upgrades:
+        lines.append(
+            "| {targetKey} | {upgradeTier} | {priority} | {currentSupport} | {firstStudyDesign} |".format(
+                **{key: md(value) for key, value in row.items()}
+            )
+        )
+    lines.extend(
+        [
+            "",
+            "## Target Matrix",
+            "",
+            "| Target | Priority | Tier | Status | Estimand | Current support | Clearance criterion | Next action |",
+            "| --- | --- | --- | --- | --- | --- | --- | --- |",
+        ]
+    )
     for row in rows:
         lines.append(
-            "| {targetKey} | {priority} | {status} | {estimand} | {currentSupport} | {clearanceCriterion} | {nextAction} |".format(
+            "| {targetKey} | {priority} | {upgradeTier} | {status} | {estimand} | {currentSupport} | {clearanceCriterion} | {nextAction} |".format(
                 **{key: md(value) for key, value in row.items()}
             )
         )
@@ -242,9 +331,7 @@ def write_markdown(path: Path, rows: list[dict[str, str]]) -> None:
         ]
     )
     for row in rows:
-        lines.append(
-            f"- `{row['targetKey']}`: {row['candidateSources']}"
-        )
+        lines.append(f"- `{row['targetKey']}`: {row['candidateSources']}")
     lines.append("")
     path.write_text("\n".join(lines), encoding="utf-8")
 

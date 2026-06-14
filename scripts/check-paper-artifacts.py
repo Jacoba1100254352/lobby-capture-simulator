@@ -75,7 +75,7 @@ FINAL_HUMAN_READTHROUGH = ROOT / "reports" / "final-human-readthrough.md"
 ARCHIVE_HANDOFF_CSV = ROOT / "reports" / "archive-handoff-manifest.csv"
 ARCHIVE_HANDOFF_JSON = ROOT / "reports" / "archive-handoff-manifest.json"
 ARCHIVE_HANDOFF_MD = ROOT / "reports" / "archive-handoff-manifest.md"
-RELEASE_TAG = "paper-publication-readiness-2026-06-13-r103"
+RELEASE_TAG = "paper-publication-readiness-2026-06-13-r104"
 ARCHIVE_HANDOFF_REPORT_NAMES = {
     "archive-handoff-manifest.csv",
     "archive-handoff-manifest.json",
