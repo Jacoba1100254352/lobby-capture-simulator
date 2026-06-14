@@ -75,12 +75,14 @@ FINAL_HUMAN_READTHROUGH = ROOT / "reports" / "final-human-readthrough.md"
 ARCHIVE_HANDOFF_CSV = ROOT / "reports" / "archive-handoff-manifest.csv"
 ARCHIVE_HANDOFF_JSON = ROOT / "reports" / "archive-handoff-manifest.json"
 ARCHIVE_HANDOFF_MD = ROOT / "reports" / "archive-handoff-manifest.md"
-RELEASE_TAG = "paper-publication-readiness-2026-06-13-r101"
+RELEASE_TAG = "paper-publication-readiness-2026-06-13-r102"
 ARCHIVE_HANDOFF_REPORT_NAMES = {
     "archive-handoff-manifest.csv",
     "archive-handoff-manifest.json",
     "archive-handoff-manifest.md",
 }
+TRACKED_SOURCE_CHECKSUM_STATUS = "tracked-source-verified"
+RELEASE_ASSET_CHECKSUM_STATUS = "release-asset-checksum-recorded-in-dist"
 CITATION_CFF = ROOT / "CITATION.cff"
 ZENODO_JSON = ROOT / ".zenodo.json"
 FORBIDDEN_LOCAL_ARTIFACTS = [
@@ -1889,6 +1891,26 @@ def check_archive_handoff_manifest() -> list[str]:
         if not source.exists():
             failures.append(f"archive handoff manifest lists missing file: {path}")
             continue
+        checksum_status = row.get("checksumStatus")
+        if row.get("includeInDoiDeposit") == "yes":
+            if checksum_status != RELEASE_ASSET_CHECKSUM_STATUS:
+                failures.append(
+                    f"archive handoff release asset {path} has unexpected checksumStatus={checksum_status!r}"
+                )
+            if row.get("sha256") != "see-dist-release-asset-checksums":
+                failures.append(
+                    f"archive handoff release asset {path} should point to dist release checksums"
+                )
+            if row.get("bytes") != "see-dist-release-asset-checksums":
+                failures.append(
+                    f"archive handoff release asset {path} should not record environment-specific byte counts"
+                )
+            continue
+        if checksum_status != TRACKED_SOURCE_CHECKSUM_STATUS:
+            failures.append(
+                f"archive handoff tracked source {path} has unexpected checksumStatus={checksum_status!r}"
+            )
+            continue
         data = source.read_bytes()
         if row.get("sha256") != hashlib.sha256(data).hexdigest():
             failures.append(f"archive handoff checksum mismatch for {path}")
@@ -1905,7 +1927,13 @@ def check_archive_handoff_manifest() -> list[str]:
     if primary_assets != expected_assets:
         failures.append("archive handoff primary release asset list is incomplete or unexpected")
     markdown = ARCHIVE_HANDOFF_MD.read_text(encoding="utf-8")
-    for phrase in (RELEASE_TAG, "DOI status: not asserted by this manifest", "SHA-256"):
+    for phrase in (
+        RELEASE_TAG,
+        "DOI status: not asserted by this manifest",
+        "SHA-256",
+        "dist/release-asset-checksums",
+        RELEASE_ASSET_CHECKSUM_STATUS,
+    ):
         if phrase not in markdown:
             failures.append(f"archive handoff markdown missing required phrase: {phrase}")
     return failures

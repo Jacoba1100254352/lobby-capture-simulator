@@ -6,80 +6,89 @@
     "strategic-channel-substitution-regulatory-capture.pdf",
     "supplement.pdf"
   ],
-  "releaseTag": "paper-publication-readiness-2026-06-13-r101",
-  "releaseUrl": "https://github.com/Jacoba1100254352/lobby-capture-simulator/releases/tag/paper-publication-readiness-2026-06-13-r101",
+  "releaseAssetChecksumLocation": "dist/release-asset-checksums.{csv,json,md}",
+  "releaseTag": "paper-publication-readiness-2026-06-13-r102",
+  "releaseUrl": "https://github.com/Jacoba1100254352/lobby-capture-simulator/releases/tag/paper-publication-readiness-2026-06-13-r102",
   "rows": [
     {
       "archiveNote": "Primary journal submission archive with manuscript source, compiled PDFs, supporting information, generated reports, and package-member checksum manifest.",
-      "bytes": "1799737",
+      "bytes": "see-dist-release-asset-checksums",
+      "checksumStatus": "release-asset-checksum-recorded-in-dist",
       "includeInDoiDeposit": "yes",
       "path": "dist/lobby-capture-wiley-submission.zip",
       "releaseAssetName": "lobby-capture-wiley-submission.zip",
       "role": "wiley-submission-archive",
-      "sha256": "9dec9a2109d00717a3908ff0ab807e36df47fc89d38bad7d368929b5626298ea"
+      "sha256": "see-dist-release-asset-checksums"
     },
     {
       "archiveNote": "Wiley-template rendered manuscript PDF for review.",
-      "bytes": "1000276",
+      "bytes": "see-dist-release-asset-checksums",
+      "checksumStatus": "release-asset-checksum-recorded-in-dist",
       "includeInDoiDeposit": "yes",
       "path": "paper/regulation-governance-wiley.pdf",
       "releaseAssetName": "regulation-governance-wiley.pdf",
       "role": "wiley-rendered-manuscript",
-      "sha256": "dc0572433c1149ddc296aacc5120e43dfef12d09c5fffa16e7c719e4c36cd93a"
+      "sha256": "see-dist-release-asset-checksums"
     },
     {
       "archiveNote": "Local rendered manuscript PDF with the descriptive project filename.",
-      "bytes": "395802",
+      "bytes": "see-dist-release-asset-checksums",
+      "checksumStatus": "release-asset-checksum-recorded-in-dist",
       "includeInDoiDeposit": "yes",
       "path": "paper/strategic-channel-substitution-regulatory-capture.pdf",
       "releaseAssetName": "strategic-channel-substitution-regulatory-capture.pdf",
       "role": "local-rendered-manuscript",
-      "sha256": "0954bb6d4797053d795d0dd1b5cef859237df708f69187589d3a5bbd97c57ee2"
+      "sha256": "see-dist-release-asset-checksums"
     },
     {
       "archiveNote": "Rendered supporting-information PDF.",
-      "bytes": "169610",
+      "bytes": "see-dist-release-asset-checksums",
+      "checksumStatus": "release-asset-checksum-recorded-in-dist",
       "includeInDoiDeposit": "yes",
       "path": "paper/supplement.pdf",
       "releaseAssetName": "supplement.pdf",
       "role": "supporting-information-pdf",
-      "sha256": "5b7d655d33a37cd627bc2c193689ee115be975c15c6218555337a9c64da0ee1b"
+      "sha256": "see-dist-release-asset-checksums"
     },
     {
       "archiveNote": "Machine-readable citation metadata included in the tagged source archive and Wiley submission archive.",
       "bytes": "1286",
+      "checksumStatus": "tracked-source-verified",
       "includeInDoiDeposit": "source-archive",
       "path": "CITATION.cff",
       "releaseAssetName": "",
       "role": "citation-metadata",
-      "sha256": "3068e1457ac16304221142c859bda79f66c0b4cdea023802bf99f77fbc79898d"
+      "sha256": "c0178c1787cf78e9e7f003a68f2d8891ca38225ff136ffe71581b618be737d4b"
     },
     {
       "archiveNote": "Zenodo-compatible metadata included in the tagged source archive and Wiley submission archive.",
       "bytes": "1490",
+      "checksumStatus": "tracked-source-verified",
       "includeInDoiDeposit": "source-archive",
       "path": ".zenodo.json",
       "releaseAssetName": "",
       "role": "doi-deposit-metadata",
-      "sha256": "d6b1926e5ac439c5a1e506f208edd94773af6944b0375ae99ee6c72034dc387a"
+      "sha256": "02300e78afe6fb0ad1090582ad6ed584ecfd04a881e005760ba61d3806e31ae1"
     },
     {
       "archiveNote": "Generated gate summary distinguishing mechanism-review readiness from DOI and human signoff.",
       "bytes": "4469",
+      "checksumStatus": "tracked-source-verified",
       "includeInDoiDeposit": "source-archive",
       "path": "reports/submission-readiness.md",
       "releaseAssetName": "",
       "role": "submission-readiness-audit",
-      "sha256": "f095a95571e1b66c8586a2a33e465537873ddf23ea5e306c596f514de53b4d0f"
+      "sha256": "ea77f3d2557cc811854da207f027334a662e210d8cf7b528043703c89ddd3539"
     },
     {
       "archiveNote": "Manual final-submission read-through checklist; remains pending until signed for the release.",
       "bytes": "2930",
+      "checksumStatus": "tracked-source-verified",
       "includeInDoiDeposit": "source-archive",
       "path": "reports/final-human-readthrough.md",
       "releaseAssetName": "",
       "role": "manual-signoff-record",
-      "sha256": "aef4d8130e8eb04c986e65eab1204e0ac7115f31301080e7cbb2a4f4b8592adb"
+      "sha256": "9de9d37c4196a3ef0a1794f815dc12035f0c971edbb7b680319f7415b932d5aa"
     }
   ],
   "schema": "lobby-capture-archive-handoff-manifest-v1",
