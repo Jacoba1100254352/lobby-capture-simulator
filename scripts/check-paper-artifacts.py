@@ -4,6 +4,7 @@
 from __future__ import annotations
 
 import csv
+import hashlib
 import json
 import os
 import re
@@ -71,7 +72,7 @@ SUBMISSION_READINESS_CSV = ROOT / "reports" / "submission-readiness.csv"
 LATEX_LOG_AUDIT_MD = ROOT / "reports" / "latex-log-audit.md"
 LATEX_LOG_AUDIT_CSV = ROOT / "reports" / "latex-log-audit.csv"
 FINAL_HUMAN_READTHROUGH = ROOT / "reports" / "final-human-readthrough.md"
-RELEASE_TAG = "paper-publication-readiness-2026-06-13-r99"
+RELEASE_TAG = "paper-publication-readiness-2026-06-13-r100"
 CITATION_CFF = ROOT / "CITATION.cff"
 ZENODO_JSON = ROOT / ".zenodo.json"
 FORBIDDEN_LOCAL_ARTIFACTS = [
@@ -173,6 +174,8 @@ EXPECTED_ZIP_MEMBERS = {
     "supporting-information/paper-layout-audit.md",
     "supporting-information/manual-visual-audit.md",
     "supporting-information/final-human-readthrough.md",
+    "supporting-information/submission-package-manifest.json",
+    "supporting-information/submission-package-manifest.md",
     "supporting-information/CITATION.cff",
     "supporting-information/zenodo.json",
 }
@@ -1835,9 +1838,82 @@ def check_submission_zip() -> list[str]:
                     failures.append(
                         f"submission zip {member} differs from {source.relative_to(ROOT)}"
                     )
+            failures.extend(check_submission_package_manifest(archive, names))
             return failures
     except (OSError, KeyError, zipfile.BadZipFile) as error:
         return [f"could not inspect submission zip: {error}"]
+
+
+def check_submission_package_manifest(
+    archive: zipfile.ZipFile,
+    names: set[str],
+) -> list[str]:
+    manifest_member = "supporting-information/submission-package-manifest.json"
+    manifest_markdown = "supporting-information/submission-package-manifest.md"
+    failures: list[str] = []
+    if manifest_member not in names:
+        return [f"submission zip missing {manifest_member}"]
+    if manifest_markdown not in names:
+        failures.append(f"submission zip missing {manifest_markdown}")
+    try:
+        manifest = json.loads(archive.read(manifest_member).decode("utf-8"))
+    except (UnicodeDecodeError, json.JSONDecodeError, KeyError) as error:
+        return [*failures, f"submission package manifest is not valid JSON: {error}"]
+
+    if manifest.get("schema") != "lobby-capture-submission-package-manifest-v1":
+        failures.append("submission package manifest has unexpected schema")
+    if manifest.get("releaseTag") != RELEASE_TAG:
+        failures.append(
+            f"submission package manifest releaseTag={manifest.get('releaseTag')!r} does not match {RELEASE_TAG}"
+        )
+    members = manifest.get("members")
+    if not isinstance(members, list):
+        return [*failures, "submission package manifest members field is not a list"]
+
+    manifest_paths: set[str] = set()
+    for index, entry in enumerate(members):
+        if not isinstance(entry, dict):
+            failures.append(f"submission package manifest member {index} is not an object")
+            continue
+        path = entry.get("path")
+        expected_sha = entry.get("sha256")
+        expected_bytes = entry.get("bytes")
+        if not isinstance(path, str) or not path:
+            failures.append(f"submission package manifest member {index} has invalid path")
+            continue
+        manifest_paths.add(path)
+        if path in {manifest_member, manifest_markdown}:
+            failures.append(f"submission package manifest should not checksum itself: {path}")
+            continue
+        if path not in names:
+            failures.append(f"submission package manifest lists missing member: {path}")
+            continue
+        data = archive.read(path)
+        actual_sha = hashlib.sha256(data).hexdigest()
+        if expected_sha != actual_sha:
+            failures.append(f"submission package manifest checksum mismatch for {path}")
+        if expected_bytes != len(data):
+            failures.append(f"submission package manifest byte count mismatch for {path}")
+
+    expected_paths = {
+        name
+        for name in names
+        if not name.endswith("/")
+        and name not in {manifest_member, manifest_markdown}
+    }
+    missing_from_manifest = sorted(expected_paths - manifest_paths)
+    extra_in_manifest = sorted(manifest_paths - expected_paths)
+    failures.extend(
+        f"submission package manifest omits member: {path}"
+        for path in missing_from_manifest
+    )
+    failures.extend(
+        f"submission package manifest lists non-package member: {path}"
+        for path in extra_in_manifest
+    )
+    if manifest.get("memberCount") != len(manifest_paths):
+        failures.append("submission package manifest memberCount does not match listed members")
+    return failures
 
 
 def package_byte_checks() -> list[tuple[Path, str]]:

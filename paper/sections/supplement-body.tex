@@ -110,7 +110,7 @@ The reproducible report pipeline writes:
   \item submission-readiness audit synthesizing claim posture, empirical-bridge scope, policy-language, layout, visual, and reproducibility gates.
 \end{itemize}
 
-The Wiley submission archive includes the generated CSV, Markdown, and manifest report files under \texttt{supporting-information/report-data/}. The artifact checker compares those packaged files against the repository copies so the reviewer bundle cannot silently omit or stale-copy a generated report.
+The Wiley submission archive includes a package-member checksum manifest alongside its supporting-information files and generated report bundle. The artifact checker compares packaged report files against the repository copies and validates the package manifest against ZIP member bytes so the reviewer bundle cannot silently omit or stale-copy a generated report.
 
 The canonical local check is:
 

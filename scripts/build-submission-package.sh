@@ -125,6 +125,7 @@ Supplement: supplement.tex and supplement.pdf
 The included USG.cls is a generated copy of Wiley's USG class with template sample journal art and the generic Open Access badge removed for neutral peer-review rendering. The downloaded Wiley template remains unmodified in the repository.
 
 Supporting information: supporting-information/
+Package manifest: supporting-information/submission-package-manifest.json and supporting-information/submission-package-manifest.md
 
 Compile from this directory with:
 pdflatex -interaction=nonstopmode strategic-channel-substitution-regulatory-capture.tex
@@ -135,5 +136,30 @@ pdflatex -interaction=nonstopmode strategic-channel-substitution-regulatory-capt
 pdflatex -interaction=nonstopmode strategic-channel-substitution-regulatory-capture.tex
 EOF
 
-(cd "$STAGING_DIR" && zip -qr "$ZIP_PATH" .)
+python3 "$ROOT_DIR/scripts/write-submission-package-manifest.py" "$STAGING_DIR" "$ROOT_DIR"
+python3 - "$STAGING_DIR" "$ZIP_PATH" <<'PY'
+from __future__ import annotations
+
+import os
+import sys
+import zipfile
+from pathlib import Path
+
+
+staging = Path(sys.argv[1])
+zip_path = Path(sys.argv[2])
+fixed_timestamp = (2026, 5, 5, 0, 0, 0)
+paths = sorted(
+    (path for path in staging.rglob("*") if path.is_file()),
+    key=lambda path: path.relative_to(staging).as_posix(),
+)
+with zipfile.ZipFile(zip_path, "w", compression=zipfile.ZIP_DEFLATED, compresslevel=9) as archive:
+    for path in paths:
+        relative = path.relative_to(staging).as_posix()
+        info = zipfile.ZipInfo(relative, fixed_timestamp)
+        info.compress_type = zipfile.ZIP_DEFLATED
+        mode = 0o755 if os.access(path, os.X_OK) else 0o644
+        info.external_attr = mode << 16
+        archive.writestr(info, path.read_bytes())
+PY
 printf 'Wrote %s\n' "$ZIP_PATH"
