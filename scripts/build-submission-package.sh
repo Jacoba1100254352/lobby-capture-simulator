@@ -95,6 +95,7 @@ for report_artifact in "$ROOT_DIR"/reports/*.csv "$ROOT_DIR"/reports/*.md "$ROOT
   if [ -e "$report_artifact" ]; then
     case "$(basename "$report_artifact")" in
       archive-handoff-manifest.*) continue ;;
+      doi-deposit-readiness.*) continue ;;
     esac
     cp "$report_artifact" "$STAGING_DIR/supporting-information/report-data/"
   fi

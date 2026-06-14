@@ -80,11 +80,20 @@ FINAL_HUMAN_READTHROUGH = ROOT / "reports" / "final-human-readthrough.md"
 ARCHIVE_HANDOFF_CSV = ROOT / "reports" / "archive-handoff-manifest.csv"
 ARCHIVE_HANDOFF_JSON = ROOT / "reports" / "archive-handoff-manifest.json"
 ARCHIVE_HANDOFF_MD = ROOT / "reports" / "archive-handoff-manifest.md"
-RELEASE_TAG = "paper-publication-readiness-2026-06-13-r106"
+DOI_DEPOSIT_READINESS_CSV = ROOT / "reports" / "doi-deposit-readiness.csv"
+DOI_DEPOSIT_READINESS_MD = ROOT / "reports" / "doi-deposit-readiness.md"
+RELEASE_ASSET_CHECKSUM_CSV = ROOT / "dist" / "release-asset-checksums.csv"
+RELEASE_ASSET_CHECKSUM_JSON = ROOT / "dist" / "release-asset-checksums.json"
+RELEASE_ASSET_CHECKSUM_MD = ROOT / "dist" / "release-asset-checksums.md"
+RELEASE_TAG = "paper-publication-readiness-2026-06-14-r107"
 ARCHIVE_HANDOFF_REPORT_NAMES = {
     "archive-handoff-manifest.csv",
     "archive-handoff-manifest.json",
     "archive-handoff-manifest.md",
+}
+POST_SUBMISSION_REPORT_NAMES = ARCHIVE_HANDOFF_REPORT_NAMES | {
+    "doi-deposit-readiness.csv",
+    "doi-deposit-readiness.md",
 }
 TRACKED_SOURCE_CHECKSUM_STATUS = "tracked-source-verified"
 RELEASE_ASSET_CHECKSUM_STATUS = "release-asset-checksum-recorded-in-dist"
@@ -109,6 +118,8 @@ FORBIDDEN_ZIP_MEMBERS = {
     "supporting-information/report-data/archive-handoff-manifest.csv",
     "supporting-information/report-data/archive-handoff-manifest.json",
     "supporting-information/report-data/archive-handoff-manifest.md",
+    "supporting-information/report-data/doi-deposit-readiness.csv",
+    "supporting-information/report-data/doi-deposit-readiness.md",
 }
 TEX_BINARY_DIRS = [
     Path("/usr/local/texlive/2026basic/bin/universal-darwin"),
@@ -240,6 +251,7 @@ def main() -> int:
     failures.extend(check_layout_and_visual_reports())
     failures.extend(check_archive_metadata())
     failures.extend(check_archive_handoff_manifest())
+    failures.extend(check_doi_deposit_readiness())
     failures.extend(check_release_tag_exactness())
     failures.extend(check_submission_zip())
     failures.extend(check_submission_zip_compiles())
@@ -291,6 +303,8 @@ def check_freshness() -> list[str]:
         (ARCHIVE_HANDOFF_CSV, archive_handoff_inputs()),
         (ARCHIVE_HANDOFF_JSON, archive_handoff_inputs()),
         (ARCHIVE_HANDOFF_MD, archive_handoff_inputs()),
+        (DOI_DEPOSIT_READINESS_CSV, doi_deposit_readiness_inputs()),
+        (DOI_DEPOSIT_READINESS_MD, doi_deposit_readiness_inputs()),
     ]
     for artifact, inputs in checks:
         if not artifact.exists():
@@ -406,7 +420,7 @@ def report_bundle_inputs() -> list[Path]:
             *sorted((ROOT / "reports").glob("*.md")),
             *sorted((ROOT / "reports").glob("*.manifest.json")),
         ]
-        if path.name not in ARCHIVE_HANDOFF_REPORT_NAMES
+        if path.name not in POST_SUBMISSION_REPORT_NAMES
     ]
 
 
@@ -421,6 +435,24 @@ def archive_handoff_inputs() -> list[Path]:
         SUBMISSION_READINESS_MD,
         FINAL_HUMAN_READTHROUGH,
         ROOT / "scripts" / "write-archive-handoff-manifest.py",
+    ]
+
+
+def doi_deposit_readiness_inputs() -> list[Path]:
+    return [
+        ARCHIVE_HANDOFF_CSV,
+        ARCHIVE_HANDOFF_JSON,
+        ARCHIVE_HANDOFF_MD,
+        RELEASE_ASSET_CHECKSUM_CSV,
+        RELEASE_ASSET_CHECKSUM_JSON,
+        RELEASE_ASSET_CHECKSUM_MD,
+        SUBMISSION_READINESS_CSV,
+        SUBMISSION_READINESS_MD,
+        FINAL_HUMAN_READTHROUGH,
+        CITATION_CFF,
+        ZENODO_JSON,
+        SUBMISSION_DECLARATIONS,
+        ROOT / "scripts" / "audit-doi-deposit-readiness.py",
     ]
 
 
@@ -1907,7 +1939,11 @@ def check_final_human_readthrough() -> list[str]:
 
 
 def field_value(text: str, field_name: str) -> str:
-    match = re.search(rf"^\s*{re.escape(field_name)}\s*:\s*(.*?)\s*$", text, re.IGNORECASE | re.MULTILINE)
+    match = re.search(
+        rf"^[^\S\n]*{re.escape(field_name)}[^\S\n]*:[^\S\n]*(.*?)[^\S\n]*$",
+        text,
+        re.IGNORECASE | re.MULTILINE,
+    )
     return match.group(1).strip() if match else ""
 
 
@@ -2121,6 +2157,70 @@ def check_archive_handoff_manifest() -> list[str]:
     ):
         if phrase not in markdown:
             failures.append(f"archive handoff markdown missing required phrase: {phrase}")
+    return failures
+
+
+def check_doi_deposit_readiness() -> list[str]:
+    failures: list[str] = []
+    for path in (DOI_DEPOSIT_READINESS_CSV, DOI_DEPOSIT_READINESS_MD):
+        if not path.exists():
+            failures.append(f"missing DOI deposit readiness report: {path.relative_to(ROOT)}")
+    if failures:
+        return failures
+
+    try:
+        with DOI_DEPOSIT_READINESS_CSV.open(newline="", encoding="utf-8") as source:
+            rows = {row.get("gate", ""): row for row in csv.DictReader(source)}
+    except OSError as error:
+        return [f"could not read DOI deposit readiness CSV: {error}"]
+    expected_statuses = {
+        "release-metadata": {"ready"},
+        "primary-release-assets": {"ready"},
+        "release-asset-checksums": {"ready"},
+        "claim-boundary": {"ready"},
+        "doi-record": {"manual_required", "ready"},
+        "human-readthrough": {"manual_required", "ready"},
+        "final-journal-submission": {"manual_required", "ready"},
+    }
+    for gate_name, statuses in expected_statuses.items():
+        row = rows.get(gate_name)
+        if not row:
+            failures.append(f"DOI deposit readiness missing gate: {gate_name}")
+            continue
+        if row.get("status") not in statuses:
+            failures.append(
+                f"DOI deposit readiness gate {gate_name} has status={row.get('status', '')}, "
+                f"expected one of {sorted(statuses)}"
+            )
+
+    final_gate = rows.get("final-journal-submission", {})
+    if final_gate.get("status") == "ready":
+        doi_gate = rows.get("doi-record", {})
+        human_gate = rows.get("human-readthrough", {})
+        if doi_gate.get("status") != "ready" or human_gate.get("status") != "ready":
+            failures.append("DOI deposit readiness clears final submission before DOI and human signoff are ready")
+    if rows.get("doi-record", {}).get("status") == "ready":
+        text_sources = "\n".join(
+            path.read_text(encoding="utf-8")
+            for path in (CITATION_CFF, ZENODO_JSON, SUBMISSION_DECLARATIONS, FINAL_HUMAN_READTHROUGH)
+            if path.exists()
+        )
+        if not re.search(r"\b10\.\d{4,9}/[-._;()/:A-Za-z0-9]+\b", text_sources):
+            failures.append("DOI deposit readiness says DOI is ready but no DOI appears in metadata")
+
+    text = DOI_DEPOSIT_READINESS_MD.read_text(encoding="utf-8")
+    required_text = [
+        "DOI Deposit Readiness",
+        RELEASE_TAG,
+        "It does not assert that a DOI has been minted",
+        "Final journal-submission status:",
+        "lobby-capture-wiley-submission.zip",
+        "dist/release-asset-checksums",
+        "reports/final-human-readthrough.md",
+    ]
+    for phrase in required_text:
+        if phrase not in text:
+            failures.append(f"DOI deposit readiness markdown missing phrase: {phrase}")
     return failures
 
 

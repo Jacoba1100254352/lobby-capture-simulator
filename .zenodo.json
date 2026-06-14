@@ -1,7 +1,7 @@
 {
   "title": "Lobby Capture Simulator: Strategic Channel Substitution in Regulatory Capture",
   "upload_type": "software",
-  "publication_date": "2026-06-13",
+  "publication_date": "2026-06-14",
   "description": "Versioned simulator, source snapshots, validation reports, generated manuscript tables and figures, and Wiley-oriented submission package for an agent-based mechanism model of lobbying, regulatory capture, channel substitution, and anti-capture reform design.",
   "creators": [
     {
@@ -28,7 +28,7 @@
       "resource_type": "software"
     },
     {
-      "identifier": "https://github.com/Jacoba1100254352/lobby-capture-simulator/releases/tag/paper-publication-readiness-2026-06-13-r106",
+      "identifier": "https://github.com/Jacoba1100254352/lobby-capture-simulator/releases/tag/paper-publication-readiness-2026-06-14-r107",
       "relation": "isIdenticalTo",
       "resource_type": "software"
     }

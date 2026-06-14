@@ -38,6 +38,7 @@ The simulator now has a lobbying-centered model core with calibration fixtures, 
 - `make causal-calibration-targets` generates the causal target matrix that must clear before the project can use calibrated policy-simulation language.
 - `make first-wave-causal-protocols` translates the first-wave causal targets into protocol-level units, treatments or shocks, comparison designs, linkage keys, falsification checks, sensitivity checks, and claim-upgrade boundaries.
 - `make first-wave-source-readiness` maps those protocols to committed source products, bounded/proxy support, missing products, blocking issues, and next source actions.
+- `make doi-deposit-readiness-audit` checks the release metadata, primary release assets, checksum handoff files, DOI-record state, and final human-read-through state needed before a final journal submission can be treated as externally complete.
 - `make tables` regenerates paper table inputs from report CSV snapshots using `paper/tables.yml`.
 - `make figures` regenerates the paper's numbered SVG/PDF figure assets and LaTeX wrappers.
 - Adaptive institutions now include per-client/per-domain funding memory, regulator queue pressure, watchdog monitoring budget allocation, adaptation speed, and reform-decay pressure.
@@ -52,6 +53,7 @@ Deliverables:
 - keep the main article focused on the model mechanism, empirical bridge, curated result tables, and governance implication;
 - keep full scenario catalogs, sensitivity matrices, ablation matrices, implementation details, and parser details in the supplement or repository reports;
 - run `make paper-artifacts-check` after any manuscript, report, table, figure, or submission-bundle change;
+- run `make doi-deposit-readiness-audit` after building a release bundle and before DOI deposition, then record the minted DOI and completed human read-through before treating the final-journal-submission gate as cleared;
 - advance the release tag in `scripts/check-paper-artifacts.py` and `paper/sections/submission-declarations.tex` whenever the review bundle changes;
 - prepare a separate anonymized package only if the paper is retargeted to a double-blind venue.
 

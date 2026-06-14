@@ -119,6 +119,16 @@ cleanup() {
 trap cleanup EXIT HUP INT TERM
 
 cd "$PAPER_DIR"
+find . -maxdepth 1 -type f \( \
+  -name 'regulation-governance-wiley [0-9]*.aux' -o \
+  -name 'regulation-governance-wiley [0-9]*.bbl' -o \
+  -name 'regulation-governance-wiley [0-9]*.blg' -o \
+  -name 'regulation-governance-wiley [0-9]*.log' -o \
+  -name 'regulation-governance-wiley [0-9]*.out' -o \
+  -name 'regulation-governance-wiley [0-9]*.pag' -o \
+  -name 'regulation-governance-wiley [0-9]*.pdf' -o \
+  -name 'regulation-governance-wiley [0-9]*.tex' \
+\) -exec rm -f {} +
 rm -f regulation-governance-wiley.aux \
   regulation-governance-wiley.bbl \
   regulation-governance-wiley.blg \

@@ -245,7 +245,11 @@ def final_human_readthrough_state() -> dict[str, str | bool]:
 
 
 def field_value(text: str, field_name: str) -> str:
-    match = re.search(rf"^\s*{re.escape(field_name)}\s*:\s*(.*?)\s*$", text, re.IGNORECASE | re.MULTILINE)
+    match = re.search(
+        rf"^[^\S\n]*{re.escape(field_name)}[^\S\n]*:[^\S\n]*(.*?)[^\S\n]*$",
+        text,
+        re.IGNORECASE | re.MULTILINE,
+    )
     return match.group(1).strip() if match else ""
 
 

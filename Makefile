@@ -14,7 +14,7 @@ MAIN_CLASS := lobbycapture.Main
 TEST_CLASSES := lobbycapture.SimulatorTests
 PAPER_BASENAME := strategic-channel-substitution-regulatory-capture
 
-.PHONY: compile script-checks test run campaign mechanism-comparison sensitivity ablation interactions portfolio source-moments source-panel-inventory source-capability-audit dark-money-bridge-audit intermediary-bridge-audit revolving-door-bridge-audit procurement-denominator-audit procurement-modification-composition-audit procurement-benchmark-crosswalk procurement-refresh-readiness sam-contract-awards-preflight sam-contract-awards-export-audit usaspending-transaction-download-strata sam-procurement-refresh claim-boundary-audit claim-source-dependency-audit causal-calibration-targets first-wave-causal-protocols first-wave-source-readiness claim-posture-audit calibration-readiness-audit policy-claim-language-audit submission-readiness-audit archive-handoff-audit latex-log-audit calibration-queue validate snapshot-2024-env tables figures paper paper-build paper-supplement-build paper-supplement paper-word-count wiley-template wiley-tex-deps paper-wiley paper-wiley-build submission-package submission-package-build submission-package-check paper-layout-audit visual-review-checklist paper-artifacts paper-artifacts-check clean
+.PHONY: compile script-checks test run campaign mechanism-comparison sensitivity ablation interactions portfolio source-moments source-panel-inventory source-capability-audit dark-money-bridge-audit intermediary-bridge-audit revolving-door-bridge-audit procurement-denominator-audit procurement-modification-composition-audit procurement-benchmark-crosswalk procurement-refresh-readiness sam-contract-awards-preflight sam-contract-awards-export-audit usaspending-transaction-download-strata sam-procurement-refresh claim-boundary-audit claim-source-dependency-audit causal-calibration-targets first-wave-causal-protocols first-wave-source-readiness claim-posture-audit calibration-readiness-audit policy-claim-language-audit submission-readiness-audit archive-handoff-audit doi-deposit-readiness-audit latex-log-audit calibration-queue validate snapshot-2024-env tables figures paper paper-build paper-supplement-build paper-supplement paper-word-count wiley-template wiley-tex-deps paper-wiley paper-wiley-build submission-package submission-package-build submission-package-check paper-layout-audit visual-review-checklist paper-artifacts paper-artifacts-check clean
 
 compile:
 	@mkdir -p out/classes
@@ -128,6 +128,16 @@ figures: claim-boundary-audit
 	python3 scripts/generate-interaction-figures.py
 
 paper-build:
+	find paper -maxdepth 1 -type f \( \
+		-name '$(PAPER_BASENAME) [0-9]*.aux' -o \
+		-name '$(PAPER_BASENAME) [0-9]*.bbl' -o \
+		-name '$(PAPER_BASENAME) [0-9]*.blg' -o \
+		-name '$(PAPER_BASENAME) [0-9]*.log' -o \
+		-name '$(PAPER_BASENAME) [0-9]*.out' -o \
+		-name '$(PAPER_BASENAME) [0-9]*.pag' -o \
+		-name '$(PAPER_BASENAME) [0-9]*.pdf' -o \
+		-name '$(PAPER_BASENAME) [0-9]*.tex' \
+	\) -exec rm -f {} +
 	rm -f paper/$(PAPER_BASENAME).aux paper/$(PAPER_BASENAME).bbl paper/$(PAPER_BASENAME).blg
 	cd paper && $(PDFLATEX) -interaction=nonstopmode $(PAPER_BASENAME).tex
 	cd paper && $(BIBTEX) $(PAPER_BASENAME)
@@ -136,7 +146,16 @@ paper-build:
 	cd paper && $(PDFLATEX) -interaction=nonstopmode $(PAPER_BASENAME).tex
 
 paper-supplement-build:
-	find paper -maxdepth 1 -type f -name 'supplement [0-9]*.aux' -exec rm -f {} +
+	find paper -maxdepth 1 -type f \( \
+		-name 'supplement [0-9]*.aux' -o \
+		-name 'supplement [0-9]*.bbl' -o \
+		-name 'supplement [0-9]*.blg' -o \
+		-name 'supplement [0-9]*.log' -o \
+		-name 'supplement [0-9]*.out' -o \
+		-name 'supplement [0-9]*.pag' -o \
+		-name 'supplement [0-9]*.pdf' -o \
+		-name 'supplement [0-9]*.tex' \
+	\) -exec rm -f {} +
 	rm -f paper/supplement.aux paper/supplement.bbl paper/supplement.blg
 	cd paper && $(PDFLATEX) -interaction=nonstopmode supplement.tex
 	cd paper && $(PDFLATEX) -interaction=nonstopmode supplement.tex
@@ -159,7 +178,7 @@ paper-wiley-build: wiley-template
 
 paper-wiley: tables figures paper-wiley-build
 
-submission-package-build:
+submission-package-build: submission-readiness-audit
 	./scripts/build-submission-package.sh
 
 submission-package-check: submission-package-build
@@ -191,7 +210,10 @@ submission-readiness-audit: policy-claim-language-audit
 archive-handoff-audit: submission-package-check
 	python3 scripts/write-archive-handoff-manifest.py
 
-paper-artifacts: campaign mechanism-comparison sensitivity ablation interactions portfolio source-moments source-panel-inventory source-capability-audit dark-money-bridge-audit intermediary-bridge-audit revolving-door-bridge-audit procurement-denominator-audit procurement-modification-composition-audit procurement-benchmark-crosswalk validate claim-boundary-audit claim-source-dependency-audit causal-calibration-targets first-wave-causal-protocols calibration-queue procurement-refresh-readiness first-wave-source-readiness tables figures paper-build paper-wiley-build paper-supplement-build paper-word-count paper-layout-audit visual-review-checklist latex-log-audit claim-posture-audit calibration-readiness-audit policy-claim-language-audit submission-readiness-audit submission-package-build submission-package-check archive-handoff-audit
+doi-deposit-readiness-audit: archive-handoff-audit
+	python3 scripts/audit-doi-deposit-readiness.py
+
+paper-artifacts: campaign mechanism-comparison sensitivity ablation interactions portfolio source-moments source-panel-inventory source-capability-audit dark-money-bridge-audit intermediary-bridge-audit revolving-door-bridge-audit procurement-denominator-audit procurement-modification-composition-audit procurement-benchmark-crosswalk validate claim-boundary-audit claim-source-dependency-audit causal-calibration-targets first-wave-causal-protocols calibration-queue procurement-refresh-readiness first-wave-source-readiness tables figures paper-build paper-wiley-build paper-supplement-build paper-word-count paper-layout-audit visual-review-checklist latex-log-audit claim-posture-audit calibration-readiness-audit policy-claim-language-audit submission-readiness-audit submission-package-build submission-package-check archive-handoff-audit doi-deposit-readiness-audit
 
 paper-artifacts-check: paper-artifacts
 	python3 scripts/check-paper-artifacts.py
@@ -205,6 +227,7 @@ clean:
 	rm -f reports/policy-claim-language-audit.csv reports/policy-claim-language-audit.md
 	rm -f reports/submission-readiness.csv reports/submission-readiness.md
 	rm -f reports/archive-handoff-manifest.csv reports/archive-handoff-manifest.json reports/archive-handoff-manifest.md
+	rm -f reports/doi-deposit-readiness.csv reports/doi-deposit-readiness.md
 	rm -f reports/latex-log-audit.csv reports/latex-log-audit.md
 	rm -f reports/sam-contract-awards-export-audit.csv reports/sam-contract-awards-export-audit.md
 	rm -f reports/lobby-capture-mechanism-comparison.csv reports/lobby-capture-mechanism-comparison.md reports/lobby-capture-mechanism-comparison.manifest.json

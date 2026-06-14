@@ -65,6 +65,8 @@ reports/*.md
 !reports/archive-handoff-manifest.csv
 !reports/archive-handoff-manifest.json
 !reports/archive-handoff-manifest.md
+!reports/doi-deposit-readiness.csv
+!reports/doi-deposit-readiness.md
 !reports/paper-layout-audit.md
 !reports/manual-visual-audit.md
 !reports/final-human-readthrough.md
