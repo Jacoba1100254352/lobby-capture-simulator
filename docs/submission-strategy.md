@@ -37,6 +37,7 @@ Wiley provides a generic LaTeX authoring template for Wiley journals. This repo 
 - `make wiley-tex-deps` installs the extra Wiley-template packages into the user TeX tree through `tlmgr --usermode`.
 - `make paper-wiley` attempts the Wiley-template build after the official bundle is fetched.
 - `make submission-package` creates `dist/lobby-capture-wiley-submission.zip` with root-level LaTeX source, compiled PDF, generated tables, generated figure files, supporting information files, bibliography, Wiley support files, and patched peer-review class copy.
+- `make wiley-submission-form-readiness-audit` checks generic Wiley Research Exchange upload mechanics after the ZIP is built: 500 MB combined upload size, 256-character file-name limits, root `.tex` and compiled PDF presence, supporting files, unsupported executable/script formats, and manuscript declaration statements. This report stays outside the Wiley ZIP because it audits that ZIP after construction.
 - `make paper-artifacts` is the normal post-edit refresh path: it reruns report sweeps, source moments, validation, calibration queue, generated tables, generated figures, the local PDF, the Wiley PDF, word count, and the submission zip.
 - `make paper-artifacts-check` is the PDF/submission guard: it runs the full refresh, verifies the local and Wiley PDFs exist and are newer than their paper inputs, checks the submission zip contents, compiles the extracted submission zip from its root, and screens the Wiley PDF for generic template placeholder text.
 
@@ -54,7 +55,7 @@ Current formatting choices made in the repository:
 - generated tables are set as wide table floats without `resizebox` scaling so the Wiley two-column reviewer PDF stays readable;
 - CI runs Java 21 tests and `make paper-artifacts-check`, which rebuilds report snapshots, validation outputs, generated tables, generated figures, the local PDF, the Wiley PDF, word count, and the Wiley submission package before checking PDF freshness, package contents, and standalone package compilation. CI then runs `git diff --exit-code` so regenerated tracked artifacts cannot drift silently.
 
-Before live submission, re-check the Regulation & Governance author page in Wiley Online Library under Contribute because Wiley notes that journal-specific instructions override generic Wiley guidance.
+Generic Wiley submission guidance was rechecked on 2026-06-14. It says LaTeX submissions can use a ZIP archive containing the root `.tex`, compiled PDF, bibliography, class/package files, figures, tables, and other manuscript materials; Wiley also lists 256 characters as the file-name limit, 500 MB as the combined-file upload limit, and notes that executable/script upload formats are not supported. Before live submission, re-check the Regulation & Governance author page in Wiley Online Library under Contribute because Wiley notes that journal-specific instructions override generic Wiley guidance.
 
 On this machine, the missing Wiley-template packages have been installed into the user TeX tree with `make wiley-tex-deps`; `make paper-artifacts-check` should be treated as the reproducibility check for the local PDF, Wiley wrapper, generated evidence, and submission package.
 

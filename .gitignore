@@ -67,6 +67,8 @@ reports/*.md
 !reports/archive-handoff-manifest.md
 !reports/doi-deposit-readiness.csv
 !reports/doi-deposit-readiness.md
+!reports/wiley-submission-form-readiness.csv
+!reports/wiley-submission-form-readiness.md
 !reports/paper-layout-audit.md
 !reports/manual-visual-audit.md
 !reports/final-human-readthrough.md
