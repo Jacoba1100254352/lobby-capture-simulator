@@ -64,6 +64,8 @@ CAUSAL_CALIBRATION_TARGETS_CSV = ROOT / "reports" / "causal-calibration-targets.
 FIRST_WAVE_CAUSAL_PROTOCOLS_MD = ROOT / "reports" / "first-wave-causal-protocols.md"
 FIRST_WAVE_CAUSAL_PROTOCOLS_CSV = ROOT / "reports" / "first-wave-causal-protocols.csv"
 FIRST_WAVE_CAUSAL_PROTOCOLS_TABLE = PAPER / "tables" / "first_wave_causal_protocols.tex"
+FIRST_WAVE_SOURCE_READINESS_MD = ROOT / "reports" / "first-wave-source-readiness.md"
+FIRST_WAVE_SOURCE_READINESS_CSV = ROOT / "reports" / "first-wave-source-readiness.csv"
 CLAIM_POSTURE_AUDIT_MD = ROOT / "reports" / "claim-posture-audit.md"
 CLAIM_POSTURE_AUDIT_CSV = ROOT / "reports" / "claim-posture-audit.csv"
 CALIBRATION_READINESS_MD = ROOT / "reports" / "calibration-readiness.md"
@@ -78,7 +80,7 @@ FINAL_HUMAN_READTHROUGH = ROOT / "reports" / "final-human-readthrough.md"
 ARCHIVE_HANDOFF_CSV = ROOT / "reports" / "archive-handoff-manifest.csv"
 ARCHIVE_HANDOFF_JSON = ROOT / "reports" / "archive-handoff-manifest.json"
 ARCHIVE_HANDOFF_MD = ROOT / "reports" / "archive-handoff-manifest.md"
-RELEASE_TAG = "paper-publication-readiness-2026-06-13-r105"
+RELEASE_TAG = "paper-publication-readiness-2026-06-13-r106"
 ARCHIVE_HANDOFF_REPORT_NAMES = {
     "archive-handoff-manifest.csv",
     "archive-handoff-manifest.json",
@@ -179,6 +181,7 @@ EXPECTED_ZIP_MEMBERS = {
     "supporting-information/claim-source-dependency.md",
     "supporting-information/causal-calibration-targets.md",
     "supporting-information/first-wave-causal-protocols.md",
+    "supporting-information/first-wave-source-readiness.md",
     "supporting-information/claim-posture-audit.md",
     "supporting-information/policy-claim-language-audit.md",
     "supporting-information/submission-readiness.md",
@@ -228,6 +231,7 @@ def main() -> int:
     failures.extend(check_claim_source_dependency_audit())
     failures.extend(check_causal_calibration_targets())
     failures.extend(check_first_wave_causal_protocols())
+    failures.extend(check_first_wave_source_readiness())
     failures.extend(check_claim_posture_audit())
     failures.extend(check_policy_claim_language_audit())
     failures.extend(check_final_human_readthrough())
@@ -342,6 +346,7 @@ def submission_inputs() -> list[Path]:
         PAPER / "references.bib",
         ROOT / "scripts" / "build-submission-package.sh",
         ROOT / "scripts" / "write-first-wave-causal-protocols.py",
+        ROOT / "scripts" / "audit-first-wave-source-readiness.py",
         CITATION_CFF,
         ZENODO_JSON,
         ROOT / "docs" / "odd-model.md",
@@ -362,6 +367,7 @@ def submission_inputs() -> list[Path]:
         ROOT / "reports" / "claim-source-dependency.md",
         CAUSAL_CALIBRATION_TARGETS_MD,
         FIRST_WAVE_CAUSAL_PROTOCOLS_MD,
+        FIRST_WAVE_SOURCE_READINESS_MD,
         ROOT / "reports" / "claim-posture-audit.md",
         ROOT / "reports" / "validation-summary.md",
         ROOT / "reports" / "substitution-audit.md",
@@ -1571,6 +1577,90 @@ def check_first_wave_causal_protocols() -> list[str]:
     return failures
 
 
+def check_first_wave_source_readiness() -> list[str]:
+    failures: list[str] = []
+    missing = [
+        path.relative_to(ROOT)
+        for path in (
+            FIRST_WAVE_SOURCE_READINESS_MD,
+            FIRST_WAVE_SOURCE_READINESS_CSV,
+        )
+        if not path.exists()
+    ]
+    if missing:
+        return [f"missing first-wave source readiness artifact: {path}" for path in missing]
+
+    with FIRST_WAVE_SOURCE_READINESS_CSV.open(newline="", encoding="utf-8") as source:
+        rows = list(csv.DictReader(source))
+    expected = {
+        "substitution-elasticity",
+        "procurement-modification-causal-capture",
+        "comment-authenticity-and-uptake-effect",
+        "venue-shifting-detection-effect",
+    }
+    present = {row.get("targetKey", "") for row in rows}
+    failures.extend(
+        f"first-wave source readiness report missing target: {target}"
+        for target in sorted(expected - present)
+    )
+    if present - expected:
+        failures.extend(
+            f"first-wave source readiness report includes non-first-wave target: {target}"
+            for target in sorted(present - expected)
+        )
+    required_fields = [
+        "sourceReadiness",
+        "currentSourceProducts",
+        "boundedOrProxySupport",
+        "missingSourceProducts",
+        "blockingIssue",
+        "claimBoundary",
+        "nextAction",
+    ]
+    ready_rows = []
+    blocked_rows = []
+    for row in rows:
+        target = row.get("targetKey", "<missing>")
+        for field_name in required_fields:
+            if not row.get(field_name):
+                failures.append(f"first-wave source readiness {target} missing {field_name}")
+        readiness = row.get("sourceReadiness", "")
+        if readiness == "ready_to_estimate":
+            ready_rows.append(target)
+        if readiness.startswith("blocked"):
+            blocked_rows.append(target)
+    if ready_rows:
+        failures.append(
+            "first-wave source readiness should not clear estimation-ready rows in this release: "
+            + ", ".join(sorted(ready_rows))
+        )
+    if "procurement-modification-causal-capture" not in blocked_rows:
+        failures.append("first-wave source readiness should keep procurement modification blocked")
+
+    text = FIRST_WAVE_SOURCE_READINESS_MD.read_text(encoding="utf-8")
+    required_text = [
+        "First-Wave Source Readiness",
+        "pre-estimation gate",
+        "Ready to estimate: `0`",
+        "Policy-simulation status: `not_cleared`",
+        "SAM/FPDS action-history export or keyed pull",
+        "canonical actor identifier table",
+    ]
+    for phrase in required_text:
+        if phrase not in text:
+            failures.append(f"first-wave source readiness markdown missing phrase: {phrase}")
+
+    if SUPPLEMENT_BODY.exists():
+        supplement = SUPPLEMENT_BODY.read_text(encoding="utf-8")
+        for phrase in (
+            "first-wave source-readiness audit",
+            "reports/first-wave-source-readiness.md",
+        ):
+            if phrase not in supplement:
+                failures.append(f"supplement does not disclose first-wave source readiness artifact: {phrase}")
+    return failures
+
+
 def check_claim_posture_audit() -> list[str]:
     failures: list[str] = []
     if not SOURCE_PANEL_INVENTORY.exists():
@@ -2195,6 +2285,7 @@ def package_byte_checks() -> list[tuple[Path, str]]:
         (ROOT / "reports" / "claim-source-dependency.md", "supporting-information/claim-source-dependency.md"),
         (CAUSAL_CALIBRATION_TARGETS_MD, "supporting-information/causal-calibration-targets.md"),
         (FIRST_WAVE_CAUSAL_PROTOCOLS_MD, "supporting-information/first-wave-causal-protocols.md"),
+        (FIRST_WAVE_SOURCE_READINESS_MD, "supporting-information/first-wave-source-readiness.md"),
         (ROOT / "reports" / "claim-posture-audit.md", "supporting-information/claim-posture-audit.md"),
         (ROOT / "reports" / "validation-summary.md", "supporting-information/validation-summary.md"),
         (ROOT / "reports" / "substitution-audit.md", "supporting-information/substitution-audit.md"),
