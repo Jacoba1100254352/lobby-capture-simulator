@@ -1,6 +1,6 @@
 gate,status,evidence,nextAction
-submission-archive-present,ready,exists=yes; readable=yes; encrypted=no; members=163,Upload the ZIP only if it opens without encryption or structural errors.
-upload-size,ready,combined upload bytes=3008600; limit=524288000,"Keep the LaTeX ZIP, compiled PDF, and supplement below Wiley's 500 MB combined-file limit."
+submission-archive-present,ready,exists=yes; readable=yes; encrypted=no; members=yes,Upload the ZIP only if it opens without encryption or structural errors.
+upload-size,ready,combined upload size=within limit; upload files present=3/3; limit=524288000,"Keep the LaTeX ZIP, compiled PDF, and supplement below Wiley's 500 MB combined-file limit."
 filename-length,ready,long upload names=0; long ZIP member names=0; limit=256,Rename files before upload if any upload file or ZIP member exceeds Wiley's file-name limit.
 root-latex-and-pdf,ready,missing root files=none,Keep the main .tex file and compiled peer-review PDF at the ZIP root.
 supporting-files,ready,missing support files=none; missing directories=none,"Retain bibliography, class/style files, figures, tables, declarations, and supporting-information manifests."

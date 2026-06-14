@@ -93,14 +93,18 @@ def readiness_rows() -> list[dict[str, str]]:
             "ready" if package["exists"] and package["readable"] and not package["encrypted"] else "blocked",
             (
                 f"exists={yes_no(package['exists'])}; readable={yes_no(package['readable'])}; "
-                f"encrypted={yes_no(package['encrypted'])}; members={len(names)}"
+                f"encrypted={yes_no(package['encrypted'])}; members={yes_no(bool(names))}"
             ),
             "Upload the ZIP only if it opens without encryption or structural errors.",
         ),
         row(
             "upload-size",
             "ready" if upload_bytes > 0 and upload_bytes <= MAX_UPLOAD_BYTES else "blocked",
-            f"combined upload bytes={upload_bytes}; limit={MAX_UPLOAD_BYTES}",
+            (
+                f"combined upload size={'within limit' if upload_bytes <= MAX_UPLOAD_BYTES and upload_bytes > 0 else 'outside limit'}; "
+                f"upload files present={sum(1 for path in upload_files if path.exists())}/{len(upload_files)}; "
+                f"limit={MAX_UPLOAD_BYTES}"
+            ),
             "Keep the LaTeX ZIP, compiled PDF, and supplement below Wiley's 500 MB combined-file limit.",
         ),
         row(

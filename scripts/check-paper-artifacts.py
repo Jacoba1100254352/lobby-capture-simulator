@@ -87,7 +87,7 @@ WILEY_SUBMISSION_FORM_READINESS_MD = ROOT / "reports" / "wiley-submission-form-r
 RELEASE_ASSET_CHECKSUM_CSV = ROOT / "dist" / "release-asset-checksums.csv"
 RELEASE_ASSET_CHECKSUM_JSON = ROOT / "dist" / "release-asset-checksums.json"
 RELEASE_ASSET_CHECKSUM_MD = ROOT / "dist" / "release-asset-checksums.md"
-RELEASE_TAG = "paper-publication-readiness-2026-06-14-r108"
+RELEASE_TAG = "paper-publication-readiness-2026-06-14-r109"
 ARCHIVE_HANDOFF_REPORT_NAMES = {
     "archive-handoff-manifest.csv",
     "archive-handoff-manifest.json",
