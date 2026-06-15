@@ -95,7 +95,7 @@ Benchmark ranges are plausibility checks, not causal empirical claims. `source_g
 | lobby-capture-campaign.csv | networkOpacityIndex | 0.2458-0.7246 | 0.00-1.00 | fit | all scenario values inside benchmark range; scope=all scenarios; rows=35 |
 | lobby-capture-campaign.csv | networkLegibilityIndex | 0.2754-0.7542 | 0.00-1.00 | fit | all scenario values inside benchmark range; scope=all scenarios; rows=35 |
 | lobby-capture-campaign.csv | intermediaryCentrality | 0.2437-0.4108 | 0.00-1.00 | fit | all scenario values inside benchmark range; scope=all scenarios; rows=35 |
-| lobby-capture-campaign.csv | procurementNetworkExposure | 0.1062-0.6576 | 0.00-1.00 | fit | all scenario values inside benchmark range; scope=procurement scenarios; rows=32 |
+| lobby-capture-campaign.csv | procurementNetworkExposure | 0.1062-0.6577 | 0.00-1.00 | fit | all scenario values inside benchmark range; scope=procurement scenarios; rows=32 |
 | lobby-capture-campaign.csv | revolvingDoorBridgeIndex | 0.1241-0.5325 | 0.00-1.00 | fit | all scenario values inside benchmark range; scope=all scenarios; rows=35 |
 | lobby-capture-campaign.csv | crossVenueDetectionIndex | 0.0803-0.7538 | 0.00-1.00 | fit | all scenario values inside benchmark range; scope=all scenarios; rows=35 |
 | lobby-capture-campaign.csv | participationProtectionIndex | 0.0340-0.6696 | 0.00-1.00 | fit | all scenario values inside benchmark range; scope=all scenarios; rows=35 |
@@ -134,7 +134,7 @@ Benchmark ranges are plausibility checks, not causal empirical claims. `source_g
 | lobby-capture-campaign.csv | participationProtectionIndex | 0.0340-0.6696 | 0.00-0.95 | fit | all scenario values inside benchmark range; scope=all scenarios; rows=35 |
 | lobby-capture-campaign.csv | speechRestrictionRisk | 0.0250-0.4326 | 0.00-0.80 | fit | all scenario values inside benchmark range; scope=all scenarios; rows=35 |
 | lobby-capture-campaign.csv | intermediaryCentrality | 0.2437-0.4108 | 0.00-0.80 | fit | all scenario values inside benchmark range; scope=all scenarios; rows=35 |
-| lobby-capture-campaign.csv | procurementNetworkExposure | 0.1062-0.6576 | 0.00-0.80 | fit | all scenario values inside benchmark range; scope=procurement scenarios; rows=32 |
+| lobby-capture-campaign.csv | procurementNetworkExposure | 0.1062-0.6577 | 0.00-0.80 | fit | all scenario values inside benchmark range; scope=procurement scenarios; rows=32 |
 | lobby-capture-campaign.csv | revolvingDoorBridgeIndex | 0.1241-0.5325 | 0.00-0.85 | fit | all scenario values inside benchmark range; scope=all scenarios; rows=35 |
 | lobby-capture-campaign.csv | commentNetworkLoad | 0.0000-0.5512 | 0.00-0.85 | fit | all scenario values inside benchmark range; scope=all scenarios; rows=35 |
 | lobby-capture-campaign.csv | venueShiftNetworkLoad | 0.0816-0.3796 | 0.00-0.85 | fit | all scenario values inside benchmark range; scope=all scenarios; rows=35 |

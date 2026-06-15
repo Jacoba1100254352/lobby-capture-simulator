@@ -265,8 +265,8 @@ W91CRB24F0034,"L3 TECHNOLOGIES, INC.",Department of Defense,Department of the Ar
 W31P4Q23C0052,LOCKHEED MARTIN CORPORATION,Department of Defense,Department of the Army,DEFINITIVE CONTRACT,251.1273,procurement,1,XFJMYSYFJEK4,W31P4Q23C0052,PZ0006,2024-09-20,unknown,0,false,true,false,false,false
 W58RGZ23C0001,BELL TEXTRON INC,Department of Defense,Department of the Army,DEFINITIVE CONTRACT,250.3605,procurement,1,N5QUZAYGPKM3,W58RGZ23C0001,P00024,2024-05-03,unknown,0,false,true,false,false,false
 N0002424C2106,HUNTINGTON INGALLS INC,Department of Defense,Department of the Navy,DEFINITIVE CONTRACT,250.0000,procurement,1,WMXDDH6HJNA5,N0002424C2106,0,2024-01-25,unknown,0,false,false,false,false,false
-FA283424CB002,"SIERRA NEVADA COMPANY, LLC",Department of Defense,Department of the Air Force,DEFINITIVE CONTRACT,250.0000,procurement,1,N1PWVLN6F4U1,FA283424CB002,P00001,2024-05-02,unknown,0,false,true,false,false,false
 HQ085621C0001,LOCKHEED MARTIN CORPORATION,Department of Defense,Missile Defense Agency,DEFINITIVE CONTRACT,250.0000,procurement,1,NGBVY5X32XZ5,HQ085621C0001,P00054,2024-07-30,unknown,0,false,true,false,false,false
+FA283424CB002,"SIERRA NEVADA COMPANY, LLC",Department of Defense,Department of the Air Force,DEFINITIVE CONTRACT,250.0000,procurement,1,N1PWVLN6F4U1,FA283424CB002,P00001,2024-05-02,unknown,0,false,true,false,false,false
 H9240224F0057,"ANDURIL INDUSTRIES, INC.",Department of Defense,U.S. Special Operations Command,DELIVERY ORDER,249.9785,procurement,1,KC3CH2MSK7Q3,H9240224F0057,0,2024-08-31,unknown,0,false,false,false,false,false
 FA860923F0006,THE BOEING COMPANY,Department of Defense,Department of the Air Force,DELIVERY ORDER,248.8140,procurement,1,WZWRLY4G3PL8,FA860923F0006,P00007,2024-07-08,unknown,0,false,true,false,false,false
 N0003022C6002,"THE CHARLES STARK DRAPER LABORATORY, INC.",Department of Defense,Department of the Navy,DEFINITIVE CONTRACT,247.6446,procurement,1,GTJHZE4M7YK1,N0003022C6002,P00027,2024-09-24,unknown,0,false,true,false,false,false
@@ -997,8 +997,8 @@ SPE60724FAGP7,SIGNATURE FLIGHT SUPPORT LLC,Department of Defense,Defense Logisti
 SPE60724FF685,WOOD COUNTY AIRPORT AUTHORITY,Department of Defense,Defense Logistics Agency,DELIVERY ORDER,0.0004,procurement,1,TYDZX41ZN7E7,SPE60724FF685,0,2024-08-10,unknown,0,false,false,false,false,false
 47QSCC24F113E,"ODP BUSINESS SOLUTIONS, LLC",General Services Administration,Federal Acquisition Service,BPA CALL,0.0025,procurement,1,DL92XLEBJHE1,47QSCC24F113E,0,2023-11-29,unknown,0,false,false,false,false,false
 SPE30024FL7TC,US FOODS INC,Department of Defense,Defense Logistics Agency,DELIVERY ORDER,0.0013,procurement,1,JM2PSZ26CGJ6,SPE30024FL7TC,0,2024-05-23,unknown,0,false,false,false,false,false
-SPE3SE24V0650,"GILL GROUP, INC.",Department of Defense,Defense Logistics Agency,PURCHASE ORDER,0.0005,procurement,1,RDN5HNBNV2D4,SPE3SE24V0650,0,2024-05-14,unknown,0,false,false,false,false,false
 SPE3SU24F1YVW,"OAKES FARMS FOOD & DISTRIBUTION SERVICES, LLC",Department of Defense,Defense Logistics Agency,DELIVERY ORDER,0.0016,procurement,1,ZQPUBCWB1JM1,SPE3SU24F1YVW,0,2023-10-25,unknown,0,false,false,false,false,false
+SPE30024FGW20,"NORFOLK BANANA DISTRIBUTORS, INC.",Department of Defense,Defense Logistics Agency,DELIVERY ORDER,0.0020,procurement,1,V5FGJ4NKYK61,SPE30024FGW20,0,2023-11-28,unknown,0,false,false,false,false,false
 N6899424F0009,SAAJ LLC,Department of Defense,Department of the Navy,BPA CALL,0.0021,procurement,1,KFJQUGB25MJ3,N6899424F0009,0,2023-10-01,unknown,0,false,false,false,false,false
 FA875124FG040,"ENTERPRISE TECHNOLOGY SOLUTIONS, INC.",Department of Defense,Department of the Air Force,DELIVERY ORDER,0.0216,procurement,1,FBRMCGPMN963,FA875124FG040,0,2023-10-01,unknown,0,false,false,false,false,false
 SPE60724FA742,AVFUEL CORP,Department of Defense,Defense Logistics Agency,DELIVERY ORDER,0.0009,procurement,1,EVM5L8672MN5,SPE60724FA742,0,2023-10-01,unknown,0,false,false,false,false,false

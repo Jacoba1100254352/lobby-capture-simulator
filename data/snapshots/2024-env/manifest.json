@@ -1,7 +1,7 @@
 {
   "snapshot": "2024-env",
-  "generatedAt": "2026-06-13T08:47:01.567532+00:00",
-  "gitCommit": "0b80229",
+  "generatedAt": "2026-06-15T20:19:02.859386+00:00",
+  "gitCommit": "0b8d907",
   "gitTreeState": "clean",
   "gitTreeStateScope": "working tree status excluding generated 2024-env snapshot, reports, paper tables, and paper figures",
   "scope": {
@@ -69,7 +69,7 @@
       "requestTemplate": "USASPENDING_FISCAL_YEAR=2024 USASPENDING_AGENCY='Environmental Protection Agency' ./scripts/fetch-usaspending.sh --live",
       "normalizedFile": "data/snapshots/2024-env/normalized/usaspending-awards.csv",
       "rowCount": 200,
-      "sha256": "be9475aa7e7a592d2e05f07729c906d1380ff52dd5cd5108c0d39b9b04ebabab",
+      "sha256": "3796f5b252b2850ae7f7889a10518020a55f26ca1629690b07bf41284fc9b4c4",
       "status": "live",
       "statusNotes": "usaspending: ok (normalized EPA award rows written)"
     },
@@ -79,7 +79,7 @@
       "requestTemplate": "USASPENDING_AGENCIES='Environmental Protection Agency,Department of Energy,Department of the Interior,Department of Agriculture,Department of Transportation,Department of Defense' USASPENDING_PAGE_SIZE=25 USASPENDING_MAX_PAGES=1 USASPENDING_TREAT_LATEST_TRANSACTION_AS_MODIFICATION=1 python3 scripts/fetch-source-data.py usaspending --output data/raw/usaspending-procurement-bridge.csv",
       "normalizedFile": "data/snapshots/2024-env/normalized/usaspending-procurement-bridge.csv",
       "rowCount": 150,
-      "sha256": "93c68f69e2e59b0ccf5b6936e9d05e970676545afdd94d7c2f4fc227997fe3a0",
+      "sha256": "b6900f83ade96294200d2f05fe8f856c724102e7585bc9995ed9a6a400589484",
       "status": "live",
       "statusNotes": "usaspending-procurement-bridge: ok (normalized multi-agency procurement bridge rows written)"
     },
@@ -88,10 +88,10 @@
       "description": "Expanded stratified 12-agency quarterly USAspending transaction/action panel for action-level procurement concentration and modification diagnostics; rows are deduplicated across modification, amount, and action-date strata and kept separate from award rows, top-award bridge rows, and SAM.gov Contract Awards rows.",
       "requestTemplate": "USASPENDING_AGENCIES='Environmental Protection Agency,Department of Energy,Department of the Interior,Department of Agriculture,Department of Transportation,Department of Defense,Department of Health and Human Services,Department of Veterans Affairs,Department of Homeland Security,National Aeronautics and Space Administration,General Services Administration,Department of Commerce' USASPENDING_ACTION_PERIOD_BUCKETS=quarterly USASPENDING_ACTION_TRANSACTION_PAGE_SIZE=100 USASPENDING_ACTION_TRANSACTION_MAX_PAGES=2 USASPENDING_ACTION_TRANSACTION_SORT_SPECS='Mod:asc;Transaction Amount:desc;Action Date:asc' python3 scripts/fetch-source-data.py usaspending-actions --output data/raw/usaspending-procurement-actions.csv",
       "normalizedFile": "data/snapshots/2024-env/normalized/usaspending-procurement-actions.csv",
-      "rowCount": 28115,
-      "sha256": "9e218dba3f4b3af84d278ae50a6bda09b7d84809aca5749253e6eeb1d86fc2cc",
-      "status": "live",
-      "statusNotes": "usaspending-procurement-actions: ok (normalized expanded USAspending procurement action rows written; agencies=12; periodBuckets=quarterly; pageSize=100; maxPages=2; sortSpecs=Mod:asc;Transaction Amount:desc;Action Date:asc)"
+      "rowCount": 28104,
+      "sha256": "0a673911ccb2ded9ea98f41bfeb5aa794d9225f15fbf09e0d99013d787521159",
+      "status": "archived-fallback",
+      "statusNotes": "usaspending-procurement-actions: archived_fallback (SAM.gov and USAspending procurement action requests failed; retainedArchivedRows=28104)"
     },
     {
       "source": "usaspending-procurement-national-actions",
@@ -99,7 +99,7 @@
       "requestTemplate": "USASPENDING_PROCUREMENT_ACTIONS_AGENCIES=ALL USASPENDING_ACTION_PERIOD_BUCKETS=annual USASPENDING_ACTION_TRANSACTION_PAGE_SIZE=100 USASPENDING_ACTION_TRANSACTION_MAX_PAGES=5 USASPENDING_ACTION_TRANSACTION_SORT_SPECS='Transaction Amount:desc;Mod:asc;Action Date:asc' python3 scripts/fetch-source-data.py usaspending-actions --output data/raw/usaspending-procurement-national-actions.csv",
       "normalizedFile": "data/snapshots/2024-env/normalized/usaspending-procurement-national-actions.csv",
       "rowCount": 1500,
-      "sha256": "193c1ff92a9d0f327bf4ec9014ea7266686881ad0b4a0c229fee73a0eccfa29e",
+      "sha256": "cf4f791826f229aad53a3ede77ce8f62f11108b06d964c0971d3d508804d7d60",
       "status": "live",
       "statusNotes": "usaspending-procurement-national-actions: ok (normalized national-volume USAspending procurement action rows written; agencyFilter=ALL; periodBuckets=annual; pageSize=100; maxPages=5; sortSpecs=Transaction Amount:desc;Mod:asc;Action Date:asc)"
     },
@@ -120,8 +120,8 @@
       "normalizedFile": "data/snapshots/2024-env/normalized/sam-contract-awards.csv",
       "rowCount": 0,
       "sha256": "missing",
-      "status": "missing",
-      "statusNotes": "normalized source file missing"
+      "status": "unavailable",
+      "statusNotes": "sam-contract-awards: unavailable (SAM.gov Contract Awards request failed; mode=1; format=json; filterCount=12; pageSize=100; maxPages=1; offsetPageStarts=0+10+50; fallback=USAspending action rows)"
     },
     {
       "source": "revolving-door",
@@ -146,6 +146,6 @@
   ],
   "liveRunStatus": {
     "file": "data/snapshots/2024-env/live-run-status.csv",
-    "sha256": "078ede094288519042496cfa9068fea7b9e709a614fdbd3f85befd7588f7a85e"
+    "sha256": "8ee91f8e200688487c19e6bdee5c13f01002e13dd42871b01828dc6a75a9bd9e"
   }
 }
