@@ -8,6 +8,7 @@ This generated schema/acquisition gate turns the first-wave causal protocols int
 - Schema/text ready products: `0`
 - Missing products: `16`
 - Present products with schema issues: `0`
+- Products with field-level quality issues: `0`
 - Targets with all required products ready: `0`
 - Policy-simulation status: `not_cleared`
 

@@ -181,6 +181,15 @@ grep -q "docs/source-product-templates/first-wave/substitution-reform-shocks.csv
 grep -q "SAM/FPDS action-history export or keyed pull" "$tmpdir/reports/first-wave-source-products.md"
 grep -q "canonical actor identifier table" "$tmpdir/reports/first-wave-source-products.md"
 
+cat > "$tmpdir/source-root/data/calibration/first-wave/substitution-reform-shocks.csv" <<'CSV'
+reformEventId,eventName,jurisdiction,policyDomain,reformType,eventDate,treatmentStartDate,affectedActorRule,affectedIssueRule,comparisonRule,sourceUrl,sourceExtractedAt
+shock-1,TODO,Example State,environment,disclosure,not-a-date,2024-02-01,covered registrants,ENV issues,matched unaffected actors,not-a-url,not-a-date
+CSV
+python3 scripts/audit-first-wave-source-products.py --root "$tmpdir/source-root" --reports "$tmpdir/reports" >/dev/null
+grep -q "qualityIssueCount" "$tmpdir/reports/first-wave-source-products.csv"
+grep -q "substitution-reform-shocks,.*schema_quality_issues" "$tmpdir/reports/first-wave-source-products.csv"
+grep -q "Products with field-level quality issues" "$tmpdir/reports/first-wave-source-products.md"
+
 cat > "$tmpdir/sam-export.csv" <<'CSV'
 contractId.piid,modification_number,recipientName,contractingDepartmentName,contractingSubtierName,awardOrIDVTypeName,Federal Action Obligation,Recipient UEI,actionDate,extentCompetedName,numberOfOffers,typeOfContractPricingName
 68HERH24C0004,0,MANUAL EXPORT CONTRACTOR,ENVIRONMENTAL PROTECTION AGENCY,EPA OFFICE,DEFINITIVE CONTRACT,1250000,EXPORTUEI1234,2024-01-15,FULL AND OPEN COMPETITION,5,FIRM FIXED PRICE

@@ -166,7 +166,7 @@ These files are acquisition templates for the source products named by `reports/
 - Markdown design-note templates: `{text_count}`
 - Production source-product directory: `data/calibration/first-wave/`
 
-Do not treat these templates as evidence. They are stored under `docs/source-product-templates/first-wave/` so the production audit continues to require real source files with rows, provenance, and protocol-specific coverage.
+Do not treat these templates as evidence. They are stored under `docs/source-product-templates/first-wave/` so the production audit continues to require real source files with rows, provenance, protocol-specific coverage, and field-level quality checks.
 
 Regenerate this directory with:
 
@@ -174,7 +174,7 @@ Regenerate this directory with:
 make first-wave-source-product-templates
 ```
 
-Use `manifest.csv` or `manifest.md` to map each template to its production path, required schema, minimum-row rule, acceptable source families, and claim boundary.
+Use `manifest.csv` or `manifest.md` to map each template to its production path, required schema, minimum-row rule, acceptable source families, field-level quality checks, and claim boundary.
 """
     path.write_text(text, encoding="utf-8")
 

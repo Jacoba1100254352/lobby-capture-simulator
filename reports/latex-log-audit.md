@@ -9,4 +9,4 @@ This audit scans the final local manuscript, Wiley manuscript, and supplement La
 | --- | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
 | local-manuscript | pass | - | 1 | 15.1147 | 0 | 0.0000 | 17 | 0 |
 | wiley-manuscript | pass | - | 0 | 0.0000 | 1 | 50.7244 | 28 | 3 |
-| supplement | pass | - | 0 | 0.0000 | 0 | 0.0000 | 40 | 0 |
+| supplement | pass | - | 0 | 0.0000 | 0 | 0.0000 | 43 | 0 |

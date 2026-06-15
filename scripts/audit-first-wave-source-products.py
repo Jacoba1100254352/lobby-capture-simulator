@@ -6,12 +6,28 @@ from __future__ import annotations
 import argparse
 import csv
 from dataclasses import dataclass
+from datetime import datetime
 from pathlib import Path
 
 
 ROOT = Path(".")
 REPORTS = Path("reports")
 TEMPLATE_ROOT = Path("docs/source-product-templates/first-wave")
+PLACEHOLDER_VALUES = {
+    "",
+    "example",
+    "example value",
+    "placeholder",
+    "sample",
+    "tbd",
+    "todo",
+    "to do",
+    "unknown",
+    "n/a",
+    "na",
+    "none",
+}
+BOOLEAN_VALUES = {"true", "false", "yes", "no", "1", "0"}
 
 
 @dataclass(frozen=True)
@@ -453,9 +469,10 @@ def audit_product(root: Path, spec: ProductSpec) -> dict[str, str]:
         observed_rows = ""
         observed_columns: tuple[str, ...] = ()
         missing_columns = spec.required_columns
+        quality_issues = 0
         validation_notes = "Expected source product is not present."
     elif path.suffix.lower() == ".csv":
-        observed_rows, observed_columns, missing_columns, validation_notes = audit_csv(path, spec)
+        observed_rows, observed_columns, missing_columns, quality_issues, validation_notes = audit_csv(path, spec)
         if missing_columns:
             status = "schema_missing_columns"
         elif observed_rows < spec.minimum_rows:
@@ -464,10 +481,13 @@ def audit_product(root: Path, spec: ProductSpec) -> dict[str, str]:
                 f"Schema columns are present, but observed rows {observed_rows} "
                 f"are below minimum {spec.minimum_rows}."
             )
+        elif quality_issues:
+            status = "schema_quality_issues"
         else:
             status = "schema_ready"
     else:
         observed_rows, observed_columns, missing_columns, validation_notes = audit_text(path, spec)
+        quality_issues = 0
         status = "text_missing_terms" if missing_columns else "text_ready"
 
     return {
@@ -486,6 +506,7 @@ def audit_product(root: Path, spec: ProductSpec) -> dict[str, str]:
         "observedRows": str(observed_rows) if observed_rows != "" else "",
         "observedColumns": "; ".join(observed_columns),
         "missingColumns": "; ".join(missing_columns),
+        "qualityIssueCount": str(quality_issues),
         "validationRule": spec.validation_rule,
         "validationNotes": validation_notes,
         "claimBoundary": spec.claim_boundary,
@@ -493,21 +514,125 @@ def audit_product(root: Path, spec: ProductSpec) -> dict[str, str]:
     }
 
 
-def audit_csv(path: Path, spec: ProductSpec) -> tuple[int, tuple[str, ...], tuple[str, ...], str]:
+def audit_csv(path: Path, spec: ProductSpec) -> tuple[int, tuple[str, ...], tuple[str, ...], int, str]:
     try:
         with path.open(newline="", encoding="utf-8") as source:
             reader = csv.DictReader(source)
             observed_columns = tuple(reader.fieldnames or ())
-            rows = sum(1 for _ in reader)
+            rows = list(reader)
     except OSError as error:
-        return 0, (), spec.required_columns, f"Could not read CSV: {error}"
+        return 0, (), spec.required_columns, 1, f"Could not read CSV: {error}"
     observed = set(observed_columns)
     missing = tuple(column for column in spec.required_columns if column not in observed)
     if missing:
         note = "Missing required schema columns."
     else:
-        note = "Required schema columns are present."
-    return rows, observed_columns, missing, note
+        quality_issues = csv_quality_issues(rows, spec)
+        if quality_issues:
+            note = f"Required schema columns are present, but {quality_issues} field-level quality issues were found."
+        else:
+            note = "Required schema columns and field-level quality checks pass."
+        return len(rows), observed_columns, missing, quality_issues, note
+    return len(rows), observed_columns, missing, 0, note
+
+
+def csv_quality_issues(rows: list[dict[str, str]], spec: ProductSpec) -> int:
+    issues = 0
+    for row in rows:
+        for column in spec.required_columns:
+            value = normalize_cell(row.get(column, ""))
+            lowered = value.lower()
+            if lowered in PLACEHOLDER_VALUES:
+                issues += 1
+                continue
+            if is_date_column(column) and not is_valid_date(value):
+                issues += 1
+            if is_url_column(column) and not is_valid_url(value):
+                issues += 1
+            if is_numeric_column(column) and not is_valid_number(value):
+                issues += 1
+            if is_boolean_column(column) and lowered not in BOOLEAN_VALUES:
+                issues += 1
+        for column in spec.optional_columns:
+            value = normalize_cell(row.get(column, ""))
+            if not value:
+                continue
+            lowered = value.lower()
+            if lowered in {"todo", "tbd", "placeholder", "example", "sample"}:
+                issues += 1
+            if is_date_column(column) and not is_valid_date(value):
+                issues += 1
+            if is_url_column(column) and not is_valid_url(value):
+                issues += 1
+            if is_numeric_column(column) and not is_valid_number(value):
+                issues += 1
+            if is_boolean_column(column) and lowered not in BOOLEAN_VALUES:
+                issues += 1
+    return issues
+
+
+def normalize_cell(value: str | None) -> str:
+    return "" if value is None else str(value).strip()
+
+
+def is_date_column(column: str) -> bool:
+    lowered = column.lower()
+    return (
+        lowered.endswith("date")
+        or lowered.endswith("at")
+        or "periodstart" in lowered
+        or "periodend" in lowered
+    )
+
+
+def is_url_column(column: str) -> bool:
+    return column.lower().endswith("url")
+
+
+def is_numeric_column(column: str) -> bool:
+    lowered = column.lower()
+    return any(
+        marker in lowered
+        for marker in (
+            "amount",
+            "obligation",
+            "score",
+            "share",
+            "confidence",
+            "similarity",
+            "numberofoffers",
+            "measure",
+        )
+    )
+
+
+def is_boolean_column(column: str) -> bool:
+    lowered = column.lower()
+    return lowered.startswith("is") or lowered in {"withdrawn"}
+
+
+def is_valid_date(value: str) -> bool:
+    normalized = value.strip()
+    if normalized.endswith("Z"):
+        normalized = normalized[:-1] + "+00:00"
+    try:
+        datetime.fromisoformat(normalized)
+        return True
+    except ValueError:
+        return False
+
+
+def is_valid_url(value: str) -> bool:
+    lowered = value.lower()
+    return lowered.startswith("https://") or lowered.startswith("http://")
+
+
+def is_valid_number(value: str) -> bool:
+    try:
+        float(value.replace(",", ""))
+        return True
+    except ValueError:
+        return False
 
 
 def audit_text(path: Path, spec: ProductSpec) -> tuple[int, tuple[str, ...], tuple[str, ...], str]:
@@ -542,6 +667,7 @@ def write_csv(path: Path, rows: list[dict[str, str]]) -> None:
         "observedRows",
         "observedColumns",
         "missingColumns",
+        "qualityIssueCount",
         "validationRule",
         "validationNotes",
         "claimBoundary",
@@ -560,6 +686,10 @@ def write_markdown(path: Path, rows: list[dict[str, str]]) -> None:
         row for row in rows
         if row["productStatus"] not in {"schema_ready", "text_ready"}
         and not row["productStatus"].startswith("missing")
+    ]
+    quality_issue_products = [
+        row for row in rows
+        if row["productStatus"] == "schema_quality_issues"
     ]
     target_keys = sorted({row["targetKey"] for row in rows})
     ready_targets = [
@@ -581,6 +711,7 @@ def write_markdown(path: Path, rows: list[dict[str, str]]) -> None:
         f"- Schema/text ready products: `{len(ready)}`",
         f"- Missing products: `{len(missing)}`",
         f"- Present products with schema issues: `{len(schema_issues)}`",
+        f"- Products with field-level quality issues: `{len(quality_issue_products)}`",
         f"- Targets with all required products ready: `{len(ready_targets)}`",
         "- Policy-simulation status: `not_cleared`",
         "",
