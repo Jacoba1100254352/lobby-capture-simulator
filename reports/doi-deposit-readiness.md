@@ -34,3 +34,7 @@ Upload or preserve these primary release assets with the DOI record, using `dist
 - `supplement.pdf`
 
 The tagged source archive should also preserve `CITATION.cff`, `.zenodo.json`, `reports/submission-readiness.md`, and `reports/final-human-readthrough.md` so the DOI record remains tied to the release claim boundary.
+
+## Post-Release Integrity Check
+
+After the GitHub release assets are uploaded, run `make github-release-asset-audit` and retain the ignored `reports/github-release-asset-audit.{csv,md}` output with the DOI handoff record. That networked audit compares GitHub's uploaded asset sizes and SHA-256 digests against the local release-machine checksum manifests. It verifies upload integrity only; it does not assert that a DOI has been minted or that final journal-submission gates are cleared.
