@@ -24,6 +24,31 @@ from urllib.request import urlopen
 ROOT = Path(__file__).resolve().parents[1]
 FETCHER = ROOT / "scripts" / "fetch-source-data.py"
 REPORTS = ROOT / "reports"
+DEFAULT_REPRESENTATIVE_AGENCIES = [
+    "Environmental Protection Agency",
+    "Department of Energy",
+    "Department of the Interior",
+    "Department of Agriculture",
+    "Department of Transportation",
+    "Department of Defense",
+    "Department of Health and Human Services",
+    "Department of Veterans Affairs",
+    "Department of Homeland Security",
+    "National Aeronautics and Space Administration",
+    "General Services Administration",
+    "Department of Commerce",
+]
+REQUIRED_ACTION_HISTORY_FIELDS = [
+    "PIID or award identifier",
+    "UEI or recipient identifier",
+    "awarding agency and subtier",
+    "recipient name",
+    "action or signed date",
+    "obligation or action amount",
+    "modification number",
+    "competition or extent-competed code",
+    "number of offers when available",
+]
 
 
 def main() -> int:
@@ -420,6 +445,10 @@ def write_markdown(path: Path, rows: list[dict[str, str]], metrics: dict[str, ob
     lines.extend(
         [
             "",
+            "## Next Export Specification",
+            "",
+            *next_export_specification(rows, metrics, args),
+            "",
             "## Promotion Command",
             "",
             "If the export is a candidate, promote it with:",
@@ -431,6 +460,47 @@ def write_markdown(path: Path, rows: list[dict[str, str]], metrics: dict[str, ob
         ]
     )
     path.write_text("\n".join(lines) + "\n", encoding="utf-8")
+
+
+def next_export_specification(rows: list[dict[str, str]], metrics: dict[str, object], args: argparse.Namespace) -> list[str]:
+    blockers = {row["item"]: row for row in rows if row["status"] == "blocked"}
+    lines = [
+        (
+            "A promotable SAM/FPDS action-history export must clear the hard gates above "
+            "before it is used as the primary procurement action panel."
+        ),
+        "",
+        "- Coverage target: fiscal-year 2024 action-history rows across at least "
+        f"`{args.min_agencies}` agencies, at least `{args.min_rows}` rows, at least "
+        f"`{args.min_awards}` distinct PIID/award identifiers, and at least "
+        f"`{args.min_date_span_days}` days of action-date span.",
+        "- Representative agency seed: " + "; ".join(DEFAULT_REPRESENTATIVE_AGENCIES) + ".",
+        "- Required field families: " + "; ".join(REQUIRED_ACTION_HISTORY_FIELDS) + ".",
+        (
+            "- Validation command: "
+            "`SAM_CONTRACT_AWARDS_LIVE_CSV=/path/to/export.zip make sam-contract-awards-export-audit`."
+        ),
+    ]
+    if not blockers:
+        lines.append(
+            "- Current result: no hard export-shape blockers. Inspect warnings and diagnostics before snapshot promotion."
+        )
+        return lines
+    lines.append("- Current blockers to fix before promotion:")
+    for item in ("agency-breadth", "date-span", "action-date-coverage", "row-count", "distinct-awards"):
+        if item in blockers:
+            row = blockers[item]
+            lines.append(f"  - `{item}`: observed `{row['value']}`, required `{row['threshold']}`.")
+    if "action-date-coverage" in blockers and float(metrics.get("rawSolicitationDateShare", 0.0)) > 0.0:
+        lines.append(
+            "  - The raw export contains solicitation dates but not action-date candidates; "
+            "use an awards/action-history export surface, not a solicitation-only extract."
+        )
+    if float(metrics.get("rawAmountFieldShare", 0.0)) <= 0.0:
+        lines.append(
+            "  - The raw export has no recognized obligation/amount field; include action obligation or current award value columns."
+        )
+    return lines
 
 
 def markdown_cell(value: str) -> str:

@@ -170,7 +170,33 @@ grep -q "SAM Contract Awards Export Audit" "$tmpdir/reports/sam-contract-awards-
 grep -q "promotion-readiness,candidate" "$tmpdir/reports/sam-contract-awards-export-audit.csv"
 grep -q "Modified action share" "$tmpdir/reports/sam-contract-awards-export-audit.md"
 grep -q "Export Shape Diagnostics" "$tmpdir/reports/sam-contract-awards-export-audit.md"
+grep -q "Next Export Specification" "$tmpdir/reports/sam-contract-awards-export-audit.md"
+grep -q "Required field families" "$tmpdir/reports/sam-contract-awards-export-audit.md"
 grep -q "raw-action-date-candidate-share" "$tmpdir/reports/sam-contract-awards-export-audit.csv"
+
+cat > "$tmpdir/sam-solicitation-only-export.csv" <<'CSV'
+contractId.piid,modification_number,recipientName,contractingDepartmentName,contractingSubtierName,awardOrIDVTypeName,Recipient UEI,solicitationDate,extentCompetedName,numberOfOffers,typeOfContractPricingName
+68HERH24C0004,0,MANUAL EXPORT CONTRACTOR,ENVIRONMENTAL PROTECTION AGENCY,EPA OFFICE,DEFINITIVE CONTRACT,EXPORTUEI1234,2024-01-15,FULL AND OPEN COMPETITION,5,FIRM FIXED PRICE
+68HERH24C0005,0,SECOND MANUAL EXPORT CONTRACTOR,ENVIRONMENTAL PROTECTION AGENCY,EPA OFFICE,DEFINITIVE CONTRACT,EXPORTUEI5678,2024-09-15,FULL AND OPEN COMPETITION,3,FIRM FIXED PRICE
+CSV
+if python3 scripts/audit-sam-contract-awards-export.py \
+  --input "$tmpdir/sam-solicitation-only-export.csv" \
+  --reports "$tmpdir/reports" \
+  --min-rows 2 \
+  --min-awards 1 \
+  --min-agencies 1 \
+  --min-date-span-days 0 \
+  --min-piid-share 1.0 \
+  --min-uei-share 1.0 \
+  --min-action-date-share 1.0 \
+  --min-competition-share 1.0 >/dev/null; then
+  echo "Expected solicitation-only SAM export audit to block promotion." >&2
+  exit 1
+fi
+grep -q "promotion-readiness,blocked" "$tmpdir/reports/sam-contract-awards-export-audit.csv"
+grep -q "raw-solicitation-date-share,diagnostic,1.0000" "$tmpdir/reports/sam-contract-awards-export-audit.csv"
+grep -q "use an awards/action-history export surface" "$tmpdir/reports/sam-contract-awards-export-audit.md"
+grep -q "no recognized obligation/amount field" "$tmpdir/reports/sam-contract-awards-export-audit.md"
 
 python3 scripts/test-source-fetchers.py
 
