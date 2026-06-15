@@ -14,7 +14,7 @@ MAIN_CLASS := lobbycapture.Main
 TEST_CLASSES := lobbycapture.SimulatorTests
 PAPER_BASENAME := strategic-channel-substitution-regulatory-capture
 
-.PHONY: compile script-checks test run campaign mechanism-comparison sensitivity ablation interactions portfolio source-moments source-panel-inventory source-capability-audit dark-money-bridge-audit intermediary-bridge-audit revolving-door-bridge-audit procurement-denominator-audit procurement-modification-composition-audit procurement-benchmark-crosswalk procurement-refresh-readiness sam-contract-awards-preflight sam-contract-awards-export-audit usaspending-transaction-download-strata sam-procurement-refresh claim-boundary-audit claim-source-dependency-audit causal-calibration-targets first-wave-causal-protocols first-wave-source-readiness claim-posture-audit calibration-readiness-audit policy-claim-language-audit submission-readiness-audit archive-handoff-audit github-release-asset-audit doi-deposit-readiness-audit wiley-submission-form-readiness-audit reggov-guidelines-readiness-audit doi-deposit-package latex-log-audit calibration-queue validate snapshot-2024-env tables figures paper paper-build paper-supplement-build paper-supplement paper-word-count wiley-template wiley-tex-deps paper-wiley paper-wiley-build submission-package submission-package-build submission-package-check paper-layout-audit visual-review-checklist paper-artifacts paper-artifacts-check clean
+.PHONY: compile script-checks test run campaign mechanism-comparison sensitivity ablation interactions portfolio source-moments source-panel-inventory source-capability-audit dark-money-bridge-audit intermediary-bridge-audit revolving-door-bridge-audit procurement-denominator-audit procurement-modification-composition-audit procurement-benchmark-crosswalk procurement-refresh-readiness sam-contract-awards-preflight sam-contract-awards-export-audit usaspending-transaction-download-strata sam-procurement-refresh claim-boundary-audit claim-source-dependency-audit causal-calibration-targets first-wave-causal-protocols first-wave-source-readiness claim-posture-audit calibration-readiness-audit policy-claim-language-audit submission-readiness-audit archive-handoff-audit github-release-asset-audit zenodo-deposit-preflight zenodo-deposit-draft zenodo-deposit-upload doi-deposit-readiness-audit wiley-submission-form-readiness-audit reggov-guidelines-readiness-audit doi-deposit-package latex-log-audit calibration-queue validate snapshot-2024-env tables figures paper paper-build paper-supplement-build paper-supplement paper-word-count wiley-template wiley-tex-deps paper-wiley paper-wiley-build submission-package submission-package-build submission-package-check paper-layout-audit visual-review-checklist paper-artifacts paper-artifacts-check clean
 
 compile:
 	@mkdir -p out/classes
@@ -216,7 +216,16 @@ github-release-asset-audit:
 doi-deposit-package: reggov-guidelines-readiness-audit archive-handoff-audit
 	python3 scripts/build-doi-deposit-package.py
 
-doi-deposit-readiness-audit: doi-deposit-package
+zenodo-deposit-preflight: doi-deposit-package
+	python3 scripts/prepare-zenodo-deposit.py
+
+zenodo-deposit-draft: zenodo-deposit-preflight
+	@. ./scripts/load-env.sh; python3 scripts/prepare-zenodo-deposit.py --create-draft
+
+zenodo-deposit-upload: zenodo-deposit-preflight
+	@. ./scripts/load-env.sh; python3 scripts/prepare-zenodo-deposit.py --create-draft --upload-package
+
+doi-deposit-readiness-audit: zenodo-deposit-preflight
 	python3 scripts/audit-doi-deposit-readiness.py
 
 wiley-submission-form-readiness-audit: submission-package-check
@@ -240,6 +249,7 @@ clean:
 	rm -f reports/submission-readiness.csv reports/submission-readiness.md
 	rm -f reports/archive-handoff-manifest.csv reports/archive-handoff-manifest.json reports/archive-handoff-manifest.md
 	rm -f reports/github-release-asset-audit.csv reports/github-release-asset-audit.md
+	rm -f reports/zenodo-deposit-preflight.csv reports/zenodo-deposit-preflight.md reports/zenodo-draft-deposit.csv reports/zenodo-draft-deposit.md
 	rm -f reports/doi-deposit-readiness.csv reports/doi-deposit-readiness.md
 	rm -f reports/wiley-submission-form-readiness.csv reports/wiley-submission-form-readiness.md
 	rm -f reports/reggov-guidelines-readiness.csv reports/reggov-guidelines-readiness.md

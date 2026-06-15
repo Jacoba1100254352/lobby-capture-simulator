@@ -38,6 +38,7 @@ Leave `status` as `pending` until a human scholarly read-through has checked the
 - [ ] Limitations identify open source panels, causal-calibration targets, and construct-validity risks without self-rejecting submission language.
 - [ ] Data and Code Availability names the exact release, repository, license, DOI archive if available, and excluded private/raw credentialed payloads.
 - [ ] Archive-handoff manifest checksums match the final release assets and DOI-deposit asset set.
+- [ ] Zenodo deposit preflight and any unpublished draft metadata match the signed-off release before a DOI record is published.
 - [ ] References are complete enough for the target venue and do not contain placeholder or "planned validation" entries.
 - [ ] AI Use Disclosure and declarations match journal expectations.
 - [ ] The final release ZIP, PDFs, supplement, reports, and metadata match the signed-off release tag.

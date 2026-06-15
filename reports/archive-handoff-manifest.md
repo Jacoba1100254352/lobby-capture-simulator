@@ -32,7 +32,7 @@ PDF and ZIP byte streams can differ across TeX and archive implementations. The 
 | CITATION.cff | - | citation-metadata | source-archive | tracked-source-verified | 1286 | `58b9dd8b6caba4824fbcbd373befaca3fa0d7519711bcc5997249f685b59ebbb` |
 | .zenodo.json | - | doi-deposit-metadata | source-archive | tracked-source-verified | 1490 | `f377bd391c3a0235a91a47a8caec9430bbee49a6c0ae968cba9b4200a3608db1` |
 | reports/submission-readiness.md | - | submission-readiness-audit | source-archive | tracked-source-verified | 5183 | `76fbbc6d2b3229cd719d2781231a1cd74fb6f422eafeebdc5fa27337e6e81597` |
-| reports/final-human-readthrough.md | - | manual-signoff-record | source-archive | tracked-source-verified | 4638 | `55d8c7b5fa2367091dff7397a810a8aa65511dd03463b92c324246191ff1ba95` |
+| reports/final-human-readthrough.md | - | manual-signoff-record | source-archive | tracked-source-verified | 4767 | `e6213d91346fc4f95a70e2286829c6a9298f1f8a27ed5f31daeda40ee7d93a79` |
 
 ## Archive Use
 

@@ -82,13 +82,13 @@
     },
     {
       "archiveNote": "Manual final-submission read-through checklist; remains pending until signed for the release.",
-      "bytes": "4638",
+      "bytes": "4767",
       "checksumStatus": "tracked-source-verified",
       "includeInDoiDeposit": "source-archive",
       "path": "reports/final-human-readthrough.md",
       "releaseAssetName": "",
       "role": "manual-signoff-record",
-      "sha256": "55d8c7b5fa2367091dff7397a810a8aa65511dd03463b92c324246191ff1ba95"
+      "sha256": "e6213d91346fc4f95a70e2286829c6a9298f1f8a27ed5f31daeda40ee7d93a79"
     }
   ],
   "schema": "lobby-capture-archive-handoff-manifest-v1",

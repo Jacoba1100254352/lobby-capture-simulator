@@ -5,7 +5,7 @@ This audit checks whether the release has the metadata, asset list, checksum han
 ## Summary
 
 - Release tag: `paper-publication-readiness-2026-06-15-r120`
-- Ready gates: `5`
+- Ready gates: `6`
 - Manual-required gates: `3`
 - Blocked gates: `0`
 - Final journal-submission status: `manual_required`
@@ -18,6 +18,7 @@ This audit checks whether the release has the metadata, asset list, checksum han
 | primary-release-assets | ready | manifest assets=4; expected assets=4 | Deposit the primary assets listed in the archive handoff manifest. |
 | release-asset-checksums | ready | checksum files=present; checksum asset rows=4 | Attach or retain dist/release-asset-checksums.* with the DOI record. |
 | doi-deposit-package | ready | package=present; manifest=present; manifest members=20; zip members=22; primary assets=4/4; zip integrity=ok; package checksum=ok | Upload or retain dist/lobby-capture-doi-deposit-package.zip as the single archive handoff package when the repository-to-archive integration does not preserve release assets directly. |
+| zenodo-preflight | ready | preflight rows=8; blocked=0; manual_required=3 | Run make zenodo-deposit-preflight before creating an unpublished Zenodo draft. |
 | claim-boundary | ready | overall submission posture=ready_for_mechanism_review | Keep the DOI record description bounded to mechanism-model review unless policy-calibration gates later clear. |
 | doi-record | manual_required | DOI=not recorded in citation, deposit metadata, or declarations | After minting a Zenodo, OSF, or journal-linked archive DOI, record it in CITATION.cff, .zenodo.json, submission declarations, and the final read-through record. |
 | human-readthrough | manual_required | status=pending; reviewed-release=paper-publication-readiness-2026-06-15-r120; expected-release=paper-publication-readiness-2026-06-15-r120; signer=missing; date=missing; commit=missing | Complete the final human scholarly read-through against the exact release tag before final journal submission. |

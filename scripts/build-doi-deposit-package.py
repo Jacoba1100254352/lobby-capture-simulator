@@ -313,6 +313,8 @@ def readme_text(release_tag: str) -> str:
           ZIP's byte-level SHA-256 hash.
         - metadata/release-asset-checksums.* records byte-level checksums for the
           release assets produced on the release-building machine.
+        - reports/zenodo-deposit-preflight.md in the repository/release records
+          the local Zenodo payload check and the unpublished-draft workflow.
         - readiness/submission-readiness.md states the claim boundary and
           remaining final-submission gates.
         - reports/doi-deposit-readiness.md in the repository/release verifies

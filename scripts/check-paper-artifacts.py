@@ -80,6 +80,8 @@ FINAL_HUMAN_READTHROUGH = ROOT / "reports" / "final-human-readthrough.md"
 ARCHIVE_HANDOFF_CSV = ROOT / "reports" / "archive-handoff-manifest.csv"
 ARCHIVE_HANDOFF_JSON = ROOT / "reports" / "archive-handoff-manifest.json"
 ARCHIVE_HANDOFF_MD = ROOT / "reports" / "archive-handoff-manifest.md"
+ZENODO_DEPOSIT_PREFLIGHT_CSV = ROOT / "reports" / "zenodo-deposit-preflight.csv"
+ZENODO_DEPOSIT_PREFLIGHT_MD = ROOT / "reports" / "zenodo-deposit-preflight.md"
 DOI_DEPOSIT_READINESS_CSV = ROOT / "reports" / "doi-deposit-readiness.csv"
 DOI_DEPOSIT_READINESS_MD = ROOT / "reports" / "doi-deposit-readiness.md"
 WILEY_SUBMISSION_FORM_READINESS_CSV = ROOT / "reports" / "wiley-submission-form-readiness.csv"
@@ -95,6 +97,7 @@ DOI_DEPOSIT_PACKAGE_MANIFEST_MD = ROOT / "dist" / "doi-deposit-package-manifest.
 DOI_DEPOSIT_PACKAGE_CHECKSUM_CSV = ROOT / "dist" / "doi-deposit-package-checksum.csv"
 DOI_DEPOSIT_PACKAGE_CHECKSUM_JSON = ROOT / "dist" / "doi-deposit-package-checksum.json"
 DOI_DEPOSIT_PACKAGE_CHECKSUM_MD = ROOT / "dist" / "doi-deposit-package-checksum.md"
+ZENODO_DEPOSIT_METADATA_JSON = ROOT / "dist" / "zenodo-deposit-metadata.json"
 RELEASE_TAG = "paper-publication-readiness-2026-06-15-r120"
 ARCHIVE_HANDOFF_REPORT_NAMES = {
     "archive-handoff-manifest.csv",
@@ -102,6 +105,8 @@ ARCHIVE_HANDOFF_REPORT_NAMES = {
     "archive-handoff-manifest.md",
 }
 POST_SUBMISSION_REPORT_NAMES = ARCHIVE_HANDOFF_REPORT_NAMES | {
+    "zenodo-deposit-preflight.csv",
+    "zenodo-deposit-preflight.md",
     "doi-deposit-readiness.csv",
     "doi-deposit-readiness.md",
     "wiley-submission-form-readiness.csv",
@@ -252,6 +257,8 @@ def main() -> int:
             DOI_DEPOSIT_PACKAGE_CHECKSUM_CSV,
             DOI_DEPOSIT_PACKAGE_CHECKSUM_JSON,
             DOI_DEPOSIT_PACKAGE_CHECKSUM_MD,
+            ZENODO_DEPOSIT_PREFLIGHT_CSV,
+            ZENODO_DEPOSIT_PREFLIGHT_MD,
             REGGOV_GUIDELINES_READINESS_CSV,
             REGGOV_GUIDELINES_READINESS_MD,
         ])
@@ -283,6 +290,7 @@ def main() -> int:
     failures.extend(check_archive_metadata())
     failures.extend(check_archive_handoff_manifest())
     failures.extend(check_doi_deposit_package())
+    failures.extend(check_zenodo_deposit_preflight())
     failures.extend(check_doi_deposit_readiness())
     failures.extend(check_wiley_submission_form_readiness())
     failures.extend(check_reggov_guidelines_readiness())
@@ -343,6 +351,9 @@ def check_freshness() -> list[str]:
         (DOI_DEPOSIT_PACKAGE_CHECKSUM_CSV, doi_deposit_package_inputs()),
         (DOI_DEPOSIT_PACKAGE_CHECKSUM_JSON, doi_deposit_package_inputs()),
         (DOI_DEPOSIT_PACKAGE_CHECKSUM_MD, doi_deposit_package_inputs()),
+        (ZENODO_DEPOSIT_PREFLIGHT_CSV, zenodo_deposit_preflight_inputs()),
+        (ZENODO_DEPOSIT_PREFLIGHT_MD, zenodo_deposit_preflight_inputs()),
+        (ZENODO_DEPOSIT_METADATA_JSON, zenodo_deposit_preflight_inputs()),
         (DOI_DEPOSIT_READINESS_CSV, doi_deposit_readiness_inputs()),
         (DOI_DEPOSIT_READINESS_MD, doi_deposit_readiness_inputs()),
         (WILEY_SUBMISSION_FORM_READINESS_CSV, wiley_submission_form_readiness_inputs()),
@@ -491,6 +502,9 @@ def doi_deposit_readiness_inputs() -> list[Path]:
         DOI_DEPOSIT_PACKAGE_CHECKSUM_CSV,
         DOI_DEPOSIT_PACKAGE_CHECKSUM_JSON,
         DOI_DEPOSIT_PACKAGE_CHECKSUM_MD,
+        ZENODO_DEPOSIT_PREFLIGHT_CSV,
+        ZENODO_DEPOSIT_PREFLIGHT_MD,
+        ZENODO_DEPOSIT_METADATA_JSON,
         ARCHIVE_HANDOFF_CSV,
         ARCHIVE_HANDOFF_JSON,
         ARCHIVE_HANDOFF_MD,
@@ -503,7 +517,25 @@ def doi_deposit_readiness_inputs() -> list[Path]:
         CITATION_CFF,
         ZENODO_JSON,
         SUBMISSION_DECLARATIONS,
+        ROOT / "scripts" / "prepare-zenodo-deposit.py",
         ROOT / "scripts" / "audit-doi-deposit-readiness.py",
+    ]
+
+
+def zenodo_deposit_preflight_inputs() -> list[Path]:
+    return [
+        DOI_DEPOSIT_PACKAGE,
+        DOI_DEPOSIT_PACKAGE_MANIFEST_JSON,
+        DOI_DEPOSIT_PACKAGE_MANIFEST_MD,
+        DOI_DEPOSIT_PACKAGE_CHECKSUM_CSV,
+        DOI_DEPOSIT_PACKAGE_CHECKSUM_JSON,
+        DOI_DEPOSIT_PACKAGE_CHECKSUM_MD,
+        ARCHIVE_HANDOFF_JSON,
+        SUBMISSION_READINESS_CSV,
+        FINAL_HUMAN_READTHROUGH,
+        CITATION_CFF,
+        ZENODO_JSON,
+        ROOT / "scripts" / "prepare-zenodo-deposit.py",
     ]
 
 
@@ -2470,6 +2502,86 @@ def check_doi_deposit_package_checksum() -> list[str]:
     return failures
 
 
+def check_zenodo_deposit_preflight() -> list[str]:
+    failures: list[str] = []
+    for path in (
+        ZENODO_DEPOSIT_PREFLIGHT_CSV,
+        ZENODO_DEPOSIT_PREFLIGHT_MD,
+        ZENODO_DEPOSIT_METADATA_JSON,
+    ):
+        if not path.exists():
+            failures.append(f"missing Zenodo deposit preflight artifact: {path.relative_to(ROOT)}")
+    if failures:
+        return failures
+
+    try:
+        metadata_payload = json.loads(ZENODO_DEPOSIT_METADATA_JSON.read_text(encoding="utf-8"))
+    except json.JSONDecodeError as error:
+        return [f"Zenodo deposit metadata JSON is invalid: {error}"]
+    metadata = metadata_payload.get("metadata")
+    if not isinstance(metadata, dict):
+        failures.append("Zenodo deposit metadata JSON missing metadata object")
+        metadata = {}
+    if metadata.get("version") != RELEASE_TAG:
+        failures.append(
+            "Zenodo deposit metadata version does not match current release tag: "
+            f"{metadata.get('version', '')} != {RELEASE_TAG}"
+        )
+    for field_name in ("title", "upload_type", "publication_date", "creators", "description", "license"):
+        if not metadata.get(field_name):
+            failures.append(f"Zenodo deposit metadata missing {field_name}")
+    if metadata.get("license") == "MIT":
+        failures.append("Zenodo deposit metadata should use Zenodo license id mit-license, not raw MIT")
+    related = metadata.get("related_identifiers", [])
+    if not isinstance(related, list) or not any(
+        isinstance(item, dict)
+        and str(item.get("identifier", "")).endswith(f"/releases/tag/{RELEASE_TAG}")
+        for item in related
+    ):
+        failures.append("Zenodo deposit metadata does not relate to the current GitHub release tag")
+
+    try:
+        with ZENODO_DEPOSIT_PREFLIGHT_CSV.open(newline="", encoding="utf-8") as source:
+            rows = {row.get("gate", ""): row for row in csv.DictReader(source)}
+    except OSError as error:
+        return [*failures, f"could not read Zenodo deposit preflight CSV: {error}"]
+    expected_statuses = {
+        "metadata-json": {"ready"},
+        "api-target": {"ready"},
+        "token": {"manual_required", "ready"},
+        "doi-package": {"ready"},
+        "archive-manifest": {"ready"},
+        "claim-boundary": {"ready"},
+        "doi-record": {"manual_required", "ready"},
+        "human-readthrough": {"manual_required", "ready"},
+    }
+    for gate_name, statuses in expected_statuses.items():
+        row = rows.get(gate_name)
+        if not row:
+            failures.append(f"Zenodo deposit preflight missing gate: {gate_name}")
+            continue
+        if row.get("status") not in statuses:
+            failures.append(
+                f"Zenodo deposit preflight gate {gate_name} has status={row.get('status', '')}, "
+                f"expected one of {sorted(statuses)}"
+            )
+    if any(row.get("status") == "blocked" for row in rows.values()):
+        failures.append("Zenodo deposit preflight has a blocked gate")
+
+    text = ZENODO_DEPOSIT_PREFLIGHT_MD.read_text(encoding="utf-8")
+    for phrase in (
+        "Zenodo Deposit Preflight",
+        RELEASE_TAG,
+        "does not assert that a DOI has been minted",
+        "ZENODO_ACCESS_TOKEN",
+        "make zenodo-deposit-draft",
+        "make zenodo-deposit-upload",
+    ):
+        if phrase not in text:
+            failures.append(f"Zenodo deposit preflight markdown missing phrase: {phrase}")
+    return failures
+
+
 def check_doi_deposit_readiness() -> list[str]:
     failures: list[str] = []
     for path in (DOI_DEPOSIT_READINESS_CSV, DOI_DEPOSIT_READINESS_MD):
@@ -2488,6 +2600,7 @@ def check_doi_deposit_readiness() -> list[str]:
         "primary-release-assets": {"ready"},
         "release-asset-checksums": {"ready"},
         "doi-deposit-package": {"ready"},
+        "zenodo-preflight": {"ready"},
         "claim-boundary": {"ready"},
         "doi-record": {"manual_required", "ready"},
         "human-readthrough": {"manual_required", "ready"},
@@ -2528,6 +2641,7 @@ def check_doi_deposit_readiness() -> list[str]:
         "live author-page refresh",
         "lobby-capture-wiley-submission.zip",
         "lobby-capture-doi-deposit-package.zip",
+        "zenodo-preflight",
         "dist/release-asset-checksums",
         "reports/final-human-readthrough.md",
     ]

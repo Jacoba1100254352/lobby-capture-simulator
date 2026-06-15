@@ -27,6 +27,8 @@ CHECKSUM_MD = DIST / "release-asset-checksums.md"
 DOI_DEPOSIT_PACKAGE = DIST / "lobby-capture-doi-deposit-package.zip"
 DOI_DEPOSIT_PACKAGE_MANIFEST = DIST / "doi-deposit-package-manifest.json"
 DOI_DEPOSIT_PACKAGE_CHECKSUM = DIST / "doi-deposit-package-checksum.json"
+ZENODO_PREFLIGHT_CSV = REPORTS / "zenodo-deposit-preflight.csv"
+ZENODO_PREFLIGHT_MD = REPORTS / "zenodo-deposit-preflight.md"
 VERSION_PATTERN = re.compile(r"^version:\s*[\"']?([^\"'\n]+)[\"']?\s*$", re.MULTILINE)
 DOI_PATTERN = re.compile(r"\b10\.\d{4,9}/[-._;()/:A-Za-z0-9]+\b")
 EXPECTED_PRIMARY_ASSETS = {
@@ -71,6 +73,7 @@ def readiness_rows(release_tag: str) -> list[dict[str, str]]:
         for row in checksum_rows
     )
     package_evidence, package_ready = doi_package_evidence(release_tag)
+    zenodo_evidence, zenodo_ready = zenodo_preflight_evidence()
     metadata_ok = release_metadata_ok(release_tag)
     submission_ok = submission.get("overall-submission-posture", {}).get("status") == "ready_for_mechanism_review"
     final_gate_status = submission.get("final-journal-submission", {}).get("status", "")
@@ -106,6 +109,12 @@ def readiness_rows(release_tag: str) -> list[dict[str, str]]:
             "ready" if package_ready else "blocked",
             package_evidence,
             "Upload or retain dist/lobby-capture-doi-deposit-package.zip as the single archive handoff package when the repository-to-archive integration does not preserve release assets directly.",
+        ),
+        row(
+            "zenodo-preflight",
+            "ready" if zenodo_ready else "blocked",
+            zenodo_evidence,
+            "Run make zenodo-deposit-preflight before creating an unpublished Zenodo draft.",
         ),
         row(
             "claim-boundary",
@@ -277,6 +286,40 @@ def package_checksum_evidence() -> tuple[bool, str]:
     # because the DOI package bundles PDFs/ZIPs whose bytes can differ across
     # TeX and zlib environments while still passing local checksum validation.
     return ready, "package checksum=" + ("ok" if ready else "mismatch")
+
+
+def zenodo_preflight_evidence() -> tuple[str, bool]:
+    if not ZENODO_PREFLIGHT_CSV.exists() or not ZENODO_PREFLIGHT_MD.exists():
+        return "preflight report=missing", False
+    rows = keyed_rows(ZENODO_PREFLIGHT_CSV, "gate")
+    blocked = [
+        gate
+        for gate, item in rows.items()
+        if item.get("status") == "blocked"
+    ]
+    manual = [
+        gate
+        for gate, item in rows.items()
+        if item.get("status") == "manual_required"
+    ]
+    text = ZENODO_PREFLIGHT_MD.read_text(encoding="utf-8")
+    required_phrases = [
+        "Zenodo Deposit Preflight",
+        "does not assert that a DOI has been minted",
+        "ZENODO_ACCESS_TOKEN",
+        "make zenodo-deposit-draft",
+    ]
+    missing_phrases = [phrase for phrase in required_phrases if phrase not in text]
+    ready = bool(rows) and not blocked and not missing_phrases
+    evidence = (
+        f"preflight rows={len(rows)}; blocked={len(blocked)}; "
+        f"manual_required={len(manual)}"
+    )
+    if blocked:
+        evidence += f"; blocked gates={','.join(sorted(blocked))}"
+    if missing_phrases:
+        evidence += f"; missing markdown phrases={','.join(missing_phrases)}"
+    return evidence, ready
 
 
 def release_tag_from_citation() -> str:
