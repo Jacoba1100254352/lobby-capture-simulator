@@ -27,7 +27,9 @@ SUBMISSION_DECLARATIONS = PAPER / "sections" / "submission-declarations.tex"
 SUBMISSION_ZIP = DIST / "lobby-capture-wiley-submission.zip"
 WILEY_FORM_CSV = REPORTS / "wiley-submission-form-readiness.csv"
 
-WORD_LIMIT = 11000
+MIN_WORDS = 8000
+MAX_WORDS = 10000
+WORD_RANGE_LABEL = "8,000-10,000"
 REGGOV_AUTHOR_GUIDELINES_URL = "https://onlinelibrary.wiley.com/page/journal/17485991/homepage/forauthors.html"
 WILEY_SUBMISSION_HELP_URL = "https://authors.wiley.com/help/submitting-your-manuscript.html"
 WILEY_LATEX_URL = "https://authors.wiley.com/author-resources/Journal-Authors/Prepare/latex-template.html"
@@ -72,9 +74,12 @@ def guideline_rows() -> list[dict[str, str]]:
         ),
         row(
             "word-limit",
-            "ready" if words <= WORD_LIMIT else "blocked",
-            f"approximate words={words}; Regulation & Governance reported limit={WORD_LIMIT}",
-            "Shorten the manuscript if the approximate count exceeds the journal cap.",
+            "ready" if MIN_WORDS <= words <= MAX_WORDS else "blocked",
+            (
+                f"approximate words={words}; "
+                f"Regulation & Governance reported preferred range={MIN_WORDS}-{MAX_WORDS}"
+            ),
+            "Revise the manuscript if the approximate count falls outside the reported preferred range.",
         ),
         row(
             "abstract-and-keywords",
@@ -575,7 +580,7 @@ def markdown(rows: list[dict[str, str]]) -> str:
         f"- Ready gates: `{ready}`",
         f"- Manual-required gates: `{manual}`",
         f"- Blocked gates: `{blocked}`",
-        f"- Word limit checked: `11,000` words including abstract, references, endnotes, tables, and figures",
+        f"- Preferred word range checked: `{WORD_RANGE_LABEL}` words including abstract, references, endnotes, tables, and figures",
         "- Manuscript declarations checked: Data and Code Availability; AI Use Disclosure; funding; conflict of interest",
         "",
         "## Source Notes",

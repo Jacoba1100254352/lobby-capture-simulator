@@ -7,7 +7,8 @@ import sys
 
 ROOT = Path(__file__).resolve().parents[1]
 PAPER_DIR = ROOT / "paper"
-LIMIT = 11000
+MIN_PREFERRED = 8000
+MAX_PREFERRED = 10000
 LOCAL_MANUSCRIPT = PAPER_DIR / "strategic-channel-substitution-regulatory-capture.tex"
 
 
@@ -49,9 +50,23 @@ def main() -> int:
     if bbl_path.exists():
         manuscript += "\n" + bbl_path.read_text(encoding="utf-8", errors="ignore")
     words = count_words(manuscript)
-    print(f"Approximate manuscript word count: {words} / {LIMIT}")
-    if words > LIMIT:
-        print("Over the Regulation & Governance reported 11,000-word cap.", file=sys.stderr)
+    print(
+        "Approximate manuscript word count: "
+        f"{words} / preferred {MIN_PREFERRED}-{MAX_PREFERRED}"
+    )
+    if words < MIN_PREFERRED:
+        print(
+            "Below the Regulation & Governance reported preferred "
+            f"{MIN_PREFERRED}-{MAX_PREFERRED}-word range.",
+            file=sys.stderr,
+        )
+        return 1
+    if words > MAX_PREFERRED:
+        print(
+            "Over the Regulation & Governance reported preferred "
+            f"{MIN_PREFERRED}-{MAX_PREFERRED}-word range.",
+            file=sys.stderr,
+        )
         return 1
     return 0
 
