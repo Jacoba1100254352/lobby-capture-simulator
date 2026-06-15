@@ -296,12 +296,23 @@ def live_author_page_refresh_state() -> dict[str, str | bool]:
         f"checked-date={'present' if checked_date else 'missing'}; "
         f"reviewed-release={reviewed_release or 'missing'}; "
         f"expected-release={current_release or 'missing'}; "
-        f"superseding-instructions={'none' if no_superseding else 'missing/not-cleared'}"
+        f"superseding-instructions={superseding_evidence(superseding, no_superseding)}"
     )
     return {
         "ready": ready,
         "evidence": ("ready: " if ready else "manual_required: ") + evidence,
     }
+
+
+def superseding_evidence(value: str, no_superseding: bool) -> str:
+    if no_superseding:
+        return "none"
+    stripped = " ".join(value.split())
+    if not stripped:
+        return "missing"
+    if len(stripped) > 180:
+        stripped = stripped[:177].rstrip() + "..."
+    return f"not-cleared: {stripped}"
 
 
 def field_value(text: str, field_name: str) -> str:

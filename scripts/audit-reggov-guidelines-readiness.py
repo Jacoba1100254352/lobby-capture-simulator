@@ -159,7 +159,7 @@ def live_author_page_refresh_state() -> dict[str, str | bool]:
         f"checked-date={'present' if checked_date else 'missing'}; "
         f"reviewed-release={reviewed_release or 'missing'}; "
         f"expected-release={current_release or 'missing'}; "
-        f"superseding-instructions={'none' if no_superseding else 'missing/not-cleared'}"
+        f"superseding-instructions={superseding_evidence(superseding, no_superseding)}"
     )
     return {
         "ready": ready,
@@ -167,9 +167,32 @@ def live_author_page_refresh_state() -> dict[str, str | bool]:
         "nextAction": (
             "Keep the recorded live author-page check with the final signoff."
             if ready
-            else "Immediately before submission, open the live journal author page and record checker, date, URL, and superseding-instruction status in reports/final-human-readthrough.md."
+            else live_author_page_next_action(superseding)
         ),
     }
+
+
+def superseding_evidence(value: str, no_superseding: bool) -> str:
+    if no_superseding:
+        return "none"
+    stripped = " ".join(value.split())
+    if not stripped:
+        return "missing"
+    if len(stripped) > 180:
+        stripped = stripped[:177].rstrip() + "..."
+    return f"not-cleared: {stripped}"
+
+
+def live_author_page_next_action(superseding: str) -> str:
+    if superseding.strip():
+        return (
+            "Complete the live journal author-page browser review and replace the recorded non-clearance "
+            "reason with none only if no superseding instructions require package changes."
+        )
+    return (
+        "Immediately before submission, open the live journal author page and record checker, date, URL, "
+        "and superseding-instruction status in reports/final-human-readthrough.md."
+    )
 
 
 def journal_target_ready(local: str, wiley: str) -> bool:
