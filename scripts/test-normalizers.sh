@@ -169,6 +169,8 @@ test -s "$tmpdir/reports/sam-contract-awards-export-audit.md"
 grep -q "SAM Contract Awards Export Audit" "$tmpdir/reports/sam-contract-awards-export-audit.md"
 grep -q "promotion-readiness,candidate" "$tmpdir/reports/sam-contract-awards-export-audit.csv"
 grep -q "Modified action share" "$tmpdir/reports/sam-contract-awards-export-audit.md"
+grep -q "Export Shape Diagnostics" "$tmpdir/reports/sam-contract-awards-export-audit.md"
+grep -q "raw-action-date-candidate-share" "$tmpdir/reports/sam-contract-awards-export-audit.csv"
 
 python3 scripts/test-source-fetchers.py
 

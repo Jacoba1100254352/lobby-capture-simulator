@@ -99,6 +99,7 @@ for report_artifact in "$ROOT_DIR"/reports/*.csv "$ROOT_DIR"/reports/*.md "$ROOT
       zenodo-deposit-preflight.*) continue ;;
       wiley-submission-form-readiness.*) continue ;;
       reggov-guidelines-readiness.*) continue ;;
+      github-release-asset-audit.*) continue ;;
       sam-contract-awards-export-audit.*) continue ;;
       sam-contract-awards-preflight.*) continue ;;
       usaspending-transaction-download-strata.*) continue ;;

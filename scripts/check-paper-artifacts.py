@@ -115,6 +115,7 @@ POST_SUBMISSION_REPORT_NAMES = ARCHIVE_HANDOFF_REPORT_NAMES | {
     "reggov-guidelines-readiness.md",
 }
 LOCAL_OPERATIONAL_REPORT_PREFIXES = (
+    "github-release-asset-audit.",
     "sam-contract-awards-export-audit.",
     "sam-contract-awards-preflight.",
     "usaspending-transaction-download-strata.",

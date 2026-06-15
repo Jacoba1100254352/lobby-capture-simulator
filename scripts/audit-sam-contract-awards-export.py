@@ -44,13 +44,15 @@ def main() -> int:
     with tempfile.TemporaryDirectory(prefix="lobby-sam-export-audit-") as tmp:
         input_path = resolved_input(args, Path(tmp))
         fetcher = load_fetcher()
+        raw_records = fetcher.sam_contract_awards_records_from_export_file(input_path)
         normalized_rows = fetcher.dedupe_usaspending_action_rows(
             fetcher.normalize_sam_contract_award_records(
-                fetcher.sam_contract_awards_records_from_export_file(input_path)
+                raw_records
             )
         )
 
     metrics = export_metrics(normalized_rows)
+    metrics.update(raw_field_metrics(fetcher, raw_records))
     rows = checklist_rows(args, metrics)
     args.reports.mkdir(parents=True, exist_ok=True)
     write_csv(args.reports / "sam-contract-awards-export-audit.csv", rows)
@@ -129,6 +131,24 @@ def checklist_rows(args: argparse.Namespace, metrics: dict[str, object]) -> list
         metric_row("top-agency-row-share", metrics["topAgencyRowShare"], "diagnostic", "concentration diagnostic"),
         metric_row("top-agency-amount-share", metrics["topAgencyAmountShare"], "diagnostic", "concentration diagnostic"),
         metric_row("top-recipient-amount-share", metrics["topRecipientAmountShare"], "diagnostic", "concentration diagnostic"),
+        metric_row(
+            "raw-action-date-candidate-share",
+            metrics["rawActionDateCandidateShare"],
+            "diagnostic",
+            "raw export coverage for fields mapped to actionDate",
+        ),
+        metric_row(
+            "raw-solicitation-date-share",
+            metrics["rawSolicitationDateShare"],
+            "diagnostic",
+            "raw export coverage for solicitationDate; not an action-date substitute",
+        ),
+        metric_row(
+            "raw-amount-field-share",
+            metrics["rawAmountFieldShare"],
+            "diagnostic",
+            "raw export coverage for fields mapped to amount",
+        ),
     ]
     blockers = [row for row in checks if row["status"] == "blocked"]
     warnings = [row for row in checks if row["status"] == "warning"]
@@ -150,6 +170,46 @@ def checklist_rows(args: argparse.Namespace, metrics: dict[str, object]) -> list
         "nextAction": next_action,
     }
     return [summary] + checks
+
+
+def raw_field_metrics(fetcher, records: list[dict[str, object]]) -> dict[str, object]:
+    action_paths = (
+        "awardDetails.transactionData.approvedDate",
+        "coreData.dateSigned",
+        "dateSigned",
+        "Date Signed",
+        "Award Date",
+        "Last Modified Date",
+        "approvedDate",
+        "Approved Date",
+        "actionDate",
+    )
+    amount_paths = (
+        "awardDetails.dollars.actionObligation",
+        "awardDetails.dollars.dollarsObligated",
+        "awardDetails.dollars.baseAndAllOptionsValue",
+        "awardDetails.dollars.currentTotalValueOfAward",
+        "awardDetails.totalContractDollars.totalActionObligation",
+        "dollarsObligated",
+        "actionObligation",
+        "Action Obligation",
+        "Federal Action Obligation",
+        "Total Action Obligation",
+        "Dollars Obligated",
+        "Current Total Value of Award",
+        "totalDollarsObligated",
+    )
+    return {
+        "rawRecordCount": len(records),
+        "rawActionDateCandidateShare": raw_path_share(fetcher, records, action_paths),
+        "rawSolicitationDateShare": raw_path_share(fetcher, records, ("coreData.solicitationDate", "solicitationDate")),
+        "rawAmountFieldShare": raw_path_share(fetcher, records, amount_paths),
+    }
+
+
+def raw_path_share(fetcher, records: list[dict[str, object]], paths: tuple[str, ...]) -> float:
+    matched = sum(1 for record in records if fetcher.first_text(record, *paths, default=""))
+    return safe_divide(matched, len(records))
 
 
 def hard_check(item: str, value: object, threshold: object, op: str, notes: str) -> dict[str, str]:
@@ -335,6 +395,17 @@ def write_markdown(path: Path, rows: list[dict[str, str]], metrics: dict[str, ob
         f"- Modified action share: `{format_value(metrics['modifiedActionShare'])}`",
         f"- Modified award share: `{format_value(metrics['modifiedAwardShare'])}`",
         f"- Amount-weighted modification share: `{format_value(metrics['amountWeightedModificationShare'])}`",
+        "",
+        "## Export Shape Diagnostics",
+        "",
+        f"- Raw award records parsed: `{metrics['rawRecordCount']}`",
+        f"- Raw action-date candidate coverage: `{format_value(metrics['rawActionDateCandidateShare'])}`",
+        f"- Raw solicitation-date coverage: `{format_value(metrics['rawSolicitationDateShare'])}`",
+        f"- Raw amount-field coverage: `{format_value(metrics['rawAmountFieldShare'])}`",
+        (
+            "- Interpretation: solicitation dates can explain why a SAM export looks time-bounded, "
+            "but they are not action dates and cannot clear the action-history date gate."
+        ),
         "",
         "## Promotion Checklist",
         "",
