@@ -57,6 +57,36 @@ fetch_usaspending_procurement_national_actions() {
     python3 scripts/fetch-source-data.py usaspending-actions --output data/raw/usaspending-procurement-national-actions.csv
 }
 
+csv_data_rows() {
+  local csv_file="$1"
+  if [ ! -s "$csv_file" ]; then
+    printf "0\n"
+    return
+  fi
+  python3 - "$csv_file" <<'PY'
+import csv
+import sys
+
+with open(sys.argv[1], newline="", encoding="utf-8") as source:
+    print(sum(1 for _ in csv.DictReader(source)))
+PY
+}
+
+record_usaspending_procurement_actions_failure() {
+  local note="$1"
+  local rows
+  rows="$(csv_data_rows data/raw/usaspending-procurement-actions.csv)"
+  if [ "$rows" -gt 0 ]; then
+    printf "usaspending-procurement-actions,partial,%s; retainedPartialRows=%s\n" "$note" "$rows" >> "$status_file"
+  elif [ -s data/snapshots/2024-env/normalized/usaspending-procurement-actions.csv ]; then
+    cp data/snapshots/2024-env/normalized/usaspending-procurement-actions.csv data/raw/usaspending-procurement-actions.csv
+    rows="$(csv_data_rows data/raw/usaspending-procurement-actions.csv)"
+    printf "usaspending-procurement-actions,archived_fallback,%s; retainedArchivedRows=%s\n" "$note" "$rows" >> "$status_file"
+  else
+    printf "usaspending-procurement-actions,unavailable,%s\n" "$note" >> "$status_file"
+  fi
+}
+
 rm -f data/raw/lda-lobbying.csv data/raw/fec-campaign-finance.csv data/raw/public-financing.csv data/raw/dark-money.csv data/raw/regulatory-dockets.csv data/raw/usaspending-awards.csv data/raw/usaspending-procurement-bridge.csv data/raw/usaspending-procurement-actions.csv data/raw/usaspending-procurement-national-actions.csv data/raw/sam-contract-awards.csv data/raw/revolving-door.csv data/raw/intermediaries.csv
 
 for period in first_quarter second_quarter third_quarter fourth_quarter; do
@@ -285,7 +315,7 @@ if [ -n "${SAM_CONTRACT_AWARDS_LIVE_CSV:-}" ] || [ -n "${SAM_CONTRACT_AWARDS_LIV
     if fetch_usaspending_procurement_actions; then
       printf "usaspending-procurement-actions,ok,normalized USAspending procurement action rows written after configured SAM export fallback\n" >> "$status_file"
     else
-      printf "usaspending-procurement-actions,unavailable,configured SAM export and USAspending procurement action requests failed\n" >> "$status_file"
+      record_usaspending_procurement_actions_failure "configured SAM export and USAspending procurement action requests failed"
     fi
   fi
 elif [ -n "${USASPENDING_PROCUREMENT_ACTIONS_LIVE_CSV:-}" ] || [ -n "${USASPENDING_PROCUREMENT_ACTIONS_LIVE_URL:-}" ]; then
@@ -298,7 +328,7 @@ elif [ -n "${USASPENDING_PROCUREMENT_ACTIONS_LIVE_CSV:-}" ] || [ -n "${USASPENDI
   if python3 scripts/normalize-calibration.py usaspending-actions "$source_file" data/raw/usaspending-procurement-actions.csv; then
     printf "usaspending-procurement-actions,ok,normalized configured procurement action rows written\n" >> "$status_file"
   else
-    printf "usaspending-procurement-actions,unavailable,configured procurement action source could not be normalized\n" >> "$status_file"
+    record_usaspending_procurement_actions_failure "configured procurement action source could not be normalized"
   fi
 elif [ "${USASPENDING_PROCUREMENT_ACTIONS_SOURCE_NATIVE:-1}" = "1" ]; then
   if [ "${SAM_CONTRACT_AWARDS_SOURCE_NATIVE:-0}" = "1" ] && [ -n "${SAM_API_KEY:-}" ]; then
@@ -357,13 +387,13 @@ PY
       if fetch_usaspending_procurement_actions; then
         printf "usaspending-procurement-actions,ok,normalized USAspending procurement action rows written after SAM fallback\n" >> "$status_file"
       else
-        printf "usaspending-procurement-actions,unavailable,SAM.gov and USAspending procurement action requests failed\n" >> "$status_file"
+        record_usaspending_procurement_actions_failure "SAM.gov and USAspending procurement action requests failed"
       fi
     fi
   elif fetch_usaspending_procurement_actions; then
     printf "usaspending-procurement-actions,ok,normalized expanded USAspending procurement action rows written; agencies=12; periodBuckets=%s; pageSize=%s; maxPages=%s; sortSpecs=%s\n" "${USASPENDING_PROCUREMENT_ACTIONS_PERIOD_BUCKETS:-quarterly}" "${USASPENDING_PROCUREMENT_ACTIONS_TRANSACTION_PAGE_SIZE:-100}" "${USASPENDING_PROCUREMENT_ACTIONS_TRANSACTION_MAX_PAGES:-2}" "${USASPENDING_PROCUREMENT_ACTIONS_TRANSACTION_SORT_SPECS:-Mod:asc;Transaction Amount:desc;Action Date:asc}" >> "$status_file"
   else
-    printf "usaspending-procurement-actions,unavailable,upstream USAspending transaction/action request returned no rows or failed\n" >> "$status_file"
+    record_usaspending_procurement_actions_failure "upstream USAspending transaction/action request returned no rows or failed"
   fi
 else
   printf "usaspending-procurement-actions,missing,procurement action panel disabled\n" >> "$status_file"

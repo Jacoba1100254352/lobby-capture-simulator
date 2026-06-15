@@ -2,10 +2,28 @@
 set -eu
 
 tmpdir="$(mktemp -d)"
+repo_root="$(pwd)"
 cleanup() {
   rm -rf "$tmpdir"
 }
 trap cleanup EXIT
+
+mkdir -p "$tmpdir/load-env"
+cat > "$tmpdir/load-env/.env" <<'ENV'
+PRESET_VALUE=from_env_file
+FRESH_VALUE="two words"
+export EXPORTED_VALUE=from_export
+INVALID-KEY=ignored
+ENV
+(
+  cd "$tmpdir/load-env"
+  LOAD_ENV_PATH="$repo_root/scripts/load-env.sh" PRESET_VALUE=from_caller sh -c '
+    . "$LOAD_ENV_PATH"
+    test "$PRESET_VALUE" = "from_caller"
+    test "$FRESH_VALUE" = "two words"
+    test "$EXPORTED_VALUE" = "from_export"
+  '
+)
 
 python3 scripts/normalize-calibration.py lda data/fixtures/normalized-lda-lobbying.csv "$tmpdir/lda.csv" >/dev/null
 python3 scripts/normalize-calibration.py fec data/fixtures/normalized-fec-campaign-finance.csv "$tmpdir/fec.csv" >/dev/null

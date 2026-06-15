@@ -111,10 +111,14 @@ def main() -> int:
             checksum = sha256(destination)
             status, notes = source_status(key, live_status)
         else:
+            if destination.exists():
+                destination.unlink()
             row_count = 0
             checksum = "missing"
-            status = "missing"
-            notes = "normalized source file missing"
+            status, notes = source_status(key, live_status)
+            if status == "copied":
+                status = "missing"
+                notes = "normalized source file missing"
         entries.append(
             {
                 "source": key,
@@ -253,8 +257,10 @@ def source_status(source: str, live_status: list[dict[str, str]]) -> tuple[str, 
     notes = "; ".join(f"{row['source']}: {row['status']} ({row['notes']})" for row in names)
     if statuses == {"ok"}:
         return "live", notes
-    if "ok" in statuses:
+    if "ok" in statuses or "partial" in statuses:
         return "partial-live", notes
+    if "archived_fallback" in statuses:
+        return "archived-fallback", notes
     if "fixture" in statuses:
         return "fixture", notes
     return "unavailable", notes
