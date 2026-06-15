@@ -469,11 +469,16 @@ def redact_url(url: str) -> str:
     parts = urlsplit(url)
     query = urlencode(
         [
-            (key, "REDACTED") if "key" in key.lower() else (key, value)
+            (key, "REDACTED") if sensitive_query_key(key) else (key, value)
             for key, value in parse_qsl(parts.query, keep_blank_values=True)
         ]
     )
     return urlunsplit((parts.scheme, parts.netloc, parts.path, query, parts.fragment))
+
+
+def sensitive_query_key(key: str) -> bool:
+    lowered = key.lower()
+    return lowered in {"token", "access_token"} or "key" in lowered or "secret" in lowered
 
 
 def write_csv(path: Path, rows: list[dict[str, str]]) -> None:
@@ -601,7 +606,10 @@ def write_download_failure_markdown(
 
 
 def redact_error_message(message: str) -> str:
-    return re.sub(r"(api_key=)[^&\s]+", r"\1REDACTED", message)
+    redacted = re.sub(r"(api_key=)[^&\s]+", r"\1REDACTED", message)
+    redacted = re.sub(r"(token=)[^&\s]+", r"\1REDACTED", redacted)
+    redacted = re.sub(r"(access_token=)[^&\s]+", r"\1REDACTED", redacted)
+    return redacted
 
 
 def next_export_specification(rows: list[dict[str, str]], metrics: dict[str, object], args: argparse.Namespace) -> list[str]:

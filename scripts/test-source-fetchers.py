@@ -32,7 +32,8 @@ def main() -> int:
     assert_propublica_nonprofit_routing(fetchers)
     assert_irs_527(fetchers)
     assert_curl_fallback_toggle(fetchers)
-    assert fetchers.redact_url("https://example.test/path?api_key=SECRET&x=1").endswith("api_key=REDACTED&x=1")
+    redacted = fetchers.redact_url("https://example.test/path?api_key=SECRET&token=TEMP&x=1")
+    assert redacted.endswith("api_key=REDACTED&token=REDACTED&x=1"), redacted
     print("Source-native parser fixture tests passed.")
     return 0
 

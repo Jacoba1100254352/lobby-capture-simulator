@@ -274,6 +274,11 @@ PY
 grep -q "promotion-readiness,quota_blocked" "$tmpdir/reports/sam-contract-awards-export-audit.csv"
 grep -q "next-access-time,manual_required,2026-Jun-16 00:00:00+0000 UTC" "$tmpdir/reports/sam-contract-awards-export-audit.csv"
 grep -q "api_key=REDACTED" "$tmpdir/reports/sam-contract-awards-export-audit.md"
+grep -q "token=REDACTED" "$tmpdir/reports/sam-contract-awards-export-audit.md"
+if grep -q "token=example" "$tmpdir/reports/sam-contract-awards-export-audit.md"; then
+  echo "SAM export audit report leaked an emailed download token." >&2
+  exit 1
+fi
 grep -q "request a fresh export email" "$tmpdir/reports/sam-contract-awards-export-audit.md"
 
 python3 scripts/test-source-fetchers.py

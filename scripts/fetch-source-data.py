@@ -3354,11 +3354,16 @@ def redact_url(url: str) -> str:
     parts = urlsplit(url)
     query = urlencode(
         [
-            (key, "REDACTED") if "key" in key.lower() else (key, value)
+            (key, "REDACTED") if sensitive_query_key(key) else (key, value)
             for key, value in parse_qsl(parts.query, keep_blank_values=True)
         ]
     )
     return urlunsplit((parts.scheme, parts.netloc, parts.path, query, parts.fragment))
+
+
+def sensitive_query_key(key: str) -> bool:
+    lowered = key.lower()
+    return lowered in {"token", "access_token"} or "key" in lowered or "secret" in lowered
 
 
 def write_raw_payload(url: str, text: str, method: str = "GET", body: bytes | None = None) -> None:
