@@ -96,6 +96,7 @@ for report_artifact in "$ROOT_DIR"/reports/*.csv "$ROOT_DIR"/reports/*.md "$ROOT
     case "$(basename "$report_artifact")" in
       archive-handoff-manifest.*) continue ;;
       doi-deposit-readiness.*) continue ;;
+      zenodo-deposit-preflight.*) continue ;;
       wiley-submission-form-readiness.*) continue ;;
       reggov-guidelines-readiness.*) continue ;;
       sam-contract-awards-export-audit.*) continue ;;
