@@ -268,12 +268,11 @@ def package_checksum_evidence() -> tuple[bool, str]:
         and row.get("sha256") == expected_sha
         and row.get("bytes") == expected_bytes
     )
-    return (
-        ready,
-        "package checksum="
-        + ("ok" if ready else "mismatch")
-        + f"; package bytes={expected_bytes}",
-    )
+    # The checksum files in dist/ carry the byte-level release-machine record.
+    # The tracked readiness report records only the stable verification status
+    # because the DOI package bundles PDFs/ZIPs whose bytes can differ across
+    # TeX and zlib environments while still passing local checksum validation.
+    return ready, "package checksum=" + ("ok" if ready else "mismatch")
 
 
 def release_tag_from_citation() -> str:
