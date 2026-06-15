@@ -242,6 +242,40 @@ grep -q "raw-solicitation-date-share,diagnostic,1.0000" "$tmpdir/reports/sam-con
 grep -q "use an awards/action-history export surface" "$tmpdir/reports/sam-contract-awards-export-audit.md"
 grep -q "no recognized obligation/amount field" "$tmpdir/reports/sam-contract-awards-export-audit.md"
 
+python3 - "$tmpdir/reports" <<'PY'
+import argparse
+import importlib.util
+from pathlib import Path
+import sys
+
+reports = Path(sys.argv[1])
+path = Path("scripts/audit-sam-contract-awards-export.py")
+spec = importlib.util.spec_from_file_location("sam_export_audit", path)
+module = importlib.util.module_from_spec(spec)
+spec.loader.exec_module(module)
+message = (
+    'GET https://api.sam.gov/contract-awards/v1/download?api_key=REDACTED&token=example '
+    'failed with HTTP 429: {"code":"900804","message":"Message throttled out",'
+    '"description":"You have exceeded your quota .","nextAccessTime":"2026-Jun-16 00:00:00+0000 UTC"}'
+)
+rows = module.download_failure_rows(message)
+assert rows[0]["status"] == "quota_blocked", rows[0]
+assert rows[1]["value"] == "HTTP 429", rows[1]
+assert rows[2]["item"] == "next-access-time", rows[2]
+assert "2026-Jun-16 00:00:00+0000 UTC" in rows[2]["value"], rows[2]
+module.write_csv(reports / "sam-contract-awards-export-audit.csv", rows)
+module.write_download_failure_markdown(
+    reports / "sam-contract-awards-export-audit.md",
+    rows,
+    argparse.Namespace(url="https://api.sam.gov/contract-awards/v1/download?api_key=REPLACE_WITH_API_KEY&token=example"),
+    message,
+)
+PY
+grep -q "promotion-readiness,quota_blocked" "$tmpdir/reports/sam-contract-awards-export-audit.csv"
+grep -q "next-access-time,manual_required,2026-Jun-16 00:00:00+0000 UTC" "$tmpdir/reports/sam-contract-awards-export-audit.csv"
+grep -q "api_key=REDACTED" "$tmpdir/reports/sam-contract-awards-export-audit.md"
+grep -q "request a fresh export email" "$tmpdir/reports/sam-contract-awards-export-audit.md"
+
 python3 scripts/test-source-fetchers.py
 
 printf 'GET https://api.sam.gov/contract-awards/v1/search?api_key=REDACTED failed with HTTP 429: {"code":"900804","message":"Message throttled out","description":"You have exceeded your quota .","nextAccessTime":"2026-Jun-13 00:00:00+0000 UTC"}\n' > "$tmpdir/sam-quota.log"

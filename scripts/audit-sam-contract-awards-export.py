@@ -16,6 +16,7 @@ from datetime import datetime
 import importlib.util
 import os
 from pathlib import Path
+import re
 import tempfile
 from urllib.parse import parse_qsl, urlencode, urlsplit, urlunsplit
 
@@ -48,6 +49,8 @@ REQUIRED_ACTION_HISTORY_FIELDS = [
     "competition or extent-competed code",
     "number of offers when available",
 ]
+NEXT_ACCESS_RE = re.compile(r'"nextAccessTime"\s*:\s*"([^"]+)"')
+HTTP_STATUS_RE = re.compile(r"HTTP\s+(\d{3})")
 
 
 def main() -> int:
@@ -65,15 +68,27 @@ def main() -> int:
     parser.add_argument("--min-competition-share", type=float, default=float_env("SAM_CONTRACT_AWARDS_EXPORT_MIN_COMPETITION_SHARE", 0.25))
     args = parser.parse_args()
 
-    with tempfile.TemporaryDirectory(prefix="lobby-sam-export-audit-") as tmp:
-        fetcher = load_fetcher()
-        input_path = resolved_input(args, Path(tmp), fetcher)
-        raw_records = fetcher.sam_contract_awards_records_from_export_file(input_path)
-        normalized_rows = fetcher.dedupe_usaspending_action_rows(
-            fetcher.normalize_sam_contract_award_records(
-                raw_records
+    try:
+        with tempfile.TemporaryDirectory(prefix="lobby-sam-export-audit-") as tmp:
+            fetcher = load_fetcher()
+            input_path = resolved_input(args, Path(tmp), fetcher)
+            raw_records = fetcher.sam_contract_awards_records_from_export_file(input_path)
+            normalized_rows = fetcher.dedupe_usaspending_action_rows(
+                fetcher.normalize_sam_contract_award_records(
+                    raw_records
+                )
             )
-        )
+    except SystemExit as error:
+        if not args.url or args.input:
+            raise
+        message = str(error)
+        rows = download_failure_rows(message)
+        args.reports.mkdir(parents=True, exist_ok=True)
+        write_csv(args.reports / "sam-contract-awards-export-audit.csv", rows)
+        write_download_failure_markdown(args.reports / "sam-contract-awards-export-audit.md", rows, args, message)
+        print(f"Wrote {args.reports / 'sam-contract-awards-export-audit.csv'}")
+        print(f"Wrote {args.reports / 'sam-contract-awards-export-audit.md'}")
+        return 1
 
     metrics = export_metrics(normalized_rows)
     metrics.update(raw_field_metrics(fetcher, raw_records))
@@ -95,6 +110,78 @@ def resolved_input(args: argparse.Namespace, tmp: Path, fetcher) -> Path:
         )
     target = tmp / "sam-contract-awards-export"
     return fetcher.download_sam_contract_awards_export_url(args.url, target)
+
+
+def download_failure_rows(message: str) -> list[dict[str, str]]:
+    status, reason = classify_download_failure(message)
+    http_status = first_match(HTTP_STATUS_RE, message)
+    next_access = first_match(NEXT_ACCESS_RE, message)
+    rows = [
+        {
+            "item": "promotion-readiness",
+            "status": status,
+            "value": reason,
+            "threshold": "downloadable export URL",
+            "notes": "No SAM/FPDS rows were promoted into the frozen snapshot.",
+            "nextAction": download_failure_next_action(status, next_access),
+        },
+        {
+            "item": "download-status",
+            "status": status,
+            "value": f"HTTP {http_status}" if http_status else "request failed",
+            "threshold": "HTTP 200 with CSV, JSON, or ZIP payload",
+            "notes": "The emailed async-export URL must be reachable before export-shape checks can run.",
+            "nextAction": "Retry the emailed URL after the upstream reset or request a fresh export.",
+        },
+    ]
+    if next_access:
+        rows.append(
+            {
+                "item": "next-access-time",
+                "status": "manual_required",
+                "value": next_access,
+                "threshold": "current time after SAM reset",
+                "notes": "SAM.gov returned this quota reset time.",
+                "nextAction": f"Retry after {next_access}; if the 60-minute token expired, request a new SAM export email.",
+            }
+        )
+    return rows
+
+
+def classify_download_failure(message: str) -> tuple[str, str]:
+    lowered = message.lower()
+    if (
+        first_match(NEXT_ACCESS_RE, message)
+        or "exceeded your quota" in lowered
+        or "message throttled out" in lowered
+        or '"code":"900804"' in lowered
+        or '"code": "900804"' in lowered
+    ):
+        next_access = first_match(NEXT_ACCESS_RE, message)
+        if next_access:
+            return "quota_blocked", f"SAM.gov quota blocked until {next_access}"
+        return "quota_blocked", "SAM.gov quota blocked; retry after the upstream reset time"
+    http_status = first_match(HTTP_STATUS_RE, message)
+    if http_status == "403":
+        return "blocked", "SAM.gov rejected the export URL or API key"
+    if http_status == "404":
+        return "blocked", "SAM.gov export URL was not found or the token expired"
+    if http_status:
+        return "blocked", f"SAM.gov export download failed with HTTP {http_status}"
+    return "blocked", "SAM.gov export download failed"
+
+
+def download_failure_next_action(status: str, next_access: str) -> str:
+    if status == "quota_blocked" and next_access:
+        return f"Retry after {next_access}; request a fresh emailed export if this token has expired."
+    if status == "quota_blocked":
+        return "Retry after the SAM.gov quota reset time; request a fresh emailed export if this token has expired."
+    return "Request a fresh SAM.gov Contract Awards export and rerun this audit."
+
+
+def first_match(pattern: re.Pattern[str], text: str) -> str:
+    match = pattern.search(text)
+    return match.group(1) if match else ""
 
 
 def load_fetcher():
@@ -459,6 +546,62 @@ def write_markdown(path: Path, rows: list[dict[str, str]], metrics: dict[str, ob
         ]
     )
     path.write_text("\n".join(lines) + "\n", encoding="utf-8")
+
+
+def write_download_failure_markdown(
+        path: Path,
+        rows: list[dict[str, str]],
+        args: argparse.Namespace,
+        message: str,
+) -> None:
+    source = redact_url(args.url)
+    lines = [
+        "# SAM Contract Awards Export Audit",
+        "",
+        (
+            "This operational audit attempted to download a SAM.gov Contract Awards export "
+            "from an emailed async-extract link before any snapshot promotion. The download "
+            "did not produce a CSV, JSON, or ZIP payload, so no export-shape checks were run "
+            "and no SAM/FPDS rows were promoted."
+        ),
+        "",
+        f"- Source: `{source}`",
+        f"- Download result: `{rows[0]['status']}`",
+        f"- Reason: `{rows[0]['value']}`",
+        "",
+        "## Download Failure Checklist",
+        "",
+        "| Item | Status | Value | Threshold | Notes | Next action |",
+        "| --- | --- | --- | --- | --- | --- |",
+    ]
+    for row in rows:
+        escaped = {key: markdown_cell(value) for key, value in row.items()}
+        lines.append(
+            "| {item} | {status} | {value} | {threshold} | {notes} | {nextAction} |".format(**escaped)
+        )
+    lines.extend(
+        [
+            "",
+            "## Redacted Error",
+            "",
+            "```text",
+            redact_error_message(message),
+            "```",
+            "",
+            "## Next Action",
+            "",
+            (
+                "After SAM.gov allows another request, rerun "
+                "`SAM_CONTRACT_AWARDS_LIVE_URL='https://api.sam.gov/contract-awards/v1/download?api_key=REPLACE_WITH_API_KEY&token=...' "
+                "make sam-contract-awards-export-audit`. If the emailed token has expired, request a fresh export email first."
+            ),
+        ]
+    )
+    path.write_text("\n".join(lines) + "\n", encoding="utf-8")
+
+
+def redact_error_message(message: str) -> str:
+    return re.sub(r"(api_key=)[^&\s]+", r"\1REDACTED", message)
 
 
 def next_export_specification(rows: list[dict[str, str]], metrics: dict[str, object], args: argparse.Namespace) -> list[str]:
