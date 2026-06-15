@@ -19,7 +19,7 @@ CALIBRATION_QUEUE = REPORTS / "calibration-queue.csv"
 LAYOUT_AUDIT = REPORTS / "paper-layout-audit.md"
 VISUAL_AUDIT = REPORTS / "manual-visual-audit.md"
 
-WEAK_STATUSES = {"thin", "warning", "fixture-only", "missing"}
+COVERAGE_GAP_STATUSES = {"thin", "warning", "fixture-only", "missing"}
 OUT_OF_SCOPE_POLICY_DEPENDENCIES = {"calibrated-policy-simulation"}
 
 
@@ -67,7 +67,7 @@ def posture_rows(
         visual: str,
 ) -> list[dict[str, str]]:
     counts = validation_counts(validation_rows)
-    coverage_gap_panels = [row for row in panels if row.get("status") in WEAK_STATUSES]
+    coverage_gap_panels = [row for row in panels if row.get("status") in COVERAGE_GAP_STATUSES]
     bounded_support_panels = [
         row for row in claim_rows
         if row.get("status") == "usable" and row.get("supportLevel") != "direct-bounded"
@@ -109,8 +109,8 @@ def posture_rows(
             (
                 f"{counts.get('miss', 0)} validation misses, "
                 f"{counts.get('unknown', 0)} unknown validations, "
-                f"{len(coverage_gap_panels)} coverage-gap source panels, "
-                f"{len(bounded_support_panels)} bounded-support source panels, "
+                f"{len(coverage_gap_panels)} unresolved coverage-gap source panels, "
+                f"{len(bounded_support_panels)} usable but source-limited support panels, "
                 f"{len(article_blocking_dependencies)} article-blocking dependency claims not cleared"
             ),
             "The manuscript can present a transparent mechanism model and synthetic stress tests under explicit source limits.",
@@ -121,8 +121,8 @@ def posture_rows(
             empirical_status,
             (
                 f"{source_gaps} source-gap validations, "
-                f"{len(coverage_gap_panels)} thin, warning, fixture-only, or missing panels, "
-                f"{len(bounded_support_panels)} bounded-support source panels"
+                f"{len(coverage_gap_panels)} unresolved weak-status panels, "
+                f"{len(bounded_support_panels)} usable but source-limited support panels"
                 f"; {dependency_counts.get('bounded', 0)} bounded claim dependencies"
             ),
             "The bridge constrains plausible ranges and flags evidence gaps; it does not validate hidden-channel magnitudes.",
@@ -219,7 +219,7 @@ def write_markdown(
         calibration_rows: list[dict[str, str]],
 ) -> None:
     counts = validation_counts(validation_rows)
-    coverage_gap_panels = [row for row in panels if row.get("status") in WEAK_STATUSES]
+    coverage_gap_panels = [row for row in panels if row.get("status") in COVERAGE_GAP_STATUSES]
     bounded_support_panels = [
         row for row in claim_rows
         if row.get("status") == "usable" and row.get("supportLevel") != "direct-bounded"
@@ -262,9 +262,9 @@ def write_markdown(
             f"- Unknown: `{counts['unknown']}`",
             f"- Not applicable: `{counts['not_applicable']}`",
             "",
-            "## Coverage-Gap Source Panels",
+            "## Unresolved Coverage-Gap Source Panels",
             "",
-            f"- Thin, warning, fixture-only, or missing panels: `{len(coverage_gap_panels)}`",
+            f"- Source panels with status thin, warning, fixture-only, or missing: `{len(coverage_gap_panels)}`",
         ]
     )
     for panel in coverage_gap_panels:
@@ -274,9 +274,9 @@ def write_markdown(
     lines.extend(
         [
             "",
-            "## Bounded Support Panels",
+            "## Usable But Source-Limited Support Panels",
             "",
-            f"- Bounded-support panels: `{len(bounded_support_panels)}`",
+            f"- Usable but source-limited support panels: `{len(bounded_support_panels)}`",
         ]
     )
     for panel in bounded_support_panels:

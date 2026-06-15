@@ -4,11 +4,13 @@ This inventory separates source coverage from simulated outcomes. `Usable` means
 
 ## Coverage Status
 
-- Usable: `11`
-- Thin: `0`
-- Warning: `0`
-- Fixture-only: `0`
-- Missing: `0`
+These counts refer to the source-panel `status` field only. Claim-support labels such as `proxy-thin` are reported separately below.
+
+- Coverage-status usable: `11`
+- Coverage-status thin: `0`
+- Coverage-status warning: `0`
+- Coverage-status fixture-only: `0`
+- Coverage-status missing: `0`
 
 ## Claim-Support Limits
 
