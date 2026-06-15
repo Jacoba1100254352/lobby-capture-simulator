@@ -4,8 +4,10 @@
 from __future__ import annotations
 
 import csv
+import hashlib
 import json
 import re
+import zipfile
 from pathlib import Path
 
 
@@ -21,6 +23,9 @@ FINAL_READTHROUGH = REPORTS / "final-human-readthrough.md"
 CHECKSUM_CSV = DIST / "release-asset-checksums.csv"
 CHECKSUM_JSON = DIST / "release-asset-checksums.json"
 CHECKSUM_MD = DIST / "release-asset-checksums.md"
+DOI_DEPOSIT_PACKAGE = DIST / "lobby-capture-doi-deposit-package.zip"
+DOI_DEPOSIT_PACKAGE_MANIFEST = DIST / "doi-deposit-package-manifest.json"
+DOI_DEPOSIT_PACKAGE_CHECKSUM = DIST / "doi-deposit-package-checksum.json"
 VERSION_PATTERN = re.compile(r"^version:\s*[\"']?([^\"'\n]+)[\"']?\s*$", re.MULTILINE)
 DOI_PATTERN = re.compile(r"\b10\.\d{4,9}/[-._;()/:A-Za-z0-9]+\b")
 EXPECTED_PRIMARY_ASSETS = {
@@ -63,6 +68,7 @@ def readiness_rows(release_tag: str) -> list[dict[str, str]]:
         row.get("sha256") and row.get("bytes") and row.get("checksumStatus")
         for row in checksum_rows
     )
+    package_evidence, package_ready = doi_package_evidence(release_tag)
     metadata_ok = release_metadata_ok(release_tag)
     submission_ok = submission.get("overall-submission-posture", {}).get("status") == "ready_for_mechanism_review"
     final_gate_status = submission.get("final-journal-submission", {}).get("status", "")
@@ -91,6 +97,12 @@ def readiness_rows(release_tag: str) -> list[dict[str, str]]:
                 f"checksum asset rows={len(checksum_assets)}"
             ),
             "Attach or retain dist/release-asset-checksums.* with the DOI record.",
+        ),
+        row(
+            "doi-deposit-package",
+            "ready" if package_ready else "blocked",
+            package_evidence,
+            "Upload or retain dist/lobby-capture-doi-deposit-package.zip as the single archive handoff package when the repository-to-archive integration does not preserve release assets directly.",
         ),
         row(
             "claim-boundary",
@@ -183,6 +195,85 @@ def find_doi() -> str:
         if match:
             return match.group(0)
     return ""
+
+
+def doi_package_evidence(release_tag: str) -> tuple[str, bool]:
+    if (
+        not DOI_DEPOSIT_PACKAGE.exists()
+        or not DOI_DEPOSIT_PACKAGE_MANIFEST.exists()
+        or not DOI_DEPOSIT_PACKAGE_CHECKSUM.exists()
+    ):
+        return "package=missing; manifest=missing; checksum=missing", False
+    try:
+        manifest = json.loads(DOI_DEPOSIT_PACKAGE_MANIFEST.read_text(encoding="utf-8"))
+    except json.JSONDecodeError as error:
+        return f"manifest=invalid JSON: {error}", False
+    if not isinstance(manifest, dict):
+        return "manifest=not an object", False
+    if manifest.get("schema") != "lobby-capture-doi-deposit-package-v1":
+        return f"schema={manifest.get('schema', 'missing')}", False
+    if manifest.get("releaseTag") != release_tag:
+        return (
+            f"releaseTag={manifest.get('releaseTag', 'missing')}; expected={release_tag}",
+            False,
+        )
+    members = manifest.get("members")
+    if not isinstance(members, list):
+        return "manifest members=missing", False
+    expected_primary_members = {
+        f"primary-assets/{asset}"
+        for asset in EXPECTED_PRIMARY_ASSETS
+    }
+    manifest_members = {
+        row.get("member", "")
+        for row in members
+        if isinstance(row, dict)
+    }
+    missing_primary = sorted(expected_primary_members - manifest_members)
+    try:
+        with zipfile.ZipFile(DOI_DEPOSIT_PACKAGE) as archive:
+            names = set(archive.namelist())
+            package_bad = archive.testzip()
+    except (OSError, zipfile.BadZipFile) as error:
+        return f"package=unreadable: {error}", False
+    checksum_ready, checksum_evidence = package_checksum_evidence()
+    missing_zip = sorted((manifest_members | {"doi-deposit-package-manifest.json", "doi-deposit-package-manifest.md"}) - names)
+    ready = not missing_primary and not missing_zip and package_bad is None and checksum_ready
+    evidence = (
+        f"package=present; manifest=present; manifest members={len(manifest_members)}; "
+        f"zip members={len(names)}; primary assets={len(expected_primary_members) - len(missing_primary)}/{len(expected_primary_members)}; "
+        f"zip integrity={'ok' if package_bad is None else 'bad member ' + str(package_bad)}; "
+        f"{checksum_evidence}"
+    )
+    if missing_primary:
+        evidence += f"; missing primary={','.join(missing_primary)}"
+    if missing_zip:
+        evidence += f"; missing zip members={','.join(missing_zip)}"
+    return evidence, ready
+
+
+def package_checksum_evidence() -> tuple[bool, str]:
+    try:
+        checksum = json.loads(DOI_DEPOSIT_PACKAGE_CHECKSUM.read_text(encoding="utf-8"))
+    except json.JSONDecodeError as error:
+        return False, f"package checksum=invalid JSON: {error}"
+    row = checksum.get("row") if isinstance(checksum, dict) else None
+    if not isinstance(row, dict):
+        return False, "package checksum=row missing"
+    data = DOI_DEPOSIT_PACKAGE.read_bytes()
+    expected_sha = hashlib.sha256(data).hexdigest()
+    expected_bytes = str(len(data))
+    ready = (
+        checksum.get("schema") == "lobby-capture-doi-deposit-package-checksum-v1"
+        and row.get("sha256") == expected_sha
+        and row.get("bytes") == expected_bytes
+    )
+    return (
+        ready,
+        "package checksum="
+        + ("ok" if ready else "mismatch")
+        + f"; package bytes={expected_bytes}",
+    )
 
 
 def release_tag_from_citation() -> str:
@@ -283,7 +374,7 @@ def markdown(release_tag: str, rows: list[dict[str, str]]) -> str:
         "",
         "## Deposit Asset Set",
         "",
-        "Upload or preserve these primary release assets with the DOI record, using `dist/release-asset-checksums.{csv,json,md}` for byte-level verification:",
+        "Upload or preserve these primary release assets with the DOI record, using `dist/release-asset-checksums.{csv,json,md}` for byte-level verification. If the archive workflow needs one file, use `dist/lobby-capture-doi-deposit-package.zip`, which bundles these assets with metadata and readiness reports:",
         "",
     ])
     for asset in sorted(EXPECTED_PRIMARY_ASSETS):

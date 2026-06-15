@@ -89,7 +89,13 @@ REGGOV_GUIDELINES_READINESS_MD = ROOT / "reports" / "reggov-guidelines-readiness
 RELEASE_ASSET_CHECKSUM_CSV = ROOT / "dist" / "release-asset-checksums.csv"
 RELEASE_ASSET_CHECKSUM_JSON = ROOT / "dist" / "release-asset-checksums.json"
 RELEASE_ASSET_CHECKSUM_MD = ROOT / "dist" / "release-asset-checksums.md"
-RELEASE_TAG = "paper-publication-readiness-2026-06-14-r111"
+DOI_DEPOSIT_PACKAGE = ROOT / "dist" / "lobby-capture-doi-deposit-package.zip"
+DOI_DEPOSIT_PACKAGE_MANIFEST_JSON = ROOT / "dist" / "doi-deposit-package-manifest.json"
+DOI_DEPOSIT_PACKAGE_MANIFEST_MD = ROOT / "dist" / "doi-deposit-package-manifest.md"
+DOI_DEPOSIT_PACKAGE_CHECKSUM_CSV = ROOT / "dist" / "doi-deposit-package-checksum.csv"
+DOI_DEPOSIT_PACKAGE_CHECKSUM_JSON = ROOT / "dist" / "doi-deposit-package-checksum.json"
+DOI_DEPOSIT_PACKAGE_CHECKSUM_MD = ROOT / "dist" / "doi-deposit-package-checksum.md"
+RELEASE_TAG = "paper-publication-readiness-2026-06-14-r112"
 ARCHIVE_HANDOFF_REPORT_NAMES = {
     "archive-handoff-manifest.csv",
     "archive-handoff-manifest.json",
@@ -240,6 +246,12 @@ def main() -> int:
             ARCHIVE_HANDOFF_CSV,
             ARCHIVE_HANDOFF_JSON,
             ARCHIVE_HANDOFF_MD,
+            DOI_DEPOSIT_PACKAGE,
+            DOI_DEPOSIT_PACKAGE_MANIFEST_JSON,
+            DOI_DEPOSIT_PACKAGE_MANIFEST_MD,
+            DOI_DEPOSIT_PACKAGE_CHECKSUM_CSV,
+            DOI_DEPOSIT_PACKAGE_CHECKSUM_JSON,
+            DOI_DEPOSIT_PACKAGE_CHECKSUM_MD,
             REGGOV_GUIDELINES_READINESS_CSV,
             REGGOV_GUIDELINES_READINESS_MD,
         ])
@@ -270,6 +282,7 @@ def main() -> int:
     failures.extend(check_layout_and_visual_reports())
     failures.extend(check_archive_metadata())
     failures.extend(check_archive_handoff_manifest())
+    failures.extend(check_doi_deposit_package())
     failures.extend(check_doi_deposit_readiness())
     failures.extend(check_wiley_submission_form_readiness())
     failures.extend(check_reggov_guidelines_readiness())
@@ -324,6 +337,12 @@ def check_freshness() -> list[str]:
         (ARCHIVE_HANDOFF_CSV, archive_handoff_inputs()),
         (ARCHIVE_HANDOFF_JSON, archive_handoff_inputs()),
         (ARCHIVE_HANDOFF_MD, archive_handoff_inputs()),
+        (DOI_DEPOSIT_PACKAGE, doi_deposit_package_inputs()),
+        (DOI_DEPOSIT_PACKAGE_MANIFEST_JSON, doi_deposit_package_inputs()),
+        (DOI_DEPOSIT_PACKAGE_MANIFEST_MD, doi_deposit_package_inputs()),
+        (DOI_DEPOSIT_PACKAGE_CHECKSUM_CSV, doi_deposit_package_inputs()),
+        (DOI_DEPOSIT_PACKAGE_CHECKSUM_JSON, doi_deposit_package_inputs()),
+        (DOI_DEPOSIT_PACKAGE_CHECKSUM_MD, doi_deposit_package_inputs()),
         (DOI_DEPOSIT_READINESS_CSV, doi_deposit_readiness_inputs()),
         (DOI_DEPOSIT_READINESS_MD, doi_deposit_readiness_inputs()),
         (WILEY_SUBMISSION_FORM_READINESS_CSV, wiley_submission_form_readiness_inputs()),
@@ -466,6 +485,12 @@ def archive_handoff_inputs() -> list[Path]:
 
 def doi_deposit_readiness_inputs() -> list[Path]:
     return [
+        DOI_DEPOSIT_PACKAGE,
+        DOI_DEPOSIT_PACKAGE_MANIFEST_JSON,
+        DOI_DEPOSIT_PACKAGE_MANIFEST_MD,
+        DOI_DEPOSIT_PACKAGE_CHECKSUM_CSV,
+        DOI_DEPOSIT_PACKAGE_CHECKSUM_JSON,
+        DOI_DEPOSIT_PACKAGE_CHECKSUM_MD,
         ARCHIVE_HANDOFF_CSV,
         ARCHIVE_HANDOFF_JSON,
         ARCHIVE_HANDOFF_MD,
@@ -479,6 +504,31 @@ def doi_deposit_readiness_inputs() -> list[Path]:
         ZENODO_JSON,
         SUBMISSION_DECLARATIONS,
         ROOT / "scripts" / "audit-doi-deposit-readiness.py",
+    ]
+
+
+def doi_deposit_package_inputs() -> list[Path]:
+    return [
+        SUBMISSION_ZIP,
+        WILEY_PDF,
+        LOCAL_PDF,
+        SUPPLEMENT_PDF,
+        CITATION_CFF,
+        ZENODO_JSON,
+        RELEASE_ASSET_CHECKSUM_CSV,
+        RELEASE_ASSET_CHECKSUM_JSON,
+        RELEASE_ASSET_CHECKSUM_MD,
+        ARCHIVE_HANDOFF_CSV,
+        ARCHIVE_HANDOFF_JSON,
+        ARCHIVE_HANDOFF_MD,
+        SUBMISSION_READINESS_CSV,
+        SUBMISSION_READINESS_MD,
+        WILEY_SUBMISSION_FORM_READINESS_CSV,
+        WILEY_SUBMISSION_FORM_READINESS_MD,
+        REGGOV_GUIDELINES_READINESS_CSV,
+        REGGOV_GUIDELINES_READINESS_MD,
+        FINAL_HUMAN_READTHROUGH,
+        ROOT / "scripts" / "build-doi-deposit-package.py",
     ]
 
 
@@ -2220,6 +2270,173 @@ def check_archive_handoff_manifest() -> list[str]:
     return failures
 
 
+def check_doi_deposit_package() -> list[str]:
+    failures: list[str] = []
+    for path in (
+        DOI_DEPOSIT_PACKAGE,
+        DOI_DEPOSIT_PACKAGE_MANIFEST_JSON,
+        DOI_DEPOSIT_PACKAGE_MANIFEST_MD,
+        DOI_DEPOSIT_PACKAGE_CHECKSUM_CSV,
+        DOI_DEPOSIT_PACKAGE_CHECKSUM_JSON,
+        DOI_DEPOSIT_PACKAGE_CHECKSUM_MD,
+    ):
+        if not path.exists():
+            failures.append(f"missing DOI deposit package artifact: {path.relative_to(ROOT)}")
+    if failures:
+        return failures
+
+    try:
+        manifest = json.loads(DOI_DEPOSIT_PACKAGE_MANIFEST_JSON.read_text(encoding="utf-8"))
+    except json.JSONDecodeError as error:
+        return [f"DOI deposit package manifest JSON is invalid: {error}"]
+    if manifest.get("schema") != "lobby-capture-doi-deposit-package-v1":
+        failures.append("DOI deposit package manifest has unexpected schema")
+    if manifest.get("releaseTag") != RELEASE_TAG:
+        failures.append(
+            f"DOI deposit package manifest releaseTag={manifest.get('releaseTag')!r} does not match {RELEASE_TAG}"
+        )
+
+    members = manifest.get("members")
+    if not isinstance(members, list):
+        return [*failures, "DOI deposit package manifest members field is not a list"]
+    expected_primary = {
+        "primary-assets/lobby-capture-wiley-submission.zip",
+        "primary-assets/regulation-governance-wiley.pdf",
+        f"primary-assets/{LOCAL_BASENAME}.pdf",
+        "primary-assets/supplement.pdf",
+    }
+    primary = set(manifest.get("primaryDepositAssets", []))
+    if primary != expected_primary:
+        failures.append("DOI deposit package primaryDepositAssets list is incomplete or unexpected")
+
+    rows_by_member = {
+        row.get("member", ""): row
+        for row in members
+        if isinstance(row, dict) and row.get("member")
+    }
+    required_members = expected_primary | {
+        "README-DOI-DEPOSIT.txt",
+        "metadata/CITATION.cff",
+        "metadata/zenodo.json",
+        "metadata/release-asset-checksums.csv",
+        "metadata/release-asset-checksums.json",
+        "metadata/release-asset-checksums.md",
+        "readiness/archive-handoff-manifest.csv",
+        "readiness/archive-handoff-manifest.json",
+        "readiness/archive-handoff-manifest.md",
+        "readiness/submission-readiness.csv",
+        "readiness/submission-readiness.md",
+        "readiness/wiley-submission-form-readiness.csv",
+        "readiness/wiley-submission-form-readiness.md",
+        "readiness/reggov-guidelines-readiness.csv",
+        "readiness/reggov-guidelines-readiness.md",
+        "readiness/final-human-readthrough.md",
+    }
+    for member in sorted(required_members - set(rows_by_member)):
+        failures.append(f"DOI deposit package manifest omits expected member: {member}")
+
+    try:
+        with zipfile.ZipFile(DOI_DEPOSIT_PACKAGE) as archive:
+            names = set(archive.namelist())
+            bad_member = archive.testzip()
+            if bad_member is not None:
+                failures.append(f"DOI deposit package has corrupt member: {bad_member}")
+            required_zip_members = set(rows_by_member) | {
+                "doi-deposit-package-manifest.json",
+                "doi-deposit-package-manifest.md",
+            }
+            for member in sorted(required_zip_members - names):
+                failures.append(f"DOI deposit package zip omits expected member: {member}")
+            if "readiness/doi-deposit-readiness.md" in names or "readiness/doi-deposit-readiness.csv" in names:
+                failures.append("DOI deposit package should not include the verifier report that checks the package")
+            if "doi-deposit-package-manifest.json" in names:
+                if archive.read("doi-deposit-package-manifest.json") != DOI_DEPOSIT_PACKAGE_MANIFEST_JSON.read_bytes():
+                    failures.append("DOI deposit package embedded JSON manifest differs from dist copy")
+            if "doi-deposit-package-manifest.md" in names:
+                if archive.read("doi-deposit-package-manifest.md") != DOI_DEPOSIT_PACKAGE_MANIFEST_MD.read_bytes():
+                    failures.append("DOI deposit package embedded Markdown manifest differs from dist copy")
+            for member, row in sorted(rows_by_member.items()):
+                if member not in names:
+                    continue
+                data = archive.read(member)
+                if row.get("sha256") != hashlib.sha256(data).hexdigest():
+                    failures.append(f"DOI deposit package manifest checksum mismatch for {member}")
+                if row.get("bytes") != str(len(data)):
+                    failures.append(f"DOI deposit package manifest byte count mismatch for {member}")
+                source_path = row.get("sourcePath", "")
+                if source_path and source_path != "generated":
+                    source = ROOT / source_path
+                    if not source.exists():
+                        failures.append(f"DOI deposit package lists missing source path: {source_path}")
+                    elif data != source.read_bytes():
+                        failures.append(f"DOI deposit package member {member} differs from {source_path}")
+    except (OSError, KeyError, zipfile.BadZipFile) as error:
+        failures.append(f"could not inspect DOI deposit package zip: {error}")
+
+    markdown = DOI_DEPOSIT_PACKAGE_MANIFEST_MD.read_text(encoding="utf-8")
+    for phrase in (
+        "DOI Deposit Package Manifest",
+        RELEASE_TAG,
+        "does not assert that a DOI has been minted",
+        "primary-assets/lobby-capture-wiley-submission.zip",
+        "readiness/submission-readiness.md",
+    ):
+        if phrase not in markdown:
+            failures.append(f"DOI deposit package manifest markdown missing phrase: {phrase}")
+    failures.extend(check_doi_deposit_package_checksum())
+    return failures
+
+
+def check_doi_deposit_package_checksum() -> list[str]:
+    failures: list[str] = []
+    data = DOI_DEPOSIT_PACKAGE.read_bytes()
+    expected_sha = hashlib.sha256(data).hexdigest()
+    expected_bytes = str(len(data))
+    try:
+        with DOI_DEPOSIT_PACKAGE_CHECKSUM_CSV.open(newline="", encoding="utf-8") as source:
+            rows = list(csv.DictReader(source))
+    except OSError as error:
+        return [f"could not read DOI deposit package checksum CSV: {error}"]
+    if len(rows) != 1:
+        failures.append("DOI deposit package checksum CSV should have exactly one data row")
+        row = rows[0] if rows else {}
+    else:
+        row = rows[0]
+    if row.get("path") != str(DOI_DEPOSIT_PACKAGE.relative_to(ROOT)):
+        failures.append("DOI deposit package checksum CSV path does not match package")
+    if row.get("releaseAssetName") != DOI_DEPOSIT_PACKAGE.name:
+        failures.append("DOI deposit package checksum CSV release asset name does not match package")
+    if row.get("sha256") != expected_sha:
+        failures.append("DOI deposit package checksum CSV SHA-256 does not match package")
+    if row.get("bytes") != expected_bytes:
+        failures.append("DOI deposit package checksum CSV byte count does not match package")
+
+    try:
+        checksum_json = json.loads(DOI_DEPOSIT_PACKAGE_CHECKSUM_JSON.read_text(encoding="utf-8"))
+    except json.JSONDecodeError as error:
+        return [*failures, f"DOI deposit package checksum JSON is invalid: {error}"]
+    if checksum_json.get("schema") != "lobby-capture-doi-deposit-package-checksum-v1":
+        failures.append("DOI deposit package checksum JSON has unexpected schema")
+    if checksum_json.get("releaseTag") != RELEASE_TAG:
+        failures.append("DOI deposit package checksum JSON release tag does not match current release tag")
+    json_row = checksum_json.get("row")
+    if not isinstance(json_row, dict):
+        failures.append("DOI deposit package checksum JSON row is missing")
+    elif json_row.get("sha256") != expected_sha or json_row.get("bytes") != expected_bytes:
+        failures.append("DOI deposit package checksum JSON does not match package bytes")
+
+    checksum_md = DOI_DEPOSIT_PACKAGE_CHECKSUM_MD.read_text(encoding="utf-8")
+    for phrase in (
+        "DOI Deposit Package Checksum",
+        RELEASE_TAG,
+        DOI_DEPOSIT_PACKAGE.name,
+        expected_sha,
+    ):
+        if phrase not in checksum_md:
+            failures.append(f"DOI deposit package checksum markdown missing phrase: {phrase}")
+    return failures
+
+
 def check_doi_deposit_readiness() -> list[str]:
     failures: list[str] = []
     for path in (DOI_DEPOSIT_READINESS_CSV, DOI_DEPOSIT_READINESS_MD):
@@ -2237,6 +2454,7 @@ def check_doi_deposit_readiness() -> list[str]:
         "release-metadata": {"ready"},
         "primary-release-assets": {"ready"},
         "release-asset-checksums": {"ready"},
+        "doi-deposit-package": {"ready"},
         "claim-boundary": {"ready"},
         "doi-record": {"manual_required", "ready"},
         "human-readthrough": {"manual_required", "ready"},
@@ -2275,6 +2493,7 @@ def check_doi_deposit_readiness() -> list[str]:
         "It does not assert that a DOI has been minted",
         "Final journal-submission status:",
         "lobby-capture-wiley-submission.zip",
+        "lobby-capture-doi-deposit-package.zip",
         "dist/release-asset-checksums",
         "reports/final-human-readthrough.md",
     ]
