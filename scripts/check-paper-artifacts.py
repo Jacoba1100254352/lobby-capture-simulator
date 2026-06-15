@@ -66,6 +66,10 @@ FIRST_WAVE_CAUSAL_PROTOCOLS_CSV = ROOT / "reports" / "first-wave-causal-protocol
 FIRST_WAVE_CAUSAL_PROTOCOLS_TABLE = PAPER / "tables" / "first_wave_causal_protocols.tex"
 FIRST_WAVE_SOURCE_PRODUCTS_MD = ROOT / "reports" / "first-wave-source-products.md"
 FIRST_WAVE_SOURCE_PRODUCTS_CSV = ROOT / "reports" / "first-wave-source-products.csv"
+FIRST_WAVE_SOURCE_TEMPLATE_DIR = ROOT / "docs" / "source-product-templates" / "first-wave"
+FIRST_WAVE_SOURCE_TEMPLATE_MANIFEST_CSV = FIRST_WAVE_SOURCE_TEMPLATE_DIR / "manifest.csv"
+FIRST_WAVE_SOURCE_TEMPLATE_MANIFEST_MD = FIRST_WAVE_SOURCE_TEMPLATE_DIR / "manifest.md"
+FIRST_WAVE_SOURCE_TEMPLATE_README = FIRST_WAVE_SOURCE_TEMPLATE_DIR / "README.md"
 FIRST_WAVE_SOURCE_READINESS_MD = ROOT / "reports" / "first-wave-source-readiness.md"
 FIRST_WAVE_SOURCE_READINESS_CSV = ROOT / "reports" / "first-wave-source-readiness.csv"
 CLAIM_POSTURE_AUDIT_MD = ROOT / "reports" / "claim-posture-audit.md"
@@ -100,7 +104,7 @@ DOI_DEPOSIT_PACKAGE_CHECKSUM_CSV = ROOT / "dist" / "doi-deposit-package-checksum
 DOI_DEPOSIT_PACKAGE_CHECKSUM_JSON = ROOT / "dist" / "doi-deposit-package-checksum.json"
 DOI_DEPOSIT_PACKAGE_CHECKSUM_MD = ROOT / "dist" / "doi-deposit-package-checksum.md"
 ZENODO_DEPOSIT_METADATA_JSON = ROOT / "dist" / "zenodo-deposit-metadata.json"
-RELEASE_TAG = "paper-publication-readiness-2026-06-15-r121"
+RELEASE_TAG = "paper-publication-readiness-2026-06-15-r122"
 ARCHIVE_HANDOFF_REPORT_NAMES = {
     "archive-handoff-manifest.csv",
     "archive-handoff-manifest.json",
@@ -241,6 +245,25 @@ EXPECTED_ZIP_MEMBERS = {
     "supporting-information/submission-package-manifest.md",
     "supporting-information/CITATION.cff",
     "supporting-information/zenodo.json",
+    "supporting-information/source-product-templates/first-wave/README.md",
+    "supporting-information/source-product-templates/first-wave/manifest.csv",
+    "supporting-information/source-product-templates/first-wave/manifest.md",
+    "supporting-information/source-product-templates/first-wave/substitution-reform-shocks.csv",
+    "supporting-information/source-product-templates/first-wave/actor-issue-time-spine.csv",
+    "supporting-information/source-product-templates/first-wave/substitution-comparison-groups.csv",
+    "supporting-information/source-product-templates/first-wave/meeting-log-channel-note.md",
+    "supporting-information/source-product-templates/first-wave/sam-fpds-action-history-crosswalk.csv",
+    "supporting-information/source-product-templates/first-wave/gao-protest-overlay.csv",
+    "supporting-information/source-product-templates/first-wave/sam-exclusion-overlay.csv",
+    "supporting-information/source-product-templates/first-wave/procurement-firewall-overlay.csv",
+    "supporting-information/source-product-templates/first-wave/comment-body-corpus.csv",
+    "supporting-information/source-product-templates/first-wave/comment-template-clusters.csv",
+    "supporting-information/source-product-templates/first-wave/agency-response-final-rule-linkage.csv",
+    "supporting-information/source-product-templates/first-wave/canonical-actor-identifiers.csv",
+    "supporting-information/source-product-templates/first-wave/alias-resolution-audit-sample.csv",
+    "supporting-information/source-product-templates/first-wave/issue-code-crosswalk.csv",
+    "supporting-information/source-product-templates/first-wave/false-match-review-log.csv",
+    "supporting-information/source-product-templates/first-wave/linked-actor-issue-venue-time.csv",
 }
 
 
@@ -284,6 +307,7 @@ def main() -> int:
     failures.extend(check_claim_source_dependency_audit())
     failures.extend(check_causal_calibration_targets())
     failures.extend(check_first_wave_causal_protocols())
+    failures.extend(check_first_wave_source_product_templates())
     failures.extend(check_first_wave_source_products())
     failures.extend(check_first_wave_source_readiness())
     failures.extend(check_claim_posture_audit())
@@ -420,6 +444,7 @@ def submission_inputs() -> list[Path]:
         PAPER / "references.bib",
         ROOT / "scripts" / "build-submission-package.sh",
         ROOT / "scripts" / "write-first-wave-causal-protocols.py",
+        ROOT / "scripts" / "write-first-wave-source-product-templates.py",
         ROOT / "scripts" / "audit-first-wave-source-products.py",
         ROOT / "scripts" / "audit-first-wave-source-readiness.py",
         CITATION_CFF,
@@ -459,6 +484,7 @@ def submission_inputs() -> list[Path]:
         PAPER / ".wiley-build" / "USG.cls",
         PAPER / ".wiley-build" / "wileyNJD-Chicago.bst",
         PAPER / ".wiley-template" / "Optimal-Design-layout" / "LETTERSP.STY",
+        *sorted(FIRST_WAVE_SOURCE_TEMPLATE_DIR.glob("*")),
         *sorted((PAPER / "sections").glob("*.tex")),
         *sorted((PAPER / "tables").glob("*.tex")),
         *sorted((PAPER / "figures").glob("*.tex")),
@@ -1758,6 +1784,132 @@ def check_first_wave_causal_protocols() -> list[str]:
     return failures
 
 
+def expected_first_wave_template_files() -> dict[str, str]:
+    return {
+        "substitution-reform-shocks": "substitution-reform-shocks.csv",
+        "actor-issue-time-spine": "actor-issue-time-spine.csv",
+        "substitution-comparison-groups": "substitution-comparison-groups.csv",
+        "meeting-log-or-missing-channel-note": "meeting-log-channel-note.md",
+        "sam-fpds-action-history-crosswalk": "sam-fpds-action-history-crosswalk.csv",
+        "gao-protest-overlay": "gao-protest-overlay.csv",
+        "sam-exclusion-overlay": "sam-exclusion-overlay.csv",
+        "procurement-firewall-overlay": "procurement-firewall-overlay.csv",
+        "comment-body-corpus": "comment-body-corpus.csv",
+        "duplicate-template-clusters": "comment-template-clusters.csv",
+        "agency-response-final-rule-linkage": "agency-response-final-rule-linkage.csv",
+        "canonical-actor-identifiers": "canonical-actor-identifiers.csv",
+        "alias-resolution-audit-sample": "alias-resolution-audit-sample.csv",
+        "issue-code-crosswalk": "issue-code-crosswalk.csv",
+        "false-match-review-log": "false-match-review-log.csv",
+        "linked-actor-issue-venue-time": "linked-actor-issue-venue-time.csv",
+    }
+
+
+def check_first_wave_source_product_templates() -> list[str]:
+    failures: list[str] = []
+    expected = expected_first_wave_template_files()
+    required_paths = [
+        FIRST_WAVE_SOURCE_TEMPLATE_README,
+        FIRST_WAVE_SOURCE_TEMPLATE_MANIFEST_CSV,
+        FIRST_WAVE_SOURCE_TEMPLATE_MANIFEST_MD,
+        *(FIRST_WAVE_SOURCE_TEMPLATE_DIR / filename for filename in expected.values()),
+    ]
+    failures.extend(
+        f"missing first-wave source product template artifact: {path.relative_to(ROOT)}"
+        for path in required_paths
+        if not path.exists()
+    )
+    if failures:
+        return failures
+
+    actual_files = {
+        path.name
+        for path in FIRST_WAVE_SOURCE_TEMPLATE_DIR.iterdir()
+        if path.is_file()
+    }
+    expected_files = {"README.md", "manifest.csv", "manifest.md", *expected.values()}
+    failures.extend(
+        f"first-wave source product template directory missing file: {filename}"
+        for filename in sorted(expected_files - actual_files)
+    )
+    failures.extend(
+        f"first-wave source product template directory includes unexpected file: {filename}"
+        for filename in sorted(actual_files - expected_files)
+    )
+
+    with FIRST_WAVE_SOURCE_TEMPLATE_MANIFEST_CSV.open(newline="", encoding="utf-8") as source:
+        rows = list(csv.DictReader(source))
+    present_products = {row.get("productKey", "") for row in rows}
+    failures.extend(
+        f"first-wave source product template manifest missing product: {product}"
+        for product in sorted(set(expected) - present_products)
+    )
+    failures.extend(
+        f"first-wave source product template manifest includes unexpected product: {product}"
+        for product in sorted(present_products - set(expected))
+    )
+    if len(rows) != len(expected):
+        failures.append(
+            f"first-wave source product template manifest row count {len(rows)} does not match expected {len(expected)}"
+        )
+
+    for row in rows:
+        product = row.get("productKey", "<missing>")
+        filename = expected.get(product)
+        if not filename:
+            continue
+        template_path = row.get("templatePath", "")
+        production_path = row.get("productionPath", "")
+        expected_template_path = f"docs/source-product-templates/first-wave/{filename}"
+        if template_path != expected_template_path:
+            failures.append(
+                f"first-wave source product template {product} path {template_path} should be {expected_template_path}"
+            )
+        if not production_path.startswith("data/calibration/first-wave/"):
+            failures.append(
+                f"first-wave source product template {product} production path should live under data/calibration/first-wave/"
+            )
+        template_file = FIRST_WAVE_SOURCE_TEMPLATE_DIR / filename
+        if filename.endswith(".csv"):
+            with template_file.open(newline="", encoding="utf-8") as source:
+                reader = csv.reader(source)
+                header = next(reader, [])
+                extra_rows = list(reader)
+            required = [
+                value.strip()
+                for value in row.get("requiredColumnsOrTerms", "").split(";")
+                if value.strip()
+            ]
+            missing_header = [column for column in required if column not in header]
+            if missing_header:
+                failures.append(
+                    f"first-wave source product template {product} missing CSV columns: {', '.join(missing_header)}"
+                )
+            if extra_rows:
+                failures.append(
+                    f"first-wave source product template {product} should be header-only, not source evidence"
+                )
+        else:
+            text = template_file.read_text(encoding="utf-8").lower()
+            for phrase in ("meeting", "missing", "substitution", "production path"):
+                if phrase not in text:
+                    failures.append(
+                        f"first-wave source product text template {product} missing phrase: {phrase}"
+                    )
+
+    readme = FIRST_WAVE_SOURCE_TEMPLATE_README.read_text(encoding="utf-8")
+    manifest_md = FIRST_WAVE_SOURCE_TEMPLATE_MANIFEST_MD.read_text(encoding="utf-8")
+    for phrase in (
+        "Production source-product directory: `data/calibration/first-wave/`",
+        "Do not treat these templates as evidence.",
+    ):
+        if phrase not in readme:
+            failures.append(f"first-wave source product template README missing phrase: {phrase}")
+    if "cannot satisfy the production source-product audit" not in manifest_md:
+        failures.append("first-wave source product template manifest missing production-audit boundary")
+    return failures
+
+
 def check_first_wave_source_products() -> list[str]:
     failures: list[str] = []
     missing = [
@@ -1784,24 +1936,7 @@ def check_first_wave_source_products() -> list[str]:
         f"first-wave source product report missing target: {target}"
         for target in sorted(expected_targets - present_targets)
     )
-    expected_products = {
-        "substitution-reform-shocks",
-        "actor-issue-time-spine",
-        "substitution-comparison-groups",
-        "meeting-log-or-missing-channel-note",
-        "sam-fpds-action-history-crosswalk",
-        "gao-protest-overlay",
-        "sam-exclusion-overlay",
-        "procurement-firewall-overlay",
-        "comment-body-corpus",
-        "duplicate-template-clusters",
-        "agency-response-final-rule-linkage",
-        "canonical-actor-identifiers",
-        "alias-resolution-audit-sample",
-        "issue-code-crosswalk",
-        "false-match-review-log",
-        "linked-actor-issue-venue-time",
-    }
+    expected_products = set(expected_first_wave_template_files())
     present_products = {row.get("productKey", "") for row in rows}
     failures.extend(
         f"first-wave source product report missing product: {product}"
@@ -1820,6 +1955,7 @@ def check_first_wave_source_products() -> list[str]:
         "productLabel",
         "requirementLevel",
         "expectedPath",
+        "templatePath",
         "acceptableSources",
         "requiredColumns",
         "productStatus",
@@ -1841,6 +1977,16 @@ def check_first_wave_source_products() -> list[str]:
             failures.append(
                 f"first-wave source product {product} expected path should live under data/calibration/first-wave/"
             )
+        expected_template = expected_first_wave_template_files().get(product)
+        if expected_template:
+            template_path = row.get("templatePath", "")
+            expected_template_path = f"docs/source-product-templates/first-wave/{expected_template}"
+            if template_path != expected_template_path:
+                failures.append(
+                    f"first-wave source product {product} template path {template_path} should be {expected_template_path}"
+                )
+            if not (ROOT / template_path).exists():
+                failures.append(f"first-wave source product {product} template path does not exist: {template_path}")
     if ready_rows:
         failures.append(
             "first-wave source products should not be ready in this release without a matching manuscript update: "
@@ -1852,6 +1998,7 @@ def check_first_wave_source_products() -> list[str]:
         "First-Wave Source Products",
         "schema/acquisition gate",
         "Policy-simulation status: `not_cleared`",
+        "Template path",
         "SAM/FPDS action-history export or keyed pull",
         "canonical actor identifier table",
         "comment-body corpus",
@@ -3063,6 +3210,11 @@ def package_byte_checks() -> list[tuple[Path, str]]:
         (CITATION_CFF, "supporting-information/CITATION.cff"),
         (ZENODO_JSON, "supporting-information/zenodo.json"),
     ]
+    checks.extend(
+        (path, f"supporting-information/source-product-templates/first-wave/{path.name}")
+        for path in sorted(FIRST_WAVE_SOURCE_TEMPLATE_DIR.glob("*"))
+        if path.is_file()
+    )
     checks.extend(
         (path, f"sections/{path.name}")
         for path in sorted((PAPER / "sections").glob("*.tex"))

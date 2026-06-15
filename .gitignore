@@ -52,6 +52,8 @@ reports/*.md
 !reports/causal-calibration-targets.md
 !reports/first-wave-causal-protocols.csv
 !reports/first-wave-causal-protocols.md
+!reports/first-wave-source-products.csv
+!reports/first-wave-source-products.md
 !reports/first-wave-source-readiness.csv
 !reports/first-wave-source-readiness.md
 !reports/claim-posture-audit.csv

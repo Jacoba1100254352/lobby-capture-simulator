@@ -149,6 +149,22 @@ grep -q "SAM_CONTRACT_AWARDS_EXTRACT_MODE=1" "$tmpdir/reports/procurement-refres
 grep -q "SAM_CONTRACT_AWARDS_OFFSET_STARTS" "$tmpdir/reports/procurement-refresh-readiness.md"
 
 mkdir -p "$tmpdir/source-root/data/calibration/first-wave"
+python3 scripts/write-first-wave-source-product-templates.py --root "$tmpdir/source-root" >/dev/null
+test -s "$tmpdir/source-root/docs/source-product-templates/first-wave/README.md"
+test -s "$tmpdir/source-root/docs/source-product-templates/first-wave/manifest.csv"
+test -s "$tmpdir/source-root/docs/source-product-templates/first-wave/substitution-reform-shocks.csv"
+test -s "$tmpdir/source-root/docs/source-product-templates/first-wave/meeting-log-channel-note.md"
+grep -q "Do not treat these templates as evidence" "$tmpdir/source-root/docs/source-product-templates/first-wave/README.md"
+grep -q "cannot satisfy the production source-product audit" "$tmpdir/source-root/docs/source-product-templates/first-wave/manifest.md"
+test ! -f "$tmpdir/source-root/data/calibration/first-wave/comment-body-corpus.csv"
+python3 - "$tmpdir/source-root/docs/source-product-templates/first-wave/substitution-reform-shocks.csv" <<'PY'
+import csv
+import sys
+with open(sys.argv[1], newline="", encoding="utf-8") as source:
+    rows = list(csv.reader(source))
+assert len(rows) == 1, rows
+assert rows[0][:3] == ["reformEventId", "eventName", "jurisdiction"], rows[0]
+PY
 cat > "$tmpdir/source-root/data/calibration/first-wave/substitution-reform-shocks.csv" <<'CSV'
 reformEventId,eventName,jurisdiction,policyDomain,reformType,eventDate,treatmentStartDate,affectedActorRule,affectedIssueRule,comparisonRule,sourceUrl,sourceExtractedAt
 shock-1,Example disclosure rule,Example State,environment,disclosure,2024-01-01,2024-02-01,covered registrants,ENV issues,matched unaffected actors,https://example.test/reform,2026-06-15
@@ -157,9 +173,11 @@ python3 scripts/audit-first-wave-source-products.py --root "$tmpdir/source-root"
 test -s "$tmpdir/reports/first-wave-source-products.csv"
 test -s "$tmpdir/reports/first-wave-source-products.md"
 grep -q "substitution-reform-shocks" "$tmpdir/reports/first-wave-source-products.csv"
+grep -q "templatePath" "$tmpdir/reports/first-wave-source-products.csv"
 grep -q "substitution-reform-shocks,.*schema_ready" "$tmpdir/reports/first-wave-source-products.csv"
 grep -q "sam-fpds-action-history-crosswalk,.*missing_required" "$tmpdir/reports/first-wave-source-products.csv"
 grep -q "schema/acquisition gate" "$tmpdir/reports/first-wave-source-products.md"
+grep -q "docs/source-product-templates/first-wave/substitution-reform-shocks.csv" "$tmpdir/reports/first-wave-source-products.md"
 grep -q "SAM/FPDS action-history export or keyed pull" "$tmpdir/reports/first-wave-source-products.md"
 grep -q "canonical actor identifier table" "$tmpdir/reports/first-wave-source-products.md"
 

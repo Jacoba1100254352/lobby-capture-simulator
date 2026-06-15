@@ -91,6 +91,8 @@ cp "$ROOT_DIR/reports/manual-visual-audit.md" "$STAGING_DIR/supporting-informati
 cp "$ROOT_DIR/reports/final-human-readthrough.md" "$STAGING_DIR/supporting-information/final-human-readthrough.md"
 cp "$ROOT_DIR/CITATION.cff" "$STAGING_DIR/supporting-information/CITATION.cff"
 cp "$ROOT_DIR/.zenodo.json" "$STAGING_DIR/supporting-information/zenodo.json"
+mkdir -p "$STAGING_DIR/supporting-information/source-product-templates"
+cp -R "$ROOT_DIR/docs/source-product-templates/first-wave" "$STAGING_DIR/supporting-information/source-product-templates/first-wave"
 mkdir -p "$STAGING_DIR/supporting-information/report-data"
 for report_artifact in "$ROOT_DIR"/reports/*.csv "$ROOT_DIR"/reports/*.md "$ROOT_DIR"/reports/*.manifest.json; do
   if [ -e "$report_artifact" ]; then

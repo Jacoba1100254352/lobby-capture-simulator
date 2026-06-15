@@ -11,6 +11,7 @@ from pathlib import Path
 
 ROOT = Path(".")
 REPORTS = Path("reports")
+TEMPLATE_ROOT = Path("docs/source-product-templates/first-wave")
 
 
 @dataclass(frozen=True)
@@ -476,6 +477,7 @@ def audit_product(root: Path, spec: ProductSpec) -> dict[str, str]:
         "priority": spec.priority,
         "requirementLevel": spec.requirement_level,
         "expectedPath": spec.expected_path,
+        "templatePath": template_path_for(spec),
         "acceptableSources": spec.acceptable_sources,
         "requiredColumns": "; ".join(spec.required_columns) if spec.required_columns else "text terms: " + "; ".join(spec.text_required_terms),
         "optionalColumns": "; ".join(spec.optional_columns),
@@ -531,6 +533,7 @@ def write_csv(path: Path, rows: list[dict[str, str]]) -> None:
         "priority",
         "requirementLevel",
         "expectedPath",
+        "templatePath",
         "acceptableSources",
         "requiredColumns",
         "optionalColumns",
@@ -583,12 +586,12 @@ def write_markdown(path: Path, rows: list[dict[str, str]]) -> None:
         "",
         "## Product Matrix",
         "",
-        "| Target | Product | Status | Expected path | Required schema | Next action |",
-        "| --- | --- | --- | --- | --- | --- |",
+        "| Target | Product | Status | Expected path | Template path | Required schema | Next action |",
+        "| --- | --- | --- | --- | --- | --- | --- |",
     ]
     for row in rows:
         lines.append(
-            "| {targetKey} | {productLabel} | {productStatus} | `{expectedPath}` | {requiredColumns} | {nextAction} |".format(
+            "| {targetKey} | {productLabel} | {productStatus} | `{expectedPath}` | `{templatePath}` | {requiredColumns} | {nextAction} |".format(
                 **{key: md(value) for key, value in row.items()}
             )
         )
@@ -611,6 +614,10 @@ def write_markdown(path: Path, rows: list[dict[str, str]]) -> None:
 
 def md(value: str) -> str:
     return str(value).replace("|", "\\|").replace("\n", " ")
+
+
+def template_path_for(spec: ProductSpec) -> str:
+    return (TEMPLATE_ROOT / Path(spec.expected_path).name).as_posix()
 
 
 if __name__ == "__main__":

@@ -14,7 +14,7 @@ MAIN_CLASS := lobbycapture.Main
 TEST_CLASSES := lobbycapture.SimulatorTests
 PAPER_BASENAME := strategic-channel-substitution-regulatory-capture
 
-.PHONY: compile script-checks test run campaign mechanism-comparison sensitivity ablation interactions portfolio source-moments source-panel-inventory source-capability-audit dark-money-bridge-audit intermediary-bridge-audit revolving-door-bridge-audit procurement-denominator-audit procurement-modification-composition-audit procurement-benchmark-crosswalk procurement-refresh-readiness sam-contract-awards-preflight sam-contract-awards-export-audit usaspending-transaction-download-strata sam-procurement-refresh claim-boundary-audit claim-source-dependency-audit causal-calibration-targets first-wave-causal-protocols first-wave-source-products first-wave-source-readiness claim-posture-audit calibration-readiness-audit policy-claim-language-audit submission-readiness-audit archive-handoff-audit github-release-asset-audit zenodo-deposit-preflight zenodo-deposit-draft zenodo-deposit-upload doi-deposit-readiness-audit wiley-submission-form-readiness-audit reggov-guidelines-readiness-audit doi-deposit-package latex-log-audit calibration-queue validate snapshot-2024-env tables figures paper paper-build paper-supplement-build paper-supplement paper-word-count wiley-template wiley-tex-deps paper-wiley paper-wiley-build submission-package submission-package-build submission-package-check paper-layout-audit visual-review-checklist paper-artifacts paper-artifacts-check clean
+.PHONY: compile script-checks test run campaign mechanism-comparison sensitivity ablation interactions portfolio source-moments source-panel-inventory source-capability-audit dark-money-bridge-audit intermediary-bridge-audit revolving-door-bridge-audit procurement-denominator-audit procurement-modification-composition-audit procurement-benchmark-crosswalk procurement-refresh-readiness sam-contract-awards-preflight sam-contract-awards-export-audit usaspending-transaction-download-strata sam-procurement-refresh claim-boundary-audit claim-source-dependency-audit causal-calibration-targets first-wave-causal-protocols first-wave-source-product-templates first-wave-source-products first-wave-source-readiness claim-posture-audit calibration-readiness-audit policy-claim-language-audit submission-readiness-audit archive-handoff-audit github-release-asset-audit zenodo-deposit-preflight zenodo-deposit-draft zenodo-deposit-upload doi-deposit-readiness-audit wiley-submission-form-readiness-audit reggov-guidelines-readiness-audit doi-deposit-package latex-log-audit calibration-queue validate snapshot-2024-env tables figures paper paper-build paper-supplement-build paper-supplement paper-word-count wiley-template wiley-tex-deps paper-wiley paper-wiley-build submission-package submission-package-build submission-package-check paper-layout-audit visual-review-checklist paper-artifacts paper-artifacts-check clean
 
 compile:
 	@mkdir -p out/classes
@@ -115,7 +115,10 @@ causal-calibration-targets: claim-source-dependency-audit
 first-wave-causal-protocols: causal-calibration-targets
 	python3 scripts/write-first-wave-causal-protocols.py
 
-first-wave-source-products: first-wave-causal-protocols
+first-wave-source-product-templates:
+	python3 scripts/write-first-wave-source-product-templates.py
+
+first-wave-source-products: first-wave-causal-protocols first-wave-source-product-templates
 	python3 scripts/audit-first-wave-source-products.py
 
 first-wave-source-readiness: first-wave-causal-protocols first-wave-source-products source-capability-audit procurement-refresh-readiness
@@ -187,7 +190,7 @@ submission-package-build: submission-readiness-audit
 submission-package-check: submission-package-build
 	./scripts/check-submission-package.sh
 
-submission-package: paper-wiley paper-supplement paper-word-count visual-review-checklist latex-log-audit policy-claim-language-audit submission-readiness-audit first-wave-causal-protocols first-wave-source-products first-wave-source-readiness submission-package-build submission-package-check archive-handoff-audit
+submission-package: paper-wiley paper-supplement paper-word-count visual-review-checklist latex-log-audit policy-claim-language-audit submission-readiness-audit first-wave-causal-protocols first-wave-source-product-templates first-wave-source-products first-wave-source-readiness submission-package-build submission-package-check archive-handoff-audit
 
 paper-layout-audit: paper-build paper-wiley-build paper-supplement-build
 	python3 scripts/audit-paper-layout.py
@@ -237,7 +240,7 @@ wiley-submission-form-readiness-audit: submission-package-check
 reggov-guidelines-readiness-audit: wiley-submission-form-readiness-audit
 	python3 scripts/audit-reggov-guidelines-readiness.py
 
-paper-artifacts: campaign mechanism-comparison sensitivity ablation interactions portfolio source-moments source-panel-inventory source-capability-audit dark-money-bridge-audit intermediary-bridge-audit revolving-door-bridge-audit procurement-denominator-audit procurement-modification-composition-audit procurement-benchmark-crosswalk validate claim-boundary-audit claim-source-dependency-audit causal-calibration-targets first-wave-causal-protocols first-wave-source-products calibration-queue procurement-refresh-readiness first-wave-source-readiness tables figures paper-build paper-wiley-build paper-supplement-build paper-word-count paper-layout-audit visual-review-checklist latex-log-audit claim-posture-audit calibration-readiness-audit policy-claim-language-audit submission-readiness-audit submission-package-build submission-package-check archive-handoff-audit wiley-submission-form-readiness-audit reggov-guidelines-readiness-audit doi-deposit-package doi-deposit-readiness-audit
+paper-artifacts: campaign mechanism-comparison sensitivity ablation interactions portfolio source-moments source-panel-inventory source-capability-audit dark-money-bridge-audit intermediary-bridge-audit revolving-door-bridge-audit procurement-denominator-audit procurement-modification-composition-audit procurement-benchmark-crosswalk validate claim-boundary-audit claim-source-dependency-audit causal-calibration-targets first-wave-causal-protocols first-wave-source-product-templates first-wave-source-products calibration-queue procurement-refresh-readiness first-wave-source-readiness tables figures paper-build paper-wiley-build paper-supplement-build paper-word-count paper-layout-audit visual-review-checklist latex-log-audit claim-posture-audit calibration-readiness-audit policy-claim-language-audit submission-readiness-audit submission-package-build submission-package-check archive-handoff-audit wiley-submission-form-readiness-audit reggov-guidelines-readiness-audit doi-deposit-package doi-deposit-readiness-audit
 
 paper-artifacts-check: paper-artifacts
 	python3 scripts/check-paper-artifacts.py
@@ -260,4 +263,5 @@ clean:
 	rm -f reports/sam-contract-awards-export-audit.csv reports/sam-contract-awards-export-audit.md
 	rm -f reports/lobby-capture-mechanism-comparison.csv reports/lobby-capture-mechanism-comparison.md reports/lobby-capture-mechanism-comparison.manifest.json
 	rm -f reports/manual-visual-audit.md
+	rm -rf docs/source-product-templates/first-wave
 	rm -rf dist
