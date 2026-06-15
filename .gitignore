@@ -69,6 +69,8 @@ reports/*.md
 !reports/doi-deposit-readiness.md
 !reports/wiley-submission-form-readiness.csv
 !reports/wiley-submission-form-readiness.md
+!reports/reggov-guidelines-readiness.csv
+!reports/reggov-guidelines-readiness.md
 !reports/paper-layout-audit.md
 !reports/manual-visual-audit.md
 !reports/final-human-readthrough.md

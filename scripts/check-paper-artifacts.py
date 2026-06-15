@@ -84,10 +84,12 @@ DOI_DEPOSIT_READINESS_CSV = ROOT / "reports" / "doi-deposit-readiness.csv"
 DOI_DEPOSIT_READINESS_MD = ROOT / "reports" / "doi-deposit-readiness.md"
 WILEY_SUBMISSION_FORM_READINESS_CSV = ROOT / "reports" / "wiley-submission-form-readiness.csv"
 WILEY_SUBMISSION_FORM_READINESS_MD = ROOT / "reports" / "wiley-submission-form-readiness.md"
+REGGOV_GUIDELINES_READINESS_CSV = ROOT / "reports" / "reggov-guidelines-readiness.csv"
+REGGOV_GUIDELINES_READINESS_MD = ROOT / "reports" / "reggov-guidelines-readiness.md"
 RELEASE_ASSET_CHECKSUM_CSV = ROOT / "dist" / "release-asset-checksums.csv"
 RELEASE_ASSET_CHECKSUM_JSON = ROOT / "dist" / "release-asset-checksums.json"
 RELEASE_ASSET_CHECKSUM_MD = ROOT / "dist" / "release-asset-checksums.md"
-RELEASE_TAG = "paper-publication-readiness-2026-06-14-r109"
+RELEASE_TAG = "paper-publication-readiness-2026-06-14-r110"
 ARCHIVE_HANDOFF_REPORT_NAMES = {
     "archive-handoff-manifest.csv",
     "archive-handoff-manifest.json",
@@ -98,6 +100,8 @@ POST_SUBMISSION_REPORT_NAMES = ARCHIVE_HANDOFF_REPORT_NAMES | {
     "doi-deposit-readiness.md",
     "wiley-submission-form-readiness.csv",
     "wiley-submission-form-readiness.md",
+    "reggov-guidelines-readiness.csv",
+    "reggov-guidelines-readiness.md",
 }
 TRACKED_SOURCE_CHECKSUM_STATUS = "tracked-source-verified"
 RELEASE_ASSET_CHECKSUM_STATUS = "release-asset-checksum-recorded-in-dist"
@@ -126,6 +130,8 @@ FORBIDDEN_ZIP_MEMBERS = {
     "supporting-information/report-data/doi-deposit-readiness.md",
     "supporting-information/report-data/wiley-submission-form-readiness.csv",
     "supporting-information/report-data/wiley-submission-form-readiness.md",
+    "supporting-information/report-data/reggov-guidelines-readiness.csv",
+    "supporting-information/report-data/reggov-guidelines-readiness.md",
 }
 TEX_BINARY_DIRS = [
     Path("/usr/local/texlive/2026basic/bin/universal-darwin"),
@@ -229,6 +235,8 @@ def main() -> int:
             ARCHIVE_HANDOFF_CSV,
             ARCHIVE_HANDOFF_JSON,
             ARCHIVE_HANDOFF_MD,
+            REGGOV_GUIDELINES_READINESS_CSV,
+            REGGOV_GUIDELINES_READINESS_MD,
         ])
     )
     failures.extend(check_forbidden_local_artifacts())
@@ -259,6 +267,7 @@ def main() -> int:
     failures.extend(check_archive_handoff_manifest())
     failures.extend(check_doi_deposit_readiness())
     failures.extend(check_wiley_submission_form_readiness())
+    failures.extend(check_reggov_guidelines_readiness())
     failures.extend(check_release_tag_exactness())
     failures.extend(check_submission_zip())
     failures.extend(check_submission_zip_compiles())
@@ -314,6 +323,8 @@ def check_freshness() -> list[str]:
         (DOI_DEPOSIT_READINESS_MD, doi_deposit_readiness_inputs()),
         (WILEY_SUBMISSION_FORM_READINESS_CSV, wiley_submission_form_readiness_inputs()),
         (WILEY_SUBMISSION_FORM_READINESS_MD, wiley_submission_form_readiness_inputs()),
+        (REGGOV_GUIDELINES_READINESS_CSV, reggov_guidelines_readiness_inputs()),
+        (REGGOV_GUIDELINES_READINESS_MD, reggov_guidelines_readiness_inputs()),
     ]
     for artifact, inputs in checks:
         if not artifact.exists():
@@ -474,6 +485,28 @@ def wiley_submission_form_readiness_inputs() -> list[Path]:
         ROOT / "docs" / "submission-strategy.md",
         ROOT / "docs" / "submission-release-checklist.md",
         ROOT / "scripts" / "audit-wiley-submission-form-readiness.py",
+    ]
+
+
+def reggov_guidelines_readiness_inputs() -> list[Path]:
+    return [
+        LOCAL_TEX,
+        LOCAL_PDF,
+        WILEY_PDF,
+        SUPPLEMENT_PDF,
+        SUBMISSION_ZIP,
+        SUBMISSION_DECLARATIONS,
+        WILEY_SUBMISSION_FORM_READINESS_CSV,
+        WILEY_SUBMISSION_FORM_READINESS_MD,
+        ROOT / "paper" / "regulation-governance-wiley.tex",
+        ROOT / "paper" / "references.bib",
+        ROOT / "scripts" / "audit-reggov-guidelines-readiness.py",
+        ROOT / "scripts" / "check-paper-word-count.py",
+        *sorted((PAPER / "sections").glob("*.tex")),
+        *sorted((PAPER / "tables").glob("*.tex")),
+        *sorted((PAPER / "figures").glob("*.tex")),
+        *sorted((PAPER / "figures").glob("Figure_*.pdf")),
+        *sorted((PAPER / "figures").glob("Figure_*.svg")),
     ]
 
 
@@ -2295,6 +2328,64 @@ def check_wiley_submission_form_readiness() -> list[str]:
     for phrase in required_text:
         if phrase not in text:
             failures.append(f"Wiley submission form readiness markdown missing phrase: {phrase}")
+    return failures
+
+
+def check_reggov_guidelines_readiness() -> list[str]:
+    failures: list[str] = []
+    for path in (REGGOV_GUIDELINES_READINESS_CSV, REGGOV_GUIDELINES_READINESS_MD):
+        if not path.exists():
+            failures.append(f"missing Regulation & Governance guideline readiness report: {path.relative_to(ROOT)}")
+    if failures:
+        return failures
+
+    try:
+        with REGGOV_GUIDELINES_READINESS_CSV.open(newline="", encoding="utf-8") as source:
+            rows = {row.get("gate", ""): row for row in csv.DictReader(source)}
+    except OSError as error:
+        return [f"could not read Regulation & Governance guideline readiness CSV: {error}"]
+
+    expected_statuses = {
+        "journal-target-and-article-type": {"ready"},
+        "word-limit": {"ready"},
+        "abstract-and-keywords": {"ready"},
+        "title-page-metadata": {"ready"},
+        "data-code-availability": {"ready"},
+        "ai-funding-conflict-disclosures": {"ready"},
+        "figures-and-tables": {"ready"},
+        "supporting-information": {"ready"},
+        "latex-submission-files": {"ready"},
+        "live-reggov-author-page-refresh": {"manual_required", "ready"},
+    }
+    for gate_name, statuses in expected_statuses.items():
+        row = rows.get(gate_name)
+        if not row:
+            failures.append(f"Regulation & Governance guideline readiness missing gate: {gate_name}")
+            continue
+        if row.get("status") not in statuses:
+            failures.append(
+                f"Regulation & Governance guideline gate {gate_name} has status={row.get('status', '')}, "
+                f"expected one of {sorted(statuses)}"
+            )
+    blocked = [name for name, row in rows.items() if row.get("status") == "blocked"]
+    for gate_name in sorted(blocked):
+        failures.append(f"Regulation & Governance guideline readiness has blocked gate: {gate_name}")
+
+    text = REGGOV_GUIDELINES_READINESS_MD.read_text(encoding="utf-8")
+    required_text = [
+        "Regulation & Governance Guideline Readiness",
+        "Automated guideline status: `ready_with_manual_live_check`",
+        "11,000",
+        "Data and Code Availability",
+        "AI Use Disclosure",
+        "live Regulation & Governance author page",
+        "root .tex",
+        "compiled PDF",
+        "supporting-information",
+    ]
+    for phrase in required_text:
+        if phrase not in text:
+            failures.append(f"Regulation & Governance guideline readiness markdown missing phrase: {phrase}")
     return failures
 
 

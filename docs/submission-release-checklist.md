@@ -12,6 +12,7 @@ Use this before creating a journal submission archive or public release tag.
 - `reports/validation-summary.md` and `reports/calibration-queue.md` are consistent with the manuscript's claim strength.
 - `reports/final-human-readthrough.md` remains `pending` for review-bundle circulation and must be completed by a human reviewer for the exact current release tag before final journal submission.
 - `reports/wiley-submission-form-readiness.md` reports mechanical upload status `ready`; the journal-specific author-guidelines row may remain `manual_required` until the final live submission check.
+- `reports/reggov-guidelines-readiness.md` reports automated guideline status `ready_with_manual_live_check`; the live Regulation & Governance author-page refresh may remain `manual_required` until final submission.
 
 ## Archive Metadata
 
@@ -27,6 +28,7 @@ Use this before creating a journal submission archive or public release tag.
 - Confirm `reports/archive-handoff-manifest.{csv,json,md}` was regenerated after the submission ZIP was built; it records the DOI-deposit asset set and stable metadata checksums. Attach ignored `dist/release-asset-checksums.{csv,json,md}` to the GitHub release, or retain it with the DOI deposit record, for local release-machine PDF/ZIP checksums. Neither handoff file family is copied into the Wiley ZIP.
 - Confirm the Wiley submission archive includes generated PDF graphics, SVG figure sources, and LaTeX figure wrappers under `figures/`.
 - Confirm `reports/wiley-submission-form-readiness.{csv,md}` was regenerated after the final Wiley ZIP was built. This post-package report is intentionally not copied into the Wiley ZIP.
+- Confirm `reports/reggov-guidelines-readiness.{csv,md}` was regenerated after the final Wiley upload-form audit. This post-package report is intentionally not copied into the Wiley ZIP.
 - Do not archive private credentials or raw API payloads that cannot be redistributed.
 - `make paper-artifacts-check` should fail if the submission declarations contain self-invalidating archive language such as `No external DOI` or `should be minted`.
 

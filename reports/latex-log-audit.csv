@@ -1,4 +1,4 @@
 document,logPath,status,unresolvedCount,unresolvedKinds,overfullHBoxCount,maxOverfullHBoxPt,overfullVBoxCount,maxOverfullVBoxPt,underfullHBoxCount,underfullVBoxCount
 local-manuscript,paper/strategic-channel-substitution-regulatory-capture.log,pass,0,,1,7.9088,0,0.0000,17,0
 wiley-manuscript,paper/regulation-governance-wiley.log,pass,0,,0,0.0000,1,50.7244,30,8
-supplement,paper/supplement.log,pass,0,,0,0.0000,0,0.0000,39,0
+supplement,paper/supplement.log,pass,0,,0,0.0000,0,0.0000,40,0
