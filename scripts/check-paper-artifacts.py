@@ -95,7 +95,7 @@ DOI_DEPOSIT_PACKAGE_MANIFEST_MD = ROOT / "dist" / "doi-deposit-package-manifest.
 DOI_DEPOSIT_PACKAGE_CHECKSUM_CSV = ROOT / "dist" / "doi-deposit-package-checksum.csv"
 DOI_DEPOSIT_PACKAGE_CHECKSUM_JSON = ROOT / "dist" / "doi-deposit-package-checksum.json"
 DOI_DEPOSIT_PACKAGE_CHECKSUM_MD = ROOT / "dist" / "doi-deposit-package-checksum.md"
-RELEASE_TAG = "paper-publication-readiness-2026-06-15-r115"
+RELEASE_TAG = "paper-publication-readiness-2026-06-15-r116"
 ARCHIVE_HANDOFF_REPORT_NAMES = {
     "archive-handoff-manifest.csv",
     "archive-handoff-manifest.json",

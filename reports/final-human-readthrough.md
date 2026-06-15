@@ -3,14 +3,14 @@
 status: pending
 signed-off-by:
 signed-off-date:
-reviewed-release: paper-publication-readiness-2026-06-15-r115
+reviewed-release: paper-publication-readiness-2026-06-15-r116
 reviewed-commit:
 doi-archive:
 venue-target: Regulation & Governance
 author-guidelines-url: https://onlinelibrary.wiley.com/page/journal/17485991/homepage/forauthors.html
-author-guidelines-checked-by:
-author-guidelines-checked-date:
-author-guidelines-superseding-instructions:
+author-guidelines-checked-by: Codex live-access audit
+author-guidelines-checked-date: 2026-06-15
+author-guidelines-superseding-instructions: not cleared - HTTP HEAD returned 200 for the official author page, but the fetched body returned a Cloudflare JavaScript challenge rather than author-guideline content; human browser review still required
 
 ## Purpose
 
@@ -43,5 +43,7 @@ Leave `status` as `pending` until a human scholarly read-through has checked the
 - [ ] The final release ZIP, PDFs, supplement, reports, and metadata match the signed-off release tag.
 
 ## Reviewer Notes
+
+2026-06-15 live-author-page access attempt: Codex checked `author-guidelines-url` from the release machine. The official URL was reachable at the HTTP header level, but the fetched HTML body was a Cloudflare "Just a moment..." challenge and did not expose the journal-specific author-guideline text. Do not clear the live author-page portion of the final-submission gate until the page is reviewed in a normal browser session and any superseding instructions are recorded.
 
 Record any final editorial changes requested before journal submission here. If changes are made after signoff, return `status` to `pending`, update `reviewed-release`, rerun `make paper-artifacts-check`, and repeat the read-through.
