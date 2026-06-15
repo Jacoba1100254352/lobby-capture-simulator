@@ -336,7 +336,9 @@ def doi_package_ready() -> tuple[bool, str]:
     ready = row_data.get("bytes") == str(size) and row_data.get("sha256") == sha
     return (
         ready,
-        f"package=present; bytes={size}; checksum={'ok' if ready else 'mismatch'}",
+        "package=present; "
+        f"checksum={'ok' if ready else 'mismatch'}; "
+        "byte-level record=dist/doi-deposit-package-checksum.*",
     )
 
 
