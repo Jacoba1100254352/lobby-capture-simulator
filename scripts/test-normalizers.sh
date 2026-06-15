@@ -148,6 +148,21 @@ grep -q "calibrated policy-simulation claims remain outside scope" "$tmpdir/repo
 grep -q "SAM_CONTRACT_AWARDS_EXTRACT_MODE=1" "$tmpdir/reports/procurement-refresh-readiness.md"
 grep -q "SAM_CONTRACT_AWARDS_OFFSET_STARTS" "$tmpdir/reports/procurement-refresh-readiness.md"
 
+mkdir -p "$tmpdir/source-root/data/calibration/first-wave"
+cat > "$tmpdir/source-root/data/calibration/first-wave/substitution-reform-shocks.csv" <<'CSV'
+reformEventId,eventName,jurisdiction,policyDomain,reformType,eventDate,treatmentStartDate,affectedActorRule,affectedIssueRule,comparisonRule,sourceUrl,sourceExtractedAt
+shock-1,Example disclosure rule,Example State,environment,disclosure,2024-01-01,2024-02-01,covered registrants,ENV issues,matched unaffected actors,https://example.test/reform,2026-06-15
+CSV
+python3 scripts/audit-first-wave-source-products.py --root "$tmpdir/source-root" --reports "$tmpdir/reports" >/dev/null
+test -s "$tmpdir/reports/first-wave-source-products.csv"
+test -s "$tmpdir/reports/first-wave-source-products.md"
+grep -q "substitution-reform-shocks" "$tmpdir/reports/first-wave-source-products.csv"
+grep -q "substitution-reform-shocks,.*schema_ready" "$tmpdir/reports/first-wave-source-products.csv"
+grep -q "sam-fpds-action-history-crosswalk,.*missing_required" "$tmpdir/reports/first-wave-source-products.csv"
+grep -q "schema/acquisition gate" "$tmpdir/reports/first-wave-source-products.md"
+grep -q "SAM/FPDS action-history export or keyed pull" "$tmpdir/reports/first-wave-source-products.md"
+grep -q "canonical actor identifier table" "$tmpdir/reports/first-wave-source-products.md"
+
 cat > "$tmpdir/sam-export.csv" <<'CSV'
 contractId.piid,modification_number,recipientName,contractingDepartmentName,contractingSubtierName,awardOrIDVTypeName,Federal Action Obligation,Recipient UEI,actionDate,extentCompetedName,numberOfOffers,typeOfContractPricingName
 68HERH24C0004,0,MANUAL EXPORT CONTRACTOR,ENVIRONMENTAL PROTECTION AGENCY,EPA OFFICE,DEFINITIVE CONTRACT,1250000,EXPORTUEI1234,2024-01-15,FULL AND OPEN COMPETITION,5,FIRM FIXED PRICE

@@ -37,7 +37,8 @@ The simulator now has a lobbying-centered model core with calibration fixtures, 
 - `make calibration-queue` classifies validation misses and partial overlaps into actionable work categories, including scenario-family splits where one validation scope mixes baseline, stress, and extreme-stress rows.
 - `make causal-calibration-targets` generates the causal target matrix that must clear before the project can use calibrated policy-simulation language.
 - `make first-wave-causal-protocols` translates the first-wave causal targets into protocol-level units, treatments or shocks, comparison designs, linkage keys, falsification checks, sensitivity checks, and claim-upgrade boundaries.
-- `make first-wave-source-readiness` maps those protocols to committed source products, bounded/proxy support, missing products, blocking issues, and next source actions.
+- `make first-wave-source-products` translates those protocols into concrete source-product schemas under `data/calibration/first-wave/`.
+- `make first-wave-source-readiness` maps those protocols and source-product schemas to committed source products, bounded/proxy support, missing products, blocking issues, and next source actions.
 - `make doi-deposit-readiness-audit` checks the release metadata, primary release assets, checksum handoff files, DOI-record state, and final human-read-through state needed before a final journal submission can be treated as externally complete.
 - `make tables` regenerates paper table inputs from report CSV snapshots using `paper/tables.yml`.
 - `make figures` regenerates the paper's numbered SVG/PDF figure assets and LaTeX wrappers.
@@ -90,11 +91,12 @@ Deliverables:
 `reports/calibration-queue.md` now identifies the highest-priority remaining gaps.
 `reports/causal-calibration-targets.md` is stricter than the validation queue and now separates first-wave empirical upgrades from second-wave coverage work. Treat the first-wave rows as the next publication-grade empirical agenda because they are the shortest route from public/source panels to stronger manuscript claims without changing the current mechanism-model boundary.
 `reports/first-wave-causal-protocols.md` is the operational workplan for those first-wave rows; use it before collecting or promoting new source panels so the unit of analysis, treatment or shock, comparison design, linkage keys, and falsification checks are fixed before results are inspected.
-`reports/first-wave-source-readiness.md` is the source-product gate for the same work; use it to keep design-ready protocols separate from estimation-ready source panels.
+`reports/first-wave-source-products.md` is the schema/acquisition gate for those protocols: it names expected paths, required columns or text terms, acceptable source families, validation rules, and claim boundaries. `reports/first-wave-source-readiness.md` consumes that gate; use both reports to keep design-ready protocols separate from estimation-ready source panels.
 
 Deliverables:
 
 - prioritize the first-wave causal-calibration rows: a cross-source substitution event panel, a SAM/FPDS-style procurement action crosswalk with protest/exclusion/firewall overlays, a docket comment-authenticity and agency-response panel, and an auditable cross-venue entity-resolution spine;
+- add first-wave products under `data/calibration/first-wave/` using the schemas in `reports/first-wave-source-products.md`, then rerun the source-product and source-readiness gates before inspecting estimates;
 - clear the first-wave source-readiness audit before promoting any protocol to estimation-ready or changing the manuscript's claim posture;
 - promote any first-wave source refresh only after the matching protocol row has documented minimum source products, linkage keys, falsification checks, and sensitivity checks;
 - extend procurement evidence beyond the denominator-mapped crosswalk with SAM/FPDS coding reconciliation, protest/exclusion/firewall overlays, and independent calibration targets before any calibrated policy-simulation claim;

@@ -64,6 +64,8 @@ CAUSAL_CALIBRATION_TARGETS_CSV = ROOT / "reports" / "causal-calibration-targets.
 FIRST_WAVE_CAUSAL_PROTOCOLS_MD = ROOT / "reports" / "first-wave-causal-protocols.md"
 FIRST_WAVE_CAUSAL_PROTOCOLS_CSV = ROOT / "reports" / "first-wave-causal-protocols.csv"
 FIRST_WAVE_CAUSAL_PROTOCOLS_TABLE = PAPER / "tables" / "first_wave_causal_protocols.tex"
+FIRST_WAVE_SOURCE_PRODUCTS_MD = ROOT / "reports" / "first-wave-source-products.md"
+FIRST_WAVE_SOURCE_PRODUCTS_CSV = ROOT / "reports" / "first-wave-source-products.csv"
 FIRST_WAVE_SOURCE_READINESS_MD = ROOT / "reports" / "first-wave-source-readiness.md"
 FIRST_WAVE_SOURCE_READINESS_CSV = ROOT / "reports" / "first-wave-source-readiness.csv"
 CLAIM_POSTURE_AUDIT_MD = ROOT / "reports" / "claim-posture-audit.md"
@@ -98,7 +100,7 @@ DOI_DEPOSIT_PACKAGE_CHECKSUM_CSV = ROOT / "dist" / "doi-deposit-package-checksum
 DOI_DEPOSIT_PACKAGE_CHECKSUM_JSON = ROOT / "dist" / "doi-deposit-package-checksum.json"
 DOI_DEPOSIT_PACKAGE_CHECKSUM_MD = ROOT / "dist" / "doi-deposit-package-checksum.md"
 ZENODO_DEPOSIT_METADATA_JSON = ROOT / "dist" / "zenodo-deposit-metadata.json"
-RELEASE_TAG = "paper-publication-readiness-2026-06-15-r120"
+RELEASE_TAG = "paper-publication-readiness-2026-06-15-r121"
 ARCHIVE_HANDOFF_REPORT_NAMES = {
     "archive-handoff-manifest.csv",
     "archive-handoff-manifest.json",
@@ -221,6 +223,7 @@ EXPECTED_ZIP_MEMBERS = {
     "supporting-information/claim-source-dependency.md",
     "supporting-information/causal-calibration-targets.md",
     "supporting-information/first-wave-causal-protocols.md",
+    "supporting-information/first-wave-source-products.md",
     "supporting-information/first-wave-source-readiness.md",
     "supporting-information/claim-posture-audit.md",
     "supporting-information/policy-claim-language-audit.md",
@@ -281,6 +284,7 @@ def main() -> int:
     failures.extend(check_claim_source_dependency_audit())
     failures.extend(check_causal_calibration_targets())
     failures.extend(check_first_wave_causal_protocols())
+    failures.extend(check_first_wave_source_products())
     failures.extend(check_first_wave_source_readiness())
     failures.extend(check_claim_posture_audit())
     failures.extend(check_policy_claim_language_audit())
@@ -416,6 +420,7 @@ def submission_inputs() -> list[Path]:
         PAPER / "references.bib",
         ROOT / "scripts" / "build-submission-package.sh",
         ROOT / "scripts" / "write-first-wave-causal-protocols.py",
+        ROOT / "scripts" / "audit-first-wave-source-products.py",
         ROOT / "scripts" / "audit-first-wave-source-readiness.py",
         CITATION_CFF,
         ZENODO_JSON,
@@ -437,6 +442,7 @@ def submission_inputs() -> list[Path]:
         ROOT / "reports" / "claim-source-dependency.md",
         CAUSAL_CALIBRATION_TARGETS_MD,
         FIRST_WAVE_CAUSAL_PROTOCOLS_MD,
+        FIRST_WAVE_SOURCE_PRODUCTS_MD,
         FIRST_WAVE_SOURCE_READINESS_MD,
         ROOT / "reports" / "claim-posture-audit.md",
         ROOT / "reports" / "validation-summary.md",
@@ -1752,6 +1758,119 @@ def check_first_wave_causal_protocols() -> list[str]:
     return failures
 
 
+def check_first_wave_source_products() -> list[str]:
+    failures: list[str] = []
+    missing = [
+        path.relative_to(ROOT)
+        for path in (
+            FIRST_WAVE_SOURCE_PRODUCTS_MD,
+            FIRST_WAVE_SOURCE_PRODUCTS_CSV,
+        )
+        if not path.exists()
+    ]
+    if missing:
+        return [f"missing first-wave source product artifact: {path}" for path in missing]
+
+    with FIRST_WAVE_SOURCE_PRODUCTS_CSV.open(newline="", encoding="utf-8") as source:
+        rows = list(csv.DictReader(source))
+    expected_targets = {
+        "substitution-elasticity",
+        "procurement-modification-causal-capture",
+        "comment-authenticity-and-uptake-effect",
+        "venue-shifting-detection-effect",
+    }
+    present_targets = {row.get("targetKey", "") for row in rows}
+    failures.extend(
+        f"first-wave source product report missing target: {target}"
+        for target in sorted(expected_targets - present_targets)
+    )
+    expected_products = {
+        "substitution-reform-shocks",
+        "actor-issue-time-spine",
+        "substitution-comparison-groups",
+        "meeting-log-or-missing-channel-note",
+        "sam-fpds-action-history-crosswalk",
+        "gao-protest-overlay",
+        "sam-exclusion-overlay",
+        "procurement-firewall-overlay",
+        "comment-body-corpus",
+        "duplicate-template-clusters",
+        "agency-response-final-rule-linkage",
+        "canonical-actor-identifiers",
+        "alias-resolution-audit-sample",
+        "issue-code-crosswalk",
+        "false-match-review-log",
+        "linked-actor-issue-venue-time",
+    }
+    present_products = {row.get("productKey", "") for row in rows}
+    failures.extend(
+        f"first-wave source product report missing product: {product}"
+        for product in sorted(expected_products - present_products)
+    )
+    if present_products - expected_products:
+        failures.extend(
+            f"first-wave source product report includes unexpected product: {product}"
+            for product in sorted(present_products - expected_products)
+        )
+    if len(rows) != len(expected_products):
+        failures.append(
+            f"first-wave source product report row count {len(rows)} does not match expected {len(expected_products)}"
+        )
+    required_fields = [
+        "productLabel",
+        "requirementLevel",
+        "expectedPath",
+        "acceptableSources",
+        "requiredColumns",
+        "productStatus",
+        "validationRule",
+        "claimBoundary",
+        "nextAction",
+    ]
+    ready_rows = []
+    for row in rows:
+        product = row.get("productKey", "<missing>")
+        for field_name in required_fields:
+            if not row.get(field_name):
+                failures.append(f"first-wave source product {product} missing {field_name}")
+        if row.get("requirementLevel") != "required":
+            failures.append(f"first-wave source product {product} should be required in this release")
+        if row.get("productStatus") in {"schema_ready", "text_ready"}:
+            ready_rows.append(product)
+        if not row.get("expectedPath", "").startswith("data/calibration/first-wave/"):
+            failures.append(
+                f"first-wave source product {product} expected path should live under data/calibration/first-wave/"
+            )
+    if ready_rows:
+        failures.append(
+            "first-wave source products should not be ready in this release without a matching manuscript update: "
+            + ", ".join(sorted(ready_rows))
+        )
+
+    text = FIRST_WAVE_SOURCE_PRODUCTS_MD.read_text(encoding="utf-8")
+    required_text = [
+        "First-Wave Source Products",
+        "schema/acquisition gate",
+        "Policy-simulation status: `not_cleared`",
+        "SAM/FPDS action-history export or keyed pull",
+        "canonical actor identifier table",
+        "comment-body corpus",
+    ]
+    for phrase in required_text:
+        if phrase not in text:
+            failures.append(f"first-wave source products markdown missing phrase: {phrase}")
+
+    if SUPPLEMENT_BODY.exists():
+        supplement = SUPPLEMENT_BODY.read_text(encoding="utf-8")
+        for phrase in (
+            "first-wave source-product audit",
+            "reports/first-wave-source-products.md",
+        ):
+            if phrase not in supplement:
+                failures.append(f"supplement does not disclose first-wave source product artifact: {phrase}")
+    return failures
+
+
 def check_first_wave_source_readiness() -> list[str]:
     failures: list[str] = []
     missing = [
@@ -1785,6 +1904,8 @@ def check_first_wave_source_readiness() -> list[str]:
         )
     required_fields = [
         "sourceReadiness",
+        "sourceProductGate",
+        "sourceProductEvidence",
         "currentSourceProducts",
         "boundedOrProxySupport",
         "missingSourceProducts",
@@ -1818,6 +1939,7 @@ def check_first_wave_source_readiness() -> list[str]:
         "pre-estimation gate",
         "Ready to estimate: `0`",
         "Policy-simulation status: `not_cleared`",
+        "Source-product schema gate",
         "SAM/FPDS action-history export or keyed pull",
         "canonical actor identifier table",
     ]
@@ -2924,6 +3046,7 @@ def package_byte_checks() -> list[tuple[Path, str]]:
         (ROOT / "reports" / "claim-source-dependency.md", "supporting-information/claim-source-dependency.md"),
         (CAUSAL_CALIBRATION_TARGETS_MD, "supporting-information/causal-calibration-targets.md"),
         (FIRST_WAVE_CAUSAL_PROTOCOLS_MD, "supporting-information/first-wave-causal-protocols.md"),
+        (FIRST_WAVE_SOURCE_PRODUCTS_MD, "supporting-information/first-wave-source-products.md"),
         (FIRST_WAVE_SOURCE_READINESS_MD, "supporting-information/first-wave-source-readiness.md"),
         (ROOT / "reports" / "claim-posture-audit.md", "supporting-information/claim-posture-audit.md"),
         (ROOT / "reports" / "validation-summary.md", "supporting-information/validation-summary.md"),

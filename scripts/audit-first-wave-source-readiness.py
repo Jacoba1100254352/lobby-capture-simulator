@@ -3,6 +3,7 @@
 
 from __future__ import annotations
 
+import argparse
 import csv
 from pathlib import Path
 
@@ -13,6 +14,7 @@ SOURCE_CAPABILITIES = REPORTS / "source-capability-audit.csv"
 SOURCE_PANELS = REPORTS / "source-panel-inventory.csv"
 SOURCE_MOMENTS = REPORTS / "source-moments.csv"
 PROCUREMENT_REFRESH = REPORTS / "procurement-refresh-readiness.csv"
+SOURCE_PRODUCTS = REPORTS / "first-wave-source-products.csv"
 
 
 TARGET_ORDER = [
@@ -24,22 +26,27 @@ TARGET_ORDER = [
 
 
 def main() -> int:
-    protocols = keyed_rows(PROTOCOLS, "targetKey")
-    capabilities = keyed_rows(SOURCE_CAPABILITIES, "capability")
-    panels = keyed_rows(SOURCE_PANELS, "panel")
-    moments = source_moments(SOURCE_MOMENTS)
-    procurement = keyed_rows(PROCUREMENT_REFRESH, "item")
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--reports", type=Path, default=REPORTS)
+    args = parser.parse_args()
+
+    protocols = keyed_rows(args.reports / PROTOCOLS.name, "targetKey")
+    capabilities = keyed_rows(args.reports / SOURCE_CAPABILITIES.name, "capability")
+    panels = keyed_rows(args.reports / SOURCE_PANELS.name, "panel")
+    moments = source_moments(args.reports / SOURCE_MOMENTS.name)
+    procurement = keyed_rows(args.reports / PROCUREMENT_REFRESH.name, "item")
+    products = product_rows(args.reports / SOURCE_PRODUCTS.name)
 
     rows = [
-        readiness_row(target, protocols, capabilities, panels, moments, procurement)
+        readiness_row(target, protocols, capabilities, panels, moments, procurement, products)
         for target in TARGET_ORDER
         if target in protocols
     ]
-    REPORTS.mkdir(parents=True, exist_ok=True)
-    write_csv(REPORTS / "first-wave-source-readiness.csv", rows)
-    write_markdown(REPORTS / "first-wave-source-readiness.md", rows)
-    print("Wrote reports/first-wave-source-readiness.csv")
-    print("Wrote reports/first-wave-source-readiness.md")
+    args.reports.mkdir(parents=True, exist_ok=True)
+    write_csv(args.reports / "first-wave-source-readiness.csv", rows)
+    write_markdown(args.reports / "first-wave-source-readiness.md", rows)
+    print(f"Wrote {args.reports / 'first-wave-source-readiness.csv'}")
+    print(f"Wrote {args.reports / 'first-wave-source-readiness.md'}")
     return 0
 
 
@@ -66,6 +73,18 @@ def source_moments(path: Path) -> dict[str, dict[str, str]]:
     return moments
 
 
+def product_rows(path: Path) -> dict[str, list[dict[str, str]]]:
+    products: dict[str, list[dict[str, str]]] = {}
+    if not path.exists():
+        return products
+    with path.open(newline="", encoding="utf-8") as source:
+        for row in csv.DictReader(source):
+            target = row.get("targetKey", "")
+            if target:
+                products.setdefault(target, []).append(row)
+    return products
+
+
 def readiness_row(
     target: str,
     protocols: dict[str, dict[str, str]],
@@ -73,6 +92,7 @@ def readiness_row(
     panels: dict[str, dict[str, str]],
     moments: dict[str, dict[str, str]],
     procurement: dict[str, dict[str, str]],
+    products: dict[str, list[dict[str, str]]],
 ) -> dict[str, str]:
     builders = {
         "substitution-elasticity": substitution_row,
@@ -82,16 +102,53 @@ def readiness_row(
     }
     row = builders[target](capabilities, panels, moments, procurement)
     protocol = protocols[target]
+    product_gate = product_gate_summary(products.get(target, []))
+    if product_gate["missingProducts"]:
+        row["missingSourceProducts"] = product_gate["missingProducts"]
     return {
         "targetKey": target,
         "protocolStatus": protocol.get("protocolStatus", ""),
         "sourceReadiness": row["sourceReadiness"],
+        "sourceProductGate": product_gate["sourceProductGate"],
+        "sourceProductEvidence": product_gate["sourceProductEvidence"],
         "currentSourceProducts": row["currentSourceProducts"],
         "boundedOrProxySupport": row["boundedOrProxySupport"],
         "missingSourceProducts": row["missingSourceProducts"],
         "blockingIssue": row["blockingIssue"],
         "claimBoundary": row["claimBoundary"],
         "nextAction": row["nextAction"],
+    }
+
+
+def product_gate_summary(rows: list[dict[str, str]]) -> dict[str, str]:
+    if not rows:
+        return {
+            "sourceProductGate": "schema_gate_missing_report",
+            "sourceProductEvidence": "required=missing; ready=0; missing=missing; schemaIssues=missing",
+            "missingProducts": "first-wave source-product audit report",
+        }
+    required = [row for row in rows if row.get("requirementLevel") == "required"]
+    ready_statuses = {"schema_ready", "text_ready"}
+    ready = [row for row in required if row.get("productStatus") in ready_statuses]
+    missing = [row for row in required if row.get("productStatus", "").startswith("missing")]
+    schema_issues = [
+        row for row in required
+        if row.get("productStatus") not in ready_statuses
+        and not row.get("productStatus", "").startswith("missing")
+    ]
+    if len(ready) == len(required) and required:
+        gate = "schema_gate_ready"
+    elif missing or schema_issues:
+        gate = "schema_gate_blocked"
+    else:
+        gate = "schema_gate_not_evaluated"
+    return {
+        "sourceProductGate": gate,
+        "sourceProductEvidence": (
+            f"required={len(required)}; ready={len(ready)}; "
+            f"missing={len(missing)}; schemaIssues={len(schema_issues)}"
+        ),
+        "missingProducts": "; ".join(row.get("productLabel", row.get("productKey", "")) for row in missing + schema_issues),
     }
 
 
@@ -276,6 +333,8 @@ def write_csv(path: Path, rows: list[dict[str, str]]) -> None:
         "targetKey",
         "protocolStatus",
         "sourceReadiness",
+        "sourceProductGate",
+        "sourceProductEvidence",
         "currentSourceProducts",
         "boundedOrProxySupport",
         "missingSourceProducts",
@@ -305,15 +364,16 @@ def write_markdown(path: Path, rows: list[dict[str, str]]) -> None:
         f"- Partial source support: `{len(partial)}`",
         f"- Blocked by missing source products: `{len(blocked)}`",
         "- Policy-simulation status: `not_cleared`",
+        "- Source-product schema gate: `blocked_until_required_products_exist`",
         "",
         "## Readiness Matrix",
         "",
-        "| Target | Source readiness | Current source products | Missing source products | Blocking issue |",
-        "| --- | --- | --- | --- | --- |",
+        "| Target | Source readiness | Source-product gate | Current source products | Missing source products | Blocking issue |",
+        "| --- | --- | --- | --- | --- | --- |",
     ]
     for row in rows:
         lines.append(
-            "| {targetKey} | {sourceReadiness} | {currentSourceProducts} | {missingSourceProducts} | {blockingIssue} |".format(
+            "| {targetKey} | {sourceReadiness} | {sourceProductGate} ({sourceProductEvidence}) | {currentSourceProducts} | {missingSourceProducts} | {blockingIssue} |".format(
                 **{key: md(value) for key, value in row.items()}
             )
         )
