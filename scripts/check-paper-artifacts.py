@@ -95,7 +95,7 @@ DOI_DEPOSIT_PACKAGE_MANIFEST_MD = ROOT / "dist" / "doi-deposit-package-manifest.
 DOI_DEPOSIT_PACKAGE_CHECKSUM_CSV = ROOT / "dist" / "doi-deposit-package-checksum.csv"
 DOI_DEPOSIT_PACKAGE_CHECKSUM_JSON = ROOT / "dist" / "doi-deposit-package-checksum.json"
 DOI_DEPOSIT_PACKAGE_CHECKSUM_MD = ROOT / "dist" / "doi-deposit-package-checksum.md"
-RELEASE_TAG = "paper-publication-readiness-2026-06-14-r113"
+RELEASE_TAG = "paper-publication-readiness-2026-06-15-r114"
 ARCHIVE_HANDOFF_REPORT_NAMES = {
     "archive-handoff-manifest.csv",
     "archive-handoff-manifest.json",
@@ -1993,6 +1993,7 @@ def check_submission_readiness_audit() -> list[str]:
         "final-journal-submission",
         "DOI archive",
         "human scholarly read-through",
+        "live author-page refresh",
         "latex unresolved=0",
     ]
     for phrase in required_text:
@@ -2018,9 +2019,24 @@ def check_final_human_readthrough() -> list[str]:
         "reviewed-commit": field_value(text, "reviewed-commit"),
         "doi-archive": field_value(text, "doi-archive"),
         "venue-target": field_value(text, "venue-target"),
+        "author-guidelines-url": field_value(text, "author-guidelines-url"),
+        "author-guidelines-checked-by": field_value(text, "author-guidelines-checked-by"),
+        "author-guidelines-checked-date": field_value(text, "author-guidelines-checked-date"),
+        "author-guidelines-superseding-instructions": field_value(
+            text,
+            "author-guidelines-superseding-instructions",
+        ),
     }
     for field_name, value in fields.items():
-        if field_name in {"signed-off-by", "signed-off-date", "reviewed-commit", "doi-archive"}:
+        if field_name in {
+            "signed-off-by",
+            "signed-off-date",
+            "reviewed-commit",
+            "doi-archive",
+            "author-guidelines-checked-by",
+            "author-guidelines-checked-date",
+            "author-guidelines-superseding-instructions",
+        }:
             continue
         if not value:
             failures.append(f"final human read-through missing {field_name}")
@@ -2033,11 +2049,28 @@ def check_final_human_readthrough() -> list[str]:
             f"{fields['reviewed-release']} != {RELEASE_TAG}"
         )
     if status == "complete":
-        for field_name in ("signed-off-by", "signed-off-date", "reviewed-commit"):
+        for field_name in (
+            "signed-off-by",
+            "signed-off-date",
+            "reviewed-commit",
+            "author-guidelines-checked-by",
+            "author-guidelines-checked-date",
+            "author-guidelines-superseding-instructions",
+        ):
             if not fields[field_name]:
                 failures.append(f"completed final human read-through missing {field_name}")
+        if fields["author-guidelines-superseding-instructions"].strip().lower() not in {
+            "none",
+            "no",
+            "none identified",
+            "no superseding instructions",
+        }:
+            failures.append(
+                "completed final human read-through has not cleared live author-page superseding instructions"
+            )
     required_phrases = [
         "Scholarly Read-Through Checklist",
+        "Live Regulation & Governance Author-Page Refresh",
         "Data and Code Availability",
         "AI Use Disclosure",
         "make paper-artifacts-check",
@@ -2492,6 +2525,7 @@ def check_doi_deposit_readiness() -> list[str]:
         RELEASE_TAG,
         "It does not assert that a DOI has been minted",
         "Final journal-submission status:",
+        "live author-page refresh",
         "lobby-capture-wiley-submission.zip",
         "lobby-capture-doi-deposit-package.zip",
         "dist/release-asset-checksums",

@@ -14,6 +14,7 @@ CITATION_CFF = ROOT / "CITATION.cff"
 ZENODO_JSON = ROOT / ".zenodo.json"
 SUBMISSION_DECLARATIONS = ROOT / "paper" / "sections" / "submission-declarations.tex"
 FINAL_HUMAN_READTHROUGH = REPORTS / "final-human-readthrough.md"
+REGGOV_AUTHOR_GUIDELINES_URL = "https://onlinelibrary.wiley.com/page/journal/17485991/homepage/forauthors.html"
 DOI_PATTERN = re.compile(r"\b10\.\d{4,9}/[-._;()/:A-Za-z0-9]+\b")
 VERSION_PATTERN = re.compile(r"^version:\s*[\"']?([^\"'\n]+)[\"']?\s*$", re.MULTILINE)
 
@@ -172,14 +173,20 @@ def final_journal_submission_gate() -> dict[str, str]:
     archive_doi = find_archive_doi()
     release_metadata_present = release_metadata_present_in_archival_files()
     readthrough = final_human_readthrough_state()
+    author_page = live_author_page_refresh_state()
     human_signoff = readthrough["complete"]
-    status = "ready" if archive_doi and human_signoff else "manual_required"
+    author_page_ready = author_page["ready"]
+    status = "ready" if archive_doi and human_signoff and author_page_ready else "manual_required"
     missing_actions: list[str] = []
     if not archive_doi:
         missing_actions.append("mint or record a DOI archive, such as Zenodo or OSF")
     if not human_signoff:
         missing_actions.append(
             f"complete and sign off a human scholarly read-through in {FINAL_HUMAN_READTHROUGH.relative_to(ROOT)}"
+        )
+    if not author_page_ready:
+        missing_actions.append(
+            "open and record the live Regulation & Governance author-page refresh"
         )
     next_action = "; ".join(missing_actions) if missing_actions else "Final submission externalities are cleared."
     return gate(
@@ -188,10 +195,11 @@ def final_journal_submission_gate() -> dict[str, str]:
         (
             f"release metadata={'present' if release_metadata_present else 'missing'}; "
             f"DOI archive={'present: ' + archive_doi if archive_doi else 'not detected'}; "
-            f"human scholarly read-through={readthrough['evidence']}"
+            f"human scholarly read-through={readthrough['evidence']}; "
+            f"live author-page refresh={author_page['evidence']}"
         ),
         (
-            "Final journal submission requires archive and human editorial signoff; "
+            "Final journal submission requires archive, human editorial signoff, and live author-page refresh; "
             "mechanism-review circulation can proceed without treating this gate as cleared."
         ),
         next_action,
@@ -224,8 +232,16 @@ def final_human_readthrough_state() -> dict[str, str | bool]:
         }
     status = field_value(text, "status").lower()
     signed_off_by = field_value(text, "signed-off-by")
+    signed_off_date = field_value(text, "signed-off-date")
     reviewed_release = field_value(text, "reviewed-release")
-    if status == "complete" and signed_off_by and reviewed_release == current_release:
+    reviewed_commit = field_value(text, "reviewed-commit")
+    if (
+        status == "complete"
+        and signed_off_by
+        and signed_off_date
+        and reviewed_commit
+        and reviewed_release == current_release
+    ):
         return {
             "complete": True,
             "evidence": f"complete for {reviewed_release}",
@@ -236,11 +252,55 @@ def final_human_readthrough_state() -> dict[str, str | bool]:
     ]
     if reviewed_release and reviewed_release != current_release:
         details.append(f"expected-release={current_release or 'missing'}")
-    if status == "complete" and not signed_off_by:
-        details.append("signer=missing")
+    if status == "complete":
+        if not signed_off_by:
+            details.append("signer=missing")
+        if not signed_off_date:
+            details.append("date=missing")
+        if not reviewed_commit:
+            details.append("commit=missing")
     return {
         "complete": False,
         "evidence": f"not signed off ({'; '.join(details)})",
+    }
+
+
+def live_author_page_refresh_state() -> dict[str, str | bool]:
+    text = read_text(FINAL_HUMAN_READTHROUGH)
+    current_release = current_release_tag()
+    reviewed_release = field_value(text, "reviewed-release")
+    checked_by = field_value(text, "author-guidelines-checked-by")
+    checked_date = field_value(text, "author-guidelines-checked-date")
+    url = field_value(text, "author-guidelines-url")
+    superseding = field_value(text, "author-guidelines-superseding-instructions")
+    superseding_normalized = superseding.strip().lower()
+    no_superseding = superseding_normalized in {
+        "none",
+        "no",
+        "none identified",
+        "no superseding instructions",
+    }
+    ready = all(
+        [
+            reviewed_release == current_release,
+            checked_by,
+            checked_date,
+            url == REGGOV_AUTHOR_GUIDELINES_URL,
+            no_superseding,
+        ]
+    )
+    evidence = (
+        f"official URL recorded={REGGOV_AUTHOR_GUIDELINES_URL}; "
+        f"record URL={'matches' if url == REGGOV_AUTHOR_GUIDELINES_URL else 'missing/mismatch'}; "
+        f"checked-by={'present' if checked_by else 'missing'}; "
+        f"checked-date={'present' if checked_date else 'missing'}; "
+        f"reviewed-release={reviewed_release or 'missing'}; "
+        f"expected-release={current_release or 'missing'}; "
+        f"superseding-instructions={'none' if no_superseding else 'missing/not-cleared'}"
+    )
+    return {
+        "ready": ready,
+        "evidence": ("ready: " if ready else "manual_required: ") + evidence,
     }
 
 
@@ -325,7 +385,7 @@ def write_markdown(path: Path, rows: list[dict[str, str]]) -> None:
             "",
             "## Final Journal Submission Boundary",
             "",
-            "The `final-journal-submission` gate records external submission requirements that cannot be cleared by simulator tests alone: DOI archiving and a human scholarly read-through. This gate is deliberately separate from mechanism-review readiness so the bundle can circulate for review without implying final journal-submission signoff.",
+            "The `final-journal-submission` gate records external submission requirements that cannot be cleared by simulator tests alone: DOI archiving, a human scholarly read-through, and live Regulation & Governance author-page refresh. This gate is deliberately separate from mechanism-review readiness so the bundle can circulate for review without implying final journal-submission signoff.",
             "",
         ]
     )

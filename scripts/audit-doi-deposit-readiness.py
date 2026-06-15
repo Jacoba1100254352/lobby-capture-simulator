@@ -19,6 +19,7 @@ ZENODO = ROOT / ".zenodo.json"
 DECLARATIONS = ROOT / "paper" / "sections" / "submission-declarations.tex"
 ARCHIVE_MANIFEST = REPORTS / "archive-handoff-manifest.json"
 SUBMISSION_READINESS = REPORTS / "submission-readiness.csv"
+REGGOV_GUIDELINES_READINESS = REPORTS / "reggov-guidelines-readiness.csv"
 FINAL_READTHROUGH = REPORTS / "final-human-readthrough.md"
 CHECKSUM_CSV = DIST / "release-asset-checksums.csv"
 CHECKSUM_JSON = DIST / "release-asset-checksums.json"
@@ -54,6 +55,7 @@ def readiness_rows(release_tag: str) -> list[dict[str, str]]:
     manifest = read_json(ARCHIVE_MANIFEST)
     checksum_rows = read_csv(CHECKSUM_CSV)
     submission = keyed_rows(SUBMISSION_READINESS, "gate")
+    reggov = keyed_rows(REGGOV_GUIDELINES_READINESS, "gate")
     final_readthrough = read_text(FINAL_READTHROUGH)
     doi = find_doi()
     human_signoff = human_readthrough_complete(final_readthrough, release_tag)
@@ -72,6 +74,7 @@ def readiness_rows(release_tag: str) -> list[dict[str, str]]:
     metadata_ok = release_metadata_ok(release_tag)
     submission_ok = submission.get("overall-submission-posture", {}).get("status") == "ready_for_mechanism_review"
     final_gate_status = submission.get("final-journal-submission", {}).get("status", "")
+    live_author_page_status = reggov.get("live-reggov-author-page-refresh", {}).get("status", "missing")
 
     rows = [
         row(
@@ -124,13 +127,14 @@ def readiness_rows(release_tag: str) -> list[dict[str, str]]:
         ),
         row(
             "final-journal-submission",
-            "ready" if doi and human_signoff and final_gate_status == "ready" else "manual_required",
+            "ready" if doi and human_signoff and live_author_page_status == "ready" and final_gate_status == "ready" else "manual_required",
             (
                 f"submission final gate={final_gate_status or 'missing'}; "
                 f"doi={'present' if doi else 'missing'}; "
-                f"human signoff={'complete' if human_signoff else 'pending'}"
+                f"human signoff={'complete' if human_signoff else 'pending'}; "
+                f"live author-page refresh={live_author_page_status}"
             ),
-            "Do not treat the bundle as final-journal-submission ready until DOI and human signoff are both recorded.",
+            "Do not treat the bundle as final-journal-submission ready until DOI, human signoff, and live author-page refresh are all recorded.",
         ),
     ]
     return rows

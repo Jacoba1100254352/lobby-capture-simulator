@@ -14,6 +14,8 @@ PAPER = ROOT / "paper"
 REPORTS = ROOT / "reports"
 DIST = ROOT / "dist"
 
+FINAL_HUMAN_READTHROUGH = REPORTS / "final-human-readthrough.md"
+CITATION_CFF = ROOT / "CITATION.cff"
 LOCAL_BASENAME = "strategic-channel-substitution-regulatory-capture"
 LOCAL_TEX = PAPER / f"{LOCAL_BASENAME}.tex"
 LOCAL_BBL = PAPER / f"{LOCAL_BASENAME}.bbl"
@@ -34,6 +36,7 @@ WILEY_SUPPORTING_INFO_URL = (
     "https://authors.wiley.com/author-resources/Journal-Authors/Prepare/"
     "manuscript-preparation-guidelines.html/supporting-information.html"
 )
+VERSION_PATTERN = re.compile(r"^version:\s*[\"']?([^\"'\n]+)[\"']?\s*$", re.MULTILINE)
 
 
 def main() -> int:
@@ -58,6 +61,7 @@ def guideline_rows() -> list[dict[str, str]]:
     figure_wrappers = sorted((PAPER / "figures").glob("*.tex"))
     tables = sorted((PAPER / "tables").glob("*.tex"))
     wiley_form_rows = read_gate_rows(WILEY_FORM_CSV)
+    live_author_page = live_author_page_refresh_state()
 
     rows = [
         row(
@@ -116,16 +120,56 @@ def guideline_rows() -> list[dict[str, str]]:
         ),
         row(
             "live-reggov-author-page-refresh",
-            "manual_required",
-            (
-                f"official URL recorded={REGGOV_AUTHOR_GUIDELINES_URL}; "
-                "automated build does not fetch live journal page; "
-                "manual live Regulation & Governance author page refresh required"
-            ),
-            "Immediately before submission, open the live journal author page and confirm no journal-specific instruction supersedes this package.",
+            "ready" if live_author_page["ready"] else "manual_required",
+            live_author_page["evidence"],
+            live_author_page["nextAction"],
         ),
     ]
     return rows
+
+
+def live_author_page_refresh_state() -> dict[str, str | bool]:
+    text = read_text(FINAL_HUMAN_READTHROUGH)
+    current_release = current_release_tag()
+    reviewed_release = field_value(text, "reviewed-release")
+    checked_by = field_value(text, "author-guidelines-checked-by")
+    checked_date = field_value(text, "author-guidelines-checked-date")
+    url = field_value(text, "author-guidelines-url")
+    superseding = field_value(text, "author-guidelines-superseding-instructions")
+    superseding_normalized = superseding.strip().lower()
+    no_superseding = superseding_normalized in {
+        "none",
+        "no",
+        "none identified",
+        "no superseding instructions",
+    }
+    ready = all(
+        [
+            reviewed_release == current_release,
+            checked_by,
+            checked_date,
+            url == REGGOV_AUTHOR_GUIDELINES_URL,
+            no_superseding,
+        ]
+    )
+    evidence = (
+        f"official URL recorded={REGGOV_AUTHOR_GUIDELINES_URL}; "
+        f"record URL={'matches' if url == REGGOV_AUTHOR_GUIDELINES_URL else 'missing/mismatch'}; "
+        f"checked-by={'present' if checked_by else 'missing'}; "
+        f"checked-date={'present' if checked_date else 'missing'}; "
+        f"reviewed-release={reviewed_release or 'missing'}; "
+        f"expected-release={current_release or 'missing'}; "
+        f"superseding-instructions={'none' if no_superseding else 'missing/not-cleared'}"
+    )
+    return {
+        "ready": ready,
+        "evidence": evidence,
+        "nextAction": (
+            "Keep the recorded live author-page check with the final signoff."
+            if ready
+            else "Immediately before submission, open the live journal author page and record checker, date, URL, and superseding-instruction status in reports/final-human-readthrough.md."
+        ),
+    }
 
 
 def journal_target_ready(local: str, wiley: str) -> bool:
@@ -448,6 +492,20 @@ def read_text(path: Path) -> str:
     if not path.exists():
         return ""
     return path.read_text(encoding="utf-8", errors="replace")
+
+
+def field_value(text: str, field_name: str) -> str:
+    match = re.search(
+        rf"^[^\S\n]*{re.escape(field_name)}[^\S\n]*:[^\S\n]*(.*?)[^\S\n]*$",
+        text,
+        re.IGNORECASE | re.MULTILINE,
+    )
+    return match.group(1).strip() if match else ""
+
+
+def current_release_tag() -> str:
+    match = VERSION_PATTERN.search(read_text(CITATION_CFF))
+    return match.group(1).strip() if match else ""
 
 
 def row(gate: str, status: str, evidence_text: str, next_action: str) -> dict[str, str]:
