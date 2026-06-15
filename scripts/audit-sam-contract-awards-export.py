@@ -18,7 +18,6 @@ import os
 from pathlib import Path
 import tempfile
 from urllib.parse import parse_qsl, urlencode, urlsplit, urlunsplit
-from urllib.request import urlopen
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -67,8 +66,8 @@ def main() -> int:
     args = parser.parse_args()
 
     with tempfile.TemporaryDirectory(prefix="lobby-sam-export-audit-") as tmp:
-        input_path = resolved_input(args, Path(tmp))
         fetcher = load_fetcher()
+        input_path = resolved_input(args, Path(tmp), fetcher)
         raw_records = fetcher.sam_contract_awards_records_from_export_file(input_path)
         normalized_rows = fetcher.dedupe_usaspending_action_rows(
             fetcher.normalize_sam_contract_award_records(
@@ -87,7 +86,7 @@ def main() -> int:
     return 0 if rows[0]["status"] in {"candidate", "diagnostic"} else 1
 
 
-def resolved_input(args: argparse.Namespace, tmp: Path) -> Path:
+def resolved_input(args: argparse.Namespace, tmp: Path, fetcher) -> Path:
     if args.input:
         return args.input
     if not args.url:
@@ -95,9 +94,7 @@ def resolved_input(args: argparse.Namespace, tmp: Path) -> Path:
             "Set SAM_CONTRACT_AWARDS_LIVE_CSV/SAM_CONTRACT_AWARDS_LIVE_URL or pass --input/--url."
         )
     target = tmp / "sam-contract-awards-export"
-    with urlopen(args.url, timeout=60) as response:
-        target.write_bytes(response.read())
-    return target
+    return fetcher.download_sam_contract_awards_export_url(args.url, target)
 
 
 def load_fetcher():
@@ -455,6 +452,8 @@ def write_markdown(path: Path, rows: list[dict[str, str]], metrics: dict[str, ob
             "",
             "```sh",
             "SAM_CONTRACT_AWARDS_LIVE_CSV=/path/to/export.csv ./scripts/run-2024-env-live-snapshot.sh",
+            "# or, for SAM.gov emailed async-extract links:",
+            "SAM_CONTRACT_AWARDS_LIVE_URL='https://api.sam.gov/contract-awards/v1/download?api_key=REPLACE_WITH_API_KEY&token=...' ./scripts/run-2024-env-live-snapshot.sh",
             "make snapshot-2024-env source-moments validate calibration-queue procurement-refresh-readiness paper-artifacts-check",
             "```",
         ]
@@ -478,7 +477,8 @@ def next_export_specification(rows: list[dict[str, str]], metrics: dict[str, obj
         "- Required field families: " + "; ".join(REQUIRED_ACTION_HISTORY_FIELDS) + ".",
         (
             "- Validation command: "
-            "`SAM_CONTRACT_AWARDS_LIVE_CSV=/path/to/export.zip make sam-contract-awards-export-audit`."
+            "`SAM_CONTRACT_AWARDS_LIVE_CSV=/path/to/export.zip make sam-contract-awards-export-audit`, "
+            "or set `SAM_CONTRACT_AWARDS_LIVE_URL` to the SAM.gov emailed download link."
         ),
     ]
     if not blockers:

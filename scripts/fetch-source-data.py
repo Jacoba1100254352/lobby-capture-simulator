@@ -69,7 +69,8 @@ def main() -> int:
     sam_contract_awards.add_argument("--output", type=Path, default=Path("data/raw/sam-contract-awards.csv"))
 
     sam_contract_awards_export = subparsers.add_parser("sam-contract-awards-export", help="Normalize a downloaded SAM.gov Contract Awards CSV/JSON/ZIP export into the procurement action schema.")
-    sam_contract_awards_export.add_argument("--input", type=Path, required=True)
+    sam_contract_awards_export.add_argument("--input", type=Path)
+    sam_contract_awards_export.add_argument("--url", default=os.environ.get("SAM_CONTRACT_AWARDS_LIVE_URL", "").strip())
     sam_contract_awards_export.add_argument("--output", type=Path, default=Path("data/raw/sam-contract-awards.csv"))
 
     nyc_public_financing = subparsers.add_parser("nyc-public-financing", help="Fetch NYC CFB public-funds payments.")
@@ -109,7 +110,7 @@ def main() -> int:
     if args.kind == "sam-contract-awards":
         return fetch_sam_contract_awards(args.output)
     if args.kind == "sam-contract-awards-export":
-        return fetch_sam_contract_awards_export(args.input, args.output)
+        return fetch_sam_contract_awards_export(args.input, args.output, args.url)
     if args.kind == "nyc-public-financing":
         return fetch_nyc_public_financing(args.output)
     if args.kind == "seattle-democracy-vouchers":
@@ -785,7 +786,14 @@ def fetch_sam_contract_awards(output: Path) -> int:
     return 0
 
 
-def fetch_sam_contract_awards_export(input_path: Path, output: Path) -> int:
+def fetch_sam_contract_awards_export(input_path: Path | None, output: Path, url: str = "") -> int:
+    if input_path is None:
+        if not url:
+            raise SystemExit("Set SAM_CONTRACT_AWARDS_LIVE_CSV/SAM_CONTRACT_AWARDS_LIVE_URL or pass --input/--url.")
+        with tempfile.TemporaryDirectory(prefix="lobby-sam-export-") as tmp:
+            downloaded = Path(tmp) / "sam-contract-awards-export"
+            download_sam_contract_awards_export_url(url, downloaded)
+            return fetch_sam_contract_awards_export(downloaded, output)
     records = sam_contract_awards_records_from_export_file(input_path)
     rows = dedupe_usaspending_action_rows(normalize_sam_contract_award_records(records))
     write_rows(
@@ -894,7 +902,44 @@ def sam_contract_awards_download_url(token_payload: dict[str, object], api_key: 
             return ""
         base = os.environ.get("SAM_API_BASE", "https://api.sam.gov").rstrip("/")
         url = f"{base}/contract-awards/v1/download?api_key=REPLACE_WITH_API_KEY&token={quote_plus(token)}"
-    return url.replace("REPLACE_WITH_API_KEY", quote_plus(api_key))
+    return sam_contract_awards_resolved_download_url(url, api_key)
+
+
+def sam_contract_awards_resolved_download_url(raw_url: str, api_key: str | None = None) -> str:
+    url = raw_url.strip()
+    if not url:
+        return ""
+    needs_key = "REPLACE_WITH_API_KEY" in url
+    key = api_key if api_key is not None else os.environ.get("SAM_API_KEY", "").strip()
+    if needs_key:
+        if not key:
+            raise SystemExit(
+                "SAM.gov Contract Awards download URL contains REPLACE_WITH_API_KEY; "
+                "set SAM_API_KEY in .env or pass a local export file instead."
+            )
+        url = url.replace("REPLACE_WITH_API_KEY", quote_plus(key))
+    return url
+
+
+def download_sam_contract_awards_export_url(raw_url: str, target: Path) -> Path:
+    url = sam_contract_awards_resolved_download_url(raw_url)
+    if not url:
+        raise SystemExit("SAM.gov Contract Awards export URL is empty.")
+    target.parent.mkdir(parents=True, exist_ok=True)
+    headers = {"User-Agent": "lobby-capture-simulator/0.1"}
+    timeout = float_env("SOURCE_FETCH_TIMEOUT_SECONDS", 60.0, 1.0, 300.0)
+    request = Request(url, headers=headers, method="GET")
+    try:
+        with urlopen(request, timeout=timeout) as response:
+            target.write_bytes(response.read())
+    except HTTPError as error:
+        detail = error.read().decode("utf-8", errors="replace")[:500]
+        hint = auth_hint(error.code)
+        raise SystemExit(f"GET {redact_url(url)} failed with HTTP {error.code}: {detail}{hint}") from error
+    except (URLError, RemoteDisconnected, TimeoutError, ConnectionError, OSError) as error:
+        reason = getattr(error, "reason", str(error))
+        raise SystemExit(f"GET {redact_url(url)} failed: {reason}") from error
+    return target
 
 
 def sam_contract_awards_records_from_csv_or_message(text: str) -> list[dict[str, object]]:

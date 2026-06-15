@@ -301,13 +301,14 @@ else
 fi
 
 if [ -n "${SAM_CONTRACT_AWARDS_LIVE_CSV:-}" ] || [ -n "${SAM_CONTRACT_AWARDS_LIVE_URL:-}" ]; then
-  source_file="$tmpdir/sam-contract-awards-source"
   if [ -n "${SAM_CONTRACT_AWARDS_LIVE_CSV:-}" ]; then
-    cp "$SAM_CONTRACT_AWARDS_LIVE_CSV" "$source_file"
+    sam_export_args="--input"
+    sam_export_source="$SAM_CONTRACT_AWARDS_LIVE_CSV"
   else
-    curl -fsSL "$SAM_CONTRACT_AWARDS_LIVE_URL" -o "$source_file"
+    sam_export_args="--url"
+    sam_export_source="$SAM_CONTRACT_AWARDS_LIVE_URL"
   fi
-  if python3 scripts/fetch-source-data.py sam-contract-awards-export --input "$source_file" --output data/raw/sam-contract-awards.csv; then
+  if python3 scripts/fetch-source-data.py sam-contract-awards-export "$sam_export_args" "$sam_export_source" --output data/raw/sam-contract-awards.csv; then
     printf "sam-contract-awards,ok,normalized configured SAM.gov Contract Awards export written; mode=manual-export\n" >> "$status_file"
     printf "usaspending-procurement-actions,skipped,SAM.gov Contract Awards configured export selected as the primary procurement action source for this live run\n" >> "$status_file"
   else

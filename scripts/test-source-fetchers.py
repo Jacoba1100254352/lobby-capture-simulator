@@ -368,6 +368,18 @@ def assert_sam_contract_awards(fetchers) -> None:
     download_url = fetchers.sam_contract_awards_download_url(token_payload, "KEY WITH SPACE")
     assert "REPLACE_WITH_API_KEY" not in download_url, download_url
     assert "KEY+WITH+SPACE" in download_url, download_url
+    emailed_url = "https://api.sam.gov/contract-awards/v1/download?api_key=REPLACE_WITH_API_KEY&token=abc123"
+    resolved_emailed_url = fetchers.sam_contract_awards_resolved_download_url(emailed_url, "KEY WITH SPACE")
+    assert "REPLACE_WITH_API_KEY" not in resolved_emailed_url, resolved_emailed_url
+    assert "KEY+WITH+SPACE" in resolved_emailed_url, resolved_emailed_url
+    assert "token=abc123" in resolved_emailed_url, resolved_emailed_url
+    os.environ.pop("SAM_API_KEY", None)
+    try:
+        fetchers.sam_contract_awards_resolved_download_url(emailed_url)
+    except SystemExit as error:
+        assert "SAM_API_KEY" in str(error), error
+    else:
+        raise AssertionError("placeholder SAM.gov download URL should require SAM_API_KEY")
     extract_payload = read_json("sam-contract-awards-extract-response.json")
     extract_records = fetchers.sam_contract_award_records(extract_payload)
     assert len(extract_records) == 2, extract_records

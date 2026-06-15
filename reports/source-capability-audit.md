@@ -13,7 +13,7 @@ This audit separates implemented live-source routes from the empirical support a
 ## Key implemented routes
 
 - Direct dark-money routing: configured `DARK_MONEY_LIVE_CSV`/`DARK_MONEY_LIVE_URL`, ProPublica Schedule I nonprofit-routing rows, and IRS EO BMF opaque-capacity proxies remain separate evidence classes.
-- SAM/FPDS action-history route: downloaded `SAM_CONTRACT_AWARDS_LIVE_CSV`/`SAM_CONTRACT_AWARDS_LIVE_URL` exports or keyed `SAM_API_KEY` runs can use `SAM_CONTRACT_AWARDS_EXTRACT_MODE` for asynchronous extracts and `SAM_CONTRACT_AWARDS_OFFSET_STARTS` for non-adjacent synchronous page-index strata.
+- SAM/FPDS action-history route: downloaded `SAM_CONTRACT_AWARDS_LIVE_CSV`/`SAM_CONTRACT_AWARDS_LIVE_URL` exports, including SAM.gov emailed `api_key=REPLACE_WITH_API_KEY` download links, or keyed `SAM_API_KEY` runs can use `SAM_CONTRACT_AWARDS_EXTRACT_MODE` for asynchronous extracts and `SAM_CONTRACT_AWARDS_OFFSET_STARTS` for non-adjacent synchronous page-index strata.
 - USAspending procurement route: no-key action, national action, and bulk-summary panels remain separate from SAM.gov Contract Awards rows so procurement provenance is auditable.
 - Revolving-door route: LDA covered-position rows support exposure diagnostics, but documented post-employment movement still requires an additional personnel source.
 

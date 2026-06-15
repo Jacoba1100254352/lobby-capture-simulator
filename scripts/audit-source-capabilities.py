@@ -61,8 +61,8 @@ CAPABILITIES = [
         "implementedRoute": (
             "optional SAM.gov Contract Awards importer behind "
             "SAM_CONTRACT_AWARDS_LIVE_CSV/SAM_CONTRACT_AWARDS_LIVE_URL for downloaded "
-            "CSV/JSON/ZIP exports, or SAM_CONTRACT_AWARDS_SOURCE_NATIVE=1 and SAM_API_KEY "
-            "for keyed API access; supports synchronous page fetches or "
+            "CSV/JSON/ZIP exports and SAM.gov emailed download-token links, or "
+            "SAM_CONTRACT_AWARDS_SOURCE_NATIVE=1 and SAM_API_KEY for keyed API access; supports synchronous page fetches or "
             "SAM_CONTRACT_AWARDS_EXTRACT_MODE extract downloads, "
             "department-code and PIID-subtier filters, plus non-adjacent offset page-index "
             "strata through SAM_CONTRACT_AWARDS_OFFSET_STARTS for synchronous runs; "
@@ -437,7 +437,8 @@ def write_markdown(path: Path, rows: list[dict[str, str]]) -> None:
             ),
             (
                 "- SAM/FPDS action-history route: downloaded `SAM_CONTRACT_AWARDS_LIVE_CSV`/"
-                "`SAM_CONTRACT_AWARDS_LIVE_URL` exports or keyed `SAM_API_KEY` runs can "
+                "`SAM_CONTRACT_AWARDS_LIVE_URL` exports, including SAM.gov emailed "
+                "`api_key=REPLACE_WITH_API_KEY` download links, or keyed `SAM_API_KEY` runs can "
                 "use `SAM_CONTRACT_AWARDS_EXTRACT_MODE` for asynchronous extracts and "
                 "`SAM_CONTRACT_AWARDS_OFFSET_STARTS` for non-adjacent synchronous page-index strata."
             ),

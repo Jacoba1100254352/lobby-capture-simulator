@@ -214,6 +214,8 @@ grep -q "Modified action share" "$tmpdir/reports/sam-contract-awards-export-audi
 grep -q "Export Shape Diagnostics" "$tmpdir/reports/sam-contract-awards-export-audit.md"
 grep -q "Next Export Specification" "$tmpdir/reports/sam-contract-awards-export-audit.md"
 grep -q "Required field families" "$tmpdir/reports/sam-contract-awards-export-audit.md"
+grep -q "SAM_CONTRACT_AWARDS_LIVE_URL" "$tmpdir/reports/sam-contract-awards-export-audit.md"
+grep -q "REPLACE_WITH_API_KEY" "$tmpdir/reports/sam-contract-awards-export-audit.md"
 grep -q "raw-action-date-candidate-share" "$tmpdir/reports/sam-contract-awards-export-audit.csv"
 
 cat > "$tmpdir/sam-solicitation-only-export.csv" <<'CSV'
