@@ -98,6 +98,9 @@ for report_artifact in "$ROOT_DIR"/reports/*.csv "$ROOT_DIR"/reports/*.md "$ROOT
       doi-deposit-readiness.*) continue ;;
       wiley-submission-form-readiness.*) continue ;;
       reggov-guidelines-readiness.*) continue ;;
+      sam-contract-awards-export-audit.*) continue ;;
+      sam-contract-awards-preflight.*) continue ;;
+      usaspending-transaction-download-strata.*) continue ;;
     esac
     cp "$report_artifact" "$STAGING_DIR/supporting-information/report-data/"
   fi

@@ -89,7 +89,7 @@ REGGOV_GUIDELINES_READINESS_MD = ROOT / "reports" / "reggov-guidelines-readiness
 RELEASE_ASSET_CHECKSUM_CSV = ROOT / "dist" / "release-asset-checksums.csv"
 RELEASE_ASSET_CHECKSUM_JSON = ROOT / "dist" / "release-asset-checksums.json"
 RELEASE_ASSET_CHECKSUM_MD = ROOT / "dist" / "release-asset-checksums.md"
-RELEASE_TAG = "paper-publication-readiness-2026-06-14-r110"
+RELEASE_TAG = "paper-publication-readiness-2026-06-14-r111"
 ARCHIVE_HANDOFF_REPORT_NAMES = {
     "archive-handoff-manifest.csv",
     "archive-handoff-manifest.json",
@@ -103,6 +103,11 @@ POST_SUBMISSION_REPORT_NAMES = ARCHIVE_HANDOFF_REPORT_NAMES | {
     "reggov-guidelines-readiness.csv",
     "reggov-guidelines-readiness.md",
 }
+LOCAL_OPERATIONAL_REPORT_PREFIXES = (
+    "sam-contract-awards-export-audit.",
+    "sam-contract-awards-preflight.",
+    "usaspending-transaction-download-strata.",
+)
 TRACKED_SOURCE_CHECKSUM_STATUS = "tracked-source-verified"
 RELEASE_ASSET_CHECKSUM_STATUS = "release-asset-checksum-recorded-in-dist"
 CITATION_CFF = ROOT / "CITATION.cff"
@@ -441,6 +446,7 @@ def report_bundle_inputs() -> list[Path]:
             *sorted((ROOT / "reports").glob("*.manifest.json")),
         ]
         if path.name not in POST_SUBMISSION_REPORT_NAMES
+        and not path.name.startswith(LOCAL_OPERATIONAL_REPORT_PREFIXES)
     ]
 
 
