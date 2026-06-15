@@ -29,10 +29,10 @@ PDF and ZIP byte streams can differ across TeX and archive implementations. The 
 | paper/regulation-governance-wiley.pdf | regulation-governance-wiley.pdf | wiley-rendered-manuscript | yes | release-asset-checksum-recorded-in-dist | see-dist-release-asset-checksums | `see-dist-release-asset-checksums` |
 | paper/strategic-channel-substitution-regulatory-capture.pdf | strategic-channel-substitution-regulatory-capture.pdf | local-rendered-manuscript | yes | release-asset-checksum-recorded-in-dist | see-dist-release-asset-checksums | `see-dist-release-asset-checksums` |
 | paper/supplement.pdf | supplement.pdf | supporting-information-pdf | yes | release-asset-checksum-recorded-in-dist | see-dist-release-asset-checksums | `see-dist-release-asset-checksums` |
-| CITATION.cff | - | citation-metadata | source-archive | tracked-source-verified | 1286 | `e15b75e5246fb32eccf5b712eca3cc933c0027dcd1944dc593ae3f4e6a69cd6f` |
-| .zenodo.json | - | doi-deposit-metadata | source-archive | tracked-source-verified | 1490 | `acb167cb665178db334661200a781ec9abbf5b685b744e406597b20a5a6b0502` |
-| reports/submission-readiness.md | - | submission-readiness-audit | source-archive | tracked-source-verified | 5183 | `572cba511d9c9342572a6441d5180af77d6d52277756aa1c6e6265cb4e3c7be6` |
-| reports/final-human-readthrough.md | - | manual-signoff-record | source-archive | tracked-source-verified | 4767 | `e8a4bc028d2e38199cba7bb801499540cf3894eedb918a2b53198786af91e24b` |
+| CITATION.cff | - | citation-metadata | source-archive | tracked-source-verified | 1286 | `664ba3f595d1644f21045467f7c66f40dd8e594104b1f78f965807f201be5d6e` |
+| .zenodo.json | - | doi-deposit-metadata | source-archive | tracked-source-verified | 1490 | `968aedd0a5ed603b4482ff7a47759194f4d1b5faa5d155946ae580da0d50a6e9` |
+| reports/submission-readiness.md | - | submission-readiness-audit | source-archive | tracked-source-verified | 5183 | `917943a57852141197a8afb262d4b1d4f1bd032ff9d227974d07635f0316ee54` |
+| reports/final-human-readthrough.md | - | manual-signoff-record | source-archive | tracked-source-verified | 4767 | `eb01615c62fe8ccccb90f2007513010a38a2ad0c7d10c402c49bb24014ee7fe2` |
 
 ## Archive Use
 

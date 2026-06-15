@@ -58,7 +58,7 @@
       "path": "CITATION.cff",
       "releaseAssetName": "",
       "role": "citation-metadata",
-      "sha256": "e15b75e5246fb32eccf5b712eca3cc933c0027dcd1944dc593ae3f4e6a69cd6f"
+      "sha256": "664ba3f595d1644f21045467f7c66f40dd8e594104b1f78f965807f201be5d6e"
     },
     {
       "archiveNote": "Zenodo-compatible metadata included in the tagged source archive and Wiley submission archive.",
@@ -68,7 +68,7 @@
       "path": ".zenodo.json",
       "releaseAssetName": "",
       "role": "doi-deposit-metadata",
-      "sha256": "acb167cb665178db334661200a781ec9abbf5b685b744e406597b20a5a6b0502"
+      "sha256": "968aedd0a5ed603b4482ff7a47759194f4d1b5faa5d155946ae580da0d50a6e9"
     },
     {
       "archiveNote": "Generated gate summary distinguishing mechanism-review readiness from DOI and human signoff.",
@@ -78,7 +78,7 @@
       "path": "reports/submission-readiness.md",
       "releaseAssetName": "",
       "role": "submission-readiness-audit",
-      "sha256": "572cba511d9c9342572a6441d5180af77d6d52277756aa1c6e6265cb4e3c7be6"
+      "sha256": "917943a57852141197a8afb262d4b1d4f1bd032ff9d227974d07635f0316ee54"
     },
     {
       "archiveNote": "Manual final-submission read-through checklist; remains pending until signed for the release.",
@@ -88,7 +88,7 @@
       "path": "reports/final-human-readthrough.md",
       "releaseAssetName": "",
       "role": "manual-signoff-record",
-      "sha256": "e8a4bc028d2e38199cba7bb801499540cf3894eedb918a2b53198786af91e24b"
+      "sha256": "eb01615c62fe8ccccb90f2007513010a38a2ad0c7d10c402c49bb24014ee7fe2"
     }
   ],
   "schema": "lobby-capture-archive-handoff-manifest-v1",
