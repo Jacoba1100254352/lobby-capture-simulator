@@ -55,6 +55,7 @@ Deliverables:
 - keep full scenario catalogs, sensitivity matrices, ablation matrices, implementation details, and parser details in the supplement or repository reports;
 - run `make paper-artifacts-check` after any manuscript, report, table, figure, or submission-bundle change;
 - run `make doi-deposit-readiness-audit` after building a release bundle and before DOI deposition, then record the minted DOI and completed human read-through before treating the final-journal-submission gate as cleared;
+- run `make external-finalization-checklist` while preparing DOI, Zenodo, journal-finalization, or SAM.gov export steps; this ignored checklist sources `.env` and summarizes private/live-state readiness without changing the deterministic review bundle;
 - advance the release tag in `scripts/check-paper-artifacts.py` and `paper/sections/submission-declarations.tex` whenever the review bundle changes;
 - prepare a separate anonymized package only if the paper is retargeted to a double-blind venue.
 
@@ -82,6 +83,7 @@ Deliverables:
 
 - run `make sam-contract-awards-preflight` immediately before any keyed SAM API refresh; if the redacted preflight reports `quota_blocked`, wait until its `nextAccessTime` before rerunning rather than spending the full live snapshot attempt;
 - archive a SAM/FPDS action-history crosswalk using `make sam-procurement-refresh`, which normalizes a configured Contract Awards/DataBank CSV/JSON/ZIP export or runs a preflight-gated keyed SAM Contract Awards extract before regenerating the live snapshot and paper artifact gate; compare its UEI, PIID, action-level modification, exclusion, award-action, and protest coverage against the archived USAspending bulk summary and stratified USAspending action panel;
+- for emailed SAM.gov async-export links, store the URL in `.env` as `SAM_CONTRACT_AWARDS_LIVE_URL` with `api_key=REPLACE_WITH_API_KEY`, keep the private credential in `SAM_API_KEY`, run `make external-finalization-checklist`, then run `make sam-contract-awards-export-audit` before any snapshot promotion;
 - add source moments for single-bid exposure, ex-post modification risk, price-only awards, award concentration, and procurement firewall coverage;
 - expand the revolving-door import path beyond covered-position indicators and keep headcount share separate from influence intensity;
 - update `data/calibration/parameter-map.csv` so procurement and revolving-door rows point at direct source moments where possible.
