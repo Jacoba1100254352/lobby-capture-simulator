@@ -234,7 +234,7 @@ zenodo-deposit-upload: zenodo-deposit-preflight
 doi-deposit-readiness-audit: zenodo-deposit-preflight
 	python3 scripts/audit-doi-deposit-readiness.py
 
-external-finalization-checklist: doi-deposit-readiness-audit
+external-finalization-checklist:
 	@. ./scripts/load-env.sh; python3 scripts/write-external-finalization-checklist.py
 
 wiley-submission-form-readiness-audit: submission-package-check
