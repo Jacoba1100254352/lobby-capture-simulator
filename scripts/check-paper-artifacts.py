@@ -104,7 +104,7 @@ DOI_DEPOSIT_PACKAGE_CHECKSUM_CSV = ROOT / "dist" / "doi-deposit-package-checksum
 DOI_DEPOSIT_PACKAGE_CHECKSUM_JSON = ROOT / "dist" / "doi-deposit-package-checksum.json"
 DOI_DEPOSIT_PACKAGE_CHECKSUM_MD = ROOT / "dist" / "doi-deposit-package-checksum.md"
 ZENODO_DEPOSIT_METADATA_JSON = ROOT / "dist" / "zenodo-deposit-metadata.json"
-RELEASE_TAG = "paper-publication-readiness-2026-06-15-r125"
+RELEASE_TAG = "paper-publication-readiness-2026-06-15-r126"
 ARCHIVE_HANDOFF_REPORT_NAMES = {
     "archive-handoff-manifest.csv",
     "archive-handoff-manifest.json",
@@ -1904,11 +1904,14 @@ def check_first_wave_source_product_templates() -> list[str]:
     for phrase in (
         "Production source-product directory: `data/calibration/first-wave/`",
         "Do not treat these templates as evidence.",
+        "product-level semantic gates",
     ):
         if phrase not in readme:
             failures.append(f"first-wave source product template README missing phrase: {phrase}")
     if "cannot satisfy the production source-product audit" not in manifest_md:
         failures.append("first-wave source product template manifest missing production-audit boundary")
+    if "Semantic checks" not in manifest_md:
+        failures.append("first-wave source product template manifest missing semantic checks")
     return failures
 
 
@@ -1960,8 +1963,11 @@ def check_first_wave_source_products() -> list[str]:
         "templatePath",
         "acceptableSources",
         "requiredColumns",
+        "minimumRows",
         "productStatus",
         "qualityIssueCount",
+        "semanticIssueCount",
+        "semanticChecks",
         "validationRule",
         "claimBoundary",
         "nextAction",
@@ -2002,7 +2008,9 @@ def check_first_wave_source_products() -> list[str]:
         "schema/acquisition gate",
         "Policy-simulation status: `not_cleared`",
         "Products with field-level quality issues",
+        "Products with semantic gate issues",
         "Template path",
+        "Semantic Gate Notes",
         "SAM/FPDS action-history export or keyed pull",
         "canonical actor identifier table",
         "comment-body corpus",

@@ -43,6 +43,7 @@ class ProductSpec:
     optional_columns: tuple[str, ...]
     minimum_rows: int
     validation_rule: str
+    semantic_checks: tuple[str, ...]
     claim_boundary: str
     next_action: str
     text_required_terms: tuple[str, ...] = ()
@@ -74,6 +75,10 @@ PRODUCTS: tuple[ProductSpec, ...] = (
         optional_columns=("legalCitation", "notes"),
         minimum_rows=1,
         validation_rule="CSV must define a named reform shock, affected actors/issues, a comparison rule, dates, and source provenance.",
+        semantic_checks=(
+            "at least one dated reform event",
+            "nonempty treatment and comparison rules",
+        ),
         claim_boundary="Required before estimating cross-channel substitution elasticity for a named reform family.",
         next_action="Choose one reform shock and encode actor, issue, treatment, comparison, and timing rules before linking outcomes.",
     ),
@@ -100,8 +105,13 @@ PRODUCTS: tuple[ProductSpec, ...] = (
             "reformEventId",
         ),
         optional_columns=("activityUnits", "jurisdiction", "matchConfidence", "notes"),
-        minimum_rows=1,
+        minimum_rows=100,
         validation_rule="CSV must link actors, issues, periods, venues, source records, and reform exposure.",
+        semantic_checks=(
+            "at least three distinct venues",
+            "at least two analysis periods",
+            "at least five canonical actors",
+        ),
         claim_boundary="Required before visible-channel drops can be compared with movement into alternate venues.",
         next_action="Normalize at least three venues onto a common actor, issue, and period key.",
     ),
@@ -125,8 +135,13 @@ PRODUCTS: tuple[ProductSpec, ...] = (
             "postPeriodEnd",
         ),
         optional_columns=("matchScore", "exclusionReason", "notes"),
-        minimum_rows=1,
+        minimum_rows=20,
         validation_rule="CSV must separate exposed, comparison, and excluded rows with pre/post windows.",
+        semantic_checks=(
+            "includes exposed or treated rows",
+            "includes comparison or control rows",
+            "pre and post windows are populated",
+        ),
         claim_boundary="Required before substitution estimates can be distinguished from common shocks.",
         next_action="Define matched unaffected actors, issues, jurisdictions, or agencies and preserve exclusions.",
     ),
@@ -142,6 +157,11 @@ PRODUCTS: tuple[ProductSpec, ...] = (
         optional_columns=(),
         minimum_rows=0,
         validation_rule="Markdown note must explain meeting/contact availability, missingness, and how the omitted channel is handled.",
+        semantic_checks=(
+            "documented meeting/contact source search",
+            "explicit missingness assessment",
+            "substitution handling decision",
+        ),
         claim_boundary="Required so substitution estimates do not silently ignore private-access movement.",
         next_action="Add a meeting/contact panel or document a defensible missing-channel design before estimation.",
         text_required_terms=("meeting", "missing", "substitution"),
@@ -171,8 +191,14 @@ PRODUCTS: tuple[ProductSpec, ...] = (
             "crosswalkConfidence",
         ),
         optional_columns=("awardType", "naics", "psc", "sourceUrl", "notes"),
-        minimum_rows=1,
+        minimum_rows=5000,
         validation_rule="CSV must reconcile action dates, obligations, modifications, competition, offers, and source identifiers.",
+        semantic_checks=(
+            "at least 1000 distinct PIID/award identifiers",
+            "at least six awarding agencies",
+            "at least 270 days of action-date span",
+            "nonempty action-obligation values",
+        ),
         claim_boundary="Required before procurement modification rows can be treated as a causal outcome panel.",
         next_action="Use a promotable SAM/FPDS action-history export and reconcile modification coding with USAspending.",
     ),
@@ -196,8 +222,13 @@ PRODUCTS: tuple[ProductSpec, ...] = (
             "sourceUrl",
         ),
         optional_columns=("docketNumber", "protesterName", "awardeeName", "notes"),
-        minimum_rows=1,
+        minimum_rows=25,
         validation_rule="CSV must link protests to awards, vendors, agencies, dates, outcomes, and source records.",
+        semantic_checks=(
+            "PIID or vendor linkage for each protest",
+            "filed and decision dates populated",
+            "outcome coding populated",
+        ),
         claim_boundary="Required before protest exposure can be used as a procurement-integrity outcome or control.",
         next_action="Archive protest rows and link them to PIID/UEI where possible.",
     ),
@@ -220,8 +251,13 @@ PRODUCTS: tuple[ProductSpec, ...] = (
             "sourceUrl",
         ),
         optional_columns=("cause", "terminationDate", "notes"),
-        minimum_rows=1,
+        minimum_rows=25,
         validation_rule="CSV must link exclusion status to vendor identifiers and dates.",
+        semantic_checks=(
+            "UEI linkage for each exclusion",
+            "start and end dates populated",
+            "exclusion type populated",
+        ),
         claim_boundary="Required before exclusion status can be used to separate capture risk from integrity enforcement.",
         next_action="Add exclusion rows with UEI linkage and timing coverage.",
     ),
@@ -246,6 +282,10 @@ PRODUCTS: tuple[ProductSpec, ...] = (
         optional_columns=("expirationDate", "coverageRule", "notes"),
         minimum_rows=1,
         validation_rule="CSV must encode integrity controls, coverage, effective dates, and sources.",
+        semantic_checks=(
+            "at least one dated control rule",
+            "agency and covered-official fields populated",
+        ),
         claim_boundary="Required before procurement firewall reforms can be evaluated as observed institutional controls.",
         next_action="Encode agency/subtier controls and effective dates for the award classes in the procurement panel.",
     ),
@@ -267,8 +307,13 @@ PRODUCTS: tuple[ProductSpec, ...] = (
             "sourceUrl",
         ),
         optional_columns=("attachmentText", "withdrawn", "notes"),
-        minimum_rows=1,
+        minimum_rows=500,
         validation_rule="CSV must preserve comment identifiers, submitter fields, posting dates, text, and source provenance.",
+        semantic_checks=(
+            "body text available for each comment",
+            "at least one docket family",
+            "source provenance populated",
+        ),
         claim_boundary="Required before duplicate, authenticity, or uptake mechanisms can be estimated from observed comments.",
         next_action="Archive body-level comments for one docket family before clustering or response linkage.",
     ),
@@ -291,8 +336,13 @@ PRODUCTS: tuple[ProductSpec, ...] = (
             "authenticitySignal",
         ),
         optional_columns=("clusterRepresentativeId", "reviewer", "notes"),
-        minimum_rows=1,
+        minimum_rows=500,
         validation_rule="CSV must assign comments to duplicate/template clusters with method and score fields.",
+        semantic_checks=(
+            "at least two cluster identifiers",
+            "duplicate scores are numeric",
+            "template flags are boolean",
+        ),
         claim_boundary="Required before comment flooding or authenticity filters can be treated as observed, not simulated, mechanisms.",
         next_action="Run duplicate/template detection and preserve method, thresholds, and uncertainty fields.",
     ),
@@ -315,8 +365,13 @@ PRODUCTS: tuple[ProductSpec, ...] = (
             "textSimilarity",
         ),
         optional_columns=("ruleCitation", "reviewer", "notes"),
-        minimum_rows=1,
+        minimum_rows=50,
         validation_rule="CSV must link comment units to response sections and final-rule text movement.",
+        semantic_checks=(
+            "response section identifiers populated",
+            "final-rule identifiers populated",
+            "uptake coding populated",
+        ),
         claim_boundary="Required before the model can compare comment authenticity with observed agency uptake.",
         next_action="Link clustered comments to response sections and final-rule language before estimating uptake effects.",
     ),
@@ -340,8 +395,12 @@ PRODUCTS: tuple[ProductSpec, ...] = (
             "sourceSystems",
         ),
         optional_columns=("parentActorId", "country", "state", "notes"),
-        minimum_rows=1,
+        minimum_rows=100,
         validation_rule="CSV must preserve canonical IDs and source-system identifiers for cross-venue linkage.",
+        semantic_checks=(
+            "at least three represented source systems",
+            "canonical actor identifiers are unique enough for linkage",
+        ),
         claim_boundary="Required before venue-shifting detection can be interpreted as linked actor behavior.",
         next_action="Create a canonical actor spine and keep source-system identifiers auditable.",
     ),
@@ -365,8 +424,13 @@ PRODUCTS: tuple[ProductSpec, ...] = (
             "reviewDate",
         ),
         optional_columns=("confidenceScore", "notes"),
-        minimum_rows=1,
+        minimum_rows=50,
         validation_rule="CSV must record reviewed aliases, source records, match rules, decisions, and reviewer/date fields.",
+        semantic_checks=(
+            "manual decisions populated",
+            "reviewer and review dates populated",
+            "fuzzy and exact match rules represented where used",
+        ),
         claim_boundary="Required before false matches can be bounded in venue-shifting estimates.",
         next_action="Sample fuzzy and exact matches, record manual decisions, and retain false-positive/false-negative examples.",
     ),
@@ -389,8 +453,12 @@ PRODUCTS: tuple[ProductSpec, ...] = (
             "notes",
         ),
         optional_columns=("reviewer", "reviewDate"),
-        minimum_rows=1,
+        minimum_rows=3,
         validation_rule="CSV must map issue concepts across lobbying, rulemaking, procurement, and electoral records.",
+        semantic_checks=(
+            "at least three issue concepts",
+            "at least lobbying, rulemaking, procurement, and electoral mapping fields considered",
+        ),
         claim_boundary="Required before movement across venues can be assigned to comparable issues.",
         next_action="Define a narrow issue ontology and crosswalk it across public source taxonomies.",
     ),
@@ -413,8 +481,12 @@ PRODUCTS: tuple[ProductSpec, ...] = (
             "notes",
         ),
         optional_columns=("reviewer", "reviewDate", "confidenceScore"),
-        minimum_rows=1,
+        minimum_rows=25,
         validation_rule="CSV must preserve reviewed linkage errors and decisions.",
+        semantic_checks=(
+            "positive and negative linkage decisions represented",
+            "error type populated",
+        ),
         claim_boundary="Required before cross-venue detection can report audited linkage uncertainty.",
         next_action="Audit positive and negative linkage samples and record error classes before promoting the panel.",
     ),
@@ -439,8 +511,13 @@ PRODUCTS: tuple[ProductSpec, ...] = (
             "matchConfidence",
         ),
         optional_columns=("activityAmount", "jurisdiction", "notes"),
-        minimum_rows=1,
+        minimum_rows=500,
         validation_rule="CSV must be the auditable linked panel used by venue-shifting diagnostics.",
+        semantic_checks=(
+            "at least three distinct venues",
+            "linked source records populated",
+            "match-confidence values are numeric",
+        ),
         claim_boundary="Required before single-source and linked multi-venue diagnostics can be compared.",
         next_action="Generate the linked actor-issue-venue-time panel after actor and issue linkage pass manual audit.",
     ),
@@ -470,9 +547,10 @@ def audit_product(root: Path, spec: ProductSpec) -> dict[str, str]:
         observed_columns: tuple[str, ...] = ()
         missing_columns = spec.required_columns
         quality_issues = 0
+        semantic_issues: tuple[str, ...] = ()
         validation_notes = "Expected source product is not present."
     elif path.suffix.lower() == ".csv":
-        observed_rows, observed_columns, missing_columns, quality_issues, validation_notes = audit_csv(path, spec)
+        observed_rows, observed_columns, missing_columns, quality_issues, semantic_issues, validation_notes = audit_csv(path, spec)
         if missing_columns:
             status = "schema_missing_columns"
         elif observed_rows < spec.minimum_rows:
@@ -481,13 +559,14 @@ def audit_product(root: Path, spec: ProductSpec) -> dict[str, str]:
                 f"Schema columns are present, but observed rows {observed_rows} "
                 f"are below minimum {spec.minimum_rows}."
             )
-        elif quality_issues:
+        elif quality_issues or semantic_issues:
             status = "schema_quality_issues"
         else:
             status = "schema_ready"
     else:
         observed_rows, observed_columns, missing_columns, validation_notes = audit_text(path, spec)
         quality_issues = 0
+        semantic_issues = ()
         status = "text_missing_terms" if missing_columns else "text_ready"
 
     return {
@@ -507,6 +586,9 @@ def audit_product(root: Path, spec: ProductSpec) -> dict[str, str]:
         "observedColumns": "; ".join(observed_columns),
         "missingColumns": "; ".join(missing_columns),
         "qualityIssueCount": str(quality_issues),
+        "semanticIssueCount": str(len(semantic_issues)),
+        "semanticChecks": "; ".join(spec.semantic_checks),
+        "semanticIssues": "; ".join(semantic_issues),
         "validationRule": spec.validation_rule,
         "validationNotes": validation_notes,
         "claimBoundary": spec.claim_boundary,
@@ -514,26 +596,32 @@ def audit_product(root: Path, spec: ProductSpec) -> dict[str, str]:
     }
 
 
-def audit_csv(path: Path, spec: ProductSpec) -> tuple[int, tuple[str, ...], tuple[str, ...], int, str]:
+def audit_csv(path: Path, spec: ProductSpec) -> tuple[int, tuple[str, ...], tuple[str, ...], int, tuple[str, ...], str]:
     try:
         with path.open(newline="", encoding="utf-8") as source:
             reader = csv.DictReader(source)
             observed_columns = tuple(reader.fieldnames or ())
             rows = list(reader)
     except OSError as error:
-        return 0, (), spec.required_columns, 1, f"Could not read CSV: {error}"
+        return 0, (), spec.required_columns, 1, (), f"Could not read CSV: {error}"
     observed = set(observed_columns)
     missing = tuple(column for column in spec.required_columns if column not in observed)
     if missing:
         note = "Missing required schema columns."
     else:
         quality_issues = csv_quality_issues(rows, spec)
-        if quality_issues:
-            note = f"Required schema columns are present, but {quality_issues} field-level quality issues were found."
+        semantic_issues = semantic_quality_issues(rows, spec)
+        if quality_issues or semantic_issues:
+            fragments = []
+            if quality_issues:
+                fragments.append(f"{quality_issues} field-level quality issues")
+            if semantic_issues:
+                fragments.append(f"{len(semantic_issues)} semantic gate issues: {', '.join(semantic_issues)}")
+            note = "Required schema columns are present, but " + "; ".join(fragments) + "."
         else:
-            note = "Required schema columns and field-level quality checks pass."
-        return len(rows), observed_columns, missing, quality_issues, note
-    return len(rows), observed_columns, missing, 0, note
+            note = "Required schema columns, field-level quality checks, and semantic gates pass."
+        return len(rows), observed_columns, missing, quality_issues, semantic_issues, note
+    return len(rows), observed_columns, missing, 0, (), note
 
 
 def csv_quality_issues(rows: list[dict[str, str]], spec: ProductSpec) -> int:
@@ -569,6 +657,119 @@ def csv_quality_issues(rows: list[dict[str, str]], spec: ProductSpec) -> int:
             if is_boolean_column(column) and lowered not in BOOLEAN_VALUES:
                 issues += 1
     return issues
+
+
+def semantic_quality_issues(rows: list[dict[str, str]], spec: ProductSpec) -> tuple[str, ...]:
+    """Return product-level gate failures that row/field checks cannot see."""
+    if not rows:
+        return ()
+    checks: list[str] = []
+    product = spec.product_key
+    if product == "actor-issue-time-spine":
+        checks.extend([
+            distinct_check(rows, "venue", 3, "fewer than three distinct venues"),
+            distinct_check(rows, "periodStart", 2, "fewer than two analysis periods"),
+            distinct_check(rows, "canonicalActorId", 5, "fewer than five canonical actors"),
+        ])
+    elif product == "substitution-comparison-groups":
+        groups = {normalize_cell(row.get("comparisonGroup", "")).lower() for row in rows}
+        if not any(token in group for group in groups for token in ("exposed", "treated", "treatment")):
+            checks.append("no exposed or treated comparison-group rows")
+        if not any(token in group for group in groups for token in ("comparison", "control", "unaffected")):
+            checks.append("no comparison or control rows")
+    elif product == "sam-fpds-action-history-crosswalk":
+        checks.extend([
+            distinct_check(rows, "piid", 1000, "fewer than 1000 distinct PIID/award identifiers"),
+            distinct_check(rows, "agency", 6, "fewer than six awarding agencies"),
+        ])
+        span = date_span_days(rows, "actionDate")
+        if span < 270:
+            checks.append(f"action-date span {span} days is below 270")
+        if value_share(rows, "actionObligation") < 0.80:
+            checks.append("action-obligation coverage below 0.80")
+    elif product == "comment-template-clusters":
+        checks.append(distinct_check(rows, "clusterId", 2, "fewer than two template/duplicate clusters"))
+    elif product == "canonical-actor-identifiers":
+        systems = source_system_values(rows)
+        if len(systems) < 3:
+            checks.append("fewer than three represented source systems")
+    elif product == "alias-resolution-audit-sample":
+        checks.append(distinct_check(rows, "matchRule", 1, "no match rule represented"))
+    elif product == "issue-code-crosswalk":
+        checks.append(distinct_check(rows, "issueCode", 3, "fewer than three issue concepts"))
+    elif product == "false-match-review-log":
+        decisions = {normalize_cell(row.get("decision", "")).lower() for row in rows}
+        positive = {"accept", "accepted", "match", "matched", "true_positive", "true positive"}
+        negative = {"reject", "rejected", "nonmatch", "non-match", "false_positive", "false positive", "false_negative", "false negative"}
+        if not decisions & positive:
+            checks.append("no positive linkage decisions represented")
+        if not decisions & negative:
+            checks.append("no negative or error linkage decisions represented")
+    elif product == "linked-actor-issue-venue-time":
+        checks.extend([
+            distinct_check(rows, "venue", 3, "fewer than three distinct venues"),
+            distinct_check(rows, "canonicalActorId", 5, "fewer than five canonical actors"),
+        ])
+    return tuple(check for check in checks if check)
+
+
+def distinct_check(rows: list[dict[str, str]], column: str, minimum: int, message: str) -> str:
+    return "" if len(distinct_values(rows, column)) >= minimum else message
+
+
+def distinct_values(rows: list[dict[str, str]], column: str) -> set[str]:
+    return {
+        value
+        for value in (normalize_cell(row.get(column, "")) for row in rows)
+        if value and value.lower() not in PLACEHOLDER_VALUES
+    }
+
+
+def date_span_days(rows: list[dict[str, str]], column: str) -> int:
+    dates = [
+        parsed
+        for parsed in (parse_iso_date(normalize_cell(row.get(column, ""))) for row in rows)
+        if parsed is not None
+    ]
+    if len(dates) < 2:
+        return 0
+    return (max(dates) - min(dates)).days
+
+
+def parse_iso_date(value: str) -> datetime | None:
+    if not value:
+        return None
+    normalized = value[:-1] + "+00:00" if value.endswith("Z") else value
+    try:
+        return datetime.fromisoformat(normalized)
+    except ValueError:
+        return None
+
+
+def value_share(rows: list[dict[str, str]], column: str) -> float:
+    if not rows:
+        return 0.0
+    present = [
+        row for row in rows
+        if normalize_cell(row.get(column, "")).lower() not in PLACEHOLDER_VALUES
+    ]
+    return len(present) / len(rows)
+
+
+def source_system_values(rows: list[dict[str, str]]) -> set[str]:
+    systems: set[str] = set()
+    for row in rows:
+        value = normalize_cell(row.get("sourceSystems", ""))
+        for part in re_split_source_systems(value):
+            normalized = part.strip().lower()
+            if normalized and normalized not in PLACEHOLDER_VALUES:
+                systems.add(normalized)
+    return systems
+
+
+def re_split_source_systems(value: str) -> list[str]:
+    normalized = value.replace("|", ";").replace(",", ";")
+    return normalized.split(";")
 
 
 def normalize_cell(value: str | None) -> str:
@@ -668,6 +869,9 @@ def write_csv(path: Path, rows: list[dict[str, str]]) -> None:
         "observedColumns",
         "missingColumns",
         "qualityIssueCount",
+        "semanticIssueCount",
+        "semanticChecks",
+        "semanticIssues",
         "validationRule",
         "validationNotes",
         "claimBoundary",
@@ -689,7 +893,11 @@ def write_markdown(path: Path, rows: list[dict[str, str]]) -> None:
     ]
     quality_issue_products = [
         row for row in rows
-        if row["productStatus"] == "schema_quality_issues"
+        if row.get("qualityIssueCount", "0") not in {"", "0"}
+    ]
+    semantic_issue_products = [
+        row for row in rows
+        if row.get("semanticIssueCount", "0") not in {"", "0"}
     ]
     target_keys = sorted({row["targetKey"] for row in rows})
     ready_targets = [
@@ -712,17 +920,33 @@ def write_markdown(path: Path, rows: list[dict[str, str]]) -> None:
         f"- Missing products: `{len(missing)}`",
         f"- Present products with schema issues: `{len(schema_issues)}`",
         f"- Products with field-level quality issues: `{len(quality_issue_products)}`",
+        f"- Products with semantic gate issues: `{len(semantic_issue_products)}`",
         f"- Targets with all required products ready: `{len(ready_targets)}`",
         "- Policy-simulation status: `not_cleared`",
         "",
         "## Product Matrix",
         "",
-        "| Target | Product | Status | Expected path | Template path | Required schema | Next action |",
-        "| --- | --- | --- | --- | --- | --- | --- |",
+        "| Target | Product | Status | Expected path | Template path | Required schema | Minimum rows | Semantic checks | Next action |",
+        "| --- | --- | --- | --- | --- | --- | ---: | --- | --- |",
     ]
     for row in rows:
         lines.append(
-            "| {targetKey} | {productLabel} | {productStatus} | `{expectedPath}` | `{templatePath}` | {requiredColumns} | {nextAction} |".format(
+            "| {targetKey} | {productLabel} | {productStatus} | `{expectedPath}` | `{templatePath}` | {requiredColumns} | {minimumRows} | {semanticChecks} | {nextAction} |".format(
+                **{key: md(value) for key, value in row.items()}
+            )
+        )
+    lines.extend([
+        "",
+        "## Semantic Gate Notes",
+        "",
+        "Semantic checks are product-level safeguards that prevent tiny or structurally incomplete files from clearing a causal source gate merely because required columns are present.",
+        "",
+        "| Target | Product | Semantic issue count | Semantic issues | Validation notes |",
+        "| --- | --- | ---: | --- | --- |",
+    ])
+    for row in rows:
+        lines.append(
+            "| {targetKey} | {productLabel} | {semanticIssueCount} | {semanticIssues} | {validationNotes} |".format(
                 **{key: md(value) for key, value in row.items()}
             )
         )

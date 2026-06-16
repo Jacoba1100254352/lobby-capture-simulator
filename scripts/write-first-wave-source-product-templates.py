@@ -105,6 +105,7 @@ def manifest_row(template_path: Path, spec: Any, template_type: str) -> dict[str
         "requiredColumnsOrTerms": required,
         "optionalColumns": "; ".join(spec.optional_columns),
         "minimumRows": str(spec.minimum_rows),
+        "semanticChecks": "; ".join(spec.semantic_checks),
         "acceptableSources": spec.acceptable_sources,
         "validationRule": spec.validation_rule,
         "claimBoundary": spec.claim_boundary,
@@ -124,6 +125,7 @@ def write_manifest_csv(path: Path, rows: list[dict[str, str]]) -> None:
         "requiredColumnsOrTerms",
         "optionalColumns",
         "minimumRows",
+        "semanticChecks",
         "acceptableSources",
         "validationRule",
         "claimBoundary",
@@ -141,12 +143,12 @@ def write_manifest_markdown(path: Path, rows: list[dict[str, str]]) -> None:
         "",
         "These templates are acquisition scaffolds for the first-wave source-product gate. They are intentionally stored under `docs/source-product-templates/first-wave/` rather than `data/calibration/first-wave/` so they cannot satisfy the production source-product audit.",
         "",
-        "| Target | Product | Template | Production path | Required schema or terms | Next action |",
-        "| --- | --- | --- | --- | --- | --- |",
+        "| Target | Product | Template | Production path | Required schema or terms | Minimum rows | Semantic checks | Next action |",
+        "| --- | --- | --- | --- | --- | ---: | --- | --- |",
     ]
     for row in rows:
         lines.append(
-            "| {targetKey} | {productLabel} | `{templatePath}` | `{productionPath}` | {requiredColumnsOrTerms} | {nextAction} |".format(
+            "| {targetKey} | {productLabel} | `{templatePath}` | `{productionPath}` | {requiredColumnsOrTerms} | {minimumRows} | {semanticChecks} | {nextAction} |".format(
                 **{key: md(value) for key, value in row.items()}
             )
         )
@@ -166,7 +168,7 @@ These files are acquisition templates for the source products named by `reports/
 - Markdown design-note templates: `{text_count}`
 - Production source-product directory: `data/calibration/first-wave/`
 
-Do not treat these templates as evidence. They are stored under `docs/source-product-templates/first-wave/` so the production audit continues to require real source files with rows, provenance, protocol-specific coverage, and field-level quality checks.
+Do not treat these templates as evidence. They are stored under `docs/source-product-templates/first-wave/` so the production audit continues to require real source files with rows, provenance, protocol-specific coverage, field-level quality checks, and product-level semantic gates.
 
 Regenerate this directory with:
 
@@ -174,7 +176,7 @@ Regenerate this directory with:
 make first-wave-source-product-templates
 ```
 
-Use `manifest.csv` or `manifest.md` to map each template to its production path, required schema, minimum-row rule, acceptable source families, field-level quality checks, and claim boundary.
+Use `manifest.csv` or `manifest.md` to map each template to its production path, required schema, minimum-row rule, semantic gate, acceptable source families, field-level quality checks, and claim boundary.
 """
     path.write_text(text, encoding="utf-8")
 
