@@ -309,6 +309,8 @@ def sam_export_audit_row() -> dict[str, str]:
     promotion_status = promotion.get("status", "")
     source_rows = audit_item_value(rows, "row-count") or "missing"
     promotion_value = promotion.get("value", "").strip()
+    hard_blockers = sam_export_hard_blockers(rows)
+    shape_summary = sam_export_shape_summary(rows)
     promotion_summary = (
         f"previousPromotion={promotion_status or 'missing'}"
         if not (env("SAM_CONTRACT_AWARDS_LIVE_CSV") or env("SAM_CONTRACT_AWARDS_LIVE_URL"))
@@ -316,6 +318,10 @@ def sam_export_audit_row() -> dict[str, str]:
     )
     if promotion_value:
         promotion_summary = f"{promotion_summary}; {promotion_value}"
+    if hard_blockers:
+        promotion_summary = f"{promotion_summary}; hardBlockers={'+'.join(hard_blockers)}"
+    if shape_summary:
+        promotion_summary = f"{promotion_summary}; {shape_summary}"
     if not (env("SAM_CONTRACT_AWARDS_LIVE_CSV") or env("SAM_CONTRACT_AWARDS_LIVE_URL")):
         return item(
             "sam-export-audit",
@@ -334,7 +340,7 @@ def sam_export_audit_row() -> dict[str, str]:
         "sam-export-audit",
         status,
         f"{promotion_summary}; sourceRows={source_rows}; auditRows={len(rows)}",
-        "Use the audit output to decide whether to rerun the live snapshot and paper-artifacts-check with the SAM export.",
+        sam_export_next_action(status, hard_blockers, shape_summary),
         "source-refresh",
     )
 
@@ -368,6 +374,43 @@ def keyed_rows(path: Path, key: str) -> dict[str, dict[str, str]]:
 def audit_item_value(rows: list[dict[str, str]], item_name: str) -> str:
     row = next((candidate for candidate in rows if candidate.get("item") == item_name), {})
     return row.get("value", "").strip()
+
+
+def sam_export_hard_blockers(rows: list[dict[str, str]]) -> list[str]:
+    return [
+        row.get("item", "")
+        for row in rows
+        if row.get("status") == "blocked" and row.get("item") != "promotion-readiness"
+    ]
+
+
+def sam_export_shape_summary(rows: list[dict[str, str]]) -> str:
+    parts = []
+    for item_name, label in [
+        ("raw-action-date-candidate-share", "rawActionDate"),
+        ("raw-solicitation-date-share", "rawSolicitationDate"),
+        ("raw-amount-field-share", "rawAmount"),
+    ]:
+        value = audit_item_value(rows, item_name)
+        if value:
+            parts.append(f"{label}={value}")
+    return "; ".join(parts)
+
+
+def sam_export_next_action(status: str, blockers: list[str], shape_summary: str) -> str:
+    if status == "ready":
+        return "Promote only by rerunning the live snapshot and full paper-artifacts-check; the audit alone does not clear procurement claims."
+    if blockers:
+        blocker_text = "+".join(blockers)
+        shape_text = f" Current shape: {shape_summary}." if shape_summary else ""
+        return (
+            "Do not promote this SAM export. Request an action-history export with multi-agency breadth, "
+            "action/signed dates, obligation or current-award-value fields, and competition/offer fields; "
+            f"current hard blockers={blocker_text}.{shape_text}"
+        )
+    if status == "manual_required":
+        return "Resolve the SAM.gov token/quota/download condition, rerun make sam-contract-awards-export-audit, and promote only after hard breadth checks clear."
+    return "Use the audit output to decide whether to rerun the live snapshot and paper-artifacts-check with the SAM export."
 
 
 def read_csv(path: Path) -> list[dict[str, str]]:

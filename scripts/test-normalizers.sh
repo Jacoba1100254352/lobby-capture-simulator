@@ -268,6 +268,35 @@ grep -q "raw-solicitation-date-share,diagnostic,1.0000" "$tmpdir/reports/sam-con
 grep -q "use an awards/action-history export surface" "$tmpdir/reports/sam-contract-awards-export-audit.md"
 grep -q "no recognized obligation/amount field" "$tmpdir/reports/sam-contract-awards-export-audit.md"
 
+python3 - "$tmpdir/reports/sam-contract-awards-export-audit.csv" "$tmpdir/sam-solicitation-only-export.csv" <<'PY'
+import importlib.util
+import os
+from pathlib import Path
+import sys
+
+audit_csv = Path(sys.argv[1])
+configured_export = Path(sys.argv[2])
+spec = importlib.util.spec_from_file_location(
+    "external_checklist",
+    Path("scripts/write-external-finalization-checklist.py"),
+)
+module = importlib.util.module_from_spec(spec)
+spec.loader.exec_module(module)
+module.SAM_EXPORT_AUDIT_CSV = audit_csv
+os.environ["SAM_CONTRACT_AWARDS_LIVE_CSV"] = str(configured_export)
+try:
+    row = module.sam_export_audit_row()
+finally:
+    os.environ.pop("SAM_CONTRACT_AWARDS_LIVE_CSV", None)
+assert row["status"] == "blocked", row
+assert "hardBlockers=action-date-coverage" in row["evidence"], row
+assert "rawActionDate=0.0000" in row["evidence"], row
+assert "rawSolicitationDate=1.0000" in row["evidence"], row
+assert "rawAmount=0.0000" in row["evidence"], row
+assert "Do not promote this SAM export" in row["nextAction"], row
+assert "action-history export" in row["nextAction"], row
+PY
+
 python3 - "$tmpdir/reports" <<'PY'
 import argparse
 import importlib.util
