@@ -307,11 +307,20 @@ def sam_export_audit_row() -> dict[str, str]:
         )
     promotion = next((row for row in rows if row.get("item") == "promotion-readiness"), rows[0])
     promotion_status = promotion.get("status", "")
+    source_rows = audit_item_value(rows, "row-count") or "missing"
+    promotion_value = promotion.get("value", "").strip()
+    promotion_summary = (
+        f"previousPromotion={promotion_status or 'missing'}"
+        if not (env("SAM_CONTRACT_AWARDS_LIVE_CSV") or env("SAM_CONTRACT_AWARDS_LIVE_URL"))
+        else f"promotion={promotion_status or 'missing'}"
+    )
+    if promotion_value:
+        promotion_summary = f"{promotion_summary}; {promotion_value}"
     if not (env("SAM_CONTRACT_AWARDS_LIVE_CSV") or env("SAM_CONTRACT_AWARDS_LIVE_URL")):
         return item(
             "sam-export-audit",
             "manual_required",
-            f"staleAudit=present; currentInput=missing; previousPromotion={promotion_status or 'missing'}; rows={len(rows)}",
+            f"staleAudit=present; currentInput=missing; {promotion_summary}; sourceRows={source_rows}; auditRows={len(rows)}",
             "Configure the current SAM export URL or CSV in .env, then rerun make sam-contract-awards-export-audit.",
             "source-refresh",
         )
@@ -324,7 +333,7 @@ def sam_export_audit_row() -> dict[str, str]:
     return item(
         "sam-export-audit",
         status,
-        f"promotion={promotion_status or 'missing'}; rows={len(rows)}",
+        f"{promotion_summary}; sourceRows={source_rows}; auditRows={len(rows)}",
         "Use the audit output to decide whether to rerun the live snapshot and paper-artifacts-check with the SAM export.",
         "source-refresh",
     )
@@ -354,6 +363,11 @@ def status_counts(rows: list[dict[str, str]], key: str = "status") -> dict[str, 
 
 def keyed_rows(path: Path, key: str) -> dict[str, dict[str, str]]:
     return {row.get(key, ""): row for row in read_csv(path)}
+
+
+def audit_item_value(rows: list[dict[str, str]], item_name: str) -> str:
+    row = next((candidate for candidate in rows if candidate.get("item") == item_name), {})
+    return row.get("value", "").strip()
 
 
 def read_csv(path: Path) -> list[dict[str, str]]:

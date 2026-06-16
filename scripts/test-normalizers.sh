@@ -218,6 +218,32 @@ grep -q "SAM_CONTRACT_AWARDS_LIVE_URL" "$tmpdir/reports/sam-contract-awards-expo
 grep -q "REPLACE_WITH_API_KEY" "$tmpdir/reports/sam-contract-awards-export-audit.md"
 grep -q "raw-action-date-candidate-share" "$tmpdir/reports/sam-contract-awards-export-audit.csv"
 
+python3 - "$tmpdir/reports/sam-contract-awards-export-audit.csv" "$tmpdir/sam-export.csv" <<'PY'
+import importlib.util
+import os
+from pathlib import Path
+import sys
+
+audit_csv = Path(sys.argv[1])
+configured_export = Path(sys.argv[2])
+spec = importlib.util.spec_from_file_location(
+    "external_checklist",
+    Path("scripts/write-external-finalization-checklist.py"),
+)
+module = importlib.util.module_from_spec(spec)
+spec.loader.exec_module(module)
+module.SAM_EXPORT_AUDIT_CSV = audit_csv
+os.environ["SAM_CONTRACT_AWARDS_LIVE_CSV"] = str(configured_export)
+try:
+    row = module.sam_export_audit_row()
+finally:
+    os.environ.pop("SAM_CONTRACT_AWARDS_LIVE_CSV", None)
+assert row["status"] == "ready", row
+assert "sourceRows=2" in row["evidence"], row
+assert "auditRows=" in row["evidence"], row
+assert "rows=18" not in row["evidence"], row
+PY
+
 cat > "$tmpdir/sam-solicitation-only-export.csv" <<'CSV'
 contractId.piid,modification_number,recipientName,contractingDepartmentName,contractingSubtierName,awardOrIDVTypeName,Recipient UEI,solicitationDate,extentCompetedName,numberOfOffers,typeOfContractPricingName
 68HERH24C0004,0,MANUAL EXPORT CONTRACTOR,ENVIRONMENTAL PROTECTION AGENCY,EPA OFFICE,DEFINITIVE CONTRACT,EXPORTUEI1234,2024-01-15,FULL AND OPEN COMPETITION,5,FIRM FIXED PRICE
