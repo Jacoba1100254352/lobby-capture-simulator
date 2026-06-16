@@ -418,6 +418,8 @@ def write_csv(path: Path, rows: list[dict[str, str]]) -> None:
 def markdown(rows: list[dict[str, str]]) -> str:
     counts = status_counts(rows)
     release_tag = release_tag_from_citation()
+    finalization_posture = posture_for_categories(rows, {"metadata", "doi", "journal"})
+    source_refresh_posture = posture_for_categories(rows, {"source-refresh"})
     blocked = [row for row in rows if row["status"] == "blocked"]
     manual = [row for row in rows if row["status"] == "manual_required"]
     lines = [
@@ -428,6 +430,8 @@ def markdown(rows: list[dict[str, str]]) -> str:
         "## Summary",
         "",
         f"- Release tag: `{md(release_tag or 'missing')}`",
+        f"- DOI/journal finalization posture: `{finalization_posture}`",
+        f"- Source-refresh posture: `{source_refresh_posture}`",
         f"- Ready: `{counts.get('ready', 0)}`",
         f"- Manual required: `{counts.get('manual_required', 0)}`",
         f"- Blocked: `{counts.get('blocked', 0)}`",
@@ -470,7 +474,8 @@ def markdown(rows: list[dict[str, str]]) -> str:
             "",
             "- `ready` means the local operational precondition is present or verified.",
             "- `manual_required` means the next step depends on a private credential, a live website, or a human signoff.",
-            "- `blocked` means a configured input or post-release check disagrees with the expected release state and should be fixed before final journal submission.",
+            "- `blocked` means a configured input or post-release check disagrees with the expected state for that category.",
+            "- A source-refresh `blocked` item blocks promotion of that live source into a refreshed snapshot; it does not invalidate the current released review bundle unless the manuscript is regenerated to rely on that source.",
             "- A candidate SAM export still must be promoted through the live snapshot and full paper artifact gate before it affects manuscript evidence.",
             "- A Zenodo draft or upload is not a published DOI record until the record is explicitly published and the DOI is recorded in repository metadata.",
             "",
@@ -487,6 +492,17 @@ def markdown(rows: list[dict[str, str]]) -> str:
             lines.append(f"- `{md(row['item'])}`: {md(row['nextAction'])}")
         lines.append("")
     return "\n".join(lines)
+
+
+def posture_for_categories(rows: list[dict[str, str]], categories: set[str]) -> str:
+    scoped = [row for row in rows if row.get("category") in categories]
+    if any(row.get("status") == "blocked" for row in scoped):
+        return "blocked"
+    if any(row.get("status") == "manual_required" for row in scoped):
+        return "manual_required"
+    if scoped and all(row.get("status") == "ready" for row in scoped):
+        return "ready"
+    return "unknown"
 
 
 def md(value: object) -> str:
