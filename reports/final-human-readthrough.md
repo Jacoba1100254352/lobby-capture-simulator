@@ -3,7 +3,7 @@
 status: pending
 signed-off-by:
 signed-off-date:
-reviewed-release: paper-publication-readiness-2026-06-15-r131
+reviewed-release: paper-publication-readiness-2026-06-15-r132
 reviewed-commit:
 doi-archive:
 venue-target: Regulation & Governance

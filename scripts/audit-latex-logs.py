@@ -17,6 +17,11 @@ LOGS = [
     ("wiley-manuscript", PAPER / "regulation-governance-wiley.log"),
     ("supplement", PAPER / "supplement.log"),
 ]
+PDF_BY_DOCUMENT = {
+    "local-manuscript": "paper/strategic-channel-substitution-regulatory-capture.pdf",
+    "wiley-manuscript": "paper/regulation-governance-wiley.pdf",
+    "supplement": "paper/supplement.pdf",
+}
 
 UNRESOLVED_PATTERNS = [
     ("latex-error", re.compile(r"! LaTeX Error:")),
@@ -31,6 +36,23 @@ OVERFULL_HBOX_RE = re.compile(r"Overfull \\hbox \(([0-9.]+)pt too wide\)")
 OVERFULL_VBOX_RE = re.compile(r"Overfull \\vbox \(([0-9.]+)pt too high\)")
 UNDERFULL_HBOX_RE = re.compile(r"Underfull \\hbox")
 UNDERFULL_VBOX_RE = re.compile(r"Underfull \\vbox")
+PAGE_MARKER_RE = re.compile(r"\n\[(\d+)(?:[^\d]|$)")
+
+FIELDNAMES = [
+    "document",
+    "logPath",
+    "status",
+    "unresolvedCount",
+    "unresolvedKinds",
+    "overfullHBoxCount",
+    "maxOverfullHBoxPt",
+    "overfullVBoxCount",
+    "maxOverfullVBoxPt",
+    "overfullVBoxPages",
+    "visualFollowup",
+    "underfullHBoxCount",
+    "underfullVBoxCount",
+]
 
 
 def main() -> int:
@@ -54,6 +76,8 @@ def audit_log(name: str, path: Path) -> dict[str, str]:
             "maxOverfullHBoxPt": "0.0000",
             "overfullVBoxCount": "0",
             "maxOverfullVBoxPt": "0.0000",
+            "overfullVBoxPages": "",
+            "visualFollowup": "missing log; no visual follow-up available",
             "underfullHBoxCount": "0",
             "underfullVBoxCount": "0",
         }
@@ -65,7 +89,8 @@ def audit_log(name: str, path: Path) -> dict[str, str]:
         if pattern.search(text)
     ]
     overfull_hbox = [float(value) for value in OVERFULL_HBOX_RE.findall(text)]
-    overfull_vbox = [float(value) for value in OVERFULL_VBOX_RE.findall(text)]
+    overfull_vbox = [float(match.group(1)) for match in OVERFULL_VBOX_RE.finditer(text)]
+    overfull_vbox_pages = page_markers_after(text, OVERFULL_VBOX_RE)
     return {
         "document": name,
         "logPath": str(path.relative_to(ROOT)),
@@ -76,9 +101,46 @@ def audit_log(name: str, path: Path) -> dict[str, str]:
         "maxOverfullHBoxPt": f"{max(overfull_hbox, default=0.0):.4f}",
         "overfullVBoxCount": str(len(overfull_vbox)),
         "maxOverfullVBoxPt": f"{max(overfull_vbox, default=0.0):.4f}",
+        "overfullVBoxPages": ",".join(str(page) for page in overfull_vbox_pages),
+        "visualFollowup": visual_followup(name, overfull_vbox_pages),
         "underfullHBoxCount": str(len(UNDERFULL_HBOX_RE.findall(text))),
         "underfullVBoxCount": str(len(UNDERFULL_VBOX_RE.findall(text))),
     }
+
+
+def page_markers_after(text: str, pattern: re.Pattern[str]) -> list[int]:
+    pages: list[int] = []
+    for match in pattern.finditer(text):
+        page = PAGE_MARKER_RE.search(text, match.end())
+        if page:
+            pages.append(int(page.group(1)))
+    return pages
+
+
+def visual_followup(document: str, pages: list[int]) -> str:
+    if not pages:
+        return "not needed"
+    statuses = []
+    for page in sorted(set(pages)):
+        statuses.append(f"p{page}:{layout_status(document, page)}")
+    return "; ".join(statuses)
+
+
+def layout_status(document: str, page: int) -> str:
+    pdf = PDF_BY_DOCUMENT.get(document, "")
+    if not pdf:
+        return "unknown document"
+    layout_report = REPORTS / "paper-layout-audit.md"
+    if not layout_report.exists():
+        return "layout audit missing"
+    prefix = f"| {pdf} | {page} |"
+    for line in layout_report.read_text(encoding="utf-8").splitlines():
+        if line.startswith(prefix):
+            cells = [cell.strip() for cell in line.strip("|").split("|")]
+            if len(cells) >= 8:
+                return f"layout {cells[7]}"
+            return "layout row malformed"
+    return "layout row missing"
 
 
 def write_csv(path: Path, rows: list[dict[str, str]]) -> None:
@@ -86,19 +148,7 @@ def write_csv(path: Path, rows: list[dict[str, str]]) -> None:
     with path.open("w", newline="", encoding="utf-8") as target:
         writer = csv.DictWriter(
             target,
-            fieldnames=[
-                "document",
-                "logPath",
-                "status",
-                "unresolvedCount",
-                "unresolvedKinds",
-                "overfullHBoxCount",
-                "maxOverfullHBoxPt",
-                "overfullVBoxCount",
-                "maxOverfullVBoxPt",
-                "underfullHBoxCount",
-                "underfullVBoxCount",
-            ],
+            fieldnames=FIELDNAMES,
             lineterminator="\n",
         )
         writer.writeheader()
@@ -115,13 +165,13 @@ def write_markdown(path: Path, rows: list[dict[str, str]]) -> None:
         f"- Logs checked: `{len(rows)}`",
         f"- Unresolved states: `{unresolved_total}`",
         "",
-        "| Document | Status | Unresolved | Overfull hbox | Max hbox pt | Overfull vbox | Max vbox pt | Underfull hbox | Underfull vbox |",
-        "| --- | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |",
+        "| Document | Status | Unresolved | Overfull hbox | Max hbox pt | Overfull vbox | Max vbox pt | VBox pages | Visual follow-up | Underfull hbox | Underfull vbox |",
+        "| --- | --- | ---: | ---: | ---: | ---: | ---: | --- | --- | ---: | ---: |",
     ]
     for row in rows:
         unresolved = row["unresolvedKinds"] or "-"
         lines.append(
-            "| {document} | {status} | {unresolved} | {overfull_hbox} | {max_hbox} | {overfull_vbox} | {max_vbox} | {underfull_hbox} | {underfull_vbox} |".format(
+            "| {document} | {status} | {unresolved} | {overfull_hbox} | {max_hbox} | {overfull_vbox} | {max_vbox} | {vbox_pages} | {visual_followup} | {underfull_hbox} | {underfull_vbox} |".format(
                 document=row["document"],
                 status=row["status"],
                 unresolved=unresolved,
@@ -129,8 +179,32 @@ def write_markdown(path: Path, rows: list[dict[str, str]]) -> None:
                 max_hbox=row["maxOverfullHBoxPt"],
                 overfull_vbox=row["overfullVBoxCount"],
                 max_vbox=row["maxOverfullVBoxPt"],
+                vbox_pages=row["overfullVBoxPages"] or "-",
+                visual_followup=row["visualFollowup"],
                 underfull_hbox=row["underfullHBoxCount"],
                 underfull_vbox=row["underfullVBoxCount"],
+            )
+        )
+    lines.extend(
+        [
+            "",
+            "## Box-Warning Follow-Up",
+            "",
+            "Box warnings are typography diagnostics, not unresolved compile states. Overfull vbox warnings are paired with the generated PDF layout audit so a reviewer can see whether the affected rendered page passed visual-density checks.",
+            "",
+        ]
+    )
+    overfull_rows = [row for row in rows if int(row["overfullVBoxCount"]) > 0]
+    if not overfull_rows:
+        lines.append("- No overfull vbox warnings were reported.")
+    for row in overfull_rows:
+        lines.append(
+            "- `{document}` reports {count} overfull vbox warning(s), max `{max_pt}` pt, nearest output page(s) `{pages}`; follow-up: {followup}.".format(
+                document=row["document"],
+                count=row["overfullVBoxCount"],
+                max_pt=row["maxOverfullVBoxPt"],
+                pages=row["overfullVBoxPages"] or "unknown",
+                followup=row["visualFollowup"],
             )
         )
     lines.append("")
