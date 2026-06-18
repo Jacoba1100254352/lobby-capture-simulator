@@ -4,7 +4,7 @@
 
 Primary journal target: **Regulation & Governance**.
 
-Reason: the paper is strongest as a regulatory-governance mechanism article about how anti-capture reforms interact across transparency, enforcement, rulemaking, procurement, public financing, dark money, and revolving-door constraints. The live Regulation & Governance author page, checked by browser on 2026-06-18 for the r155 review bundle, reported a preferred first-submission length of 8,000-10,000 words, a normal upper limit of 11,000 words, a 6,000-word Research Forum limit, and a 150-word abstract limit, with no superseding instruction requiring package changes. Recheck the live author page again immediately before actual journal submission.
+Reason: the paper is strongest as a regulatory-governance mechanism article about how anti-capture reforms interact across transparency, enforcement, rulemaking, procurement, public financing, dark money, and revolving-door constraints. The live Regulation & Governance author page, checked by browser on 2026-06-18 for the r156 review bundle, reported a preferred first-submission length of 8,000-10,000 words, a normal upper limit of 11,000 words, a 6,000-word Research Forum limit, and a 150-word abstract limit, with no superseding instruction requiring package changes. Recheck the live author page again immediately before actual journal submission.
 
 Working article frame:
 

@@ -608,6 +608,14 @@ def audit_product(root: Path, spec: ProductSpec) -> dict[str, str]:
 
 
 def product_next_action(spec: ProductSpec, status: str) -> str:
+    if status == CANDIDATE_UNREVIEWED_STATUS:
+        if spec.product_key == "agency-response-final-rule-linkage":
+            return (
+                "Use this candidate worklist to manually link clustered comments to agency "
+                "response sections and final-rule text; do not estimate uptake until "
+                "uptakeCode and textSimilarity are reviewed against observed source text."
+            )
+        return spec.next_action
     if status in {"schema_ready", "text_ready"}:
         if spec.product_key == "substitution-reform-shocks":
             return (
@@ -659,13 +667,23 @@ def audit_csv(path: Path, spec: ProductSpec) -> tuple[int, tuple[str, ...], tupl
         else:
             note = "Required schema columns, field-level quality checks, and semantic gates pass."
         if candidate_unreviewed:
-            note = (
-                "Candidate-only manual-review seed is present; it does not clear "
-                "source-product readiness until aliases, issue comparability, and "
-                "false matches are adjudicated. " + note
-            )
+            note = candidate_unreviewed_note(spec) + " " + note
         return len(rows), observed_columns, missing, quality_issues, semantic_issues, note, candidate_unreviewed
     return len(rows), observed_columns, missing, 0, (), note, candidate_unreviewed
+
+
+def candidate_unreviewed_note(spec: ProductSpec) -> str:
+    if spec.product_key == "agency-response-final-rule-linkage":
+        return (
+            "Candidate-only manual-review seed is present; it does not clear "
+            "source-product readiness until response sections, final-rule text movement, "
+            "and uptake coding are manually adjudicated."
+        )
+    return (
+        "Candidate-only manual-review seed is present; it does not clear "
+        "source-product readiness until aliases, issue comparability, and "
+        "false matches are adjudicated."
+    )
 
 
 def is_candidate_unreviewed_product(rows: list[dict[str, str]]) -> bool:
@@ -1000,7 +1018,7 @@ def write_markdown(path: Path, rows: list[dict[str, str]]) -> None:
         "",
         "Semantic checks are product-level safeguards that prevent tiny or structurally incomplete files from clearing a causal source gate merely because required columns are present.",
         "",
-        "The `candidate_unreviewed` status means the production file exists as a deterministic manual-review seed, but it cannot clear readiness until aliases, issue mappings, and false-match decisions are adjudicated.",
+        "The `candidate_unreviewed` status means the production file exists as a deterministic manual-review seed, but it cannot clear readiness until the product-specific manual checks are adjudicated. Entity-resolution seeds require alias, issue, and false-match review; the response/final-rule linkage seed requires observed response-section, final-rule movement, and uptake-coding review.",
         "",
         "| Target | Product | Semantic issue count | Semantic issues | Validation notes |",
         "| --- | --- | ---: | --- | --- |",

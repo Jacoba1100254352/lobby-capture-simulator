@@ -27,8 +27,8 @@ This audit checks generated PDFs for sparse float pages, large whitespace gaps, 
 | paper/strategic-channel-substitution-regulatory-capture.pdf | 18 | 99 | 1880 | 0.857 | 0.053 | yes | pass | layout density acceptable |
 | paper/strategic-channel-substitution-regulatory-capture.pdf | 19 | 138 | 3516 | 0.852 | 0.058 | yes | pass | layout density acceptable |
 | paper/strategic-channel-substitution-regulatory-capture.pdf | 20 | 48 | 4154 | 0.854 | 0.059 | no | pass | layout density acceptable |
-| paper/strategic-channel-substitution-regulatory-capture.pdf | 21 | 49 | 4285 | 0.857 | 0.053 | no | pass | layout density acceptable |
-| paper/strategic-channel-substitution-regulatory-capture.pdf | 22 | 57 | 3786 | 0.854 | 0.071 | no | pass | layout density acceptable |
+| paper/strategic-channel-substitution-regulatory-capture.pdf | 21 | 51 | 4267 | 0.857 | 0.053 | no | pass | layout density acceptable |
+| paper/strategic-channel-substitution-regulatory-capture.pdf | 22 | 59 | 3977 | 0.854 | 0.055 | no | pass | layout density acceptable |
 | paper/strategic-channel-substitution-regulatory-capture.pdf | 23 | 75 | 3059 | 0.857 | 0.053 | no | pass | references/declarations page |
 | paper/strategic-channel-substitution-regulatory-capture.pdf | 24 | 93 | 3827 | 0.854 | 0.056 | no | pass | references/declarations page |
 | paper/regulation-governance-wiley.pdf | 1 | 25 | 1253 | 0.876 | 0.385 | no | pass | title/front-matter page |
@@ -47,18 +47,18 @@ This audit checks generated PDFs for sparse float pages, large whitespace gaps, 
 | paper/regulation-governance-wiley.pdf | 14 | 138 | 2287 | 0.934 | 0.056 | yes | pass | layout density acceptable |
 | paper/regulation-governance-wiley.pdf | 15 | 152 | 2846 | 0.934 | 0.045 | no | pass | layout density acceptable |
 | paper/regulation-governance-wiley.pdf | 16 | 59 | 5844 | 0.943 | 0.064 | no | pass | layout density acceptable |
-| paper/regulation-governance-wiley.pdf | 17 | 57 | 6048 | 0.943 | 0.048 | no | pass | layout density acceptable |
-| paper/regulation-governance-wiley.pdf | 18 | 123 | 6365 | 0.942 | 0.043 | no | pass | references/declarations page |
-| paper/regulation-governance-wiley.pdf | 19 | 38 | 2619 | 0.938 | 0.719 | no | pass | references/declarations page |
-| paper/supplement.pdf | 1 | 35 | 2156 | 0.838 | 0.089 | no | pass | title/front-matter page |
+| paper/regulation-governance-wiley.pdf | 17 | 56 | 5862 | 0.943 | 0.064 | no | pass | layout density acceptable |
+| paper/regulation-governance-wiley.pdf | 18 | 115 | 6111 | 0.942 | 0.043 | no | pass | references/declarations page |
+| paper/regulation-governance-wiley.pdf | 19 | 49 | 3233 | 0.938 | 0.668 | no | pass | references/declarations page |
+| paper/supplement.pdf | 1 | 35 | 2178 | 0.838 | 0.089 | no | pass | title/front-matter page |
 | paper/supplement.pdf | 2 | 60 | 3037 | 0.887 | 0.039 | no | pass | layout density acceptable |
 | paper/supplement.pdf | 3 | 239 | 2609 | 0.891 | 0.041 | yes | pass | layout density acceptable |
 | paper/supplement.pdf | 4 | 82 | 2862 | 0.857 | 0.091 | yes | pass | layout density acceptable |
 | paper/supplement.pdf | 5 | 88 | 2486 | 0.891 | 0.036 | yes | pass | layout density acceptable |
-| paper/supplement.pdf | 6 | 70 | 3441 | 0.891 | 0.035 | no | pass | layout density acceptable |
+| paper/supplement.pdf | 6 | 71 | 3468 | 0.891 | 0.035 | no | pass | layout density acceptable |
 | paper/supplement.pdf | 7 | 67 | 4362 | 0.887 | 0.039 | no | pass | layout density acceptable |
 | paper/supplement.pdf | 8 | 133 | 3795 | 0.887 | 0.039 | yes | pass | layout density acceptable |
-| paper/supplement.pdf | 9 | 116 | 3953 | 0.887 | 0.039 | yes | pass | layout density acceptable |
-| paper/supplement.pdf | 10 | 67 | 3750 | 0.887 | 0.039 | no | pass | layout density acceptable |
-| paper/supplement.pdf | 11 | 71 | 3053 | 0.887 | 0.039 | yes | pass | references/declarations page |
-| paper/supplement.pdf | 12 | 26 | 1674 | 0.887 | 0.514 | no | pass | references/declarations page |
+| paper/supplement.pdf | 9 | 110 | 3978 | 0.887 | 0.039 | yes | pass | layout density acceptable |
+| paper/supplement.pdf | 10 | 71 | 3846 | 0.887 | 0.039 | no | pass | layout density acceptable |
+| paper/supplement.pdf | 11 | 71 | 3110 | 0.891 | 0.035 | yes | pass | references/declarations page |
+| paper/supplement.pdf | 12 | 29 | 1813 | 0.891 | 0.465 | no | pass | references/declarations page |

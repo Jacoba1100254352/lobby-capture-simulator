@@ -206,6 +206,12 @@ def product_aware_next_action(
             "verify aliases and issue comparability, and replace candidate exposure labels with reviewed "
             "treated and comparison assignments before inspecting outcome movement."
         )
+    if target == "comment-authenticity-and-uptake-effect" and product_gate.get("sourceProductGate") == "candidate_only_blocked":
+        return (
+            "Manually adjudicate the candidate response/final-rule linkage file, replace "
+            "candidate response sections and final-rule identifiers with observed response-to-comments "
+            "and final-rule text, and estimate uptake only after reviewed uptake coding."
+        )
     if target == "substitution-elasticity" and "named reform-shock event file" in ready:
         return (
             "Use the committed reform-shock event file and meeting/contact missing-channel note, "
@@ -235,6 +241,11 @@ def product_aware_blocking_issue(
         return (
             "Candidate actor-issue-time and comparison-group files are committed, but aliases, issue "
             "comparability, exposure groups, and pre/post windows are not manually adjudicated."
+        )
+    if target == "comment-authenticity-and-uptake-effect" and product_gate.get("sourceProductGate") == "candidate_only_blocked":
+        return (
+            "Candidate response/final-rule linkage file is committed, but response sections, "
+            "final-rule movement, and uptake coding are not manually adjudicated."
         )
     if target == "comment-authenticity-and-uptake-effect" and {
         "comment-body corpus",

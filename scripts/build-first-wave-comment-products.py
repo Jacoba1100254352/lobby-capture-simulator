@@ -5,6 +5,10 @@ This is a bounded networked acquisition helper for the comment-authenticity
 first-wave protocol. It intentionally writes only normalized public fields to
 `data/calibration/first-wave/`; raw API payloads and private API keys are not
 written to the repository.
+
+The response/final-rule linkage output is a candidate-only review scaffold. It
+preserves the required schema for manual response-section linkage, but it does
+not claim observed agency uptake or clear the source-readiness gate.
 """
 
 from __future__ import annotations
@@ -50,6 +54,14 @@ TECHNICAL_TERMS = (
     "health",
     "environmental",
 )
+MAX_LINKAGE_ROWS = 80
+CANDIDATE_STATUS = "candidate_unreviewed_not_estimation_ready"
+LINKAGE_BOUNDARY = (
+    "candidate-only response/final-rule linkage scaffold; response sections "
+    "and final-rule movement are not manually linked; does not clear the "
+    "comment-authenticity uptake, first-wave source-product, or "
+    "causal-calibration gates"
+)
 
 
 def main() -> int:
@@ -83,6 +95,7 @@ def main() -> int:
     details = fetch_comment_details(args.base.rstrip("/"), api_key, comment_ids, args.workers)
     corpus_rows = [comment_corpus_row(args.base.rstrip("/"), detail) for detail in details]
     cluster_rows = comment_cluster_rows(corpus_rows, details)
+    linkage_rows = agency_response_final_rule_linkage_rows(corpus_rows, cluster_rows)
 
     args.output_dir.mkdir(parents=True, exist_ok=True)
     write_csv(
@@ -118,8 +131,28 @@ def main() -> int:
         ],
         cluster_rows,
     )
+    write_csv(
+        args.output_dir / "agency-response-final-rule-linkage.csv",
+        [
+            "docketId",
+            "commentId",
+            "responseSectionId",
+            "responseText",
+            "finalRuleId",
+            "finalRuleDate",
+            "uptakeCode",
+            "textSimilarity",
+            "ruleCitation",
+            "reviewer",
+            "notes",
+            "candidateOnly",
+            "candidateStatus",
+        ],
+        linkage_rows,
+    )
     print(f"Wrote {args.output_dir / 'comment-body-corpus.csv'}")
     print(f"Wrote {args.output_dir / 'comment-template-clusters.csv'}")
+    print(f"Wrote {args.output_dir / 'agency-response-final-rule-linkage.csv'}")
     return 0
 
 
@@ -264,6 +297,48 @@ def comment_cluster_rows(corpus_rows: list[dict[str, str]], details: list[dict[s
     return result
 
 
+def agency_response_final_rule_linkage_rows(
+    corpus_rows: list[dict[str, str]],
+    cluster_rows: list[dict[str, str]],
+) -> list[dict[str, str]]:
+    """Create a bounded manual-review scaffold for response/final-rule linkage."""
+    clusters_by_comment = {row["commentId"]: row for row in cluster_rows}
+    selected_rows = sorted(
+        corpus_rows,
+        key=lambda row: (
+            -float_value(clusters_by_comment.get(row["commentId"], {}).get("duplicateScore", "0")),
+            -float_value(clusters_by_comment.get(row["commentId"], {}).get("technicalContentScore", "0")),
+            row["commentId"],
+        ),
+    )[:MAX_LINKAGE_ROWS]
+    rows = []
+    for index, row in enumerate(selected_rows, start=1):
+        cluster = clusters_by_comment.get(row["commentId"], {})
+        docket_id = row["docketId"]
+        rows.append(
+            {
+                "docketId": docket_id,
+                "commentId": row["commentId"],
+                "responseSectionId": f"candidate-response-section-{index:04d}",
+                "responseText": "manual response-to-comments section linkage required before uptake coding",
+                "finalRuleId": f"{docket_id}-candidate-final-rule",
+                "finalRuleDate": candidate_final_rule_date(row.get("postedDate", "")),
+                "uptakeCode": CANDIDATE_STATUS,
+                "textSimilarity": "0.0000",
+                "ruleCitation": f"https://www.regulations.gov/docket/{docket_id}",
+                "reviewer": "script:build-first-wave-comment-products",
+                "notes": (
+                    f"{LINKAGE_BOUNDARY}; clusterId={cluster.get('clusterId', '')}; "
+                    f"duplicateScore={cluster.get('duplicateScore', '')}; "
+                    f"technicalContentScore={cluster.get('technicalContentScore', '')}"
+                ),
+                "candidateOnly": "true",
+                "candidateStatus": CANDIDATE_STATUS,
+            }
+        )
+    return rows
+
+
 def public_comment_text(value: str) -> str:
     text = html.unescape(value)
     text = re.sub(r"(?i)<br\\s*/?>", "\n", text)
@@ -305,6 +380,20 @@ def int_value(value: object) -> int:
         return int(float(str(value or "0")))
     except ValueError:
         return 0
+
+
+def float_value(value: object) -> float:
+    try:
+        return float(str(value or "0"))
+    except ValueError:
+        return 0.0
+
+
+def candidate_final_rule_date(posted_date: str) -> str:
+    text = (posted_date or "").strip()
+    if len(text) >= 10:
+        return text[:10]
+    return "2024-01-01"
 
 
 def boolean_text(value: object) -> str:

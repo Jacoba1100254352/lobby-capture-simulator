@@ -75,6 +75,7 @@ FIRST_WAVE_SOURCE_PRODUCT_DIR = ROOT / "data" / "calibration" / "first-wave"
 FIRST_WAVE_CANDIDATE_SEED_PRODUCTS = {
     "actor-issue-time-spine": FIRST_WAVE_SOURCE_PRODUCT_DIR / "actor-issue-time-spine.csv",
     "substitution-comparison-groups": FIRST_WAVE_SOURCE_PRODUCT_DIR / "substitution-comparison-groups.csv",
+    "agency-response-final-rule-linkage": FIRST_WAVE_SOURCE_PRODUCT_DIR / "agency-response-final-rule-linkage.csv",
     "canonical-actor-identifiers": FIRST_WAVE_SOURCE_PRODUCT_DIR / "canonical-actor-identifiers.csv",
     "alias-resolution-audit-sample": FIRST_WAVE_SOURCE_PRODUCT_DIR / "alias-resolution-audit-sample.csv",
     "issue-code-crosswalk": FIRST_WAVE_SOURCE_PRODUCT_DIR / "issue-code-crosswalk.csv",
@@ -123,7 +124,7 @@ DOI_DEPOSIT_PACKAGE_CHECKSUM_CSV = ROOT / "dist" / "doi-deposit-package-checksum
 DOI_DEPOSIT_PACKAGE_CHECKSUM_JSON = ROOT / "dist" / "doi-deposit-package-checksum.json"
 DOI_DEPOSIT_PACKAGE_CHECKSUM_MD = ROOT / "dist" / "doi-deposit-package-checksum.md"
 ZENODO_DEPOSIT_METADATA_JSON = ROOT / "dist" / "zenodo-deposit-metadata.json"
-RELEASE_TAG = "paper-publication-readiness-2026-06-18-r155"
+RELEASE_TAG = "paper-publication-readiness-2026-06-18-r156"
 ARCHIVE_HANDOFF_REPORT_NAMES = {
     "archive-handoff-manifest.csv",
     "archive-handoff-manifest.json",
@@ -473,6 +474,7 @@ def submission_inputs() -> list[Path]:
         ROOT / "scripts" / "write-first-wave-causal-protocols.py",
         ROOT / "scripts" / "write-first-wave-source-product-templates.py",
         ROOT / "scripts" / "build-first-wave-entity-resolution-seeds.py",
+        ROOT / "scripts" / "build-first-wave-comment-linkage-seeds.py",
         ROOT / "scripts" / "audit-first-wave-source-products.py",
         ROOT / "scripts" / "build-first-wave-linkage-candidates.py",
         ROOT / "scripts" / "audit-first-wave-source-readiness.py",
@@ -2069,7 +2071,7 @@ def check_first_wave_source_products() -> list[str]:
         )
     if set(candidate_rows) != expected_candidate_rows:
         failures.append(
-            "first-wave source products should mark exactly the entity-resolution seed products candidate_unreviewed: "
+            "first-wave source products should mark exactly the candidate source-product seeds candidate_unreviewed: "
             + ", ".join(sorted(candidate_rows))
         )
     for product, path in FIRST_WAVE_CANDIDATE_SEED_PRODUCTS.items():
@@ -2097,7 +2099,7 @@ def check_first_wave_source_products() -> list[str]:
         product_text = FIRST_WAVE_SOURCE_PRODUCTS_MD.read_text(encoding="utf-8")
         for phrase in (
             "Schema/text ready products: `4`",
-            "Candidate-only unreviewed products: `7`",
+            "Candidate-only unreviewed products: `8`",
             "named reform-shock event file",
             "Use the committed reform-shock row",
             "do not treat this event row as substitution evidence",
@@ -2111,6 +2113,9 @@ def check_first_wave_source_products() -> list[str]:
             "duplicate/template cluster assignments",
             "Use these reproducible pre-review clusters",
             "link clusters to response sections and final-rule text before estimating uptake",
+            "agency response text and final-rule linkage",
+            "Candidate-only manual-review seed is present",
+            "response sections, final-rule text movement, and uptake coding are manually adjudicated",
         ):
             if phrase not in product_text:
                 failures.append(f"first-wave source products markdown missing ready-note boundary phrase: {phrase}")
@@ -2130,6 +2135,7 @@ def check_first_wave_source_products() -> list[str]:
         "canonical actor identifier table",
         "comment-body corpus",
         "duplicate/template cluster assignments",
+        "agency response text and final-rule linkage",
     ]
     for phrase in required_text:
         if phrase not in text:
@@ -2144,7 +2150,7 @@ def check_first_wave_source_products() -> list[str]:
             "not an actor-time panel or substitution estimate",
             "comment-body corpus",
             "duplicate/template clusters",
-            "not agency-response linkage",
+            "candidate-only response/final-rule linkage",
         ):
             if phrase not in supplement:
                 failures.append(f"supplement does not disclose first-wave source product artifact: {phrase}")
@@ -2314,12 +2320,13 @@ def check_first_wave_source_readiness() -> list[str]:
         "Policy-simulation status: `not_cleared`",
         "Source-product schema gate",
         "ready=2",
+        "candidateOnly=1",
         "candidateOnly=2",
         "candidateOnly=5",
         "Manually adjudicate the candidate actor-issue-time spine and comparison groups",
         "first-wave ready products=comment-body corpus; duplicate/template cluster assignments",
-        "agency-response uptake links and final-rule text movement remain absent",
-        "Use the committed Regulations.gov comment corpus",
+        "Candidate response/final-rule linkage file is committed",
+        "Manually adjudicate the candidate response/final-rule linkage file",
         "candidate-only seed files",
         "SAM/FPDS action-history export or keyed pull",
         "canonical actor identifier table",
