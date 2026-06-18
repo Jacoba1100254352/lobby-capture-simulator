@@ -14,6 +14,7 @@ VALIDATION_SUMMARY = REPORTS / "validation-summary.csv"
 CALIBRATION_QUEUE = REPORTS / "calibration-queue.csv"
 CLAIM_POSTURE_AUDIT = REPORTS / "claim-posture-audit.csv"
 CAUSAL_CALIBRATION_TARGETS = REPORTS / "causal-calibration-targets.csv"
+VALIDATION_SCOPE_COVERAGE = REPORTS / "validation-scope-coverage.csv"
 
 
 def main() -> int:
@@ -25,11 +26,12 @@ def main() -> int:
     calibration_rows = read_csv(args.reports / CALIBRATION_QUEUE.name)
     claim_rows = read_csv(args.reports / CLAIM_POSTURE_AUDIT.name)
     causal_rows = read_csv(args.reports / CAUSAL_CALIBRATION_TARGETS.name)
-    rows = readiness_rows(validation_rows, calibration_rows, claim_rows, causal_rows)
+    scope_rows = read_csv(args.reports / VALIDATION_SCOPE_COVERAGE.name)
+    rows = readiness_rows(validation_rows, calibration_rows, claim_rows, causal_rows, scope_rows)
 
     args.reports.mkdir(parents=True, exist_ok=True)
     write_csv(args.reports / "calibration-readiness.csv", rows)
-    write_markdown(args.reports / "calibration-readiness.md", rows, validation_rows, calibration_rows, causal_rows)
+    write_markdown(args.reports / "calibration-readiness.md", rows, validation_rows, calibration_rows, causal_rows, scope_rows)
     print(f"Wrote {args.reports / 'calibration-readiness.csv'}")
     print(f"Wrote {args.reports / 'calibration-readiness.md'}")
     return 0
@@ -47,6 +49,7 @@ def readiness_rows(
         calibration_rows: list[dict[str, str]],
         claim_rows: list[dict[str, str]],
         causal_rows: list[dict[str, str]],
+        scope_rows: list[dict[str, str]],
 ) -> list[dict[str, str]]:
     validation = validation_counts(validation_rows)
     by_priority = Counter(row.get("priority", "") for row in calibration_rows)
@@ -59,6 +62,8 @@ def readiness_rows(
     unknown_rows = [row for row in validation_rows if row.get("status") == "unknown"]
     miss_rows = [row for row in validation_rows if row.get("status") == "miss"]
     source_gap_rows = [row for row in validation_rows if row.get("status") == "source_gap"]
+    not_applicable_rows = [row for row in validation_rows if row.get("status") == "not_applicable"]
+    scope_counts = Counter(row.get("status", "") for row in scope_rows)
     mechanism_posture = claim_status(claim_rows, "Mechanism-model article")
     empirical_posture = claim_status(claim_rows, "Empirical bridge")
     empirical_evidence = claim_field(claim_rows, "Empirical bridge", "evidence")
@@ -93,6 +98,12 @@ def readiness_rows(
             for row in p3_rows
         )
     ) or "none"
+    scope_evidence = (
+        f"not_applicable={len(not_applicable_rows)}; "
+        f"covered_elsewhere={scope_counts.get('covered_elsewhere', 0)}; "
+        f"partial_elsewhere={scope_counts.get('partial_elsewhere', 0)}; "
+        f"coverage_gaps={scope_counts.get('coverage_gap', 0)}"
+    )
 
     return [
         row(
@@ -124,10 +135,12 @@ def readiness_rows(
         ),
         row(
             "soft-validation-scope",
-            "nonblocking" if p3_rows else "cleared",
-            f"P3={len(p3_rows)}; {p3_evidence}",
-            "P3 partials are validation-scope, scenario-family, or benchmark-review work; they do not by themselves clear or block calibrated empirical claims.",
-            "Resolve P3 rows by documenting benchmark scope, splitting scenario families, or adding targeted stress scenarios before treating them as calibration evidence.",
+            "needs_scope_review" if scope_counts.get("coverage_gap", 0) else (
+                "nonblocking" if p3_rows else "cleared"
+            ),
+            f"P3={len(p3_rows)}; {scope_evidence}; {p3_evidence}",
+            "P3 partials and not-applicable rows are validation-scope, scenario-family, or benchmark-review work; they do not by themselves clear or block calibrated empirical claims when the same benchmark is covered elsewhere.",
+            "Resolve P3 rows or validation-scope coverage gaps by documenting benchmark scope, splitting scenario families, or adding targeted stress scenarios before treating them as calibration evidence.",
         ),
         row(
             "source-gap-boundary",
@@ -191,9 +204,11 @@ def write_markdown(
         validation_rows: list[dict[str, str]],
         calibration_rows: list[dict[str, str]],
         causal_rows: list[dict[str, str]],
+        scope_rows: list[dict[str, str]],
 ) -> None:
     validation = validation_counts(validation_rows)
     by_priority = Counter(row.get("priority", "") for row in calibration_rows)
+    scope_counts = Counter(row.get("status", "") for row in scope_rows)
     causal_blockers = [
         row for row in causal_rows
         if row.get("blocksPolicySimulation", "yes") == "yes"
@@ -225,6 +240,9 @@ def write_markdown(
             f"- Validation misses: `{validation.get('miss', 0)}`",
             f"- Validation source gaps: `{validation.get('source_gap', 0)}`",
             f"- Validation unknowns: `{validation.get('unknown', 0)}`",
+            f"- Validation not applicable: `{validation.get('not_applicable', 0)}`",
+            f"- Validation-scope covered elsewhere: `{scope_counts.get('covered_elsewhere', 0)}`",
+            f"- Validation-scope coverage gaps: `{scope_counts.get('coverage_gap', 0)}`",
             f"- Validation-queue P0: `{by_priority.get('P0', 0)}`",
             f"- Validation-queue P1: `{by_priority.get('P1', 0)}`",
             f"- Validation-queue P2: `{by_priority.get('P2', 0)}`",

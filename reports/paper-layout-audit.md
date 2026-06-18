@@ -50,15 +50,15 @@ This audit checks generated PDFs for sparse float pages, large whitespace gaps, 
 | paper/regulation-governance-wiley.pdf | 17 | 56 | 5862 | 0.943 | 0.064 | no | pass | layout density acceptable |
 | paper/regulation-governance-wiley.pdf | 18 | 115 | 6111 | 0.942 | 0.043 | no | pass | references/declarations page |
 | paper/regulation-governance-wiley.pdf | 19 | 49 | 3233 | 0.938 | 0.668 | no | pass | references/declarations page |
-| paper/supplement.pdf | 1 | 35 | 2178 | 0.838 | 0.089 | no | pass | title/front-matter page |
+| paper/supplement.pdf | 1 | 36 | 2205 | 0.838 | 0.089 | no | pass | title/front-matter page |
 | paper/supplement.pdf | 2 | 60 | 3037 | 0.887 | 0.039 | no | pass | layout density acceptable |
 | paper/supplement.pdf | 3 | 239 | 2609 | 0.891 | 0.041 | yes | pass | layout density acceptable |
 | paper/supplement.pdf | 4 | 82 | 2862 | 0.857 | 0.091 | yes | pass | layout density acceptable |
 | paper/supplement.pdf | 5 | 88 | 2486 | 0.891 | 0.036 | yes | pass | layout density acceptable |
-| paper/supplement.pdf | 6 | 69 | 3220 | 0.891 | 0.045 | no | pass | layout density acceptable |
+| paper/supplement.pdf | 6 | 70 | 3253 | 0.891 | 0.035 | no | pass | layout density acceptable |
 | paper/supplement.pdf | 7 | 66 | 4391 | 0.887 | 0.039 | no | pass | layout density acceptable |
 | paper/supplement.pdf | 8 | 118 | 3771 | 0.887 | 0.066 | yes | pass | layout density acceptable |
 | paper/supplement.pdf | 9 | 125 | 3751 | 0.886 | 0.041 | yes | pass | layout density acceptable |
-| paper/supplement.pdf | 10 | 73 | 4006 | 0.887 | 0.039 | no | pass | layout density acceptable |
-| paper/supplement.pdf | 11 | 72 | 3252 | 0.891 | 0.035 | yes | pass | references/declarations page |
-| paper/supplement.pdf | 12 | 37 | 2215 | 0.891 | 0.346 | no | pass | references/declarations page |
+| paper/supplement.pdf | 10 | 76 | 4122 | 0.887 | 0.039 | no | pass | layout density acceptable |
+| paper/supplement.pdf | 11 | 70 | 3288 | 0.891 | 0.040 | yes | pass | references/declarations page |
+| paper/supplement.pdf | 12 | 43 | 2448 | 0.891 | 0.254 | no | pass | references/declarations page |

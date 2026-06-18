@@ -80,6 +80,7 @@ cp "$ROOT_DIR/reports/first-wave-linkage-candidates.md" "$STAGING_DIR/supporting
 cp "$ROOT_DIR/reports/first-wave-source-readiness.md" "$STAGING_DIR/supporting-information/first-wave-source-readiness.md"
 cp "$ROOT_DIR/reports/claim-posture-audit.md" "$STAGING_DIR/supporting-information/claim-posture-audit.md"
 cp "$ROOT_DIR/reports/validation-summary.md" "$STAGING_DIR/supporting-information/validation-summary.md"
+cp "$ROOT_DIR/reports/validation-scope-coverage.md" "$STAGING_DIR/supporting-information/validation-scope-coverage.md"
 cp "$ROOT_DIR/reports/substitution-audit.md" "$STAGING_DIR/supporting-information/substitution-audit.md"
 cp "$ROOT_DIR/reports/lobby-capture-portfolio.md" "$STAGING_DIR/supporting-information/portfolio-screen.md"
 cp "$ROOT_DIR/reports/calibration-queue.md" "$STAGING_DIR/supporting-information/calibration-queue.md"

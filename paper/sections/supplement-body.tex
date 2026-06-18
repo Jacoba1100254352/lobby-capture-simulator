@@ -1,6 +1,6 @@
 \section{Purpose of the Supporting Information}
 
-This supplement records implementation details that should not carry the main article's narrative burden. It makes the model schedule, scenario catalog, validation artifacts, source-panel boundaries, source-capability status, dark-money bridge limits, intermediary bridge limits, revolving-door bridge limits, procurement-denominator limits, procurement-modification composition limits, procurement-benchmark crosswalk, causal-calibration target audit, first-wave causal protocols, first-wave source-product schemas, candidate-only entity-resolution and response-linkage seeds, first-wave source readiness, and procurement-refresh readiness easy to inspect.
+This supplement records implementation details that should not carry the main article's narrative burden. It makes the model schedule, scenario catalog, validation artifacts, validation-scope coverage, source-panel boundaries, source-capability status, dark-money bridge limits, intermediary bridge limits, revolving-door bridge limits, procurement-denominator limits, procurement-modification composition limits, procurement-benchmark crosswalk, causal-calibration target audit, first-wave causal protocols, first-wave source-product schemas, candidate-only entity-resolution and response-linkage seeds, first-wave source readiness, and procurement-refresh readiness easy to inspect.
 
 \section{Model Schedule and State}
 
@@ -108,7 +108,7 @@ The reproducible report pipeline writes:
   \item first-wave linkage-candidate report mining the frozen normalized snapshot for automated cross-source and cross-venue actor-name overlaps as a manual-review worklist;
   \item candidate-only seed files under \texttt{data/calibration/first-wave/} for canonical actors, alias review, issue crosswalks, false-match review, linked actor-issue-venue-time review, and comment response/final-rule linkage review;
   \item first-wave source-readiness audit mapping those protocols and source-product gates to bounded/proxy support, missing products, candidate-only unadjudicated products, schema/quality issues, and blocking issues;
-  \item validation summary, classified calibration queue, and calibration-readiness audit;
+  \item validation summary, validation-scope coverage audit, classified calibration queue, and calibration-readiness audit;
   \item substitution audit with distortion-failure, warning, and channel-shift tradeoff labels;
   \item LaTeX log audit checking final manuscript, Wiley, and supplement logs for unresolved citation, reference, fatal error, or rerun-required states;
   \item generated paper tables, figures, local PDF, Wiley PDF, supplement PDF, and Wiley submission archive;
@@ -156,7 +156,7 @@ The first-wave source-product audit in \texttt{reports/first-wave-source-product
 
 The claim-posture audit in \texttt{reports/claim-posture-audit.md} summarizes the same evidence at the manuscript level. It clears the mechanism-model article posture, bounds the empirical bridge, and keeps calibrated policy-simulation claims outside the present manuscript scope until the causal-calibration target audit and source panels justify that stronger claim.
 
-The policy-claim language audit in \texttt{reports/policy-claim-language-audit.md} mechanically scans the manuscript, supplement, generated-table sources, and paper-facing documentation for calibrated-policy, causal-effect, policy-ranking, and representativeness language. The audit flags any such phrase that does not appear with local claim-boundary language, providing a reproducible check against accidental scope and policy-effect overclaims.
+The validation-scope coverage audit in \texttt{reports/validation-scope-coverage.md} enumerates each \texttt{not\_applicable} validation row and records whether the same benchmark is covered by another generated report. This keeps scenario-family exclusions from being mistaken for hidden validation misses: scoped-out rows are acceptable for a report family only when the bundle covers that benchmark elsewhere. The policy-claim language audit in \texttt{reports/policy-claim-language-audit.md} mechanically scans the manuscript, supplement, generated-table sources, and paper-facing documentation for calibrated-policy, causal-effect, policy-ranking, and representativeness language. The audit flags any such phrase that does not appear with local claim-boundary language, providing a reproducible check against accidental scope and policy-effect overclaims.
 
 The LaTeX log audit in \texttt{reports/latex-log-audit.md} checks the final local manuscript, Wiley manuscript, and supplement logs for unresolved citations, references, fatal LaTeX errors, and rerun-required states. Overfull and underfull boxes remain visible in that report for human visual review, but unresolved compile state blocks the paper artifact gate.
 

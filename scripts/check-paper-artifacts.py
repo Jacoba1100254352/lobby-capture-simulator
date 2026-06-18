@@ -13,6 +13,7 @@ import subprocess
 import sys
 import tempfile
 import zipfile
+from collections import Counter
 from pathlib import Path
 
 
@@ -94,6 +95,8 @@ FIRST_WAVE_SOURCE_READINESS_MD = ROOT / "reports" / "first-wave-source-readiness
 FIRST_WAVE_SOURCE_READINESS_CSV = ROOT / "reports" / "first-wave-source-readiness.csv"
 CLAIM_POSTURE_AUDIT_MD = ROOT / "reports" / "claim-posture-audit.md"
 CLAIM_POSTURE_AUDIT_CSV = ROOT / "reports" / "claim-posture-audit.csv"
+VALIDATION_SCOPE_COVERAGE_MD = ROOT / "reports" / "validation-scope-coverage.md"
+VALIDATION_SCOPE_COVERAGE_CSV = ROOT / "reports" / "validation-scope-coverage.csv"
 CALIBRATION_READINESS_MD = ROOT / "reports" / "calibration-readiness.md"
 CALIBRATION_READINESS_CSV = ROOT / "reports" / "calibration-readiness.csv"
 POLICY_CLAIM_LANGUAGE_AUDIT_MD = ROOT / "reports" / "policy-claim-language-audit.md"
@@ -124,7 +127,7 @@ DOI_DEPOSIT_PACKAGE_CHECKSUM_CSV = ROOT / "dist" / "doi-deposit-package-checksum
 DOI_DEPOSIT_PACKAGE_CHECKSUM_JSON = ROOT / "dist" / "doi-deposit-package-checksum.json"
 DOI_DEPOSIT_PACKAGE_CHECKSUM_MD = ROOT / "dist" / "doi-deposit-package-checksum.md"
 ZENODO_DEPOSIT_METADATA_JSON = ROOT / "dist" / "zenodo-deposit-metadata.json"
-RELEASE_TAG = "paper-publication-readiness-2026-06-18-r157"
+RELEASE_TAG = "paper-publication-readiness-2026-06-18-r158"
 ARCHIVE_HANDOFF_REPORT_NAMES = {
     "archive-handoff-manifest.csv",
     "archive-handoff-manifest.json",
@@ -264,6 +267,7 @@ EXPECTED_ZIP_MEMBERS = {
     "supporting-information/submission-readiness.md",
     "supporting-information/latex-log-audit.md",
     "supporting-information/validation-summary.md",
+    "supporting-information/validation-scope-coverage.md",
     "supporting-information/substitution-audit.md",
     "supporting-information/portfolio-screen.md",
     "supporting-information/calibration-queue.md",
@@ -316,6 +320,8 @@ def main() -> int:
             DOI_DEPOSIT_PACKAGE_CHECKSUM_MD,
             ZENODO_DEPOSIT_PREFLIGHT_CSV,
             ZENODO_DEPOSIT_PREFLIGHT_MD,
+            VALIDATION_SCOPE_COVERAGE_CSV,
+            VALIDATION_SCOPE_COVERAGE_MD,
             REGGOV_GUIDELINES_READINESS_CSV,
             REGGOV_GUIDELINES_READINESS_MD,
         ])
@@ -342,6 +348,7 @@ def main() -> int:
     failures.extend(check_first_wave_linkage_candidates())
     failures.extend(check_first_wave_source_readiness())
     failures.extend(check_claim_posture_audit())
+    failures.extend(check_validation_scope_coverage())
     failures.extend(check_policy_claim_language_audit())
     failures.extend(check_final_human_readthrough())
     failures.extend(check_submission_readiness_audit())
@@ -832,6 +839,84 @@ def check_claim_alignment() -> list[str]:
                         failures.append(
                             f"{path.relative_to(ROOT)} still describes electoral-communication rows as absent"
                         )
+    return failures
+
+
+def check_validation_scope_coverage() -> list[str]:
+    failures: list[str] = []
+    missing = [
+        path.relative_to(ROOT)
+        for path in (VALIDATION_SCOPE_COVERAGE_MD, VALIDATION_SCOPE_COVERAGE_CSV)
+        if not path.exists()
+    ]
+    if missing:
+        return [f"missing validation scope coverage artifact: {path}" for path in missing]
+    if not (ROOT / "reports" / "validation-summary.csv").exists():
+        return ["missing validation summary CSV needed to verify validation scope coverage"]
+
+    with (ROOT / "reports" / "validation-summary.csv").open(newline="", encoding="utf-8") as source:
+        validation_rows = list(csv.DictReader(source))
+    with VALIDATION_SCOPE_COVERAGE_CSV.open(newline="", encoding="utf-8") as source:
+        coverage_reader = csv.DictReader(source)
+        coverage_rows = list(coverage_reader)
+        coverage_fields = set(coverage_reader.fieldnames or [])
+
+    required_fields = {
+        "report",
+        "benchmarkKey",
+        "metric",
+        "validationScope",
+        "status",
+        "coverageReports",
+        "fitCoverageCount",
+        "partialCoverageCount",
+        "nextAction",
+    }
+    missing_fields = required_fields - coverage_fields
+    if missing_fields:
+        failures.append(
+            "validation scope coverage CSV missing fields: " + ", ".join(sorted(missing_fields))
+        )
+        return failures
+
+    validation_counts = Counter(row.get("status", "") for row in validation_rows)
+    coverage_counts = Counter(row.get("status", "") for row in coverage_rows)
+    not_applicable = validation_counts.get("not_applicable", 0)
+    if len(coverage_rows) != not_applicable:
+        failures.append(
+            f"validation scope coverage rows ({len(coverage_rows)}) do not match not_applicable validations ({not_applicable})"
+        )
+    if coverage_counts.get("coverage_gap", 0):
+        failures.append(
+            f"validation scope coverage has unresolved coverage gaps: {coverage_counts.get('coverage_gap', 0)}"
+        )
+    uncovered = [
+        row for row in coverage_rows
+        if row.get("status") == "covered_elsewhere" and row.get("coverageReports", "") == "none"
+    ]
+    if uncovered:
+        failures.append("validation scope coverage labels rows covered_elsewhere without coverage reports")
+
+    markdown = VALIDATION_SCOPE_COVERAGE_MD.read_text(encoding="utf-8")
+    required_phrases = [
+        f"Not-applicable validations: `{not_applicable}`",
+        f"Covered elsewhere: `{coverage_counts.get('covered_elsewhere', 0)}`",
+        "Coverage gaps: `0`",
+        "scenario-specific benchmark",
+    ]
+    for phrase in required_phrases:
+        if phrase not in markdown:
+            failures.append(f"validation scope coverage markdown missing phrase: {phrase}")
+    if CALIBRATION_READINESS_MD.exists():
+        readiness = CALIBRATION_READINESS_MD.read_text(encoding="utf-8")
+        for phrase in (
+            f"not_applicable={not_applicable}",
+            f"coverage_gaps={coverage_counts.get('coverage_gap', 0)}",
+        ):
+            if phrase not in readiness:
+                failures.append(f"calibration-readiness audit missing validation-scope evidence: {phrase}")
+    if SUPPLEMENT_BODY.exists() and "validation-scope coverage audit" not in SUPPLEMENT_BODY.read_text(encoding="utf-8"):
+        failures.append("supplement does not disclose the validation-scope coverage audit")
     return failures
 
 
@@ -3469,6 +3554,7 @@ def package_byte_checks() -> list[tuple[Path, str]]:
         (FIRST_WAVE_SOURCE_READINESS_MD, "supporting-information/first-wave-source-readiness.md"),
         (ROOT / "reports" / "claim-posture-audit.md", "supporting-information/claim-posture-audit.md"),
         (ROOT / "reports" / "validation-summary.md", "supporting-information/validation-summary.md"),
+        (VALIDATION_SCOPE_COVERAGE_MD, "supporting-information/validation-scope-coverage.md"),
         (ROOT / "reports" / "substitution-audit.md", "supporting-information/substitution-audit.md"),
         (ROOT / "reports" / "lobby-capture-portfolio.md", "supporting-information/portfolio-screen.md"),
         (ROOT / "reports" / "calibration-queue.md", "supporting-information/calibration-queue.md"),
