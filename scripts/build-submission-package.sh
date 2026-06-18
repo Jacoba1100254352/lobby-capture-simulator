@@ -96,6 +96,8 @@ mkdir -p "$STAGING_DIR/supporting-information/source-product-templates"
 cp -R "$ROOT_DIR/docs/source-product-templates/first-wave" "$STAGING_DIR/supporting-information/source-product-templates/first-wave"
 mkdir -p "$STAGING_DIR/supporting-information/source-products/first-wave"
 for source_product in \
+  comment-body-corpus.csv \
+  comment-template-clusters.csv \
   canonical-actor-identifiers.csv \
   alias-resolution-audit-sample.csv \
   issue-code-crosswalk.csv \

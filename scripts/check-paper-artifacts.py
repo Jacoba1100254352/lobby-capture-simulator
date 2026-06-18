@@ -80,6 +80,8 @@ FIRST_WAVE_CANDIDATE_SEED_PRODUCTS = {
     "linked-actor-issue-venue-time": FIRST_WAVE_SOURCE_PRODUCT_DIR / "linked-actor-issue-venue-time.csv",
 }
 FIRST_WAVE_TEXT_SOURCE_PRODUCTS = {
+    "comment-body-corpus": FIRST_WAVE_SOURCE_PRODUCT_DIR / "comment-body-corpus.csv",
+    "duplicate-template-clusters": FIRST_WAVE_SOURCE_PRODUCT_DIR / "comment-template-clusters.csv",
     "meeting-log-or-missing-channel-note": FIRST_WAVE_SOURCE_PRODUCT_DIR / "meeting-log-channel-note.md",
 }
 FIRST_WAVE_LINKAGE_CANDIDATES_MD = ROOT / "reports" / "first-wave-linkage-candidates.md"
@@ -119,7 +121,7 @@ DOI_DEPOSIT_PACKAGE_CHECKSUM_CSV = ROOT / "dist" / "doi-deposit-package-checksum
 DOI_DEPOSIT_PACKAGE_CHECKSUM_JSON = ROOT / "dist" / "doi-deposit-package-checksum.json"
 DOI_DEPOSIT_PACKAGE_CHECKSUM_MD = ROOT / "dist" / "doi-deposit-package-checksum.md"
 ZENODO_DEPOSIT_METADATA_JSON = ROOT / "dist" / "zenodo-deposit-metadata.json"
-RELEASE_TAG = "paper-publication-readiness-2026-06-18-r152"
+RELEASE_TAG = "paper-publication-readiness-2026-06-18-r153"
 ARCHIVE_HANDOFF_REPORT_NAMES = {
     "archive-handoff-manifest.csv",
     "archive-handoff-manifest.json",
@@ -2051,6 +2053,8 @@ def check_first_wave_source_products() -> list[str]:
             if not (ROOT / template_path).exists():
                 failures.append(f"first-wave source product {product} template path does not exist: {template_path}")
     allowed_ready_rows = {
+        "comment-body-corpus",
+        "duplicate-template-clusters",
         "meeting-log-or-missing-channel-note",
         "substitution-reform-shocks",
     }
@@ -2085,18 +2089,24 @@ def check_first_wave_source_products() -> list[str]:
     if ready_rows:
         if set(ready_rows) != allowed_ready_rows:
             failures.append(
-                "first-wave source products may only mark the bounded HLOGA reform-shock row and meeting/contact missing-channel design note ready in this release: "
+                "first-wave source products may only mark the bounded HLOGA reform-shock row, meeting/contact missing-channel design note, comment-body corpus, and duplicate/template cluster product ready in this release: "
                 + ", ".join(sorted(ready_rows))
             )
         product_text = FIRST_WAVE_SOURCE_PRODUCTS_MD.read_text(encoding="utf-8")
         for phrase in (
-            "Schema/text ready products: `2`",
+            "Schema/text ready products: `4`",
             "Candidate-only unreviewed products: `5`",
             "named reform-shock event file",
             "Use the committed reform-shock row",
             "do not treat this event row as substitution evidence",
             "meeting-log or contact-register panel, or explicit missing-channel design note",
             "Text source product contains the required missing-channel design terms",
+            "comment-body corpus",
+            "Use this public comment corpus",
+            "do not treat body text alone as agency uptake evidence",
+            "duplicate/template cluster assignments",
+            "Use these reproducible pre-review clusters",
+            "link clusters to response sections and final-rule text before estimating uptake",
         ):
             if phrase not in product_text:
                 failures.append(f"first-wave source products markdown missing ready-note boundary phrase: {phrase}")
@@ -2115,6 +2125,7 @@ def check_first_wave_source_products() -> list[str]:
         "SAM/FPDS action-history export or keyed pull",
         "canonical actor identifier table",
         "comment-body corpus",
+        "duplicate/template cluster assignments",
     ]
     for phrase in required_text:
         if phrase not in text:
@@ -2127,6 +2138,9 @@ def check_first_wave_source_products() -> list[str]:
             "reports/first-wave-source-products.md",
             "Honest Leadership and Open Government Act of 2007",
             "not an actor-time panel or substitution estimate",
+            "comment-body corpus",
+            "duplicate/template clusters",
+            "not agency-response linkage",
         ):
             if phrase not in supplement:
                 failures.append(f"supplement does not disclose first-wave source product artifact: {phrase}")
@@ -2298,6 +2312,9 @@ def check_first_wave_source_readiness() -> list[str]:
         "ready=2",
         "candidateOnly=5",
         "Use the committed reform-shock event file",
+        "first-wave ready products=comment-body corpus; duplicate/template cluster assignments",
+        "agency-response uptake links and final-rule text movement remain absent",
+        "Use the committed Regulations.gov comment corpus",
         "candidate-only seed files",
         "SAM/FPDS action-history export or keyed pull",
         "canonical actor identifier table",

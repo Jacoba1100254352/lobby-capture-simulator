@@ -114,6 +114,7 @@ def readiness_row(
             "first-wave ready products=" + "; ".join(ready_labels),
         )
     row["nextAction"] = product_aware_next_action(target, row["nextAction"], ready_labels)
+    row["blockingIssue"] = product_aware_blocking_issue(target, row["blockingIssue"], ready_labels)
     if product_gate["missingProducts"]:
         row["missingSourceProducts"] = product_gate["missingProducts"]
     return {
@@ -199,6 +200,28 @@ def product_aware_next_action(target: str, default: str, ready_labels: list[str]
             "Use the committed reform-shock event file and meeting/contact missing-channel note, "
             "then build the actor-issue-time linkage file and exposed plus comparison groups before "
             "inspecting outcome movement."
+        )
+    if target == "comment-authenticity-and-uptake-effect" and {
+        "comment-body corpus",
+        "duplicate/template cluster assignments",
+    }.issubset(ready):
+        return (
+            "Use the committed Regulations.gov comment corpus and duplicate/template clusters, "
+            "then link clustered comments to agency response sections and final-rule text before "
+            "estimating uptake or duplicate-compression effects."
+        )
+    return default
+
+
+def product_aware_blocking_issue(target: str, default: str, ready_labels: list[str]) -> str:
+    ready = set(ready_labels)
+    if target == "comment-authenticity-and-uptake-effect" and {
+        "comment-body corpus",
+        "duplicate/template cluster assignments",
+    }.issubset(ready):
+        return (
+            "A bounded public comment corpus and duplicate/template clusters are committed, "
+            "but agency-response uptake links and final-rule text movement remain absent."
         )
     return default
 
@@ -341,8 +364,8 @@ def comment_row(
             metric_text(moments, "commentFloodingIndex", "comment-flooding index"),
         ]),
         "boundedOrProxySupport": (
-            "Rulemaking comments: source-moment-only "
-            f"({metric_text(moments, 'regulatoryRows', 'regulatory rows')}; no separate source-panel row)"
+            "Rulemaking comments: source moments plus first-wave source products when ready "
+            f"({metric_text(moments, 'regulatoryRows', 'regulatory rows')})"
         ),
         "missingSourceProducts": "; ".join([
             "comment-body corpus",
@@ -352,7 +375,7 @@ def comment_row(
             "final-rule text linkage",
             "treated/untreated or before/after docket marker",
         ]),
-        "blockingIssue": "Docket schema and volume moments exist, but body-level duplicate clusters and agency-response uptake links are not yet committed.",
+        "blockingIssue": "Docket schema and volume moments exist, but comment-corpus products and agency-response uptake links must both be committed before estimation.",
         "claimBoundary": "Supports rulemaking information-distortion design and source moments only; does not estimate comment-authenticity effects.",
         "nextAction": "Select a docket family, archive comment bodies and duplicate clusters, then link comments to response sections and final-rule text before estimating uptake.",
     }

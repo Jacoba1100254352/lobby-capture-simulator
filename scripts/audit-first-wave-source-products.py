@@ -619,6 +619,16 @@ def product_next_action(spec: ProductSpec, status: str) -> str:
                 "Use this missing-channel note to bound private-access substitution while building the "
                 "actor-issue-time spine; replace it with a meeting/contact panel only if one is sourced."
             )
+        if spec.product_key == "comment-body-corpus":
+            return (
+                "Use this public comment corpus with the duplicate/template cluster product; "
+                "do not treat body text alone as agency uptake evidence."
+            )
+        if spec.product_key == "duplicate-template-clusters":
+            return (
+                "Use these reproducible pre-review clusters with the comment-body corpus; "
+                "link clusters to response sections and final-rule text before estimating uptake."
+            )
         return "Use this ready source product as an input to the target protocol; keep provenance and claim boundaries attached."
     return spec.next_action
 
