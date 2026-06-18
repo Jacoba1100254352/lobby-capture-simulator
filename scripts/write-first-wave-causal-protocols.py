@@ -25,6 +25,9 @@ PROTOCOLS = {
         "sensitivityChecks": "alternative event windows, actor matching rules, issue-code coarsening, and exclusion of high-outlier spenders",
         "threatModel": "simultaneous political shocks, endogenous reform adoption, entity-resolution errors, and unobserved private contacts",
         "claimUpgradeBoundary": "Can support a source-anchored substitution diagnostic for the named reform family; cannot establish national hidden-channel magnitudes alone.",
+        "committedScaffold": "HLOGA reform-shock row, meeting/contact missing-channel note, and candidate actor-time plus comparison-group seeds.",
+        "firstPromotionGate": "Adjudicate aliases, issues, exposure groups, and pre/post windows; replace candidate rows with observed actor-issue activity across at least three venues.",
+        "whyItMatters": "Directly tests whether pressure moves from a restricted visible channel into alternate channels after a named reform shock.",
     },
     "procurement-modification-causal-capture": {
         "protocolStatus": "protocol_ready_source_pending",
@@ -38,6 +41,9 @@ PROTOCOLS = {
         "sensitivityChecks": "row-weighted, distinct-award, and amount-weighted denominators; agency fixed effects; competition-field completeness thresholds",
         "threatModel": "procurement coding inconsistency, unobserved contract complexity, reverse causality from troubled awards to lobbying, and missing protest/firewall data",
         "claimUpgradeBoundary": "Can strengthen procurement-domain capture-adjacent diagnostics; cannot justify broad calibrated capture effects without exposure timing and outcome linkage.",
+        "committedScaffold": "USAspending action and bulk denominators, optional SAM importer, and acquisition plan for SAM/FPDS, protests, exclusions, and firewalls.",
+        "firstPromotionGate": "Acquire a promotable SAM/FPDS action-history crosswalk and add GAO protest, SAM exclusion, offer-count, and firewall overlays.",
+        "whyItMatters": "Turns procurement from denominator-mapped diagnostics into an outcome panel with timing, integrity controls, and exposure linkage.",
     },
     "comment-authenticity-and-uptake-effect": {
         "protocolStatus": "protocol_ready_source_pending",
@@ -51,6 +57,9 @@ PROTOCOLS = {
         "sensitivityChecks": "duplicate-clustering thresholds, technical-content classifiers, response-text matching rules, and excluding late or withdrawn comments",
         "threatModel": "missing comment bodies, bot or identity uncertainty, agency selection into authentication tools, and conflating volume with substantive influence",
         "claimUpgradeBoundary": "Can anchor rulemaking information-distortion mechanisms for observed dockets; cannot generalize to all agencies or hidden influence channels alone.",
+        "committedScaffold": "Bounded Regulations.gov comment-body corpus, duplicate/template cluster assignments, and candidate response/final-rule linkage scaffold.",
+        "firstPromotionGate": "Manually link clustered comments to agency response sections and final-rule text, then review uptake codes and text-similarity fields.",
+        "whyItMatters": "Connects comment flooding and authenticity filters to agency uptake rather than only to docket volume or template saturation.",
     },
     "venue-shifting-detection-effect": {
         "protocolStatus": "protocol_ready_source_pending",
@@ -64,6 +73,9 @@ PROTOCOLS = {
         "sensitivityChecks": "strict versus fuzzy matching, issue-window width, alias normalization rules, and venue subsets with and without meeting/procurement rows",
         "threatModel": "entity-resolution bias, common-name collisions, missing private channels, and inflated substitution when issue codes are too broad",
         "claimUpgradeBoundary": "Can support a detection and measurement contribution for cross-venue substitution; cannot by itself prove that substitution changed outcomes.",
+        "committedScaffold": "Candidate canonical-actor, alias-review, issue-crosswalk, false-match, and linked actor-issue-venue-time seed files.",
+        "firstPromotionGate": "Complete manual false-positive and false-negative audits, adjudicate issue comparability, and promote a reviewed linked panel.",
+        "whyItMatters": "Shows how much apparent substitution becomes visible only after actors and issues are resolved across public venues.",
     },
 }
 
@@ -73,24 +85,36 @@ PAPER_SUMMARIES = {
         "unit": "Actor-issue-month or quarter",
         "design": "Event-study or difference-in-differences around a binding reform shock.",
         "validity": "Pre-trends, placebo dates, unaffected issues, and alternate matching windows.",
+        "scaffold": "HLOGA shock row plus candidate actor-time seeds.",
+        "promotion": "Adjudicate exposed/comparison actors and observed pre/post activity across three or more venues.",
+        "claim": "Named-reform substitution diagnostic.",
     },
     "procurement-modification-causal-capture": {
         "label": "Procurement modification",
         "unit": "Award-action or award-recipient-quarter",
         "design": "Matched award/action panel with agency, award-type, size, timing, and competition controls.",
         "validity": "Low-discretion placebo awards, agency fixed effects, and row/award/amount denominators.",
+        "scaffold": "USAspending denominators plus optional SAM importer.",
+        "promotion": "Promote SAM/FPDS crosswalk, protest, exclusion, offer-count, and firewall overlays.",
+        "claim": "Procurement-domain capture-adjacent diagnostic.",
     },
     "comment-authenticity-and-uptake-effect": {
         "label": "Comment authenticity and uptake",
         "unit": "Docket-comment or docket-rule stage",
         "design": "Treated/untreated or before/after docket comparison around authentication or deduplication.",
         "validity": "No-mass-comment placebo dockets, response-section placebos, and duplicate-threshold sensitivity.",
+        "scaffold": "Comment corpus, duplicate clusters, and candidate response-linkage file.",
+        "promotion": "Review response/final-rule links, uptake codes, and text-similarity fields.",
+        "claim": "Observed-docket information-distortion diagnostic.",
     },
     "venue-shifting-detection-effect": {
         "label": "Venue-shifting detection",
         "unit": "Actor-issue-venue-time record",
         "design": "Compare single-source diagnostics with linked multi-venue actor/issue panels.",
         "validity": "Manual false-match audits, unrelated issue placebos, and strict/fuzzy matching sensitivity.",
+        "scaffold": "Candidate actor, alias, issue, false-match, and linked-panel seeds.",
+        "promotion": "Complete false-match review and promote a reviewed actor-issue-venue-time panel.",
+        "claim": "Cross-venue detection and measurement diagnostic.",
     },
 }
 
@@ -153,6 +177,9 @@ def write_csv(path: Path, rows: list[dict[str, str]]) -> None:
         "falsificationChecks",
         "sensitivityChecks",
         "threatModel",
+        "committedScaffold",
+        "firstPromotionGate",
+        "whyItMatters",
         "estimand",
         "clearanceCriterion",
         "claimUpgradeBoundary",
@@ -212,6 +239,21 @@ def write_markdown(path: Path, rows: list[dict[str, str]]) -> None:
                 **{key: md(value) for key, value in row.items()}
             )
         )
+    lines.extend([
+        "",
+        "## Promotion Gates",
+        "",
+        "These rows identify the concrete scaffold already in the repository and the first manual gate that must clear before the protocol can be used for estimation.",
+        "",
+        "| Target | Committed scaffold | First promotion gate | Why it matters |",
+        "| --- | --- | --- | --- |",
+    ])
+    for row in rows:
+        lines.append(
+            "| {targetKey} | {committedScaffold} | {firstPromotionGate} | {whyItMatters} |".format(
+                **{key: md(value) for key, value in row.items()}
+            )
+        )
     lines.append("")
     path.write_text("\n".join(lines), encoding="utf-8")
 
@@ -224,9 +266,9 @@ def write_latex(path: Path, rows: list[dict[str, str]]) -> None:
         "\\small",
         "\\caption{First-wave causal calibration protocols.}",
         "\\label{tab:first-wave-causal-protocols}",
-        "\\begin{tabular}{p{0.18\\textwidth}p{0.22\\textwidth}p{0.25\\textwidth}p{0.25\\textwidth}}",
+        "\\begin{tabular}{p{0.16\\textwidth}p{0.24\\textwidth}p{0.30\\textwidth}p{0.20\\textwidth}}",
         "\\toprule",
-        "Target & Unit & Comparison design & Validity checks \\\\",
+        "Target & Current scaffold & First promotion gate & Claim boundary \\\\",
         "\\midrule",
     ]
     for row in rows:
@@ -234,9 +276,9 @@ def write_latex(path: Path, rows: list[dict[str, str]]) -> None:
         lines.append(
             "{} & {} & {} & {} \\\\".format(
                 tex(summary["label"]),
-                tex(summary["unit"]),
-                tex(summary["design"]),
-                tex(summary["validity"]),
+                tex(summary["scaffold"]),
+                tex(summary["promotion"]),
+                tex(summary["claim"]),
             )
         )
     lines.extend([
