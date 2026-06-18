@@ -9,6 +9,9 @@ ZIP_PATH="$DIST_DIR/lobby-capture-wiley-submission.zip"
 TEMPLATE_DIR="$PAPER_DIR/.wiley-template/Optimal-Design-layout"
 BUILD_DIR="$PAPER_DIR/.wiley-build"
 SUBMISSION_BASENAME="strategic-channel-substitution-regulatory-capture"
+export TZ=UTC
+export SOURCE_DATE_EPOCH="${SOURCE_DATE_EPOCH:-1777939200}"
+export FORCE_SOURCE_DATE="${FORCE_SOURCE_DATE:-1}"
 
 if ! python3 - "$ROOT_DIR" <<'PY'
 from pathlib import Path
@@ -169,6 +172,7 @@ Supporting information: supporting-information/
 Package manifest: supporting-information/submission-package-manifest.json and supporting-information/submission-package-manifest.md
 
 Compile from this directory with:
+export TZ=UTC SOURCE_DATE_EPOCH=1777939200 FORCE_SOURCE_DATE=1
 pdflatex -interaction=nonstopmode strategic-channel-substitution-regulatory-capture.tex
 bibtex strategic-channel-substitution-regulatory-capture
 pdflatex -interaction=nonstopmode strategic-channel-substitution-regulatory-capture.tex

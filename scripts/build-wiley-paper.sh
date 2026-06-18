@@ -30,6 +30,9 @@ resolve_binary() {
 PDFLATEX="$(resolve_binary pdflatex)"
 BIBTEX="$(resolve_binary bibtex)"
 KPSEWHICH="$(resolve_binary kpsewhich)"
+export TZ=UTC
+export SOURCE_DATE_EPOCH="${SOURCE_DATE_EPOCH:-1777939200}"
+export FORCE_SOURCE_DATE="${FORCE_SOURCE_DATE:-1}"
 
 if [ ! -f "$WILEY_DIR/USG.cls" ]; then
   "$ROOT_DIR/scripts/fetch-wiley-template.sh"

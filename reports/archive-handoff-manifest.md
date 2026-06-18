@@ -7,8 +7,8 @@ PDF and ZIP byte streams can differ across TeX and archive implementations. The 
 ## Summary
 
 - Schema: `lobby-capture-archive-handoff-manifest-v1`
-- Release tag: `paper-publication-readiness-2026-06-18-r164`
-- Release URL: https://github.com/Jacoba1100254352/lobby-capture-simulator/releases/tag/paper-publication-readiness-2026-06-18-r164
+- Release tag: `paper-publication-readiness-2026-06-18-r165`
+- Release URL: https://github.com/Jacoba1100254352/lobby-capture-simulator/releases/tag/paper-publication-readiness-2026-06-18-r165
 - Generated at: `2026-05-05T00:00:00Z`
 - DOI status: not asserted by this manifest
 - Release asset checksum file: `dist/release-asset-checksums.{csv,json,md}`
@@ -29,14 +29,14 @@ PDF and ZIP byte streams can differ across TeX and archive implementations. The 
 | paper/regulation-governance-wiley.pdf | regulation-governance-wiley.pdf | wiley-rendered-manuscript | yes | release-asset-checksum-recorded-in-dist | see-dist-release-asset-checksums | `see-dist-release-asset-checksums` |
 | paper/strategic-channel-substitution-regulatory-capture.pdf | strategic-channel-substitution-regulatory-capture.pdf | local-rendered-manuscript | yes | release-asset-checksum-recorded-in-dist | see-dist-release-asset-checksums | `see-dist-release-asset-checksums` |
 | paper/supplement.pdf | supplement.pdf | supporting-information-pdf | yes | release-asset-checksum-recorded-in-dist | see-dist-release-asset-checksums | `see-dist-release-asset-checksums` |
-| CITATION.cff | - | citation-metadata | source-archive | tracked-source-verified | 1286 | `6f7361d779241af3987f96b1028d6f314fd1897b1655eb6921a9e721607f25f3` |
-| .zenodo.json | - | doi-deposit-metadata | source-archive | tracked-source-verified | 1490 | `2c8327f02d1fad4511e74203bcc3bcf339e13b7b861212054fe4057bbd44fa32` |
-| reports/submission-readiness.md | - | submission-readiness-audit | source-archive | tracked-source-verified | 4989 | `7dbe42075108318841045d2997c70b7fac47093b8328a76e37540852e881085e` |
+| CITATION.cff | - | citation-metadata | source-archive | tracked-source-verified | 1286 | `1901d221bb4bac3d172ae2601897724e6d9426609ba8fdfd7ed6cffa62f4b25c` |
+| .zenodo.json | - | doi-deposit-metadata | source-archive | tracked-source-verified | 1490 | `fb08b5b1f0c4e542dda9b461379748a5f88b071d34cde2109a854dfc771c846e` |
+| reports/submission-readiness.md | - | submission-readiness-audit | source-archive | tracked-source-verified | 4989 | `20cb9a08ddc095b2b9af564a251039cf9592d7c45d9f6dce0ecd5e5dc5954ccc` |
 | reports/reviewer-risk-register.csv | - | reviewer-risk-register | source-archive | tracked-source-verified | 6676 | `9d68ba817227f143e28498a02b4b0885faf16c253f590109d4449e9794ed7b16` |
 | reports/reviewer-risk-register.md | - | reviewer-risk-register | source-archive | tracked-source-verified | 7850 | `ab8dd3fe28f8324d2d1f4a62dfacf44865e706ccc3ae2a8fec9243991e6ed601` |
-| reports/final-human-readthrough.md | - | manual-signoff-record | source-archive | tracked-source-verified | 5393 | `8b240f42b83e1a26ae0b4b5250d165afbc24103ee466944ff1a65a9bfa178811` |
-| reports/final-human-readthrough-audit.csv | - | final-human-readthrough-audit | source-archive | tracked-source-verified | 6874 | `e07b8d696c1bf6c2f334746df1d6b2d2096367cd25ec261399f8304e5abf6a13` |
-| reports/final-human-readthrough-audit.md | - | final-human-readthrough-audit | source-archive | tracked-source-verified | 7841 | `8720c015c95479a122678b45f48b620667aaca76cebfc52217d707d801b7bf50` |
+| reports/final-human-readthrough.md | - | manual-signoff-record | source-archive | tracked-source-verified | 5393 | `250c54df262e2ec05656dae053d4219333af7a97bff7e14f000c6e2283453968` |
+| reports/final-human-readthrough-audit.csv | - | final-human-readthrough-audit | source-archive | tracked-source-verified | 6874 | `e15430b0f42b46100ad4392704f9d010d6da1b021a368139763dca22fb66d21b` |
+| reports/final-human-readthrough-audit.md | - | final-human-readthrough-audit | source-archive | tracked-source-verified | 7841 | `d2e99525216449cd8f2484cee63c43686e054079e4535fd21caed58dc73f63cc` |
 
 ## Archive Use
 

@@ -131,7 +131,7 @@ DOI_DEPOSIT_PACKAGE_CHECKSUM_CSV = ROOT / "dist" / "doi-deposit-package-checksum
 DOI_DEPOSIT_PACKAGE_CHECKSUM_JSON = ROOT / "dist" / "doi-deposit-package-checksum.json"
 DOI_DEPOSIT_PACKAGE_CHECKSUM_MD = ROOT / "dist" / "doi-deposit-package-checksum.md"
 ZENODO_DEPOSIT_METADATA_JSON = ROOT / "dist" / "zenodo-deposit-metadata.json"
-RELEASE_TAG = "paper-publication-readiness-2026-06-18-r164"
+RELEASE_TAG = "paper-publication-readiness-2026-06-18-r165"
 ARCHIVE_HANDOFF_REPORT_NAMES = {
     "archive-handoff-manifest.csv",
     "archive-handoff-manifest.json",
@@ -3836,6 +3836,9 @@ def check_submission_zip_compiles() -> list[str]:
         env = os.environ.copy()
         for key in ("TEXINPUTS", "BIBINPUTS", "BSTINPUTS"):
             env.pop(key, None)
+        env["TZ"] = "UTC"
+        env["SOURCE_DATE_EPOCH"] = "1777939200"
+        env["FORCE_SOURCE_DATE"] = "1"
         commands = [
             [pdflatex, "-interaction=nonstopmode", f"{LOCAL_BASENAME}.tex"],
             [bibtex, LOCAL_BASENAME],

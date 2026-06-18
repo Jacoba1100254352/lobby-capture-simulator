@@ -28,6 +28,9 @@ resolve_binary() {
 
 PDFLATEX="$(resolve_binary pdflatex)"
 BIBTEX="$(resolve_binary bibtex)"
+export TZ=UTC
+export SOURCE_DATE_EPOCH="${SOURCE_DATE_EPOCH:-1777939200}"
+export FORCE_SOURCE_DATE="${FORCE_SOURCE_DATE:-1}"
 
 if [ ! -f "$ZIP_PATH" ]; then
   printf 'Missing submission package: %s\n' "$ZIP_PATH" >&2

@@ -7,6 +7,8 @@ REPORT_GIT_COMMIT ?= tracked-artifact-build
 REPORT_GIT_DIRTY ?= false
 REPORT_JAVA_VERSION ?= tracked-artifact-build
 REPORT_ENV := LOBBY_CAPTURE_REPORT_TIMESTAMP=$(REPORT_GENERATED_AT) LOBBY_CAPTURE_REPORT_GIT_COMMIT=$(REPORT_GIT_COMMIT) LOBBY_CAPTURE_REPORT_WORKING_TREE_DIRTY=$(REPORT_GIT_DIRTY) LOBBY_CAPTURE_REPORT_JAVA_VERSION=$(REPORT_JAVA_VERSION)
+SOURCE_DATE_EPOCH ?= 1777939200
+REPRO_PDF_ENV := TZ=UTC SOURCE_DATE_EPOCH=$(SOURCE_DATE_EPOCH) FORCE_SOURCE_DATE=1
 
 MAIN_SOURCES := $(shell find src/main/java -name "*.java" | sort)
 TEST_SOURCES := $(shell find src/test/java -name "*.java" | sort)
@@ -189,11 +191,11 @@ paper-build: scrub-copy-suffix-artifacts
 		-name '$(PAPER_BASENAME) [0-9]*.tex' \
 	\) -exec rm -f {} +
 	rm -f paper/$(PAPER_BASENAME).aux paper/$(PAPER_BASENAME).bbl paper/$(PAPER_BASENAME).blg
-	cd paper && $(PDFLATEX) -interaction=nonstopmode $(PAPER_BASENAME).tex
-	cd paper && $(BIBTEX) $(PAPER_BASENAME)
-	cd paper && $(PDFLATEX) -interaction=nonstopmode $(PAPER_BASENAME).tex
-	cd paper && $(PDFLATEX) -interaction=nonstopmode $(PAPER_BASENAME).tex
-	cd paper && $(PDFLATEX) -interaction=nonstopmode $(PAPER_BASENAME).tex
+	cd paper && $(REPRO_PDF_ENV) $(PDFLATEX) -interaction=nonstopmode $(PAPER_BASENAME).tex
+	cd paper && $(REPRO_PDF_ENV) $(BIBTEX) $(PAPER_BASENAME)
+	cd paper && $(REPRO_PDF_ENV) $(PDFLATEX) -interaction=nonstopmode $(PAPER_BASENAME).tex
+	cd paper && $(REPRO_PDF_ENV) $(PDFLATEX) -interaction=nonstopmode $(PAPER_BASENAME).tex
+	cd paper && $(REPRO_PDF_ENV) $(PDFLATEX) -interaction=nonstopmode $(PAPER_BASENAME).tex
 
 paper-supplement-build: scrub-copy-suffix-artifacts
 	find paper -maxdepth 1 -type f \( \
@@ -207,8 +209,8 @@ paper-supplement-build: scrub-copy-suffix-artifacts
 		-name 'supplement [0-9]*.tex' \
 	\) -exec rm -f {} +
 	rm -f paper/supplement.aux paper/supplement.bbl paper/supplement.blg
-	cd paper && $(PDFLATEX) -interaction=nonstopmode supplement.tex
-	cd paper && $(PDFLATEX) -interaction=nonstopmode supplement.tex
+	cd paper && $(REPRO_PDF_ENV) $(PDFLATEX) -interaction=nonstopmode supplement.tex
+	cd paper && $(REPRO_PDF_ENV) $(PDFLATEX) -interaction=nonstopmode supplement.tex
 
 paper-supplement: tables figures paper-supplement-build
 
