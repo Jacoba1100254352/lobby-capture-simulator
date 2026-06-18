@@ -699,7 +699,7 @@ with ci_csv.open("w", newline="", encoding="utf-8") as target:
         "gate": "release-tag-target",
         "status": "ready",
         "workflow": "local-git",
-        "branchOrTag": "paper-publication-readiness-2026-06-18-r165",
+        "branchOrTag": "paper-publication-readiness-2026-06-18-r166",
         "headSha": "abc123",
         "runId": "",
         "runStatus": "completed",
@@ -725,7 +725,7 @@ with ci_csv.open("w", newline="", encoding="utf-8") as target:
         "gate": "release-tag-ci",
         "status": "ready",
         "workflow": "CI",
-        "branchOrTag": "paper-publication-readiness-2026-06-18-r165",
+        "branchOrTag": "paper-publication-readiness-2026-06-18-r166",
         "headSha": "abc123",
         "runId": "112",
         "runStatus": "completed",
@@ -747,7 +747,7 @@ with ci_csv.open("w", newline="", encoding="utf-8") as target:
         "gate": "release-tag-target",
         "status": "ready",
         "workflow": "local-git",
-        "branchOrTag": "paper-publication-readiness-2026-06-18-r165",
+        "branchOrTag": "paper-publication-readiness-2026-06-18-r166",
         "headSha": "abc123",
         "runId": "",
         "runStatus": "completed",
@@ -779,9 +779,9 @@ mkdir -p "$tmpdir/doi-repo/paper/sections" "$tmpdir/doi-repo/reports"
 cat > "$tmpdir/doi-repo/CITATION.cff" <<'YAML'
 cff-version: 1.2.0
 title: "Lobby Capture Simulator"
-version: "paper-publication-readiness-2026-06-18-r165"
+version: "paper-publication-readiness-2026-06-18-r166"
 repository-code: "https://github.com/Jacoba1100254352/lobby-capture-simulator"
-url: "https://github.com/Jacoba1100254352/lobby-capture-simulator/releases/tag/paper-publication-readiness-2026-06-18-r165"
+url: "https://github.com/Jacoba1100254352/lobby-capture-simulator/releases/tag/paper-publication-readiness-2026-06-18-r166"
 license: MIT
 preferred-citation:
   type: article
@@ -793,7 +793,7 @@ cat > "$tmpdir/doi-repo/.zenodo.json" <<'JSON'
   "upload_type": "software",
   "related_identifiers": [
     {
-      "identifier": "https://github.com/Jacoba1100254352/lobby-capture-simulator/releases/tag/paper-publication-readiness-2026-06-18-r165",
+      "identifier": "https://github.com/Jacoba1100254352/lobby-capture-simulator/releases/tag/paper-publication-readiness-2026-06-18-r166",
       "relation": "isIdenticalTo",
       "resource_type": "software"
     },
@@ -807,7 +807,7 @@ cat > "$tmpdir/doi-repo/.zenodo.json" <<'JSON'
 JSON
 cat > "$tmpdir/doi-repo/paper/sections/submission-declarations.tex" <<'TEX'
 \submissionsection{Data and Code Availability}
-The simulator source is publicly maintained at \url{https://github.com/Jacoba1100254352/lobby-capture-simulator}. The code is released under the MIT License, and this review bundle is associated with \href{https://github.com/Jacoba1100254352/lobby-capture-simulator/releases/tag/paper-publication-readiness-2026-06-18-r165}{release r165}. Report manifests record seed and runtime provenance.
+The simulator source is publicly maintained at \url{https://github.com/Jacoba1100254352/lobby-capture-simulator}. The code is released under the MIT License, and this review bundle is associated with \href{https://github.com/Jacoba1100254352/lobby-capture-simulator/releases/tag/paper-publication-readiness-2026-06-18-r166}{release r166}. Report manifests record seed and runtime provenance.
 TEX
 cat > "$tmpdir/doi-repo/reports/final-human-readthrough.md" <<'MD'
 # Final Human Scholarly Read-Through
@@ -815,7 +815,7 @@ cat > "$tmpdir/doi-repo/reports/final-human-readthrough.md" <<'MD'
 status: pending
 signed-off-by:
 signed-off-date:
-reviewed-release: paper-publication-readiness-2026-06-18-r165
+reviewed-release: paper-publication-readiness-2026-06-18-r166
 reviewed-commit:
 doi-archive:
 MD
@@ -888,7 +888,7 @@ mkdir -p "$tmpdir/readthrough-repo/reports"
 cat > "$tmpdir/readthrough-repo/CITATION.cff" <<'YAML'
 cff-version: 1.2.0
 title: Lobby Capture Simulator
-version: "paper-publication-readiness-2026-06-18-r165"
+version: "paper-publication-readiness-2026-06-18-r166"
 YAML
 cp reports/final-human-readthrough.md "$tmpdir/readthrough-repo/reports/final-human-readthrough.md"
 python3 - "$tmpdir/readthrough-repo/reports/final-human-readthrough.md" <<'PY'
@@ -902,7 +902,7 @@ for key, value in {
     "status": "pending",
     "signed-off-by": "",
     "signed-off-date": "",
-    "reviewed-release": "paper-publication-readiness-2026-06-18-r165",
+    "reviewed-release": "paper-publication-readiness-2026-06-18-r166",
     "reviewed-commit": "",
     "doi-archive": "",
 }.items():

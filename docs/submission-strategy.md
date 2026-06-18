@@ -4,14 +4,14 @@
 
 Primary journal target: **Regulation & Governance**.
 
-Reason: the paper is strongest as a regulatory-governance mechanism article about how anti-capture reforms interact across transparency, enforcement, rulemaking, procurement, public financing, dark money, and revolving-door constraints. The live Regulation & Governance author page, checked by browser on 2026-06-18 for the r162 review bundle, reported a preferred first-submission length of 8,000-10,000 words, a normal upper limit of 11,000 words, a 6,000-word Research Forum limit, and a 150-word abstract limit, with no superseding instruction requiring package changes. Recheck the live author page again immediately before actual journal submission.
+Reason: the paper is strongest as a regulatory-governance mechanism article about how anti-capture reforms interact across transparency, enforcement, rulemaking, procurement, public financing, dark money, and revolving-door constraints. The live Regulation & Governance author page, checked by browser on 2026-06-18 for the r166 review bundle, reported a preferred first-submission length of 8,000-10,000 words, a normal upper limit of 11,000 words, a 6,000-word Research Forum limit, and a 150-word abstract limit, with no superseding instruction requiring package changes. Recheck the live author page again immediately before actual journal submission.
 
 Working article frame:
 
 - Main claim: organized interests preserve influence through strategic channel substitution when reforms constrain one visible route.
 - Main audience: regulation, governance, public policy, public administration, and political economy scholars.
 - Main empirical posture: public administrative data provide distributional anchors and validation moments, not causal estimates.
-- Main results to keep in the article: one campaign snapshot, one sensitivity slice, one ablation table, a channel-mix figure, an evasion-sensitivity figure, a scenario tradeoff figure, and one interaction tradeoff view.
+- Main results to keep in the article: one campaign snapshot, one sensitivity slice, one ablation table, a channel-mix figure, a substitution-warning map, an evasion-sensitivity figure, a scenario tradeoff figure, and one interaction tradeoff view.
 - Material to move to supplement before submission: full scenario catalog, full calibration queue, parser details, full sensitivity matrices, full ablation matrices, and implementation notes.
 
 ## Figure Plan
@@ -23,7 +23,8 @@ Wiley's figure-preparation guidance treats graphs, flowcharts, diagrams, scatter
 - `paper/figures/Figure_2_evasion_sensitivity.pdf` and `.svg`: line chart showing hidden influence rising as evasion freedom increases.
 - `paper/figures/Figure_3_interaction_tradeoffs.pdf` and `.svg`: hidden-influence versus net-transparency interaction scatter.
 - `paper/figures/Figure_4_scenario_tradeoffs.pdf` and `.svg`: capture-rate versus hidden-influence scenario scatter.
-- `paper/figures/model_architecture.tex`, `channel_mix.tex`, `evasion_sensitivity.tex`, `interaction_tradeoffs.tex`, and `scenario_tradeoffs.tex`: thin LaTeX wrappers that include the PDF graphics and keep captions/labels in the manuscript.
+- `paper/figures/Figure_5_substitution_warning_map.pdf` and `.svg`: observed-capture change versus total-distortion change for substitution-warning rows.
+- `paper/figures/model_architecture.tex`, `channel_mix.tex`, `evasion_sensitivity.tex`, `interaction_tradeoffs.tex`, `scenario_tradeoffs.tex`, and `substitution_warning_map.tex`: thin LaTeX wrappers that include the PDF graphics and keep captions/labels in the manuscript.
 
 These are intentionally analytical figures, not illustrative decoration. They make the paper's mechanism legible while keeping the source reproducible from committed report CSVs.
 
@@ -52,7 +53,7 @@ Current formatting choices made in the repository:
 - author, affiliation, country, and corresponding email are present in the local article and Wiley wrapper;
 - the manuscript includes data/code availability, financial disclosure, conflicts of interest, and AI-use disclosure statements;
 - generated graphs are separate numbered PDF figure files, with legends retained in the manuscript through the LaTeX wrappers;
-- the primary local draft uses `plainnat` author-year citations and a conventional 1-inch-margin article layout for compile stability;
+- the primary local manuscript uses `plainnat` author-year citations and a conventional 1-inch-margin article layout for compile stability;
 - the Wiley-specific wrapper uses the official `USG` class once the downloaded template and full TeX package set are available;
 - generated tables are set as wide table floats without `resizebox` scaling so the Wiley two-column reviewer PDF stays readable;
 - CI runs Java 21 tests and `make paper-artifacts-check`, which rebuilds report snapshots, validation outputs, generated tables, generated figures, the local PDF, the Wiley PDF, word count, and the Wiley submission package before checking PDF freshness, package contents, and standalone package compilation. CI then runs `git diff --exit-code` so regenerated tracked artifacts cannot drift silently.

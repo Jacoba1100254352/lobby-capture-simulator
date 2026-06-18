@@ -1,12 +1,12 @@
 # Paper
 
-Build the draft with:
+Build the manuscript with:
 
 ```sh
 make paper
 ```
 
-The paper is a submission-oriented draft under active validation. It should stay tied to reproducible report snapshots under `reports/` and should distinguish simulation calibration from causal empirical claims.
+The paper is a submission-oriented mechanism-model manuscript with a bounded empirical bridge. It should stay tied to reproducible report snapshots under `reports/` and should distinguish simulation calibration from causal empirical claims.
 
 The primary submission target is **Regulation & Governance**. The local article entrypoint is `paper/strategic-channel-substitution-regulatory-capture.tex`; the Wiley-template entrypoint is `paper/regulation-governance-wiley.tex`; the supporting-information entrypoint is `paper/supplement.tex`.
 
@@ -34,6 +34,6 @@ Paper table selection is defined in `paper/tables.yml`; generated files in `pape
 The manuscript now carries the submission statements Wiley commonly expects for this kind of article: data/code availability, financial disclosure, conflicts of interest, and AI-use disclosure. The data/code statement names the GitHub repository, release tag, MIT License, source-snapshot limits, machine-readable citation metadata, and submission-package command. The Wiley submission archive includes PDF graphics, SVG figure sources, and LaTeX figure wrappers under `figures/`; it also includes a package-member checksum manifest under `supporting-information/submission-package-manifest.*` and the generated CSV, Markdown, and manifest report bundle under `supporting-information/report-data/`. `make archive-handoff-audit` writes the DOI-deposit asset set and stable metadata checksums under `reports/archive-handoff-manifest.*`; it writes local PDF/ZIP release checksums under ignored `dist/release-asset-checksums.*` for release upload verification. Corresponding-author contact is taken from the local git configuration.
 
 Report snapshots have adjacent `*.manifest.json` files, `make source-moments` writes direct source diagnostics, `make source-panel-inventory` writes source-coverage gaps, `make paper-layout-audit` writes PDF layout-density diagnostics, and `make validate` plus `make calibration-queue` write validation summaries and classified follow-up queues under `reports/`.
-The draft follows the stage-and-channel framing in `docs/research/research-synthesis.md`, with `data/calibration/parameter-map.csv` acting as the parameter appendix scaffold.
+The manuscript follows the stage-and-channel framing in `docs/research/research-synthesis.md`, with `data/calibration/parameter-map.csv` acting as the parameter appendix scaffold.
 
 Submission strategy details live in `docs/submission-strategy.md`.
