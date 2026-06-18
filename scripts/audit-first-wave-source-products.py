@@ -603,8 +603,24 @@ def audit_product(root: Path, spec: ProductSpec) -> dict[str, str]:
         "validationRule": spec.validation_rule,
         "validationNotes": validation_notes,
         "claimBoundary": spec.claim_boundary,
-        "nextAction": spec.next_action,
+        "nextAction": product_next_action(spec, status),
     }
+
+
+def product_next_action(spec: ProductSpec, status: str) -> str:
+    if status in {"schema_ready", "text_ready"}:
+        if spec.product_key == "substitution-reform-shocks":
+            return (
+                "Use the committed reform-shock row to build the actor-issue-time spine and "
+                "pre/post comparison-group products; do not treat this event row as substitution evidence."
+            )
+        if spec.product_key == "meeting-log-or-missing-channel-note":
+            return (
+                "Use this missing-channel note to bound private-access substitution while building the "
+                "actor-issue-time spine; replace it with a meeting/contact panel only if one is sourced."
+            )
+        return "Use this ready source product as an input to the target protocol; keep provenance and claim boundaries attached."
+    return spec.next_action
 
 
 def audit_csv(path: Path, spec: ProductSpec) -> tuple[int, tuple[str, ...], tuple[str, ...], int, tuple[str, ...], str, bool]:

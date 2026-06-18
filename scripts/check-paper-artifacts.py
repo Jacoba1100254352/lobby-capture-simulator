@@ -119,7 +119,7 @@ DOI_DEPOSIT_PACKAGE_CHECKSUM_CSV = ROOT / "dist" / "doi-deposit-package-checksum
 DOI_DEPOSIT_PACKAGE_CHECKSUM_JSON = ROOT / "dist" / "doi-deposit-package-checksum.json"
 DOI_DEPOSIT_PACKAGE_CHECKSUM_MD = ROOT / "dist" / "doi-deposit-package-checksum.md"
 ZENODO_DEPOSIT_METADATA_JSON = ROOT / "dist" / "zenodo-deposit-metadata.json"
-RELEASE_TAG = "paper-publication-readiness-2026-06-18-r151"
+RELEASE_TAG = "paper-publication-readiness-2026-06-18-r152"
 ARCHIVE_HANDOFF_REPORT_NAMES = {
     "archive-handoff-manifest.csv",
     "archive-handoff-manifest.json",
@@ -2050,7 +2050,10 @@ def check_first_wave_source_products() -> list[str]:
                 )
             if not (ROOT / template_path).exists():
                 failures.append(f"first-wave source product {product} template path does not exist: {template_path}")
-    allowed_ready_rows = {"meeting-log-or-missing-channel-note"}
+    allowed_ready_rows = {
+        "meeting-log-or-missing-channel-note",
+        "substitution-reform-shocks",
+    }
     expected_candidate_rows = set(FIRST_WAVE_CANDIDATE_SEED_PRODUCTS)
     unexpected_ready_rows = sorted(set(ready_rows) - allowed_ready_rows)
     if unexpected_ready_rows:
@@ -2082,13 +2085,16 @@ def check_first_wave_source_products() -> list[str]:
     if ready_rows:
         if set(ready_rows) != allowed_ready_rows:
             failures.append(
-                "first-wave source products may only mark the meeting/contact missing-channel design note ready in this release: "
+                "first-wave source products may only mark the bounded HLOGA reform-shock row and meeting/contact missing-channel design note ready in this release: "
                 + ", ".join(sorted(ready_rows))
             )
         product_text = FIRST_WAVE_SOURCE_PRODUCTS_MD.read_text(encoding="utf-8")
         for phrase in (
-            "Schema/text ready products: `1`",
+            "Schema/text ready products: `2`",
             "Candidate-only unreviewed products: `5`",
+            "named reform-shock event file",
+            "Use the committed reform-shock row",
+            "do not treat this event row as substitution evidence",
             "meeting-log or contact-register panel, or explicit missing-channel design note",
             "Text source product contains the required missing-channel design terms",
         ):
@@ -2119,6 +2125,8 @@ def check_first_wave_source_products() -> list[str]:
         for phrase in (
             "first-wave source-product audit",
             "reports/first-wave-source-products.md",
+            "Honest Leadership and Open Government Act of 2007",
+            "not an actor-time panel or substitution estimate",
         ):
             if phrase not in supplement:
                 failures.append(f"supplement does not disclose first-wave source product artifact: {phrase}")
@@ -2287,8 +2295,9 @@ def check_first_wave_source_readiness() -> list[str]:
         "Ready to estimate: `0`",
         "Policy-simulation status: `not_cleared`",
         "Source-product schema gate",
-        "ready=1",
+        "ready=2",
         "candidateOnly=5",
+        "Use the committed reform-shock event file",
         "candidate-only seed files",
         "SAM/FPDS action-history export or keyed pull",
         "canonical actor identifier table",

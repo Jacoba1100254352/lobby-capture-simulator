@@ -105,7 +105,15 @@ def readiness_row(
     }
     row = builders[target](capabilities, panels, moments, procurement, linkage)
     protocol = protocols[target]
-    product_gate = product_gate_summary(products.get(target, []))
+    target_products = products.get(target, [])
+    product_gate = product_gate_summary(target_products)
+    ready_labels = ready_product_labels(target_products)
+    if ready_labels:
+        row["currentSourceProducts"] = append_text(
+            row["currentSourceProducts"],
+            "first-wave ready products=" + "; ".join(ready_labels),
+        )
+    row["nextAction"] = product_aware_next_action(target, row["nextAction"], ready_labels)
     if product_gate["missingProducts"]:
         row["missingSourceProducts"] = product_gate["missingProducts"]
     return {
@@ -164,6 +172,35 @@ def product_gate_summary(rows: list[dict[str, str]]) -> dict[str, str]:
             for row in missing + candidate_unreviewed + schema_issues
         ),
     }
+
+
+def ready_product_labels(rows: list[dict[str, str]]) -> list[str]:
+    ready_statuses = {"schema_ready", "text_ready"}
+    return [
+        row.get("productLabel", row.get("productKey", ""))
+        for row in rows
+        if row.get("requirementLevel") == "required"
+        and row.get("productStatus") in ready_statuses
+    ]
+
+
+def append_text(base: str, addition: str) -> str:
+    if not base:
+        return addition
+    if not addition:
+        return base
+    return f"{base}; {addition}"
+
+
+def product_aware_next_action(target: str, default: str, ready_labels: list[str]) -> str:
+    ready = set(ready_labels)
+    if target == "substitution-elasticity" and "named reform-shock event file" in ready:
+        return (
+            "Use the committed reform-shock event file and meeting/contact missing-channel note, "
+            "then build the actor-issue-time linkage file and exposed plus comparison groups before "
+            "inspecting outcome movement."
+        )
+    return default
 
 
 def linkage_candidate_summary(path: Path) -> dict[str, str]:
