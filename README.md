@@ -22,6 +22,7 @@ make calibration-queue
 make snapshot-2024-env
 make tables
 make figures
+make scrub-copy-suffix-artifacts
 make paper
 make paper-word-count
 make wiley-template
@@ -167,6 +168,7 @@ The Wiley-template path is available but intentionally separate from the default
 - `paper/regulation-governance-wiley.tex` is the Regulation & Governance/Wiley wrapper using Wiley's `USG` class.
 - `make paper-wiley` builds the Wiley wrapper after the official bundle and TeX dependencies are available. It writes ignored scratch files under `paper/.wiley-build/` to work around a BibTeX failure in the current Wiley archive's primary Chicago style file while still using the downloaded Wiley class and template assets.
 - `make submission-package` builds the Wiley wrapper and writes `dist/lobby-capture-wiley-submission.zip` with the root LaTeX file, compiled PDF, patched peer-review class copy, bibliography, generated tables, PDF graphics, SVG figure sources, LaTeX figure wrappers, supporting-information files, a package-member checksum manifest, and the full generated CSV/Markdown/manifest report bundle. The package ZIP is written with sorted entries and fixed timestamps so archive contents are reproducible across clean builds.
+- `make scrub-copy-suffix-artifacts` removes local duplicate-copy artifacts such as `report 2.md`, `paper 2.aux`, or `bundle 2.zip` from `paper/`, `reports/`, and `dist/`. The paper, package, clean, and artifact-check paths run it automatically so local file-sync duplicates cannot enter the Wiley package or block the final checker.
 - `make archive-handoff-audit` runs after the Wiley submission archive is built and writes `reports/archive-handoff-manifest.{csv,json,md}` with the DOI-deposit asset set and stable source-metadata checksums. It also writes ignored `dist/release-asset-checksums.{csv,json,md}` with local PDF/ZIP SHA-256 checksums for release upload verification. The tracked manifest is intentionally kept outside the Wiley ZIP and avoids environment-specific binary hashes.
 - `make github-release-asset-audit` is a post-release, networked check that uses `gh release view` to compare uploaded GitHub release assets against the local release-machine checksum manifests. It writes ignored `reports/github-release-asset-audit.{csv,md}` and is intentionally excluded from `make paper-artifacts-check` so the standard reviewer build remains offline-reproducible.
 - `make github-ci-status-audit` is a post-release, networked check that uses `gh run list` to verify the current main commit and the current release tag both have completed, successful GitHub Actions CI runs. It writes ignored `reports/github-ci-status-audit.{csv,md}` and is folded into `make external-finalization-checklist`.
