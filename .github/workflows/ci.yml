@@ -23,7 +23,7 @@ jobs:
       - name: Run tests
         run: make test
       - name: Install paper build dependencies
-        timeout-minutes: 15
+        timeout-minutes: 35
         env:
           DEBIAN_FRONTEND: noninteractive
         run: |
