@@ -173,8 +173,25 @@ You can download it using the link below (valid for 60 minutes):
 
 https://api.sam.gov/contract-awards/v1/download?api_key=REPLACE_WITH_API_KEY&token=last-no-date-token
 TXT
+set +e
 python3 scripts/record-sam-export-link.py \
   --dry-run \
+  --env "$tmpdir/sam-link.env" \
+  --input "$tmpdir/sam-multi-no-date.txt" >"$tmpdir/sam-multi-no-date-reject.out" 2>"$tmpdir/sam-multi-no-date-reject.err"
+no_date_multi_exit="$?"
+set -e
+if [ "$no_date_multi_exit" -ne 1 ]; then
+  echo "Expected body-only multi-link SAM export recorder to fail closed without --assume-fresh, got $no_date_multi_exit." >&2
+  exit 1
+fi
+grep -q 'ERROR: no email Date header or --generated-at timestamp was found' "$tmpdir/sam-multi-no-date-reject.err"
+if grep -q 'first-no-date-token\|last-no-date-token' "$tmpdir/sam-multi-no-date-reject.out" "$tmpdir/sam-multi-no-date-reject.err"; then
+  echo "SAM export multi-link no-date reject path leaked a token." >&2
+  exit 1
+fi
+python3 scripts/record-sam-export-link.py \
+  --dry-run \
+  --assume-fresh \
   --env "$tmpdir/sam-link.env" \
   --input "$tmpdir/sam-multi-no-date.txt" >"$tmpdir/sam-multi-no-date.out"
 grep -q 'SAM_CONTRACT_AWARDS_EXPORT_LINK_COUNT=2' "$tmpdir/sam-multi-no-date.out"
@@ -211,8 +228,25 @@ You can download it using the link below (valid for 60 minutes):
 
 https://api.sam.gov/contract-awards/v1/download?api_key=REPLACE_WITH_API_KEY&token=no-date-token
 TXT
+set +e
 python3 scripts/record-sam-export-link.py \
   --dry-run \
+  --env "$tmpdir/sam-link.env" \
+  --input "$tmpdir/sam-email-no-date.txt" >"$tmpdir/sam-email-no-date-reject.out" 2>"$tmpdir/sam-email-no-date-reject.err"
+no_date_email_exit="$?"
+set -e
+if [ "$no_date_email_exit" -ne 1 ]; then
+  echo "Expected body-only SAM export recorder to fail closed without --assume-fresh, got $no_date_email_exit." >&2
+  exit 1
+fi
+grep -q 'ERROR: no email Date header or --generated-at timestamp was found' "$tmpdir/sam-email-no-date-reject.err"
+if grep -q 'no-date-token' "$tmpdir/sam-email-no-date-reject.out" "$tmpdir/sam-email-no-date-reject.err"; then
+  echo "SAM export link no-date reject path leaked a token." >&2
+  exit 1
+fi
+python3 scripts/record-sam-export-link.py \
+  --dry-run \
+  --assume-fresh \
   --env "$tmpdir/sam-link.env" \
   --input "$tmpdir/sam-email-no-date.txt" >"$tmpdir/sam-email-no-date.out"
 grep -q 'SAM_CONTRACT_AWARDS_LIVE_URL_TIME_SOURCE=recorded_at_fallback' "$tmpdir/sam-email-no-date.out"

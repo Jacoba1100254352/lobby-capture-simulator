@@ -59,6 +59,14 @@ def main() -> int:
         help="Record an already-expired link for fixtures or diagnostics. Normal use should request a fresh link.",
     )
     parser.add_argument(
+        "--assume-fresh",
+        action="store_true",
+        help=(
+            "Allow body-only emails with no Date header or --generated-at timestamp by treating "
+            "the helper run time as the generation time. Use only immediately after receiving the email."
+        ),
+    )
+    parser.add_argument(
         "--keep-live-csv",
         action="store_true",
         help="Do not clear SAM_CONTRACT_AWARDS_LIVE_CSV when recording a URL.",
@@ -96,6 +104,26 @@ def main() -> int:
     }
     if not args.keep_live_csv:
         updates["SAM_CONTRACT_AWARDS_LIVE_CSV"] = ""
+
+    if time_source == "recorded_at_fallback" and not args.assume_fresh and not args.allow_expired:
+        print_summary(
+            args.env,
+            updates,
+            generated_at,
+            expires_at,
+            recorded_at,
+            time_source,
+            dry_run=True,
+            url_count=selected["count"],
+            selection_note=selected["selectionNote"],
+        )
+        print(
+            "ERROR: no email Date header or --generated-at timestamp was found. "
+            "Save the full email with headers, pass --generated-at, or pass --assume-fresh "
+            "only when this body-only link was just generated.",
+            file=sys.stderr,
+        )
+        return 1
 
     if expires_at <= recorded_at and not args.allow_expired:
         print_summary(
