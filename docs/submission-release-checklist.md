@@ -10,9 +10,9 @@ Use this before creating a journal submission archive or public release tag.
 - `reports/paper-layout-audit.md` reports `Failures: 0`, and `reports/manual-visual-audit.md` shows no `needs review` entries. `make paper-artifacts-check` enforces both conditions; a human final visual inspection is still recommended before submission.
 - `reports/source-panel-inventory.md` has no unacknowledged source gap that contradicts the manuscript framing.
 - `reports/validation-summary.md` and `reports/calibration-queue.md` are consistent with the manuscript's claim strength.
-- `reports/final-human-readthrough.md` remains `pending` for review-bundle circulation and must be completed by a human reviewer for the exact current release tag before final journal submission. Its live Regulation & Governance author-page fields must also be completed for the current release.
+- `reports/final-human-readthrough.md` remains `pending` for review-bundle circulation and must be completed by a human reviewer for the exact current release tag before final journal submission. Its live Regulation & Governance author-page fields should be completed for the current release and rechecked immediately before actual submission.
 - `reports/wiley-submission-form-readiness.md` reports mechanical upload status `ready`; the journal-specific author-guidelines row may remain `manual_required` until the final live submission check.
-- `reports/reggov-guidelines-readiness.md` reports automated guideline status `ready_with_manual_live_check`; the live Regulation & Governance author-page refresh may remain `manual_required` until final submission, but final submission cannot clear until the refresh is recorded in `reports/final-human-readthrough.md`.
+- `reports/reggov-guidelines-readiness.md` reports whether the Regulation & Governance/Wiley guideline surface is ready for the current release. If the live author-page refresh is not recorded, it remains `ready_with_manual_live_check`; if it is recorded with no superseding instructions, the guideline status may be `ready`. Final submission still cannot clear until DOI archiving and human scholarly read-through signoff are complete.
 
 ## Archive Metadata
 

@@ -268,11 +268,17 @@ def live_author_page_row() -> dict[str, str]:
     rows = keyed_rows(REGGOV_GUIDELINES_CSV, "gate")
     row_data = rows.get("live-reggov-author-page-refresh", {})
     status = row_data.get("status", "manual_required")
+    normalized_status = status if status in {"ready", "blocked"} else "manual_required"
+    default_next_action = (
+        "Recheck the live Regulation & Governance author instructions immediately before final submission."
+        if normalized_status == "ready"
+        else "Open the live Regulation & Governance author instructions and record any superseding guidance before final submission."
+    )
     return item(
         "live-reggov-author-page-refresh",
-        status if status in {"ready", "blocked"} else "manual_required",
+        normalized_status,
         row_data.get("evidence", "live author-page refresh=not recorded"),
-        "Open the live Regulation & Governance author instructions and record any superseding guidance before final submission.",
+        row_data.get("nextAction", default_next_action) or default_next_action,
         "journal",
     )
 

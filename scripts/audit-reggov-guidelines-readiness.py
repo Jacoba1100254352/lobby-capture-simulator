@@ -27,9 +27,12 @@ SUBMISSION_DECLARATIONS = PAPER / "sections" / "submission-declarations.tex"
 SUBMISSION_ZIP = DIST / "lobby-capture-wiley-submission.zip"
 WILEY_FORM_CSV = REPORTS / "wiley-submission-form-readiness.csv"
 
-MIN_WORDS = 8000
-MAX_WORDS = 10000
-WORD_RANGE_LABEL = "8,000-10,000"
+PREFERRED_MIN_WORDS = 8000
+PREFERRED_MAX_WORDS = 10000
+NORMAL_MAX_WORDS = 11000
+RESEARCH_FORUM_MAX_WORDS = 6000
+ABSTRACT_MAX_WORDS = 150
+WORD_RANGE_LABEL = "preferred 8,000-10,000; normal upper limit 11,000"
 REGGOV_AUTHOR_GUIDELINES_URL = "https://onlinelibrary.wiley.com/page/journal/17485991/homepage/forauthors.html"
 WILEY_SUBMISSION_HELP_URL = "https://authors.wiley.com/help/submitting-your-manuscript.html"
 WILEY_LATEX_URL = "https://authors.wiley.com/author-resources/Journal-Authors/Prepare/latex-template.html"
@@ -75,12 +78,14 @@ def guideline_rows() -> list[dict[str, str]]:
         ),
         row(
             "word-limit",
-            "ready" if MIN_WORDS <= words <= MAX_WORDS else "blocked",
+            "ready" if PREFERRED_MIN_WORDS <= words <= NORMAL_MAX_WORDS else "blocked",
             (
                 f"approximate words={words}; "
-                f"Regulation & Governance reported preferred range={MIN_WORDS}-{MAX_WORDS}"
+                f"preferred range={PREFERRED_MIN_WORDS}-{PREFERRED_MAX_WORDS}; "
+                f"within preferred={yes_no(PREFERRED_MIN_WORDS <= words <= PREFERRED_MAX_WORDS)}; "
+                f"normal upper limit={NORMAL_MAX_WORDS}; Research Forum limit={RESEARCH_FORUM_MAX_WORDS}"
             ),
-            "Revise the manuscript if the approximate count falls outside the reported preferred range.",
+            "Keep the manuscript in the preferred range when feasible and below the normal upper limit.",
         ),
         row(
             "abstract-and-keywords",
@@ -276,6 +281,7 @@ def count_words(text: str) -> int:
 
 
 def abstract_keywords_ready(local: str, wiley: str) -> bool:
+    abstract_words = local_abstract_word_count(local)
     return all(
         [
             r"\begin{abstract}" in local,
@@ -283,18 +289,27 @@ def abstract_keywords_ready(local: str, wiley: str) -> bool:
             r"\textbf{Keywords:}" in local,
             r"\abstract[ABSTRACT]" in wiley,
             r"\keywords{" in wiley,
+            abstract_words > 0,
+            abstract_words <= ABSTRACT_MAX_WORDS,
         ]
     )
 
 
 def abstract_keywords_evidence(local: str, wiley: str) -> str:
+    abstract_words = local_abstract_word_count(local)
     checks = {
         "local abstract": r"\begin{abstract}" in local and r"\end{abstract}" in local,
         "local keywords": r"\textbf{Keywords:}" in local,
         "Wiley abstract": r"\abstract[ABSTRACT]" in wiley,
         "Wiley keywords": r"\keywords{" in wiley,
+        f"abstract words <= {ABSTRACT_MAX_WORDS}": 0 < abstract_words <= ABSTRACT_MAX_WORDS,
     }
-    return evidence(checks)
+    return evidence(checks) + f"; abstract words={abstract_words}"
+
+
+def local_abstract_word_count(local: str) -> int:
+    match = re.search(r"\\begin\{abstract\}(.*?)\\end\{abstract\}", local, flags=re.S)
+    return count_words(match.group(1)) if match else 0
 
 
 def title_metadata_ready(local: str, wiley: str) -> bool:
@@ -632,7 +647,12 @@ def markdown(rows: list[dict[str, str]]) -> str:
     ready = sum(1 for item in rows if item["status"] == "ready")
     manual = sum(1 for item in rows if item["status"] == "manual_required")
     blocked = sum(1 for item in rows if item["status"] == "blocked")
-    status = "ready_with_manual_live_check" if blocked == 0 else "blocked"
+    if blocked:
+        status = "blocked"
+    elif manual:
+        status = "ready_with_manual_live_check"
+    else:
+        status = "ready"
     lines = [
         "# Regulation & Governance Guideline Readiness",
         "",
@@ -645,6 +665,8 @@ def markdown(rows: list[dict[str, str]]) -> str:
         f"- Manual-required gates: `{manual}`",
         f"- Blocked gates: `{blocked}`",
         f"- Preferred word range checked: `{WORD_RANGE_LABEL}` words including abstract, references, endnotes, tables, and figures",
+        f"- Research Forum word limit noted: `{RESEARCH_FORUM_MAX_WORDS}` words",
+        f"- Abstract limit checked: `{ABSTRACT_MAX_WORDS}` words",
         "- Manuscript declarations checked: Data and Code Availability; AI Use Disclosure; funding; conflict of interest",
         "- Supporting-information checks include Wiley's clear-labeling and 10 MB per-file guidance",
         "",
@@ -656,7 +678,7 @@ def markdown(rows: list[dict[str, str]]) -> str:
         f"- Wiley AI guidelines: {WILEY_AI_URL}",
         f"- Wiley supporting-information guidance: {WILEY_SUPPORTING_INFO_URL}",
         "",
-        "The live Regulation & Governance author page should be opened immediately before final submission because journal-specific instructions can supersede generic Wiley guidance.",
+        "The live Regulation & Governance author page records free-format first submission, double-anonymized review, at least three suggested reviewers, expected data sharing, LaTeX/PDF/source upload rules, and separate figure/supporting-information expectations. It should still be opened immediately before final submission because journal-specific instructions can change.",
         "",
         "## Gate Matrix",
         "",
@@ -677,7 +699,7 @@ def markdown(rows: list[dict[str, str]]) -> str:
             "",
             "## Interpretation",
             "",
-            "A `ready_with_manual_live_check` status means the repository satisfies the checks that can be made from committed files and the generated Wiley package. It does not mean the journal submission is complete: DOI archiving, human final read-through, and live Regulation & Governance author-page refresh remain separate final-submission controls.",
+            "A `ready` guideline status means the repository satisfies the checked Regulation & Governance/Wiley format surface for this release, including the recorded live author-page refresh. It does not mean the journal submission is complete: DOI archiving and human final read-through remain separate final-submission controls, and the live author page should still be checked again immediately before submission.",
             "",
         ]
     )

@@ -104,7 +104,7 @@ DOI_DEPOSIT_PACKAGE_CHECKSUM_CSV = ROOT / "dist" / "doi-deposit-package-checksum
 DOI_DEPOSIT_PACKAGE_CHECKSUM_JSON = ROOT / "dist" / "doi-deposit-package-checksum.json"
 DOI_DEPOSIT_PACKAGE_CHECKSUM_MD = ROOT / "dist" / "doi-deposit-package-checksum.md"
 ZENODO_DEPOSIT_METADATA_JSON = ROOT / "dist" / "zenodo-deposit-metadata.json"
-RELEASE_TAG = "paper-publication-readiness-2026-06-15-r139"
+RELEASE_TAG = "paper-publication-readiness-2026-06-15-r140"
 ARCHIVE_HANDOFF_REPORT_NAMES = {
     "archive-handoff-manifest.csv",
     "archive-handoff-manifest.json",
@@ -3052,8 +3052,12 @@ def check_reggov_guidelines_readiness() -> list[str]:
     text = REGGOV_GUIDELINES_READINESS_MD.read_text(encoding="utf-8")
     required_text = [
         "Regulation & Governance Guideline Readiness",
-        "Automated guideline status: `ready_with_manual_live_check`",
+        "Automated guideline status:",
         "8,000-10,000",
+        "11,000",
+        "150",
+        "three suggested reviewers",
+        "double-anonymized review",
         "Data and Code Availability",
         "AI Use Disclosure",
         "10 MB",

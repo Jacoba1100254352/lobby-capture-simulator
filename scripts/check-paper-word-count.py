@@ -9,6 +9,7 @@ ROOT = Path(__file__).resolve().parents[1]
 PAPER_DIR = ROOT / "paper"
 MIN_PREFERRED = 8000
 MAX_PREFERRED = 10000
+MAX_NORMAL = 11000
 LOCAL_MANUSCRIPT = PAPER_DIR / "strategic-channel-substitution-regulatory-capture.tex"
 
 
@@ -52,7 +53,7 @@ def main() -> int:
     words = count_words(manuscript)
     print(
         "Approximate manuscript word count: "
-        f"{words} / preferred {MIN_PREFERRED}-{MAX_PREFERRED}"
+        f"{words} / preferred {MIN_PREFERRED}-{MAX_PREFERRED}; normal upper {MAX_NORMAL}"
     )
     if words < MIN_PREFERRED:
         print(
@@ -61,13 +62,20 @@ def main() -> int:
             file=sys.stderr,
         )
         return 1
-    if words > MAX_PREFERRED:
+    if words > MAX_NORMAL:
         print(
-            "Over the Regulation & Governance reported preferred "
-            f"{MIN_PREFERRED}-{MAX_PREFERRED}-word range.",
+            "Over the Regulation & Governance normal upper limit "
+            f"of {MAX_NORMAL} words.",
             file=sys.stderr,
         )
         return 1
+    if words > MAX_PREFERRED:
+        print(
+            "Above the Regulation & Governance preferred "
+            f"{MIN_PREFERRED}-{MAX_PREFERRED}-word range but below the "
+            f"{MAX_NORMAL}-word normal upper limit.",
+            file=sys.stderr,
+        )
     return 0
 
 

@@ -189,6 +189,29 @@ def final_journal_submission_gate() -> dict[str, str]:
             "open and record the live Regulation & Governance author-page refresh"
         )
     next_action = "; ".join(missing_actions) if missing_actions else "Final submission externalities are cleared."
+    cleared = []
+    if archive_doi:
+        cleared.append("DOI archive")
+    if human_signoff:
+        cleared.append("human editorial signoff")
+    if author_page_ready:
+        cleared.append("live author-page refresh")
+    remaining = []
+    if not archive_doi:
+        remaining.append("archive")
+    if not human_signoff:
+        remaining.append("human editorial signoff")
+    if not author_page_ready:
+        remaining.append("live author-page refresh")
+    implication = (
+        "Final journal submission externalities are cleared."
+        if status == "ready"
+        else (
+            f"Final journal submission still requires {', '.join(remaining)}; "
+            f"cleared external items={', '.join(cleared) if cleared else 'none'}; "
+            "mechanism-review circulation can proceed without treating this gate as cleared."
+        )
+    )
     return gate(
         "final-journal-submission",
         status,
@@ -198,10 +221,7 @@ def final_journal_submission_gate() -> dict[str, str]:
             f"human scholarly read-through={readthrough['evidence']}; "
             f"live author-page refresh={author_page['evidence']}"
         ),
-        (
-            "Final journal submission requires archive, human editorial signoff, and live author-page refresh; "
-            "mechanism-review circulation can proceed without treating this gate as cleared."
-        ),
+        implication,
         next_action,
     )
 

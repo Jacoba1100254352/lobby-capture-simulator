@@ -3,14 +3,14 @@
 status: pending
 signed-off-by:
 signed-off-date:
-reviewed-release: paper-publication-readiness-2026-06-15-r139
+reviewed-release: paper-publication-readiness-2026-06-15-r140
 reviewed-commit:
 doi-archive:
 venue-target: Regulation & Governance
 author-guidelines-url: https://onlinelibrary.wiley.com/page/journal/17485991/homepage/forauthors.html
-author-guidelines-checked-by: Codex live-access audit
-author-guidelines-checked-date: 2026-06-15
-author-guidelines-superseding-instructions: not cleared - HTTP HEAD returned 200 for the official author page, but the fetched body returned a Cloudflare JavaScript challenge rather than author-guideline content; human browser review still required
+author-guidelines-checked-by: Codex Playwright browser audit
+author-guidelines-checked-date: 2026-06-18
+author-guidelines-superseding-instructions: none
 
 ## Purpose
 
@@ -45,6 +45,8 @@ Leave `status` as `pending` until a human scholarly read-through has checked the
 
 ## Reviewer Notes
 
-2026-06-15 live-author-page access attempt: Codex checked `author-guidelines-url` from the release machine. The official URL was reachable at the HTTP header level, but the fetched HTML body was a Cloudflare "Just a moment..." challenge and did not expose the journal-specific author-guideline text. Do not clear the live author-page portion of the final-submission gate until the page is reviewed in a normal browser session and any superseding instructions are recorded.
+2026-06-15 live-author-page access attempt: Codex checked `author-guidelines-url` from the release machine. The official URL was reachable at the HTTP header level, but the fetched HTML body was a Cloudflare "Just a moment..." challenge and did not expose the journal-specific author-guideline text.
+
+2026-06-18 live-author-page browser check: Codex used Playwright to load the official Regulation & Governance author page in a browser context. The page title was `Regulation & Governance` and the page exposed the journal-specific author guidelines. The check confirmed free-format first submission, double-anonymized review, at least three suggested reviewers, normal article submissions not normally accepted above 11,000 words, Research Forum limit of 6,000 words, preferred first-submission length of 8,000-10,000 words, abstract limit of 150 words, data sharing expected, LaTeX accepted with a peer-review PDF and source/supporting files, and separate figure/supporting-information expectations. No package-changing superseding instruction was identified for the r140 bundle. DOI archiving and human scholarly read-through signoff remain pending.
 
 Record any final editorial changes requested before journal submission here. If changes are made after signoff, return `status` to `pending`, update `reviewed-release`, rerun `make paper-artifacts-check`, and repeat the read-through.
