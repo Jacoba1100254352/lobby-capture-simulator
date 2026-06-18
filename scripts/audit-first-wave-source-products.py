@@ -608,6 +608,7 @@ def audit_product(root: Path, spec: ProductSpec) -> dict[str, str]:
         "validationNotes": validation_notes,
         "claimBoundary": spec.claim_boundary,
         "nextAction": product_next_action(spec, status),
+        "manualReviewChecklist": product_manual_review_checklist(spec, status),
     }
 
 
@@ -643,6 +644,73 @@ def product_next_action(spec: ProductSpec, status: str) -> str:
             )
         return "Use this ready source product as an input to the target protocol; keep provenance and claim boundaries attached."
     return spec.next_action
+
+
+def product_manual_review_checklist(spec: ProductSpec, status: str) -> str:
+    if status in {"schema_ready", "text_ready"}:
+        return (
+            "Retain source provenance, rerun the source-product and source-readiness gates after edits, "
+            "and keep the claim boundary attached before using this product in a protocol."
+        )
+    if status.startswith("missing"):
+        return (
+            "Acquire the named source product from the acceptable source family, populate the required schema "
+            f"at {spec.expected_path}, meet the minimum-row and semantic gates, and rerun the audit before "
+            "treating the protocol as source-supported."
+        )
+    if status != CANDIDATE_UNREVIEWED_STATUS:
+        return (
+            "Resolve the reported schema, field-quality, or semantic-gate issues, document provenance for the "
+            "corrected rows, and rerun the source-product gate before promotion."
+        )
+    candidate_checklists = {
+        "actor-issue-time-spine": (
+            "Verify each canonical actor, issue code, period, venue, source record, exposure group, and reform "
+            "event against the source files; record alias and false-match decisions in the review logs; remove "
+            "candidateOnly markers only after a reviewer signs off that at least three venues and pre/post "
+            "periods are comparable."
+        ),
+        "substitution-comparison-groups": (
+            "Confirm treated and comparison actors or jurisdictions are tied to the named reform shock, verify "
+            "matching variables and pre/post windows, preserve exclusions, and remove candidateOnly markers only "
+            "after treatment and comparison assignments are manually adjudicated."
+        ),
+        "agency-response-final-rule-linkage": (
+            "Open the cited agency response and final-rule materials, replace candidate response sections and "
+            "finalRuleId values with observed identifiers, review uptakeCode and textSimilarity against source "
+            "text, record reviewer/date fields, and remove candidateOnly markers only after the linkage is "
+            "adjudicated."
+        ),
+        "canonical-actor-identifiers": (
+            "Check each canonical actor against source-system identifiers, prevent parent/subsidiary or similarly "
+            "named actor conflation, preserve source-system coverage, and promote only after alias and false-match "
+            "review logs support the canonical IDs."
+        ),
+        "alias-resolution-audit-sample": (
+            "Replace placeholder manualDecision, reviewer, and reviewDate values with reviewed accept/reject "
+            "decisions; include exact and fuzzy match examples; retain enough rejected aliases to bound false "
+            "positive risk, and promote only after reviewer/date provenance is complete."
+        ),
+        "issue-code-crosswalk": (
+            "Review each issue concept against LDA, docket, procurement, and electoral terms, fill reviewer/date "
+            "fields, document ambiguous mappings in notes, and promote only after issue comparability is explicit "
+            "enough for cross-venue movement tests."
+        ),
+        "false-match-review-log": (
+            "Add both accepted and rejected linkage examples, populate decision, errorType, reviewer, reviewDate, "
+            "and confidenceScore where available, and promote only after false-positive and false-negative cases "
+            "are represented."
+        ),
+        "linked-actor-issue-venue-time": (
+            "Promote only after canonical actors, issue codes, alias decisions, and false-match logs pass review; "
+            "then verify each linked sourceRecordId, period, venue, activity measure, and matchConfidence against "
+            "the source files."
+        ),
+    }
+    return candidate_checklists.get(
+        spec.product_key,
+        "Manually adjudicate candidate rows against source records, document reviewer/date provenance, and remove candidateOnly markers only after the target protocol owner signs off.",
+    )
 
 
 def audit_csv(path: Path, spec: ProductSpec) -> tuple[int, tuple[str, ...], tuple[str, ...], int, tuple[str, ...], tuple[str, ...], str, bool]:
@@ -986,6 +1054,7 @@ def write_csv(path: Path, rows: list[dict[str, str]]) -> None:
         "validationNotes",
         "claimBoundary",
         "nextAction",
+        "manualReviewChecklist",
     ]
     with path.open("w", newline="", encoding="utf-8") as destination:
         writer = csv.DictWriter(destination, fieldnames=fieldnames, lineterminator="\n")
@@ -1093,6 +1162,21 @@ def write_markdown(path: Path, rows: list[dict[str, str]]) -> None:
     for row in rows:
         lines.append(
             "| {targetKey} | {productLabel} | {acceptableSources} | {validationRule} | {claimBoundary} |".format(
+                **{key: md(value) for key, value in row.items()}
+            )
+        )
+    lines.extend([
+        "",
+        "## Manual Promotion Checklists",
+        "",
+        "These checklists describe what must happen before a ready-but-bounded, missing, schema-problem, or candidate-only product can support a stronger empirical claim. Candidate-only products remain manual-review worklists until these checks are completed and the product is regenerated without candidate-only markers.",
+        "",
+        "| Target | Product | Status | Checklist |",
+        "| --- | --- | --- | --- |",
+    ])
+    for row in rows:
+        lines.append(
+            "| {targetKey} | {productLabel} | {productStatus} | {manualReviewChecklist} |".format(
                 **{key: md(value) for key, value in row.items()}
             )
         )

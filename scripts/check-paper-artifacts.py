@@ -127,7 +127,7 @@ DOI_DEPOSIT_PACKAGE_CHECKSUM_CSV = ROOT / "dist" / "doi-deposit-package-checksum
 DOI_DEPOSIT_PACKAGE_CHECKSUM_JSON = ROOT / "dist" / "doi-deposit-package-checksum.json"
 DOI_DEPOSIT_PACKAGE_CHECKSUM_MD = ROOT / "dist" / "doi-deposit-package-checksum.md"
 ZENODO_DEPOSIT_METADATA_JSON = ROOT / "dist" / "zenodo-deposit-metadata.json"
-RELEASE_TAG = "paper-publication-readiness-2026-06-18-r160"
+RELEASE_TAG = "paper-publication-readiness-2026-06-18-r161"
 ARCHIVE_HANDOFF_REPORT_NAMES = {
     "archive-handoff-manifest.csv",
     "archive-handoff-manifest.json",
@@ -2113,6 +2113,7 @@ def check_first_wave_source_products() -> list[str]:
         "validationRule",
         "claimBoundary",
         "nextAction",
+        "manualReviewChecklist",
     ]
     ready_rows = []
     candidate_rows = []
@@ -2127,6 +2128,15 @@ def check_first_wave_source_products() -> list[str]:
             ready_rows.append(product)
         if row.get("productStatus") == "candidate_unreviewed":
             candidate_rows.append(product)
+            checklist = row.get("manualReviewChecklist", "")
+            checklist_lower = checklist.lower()
+            if (
+                "remove candidateonly markers only after" not in checklist_lower
+                and "promote only after" not in checklist_lower
+            ):
+                failures.append(
+                    f"first-wave candidate source product {product} missing promotion-gate checklist language"
+                )
         quality_issue_count = row.get("qualityIssueCount", "0")
         if quality_issue_count not in {"", "0"} and not row.get("qualityIssueExamples", "").strip():
             failures.append(
@@ -2206,6 +2216,8 @@ def check_first_wave_source_products() -> list[str]:
             "agency response text and final-rule linkage",
             "Candidate-only manual-review seed is present",
             "response sections, final-rule text movement, and uptake coding are manually adjudicated",
+            "Manual Promotion Checklists",
+            "remove candidateOnly markers only after",
         ):
             if phrase not in product_text:
                 failures.append(f"first-wave source products markdown missing ready-note boundary phrase: {phrase}")
@@ -2222,8 +2234,10 @@ def check_first_wave_source_products() -> list[str]:
         "Counts remain the gate",
         "candidate_unreviewed",
         "deterministic manual-review seed",
+        "manual-review worklists until these checks are completed",
         "Template path",
         "Semantic Gate Notes",
+        "Manual Promotion Checklists",
         "SAM/FPDS action-history export or keyed pull",
         "canonical actor identifier table",
         "comment-body corpus",
@@ -2246,6 +2260,8 @@ def check_first_wave_source_products() -> list[str]:
             "comment-body corpus",
             "duplicate/template clusters",
             "candidate-only response/final-rule linkage",
+            "first-wave source-product audit",
+            "manual promotion",
         ):
             if phrase not in supplement:
                 failures.append(f"supplement does not disclose first-wave source product artifact: {phrase}")

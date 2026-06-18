@@ -655,7 +655,7 @@ with ci_csv.open("w", newline="", encoding="utf-8") as target:
         "gate": "release-tag-target",
         "status": "ready",
         "workflow": "local-git",
-        "branchOrTag": "paper-publication-readiness-2026-06-18-r160",
+        "branchOrTag": "paper-publication-readiness-2026-06-18-r161",
         "headSha": "abc123",
         "runId": "",
         "runStatus": "completed",
@@ -681,7 +681,7 @@ with ci_csv.open("w", newline="", encoding="utf-8") as target:
         "gate": "release-tag-ci",
         "status": "ready",
         "workflow": "CI",
-        "branchOrTag": "paper-publication-readiness-2026-06-18-r160",
+        "branchOrTag": "paper-publication-readiness-2026-06-18-r161",
         "headSha": "abc123",
         "runId": "112",
         "runStatus": "completed",
@@ -703,7 +703,7 @@ with ci_csv.open("w", newline="", encoding="utf-8") as target:
         "gate": "release-tag-target",
         "status": "ready",
         "workflow": "local-git",
-        "branchOrTag": "paper-publication-readiness-2026-06-18-r160",
+        "branchOrTag": "paper-publication-readiness-2026-06-18-r161",
         "headSha": "abc123",
         "runId": "",
         "runStatus": "completed",
@@ -735,9 +735,9 @@ mkdir -p "$tmpdir/doi-repo/paper/sections" "$tmpdir/doi-repo/reports"
 cat > "$tmpdir/doi-repo/CITATION.cff" <<'YAML'
 cff-version: 1.2.0
 title: "Lobby Capture Simulator"
-version: "paper-publication-readiness-2026-06-18-r160"
+version: "paper-publication-readiness-2026-06-18-r161"
 repository-code: "https://github.com/Jacoba1100254352/lobby-capture-simulator"
-url: "https://github.com/Jacoba1100254352/lobby-capture-simulator/releases/tag/paper-publication-readiness-2026-06-18-r160"
+url: "https://github.com/Jacoba1100254352/lobby-capture-simulator/releases/tag/paper-publication-readiness-2026-06-18-r161"
 license: MIT
 preferred-citation:
   type: article
@@ -749,7 +749,7 @@ cat > "$tmpdir/doi-repo/.zenodo.json" <<'JSON'
   "upload_type": "software",
   "related_identifiers": [
     {
-      "identifier": "https://github.com/Jacoba1100254352/lobby-capture-simulator/releases/tag/paper-publication-readiness-2026-06-18-r160",
+      "identifier": "https://github.com/Jacoba1100254352/lobby-capture-simulator/releases/tag/paper-publication-readiness-2026-06-18-r161",
       "relation": "isIdenticalTo",
       "resource_type": "software"
     },
@@ -763,7 +763,7 @@ cat > "$tmpdir/doi-repo/.zenodo.json" <<'JSON'
 JSON
 cat > "$tmpdir/doi-repo/paper/sections/submission-declarations.tex" <<'TEX'
 \submissionsection{Data and Code Availability}
-The simulator source is publicly maintained at \url{https://github.com/Jacoba1100254352/lobby-capture-simulator}. The code is released under the MIT License, and this review bundle is associated with \href{https://github.com/Jacoba1100254352/lobby-capture-simulator/releases/tag/paper-publication-readiness-2026-06-18-r160}{release r160}. Report manifests record seed and runtime provenance.
+The simulator source is publicly maintained at \url{https://github.com/Jacoba1100254352/lobby-capture-simulator}. The code is released under the MIT License, and this review bundle is associated with \href{https://github.com/Jacoba1100254352/lobby-capture-simulator/releases/tag/paper-publication-readiness-2026-06-18-r161}{release r161}. Report manifests record seed and runtime provenance.
 TEX
 cat > "$tmpdir/doi-repo/reports/final-human-readthrough.md" <<'MD'
 # Final Human Scholarly Read-Through
@@ -771,7 +771,7 @@ cat > "$tmpdir/doi-repo/reports/final-human-readthrough.md" <<'MD'
 status: pending
 signed-off-by:
 signed-off-date:
-reviewed-release: paper-publication-readiness-2026-06-18-r160
+reviewed-release: paper-publication-readiness-2026-06-18-r161
 reviewed-commit:
 doi-archive:
 MD
