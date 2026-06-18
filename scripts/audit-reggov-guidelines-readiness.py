@@ -435,6 +435,7 @@ def supporting_information_ready(names: set[str]) -> bool:
         "supporting-information/submission-readiness.md",
         "supporting-information/final-human-readthrough.md",
         "supporting-information/final-human-readthrough-audit.md",
+        "supporting-information/final-readthrough-evidence.md",
     }
     return all((ROOT / path).exists() for path in ["docs/odd-model.md", "docs/scenario-catalog.md", "docs/validation.md"]) and required <= names
 
@@ -450,6 +451,7 @@ def supporting_information_evidence(names: set[str]) -> str:
         "supporting-information/submission-readiness.md",
         "supporting-information/final-human-readthrough.md",
         "supporting-information/final-human-readthrough-audit.md",
+        "supporting-information/final-readthrough-evidence.md",
     ]
     report_data = sum(1 for name in names if name.startswith("supporting-information/report-data/"))
     return (

@@ -436,7 +436,7 @@ def markdown(release_tag: str, rows: list[dict[str, str]]) -> str:
         lines.append(f"- `{asset}`")
     lines.extend([
         "",
-        "The tagged source archive should also preserve `CITATION.cff`, `.zenodo.json`, `reports/submission-readiness.md`, `reports/final-human-readthrough.md`, and `reports/final-human-readthrough-audit.md` so the DOI record remains tied to the release claim boundary and final signoff state.",
+        "The tagged source archive should also preserve `CITATION.cff`, `.zenodo.json`, `reports/submission-readiness.md`, `reports/final-human-readthrough.md`, `reports/final-human-readthrough-audit.md`, and `reports/final-readthrough-evidence.md` so the DOI record remains tied to the release claim boundary, automated read-through evidence, and final signoff state.",
         "",
         "## Post-Release Integrity Check",
         "",

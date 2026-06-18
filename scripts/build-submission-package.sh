@@ -97,6 +97,7 @@ cp "$ROOT_DIR/reports/paper-layout-audit.md" "$STAGING_DIR/supporting-informatio
 cp "$ROOT_DIR/reports/manual-visual-audit.md" "$STAGING_DIR/supporting-information/manual-visual-audit.md"
 cp "$ROOT_DIR/reports/final-human-readthrough.md" "$STAGING_DIR/supporting-information/final-human-readthrough.md"
 cp "$ROOT_DIR/reports/final-human-readthrough-audit.md" "$STAGING_DIR/supporting-information/final-human-readthrough-audit.md"
+cp "$ROOT_DIR/reports/final-readthrough-evidence.md" "$STAGING_DIR/supporting-information/final-readthrough-evidence.md"
 cp "$ROOT_DIR/CITATION.cff" "$STAGING_DIR/supporting-information/CITATION.cff"
 cp "$ROOT_DIR/.zenodo.json" "$STAGING_DIR/supporting-information/zenodo.json"
 mkdir -p "$STAGING_DIR/supporting-information/source-product-templates"

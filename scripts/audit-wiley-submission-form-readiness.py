@@ -41,6 +41,7 @@ EXPECTED_SUPPORT_MEMBERS = {
     "supporting-information/zenodo.json",
     "supporting-information/final-human-readthrough.md",
     "supporting-information/final-human-readthrough-audit.md",
+    "supporting-information/final-readthrough-evidence.md",
 }
 EXPECTED_PREFIXES = {
     "figures/",

@@ -39,6 +39,8 @@ RELEASE_AID_PATHS = [
     "reports/final-human-readthrough.md",
     "reports/final-human-readthrough-audit.csv",
     "reports/final-human-readthrough-audit.md",
+    "reports/final-readthrough-evidence.csv",
+    "reports/final-readthrough-evidence.md",
     "reports/reggov-guidelines-readiness.csv",
     "reports/reggov-guidelines-readiness.md",
     "reports/reviewer-risk-register.csv",
