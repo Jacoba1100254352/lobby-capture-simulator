@@ -23,7 +23,21 @@ if [ -f .env ]; then
     esac
     eval "already_set=\${$key+x}"
     if [ -z "$already_set" ]; then
-      printf '%s\n' "$stripped" >> "$env_tmp"
+      value="${assignment#*=}"
+      case "$value" in
+        \"*\")
+          case "$value" in
+            *\") value="${value#\"}"; value="${value%\"}" ;;
+          esac
+          ;;
+        \'*\')
+          case "$value" in
+            *\') value="${value#\'}"; value="${value%\'}" ;;
+          esac
+          ;;
+      esac
+      quoted_value="$(printf '%s' "$value" | sed "s/'/'\\\\''/g")"
+      printf "%s='%s'\n" "$key" "$quoted_value" >> "$env_tmp"
     fi
   done < .env
   set -a

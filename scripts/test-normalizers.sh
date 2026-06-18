@@ -33,6 +33,7 @@ cat > "$tmpdir/load-env/.env" <<'ENV'
 PRESET_VALUE=from_env_file
 FRESH_VALUE="two words"
 export EXPORTED_VALUE=from_export
+SAM_CONTRACT_AWARDS_LIVE_URL=https://api.sam.gov/contract-awards/v1/download?api_key=REPLACE_WITH_API_KEY&token=example-token
 INVALID-KEY=ignored
 ENV
 (
@@ -42,6 +43,7 @@ ENV
     test "$PRESET_VALUE" = "from_caller"
     test "$FRESH_VALUE" = "two words"
     test "$EXPORTED_VALUE" = "from_export"
+    test "$SAM_CONTRACT_AWARDS_LIVE_URL" = "https://api.sam.gov/contract-awards/v1/download?api_key=REPLACE_WITH_API_KEY&token=example-token"
   '
 )
 
@@ -467,9 +469,9 @@ mkdir -p "$tmpdir/doi-repo/paper/sections" "$tmpdir/doi-repo/reports"
 cat > "$tmpdir/doi-repo/CITATION.cff" <<'YAML'
 cff-version: 1.2.0
 title: "Lobby Capture Simulator"
-version: "paper-publication-readiness-2026-06-18-r145"
+version: "paper-publication-readiness-2026-06-18-r146"
 repository-code: "https://github.com/Jacoba1100254352/lobby-capture-simulator"
-url: "https://github.com/Jacoba1100254352/lobby-capture-simulator/releases/tag/paper-publication-readiness-2026-06-18-r145"
+url: "https://github.com/Jacoba1100254352/lobby-capture-simulator/releases/tag/paper-publication-readiness-2026-06-18-r146"
 license: MIT
 preferred-citation:
   type: article
@@ -481,7 +483,7 @@ cat > "$tmpdir/doi-repo/.zenodo.json" <<'JSON'
   "upload_type": "software",
   "related_identifiers": [
     {
-      "identifier": "https://github.com/Jacoba1100254352/lobby-capture-simulator/releases/tag/paper-publication-readiness-2026-06-18-r145",
+      "identifier": "https://github.com/Jacoba1100254352/lobby-capture-simulator/releases/tag/paper-publication-readiness-2026-06-18-r146",
       "relation": "isIdenticalTo",
       "resource_type": "software"
     },
@@ -495,7 +497,7 @@ cat > "$tmpdir/doi-repo/.zenodo.json" <<'JSON'
 JSON
 cat > "$tmpdir/doi-repo/paper/sections/submission-declarations.tex" <<'TEX'
 \submissionsection{Data and Code Availability}
-The simulator source is publicly maintained at \url{https://github.com/Jacoba1100254352/lobby-capture-simulator}. The code is released under the MIT License, and this review bundle is associated with \href{https://github.com/Jacoba1100254352/lobby-capture-simulator/releases/tag/paper-publication-readiness-2026-06-18-r145}{release r145}. Report manifests record seed and runtime provenance.
+The simulator source is publicly maintained at \url{https://github.com/Jacoba1100254352/lobby-capture-simulator}. The code is released under the MIT License, and this review bundle is associated with \href{https://github.com/Jacoba1100254352/lobby-capture-simulator/releases/tag/paper-publication-readiness-2026-06-18-r146}{release r146}. Report manifests record seed and runtime provenance.
 TEX
 cat > "$tmpdir/doi-repo/reports/final-human-readthrough.md" <<'MD'
 # Final Human Scholarly Read-Through
@@ -503,7 +505,7 @@ cat > "$tmpdir/doi-repo/reports/final-human-readthrough.md" <<'MD'
 status: pending
 signed-off-by:
 signed-off-date:
-reviewed-release: paper-publication-readiness-2026-06-18-r145
+reviewed-release: paper-publication-readiness-2026-06-18-r146
 reviewed-commit:
 doi-archive:
 MD
