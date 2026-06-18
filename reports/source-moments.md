@@ -47,8 +47,8 @@ These are direct moments from normalized calibration tables. They are source dia
 | snapshot | fec | `publicFinancingProgramCount` | 2.0000 | observed_proxy | distinct public-financing program sources represented |
 | snapshot | fec | `publicFinancingVoucherRows` | 3.0000 | observed | democracy-voucher rows from explicit public-financing panels |
 | snapshot | fec | `publicFinancingMatchingRows` | 132.0000 | observed | public matching-fund rows from explicit public-financing panels |
-| snapshot | fec | `publicFinancingVoucherAmount` | 0.0968 | observed_proxy | sum of normalized democracy-voucher amount |
-| snapshot | fec | `publicFinancingProgramAmount` | 87.0526 | observed_proxy | sum of public-match and voucher bridge amount |
+| snapshot | fec | `publicFinancingVoucherAmount` | 0.0972 | observed_proxy | sum of normalized democracy-voucher amount |
+| snapshot | fec | `publicFinancingProgramAmount` | 87.0530 | observed_proxy | sum of public-match and voucher bridge amount |
 | snapshot | fec | `publicFinancingSourceShare` | 0.0758 | observed_proxy | public-match or voucher share of normalized campaign-finance plus bridge amount |
 | snapshot | fec | `publicFinancingTraceabilityMean` | 0.9600 | observed_proxy | amount-weighted traceability among public-financing rows |
 | snapshot | fec | `publicFinancingLargeDonorWeightedShare` | 0.0999 | observed_proxy | amount-weighted large-donor share among public-financing rows |
@@ -79,7 +79,7 @@ These are direct moments from normalized calibration tables. They are source dia
 | snapshot | usaspending | `procurementActionAgencyCount` | 12.0000 | diagnostic | distinct awarding agencies in the primary transaction/action panel from stratified USAspending transaction/action rows |
 | snapshot | usaspending | `procurementBridgeTopAwardSample` | 1.0000 | diagnostic | 1 when a separate multi-agency top-award bridge is available |
 | snapshot | usaspending | `procurementLatestTransactionModificationProxy` | 1.0000 | diagnostic | 1 when latest-transaction enrichment exists but is kept separate from action-level modification incidence |
-| snapshot | usaspending | `procurementTotalAwards` | 194287.3483 | observed | sum of national-volume no-agency-filtered USAspending transaction/action rows amount |
+| snapshot | usaspending | `procurementTotalAwards` | 194283.8763 | observed | sum of national-volume no-agency-filtered USAspending transaction/action rows amount |
 | snapshot | usaspending | `procurementRecipientTop1Share` | 0.1139 | observed | largest recipient share of national-volume no-agency-filtered USAspending transaction/action rows amount |
 | snapshot | usaspending | `procurementRecipientTop3Share` | 0.2753 | observed | top three recipients share of national-volume no-agency-filtered USAspending transaction/action rows amount |
 | snapshot | usaspending | `procurementRecipientHerfindahl` | 0.0403 | observed | recipient award-amount Herfindahl over national-volume no-agency-filtered USAspending transaction/action rows |
@@ -89,15 +89,15 @@ These are direct moments from normalized calibration tables. They are source dia
 | snapshot | usaspending | `procurementSubAgencyTop3Share` | 0.5753 | observed | top three sub-agencies share of national-volume no-agency-filtered USAspending transaction/action rows amount |
 | snapshot | usaspending | `procurementAwardCount` | 1500.0000 | observed | sum of normalized award or transaction counts in national-volume no-agency-filtered USAspending transaction/action rows |
 | snapshot | usaspending | `procurementSingleBidShare` | 0.2350 | observed_proxy | share among normalized USAspending award rows with competition fields that have one known offer |
-| snapshot | usaspending | `procurementAmountWeightedSingleBidShare` | 0.2109 | observed_proxy | award-amount share among normalized USAspending award rows with competition fields with one known offer |
-| snapshot | usaspending | `procurementInitialAwardShare` | 0.5777 | observed_proxy | share of stratified USAspending transaction/action rows that appear to be initial awards |
-| snapshot | usaspending | `procurementExPostModificationShare` | 0.4223 | observed_proxy | share of stratified USAspending transaction/action rows marked as ex-post modifications or nonzero modification sequence |
+| snapshot | usaspending | `procurementAmountWeightedSingleBidShare` | 0.2110 | observed_proxy | award-amount share among normalized USAspending award rows with competition fields with one known offer |
+| snapshot | usaspending | `procurementInitialAwardShare` | 0.5778 | observed_proxy | share of stratified USAspending transaction/action rows that appear to be initial awards |
+| snapshot | usaspending | `procurementExPostModificationShare` | 0.4222 | observed_proxy | share of stratified USAspending transaction/action rows marked as ex-post modifications or nonzero modification sequence |
 | snapshot | usaspending | `procurementActionDistinctAwards` | 23809.0000 | diagnostic | distinct PIID/award identifiers in stratified USAspending transaction/action rows used for award-level modification diagnostics |
-| snapshot | usaspending | `procurementModifiedAwardCount` | 8203.0000 | diagnostic | distinct PIID/award identifiers in stratified USAspending transaction/action rows with at least one ex-post modification row |
-| snapshot | usaspending | `procurementModifiedAwardShare` | 0.3445 | observed_proxy | share of distinct PIID/award identifiers in stratified USAspending transaction/action rows with at least one ex-post modification row |
-| snapshot | usaspending | `procurementModificationActionsPerModifiedAward` | 1.4467 | diagnostic | mean modified action rows per modified PIID/award identifier in stratified USAspending transaction/action rows |
+| snapshot | usaspending | `procurementModifiedAwardCount` | 8201.0000 | diagnostic | distinct PIID/award identifiers in stratified USAspending transaction/action rows with at least one ex-post modification row |
+| snapshot | usaspending | `procurementModifiedAwardShare` | 0.3444 | observed_proxy | share of distinct PIID/award identifiers in stratified USAspending transaction/action rows with at least one ex-post modification row |
+| snapshot | usaspending | `procurementModificationActionsPerModifiedAward` | 1.4469 | diagnostic | mean modified action rows per modified PIID/award identifier in stratified USAspending transaction/action rows |
 | snapshot | usaspending | `procurementAmountWeightedModificationShare` | 0.6344 | observed_proxy | award-amount share of stratified USAspending transaction/action rows marked as ex-post modifications |
-| snapshot | usaspending | `procurementActionModificationRows` | 11867.0000 | diagnostic | primary transaction/action rows from stratified USAspending transaction/action rows marked as ex-post modifications |
+| snapshot | usaspending | `procurementActionModificationRows` | 11866.0000 | diagnostic | primary transaction/action rows from stratified USAspending transaction/action rows marked as ex-post modifications |
 | snapshot | usaspending | `procurementPriceOnlyAwardShare` | 0.2400 | observed_proxy | share among normalized USAspending award rows with competition fields marked as price-only or one-offer awards |
 | snapshot | usaspending | `procurementLimitedCompetitionShare` | 0.4600 | observed_proxy | share among normalized USAspending award rows with competition fields with limited competition, exclusions, or one known offer |
 | snapshot | usaspending | `procurementProtestShare` | 0.0000 | observed_proxy | share of normalized award rows marked with a protest flag |

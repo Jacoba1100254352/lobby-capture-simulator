@@ -4,9 +4,8 @@ This audit separates implemented live-source routes from the empirical support a
 
 ## Summary
 
-- active-bounded: `1`
 - active-representative: `1`
-- active-usable: `4`
+- active-usable: `5`
 - implemented-not-active: `1`
 - planned-overlay: `1`
 
@@ -21,7 +20,7 @@ This audit separates implemented live-source routes from the empirical support a
 | --- | --- | ---: | --- | --- | --- | --- | --- | --- |
 | direct-dark-money-routing | dark-money (ok) | 330 | usable | active-usable | not-applicable | normalized IRS EO BMF opaque-capacity proxy rows written; ProPublica Nonprofit Explorer Schedule I nonprofit-routing rows appended | Hidden-channel magnitude and calibrated policy-simulation claims | Broaden nonprofit-routing beyond the bounded top-EIN Schedule I slice and keep these transfer rows separate from Schedule E, electioneering, communication-cost, IRS BMF capacity proxies, and hidden-donor identity claims. |
 | sam-contract-awards-action-history | sam-contract-awards (unavailable) | 0 | usable | implemented-not-active | blocked | SAM.gov Contract Awards request failed; mode=1; format=json; filterCount=12; pageSize=100; maxPages=1; offsetPageStarts=0+10+50; fallback=USAspending action rows | Procurement modification capture and calibrated policy-simulation claims | Use the archived USAspending bulk summary for public modification diagnostics; add a SAM/FPDS pull or configured export to crosswalk modification coding, exclusions, offer counts, protests, and firewalls. |
-| usaspending-stratified-action-panel | usaspending-procurement-actions (archived_fallback) | 28104 | usable | active-bounded | not-applicable | SAM.gov and USAspending procurement action requests failed; retainedArchivedRows=28104 | Bounded procurement concentration and modification diagnostics | Broaden beyond the selected 12-agency quarterly stress panel before treating modification incidence as calibration-grade. |
+| usaspending-stratified-action-panel | usaspending-procurement-actions (ok) | 28104 | usable | active-usable | not-applicable | normalized USAspending procurement action rows written after SAM fallback | Bounded procurement concentration and modification diagnostics | Broaden beyond the selected 12-agency quarterly stress panel before treating modification incidence as calibration-grade. |
 | usaspending-national-action-panel | usaspending-procurement-national-actions (ok) | 1500 | usable | active-usable | not-applicable | normalized national-volume USAspending procurement action rows written; agencyFilter=ALL; periodBuckets=annual; pageSize=100; maxPages=5; sortSpecs=Transaction Amount:desc;Mod:asc;Action Date:asc | Stronger public procurement concentration diagnostics | Use this no-key national-volume panel as a fallback concentration diagnostic; prefer the archived bulk summary when present and keep modification incidence blocked on benchmark/coding reconciliation. |
 | usaspending-bulk-transaction-download-panel | usaspending-procurement-bulk-summary (present) | 6449101 | usable | active-representative | not-applicable | Active rows are present in the frozen snapshot. | Procurement modification denominator robustness and calibrated policy-simulation claim review | Use the compact frozen summary for public transaction-history diagnostics; archive the full normalized CSV/ZIP payloads externally only when full byte-for-byte reproduction is required. |
 | lda-covered-position-revolving-door | revolving-door (ok) | 803 | usable | active-usable | not-applicable | derived normalized covered-position rows from LDA source | Revolving-door access mechanism diagnostics | Supplement with OGE, FACA, witness, LegiStorm/OpenSecrets, or archived personnel-movement exports before claiming representative post-employment movement. |

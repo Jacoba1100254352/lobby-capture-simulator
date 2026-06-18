@@ -255,7 +255,7 @@ Benchmark ranges are plausibility checks, not causal empirical claims. `source_g
 | lobby-capture-mechanism-comparison.csv | commentNetworkLoad | 0.0477-0.2362 | 0.00-0.85 | fit | all scenario values inside benchmark range; scope=all scenarios; rows=9 |
 | lobby-capture-mechanism-comparison.csv | venueShiftNetworkLoad | 0.0086-0.2824 | 0.00-0.85 | fit | all scenario values inside benchmark range; scope=all scenarios; rows=9 |
 | lobby-capture-portfolio.csv | lobbySpendPerContest | 0.1465-0.3453 | 0.01-5.00 | fit | all scenario values inside benchmark range; scope=all scenarios; rows=10 |
-| lobby-capture-portfolio.csv | largeDonorDependence | 0.5492-0.6226 | 0.10-0.95 | fit | all scenario values inside benchmark range; scope=all scenarios; rows=10 |
+| lobby-capture-portfolio.csv | largeDonorDependence | 0.5492-0.6225 | 0.10-0.95 | fit | all scenario values inside benchmark range; scope=all scenarios; rows=10 |
 | lobby-capture-portfolio.csv | constitutionalChallengeDelay | 0.0000-0.0000 | 0.00-0.80 | fit | all scenario values inside benchmark range; scope=all scenarios; rows=10 |
 | lobby-capture-portfolio.csv | voucherParticipation | 0.0200-0.7600 | 0.00-1.00 | fit | all scenario values inside benchmark range; scope=all scenarios; rows=10 |
 | lobby-capture-portfolio.csv | procurementBias | 0.0151-0.1059 | 0.00-1.00 | fit | all scenario values inside benchmark range; scope=procurement scenarios; rows=10 |

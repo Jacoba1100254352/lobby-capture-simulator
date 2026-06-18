@@ -32,7 +32,7 @@ The current command freezes whatever normalized files are present under `data/ra
 | regulatory | 200 | live | `data/snapshots/2024-env/normalized/regulatory-dockets.csv` |
 | usaspending | 200 | live | `data/snapshots/2024-env/normalized/usaspending-awards.csv` |
 | usaspending-procurement-bridge | 150 | live | `data/snapshots/2024-env/normalized/usaspending-procurement-bridge.csv` |
-| usaspending-procurement-actions | 28104 | archived-fallback | `data/snapshots/2024-env/normalized/usaspending-procurement-actions.csv` |
+| usaspending-procurement-actions | 28104 | live | `data/snapshots/2024-env/normalized/usaspending-procurement-actions.csv` |
 | usaspending-procurement-national-actions | 1500 | live | `data/snapshots/2024-env/normalized/usaspending-procurement-national-actions.csv` |
 | usaspending-procurement-bulk-summary | 6449101 | copied | `data/snapshots/2024-env/normalized/usaspending-procurement-bulk-summary.json` |
 | sam-contract-awards | 0 | unavailable | `data/snapshots/2024-env/normalized/sam-contract-awards.csv` |

@@ -1,7 +1,7 @@
 {
   "snapshot": "2024-env",
-  "generatedAt": "2026-06-15T20:19:02.859386+00:00",
-  "gitCommit": "0b8d907",
+  "generatedAt": "2026-06-18T05:19:55.063280+00:00",
+  "gitCommit": "567b574",
   "gitTreeState": "clean",
   "gitTreeStateScope": "working tree status excluding generated 2024-env snapshot, reports, paper tables, and paper figures",
   "scope": {
@@ -39,7 +39,7 @@
       "requestTemplate": "PUBLIC_FINANCING_SOURCE_NATIVE=1 with nyc-public-financing and seattle-democracy-vouchers source-native fetchers, or PUBLIC_FINANCING_LIVE_CSV=/path/to/program-export.csv ./scripts/fetch-public-financing.sh --live",
       "normalizedFile": "data/snapshots/2024-env/normalized/public-financing.csv",
       "rowCount": 135,
-      "sha256": "e83b30ab8dff2247d4be37409ce328bae5963e6eb21d624e54d5a80d5d79aa7d",
+      "sha256": "24d9eb91741b351d941929fe6a2d7fcc88ad9aa2a9ac451072e5463a5dbc0254",
       "status": "live",
       "statusNotes": "public-financing: ok (NYC CFB public-financing rows; Seattle Democracy Voucher rows)"
     },
@@ -69,7 +69,7 @@
       "requestTemplate": "USASPENDING_FISCAL_YEAR=2024 USASPENDING_AGENCY='Environmental Protection Agency' ./scripts/fetch-usaspending.sh --live",
       "normalizedFile": "data/snapshots/2024-env/normalized/usaspending-awards.csv",
       "rowCount": 200,
-      "sha256": "3796f5b252b2850ae7f7889a10518020a55f26ca1629690b07bf41284fc9b4c4",
+      "sha256": "a4f84c268a49ad54de6d152756edf945a2b3606638d6f9e89bbe80f2a88077f7",
       "status": "live",
       "statusNotes": "usaspending: ok (normalized EPA award rows written)"
     },
@@ -79,7 +79,7 @@
       "requestTemplate": "USASPENDING_AGENCIES='Environmental Protection Agency,Department of Energy,Department of the Interior,Department of Agriculture,Department of Transportation,Department of Defense' USASPENDING_PAGE_SIZE=25 USASPENDING_MAX_PAGES=1 USASPENDING_TREAT_LATEST_TRANSACTION_AS_MODIFICATION=1 python3 scripts/fetch-source-data.py usaspending --output data/raw/usaspending-procurement-bridge.csv",
       "normalizedFile": "data/snapshots/2024-env/normalized/usaspending-procurement-bridge.csv",
       "rowCount": 150,
-      "sha256": "b6900f83ade96294200d2f05fe8f856c724102e7585bc9995ed9a6a400589484",
+      "sha256": "4ece1ae026193f9013242c0e612b567ef1124cd1bdf383a60b8ec2418f2be051",
       "status": "live",
       "statusNotes": "usaspending-procurement-bridge: ok (normalized multi-agency procurement bridge rows written)"
     },
@@ -89,9 +89,9 @@
       "requestTemplate": "USASPENDING_AGENCIES='Environmental Protection Agency,Department of Energy,Department of the Interior,Department of Agriculture,Department of Transportation,Department of Defense,Department of Health and Human Services,Department of Veterans Affairs,Department of Homeland Security,National Aeronautics and Space Administration,General Services Administration,Department of Commerce' USASPENDING_ACTION_PERIOD_BUCKETS=quarterly USASPENDING_ACTION_TRANSACTION_PAGE_SIZE=100 USASPENDING_ACTION_TRANSACTION_MAX_PAGES=2 USASPENDING_ACTION_TRANSACTION_SORT_SPECS='Mod:asc;Transaction Amount:desc;Action Date:asc' python3 scripts/fetch-source-data.py usaspending-actions --output data/raw/usaspending-procurement-actions.csv",
       "normalizedFile": "data/snapshots/2024-env/normalized/usaspending-procurement-actions.csv",
       "rowCount": 28104,
-      "sha256": "0a673911ccb2ded9ea98f41bfeb5aa794d9225f15fbf09e0d99013d787521159",
-      "status": "archived-fallback",
-      "statusNotes": "usaspending-procurement-actions: archived_fallback (SAM.gov and USAspending procurement action requests failed; retainedArchivedRows=28104)"
+      "sha256": "72fcc25e7f9da026214765a20c5b2853061e12533902c205dcfb6cdc0088148c",
+      "status": "live",
+      "statusNotes": "usaspending-procurement-actions: ok (normalized USAspending procurement action rows written after SAM fallback)"
     },
     {
       "source": "usaspending-procurement-national-actions",
@@ -99,7 +99,7 @@
       "requestTemplate": "USASPENDING_PROCUREMENT_ACTIONS_AGENCIES=ALL USASPENDING_ACTION_PERIOD_BUCKETS=annual USASPENDING_ACTION_TRANSACTION_PAGE_SIZE=100 USASPENDING_ACTION_TRANSACTION_MAX_PAGES=5 USASPENDING_ACTION_TRANSACTION_SORT_SPECS='Transaction Amount:desc;Mod:asc;Action Date:asc' python3 scripts/fetch-source-data.py usaspending-actions --output data/raw/usaspending-procurement-national-actions.csv",
       "normalizedFile": "data/snapshots/2024-env/normalized/usaspending-procurement-national-actions.csv",
       "rowCount": 1500,
-      "sha256": "cf4f791826f229aad53a3ede77ce8f62f11108b06d964c0971d3d508804d7d60",
+      "sha256": "370ee77bc06d2ab8f28ca86eba391088bfc504cbc626210d1fb13ddb096753a3",
       "status": "live",
       "statusNotes": "usaspending-procurement-national-actions: ok (normalized national-volume USAspending procurement action rows written; agencyFilter=ALL; periodBuckets=annual; pageSize=100; maxPages=5; sortSpecs=Transaction Amount:desc;Mod:asc;Action Date:asc)"
     },
@@ -116,7 +116,7 @@
     {
       "source": "sam-contract-awards",
       "description": "Optional SAM.gov Contract Awards action panel for PIID/UEI, competition, modification, award-date, and contracting-department diagnostics; kept separate from USAspending action rows so procurement provenance remains auditable.",
-      "requestTemplate": "SAM_CONTRACT_AWARDS_LIVE_CSV=/path/to/export.csv python3 scripts/fetch-source-data.py sam-contract-awards-export --input /path/to/export.csv --output data/raw/sam-contract-awards.csv, or SAM_CONTRACT_AWARDS_SOURCE_NATIVE=1 SAM_CONTRACT_AWARDS_EXTRACT_MODE=1 SAM_API_KEY=... python3 scripts/fetch-source-data.py sam-contract-awards --output data/raw/sam-contract-awards.csv",
+      "requestTemplate": "SAM_CONTRACT_AWARDS_LIVE_CSV=/path/to/export.csv python3 scripts/fetch-source-data.py sam-contract-awards-export --input /path/to/export.csv --output data/raw/sam-contract-awards.csv, or SAM_CONTRACT_AWARDS_LIVE_URL='https://api.sam.gov/contract-awards/v1/download?api_key=REPLACE_WITH_API_KEY&token=...' python3 scripts/fetch-source-data.py sam-contract-awards-export --output data/raw/sam-contract-awards.csv, or SAM_CONTRACT_AWARDS_SOURCE_NATIVE=1 SAM_CONTRACT_AWARDS_EXTRACT_MODE=1 SAM_API_KEY=... python3 scripts/fetch-source-data.py sam-contract-awards --output data/raw/sam-contract-awards.csv",
       "normalizedFile": "data/snapshots/2024-env/normalized/sam-contract-awards.csv",
       "rowCount": 0,
       "sha256": "missing",
@@ -146,6 +146,6 @@
   ],
   "liveRunStatus": {
     "file": "data/snapshots/2024-env/live-run-status.csv",
-    "sha256": "8ee91f8e200688487c19e6bdee5c13f01002e13dd42871b01828dc6a75a9bd9e"
+    "sha256": "0e2ceb639fe1119db0a5bc9e0062d98ec3b7fd0a7efde5983bc1ec011ce37171"
   }
 }
