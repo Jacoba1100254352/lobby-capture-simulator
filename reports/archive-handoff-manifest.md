@@ -7,8 +7,8 @@ PDF and ZIP byte streams can differ across TeX and archive implementations. The 
 ## Summary
 
 - Schema: `lobby-capture-archive-handoff-manifest-v1`
-- Release tag: `paper-publication-readiness-2026-06-18-r161`
-- Release URL: https://github.com/Jacoba1100254352/lobby-capture-simulator/releases/tag/paper-publication-readiness-2026-06-18-r161
+- Release tag: `paper-publication-readiness-2026-06-18-r162`
+- Release URL: https://github.com/Jacoba1100254352/lobby-capture-simulator/releases/tag/paper-publication-readiness-2026-06-18-r162
 - Generated at: `2026-05-05T00:00:00Z`
 - DOI status: not asserted by this manifest
 - Release asset checksum file: `dist/release-asset-checksums.{csv,json,md}`
@@ -29,10 +29,10 @@ PDF and ZIP byte streams can differ across TeX and archive implementations. The 
 | paper/regulation-governance-wiley.pdf | regulation-governance-wiley.pdf | wiley-rendered-manuscript | yes | release-asset-checksum-recorded-in-dist | see-dist-release-asset-checksums | `see-dist-release-asset-checksums` |
 | paper/strategic-channel-substitution-regulatory-capture.pdf | strategic-channel-substitution-regulatory-capture.pdf | local-rendered-manuscript | yes | release-asset-checksum-recorded-in-dist | see-dist-release-asset-checksums | `see-dist-release-asset-checksums` |
 | paper/supplement.pdf | supplement.pdf | supporting-information-pdf | yes | release-asset-checksum-recorded-in-dist | see-dist-release-asset-checksums | `see-dist-release-asset-checksums` |
-| CITATION.cff | - | citation-metadata | source-archive | tracked-source-verified | 1286 | `2f17bc3d803a6ba157b09cad72afa32c411dfce5c4398909a4403f79300888f9` |
-| .zenodo.json | - | doi-deposit-metadata | source-archive | tracked-source-verified | 1490 | `a7c36fa5b50b3411f388c84ed948cee11c32c4211a3457108fc1d7e1c85f39ff` |
-| reports/submission-readiness.md | - | submission-readiness-audit | source-archive | tracked-source-verified | 4939 | `996b129bcbd632be06152b6a24bc48ff94c52e934ab2e27c60e629092a26024b` |
-| reports/final-human-readthrough.md | - | manual-signoff-record | source-archive | tracked-source-verified | 5393 | `38bfdfd5dcc4cd7d64f96c80317f0a9977a385065a3ef40e1419e0a387bdaa42` |
+| CITATION.cff | - | citation-metadata | source-archive | tracked-source-verified | 1286 | `69364f60d2ccf4c2ea6b8c2b7bcde7ad29582bf9f4850937d5bd903ea9144f2d` |
+| .zenodo.json | - | doi-deposit-metadata | source-archive | tracked-source-verified | 1490 | `e64a31a25d491402571fca437017faa5c3f43d227fb8ac9451fa9c39685744fe` |
+| reports/submission-readiness.md | - | submission-readiness-audit | source-archive | tracked-source-verified | 4939 | `132d3a07c59b5763512a0a8354aabdf39e3a6edeeedb4df7b0656a1f7abe2b2a` |
+| reports/final-human-readthrough.md | - | manual-signoff-record | source-archive | tracked-source-verified | 5393 | `2dfb2a1712a7dd1a6865f72be5f2c50f070c67f72a410323ceecc93ee4d82881` |
 
 ## Archive Use
 

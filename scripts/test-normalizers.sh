@@ -47,6 +47,50 @@ ENV
   '
 )
 
+cat > "$tmpdir/sam-link.env" <<'ENV'
+SAM_API_KEY=fixture-private-key
+SAM_CONTRACT_AWARDS_LIVE_CSV=/tmp/stale-export.csv
+SAM_CONTRACT_AWARDS_LIVE_URL=https://api.sam.gov/contract-awards/v1/download?api_key=REPLACE_WITH_API_KEY&token=old-token
+ENV
+python3 scripts/record-sam-export-link.py \
+  --env "$tmpdir/sam-link.env" \
+  --url "https://api.sam.gov/contract-awards/v1/download?api_key=actual-private-key&token=fresh-token&extra=1" \
+  --generated-at 2026-06-18T12:00:00Z \
+  --valid-minutes 45 >"$tmpdir/sam-link.out"
+grep -q '^SAM_CONTRACT_AWARDS_LIVE_CSV=$' "$tmpdir/sam-link.env"
+grep -q '^SAM_CONTRACT_AWARDS_LIVE_URL=https://api.sam.gov/contract-awards/v1/download?api_key=REPLACE_WITH_API_KEY&token=fresh-token&extra=1$' "$tmpdir/sam-link.env"
+grep -q '^SAM_CONTRACT_AWARDS_LIVE_URL_GENERATED_AT=2026-06-18T12:00:00Z$' "$tmpdir/sam-link.env"
+grep -q '^SAM_CONTRACT_AWARDS_LIVE_URL_EXPIRES_AT=2026-06-18T12:45:00Z$' "$tmpdir/sam-link.env"
+grep -q '^SAM_CONTRACT_AWARDS_LIVE_URL_VALID_MINUTES=45$' "$tmpdir/sam-link.env"
+grep -q 'api_key=REDACTED' "$tmpdir/sam-link.out"
+grep -q 'token=REDACTED' "$tmpdir/sam-link.out"
+if grep -q 'actual-private-key\|fresh-token' "$tmpdir/sam-link.out"; then
+  echo "SAM export link recorder leaked a key or token in stdout." >&2
+  exit 1
+fi
+cat > "$tmpdir/sam-email.txt" <<'TXT'
+Dear user,
+
+Your file has been successfully generated and uploaded.
+
+You can download it using the link below (valid for 60 minutes):
+
+https://api.sam.gov/contract-awards/v1/download?api_key=REPLACE_WITH_API_KEY&token=email-token
+TXT
+python3 scripts/record-sam-export-link.py \
+  --dry-run \
+  --env "$tmpdir/sam-link.env" \
+  --input "$tmpdir/sam-email.txt" \
+  --generated-at 2026-06-18T13:00:00Z >"$tmpdir/sam-email.out"
+grep -q 'SAM_CONTRACT_AWARDS_LIVE_URL_GENERATED_AT=2026-06-18T13:00:00Z' "$tmpdir/sam-email.out"
+grep -q 'SAM_CONTRACT_AWARDS_LIVE_URL_EXPIRES_AT=2026-06-18T14:00:00Z' "$tmpdir/sam-email.out"
+grep -q 'SAM_CONTRACT_AWARDS_LIVE_URL_VALID_MINUTES=60' "$tmpdir/sam-email.out"
+grep -q 'token=REDACTED' "$tmpdir/sam-email.out"
+if grep -q 'email-token' "$tmpdir/sam-email.out"; then
+  echo "SAM export link recorder leaked an email token in dry-run output." >&2
+  exit 1
+fi
+
 python3 scripts/normalize-calibration.py lda data/fixtures/normalized-lda-lobbying.csv "$tmpdir/lda.csv" >/dev/null
 python3 scripts/normalize-calibration.py fec data/fixtures/normalized-fec-campaign-finance.csv "$tmpdir/fec.csv" >/dev/null
 python3 scripts/normalize-calibration.py intermediary data/fixtures/normalized-intermediaries.csv "$tmpdir/intermediaries.csv" >/dev/null
@@ -514,7 +558,7 @@ try:
     assert "keyResolution=runtime_substituted" in row["evidence"], row
     assert "token=REDACTED" in row["evidence"], row
     assert "fixture" not in row["evidence"], row
-    assert "Record SAM_CONTRACT_AWARDS_LIVE_URL_GENERATED_AT" in row["nextAction"], row
+    assert "make sam-contract-awards-record-export-link" in row["nextAction"], row
 
     os.environ.pop("SAM_API_KEY", None)
     row = module.sam_export_input_row()
@@ -558,7 +602,7 @@ try:
     row = module.sam_export_input_row()
     assert row["status"] == "manual_required", row
     assert "linkFreshness=expired" in row["evidence"], row
-    assert "Request a fresh SAM.gov export email" in row["nextAction"], row
+    assert "make sam-contract-awards-record-export-link" in row["nextAction"], row
 finally:
     for key, value in saved.items():
         if value is None:
@@ -655,7 +699,7 @@ with ci_csv.open("w", newline="", encoding="utf-8") as target:
         "gate": "release-tag-target",
         "status": "ready",
         "workflow": "local-git",
-        "branchOrTag": "paper-publication-readiness-2026-06-18-r161",
+        "branchOrTag": "paper-publication-readiness-2026-06-18-r162",
         "headSha": "abc123",
         "runId": "",
         "runStatus": "completed",
@@ -681,7 +725,7 @@ with ci_csv.open("w", newline="", encoding="utf-8") as target:
         "gate": "release-tag-ci",
         "status": "ready",
         "workflow": "CI",
-        "branchOrTag": "paper-publication-readiness-2026-06-18-r161",
+        "branchOrTag": "paper-publication-readiness-2026-06-18-r162",
         "headSha": "abc123",
         "runId": "112",
         "runStatus": "completed",
@@ -703,7 +747,7 @@ with ci_csv.open("w", newline="", encoding="utf-8") as target:
         "gate": "release-tag-target",
         "status": "ready",
         "workflow": "local-git",
-        "branchOrTag": "paper-publication-readiness-2026-06-18-r161",
+        "branchOrTag": "paper-publication-readiness-2026-06-18-r162",
         "headSha": "abc123",
         "runId": "",
         "runStatus": "completed",
@@ -735,9 +779,9 @@ mkdir -p "$tmpdir/doi-repo/paper/sections" "$tmpdir/doi-repo/reports"
 cat > "$tmpdir/doi-repo/CITATION.cff" <<'YAML'
 cff-version: 1.2.0
 title: "Lobby Capture Simulator"
-version: "paper-publication-readiness-2026-06-18-r161"
+version: "paper-publication-readiness-2026-06-18-r162"
 repository-code: "https://github.com/Jacoba1100254352/lobby-capture-simulator"
-url: "https://github.com/Jacoba1100254352/lobby-capture-simulator/releases/tag/paper-publication-readiness-2026-06-18-r161"
+url: "https://github.com/Jacoba1100254352/lobby-capture-simulator/releases/tag/paper-publication-readiness-2026-06-18-r162"
 license: MIT
 preferred-citation:
   type: article
@@ -749,7 +793,7 @@ cat > "$tmpdir/doi-repo/.zenodo.json" <<'JSON'
   "upload_type": "software",
   "related_identifiers": [
     {
-      "identifier": "https://github.com/Jacoba1100254352/lobby-capture-simulator/releases/tag/paper-publication-readiness-2026-06-18-r161",
+      "identifier": "https://github.com/Jacoba1100254352/lobby-capture-simulator/releases/tag/paper-publication-readiness-2026-06-18-r162",
       "relation": "isIdenticalTo",
       "resource_type": "software"
     },
@@ -763,7 +807,7 @@ cat > "$tmpdir/doi-repo/.zenodo.json" <<'JSON'
 JSON
 cat > "$tmpdir/doi-repo/paper/sections/submission-declarations.tex" <<'TEX'
 \submissionsection{Data and Code Availability}
-The simulator source is publicly maintained at \url{https://github.com/Jacoba1100254352/lobby-capture-simulator}. The code is released under the MIT License, and this review bundle is associated with \href{https://github.com/Jacoba1100254352/lobby-capture-simulator/releases/tag/paper-publication-readiness-2026-06-18-r161}{release r161}. Report manifests record seed and runtime provenance.
+The simulator source is publicly maintained at \url{https://github.com/Jacoba1100254352/lobby-capture-simulator}. The code is released under the MIT License, and this review bundle is associated with \href{https://github.com/Jacoba1100254352/lobby-capture-simulator/releases/tag/paper-publication-readiness-2026-06-18-r162}{release r162}. Report manifests record seed and runtime provenance.
 TEX
 cat > "$tmpdir/doi-repo/reports/final-human-readthrough.md" <<'MD'
 # Final Human Scholarly Read-Through
@@ -771,7 +815,7 @@ cat > "$tmpdir/doi-repo/reports/final-human-readthrough.md" <<'MD'
 status: pending
 signed-off-by:
 signed-off-date:
-reviewed-release: paper-publication-readiness-2026-06-18-r161
+reviewed-release: paper-publication-readiness-2026-06-18-r162
 reviewed-commit:
 doi-archive:
 MD

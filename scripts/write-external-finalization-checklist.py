@@ -405,16 +405,16 @@ def sam_export_input_row() -> dict[str, str]:
         if retry_window_missed:
             status = "manual_required"
             evidence = f"{evidence}; retryWindow=missed"
-            next_action = "Wait for the SAM.gov quota reset, request a fresh export email, update SAM_CONTRACT_AWARDS_LIVE_URL and timestamp metadata, then rerun make sam-procurement-refresh."
+            next_action = "Wait for the SAM.gov quota reset, request a fresh export email, record it with make sam-contract-awards-record-export-link, then rerun make sam-procurement-refresh."
         if freshness["status"] == "expired":
-            next_action = "Request a fresh SAM.gov export email, update SAM_CONTRACT_AWARDS_LIVE_URL and its timestamp metadata, then run make sam-procurement-refresh."
+            next_action = "Request a fresh SAM.gov export email, record it with make sam-contract-awards-record-export-link, then run make sam-procurement-refresh."
         elif freshness["status"] == "unknown":
-            next_action = "Record SAM_CONTRACT_AWARDS_LIVE_URL_GENERATED_AT or EXPIRES_AT for this emailed URL, then run make sam-procurement-refresh before the token expires."
+            next_action = "Record this emailed URL with make sam-contract-awards-record-export-link so expiration metadata is set, then run make sam-procurement-refresh before the token expires."
         if needs_key and not sam_key_present:
             if freshness["status"] == "expired" or retry_window_missed:
-                next_action = "Set SAM_API_KEY in .env, request a fresh SAM.gov export email, update SAM_CONTRACT_AWARDS_LIVE_URL metadata, then run make sam-procurement-refresh."
+                next_action = "Set SAM_API_KEY in .env, request a fresh SAM.gov export email, record it with make sam-contract-awards-record-export-link, then run make sam-procurement-refresh."
             elif freshness["status"] == "unknown":
-                next_action = "Set SAM_API_KEY in .env so the REPLACE_WITH_API_KEY placeholder can be substituted at runtime, record the emailed URL timestamp metadata, then run make sam-procurement-refresh before the token expires."
+                next_action = "Set SAM_API_KEY in .env so the REPLACE_WITH_API_KEY placeholder can be substituted at runtime, then run make sam-procurement-refresh before the token expires."
             else:
                 next_action = "Set SAM_API_KEY in .env so the REPLACE_WITH_API_KEY placeholder can be substituted at runtime, then run make sam-procurement-refresh before the token expires."
         return item(
@@ -428,7 +428,7 @@ def sam_export_input_row() -> dict[str, str]:
         "sam-export-input",
         "manual_required",
         "SAM_CONTRACT_AWARDS_LIVE_CSV/URL=missing",
-        "If using a SAM.gov email link, paste it into .env as SAM_CONTRACT_AWARDS_LIVE_URL with api_key=REPLACE_WITH_API_KEY and keep SAM_API_KEY separate.",
+        "If using a SAM.gov email link, record it with make sam-contract-awards-record-export-link so .env keeps api_key=REPLACE_WITH_API_KEY, expiration metadata, and a separate SAM_API_KEY.",
         "source-refresh",
     )
 
@@ -749,7 +749,8 @@ def markdown(rows: list[dict[str, str]]) -> str:
             "make paper-artifacts-check",
             "make external-finalization-checklist",
             "",
-            "# If a SAM.gov emailed export link is configured in .env:",
+            "# If a SAM.gov emailed export link is available:",
+            "# make sam-contract-awards-record-export-link < sam-email.txt",
             "make sam-procurement-refresh",
             "# For audit-only diagnostics without snapshot promotion:",
             "make sam-contract-awards-export-audit",
