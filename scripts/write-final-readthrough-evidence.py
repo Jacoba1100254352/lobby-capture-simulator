@@ -184,10 +184,7 @@ def synthetic_results_row() -> dict[str, str]:
 def empirical_bridge_row() -> dict[str, str]:
     claim = keyed_rows(REPORTS / "claim-posture-audit.csv", "gate").get("Empirical bridge", {})
     panels = read_csv(REPORTS / "source-panel-inventory.csv")
-    source_limited = [
-        row for row in panels
-        if row.get("supportLevel", "").endswith("bounded") or row.get("supportLevel") == "proxy-thin"
-    ]
+    source_limited = [row for row in panels if is_source_limited_panel(row)]
     status = "automated_support_present" if claim.get("status") == "bounded" and source_limited else "manual_review_required"
     return evidence_row(
         EXPECTED_ITEMS[5],
@@ -196,6 +193,10 @@ def empirical_bridge_row() -> dict[str, str]:
         "reports/claim-posture-audit.md; reports/source-panel-inventory.md; reports/source-capability-audit.md",
         "Check that the manuscript describes the bridge as bounded source support rather than validation of hidden-channel magnitudes.",
     )
+
+
+def is_source_limited_panel(row: dict[str, str]) -> bool:
+    return row.get("status") == "usable" and row.get("supportLevel") != "direct-bounded"
 
 
 def layout_visual_row() -> dict[str, str]:

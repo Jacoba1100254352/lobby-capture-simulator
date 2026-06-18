@@ -236,7 +236,7 @@ paper-wiley-build: scrub-copy-suffix-artifacts wiley-template
 
 paper-wiley: tables figures paper-wiley-build
 
-submission-package-build: scrub-copy-suffix-artifacts reviewer-risk-register first-wave-procurement-source-acquisition
+submission-package-build: scrub-copy-suffix-artifacts reviewer-risk-register first-wave-procurement-source-acquisition latex-log-audit policy-claim-language-audit literature-positioning-audit reference-integrity-audit submission-readiness-audit paper-layout-audit visual-review-checklist
 	./scripts/build-submission-package.sh
 
 submission-package-check: submission-package-build
@@ -310,7 +310,7 @@ wiley-submission-form-readiness-audit: submission-package-check
 reggov-guidelines-readiness-audit: wiley-submission-form-readiness-audit
 	python3 scripts/audit-reggov-guidelines-readiness.py
 
-final-readthrough-evidence: final-human-readthrough-audit literature-positioning-audit reference-integrity-audit submission-readiness-audit reviewer-risk-register archive-handoff-audit reggov-guidelines-readiness-audit
+final-readthrough-evidence: final-human-readthrough-audit literature-positioning-audit reference-integrity-audit submission-readiness-audit reviewer-risk-register latex-log-audit archive-handoff-audit reggov-guidelines-readiness-audit
 	python3 scripts/write-final-readthrough-evidence.py
 
 doi-deposit-package: reggov-guidelines-readiness-audit archive-handoff-audit final-readthrough-evidence
