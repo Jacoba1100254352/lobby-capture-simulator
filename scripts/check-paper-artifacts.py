@@ -53,6 +53,8 @@ PROCUREMENT_BENCHMARK_CROSSWALK_MD = ROOT / "reports" / "procurement-benchmark-c
 PROCUREMENT_BENCHMARK_CROSSWALK_CSV = ROOT / "reports" / "procurement-benchmark-crosswalk.csv"
 PROCUREMENT_REFRESH_READINESS_MD = ROOT / "reports" / "procurement-refresh-readiness.md"
 PROCUREMENT_REFRESH_READINESS_CSV = ROOT / "reports" / "procurement-refresh-readiness.csv"
+FIRST_WAVE_PROCUREMENT_SOURCE_ACQUISITION_MD = ROOT / "reports" / "first-wave-procurement-source-acquisition.md"
+FIRST_WAVE_PROCUREMENT_SOURCE_ACQUISITION_CSV = ROOT / "reports" / "first-wave-procurement-source-acquisition.csv"
 LAYOUT_AUDIT = ROOT / "reports" / "paper-layout-audit.md"
 MANUAL_VISUAL_AUDIT = ROOT / "reports" / "manual-visual-audit.md"
 CLAIM_BOUNDARY_AUDIT_MD = ROOT / "reports" / "claim-boundary-audit.md"
@@ -131,7 +133,7 @@ DOI_DEPOSIT_PACKAGE_CHECKSUM_CSV = ROOT / "dist" / "doi-deposit-package-checksum
 DOI_DEPOSIT_PACKAGE_CHECKSUM_JSON = ROOT / "dist" / "doi-deposit-package-checksum.json"
 DOI_DEPOSIT_PACKAGE_CHECKSUM_MD = ROOT / "dist" / "doi-deposit-package-checksum.md"
 ZENODO_DEPOSIT_METADATA_JSON = ROOT / "dist" / "zenodo-deposit-metadata.json"
-RELEASE_TAG = "paper-publication-readiness-2026-06-18-r167"
+RELEASE_TAG = "paper-publication-readiness-2026-06-18-r168"
 ARCHIVE_HANDOFF_REPORT_NAMES = {
     "archive-handoff-manifest.csv",
     "archive-handoff-manifest.json",
@@ -259,6 +261,7 @@ EXPECTED_ZIP_MEMBERS = {
     "supporting-information/procurement-modification-composition-audit.md",
     "supporting-information/procurement-benchmark-crosswalk.md",
     "supporting-information/procurement-refresh-readiness.md",
+    "supporting-information/first-wave-procurement-source-acquisition.md",
     "supporting-information/claim-boundary-audit.md",
     "supporting-information/claim-source-dependency.md",
     "supporting-information/causal-calibration-targets.md",
@@ -346,6 +349,7 @@ def main() -> int:
     failures.extend(check_procurement_modification_composition_audit())
     failures.extend(check_procurement_benchmark_crosswalk())
     failures.extend(check_procurement_refresh_readiness())
+    failures.extend(check_first_wave_procurement_source_acquisition())
     failures.extend(check_claim_boundary_audit())
     failures.extend(check_claim_source_dependency_audit())
     failures.extend(check_causal_calibration_targets())
@@ -515,6 +519,7 @@ def submission_inputs() -> list[Path]:
         ROOT / "scripts" / "audit-first-wave-source-products.py",
         ROOT / "scripts" / "build-first-wave-linkage-candidates.py",
         ROOT / "scripts" / "audit-first-wave-source-readiness.py",
+        ROOT / "scripts" / "write-first-wave-procurement-source-acquisition.py",
         CITATION_CFF,
         ZENODO_JSON,
         ROOT / "docs" / "odd-model.md",
@@ -531,6 +536,7 @@ def submission_inputs() -> list[Path]:
         PROCUREMENT_MODIFICATION_COMPOSITION_AUDIT_MD,
         PROCUREMENT_BENCHMARK_CROSSWALK_MD,
         PROCUREMENT_REFRESH_READINESS_MD,
+        FIRST_WAVE_PROCUREMENT_SOURCE_ACQUISITION_MD,
         ROOT / "reports" / "claim-boundary-audit.md",
         ROOT / "reports" / "claim-source-dependency.md",
         CAUSAL_CALIBRATION_TARGETS_MD,
@@ -1548,6 +1554,97 @@ def check_procurement_refresh_readiness() -> list[str]:
     for phrase in required_text:
         if phrase not in text:
             failures.append(f"procurement refresh readiness markdown missing phrase: {phrase}")
+    return failures
+
+
+def check_first_wave_procurement_source_acquisition() -> list[str]:
+    failures: list[str] = []
+    missing = [
+        path.relative_to(ROOT)
+        for path in (
+            FIRST_WAVE_PROCUREMENT_SOURCE_ACQUISITION_MD,
+            FIRST_WAVE_PROCUREMENT_SOURCE_ACQUISITION_CSV,
+        )
+        if not path.exists()
+    ]
+    if missing:
+        return [f"missing first-wave procurement source acquisition artifact: {path}" for path in missing]
+
+    with FIRST_WAVE_PROCUREMENT_SOURCE_ACQUISITION_CSV.open(newline="", encoding="utf-8") as source:
+        rows = {row.get("productKey", ""): row for row in csv.DictReader(source)}
+    required = {
+        "sam-fpds-action-history-crosswalk",
+        "gao-protest-overlay",
+        "sam-exclusion-overlay",
+        "procurement-firewall-overlay",
+        "procurement-offer-competition-enrichment",
+    }
+    missing_products = sorted(required - set(rows))
+    failures.extend(
+        f"first-wave procurement source acquisition missing product: {product}"
+        for product in missing_products
+    )
+    if missing_products:
+        return failures
+
+    product_expectations = {
+        "sam-fpds-action-history-crosswalk": [
+            "Contract Awards",
+            "PIID",
+            "UEI",
+            "make sam-procurement-refresh",
+            "does not by itself estimate capture effects",
+        ],
+        "gao-protest-overlay": [
+            "GAO",
+            "B-number",
+            "PIID",
+            "manual",
+            "does not identify lobbying exposure",
+        ],
+        "sam-exclusion-overlay": [
+            "Exclusions API",
+            "UEI",
+            "exclusion type",
+            "integrity-enforcement status",
+        ],
+        "procurement-firewall-overlay": [
+            "procurement-integrity",
+            "effective date",
+            "covered officials",
+            "document-review",
+        ],
+        "procurement-offer-competition-enrichment": [
+            "number of offers",
+            "competition",
+            "not an independent capture outcome",
+        ],
+    }
+    for product, phrases in product_expectations.items():
+        row_text = " ".join(rows[product].values())
+        for phrase in phrases:
+            if phrase not in row_text:
+                failures.append(
+                    f"first-wave procurement source acquisition {product} missing phrase: {phrase}"
+                )
+    text = FIRST_WAVE_PROCUREMENT_SOURCE_ACQUISITION_MD.read_text(encoding="utf-8")
+    required_text = [
+        "First-Wave Procurement Source Acquisition",
+        "acquisition_plan_only",
+        "A row in this report is only an acquisition instruction",
+        "GAO Legal Products XML feed",
+        "SAM.gov Exclusions API",
+        "SAM_Exclusions_Public_Extract",
+        "SAM.gov Contract Awards remains the preferred source",
+        "Procurement firewall coverage is a document-review product",
+    ]
+    for phrase in required_text:
+        if phrase not in text:
+            failures.append(f"first-wave procurement source acquisition markdown missing phrase: {phrase}")
+    if SUPPLEMENT_BODY.exists():
+        supplement = SUPPLEMENT_BODY.read_text(encoding="utf-8")
+        if "first-wave procurement source-acquisition report" not in supplement:
+            failures.append("supplement does not disclose the first-wave procurement source-acquisition report")
     return failures
 
 
@@ -3749,6 +3846,10 @@ def package_byte_checks() -> list[tuple[Path, str]]:
         ),
         (PROCUREMENT_BENCHMARK_CROSSWALK_MD, "supporting-information/procurement-benchmark-crosswalk.md"),
         (PROCUREMENT_REFRESH_READINESS_MD, "supporting-information/procurement-refresh-readiness.md"),
+        (
+            FIRST_WAVE_PROCUREMENT_SOURCE_ACQUISITION_MD,
+            "supporting-information/first-wave-procurement-source-acquisition.md",
+        ),
         (ROOT / "reports" / "claim-boundary-audit.md", "supporting-information/claim-boundary-audit.md"),
         (ROOT / "reports" / "claim-source-dependency.md", "supporting-information/claim-source-dependency.md"),
         (CAUSAL_CALIBRATION_TARGETS_MD, "supporting-information/causal-calibration-targets.md"),

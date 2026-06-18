@@ -74,6 +74,7 @@ cp "$ROOT_DIR/reports/procurement-denominator-audit.md" "$STAGING_DIR/supporting
 cp "$ROOT_DIR/reports/procurement-modification-composition-audit.md" "$STAGING_DIR/supporting-information/procurement-modification-composition-audit.md"
 cp "$ROOT_DIR/reports/procurement-benchmark-crosswalk.md" "$STAGING_DIR/supporting-information/procurement-benchmark-crosswalk.md"
 cp "$ROOT_DIR/reports/procurement-refresh-readiness.md" "$STAGING_DIR/supporting-information/procurement-refresh-readiness.md"
+cp "$ROOT_DIR/reports/first-wave-procurement-source-acquisition.md" "$STAGING_DIR/supporting-information/first-wave-procurement-source-acquisition.md"
 cp "$ROOT_DIR/reports/claim-boundary-audit.md" "$STAGING_DIR/supporting-information/claim-boundary-audit.md"
 cp "$ROOT_DIR/reports/claim-source-dependency.md" "$STAGING_DIR/supporting-information/claim-source-dependency.md"
 cp "$ROOT_DIR/reports/causal-calibration-targets.md" "$STAGING_DIR/supporting-information/causal-calibration-targets.md"

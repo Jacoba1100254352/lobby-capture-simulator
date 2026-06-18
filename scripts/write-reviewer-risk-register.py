@@ -37,6 +37,7 @@ def main() -> int:
         "source-capability-audit.csv",
         "source-panel-inventory.csv",
         "procurement-refresh-readiness.csv",
+        "first-wave-procurement-source-acquisition.csv",
         "final-human-readthrough-audit.csv",
         "policy-claim-language-audit.csv",
         "validation-summary.csv",
@@ -63,6 +64,7 @@ def load_context() -> dict[str, object]:
     capabilities = keyed_rows("source-capability-audit.csv", "capability")
     panels = read_rows("source-panel-inventory.csv")
     procurement = keyed_rows("procurement-refresh-readiness.csv", "item")
+    procurement_acquisition = keyed_rows("first-wave-procurement-source-acquisition.csv", "productKey")
     final_readthrough = keyed_rows("final-human-readthrough-audit.csv", "item")
     policy_language = read_rows("policy-claim-language-audit.csv")
     validation = read_rows("validation-summary.csv")
@@ -74,6 +76,7 @@ def load_context() -> dict[str, object]:
         "capabilities": capabilities,
         "panels": panels,
         "procurement": procurement,
+        "procurement_acquisition": procurement_acquisition,
         "final_readthrough": final_readthrough,
         "policy_language": policy_language,
         "validation": validation,
@@ -88,6 +91,7 @@ def risk_rows(context: dict[str, object]) -> list[dict[str, str]]:
     capabilities: dict[str, dict[str, str]] = context["capabilities"]  # type: ignore[assignment]
     panels: list[dict[str, str]] = context["panels"]  # type: ignore[assignment]
     procurement: dict[str, dict[str, str]] = context["procurement"]  # type: ignore[assignment]
+    procurement_acquisition: dict[str, dict[str, str]] = context["procurement_acquisition"]  # type: ignore[assignment]
     final_readthrough: dict[str, dict[str, str]] = context["final_readthrough"]  # type: ignore[assignment]
     policy_language: list[dict[str, str]] = context["policy_language"]  # type: ignore[assignment]
     validation: list[dict[str, str]] = context["validation"]  # type: ignore[assignment]
@@ -183,12 +187,14 @@ def risk_rows(context: dict[str, object]) -> list[dict[str, str]]:
                 f"USAspending action rows={capabilities.get('usaspending-stratified-action-panel', {}).get('snapshotRows', 'missing')}",
                 f"procurement target={causal_targets.get('procurement-modification-causal-capture', {}).get('status', 'missing')}",
                 f"refresh status={procurement.get('primary-action-panel', procurement.get('sam-live-status', {})).get('status', 'missing')}",
+                f"acquisition products={len(procurement_acquisition)}",
             ),
-            "The project separates denominator-mapped USAspending action diagnostics from SAM/FPDS action-history promotion and causal procurement-capture claims.",
+            "The project separates denominator-mapped USAspending action diagnostics from SAM/FPDS action-history promotion and now maps the missing protest, exclusion, offer-count, and firewall overlays to official acquisition paths.",
             "Procurement modification results are bounded diagnostics until SAM/FPDS coding, offer counts, protests, exclusions, firewall indicators, and exposure designs clear.",
-            causal_targets.get("procurement-modification-causal-capture", {}).get(
-                "nextAction",
-                "Crosswalk USAspending and SAM/FPDS modification codes, then add protest, exclusion, offer-count, and firewall overlays.",
+            (
+                "Use reports/first-wave-procurement-source-acquisition.md to populate the SAM/FPDS action-history crosswalk, "
+                "GAO protest overlay, SAM exclusion overlay, offer-count/competition enrichment, and procurement-firewall overlay; "
+                "then rerun first-wave source-product, source-readiness, and paper-artifacts gates."
             ),
         ),
         row(

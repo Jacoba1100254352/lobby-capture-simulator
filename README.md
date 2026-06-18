@@ -151,6 +151,14 @@ make sam-procurement-refresh
 
 It uses a configured `SAM_CONTRACT_AWARDS_LIVE_CSV`/`SAM_CONTRACT_AWARDS_LIVE_URL` as a manual export path when present. Otherwise it runs `make sam-contract-awards-preflight` first, stops with a temporary-failure exit when SAM.gov reports a quota reset time, and only then runs the keyed extract-mode live snapshot plus `make paper-artifacts-check`. Use `scripts/refresh-sam-procurement-panel.sh --dry-run` to inspect the selected mode without spending quota.
 
+The remaining procurement overlay work is tracked by:
+
+```sh
+make first-wave-procurement-source-acquisition
+```
+
+That report is an acquisition plan, not evidence. It maps the first-wave procurement source products to official public surfaces: SAM.gov Contract Awards for action history and offer-count/competition enrichment, GAO bid protest decisions and Legal Products feed for protest overlays, SAM.gov Exclusions API or public exclusion extracts for exclusion overlays, and agency procurement-integrity documents for firewall controls. Populate the named files under `data/calibration/first-wave/`, then rerun `make first-wave-source-products`, `make first-wave-source-readiness`, and `make paper-artifacts-check` before treating any procurement overlay as source-supported.
+
 `docs/source-data-roadmap.md` records the next source panels and matching identifiers: LDA registrant/client IDs, FEC committee/candidate IDs, IRS EINs, SAM UEIs, PIIDs, docket/document/comment IDs, and official/person records. The project keeps direct observed source rows separate from proxy overlays and synthetic design metrics.
 
 `make snapshot-2024-env` freezes the current normalized source rows under `data/snapshots/2024-env/` and writes a manifest for the first closed-window paper snapshot: 2024 LDA `ENV`, EPA Regulations.gov/Federal Register activity, 2024 OpenFEC national party committee rows, Schedule E independent-expenditure rows, optional electioneering and communication-cost rows, configured public-financing bridge rows, EPA fiscal-year 2024 USAspending awards, the multi-agency procurement concentration bridge, a stratified 12-agency quarterly procurement transaction/action panel for concentration and modification-incidence diagnostics, an LDA-derived covered-position revolving-door panel, and the configured nonprofit/527/association intermediary panel. Live paper snapshots should run the source-native fetchers with those fixed filters before freezing.
