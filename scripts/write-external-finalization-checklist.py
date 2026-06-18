@@ -392,12 +392,13 @@ def sam_export_input_row() -> dict[str, str]:
         )
     if url:
         needs_key = "REPLACE_WITH_API_KEY" in url
+        key_resolution = sam_export_key_resolution(needs_key, sam_key_present)
         freshness = sam_export_url_freshness()
         retry_window_missed = sam_export_retry_window_missed(freshness["evidence"])
         status = "ready" if (not needs_key or sam_key_present) and freshness["status"] == "fresh" else "manual_required"
         evidence = (
             f"configuredUrl={redact_url(url)}; placeholderKey={'yes' if needs_key else 'no'}; "
-            f"SAM_API_KEY={'present' if sam_key_present else 'missing'}; "
+            f"SAM_API_KEY={'present' if sam_key_present else 'missing'}; keyResolution={key_resolution}; "
             f"linkFreshness={freshness['status']}; {freshness['evidence']}"
         )
         next_action = "Keep the emailed URL in SAM_CONTRACT_AWARDS_LIVE_URL and the private key in SAM_API_KEY, then run make sam-procurement-refresh."
@@ -409,6 +410,13 @@ def sam_export_input_row() -> dict[str, str]:
             next_action = "Request a fresh SAM.gov export email, update SAM_CONTRACT_AWARDS_LIVE_URL and its timestamp metadata, then run make sam-procurement-refresh."
         elif freshness["status"] == "unknown":
             next_action = "Record SAM_CONTRACT_AWARDS_LIVE_URL_GENERATED_AT or EXPIRES_AT for this emailed URL, then run make sam-procurement-refresh before the token expires."
+        if needs_key and not sam_key_present:
+            if freshness["status"] == "expired" or retry_window_missed:
+                next_action = "Set SAM_API_KEY in .env, request a fresh SAM.gov export email, update SAM_CONTRACT_AWARDS_LIVE_URL metadata, then run make sam-procurement-refresh."
+            elif freshness["status"] == "unknown":
+                next_action = "Set SAM_API_KEY in .env so the REPLACE_WITH_API_KEY placeholder can be substituted at runtime, record the emailed URL timestamp metadata, then run make sam-procurement-refresh before the token expires."
+            else:
+                next_action = "Set SAM_API_KEY in .env so the REPLACE_WITH_API_KEY placeholder can be substituted at runtime, then run make sam-procurement-refresh before the token expires."
         return item(
             "sam-export-input",
             status,
@@ -423,6 +431,14 @@ def sam_export_input_row() -> dict[str, str]:
         "If using a SAM.gov email link, paste it into .env as SAM_CONTRACT_AWARDS_LIVE_URL with api_key=REPLACE_WITH_API_KEY and keep SAM_API_KEY separate.",
         "source-refresh",
     )
+
+
+def sam_export_key_resolution(needs_key: bool, sam_key_present: bool) -> str:
+    if not needs_key:
+        return "not_needed"
+    if sam_key_present:
+        return "runtime_substituted"
+    return "missing_key"
 
 
 def sam_export_retry_window_missed(freshness_evidence: str) -> bool:
