@@ -336,6 +336,62 @@ if grep -q "token=example" "$tmpdir/reports/sam-contract-awards-export-audit.md"
 fi
 grep -q "request a fresh export email" "$tmpdir/reports/sam-contract-awards-export-audit.md"
 
+mkdir -p "$tmpdir/doi-repo/paper/sections" "$tmpdir/doi-repo/reports"
+cat > "$tmpdir/doi-repo/CITATION.cff" <<'YAML'
+cff-version: 1.2.0
+title: "Lobby Capture Simulator"
+version: "paper-publication-readiness-2026-06-15-r136"
+repository-code: "https://github.com/Jacoba1100254352/lobby-capture-simulator"
+url: "https://github.com/Jacoba1100254352/lobby-capture-simulator/releases/tag/paper-publication-readiness-2026-06-15-r136"
+license: MIT
+preferred-citation:
+  type: article
+  title: "Strategic Channel Substitution in Regulatory Capture"
+YAML
+cat > "$tmpdir/doi-repo/.zenodo.json" <<'JSON'
+{
+  "title": "Lobby Capture Simulator",
+  "upload_type": "software",
+  "related_identifiers": [
+    {
+      "identifier": "https://github.com/Jacoba1100254352/lobby-capture-simulator/releases/tag/paper-publication-readiness-2026-06-15-r136",
+      "relation": "isIdenticalTo",
+      "resource_type": "software"
+    },
+    {
+      "identifier": "https://doi.org/10.5281/zenodo.7654321",
+      "relation": "isIdenticalTo",
+      "resource_type": "software"
+    }
+  ]
+}
+JSON
+cat > "$tmpdir/doi-repo/paper/sections/submission-declarations.tex" <<'TEX'
+\submissionsection{Data and Code Availability}
+The simulator source is publicly maintained at \url{https://github.com/Jacoba1100254352/lobby-capture-simulator}. The code is released under the MIT License, and this review bundle is associated with \href{https://github.com/Jacoba1100254352/lobby-capture-simulator/releases/tag/paper-publication-readiness-2026-06-15-r136}{release r136}. Report manifests record seed and runtime provenance.
+TEX
+cat > "$tmpdir/doi-repo/reports/final-human-readthrough.md" <<'MD'
+# Final Human Scholarly Read-Through
+
+status: pending
+signed-off-by:
+signed-off-date:
+reviewed-release: paper-publication-readiness-2026-06-15-r136
+reviewed-commit:
+doi-archive:
+MD
+python3 scripts/record-doi-archive.py --root "$tmpdir/doi-repo" --doi "https://doi.org/10.5281/zenodo.1234567" >/dev/null
+grep -q 'doi: "10.5281/zenodo.1234567"' "$tmpdir/doi-repo/CITATION.cff"
+grep -q '"doi": "10.5281/zenodo.1234567"' "$tmpdir/doi-repo/.zenodo.json"
+grep -q '"identifier": "https://doi.org/10.5281/zenodo.1234567"' "$tmpdir/doi-repo/.zenodo.json"
+if grep -q '10.5281/zenodo.7654321' "$tmpdir/doi-repo/.zenodo.json"; then
+  echo "old DOI identifier was retained after DOI refresh" >&2
+  exit 1
+fi
+grep -q 'DOI archive for this review bundle is \\href{https://doi.org/10.5281/zenodo.1234567}{10.5281/zenodo.1234567}' "$tmpdir/doi-repo/paper/sections/submission-declarations.tex"
+grep -q '^doi-archive: https://doi.org/10.5281/zenodo.1234567$' "$tmpdir/doi-repo/reports/final-human-readthrough.md"
+grep -q '^status: pending$' "$tmpdir/doi-repo/reports/final-human-readthrough.md"
+
 python3 scripts/test-source-fetchers.py
 
 printf 'GET https://api.sam.gov/contract-awards/v1/search?api_key=REDACTED failed with HTTP 429: {"code":"900804","message":"Message throttled out","description":"You have exceeded your quota .","nextAccessTime":"2026-Jun-13 00:00:00+0000 UTC"}\n' > "$tmpdir/sam-quota.log"

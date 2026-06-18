@@ -55,6 +55,7 @@ Deliverables:
 - keep full scenario catalogs, sensitivity matrices, ablation matrices, implementation details, and parser details in the supplement or repository reports;
 - run `make paper-artifacts-check` after any manuscript, report, table, figure, or submission-bundle change;
 - run `make doi-deposit-readiness-audit` after building a release bundle and before DOI deposition, then record the minted DOI and completed human read-through before treating the final-journal-submission gate as cleared;
+- when a DOI is reserved or minted, set `ARCHIVE_DOI` in `.env`, run `make record-doi-archive`, and then rerun `make paper-artifacts-check` so every generated readiness report and package carries the recorded archive identifier;
 - run `make external-finalization-checklist` while preparing DOI, Zenodo, journal-finalization, or SAM.gov export steps; this ignored checklist sources `.env` and summarizes private/live-state readiness without changing the deterministic review bundle;
 - advance the release tag in `scripts/check-paper-artifacts.py` and `paper/sections/submission-declarations.tex` whenever the review bundle changes;
 - prepare a separate anonymized package only if the paper is retargeted to a double-blind venue.
