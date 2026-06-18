@@ -15,6 +15,7 @@ from datetime import datetime, timedelta, timezone
 import json
 import os
 import re
+import subprocess
 import sys
 from pathlib import Path
 from urllib.parse import parse_qsl, urlencode, urlsplit, urlunsplit
@@ -70,17 +71,12 @@ def main() -> int:
 
 def checklist_rows() -> list[dict[str, str]]:
     release_tag = release_tag_from_citation()
+    release_state = release_tag_git_state(release_tag)
     rows = [
-        item(
-            "release-tag",
-            "ready" if release_tag else "blocked",
-            f"release={release_tag or 'missing'}",
-            "Keep CITATION.cff, .zenodo.json, paper declarations, and release artifacts synchronized.",
-            "metadata",
-        ),
+        release_tag_row(release_tag, release_state),
         doi_readiness_row(),
-        github_asset_audit_row(),
-        github_ci_status_row(),
+        github_asset_audit_row(release_state),
+        github_ci_status_row(release_state),
         zenodo_target_row(),
         zenodo_token_row(),
         zenodo_draft_row(),
@@ -93,6 +89,29 @@ def checklist_rows() -> list[dict[str, str]]:
         sam_export_audit_row(),
     ]
     return rows
+
+
+def release_tag_row(release_tag: str, release_state: dict[str, str]) -> dict[str, str]:
+    if not release_tag:
+        return item(
+            "release-tag",
+            "blocked",
+            "release=missing",
+            "Set the versioned review-bundle tag in CITATION.cff before finalization.",
+            "metadata",
+        )
+    status = release_state["status"]
+    if status == "ready":
+        next_action = "Keep CITATION.cff, .zenodo.json, paper declarations, release artifacts, and HEAD synchronized."
+    else:
+        next_action = "Create a new release tag for the current HEAD, update CITATION.cff and .zenodo.json, rebuild artifacts, and rerun post-release audits."
+    return item(
+        "release-tag",
+        status,
+        f"release={release_tag}; {release_state['evidence']}",
+        next_action,
+        "metadata",
+    )
 
 
 def doi_readiness_row() -> dict[str, str]:
@@ -121,7 +140,17 @@ def doi_readiness_row() -> dict[str, str]:
     )
 
 
-def github_asset_audit_row() -> dict[str, str]:
+def github_asset_audit_row(release_state: dict[str, str] | None = None) -> dict[str, str]:
+    if release_state is None:
+        release_state = release_tag_git_state(release_tag_from_citation())
+    if release_state["status"] != "ready":
+        return item(
+            "github-release-assets",
+            "blocked",
+            f"releaseTagTarget={release_state['status']}; {release_state['evidence']}",
+            "Create or update the current release before trusting release-asset audit files.",
+            "doi",
+        )
     rows = read_csv(GITHUB_ASSET_AUDIT_CSV)
     if not rows:
         return item(
@@ -151,7 +180,17 @@ def github_asset_audit_row() -> dict[str, str]:
     )
 
 
-def github_ci_status_row() -> dict[str, str]:
+def github_ci_status_row(release_state: dict[str, str] | None = None) -> dict[str, str]:
+    if release_state is None:
+        release_state = release_tag_git_state(release_tag_from_citation())
+    if release_state["status"] != "ready":
+        return item(
+            "github-ci-status",
+            "blocked",
+            f"releaseTagTarget={release_state['status']}; {release_state['evidence']}",
+            "Create or update the current release tag and wait for GitHub Actions before treating CI evidence as synchronized.",
+            "doi",
+        )
     rows = read_csv(GITHUB_CI_STATUS_CSV)
     if not rows:
         return item(
@@ -690,6 +729,38 @@ def field_value(text: str, field_name: str) -> str:
         re.IGNORECASE | re.MULTILINE,
     )
     return match.group(1).strip() if match else ""
+
+
+def release_tag_git_state(release_tag: str) -> dict[str, str]:
+    if not release_tag:
+        return {"status": "blocked", "evidence": "release=missing"}
+    head, head_error = git_maybe_output(["rev-parse", "HEAD"])
+    tag_sha, tag_error = git_maybe_output(["rev-parse", f"{release_tag}^{{commit}}"])
+    if head_error:
+        return {"status": "blocked", "evidence": f"head=unresolved; error={head_error}"}
+    if tag_error:
+        return {
+            "status": "blocked",
+            "evidence": f"head={short_sha(head)}; tag=unresolved; error={tag_error}",
+        }
+    status = "ready" if head == tag_sha else "blocked"
+    evidence = (
+        f"head={short_sha(head)}; tag={short_sha(tag_sha)}; "
+        f"tagTarget={'current-head' if status == 'ready' else 'mismatch'}"
+    )
+    return {"status": status, "evidence": evidence}
+
+
+def git_maybe_output(args: list[str]) -> tuple[str, str]:
+    try:
+        return subprocess.check_output(["git", *args], cwd=ROOT, text=True, stderr=subprocess.PIPE).strip(), ""
+    except (OSError, subprocess.CalledProcessError) as error:
+        stderr = getattr(error, "stderr", "") or str(error)
+        return "", stderr.strip()
+
+
+def short_sha(value: str) -> str:
+    return value[:12] if value else "missing"
 
 
 def env(key: str) -> str:

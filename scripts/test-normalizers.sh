@@ -723,8 +723,9 @@ spec = importlib.util.spec_from_file_location(
 module = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(module)
 module.GITHUB_CI_STATUS_CSV = ci_csv
+ready_release = {"status": "ready", "evidence": "test release tag points at HEAD"}
 
-row = module.github_ci_status_row()
+row = module.github_ci_status_row(ready_release)
 assert row["status"] == "manual_required", row
 assert "post-release CI audit=missing" in row["evidence"], row
 
@@ -784,7 +785,7 @@ with ci_csv.open("w", newline="", encoding="utf-8") as target:
         "evidence": "workflow=CI",
         "nextAction": "Retain this CI evidence with the release and DOI handoff records.",
     })
-row = module.github_ci_status_row()
+row = module.github_ci_status_row(ready_release)
 assert row["status"] == "ready", row
 assert "ready=3" in row["evidence"], row
 assert "main=completed/success" in row["evidence"], row
@@ -819,7 +820,7 @@ with ci_csv.open("w", newline="", encoding="utf-8") as target:
         "evidence": "workflow=CI",
         "nextAction": "Inspect the failed GitHub Actions run and fix the repository before final submission.",
     })
-row = module.github_ci_status_row()
+row = module.github_ci_status_row(ready_release)
 assert row["status"] == "blocked", row
 assert "blocked=1" in row["evidence"], row
 assert "main=completed/failure" in row["evidence"], row
