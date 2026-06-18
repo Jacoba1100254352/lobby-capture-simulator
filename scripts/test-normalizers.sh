@@ -474,10 +474,12 @@ assert "rows=1" in row["evidence"], row
 assert "representative settings" in row["nextAction"], row
 PY
 
-python3 - <<'PY'
+python3 - "$tmpdir/reports/sam-contract-awards-export-audit-for-input.csv" <<'PY'
+import csv
 import importlib.util
 import os
 from pathlib import Path
+import sys
 
 spec = importlib.util.spec_from_file_location(
     "external_checklist",
@@ -485,6 +487,8 @@ spec = importlib.util.spec_from_file_location(
 )
 module = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(module)
+audit_csv = Path(sys.argv[1])
+module.SAM_EXPORT_AUDIT_CSV = audit_csv
 
 keys = [
     "SAM_CONTRACT_AWARDS_LIVE_URL",
@@ -495,6 +499,8 @@ keys = [
 ]
 saved = {key: os.environ.get(key) for key in keys}
 try:
+    if audit_csv.exists():
+        audit_csv.unlink()
     for key in keys:
         os.environ.pop(key, None)
     os.environ["SAM_CONTRACT_AWARDS_LIVE_URL"] = "https://api.sam.gov/contract-awards/v1/download?api_key=REPLACE_WITH_API_KEY&token=fixture"
@@ -512,6 +518,29 @@ try:
     assert row["status"] == "ready", row
     assert "linkFreshness=fresh" in row["evidence"], row
     assert "expiresAt=2099-01-01T01:00:00Z" in row["evidence"], row
+
+    audit_csv.parent.mkdir(parents=True, exist_ok=True)
+    with audit_csv.open("w", newline="", encoding="utf-8") as target:
+        writer = csv.DictWriter(
+            target,
+            fieldnames=["item", "status", "value", "threshold", "notes", "nextAction"],
+            lineterminator="\n",
+        )
+        writer.writeheader()
+        writer.writerow({
+            "item": "export-link-retry-window",
+            "status": "manual_required",
+            "value": "quota reset occurs after emailed token expiry",
+            "threshold": "SAM reset before expiresAt",
+            "notes": "generatedAt=2099-01-01T00:00:00Z; expiresAt=2099-01-01T01:00:00Z; ttlMinutes=60",
+            "nextAction": "Request a fresh SAM.gov export email after the quota reset and update SAM_CONTRACT_AWARDS_LIVE_URL metadata.",
+        })
+    row = module.sam_export_input_row()
+    assert row["status"] == "manual_required", row
+    assert "retryWindow=missed" in row["evidence"], row
+    assert "Wait for the SAM.gov quota reset" in row["nextAction"], row
+
+    audit_csv.unlink()
 
     os.environ["SAM_CONTRACT_AWARDS_LIVE_URL_GENERATED_AT"] = "2000-01-01T00:00:00Z"
     row = module.sam_export_input_row()
@@ -614,7 +643,7 @@ with ci_csv.open("w", newline="", encoding="utf-8") as target:
         "gate": "release-tag-target",
         "status": "ready",
         "workflow": "local-git",
-        "branchOrTag": "paper-publication-readiness-2026-06-18-r149",
+        "branchOrTag": "paper-publication-readiness-2026-06-18-r150",
         "headSha": "abc123",
         "runId": "",
         "runStatus": "completed",
@@ -640,7 +669,7 @@ with ci_csv.open("w", newline="", encoding="utf-8") as target:
         "gate": "release-tag-ci",
         "status": "ready",
         "workflow": "CI",
-        "branchOrTag": "paper-publication-readiness-2026-06-18-r149",
+        "branchOrTag": "paper-publication-readiness-2026-06-18-r150",
         "headSha": "abc123",
         "runId": "112",
         "runStatus": "completed",
@@ -662,7 +691,7 @@ with ci_csv.open("w", newline="", encoding="utf-8") as target:
         "gate": "release-tag-target",
         "status": "ready",
         "workflow": "local-git",
-        "branchOrTag": "paper-publication-readiness-2026-06-18-r149",
+        "branchOrTag": "paper-publication-readiness-2026-06-18-r150",
         "headSha": "abc123",
         "runId": "",
         "runStatus": "completed",
@@ -694,9 +723,9 @@ mkdir -p "$tmpdir/doi-repo/paper/sections" "$tmpdir/doi-repo/reports"
 cat > "$tmpdir/doi-repo/CITATION.cff" <<'YAML'
 cff-version: 1.2.0
 title: "Lobby Capture Simulator"
-version: "paper-publication-readiness-2026-06-18-r149"
+version: "paper-publication-readiness-2026-06-18-r150"
 repository-code: "https://github.com/Jacoba1100254352/lobby-capture-simulator"
-url: "https://github.com/Jacoba1100254352/lobby-capture-simulator/releases/tag/paper-publication-readiness-2026-06-18-r149"
+url: "https://github.com/Jacoba1100254352/lobby-capture-simulator/releases/tag/paper-publication-readiness-2026-06-18-r150"
 license: MIT
 preferred-citation:
   type: article
@@ -708,7 +737,7 @@ cat > "$tmpdir/doi-repo/.zenodo.json" <<'JSON'
   "upload_type": "software",
   "related_identifiers": [
     {
-      "identifier": "https://github.com/Jacoba1100254352/lobby-capture-simulator/releases/tag/paper-publication-readiness-2026-06-18-r149",
+      "identifier": "https://github.com/Jacoba1100254352/lobby-capture-simulator/releases/tag/paper-publication-readiness-2026-06-18-r150",
       "relation": "isIdenticalTo",
       "resource_type": "software"
     },
@@ -722,7 +751,7 @@ cat > "$tmpdir/doi-repo/.zenodo.json" <<'JSON'
 JSON
 cat > "$tmpdir/doi-repo/paper/sections/submission-declarations.tex" <<'TEX'
 \submissionsection{Data and Code Availability}
-The simulator source is publicly maintained at \url{https://github.com/Jacoba1100254352/lobby-capture-simulator}. The code is released under the MIT License, and this review bundle is associated with \href{https://github.com/Jacoba1100254352/lobby-capture-simulator/releases/tag/paper-publication-readiness-2026-06-18-r149}{release r149}. Report manifests record seed and runtime provenance.
+The simulator source is publicly maintained at \url{https://github.com/Jacoba1100254352/lobby-capture-simulator}. The code is released under the MIT License, and this review bundle is associated with \href{https://github.com/Jacoba1100254352/lobby-capture-simulator/releases/tag/paper-publication-readiness-2026-06-18-r150}{release r150}. Report manifests record seed and runtime provenance.
 TEX
 cat > "$tmpdir/doi-repo/reports/final-human-readthrough.md" <<'MD'
 # Final Human Scholarly Read-Through
@@ -730,7 +759,7 @@ cat > "$tmpdir/doi-repo/reports/final-human-readthrough.md" <<'MD'
 status: pending
 signed-off-by:
 signed-off-date:
-reviewed-release: paper-publication-readiness-2026-06-18-r149
+reviewed-release: paper-publication-readiness-2026-06-18-r150
 reviewed-commit:
 doi-archive:
 MD

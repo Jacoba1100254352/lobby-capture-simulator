@@ -117,6 +117,7 @@ for report_artifact in "$ROOT_DIR"/reports/*.csv "$ROOT_DIR"/reports/*.md "$ROOT
       wiley-submission-form-readiness.*) continue ;;
       reggov-guidelines-readiness.*) continue ;;
       external-finalization-checklist.*) continue ;;
+      github-ci-status-audit.*) continue ;;
       github-release-asset-audit.*) continue ;;
       sam-contract-awards-export-audit.*) continue ;;
       sam-contract-awards-preflight.*) continue ;;

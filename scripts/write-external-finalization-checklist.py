@@ -393,6 +393,7 @@ def sam_export_input_row() -> dict[str, str]:
     if url:
         needs_key = "REPLACE_WITH_API_KEY" in url
         freshness = sam_export_url_freshness()
+        retry_window_missed = sam_export_retry_window_missed(freshness["evidence"])
         status = "ready" if (not needs_key or sam_key_present) and freshness["status"] == "fresh" else "manual_required"
         evidence = (
             f"configuredUrl={redact_url(url)}; placeholderKey={'yes' if needs_key else 'no'}; "
@@ -400,6 +401,10 @@ def sam_export_input_row() -> dict[str, str]:
             f"linkFreshness={freshness['status']}; {freshness['evidence']}"
         )
         next_action = "Keep the emailed URL in SAM_CONTRACT_AWARDS_LIVE_URL and the private key in SAM_API_KEY, then run make sam-procurement-refresh."
+        if retry_window_missed:
+            status = "manual_required"
+            evidence = f"{evidence}; retryWindow=missed"
+            next_action = "Wait for the SAM.gov quota reset, request a fresh export email, update SAM_CONTRACT_AWARDS_LIVE_URL and timestamp metadata, then rerun make sam-procurement-refresh."
         if freshness["status"] == "expired":
             next_action = "Request a fresh SAM.gov export email, update SAM_CONTRACT_AWARDS_LIVE_URL and its timestamp metadata, then run make sam-procurement-refresh."
         elif freshness["status"] == "unknown":
@@ -417,6 +422,16 @@ def sam_export_input_row() -> dict[str, str]:
         "SAM_CONTRACT_AWARDS_LIVE_CSV/URL=missing",
         "If using a SAM.gov email link, paste it into .env as SAM_CONTRACT_AWARDS_LIVE_URL with api_key=REPLACE_WITH_API_KEY and keep SAM_API_KEY separate.",
         "source-refresh",
+    )
+
+
+def sam_export_retry_window_missed(freshness_evidence: str) -> bool:
+    rows = keyed_rows(SAM_EXPORT_AUDIT_CSV, "item")
+    row = rows.get("export-link-retry-window", {})
+    return (
+        row.get("status") == "manual_required"
+        and row.get("value") == "quota reset occurs after emailed token expiry"
+        and row.get("notes") == freshness_evidence
     )
 
 
