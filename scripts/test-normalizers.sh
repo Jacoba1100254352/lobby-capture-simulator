@@ -768,6 +768,33 @@ if grep -q "expired-fixture" "$tmpdir/reports/sam-contract-awards-export-audit.m
   exit 1
 fi
 
+python3 scripts/probe-gao-protest-feed.py \
+  --input data/fixtures/source-native/gao-legal-products-feed.xml \
+  --output-prefix "$tmpdir/gao-protest-feed-preflight" \
+  --strict >/dev/null
+test -s "$tmpdir/gao-protest-feed-preflight.csv"
+test -s "$tmpdir/gao-protest-feed-preflight.md"
+python3 - "$tmpdir/gao-protest-feed-preflight.csv" <<'PY'
+import csv
+import sys
+
+with open(sys.argv[1], newline="", encoding="utf-8") as source:
+    rows = list(csv.DictReader(source))
+assert len(rows) == 3, len(rows)
+likely = [row for row in rows if row["likelyBidProtest"] == "true"]
+assert len(likely) == 2, likely
+first = rows[0]
+assert first["protestId"] == "B-424306", first
+assert first["agencyHint"] == "Department of the Air Force", first
+assert first["linkageStatus"] == "candidate_unreviewed", first
+assert "candidate-only GAO protest discovery row" in first["notes"], first
+assert "does not clear the gao-protest-overlay source-product gate" in first["notes"], first
+PY
+grep -q "GAO Protest Feed Preflight" "$tmpdir/gao-protest-feed-preflight.md"
+grep -q 'Likely bid-protest rows: `2`' "$tmpdir/gao-protest-feed-preflight.md"
+grep -q "does not clear the procurement calibration gate" "$tmpdir/gao-protest-feed-preflight.md"
+grep -q "data/calibration/first-wave/gao-protest-overlay.csv" "$tmpdir/gao-protest-feed-preflight.md"
+
 python3 - <<'PY'
 import importlib.util
 from pathlib import Path

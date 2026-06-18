@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<rss version="2.0">
+  <channel>
+    <title>GAO Legal Products</title>
+    <link>https://www.gao.gov/rss/reportslegal.xml</link>
+    <description>Summaries of Comptroller General decisions and opinions.</description>
+    <lastBuildDate>Thu, 18 Jun 2026 12:00:00 GMT</lastBuildDate>
+    <item>
+      <title>DarkStar Intelligence, LLC</title>
+      <link>https://www.gao.gov/products/b-424306</link>
+      <guid>https://www.gao.gov/products/b-424306</guid>
+      <pubDate>Wed, 17 Jun 2026 18:00:00 GMT</pubDate>
+      <description>DarkStar Intelligence, LLC, of Reston, Virginia, protests the Department of the Air Force's award of a task order for intelligence support services.</description>
+    </item>
+    <item>
+      <title>Highlight Technologies, Inc.</title>
+      <link>https://www.gao.gov/products/b-424310.2</link>
+      <guid>https://www.gao.gov/products/b-424310.2</guid>
+      <pubDate>Tue, 16 Jun 2026 16:30:00 GMT</pubDate>
+      <description>Highlight Technologies, Inc., protests the General Services Administration's evaluation under a federal information technology procurement.</description>
+    </item>
+    <item>
+      <title>Appropriations Law Decision</title>
+      <link>https://www.gao.gov/products/b-333111</link>
+      <guid>https://www.gao.gov/products/b-333111</guid>
+      <pubDate>Mon, 15 Jun 2026 14:00:00 GMT</pubDate>
+      <description>Decision concerning availability of appropriations for an agency program.</description>
+    </item>
+  </channel>
+</rss>

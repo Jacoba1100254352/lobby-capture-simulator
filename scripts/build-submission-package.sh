@@ -138,6 +138,7 @@ for report_artifact in "$ROOT_DIR"/reports/*.csv "$ROOT_DIR"/reports/*.md "$ROOT
       final-readthrough-evidence.*) continue ;;
       github-ci-status-audit.*) continue ;;
       github-release-asset-audit.*) continue ;;
+      gao-protest-feed-preflight.*) continue ;;
       sam-contract-awards-export-audit.*) continue ;;
       sam-contract-awards-preflight.*) continue ;;
       usaspending-transaction-download-strata.*) continue ;;
