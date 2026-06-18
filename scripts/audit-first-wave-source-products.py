@@ -548,6 +548,7 @@ def audit_product(root: Path, spec: ProductSpec) -> dict[str, str]:
         observed_columns: tuple[str, ...] = ()
         missing_columns = spec.required_columns
         quality_issues = 0
+        quality_issue_examples: tuple[str, ...] = ()
         semantic_issues: tuple[str, ...] = ()
         validation_notes = "Expected source product is not present."
     elif path.suffix.lower() == ".csv":
@@ -556,6 +557,7 @@ def audit_product(root: Path, spec: ProductSpec) -> dict[str, str]:
             observed_columns,
             missing_columns,
             quality_issues,
+            quality_issue_examples,
             semantic_issues,
             validation_notes,
             candidate_unreviewed,
@@ -577,6 +579,7 @@ def audit_product(root: Path, spec: ProductSpec) -> dict[str, str]:
     else:
         observed_rows, observed_columns, missing_columns, validation_notes = audit_text(path, spec)
         quality_issues = 0
+        quality_issue_examples = ()
         semantic_issues = ()
         status = "text_missing_terms" if missing_columns else "text_ready"
 
@@ -597,6 +600,7 @@ def audit_product(root: Path, spec: ProductSpec) -> dict[str, str]:
         "observedColumns": "; ".join(observed_columns),
         "missingColumns": "; ".join(missing_columns),
         "qualityIssueCount": str(quality_issues),
+        "qualityIssueExamples": "; ".join(quality_issue_examples),
         "semanticIssueCount": str(len(semantic_issues)),
         "semanticChecks": "; ".join(spec.semantic_checks),
         "semanticIssues": "; ".join(semantic_issues),
@@ -641,14 +645,14 @@ def product_next_action(spec: ProductSpec, status: str) -> str:
     return spec.next_action
 
 
-def audit_csv(path: Path, spec: ProductSpec) -> tuple[int, tuple[str, ...], tuple[str, ...], int, tuple[str, ...], str, bool]:
+def audit_csv(path: Path, spec: ProductSpec) -> tuple[int, tuple[str, ...], tuple[str, ...], int, tuple[str, ...], tuple[str, ...], str, bool]:
     try:
         with path.open(newline="", encoding="utf-8") as source:
             reader = csv.DictReader(source)
             observed_columns = tuple(reader.fieldnames or ())
             rows = list(reader)
     except OSError as error:
-        return 0, (), spec.required_columns, 1, (), f"Could not read CSV: {error}", False
+        return 0, (), spec.required_columns, 1, (f"file: could not read CSV: {error}",), (), f"Could not read CSV: {error}", False
     observed = set(observed_columns)
     missing = tuple(column for column in spec.required_columns if column not in observed)
     candidate_unreviewed = is_candidate_unreviewed_product(rows)
@@ -656,6 +660,7 @@ def audit_csv(path: Path, spec: ProductSpec) -> tuple[int, tuple[str, ...], tupl
         note = "Missing required schema columns."
     else:
         quality_issues = csv_quality_issues(rows, spec)
+        quality_issue_examples = csv_quality_issue_examples(rows, spec)
         semantic_issues = semantic_quality_issues(rows, spec)
         if quality_issues or semantic_issues:
             fragments = []
@@ -668,8 +673,8 @@ def audit_csv(path: Path, spec: ProductSpec) -> tuple[int, tuple[str, ...], tupl
             note = "Required schema columns, field-level quality checks, and semantic gates pass."
         if candidate_unreviewed:
             note = candidate_unreviewed_note(spec) + " " + note
-        return len(rows), observed_columns, missing, quality_issues, semantic_issues, note, candidate_unreviewed
-    return len(rows), observed_columns, missing, 0, (), note, candidate_unreviewed
+        return len(rows), observed_columns, missing, quality_issues, quality_issue_examples, semantic_issues, note, candidate_unreviewed
+    return len(rows), observed_columns, missing, 0, (), (), note, candidate_unreviewed
 
 
 def candidate_unreviewed_note(spec: ProductSpec) -> str:
@@ -703,34 +708,61 @@ def csv_quality_issues(rows: list[dict[str, str]], spec: ProductSpec) -> int:
     for row in rows:
         for column in spec.required_columns:
             value = normalize_cell(row.get(column, ""))
-            lowered = value.lower()
-            if lowered in PLACEHOLDER_VALUES:
-                issues += 1
-                continue
-            if is_date_column(column) and not is_valid_date(value):
-                issues += 1
-            if is_url_column(column) and not is_valid_url(value):
-                issues += 1
-            if is_numeric_column(column) and not is_valid_number(value):
-                issues += 1
-            if is_boolean_column(column) and lowered not in BOOLEAN_VALUES:
+            if field_quality_issue(column, value, required=True):
                 issues += 1
         for column in spec.optional_columns:
             value = normalize_cell(row.get(column, ""))
             if not value:
                 continue
-            lowered = value.lower()
-            if lowered in {"todo", "tbd", "placeholder", "example", "sample"}:
-                issues += 1
-            if is_date_column(column) and not is_valid_date(value):
-                issues += 1
-            if is_url_column(column) and not is_valid_url(value):
-                issues += 1
-            if is_numeric_column(column) and not is_valid_number(value):
-                issues += 1
-            if is_boolean_column(column) and lowered not in BOOLEAN_VALUES:
+            if field_quality_issue(column, value, required=False):
                 issues += 1
     return issues
+
+
+def csv_quality_issue_examples(rows: list[dict[str, str]], spec: ProductSpec, limit: int = 5) -> tuple[str, ...]:
+    examples: list[str] = []
+    for row_number, row in enumerate(rows, start=2):
+        for column in spec.required_columns:
+            value = normalize_cell(row.get(column, ""))
+            issue = field_quality_issue(column, value, required=True)
+            if issue:
+                examples.append(f"line {row_number} `{column}`: {issue}")
+                if len(examples) >= limit:
+                    return tuple(examples)
+        for column in spec.optional_columns:
+            value = normalize_cell(row.get(column, ""))
+            if not value:
+                continue
+            issue = field_quality_issue(column, value, required=False)
+            if issue:
+                examples.append(f"line {row_number} `{column}`: {issue}")
+                if len(examples) >= limit:
+                    return tuple(examples)
+    return tuple(examples)
+
+
+def field_quality_issue(column: str, value: str, *, required: bool) -> str:
+    lowered = value.lower()
+    if required and lowered in PLACEHOLDER_VALUES:
+        return f"missing or placeholder value `{short_value(value)}`"
+    if not required and lowered in {"todo", "tbd", "placeholder", "example", "sample"}:
+        return f"placeholder optional value `{short_value(value)}`"
+    if is_date_column(column) and not is_valid_date(value):
+        return f"invalid date `{short_value(value)}`"
+    if is_url_column(column) and not is_valid_url(value):
+        return f"invalid URL `{short_value(value)}`"
+    if is_numeric_column(column) and not is_valid_number(value):
+        return f"invalid number `{short_value(value)}`"
+    if is_boolean_column(column) and lowered not in BOOLEAN_VALUES:
+        return f"invalid boolean `{short_value(value)}`"
+    return ""
+
+
+def short_value(value: str, limit: int = 60) -> str:
+    normalized = value.replace("\n", " ").strip()
+    if len(normalized) <= limit:
+        return normalized
+    return normalized[: limit - 3] + "..."
 
 
 def semantic_quality_issues(rows: list[dict[str, str]], spec: ProductSpec) -> tuple[str, ...]:
@@ -883,7 +915,10 @@ def is_numeric_column(column: str) -> bool:
 
 def is_boolean_column(column: str) -> bool:
     lowered = column.lower()
-    return lowered.startswith("is") or lowered in {"withdrawn"}
+    return (
+        lowered in {"candidateonly", "withdrawn"}
+        or (column.startswith("is") and len(column) > 2 and column[2].isupper())
+    )
 
 
 def is_valid_date(value: str) -> bool:
@@ -943,6 +978,7 @@ def write_csv(path: Path, rows: list[dict[str, str]]) -> None:
         "observedColumns",
         "missingColumns",
         "qualityIssueCount",
+        "qualityIssueExamples",
         "semanticIssueCount",
         "semanticChecks",
         "semanticIssues",
@@ -1029,6 +1065,24 @@ def write_markdown(path: Path, rows: list[dict[str, str]]) -> None:
                 **{key: md(value) for key, value in row.items()}
             )
         )
+    lines.extend([
+        "",
+        "## Field Quality Notes",
+        "",
+        "Field-level examples are deterministic samples from the same validators that produce the quality issue counts. Counts remain the gate; examples make candidate-only and schema-problem rows actionable during source acquisition.",
+        "",
+        "| Target | Product | Quality issue count | Example issue(s) | Claim boundary |",
+        "| --- | --- | ---: | --- | --- |",
+    ])
+    if quality_issue_products:
+        for row in quality_issue_products:
+            lines.append(
+                "| {targetKey} | {productLabel} | {qualityIssueCount} | {qualityIssueExamples} | {claimBoundary} |".format(
+                    **{key: md(value) for key, value in row.items()}
+                )
+            )
+    else:
+        lines.append("| all | all audited products | 0 | none | no field-level quality issues in this audit run |")
     lines.extend([
         "",
         "## Product Boundaries",

@@ -209,8 +209,11 @@ shock-1,TODO,Example State,environment,disclosure,not-a-date,2024-02-01,covered 
 CSV
 python3 scripts/audit-first-wave-source-products.py --root "$tmpdir/source-root" --reports "$tmpdir/reports" >/dev/null
 grep -q "qualityIssueCount" "$tmpdir/reports/first-wave-source-products.csv"
+grep -q "qualityIssueExamples" "$tmpdir/reports/first-wave-source-products.csv"
 grep -q "substitution-reform-shocks,.*schema_quality_issues" "$tmpdir/reports/first-wave-source-products.csv"
 grep -q "Products with field-level quality issues" "$tmpdir/reports/first-wave-source-products.md"
+grep -q "Field Quality Notes" "$tmpdir/reports/first-wave-source-products.md"
+grep -q 'line 2 `eventName`: missing or placeholder value `TODO`' "$tmpdir/reports/first-wave-source-products.md"
 
 cat > "$tmpdir/sam-export.csv" <<'CSV'
 contractId.piid,modification_number,recipientName,contractingDepartmentName,contractingSubtierName,awardOrIDVTypeName,Federal Action Obligation,Recipient UEI,actionDate,extentCompetedName,numberOfOffers,typeOfContractPricingName
@@ -643,7 +646,7 @@ with ci_csv.open("w", newline="", encoding="utf-8") as target:
         "gate": "release-tag-target",
         "status": "ready",
         "workflow": "local-git",
-        "branchOrTag": "paper-publication-readiness-2026-06-18-r158",
+        "branchOrTag": "paper-publication-readiness-2026-06-18-r159",
         "headSha": "abc123",
         "runId": "",
         "runStatus": "completed",
@@ -669,7 +672,7 @@ with ci_csv.open("w", newline="", encoding="utf-8") as target:
         "gate": "release-tag-ci",
         "status": "ready",
         "workflow": "CI",
-        "branchOrTag": "paper-publication-readiness-2026-06-18-r158",
+        "branchOrTag": "paper-publication-readiness-2026-06-18-r159",
         "headSha": "abc123",
         "runId": "112",
         "runStatus": "completed",
@@ -691,7 +694,7 @@ with ci_csv.open("w", newline="", encoding="utf-8") as target:
         "gate": "release-tag-target",
         "status": "ready",
         "workflow": "local-git",
-        "branchOrTag": "paper-publication-readiness-2026-06-18-r158",
+        "branchOrTag": "paper-publication-readiness-2026-06-18-r159",
         "headSha": "abc123",
         "runId": "",
         "runStatus": "completed",
@@ -723,9 +726,9 @@ mkdir -p "$tmpdir/doi-repo/paper/sections" "$tmpdir/doi-repo/reports"
 cat > "$tmpdir/doi-repo/CITATION.cff" <<'YAML'
 cff-version: 1.2.0
 title: "Lobby Capture Simulator"
-version: "paper-publication-readiness-2026-06-18-r158"
+version: "paper-publication-readiness-2026-06-18-r159"
 repository-code: "https://github.com/Jacoba1100254352/lobby-capture-simulator"
-url: "https://github.com/Jacoba1100254352/lobby-capture-simulator/releases/tag/paper-publication-readiness-2026-06-18-r158"
+url: "https://github.com/Jacoba1100254352/lobby-capture-simulator/releases/tag/paper-publication-readiness-2026-06-18-r159"
 license: MIT
 preferred-citation:
   type: article
@@ -737,7 +740,7 @@ cat > "$tmpdir/doi-repo/.zenodo.json" <<'JSON'
   "upload_type": "software",
   "related_identifiers": [
     {
-      "identifier": "https://github.com/Jacoba1100254352/lobby-capture-simulator/releases/tag/paper-publication-readiness-2026-06-18-r158",
+      "identifier": "https://github.com/Jacoba1100254352/lobby-capture-simulator/releases/tag/paper-publication-readiness-2026-06-18-r159",
       "relation": "isIdenticalTo",
       "resource_type": "software"
     },
@@ -751,7 +754,7 @@ cat > "$tmpdir/doi-repo/.zenodo.json" <<'JSON'
 JSON
 cat > "$tmpdir/doi-repo/paper/sections/submission-declarations.tex" <<'TEX'
 \submissionsection{Data and Code Availability}
-The simulator source is publicly maintained at \url{https://github.com/Jacoba1100254352/lobby-capture-simulator}. The code is released under the MIT License, and this review bundle is associated with \href{https://github.com/Jacoba1100254352/lobby-capture-simulator/releases/tag/paper-publication-readiness-2026-06-18-r158}{release r158}. Report manifests record seed and runtime provenance.
+The simulator source is publicly maintained at \url{https://github.com/Jacoba1100254352/lobby-capture-simulator}. The code is released under the MIT License, and this review bundle is associated with \href{https://github.com/Jacoba1100254352/lobby-capture-simulator/releases/tag/paper-publication-readiness-2026-06-18-r159}{release r159}. Report manifests record seed and runtime provenance.
 TEX
 cat > "$tmpdir/doi-repo/reports/final-human-readthrough.md" <<'MD'
 # Final Human Scholarly Read-Through
@@ -759,7 +762,7 @@ cat > "$tmpdir/doi-repo/reports/final-human-readthrough.md" <<'MD'
 status: pending
 signed-off-by:
 signed-off-date:
-reviewed-release: paper-publication-readiness-2026-06-18-r158
+reviewed-release: paper-publication-readiness-2026-06-18-r159
 reviewed-commit:
 doi-archive:
 MD

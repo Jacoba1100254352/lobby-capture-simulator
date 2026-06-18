@@ -9,7 +9,7 @@ This generated schema/acquisition gate turns the first-wave causal protocols int
 - Candidate-only unreviewed products: `8`
 - Missing products: `4`
 - Present products with schema issues: `0`
-- Products with field-level quality issues: `6`
+- Products with field-level quality issues: `3`
 - Products with semantic gate issues: `1`
 - Targets with all required products ready: `0`
 - Policy-simulation status: `not_cleared`
@@ -44,8 +44,8 @@ The `candidate_unreviewed` status means the production file exists as a determin
 | Target | Product | Semantic issue count | Semantic issues | Validation notes |
 | --- | --- | ---: | --- | --- |
 | substitution-elasticity | named reform-shock event file | 0 |  | Required schema columns, field-level quality checks, and semantic gates pass. |
-| substitution-elasticity | canonical actor-issue-time spine across at least three venues | 0 |  | Candidate-only manual-review seed is present; it does not clear source-product readiness until aliases, issue comparability, and false matches are adjudicated. Required schema columns are present, but 1500 field-level quality issues. |
-| substitution-elasticity | pre/post comparison groups for exposed and unaffected actors or jurisdictions | 0 |  | Candidate-only manual-review seed is present; it does not clear source-product readiness until aliases, issue comparability, and false matches are adjudicated. Required schema columns are present, but 80 field-level quality issues. |
+| substitution-elasticity | canonical actor-issue-time spine across at least three venues | 0 |  | Candidate-only manual-review seed is present; it does not clear source-product readiness until aliases, issue comparability, and false matches are adjudicated. Required schema columns, field-level quality checks, and semantic gates pass. |
+| substitution-elasticity | pre/post comparison groups for exposed and unaffected actors or jurisdictions | 0 |  | Candidate-only manual-review seed is present; it does not clear source-product readiness until aliases, issue comparability, and false matches are adjudicated. Required schema columns, field-level quality checks, and semantic gates pass. |
 | substitution-elasticity | meeting-log or contact-register panel, or explicit missing-channel design note | 0 |  | Text source product contains the required missing-channel design terms. |
 | procurement-modification-causal-capture | SAM/FPDS action-history export or keyed pull | 0 |  | Expected source product is not present. |
 | procurement-modification-causal-capture | GAO protest overlay | 0 |  | Expected source product is not present. |
@@ -56,9 +56,19 @@ The `candidate_unreviewed` status means the production file exists as a determin
 | comment-authenticity-and-uptake-effect | agency response text and final-rule linkage | 0 |  | Candidate-only manual-review seed is present; it does not clear source-product readiness until response sections, final-rule text movement, and uptake coding are manually adjudicated. Required schema columns, field-level quality checks, and semantic gates pass. |
 | venue-shifting-detection-effect | canonical actor identifier table | 0 |  | Candidate-only manual-review seed is present; it does not clear source-product readiness until aliases, issue comparability, and false matches are adjudicated. Required schema columns, field-level quality checks, and semantic gates pass. |
 | venue-shifting-detection-effect | alias-resolution rules and manual audit sample | 0 |  | Candidate-only manual-review seed is present; it does not clear source-product readiness until aliases, issue comparability, and false matches are adjudicated. Required schema columns are present, but 80 field-level quality issues. |
-| venue-shifting-detection-effect | issue-code crosswalk across venues | 0 |  | Candidate-only manual-review seed is present; it does not clear source-product readiness until aliases, issue comparability, and false matches are adjudicated. Required schema columns are present, but 10 field-level quality issues. |
-| venue-shifting-detection-effect | false-positive and false-negative review log | 2 | no positive linkage decisions represented; no negative or error linkage decisions represented | Candidate-only manual-review seed is present; it does not clear source-product readiness until aliases, issue comparability, and false matches are adjudicated. Required schema columns are present, but 80 field-level quality issues; 2 semantic gate issues: no positive linkage decisions represented, no negative or error linkage decisions represented. |
-| venue-shifting-detection-effect | linked actor-issue-venue-time output table | 0 |  | Candidate-only manual-review seed is present; it does not clear source-product readiness until aliases, issue comparability, and false matches are adjudicated. Required schema columns are present, but 1500 field-level quality issues. |
+| venue-shifting-detection-effect | issue-code crosswalk across venues | 0 |  | Candidate-only manual-review seed is present; it does not clear source-product readiness until aliases, issue comparability, and false matches are adjudicated. Required schema columns are present, but 5 field-level quality issues. |
+| venue-shifting-detection-effect | false-positive and false-negative review log | 2 | no positive linkage decisions represented; no negative or error linkage decisions represented | Candidate-only manual-review seed is present; it does not clear source-product readiness until aliases, issue comparability, and false matches are adjudicated. Required schema columns are present, but 40 field-level quality issues; 2 semantic gate issues: no positive linkage decisions represented, no negative or error linkage decisions represented. |
+| venue-shifting-detection-effect | linked actor-issue-venue-time output table | 0 |  | Candidate-only manual-review seed is present; it does not clear source-product readiness until aliases, issue comparability, and false matches are adjudicated. Required schema columns, field-level quality checks, and semantic gates pass. |
+
+## Field Quality Notes
+
+Field-level examples are deterministic samples from the same validators that produce the quality issue counts. Counts remain the gate; examples make candidate-only and schema-problem rows actionable during source acquisition.
+
+| Target | Product | Quality issue count | Example issue(s) | Claim boundary |
+| --- | --- | ---: | --- | --- |
+| venue-shifting-detection-effect | alias-resolution rules and manual audit sample | 80 | line 2 `reviewDate`: invalid date `not_reviewed`; line 3 `reviewDate`: invalid date `not_reviewed`; line 4 `reviewDate`: invalid date `not_reviewed`; line 5 `reviewDate`: invalid date `not_reviewed`; line 6 `reviewDate`: invalid date `not_reviewed` | Required before false matches can be bounded in venue-shifting estimates. |
+| venue-shifting-detection-effect | issue-code crosswalk across venues | 5 | line 2 `reviewDate`: invalid date `not_reviewed`; line 3 `reviewDate`: invalid date `not_reviewed`; line 4 `reviewDate`: invalid date `not_reviewed`; line 5 `reviewDate`: invalid date `not_reviewed`; line 6 `reviewDate`: invalid date `not_reviewed` | Required before movement across venues can be assigned to comparable issues. |
+| venue-shifting-detection-effect | false-positive and false-negative review log | 40 | line 2 `reviewDate`: invalid date `not_reviewed`; line 3 `reviewDate`: invalid date `not_reviewed`; line 4 `reviewDate`: invalid date `not_reviewed`; line 5 `reviewDate`: invalid date `not_reviewed`; line 6 `reviewDate`: invalid date `not_reviewed` | Required before cross-venue detection can report audited linkage uncertainty. |
 
 ## Product Boundaries
 

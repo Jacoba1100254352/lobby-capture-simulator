@@ -127,7 +127,7 @@ DOI_DEPOSIT_PACKAGE_CHECKSUM_CSV = ROOT / "dist" / "doi-deposit-package-checksum
 DOI_DEPOSIT_PACKAGE_CHECKSUM_JSON = ROOT / "dist" / "doi-deposit-package-checksum.json"
 DOI_DEPOSIT_PACKAGE_CHECKSUM_MD = ROOT / "dist" / "doi-deposit-package-checksum.md"
 ZENODO_DEPOSIT_METADATA_JSON = ROOT / "dist" / "zenodo-deposit-metadata.json"
-RELEASE_TAG = "paper-publication-readiness-2026-06-18-r158"
+RELEASE_TAG = "paper-publication-readiness-2026-06-18-r159"
 ARCHIVE_HANDOFF_REPORT_NAMES = {
     "archive-handoff-manifest.csv",
     "archive-handoff-manifest.json",
@@ -2127,6 +2127,11 @@ def check_first_wave_source_products() -> list[str]:
             ready_rows.append(product)
         if row.get("productStatus") == "candidate_unreviewed":
             candidate_rows.append(product)
+        quality_issue_count = row.get("qualityIssueCount", "0")
+        if quality_issue_count not in {"", "0"} and not row.get("qualityIssueExamples", "").strip():
+            failures.append(
+                f"first-wave source product {product} has quality issues but no example field-level issue"
+            )
         if not row.get("expectedPath", "").startswith("data/calibration/first-wave/"):
             failures.append(
                 f"first-wave source product {product} expected path should live under data/calibration/first-wave/"
@@ -2212,6 +2217,9 @@ def check_first_wave_source_products() -> list[str]:
         "Policy-simulation status: `not_cleared`",
         "Products with field-level quality issues",
         "Products with semantic gate issues",
+        "Field Quality Notes",
+        "Field-level examples are deterministic samples",
+        "Counts remain the gate",
         "candidate_unreviewed",
         "deterministic manual-review seed",
         "Template path",
@@ -2225,6 +2233,8 @@ def check_first_wave_source_products() -> list[str]:
     for phrase in required_text:
         if phrase not in text:
             failures.append(f"first-wave source products markdown missing phrase: {phrase}")
+    if "`issueCode`: invalid boolean" in text:
+        failures.append("first-wave source products markdown should not classify issueCode as a boolean field")
 
     if SUPPLEMENT_BODY.exists():
         supplement = SUPPLEMENT_BODY.read_text(encoding="utf-8")
