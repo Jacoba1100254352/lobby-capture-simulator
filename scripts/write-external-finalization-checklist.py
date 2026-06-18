@@ -351,7 +351,7 @@ def sam_export_input_row() -> dict[str, str]:
             "sam-export-input",
             "ready" if exists else "blocked",
             f"configuredCsv={path}; exists={'yes' if exists else 'no'}",
-            "Run SAM_CONTRACT_AWARDS_LIVE_CSV=/path/to/export.zip make sam-contract-awards-export-audit before snapshot promotion.",
+            "Run make sam-procurement-refresh so the export audit must report candidate before snapshot promotion.",
             "source-refresh",
         )
     if url:
@@ -365,7 +365,7 @@ def sam_export_input_row() -> dict[str, str]:
             "sam-export-input",
             status,
             evidence,
-            "Keep the emailed URL in SAM_CONTRACT_AWARDS_LIVE_URL and the private key in SAM_API_KEY, then run make sam-contract-awards-export-audit.",
+            "Keep the emailed URL in SAM_CONTRACT_AWARDS_LIVE_URL and the private key in SAM_API_KEY, then run make sam-procurement-refresh.",
             "source-refresh",
         )
     return item(
@@ -384,7 +384,7 @@ def sam_export_audit_row() -> dict[str, str]:
             "sam-export-audit",
             "manual_required",
             "audit=missing",
-            "Run make sam-contract-awards-export-audit after configuring a SAM export CSV or emailed URL.",
+            "Run make sam-procurement-refresh after configuring a SAM export CSV or emailed URL; the wrapper audits first and promotes only candidate exports.",
             "source-refresh",
         )
     promotion = next((row for row in rows if row.get("item") == "promotion-readiness"), rows[0])
@@ -409,7 +409,7 @@ def sam_export_audit_row() -> dict[str, str]:
             "sam-export-audit",
             "manual_required",
             f"staleAudit=present; currentInput=missing; {promotion_summary}; sourceRows={source_rows}; auditRows={len(rows)}",
-            "Configure the current SAM export URL or CSV in .env, then rerun make sam-contract-awards-export-audit.",
+            "Configure the current SAM export URL or CSV in .env, then rerun make sam-procurement-refresh so stale audits cannot be promoted.",
             "source-refresh",
         )
     if promotion_status == "candidate":
@@ -486,7 +486,7 @@ def sam_export_shape_summary(rows: list[dict[str, str]]) -> str:
 
 def sam_export_next_action(status: str, blockers: list[str], shape_summary: str) -> str:
     if status == "ready":
-        return "Promote only by rerunning the live snapshot and full paper-artifacts-check; the audit alone does not clear procurement claims."
+        return "Promote through make sam-procurement-refresh so the audited candidate export is followed by the live snapshot and full paper-artifacts-check; the audit alone does not clear procurement claims."
     if blockers:
         blocker_text = "+".join(blockers)
         shape_text = f" Current shape: {shape_summary}." if shape_summary else ""
@@ -496,8 +496,8 @@ def sam_export_next_action(status: str, blockers: list[str], shape_summary: str)
             f"current hard blockers={blocker_text}.{shape_text}"
         )
     if status == "manual_required":
-        return "Resolve the SAM.gov token/quota/download condition, rerun make sam-contract-awards-export-audit, and promote only after hard breadth checks clear."
-    return "Use the audit output to decide whether to rerun the live snapshot and paper-artifacts-check with the SAM export."
+        return "Resolve the SAM.gov token/quota/download condition, rerun make sam-procurement-refresh, and promote only after the audit reports candidate."
+    return "Use make sam-procurement-refresh to audit, promote, refresh the live snapshot, and run paper-artifacts-check with the SAM export."
 
 
 def read_csv(path: Path) -> list[dict[str, str]]:
@@ -613,6 +613,8 @@ def markdown(rows: list[dict[str, str]]) -> str:
             "make external-finalization-checklist",
             "",
             "# If a SAM.gov emailed export link is configured in .env:",
+            "make sam-procurement-refresh",
+            "# For audit-only diagnostics without snapshot promotion:",
             "make sam-contract-awards-export-audit",
             "",
             "# Before a keyed SAM.gov Contract Awards API refresh:",

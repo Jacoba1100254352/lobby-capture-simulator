@@ -3,7 +3,27 @@ set -eu
 
 tmpdir="$(mktemp -d)"
 repo_root="$(pwd)"
+preserve_report() {
+  file="$1"
+  if [ -f "$file" ]; then
+    mkdir -p "$tmpdir/preserved-reports"
+    cp "$file" "$tmpdir/preserved-reports/$(basename "$file")"
+  fi
+}
+restore_report() {
+  file="$1"
+  backup="$tmpdir/preserved-reports/$(basename "$file")"
+  if [ -f "$backup" ]; then
+    cp "$backup" "$file"
+  else
+    rm -f "$file"
+  fi
+}
+preserve_report reports/sam-contract-awards-export-audit.csv
+preserve_report reports/sam-contract-awards-export-audit.md
 cleanup() {
+  restore_report reports/sam-contract-awards-export-audit.csv
+  restore_report reports/sam-contract-awards-export-audit.md
   rm -rf "$tmpdir"
 }
 trap cleanup EXIT
@@ -324,6 +344,26 @@ assert "Do not promote this SAM export" in row["nextAction"], row
 assert "action-history export" in row["nextAction"], row
 PY
 
+cat > "$tmpdir/sam-wrapper-blocked-export.csv" <<'CSV'
+contractId.piid,modification_number,recipientName,contractingDepartmentName,contractingSubtierName,awardOrIDVTypeName,Federal Action Obligation,Recipient UEI,actionDate,extentCompetedName,numberOfOffers,typeOfContractPricingName
+68HERH24C9999,0,WRAPPER BLOCKED CONTRACTOR,ENVIRONMENTAL PROTECTION AGENCY,EPA OFFICE,DEFINITIVE CONTRACT,1250000,WRAPUEI1234,2024-01-15,FULL AND OPEN COMPETITION,5,FIRM FIXED PRICE
+CSV
+set +e
+SAM_CONTRACT_AWARDS_LIVE_CSV="$tmpdir/sam-wrapper-blocked-export.csv" \
+SAM_CONTRACT_AWARDS_LIVE_URL= \
+SAM_CONTRACT_AWARDS_ALLOW_DIAGNOSTIC_PROMOTION=0 \
+./scripts/refresh-sam-procurement-panel.sh --mode manual-export --no-artifacts >"$tmpdir/sam-wrapper.out" 2>&1
+wrapper_exit="$?"
+set -e
+if [ "$wrapper_exit" -ne 65 ]; then
+  echo "Expected guarded SAM refresh wrapper to reject a blocked export with exit 65, got $wrapper_exit." >&2
+  cat "$tmpdir/sam-wrapper.out" >&2
+  exit 1
+fi
+grep -q "Not promoting into the live snapshot" "$tmpdir/sam-wrapper.out"
+grep -q "promotion-readiness,blocked" reports/sam-contract-awards-export-audit.csv
+rm -f reports/sam-contract-awards-export-audit.csv reports/sam-contract-awards-export-audit.md
+
 python3 - "$tmpdir/reports" <<'PY'
 import argparse
 import importlib.util
@@ -427,9 +467,9 @@ mkdir -p "$tmpdir/doi-repo/paper/sections" "$tmpdir/doi-repo/reports"
 cat > "$tmpdir/doi-repo/CITATION.cff" <<'YAML'
 cff-version: 1.2.0
 title: "Lobby Capture Simulator"
-version: "paper-publication-readiness-2026-06-18-r143"
+version: "paper-publication-readiness-2026-06-18-r144"
 repository-code: "https://github.com/Jacoba1100254352/lobby-capture-simulator"
-url: "https://github.com/Jacoba1100254352/lobby-capture-simulator/releases/tag/paper-publication-readiness-2026-06-18-r143"
+url: "https://github.com/Jacoba1100254352/lobby-capture-simulator/releases/tag/paper-publication-readiness-2026-06-18-r144"
 license: MIT
 preferred-citation:
   type: article
@@ -441,7 +481,7 @@ cat > "$tmpdir/doi-repo/.zenodo.json" <<'JSON'
   "upload_type": "software",
   "related_identifiers": [
     {
-      "identifier": "https://github.com/Jacoba1100254352/lobby-capture-simulator/releases/tag/paper-publication-readiness-2026-06-18-r143",
+      "identifier": "https://github.com/Jacoba1100254352/lobby-capture-simulator/releases/tag/paper-publication-readiness-2026-06-18-r144",
       "relation": "isIdenticalTo",
       "resource_type": "software"
     },
@@ -455,7 +495,7 @@ cat > "$tmpdir/doi-repo/.zenodo.json" <<'JSON'
 JSON
 cat > "$tmpdir/doi-repo/paper/sections/submission-declarations.tex" <<'TEX'
 \submissionsection{Data and Code Availability}
-The simulator source is publicly maintained at \url{https://github.com/Jacoba1100254352/lobby-capture-simulator}. The code is released under the MIT License, and this review bundle is associated with \href{https://github.com/Jacoba1100254352/lobby-capture-simulator/releases/tag/paper-publication-readiness-2026-06-18-r143}{release r143}. Report manifests record seed and runtime provenance.
+The simulator source is publicly maintained at \url{https://github.com/Jacoba1100254352/lobby-capture-simulator}. The code is released under the MIT License, and this review bundle is associated with \href{https://github.com/Jacoba1100254352/lobby-capture-simulator/releases/tag/paper-publication-readiness-2026-06-18-r144}{release r144}. Report manifests record seed and runtime provenance.
 TEX
 cat > "$tmpdir/doi-repo/reports/final-human-readthrough.md" <<'MD'
 # Final Human Scholarly Read-Through
@@ -463,7 +503,7 @@ cat > "$tmpdir/doi-repo/reports/final-human-readthrough.md" <<'MD'
 status: pending
 signed-off-by:
 signed-off-date:
-reviewed-release: paper-publication-readiness-2026-06-18-r143
+reviewed-release: paper-publication-readiness-2026-06-18-r144
 reviewed-commit:
 doi-archive:
 MD
