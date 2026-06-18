@@ -124,7 +124,7 @@ DOI_DEPOSIT_PACKAGE_CHECKSUM_CSV = ROOT / "dist" / "doi-deposit-package-checksum
 DOI_DEPOSIT_PACKAGE_CHECKSUM_JSON = ROOT / "dist" / "doi-deposit-package-checksum.json"
 DOI_DEPOSIT_PACKAGE_CHECKSUM_MD = ROOT / "dist" / "doi-deposit-package-checksum.md"
 ZENODO_DEPOSIT_METADATA_JSON = ROOT / "dist" / "zenodo-deposit-metadata.json"
-RELEASE_TAG = "paper-publication-readiness-2026-06-18-r156"
+RELEASE_TAG = "paper-publication-readiness-2026-06-18-r157"
 ARCHIVE_HANDOFF_REPORT_NAMES = {
     "archive-handoff-manifest.csv",
     "archive-handoff-manifest.json",
@@ -2288,6 +2288,9 @@ def check_first_wave_source_readiness() -> list[str]:
         "currentSourceProducts",
         "boundedOrProxySupport",
         "missingSourceProducts",
+        "candidateOnlySourceProducts",
+        "schemaIssueSourceProducts",
+        "blockingSourceProducts",
         "blockingIssue",
         "claimBoundary",
         "nextAction",
@@ -2304,6 +2307,18 @@ def check_first_wave_source_readiness() -> list[str]:
             ready_rows.append(target)
         if readiness.startswith("blocked"):
             blocked_rows.append(target)
+    by_target = {row.get("targetKey", ""): row for row in rows}
+    comment_row = by_target.get("comment-authenticity-and-uptake-effect", {})
+    if comment_row.get("missingSourceProducts") != "none":
+        failures.append("first-wave source readiness should not call the committed comment linkage seed missing")
+    if "agency response text and final-rule linkage" not in comment_row.get("candidateOnlySourceProducts", ""):
+        failures.append("first-wave source readiness should list agency response/final-rule linkage as candidate-only")
+    substitution_row = by_target.get("substitution-elasticity", {})
+    if substitution_row.get("missingSourceProducts") != "none":
+        failures.append("first-wave source readiness should not call committed substitution seed files missing")
+    venue_row = by_target.get("venue-shifting-detection-effect", {})
+    if venue_row.get("missingSourceProducts") != "none":
+        failures.append("first-wave source readiness should not call committed venue seed files missing")
     if ready_rows:
         failures.append(
             "first-wave source readiness should not clear estimation-ready rows in this release: "
@@ -2319,10 +2334,17 @@ def check_first_wave_source_readiness() -> list[str]:
         "Ready to estimate: `0`",
         "Policy-simulation status: `not_cleared`",
         "Source-product schema gate",
+        "Blocked source-product targets",
+        "Candidate-only source products",
+        "Schema/quality issue products",
         "ready=2",
         "candidateOnly=1",
         "candidateOnly=2",
         "candidateOnly=5",
+        "| comment-authenticity-and-uptake-effect | partial_source_support_not_estimation_ready | candidate_only_blocked",
+        "| venue-shifting-detection-effect | partial_identifier_support_not_linkage_ready | candidate_only_blocked",
+        "| procurement-modification-causal-capture | blocked_by_sam_fps_crosswalk_and_overlays | schema_gate_blocked",
+        "none | agency response text and final-rule linkage | none",
         "Manually adjudicate the candidate actor-issue-time spine and comparison groups",
         "first-wave ready products=comment-body corpus; duplicate/template cluster assignments",
         "Candidate response/final-rule linkage file is committed",

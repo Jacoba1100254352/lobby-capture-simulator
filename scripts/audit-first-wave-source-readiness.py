@@ -115,8 +115,10 @@ def readiness_row(
         )
     row["nextAction"] = product_aware_next_action(target, row["nextAction"], ready_labels, product_gate)
     row["blockingIssue"] = product_aware_blocking_issue(target, row["blockingIssue"], ready_labels, product_gate)
-    if product_gate["missingProducts"]:
-        row["missingSourceProducts"] = product_gate["missingProducts"]
+    row["missingSourceProducts"] = product_gate["missingProducts"] or "none"
+    row["candidateOnlySourceProducts"] = product_gate["candidateOnlyProducts"] or "none"
+    row["schemaIssueSourceProducts"] = product_gate["schemaIssueProducts"] or "none"
+    row["blockingSourceProducts"] = product_gate["blockingProducts"] or "none"
     return {
         "targetKey": target,
         "protocolStatus": protocol.get("protocolStatus", ""),
@@ -126,6 +128,9 @@ def readiness_row(
         "currentSourceProducts": row["currentSourceProducts"],
         "boundedOrProxySupport": row["boundedOrProxySupport"],
         "missingSourceProducts": row["missingSourceProducts"],
+        "candidateOnlySourceProducts": row["candidateOnlySourceProducts"],
+        "schemaIssueSourceProducts": row["schemaIssueSourceProducts"],
+        "blockingSourceProducts": row["blockingSourceProducts"],
         "blockingIssue": row["blockingIssue"],
         "claimBoundary": row["claimBoundary"],
         "nextAction": row["nextAction"],
@@ -138,6 +143,9 @@ def product_gate_summary(rows: list[dict[str, str]]) -> dict[str, str]:
             "sourceProductGate": "schema_gate_missing_report",
             "sourceProductEvidence": "required=missing; ready=0; missing=missing; schemaIssues=missing",
             "missingProducts": "first-wave source-product audit report",
+            "candidateOnlyProducts": "",
+            "schemaIssueProducts": "",
+            "blockingProducts": "first-wave source-product audit report",
         }
     required = [row for row in rows if row.get("requirementLevel") == "required"]
     ready_statuses = {"schema_ready", "text_ready"}
@@ -168,11 +176,18 @@ def product_gate_summary(rows: list[dict[str, str]]) -> dict[str, str]:
             f"candidateOnly={len(candidate_unreviewed)}; "
             f"missing={len(missing)}; schemaIssues={len(schema_issues)}"
         ),
-        "missingProducts": "; ".join(
-            row.get("productLabel", row.get("productKey", ""))
-            for row in missing + candidate_unreviewed + schema_issues
-        ),
+        "missingProducts": product_labels(missing),
+        "candidateOnlyProducts": product_labels(candidate_unreviewed),
+        "schemaIssueProducts": product_labels(schema_issues),
+        "blockingProducts": product_labels(missing + candidate_unreviewed + schema_issues),
     }
+
+
+def product_labels(rows: list[dict[str, str]]) -> str:
+    return "; ".join(
+        row.get("productLabel", row.get("productKey", ""))
+        for row in rows
+    )
 
 
 def ready_product_labels(rows: list[dict[str, str]]) -> list[str]:
@@ -514,6 +529,9 @@ def write_csv(path: Path, rows: list[dict[str, str]]) -> None:
         "currentSourceProducts",
         "boundedOrProxySupport",
         "missingSourceProducts",
+        "candidateOnlySourceProducts",
+        "schemaIssueSourceProducts",
+        "blockingSourceProducts",
         "blockingIssue",
         "claimBoundary",
         "nextAction",
@@ -531,25 +549,25 @@ def write_markdown(path: Path, rows: list[dict[str, str]]) -> None:
     lines = [
         "# First-Wave Source Readiness",
         "",
-        "This audit maps the first-wave causal protocols to committed source products. It is a pre-estimation gate: source products can support protocol design, but no row clears calibrated policy-simulation claims or causal effect language. Candidate linkage rows from `reports/first-wave-linkage-candidates.md` and candidate-only seed files under `data/calibration/first-wave/` are manual-review worklists only; they do not satisfy adjudicated production source-product requirements.",
+        "This audit maps the first-wave causal protocols to committed source products. It is a pre-estimation gate: source products can support protocol design, but no row clears calibrated policy-simulation claims or causal effect language. Candidate linkage rows from `reports/first-wave-linkage-candidates.md` and candidate-only seed files under `data/calibration/first-wave/` are manual-review worklists only; they are separated from truly missing products and do not satisfy adjudicated production source-product requirements.",
         "",
         "## Summary",
         "",
         f"- Protocols audited: `{len(rows)}`",
         f"- Ready to estimate: `{len(ready)}`",
         f"- Partial source support: `{len(partial)}`",
-        f"- Blocked by missing source products: `{len(blocked)}`",
+        f"- Blocked source-product targets: `{len(blocked)}`",
         "- Policy-simulation status: `not_cleared`",
         "- Source-product schema gate: `blocked_until_required_products_exist`",
         "",
         "## Readiness Matrix",
         "",
-        "| Target | Source readiness | Source-product gate | Current source products | Missing source products | Blocking issue |",
-        "| --- | --- | --- | --- | --- | --- |",
+        "| Target | Source readiness | Source-product gate | Current source products | Missing source products | Candidate-only source products | Schema/quality issue products | Blocking issue |",
+        "| --- | --- | --- | --- | --- | --- | --- | --- |",
     ]
     for row in rows:
         lines.append(
-            "| {targetKey} | {sourceReadiness} | {sourceProductGate} ({sourceProductEvidence}) | {currentSourceProducts} | {missingSourceProducts} | {blockingIssue} |".format(
+            "| {targetKey} | {sourceReadiness} | {sourceProductGate} ({sourceProductEvidence}) | {currentSourceProducts} | {missingSourceProducts} | {candidateOnlySourceProducts} | {schemaIssueSourceProducts} | {blockingIssue} |".format(
                 **{key: md(value) for key, value in row.items()}
             )
         )
