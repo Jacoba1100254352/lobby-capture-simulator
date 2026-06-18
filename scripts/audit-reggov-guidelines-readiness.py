@@ -38,6 +38,7 @@ WILEY_SUPPORTING_INFO_URL = (
     "https://authors.wiley.com/author-resources/Journal-Authors/Prepare/"
     "manuscript-preparation-guidelines.html/supporting-information.html"
 )
+SUPPORTING_INFO_MAX_BYTES = 10 * 1024 * 1024
 VERSION_PATTERN = re.compile(r"^version:\s*[\"']?([^\"'\n]+)[\"']?\s*$", re.MULTILINE)
 
 
@@ -116,6 +117,16 @@ def guideline_rows() -> list[dict[str, str]]:
             "ready" if supporting_information_ready(names) else "blocked",
             supporting_information_evidence(names),
             "Keep supplement files, ODD model, scenario catalog, validation plan, source roadmap, and report data in the package.",
+        ),
+        row(
+            "supporting-information-format-size",
+            (
+                "ready"
+                if supporting_information_format_size_ready(names, package["sizes"])
+                else "blocked"
+            ),
+            supporting_information_format_size_evidence(names, package["sizes"]),
+            "Keep every supporting-information member clearly labeled and at or below Wiley's 10 MB per-file guidance.",
         ),
         row(
             "latex-submission-files",
@@ -430,6 +441,58 @@ def supporting_information_evidence(names: set[str]) -> str:
     )
 
 
+def supporting_information_members(names: set[str]) -> list[str]:
+    members = [
+        name
+        for name in names
+        if name.startswith("supporting-information/") or name in {"supplement.tex", "supplement.pdf"}
+    ]
+    return sorted(members)
+
+
+def supporting_information_format_size_ready(names: set[str], sizes: dict[str, int]) -> bool:
+    members = supporting_information_members(names)
+    return bool(members) and not oversized_supporting_members(names, sizes) and not unlabeled_supporting_members(names)
+
+
+def oversized_supporting_members(names: set[str], sizes: dict[str, int]) -> list[str]:
+    return [
+        name
+        for name in supporting_information_members(names)
+        if int(sizes.get(name, 0)) > SUPPORTING_INFO_MAX_BYTES
+    ]
+
+
+def unlabeled_supporting_members(names: set[str]) -> list[str]:
+    unlabeled: list[str] = []
+    for name in supporting_information_members(names):
+        normalized = name.lower()
+        basename = Path(name).name.lower()
+        labeled = (
+            normalized.startswith("supporting-information/")
+            or basename.startswith("supplement")
+            or "suppinfo" in basename
+            or "_supp" in basename
+            or "-supp" in basename
+        )
+        if not labeled:
+            unlabeled.append(name)
+    return unlabeled
+
+
+def supporting_information_format_size_evidence(names: set[str], sizes: dict[str, int]) -> str:
+    members = supporting_information_members(names)
+    oversized = oversized_supporting_members(names, sizes)
+    unlabeled = unlabeled_supporting_members(names)
+    largest = max((int(sizes.get(name, 0)) for name in members), default=0)
+    return (
+        f"supporting members={len(members)}; "
+        f"largest={largest}; limit={SUPPORTING_INFO_MAX_BYTES}; "
+        f"oversized={'; '.join(oversized) if oversized else 'none'}; "
+        f"unlabeled={'; '.join(unlabeled) if unlabeled else 'none'}"
+    )
+
+
 def latex_submission_ready(
     package: dict[str, object],
     names: set[str],
@@ -494,7 +557,7 @@ def latex_submission_evidence(
 
 def inspect_package() -> dict[str, object]:
     if not SUBMISSION_ZIP.exists():
-        return {"exists": False, "readable": False, "encrypted": False, "names": []}
+        return {"exists": False, "readable": False, "encrypted": False, "names": [], "sizes": {}}
     try:
         with zipfile.ZipFile(SUBMISSION_ZIP) as archive:
             infos = [info for info in archive.infolist() if not info.is_dir()]
@@ -504,9 +567,10 @@ def inspect_package() -> dict[str, object]:
                 "readable": True,
                 "encrypted": encrypted,
                 "names": [info.filename for info in infos],
+                "sizes": {info.filename: int(info.file_size) for info in infos},
             }
     except (OSError, zipfile.BadZipFile):
-        return {"exists": True, "readable": False, "encrypted": False, "names": []}
+        return {"exists": True, "readable": False, "encrypted": False, "names": [], "sizes": {}}
 
 
 def read_gate_rows(path: Path) -> dict[str, dict[str, str]]:
@@ -582,6 +646,7 @@ def markdown(rows: list[dict[str, str]]) -> str:
         f"- Blocked gates: `{blocked}`",
         f"- Preferred word range checked: `{WORD_RANGE_LABEL}` words including abstract, references, endnotes, tables, and figures",
         "- Manuscript declarations checked: Data and Code Availability; AI Use Disclosure; funding; conflict of interest",
+        "- Supporting-information checks include Wiley's clear-labeling and 10 MB per-file guidance",
         "",
         "## Source Notes",
         "",

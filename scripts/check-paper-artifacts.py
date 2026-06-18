@@ -104,7 +104,7 @@ DOI_DEPOSIT_PACKAGE_CHECKSUM_CSV = ROOT / "dist" / "doi-deposit-package-checksum
 DOI_DEPOSIT_PACKAGE_CHECKSUM_JSON = ROOT / "dist" / "doi-deposit-package-checksum.json"
 DOI_DEPOSIT_PACKAGE_CHECKSUM_MD = ROOT / "dist" / "doi-deposit-package-checksum.md"
 ZENODO_DEPOSIT_METADATA_JSON = ROOT / "dist" / "zenodo-deposit-metadata.json"
-RELEASE_TAG = "paper-publication-readiness-2026-06-15-r133"
+RELEASE_TAG = "paper-publication-readiness-2026-06-15-r134"
 ARCHIVE_HANDOFF_REPORT_NAMES = {
     "archive-handoff-manifest.csv",
     "archive-handoff-manifest.json",
@@ -3014,6 +3014,7 @@ def check_reggov_guidelines_readiness() -> list[str]:
         "ai-funding-conflict-disclosures": {"ready"},
         "figures-and-tables": {"ready"},
         "supporting-information": {"ready"},
+        "supporting-information-format-size": {"ready"},
         "latex-submission-files": {"ready"},
         "live-reggov-author-page-refresh": {"manual_required", "ready"},
     }
@@ -3038,6 +3039,7 @@ def check_reggov_guidelines_readiness() -> list[str]:
         "8,000-10,000",
         "Data and Code Availability",
         "AI Use Disclosure",
+        "10 MB",
         "live Regulation & Governance author page",
         "root .tex",
         "compiled PDF",

@@ -5,11 +5,12 @@ This audit checks the locally verifiable Regulation & Governance and Wiley submi
 ## Summary
 
 - Automated guideline status: `ready_with_manual_live_check`
-- Ready gates: `9`
+- Ready gates: `10`
 - Manual-required gates: `1`
 - Blocked gates: `0`
 - Preferred word range checked: `8,000-10,000` words including abstract, references, endnotes, tables, and figures
 - Manuscript declarations checked: Data and Code Availability; AI Use Disclosure; funding; conflict of interest
+- Supporting-information checks include Wiley's clear-labeling and 10 MB per-file guidance
 
 ## Source Notes
 
@@ -33,8 +34,9 @@ The live Regulation & Governance author page should be opened immediately before
 | ai-funding-conflict-disclosures | ready | AI disclosure=yes; human responsibility=yes; AI no fabrication=yes; funding statement=yes; Wiley funding metadata=yes; conflict statement=yes | Keep AI use, human responsibility, funding, and conflict statements in the manuscript. |
 | figures-and-tables | ready | PDF figures=6; SVG sources=6; figure wrappers=6; table files=17; ZIP PDF figures=6; ZIP table files=17 | Retain generated PDF graphics, reproducible SVG sources, LaTeX wrappers, and table files. |
 | supporting-information | ready | supplement.tex=yes; supplement.pdf=yes; supporting-information/ODD-model.md=yes; supporting-information/scenario-catalog.md=yes; supporting-information/validation-plan.md=yes; supporting-information/source-data-roadmap.md=yes; supporting-information/submission-readiness.md=yes; supporting-information/final-human-readthrough.md=yes; report-data files=69 | Keep supplement files, ODD model, scenario catalog, validation plan, source roadmap, and report data in the package. |
+| supporting-information-format-size | ready | supporting members=126; largest=173976; limit=10485760; oversized=none; unlabeled=none | Keep every supporting-information member clearly labeled and at or below Wiley's 10 MB per-file guidance. |
 | latex-submission-files | ready | exists=yes; readable=yes; encrypted=no; members=181; strategic-channel-substitution-regulatory-capture.tex=yes; strategic-channel-substitution-regulatory-capture.pdf=yes; references.bib=yes; USG.cls=yes; lettersp.sty=yes; wileyNJD-Chicago.bst=yes; supporting-information/submission-package-manifest.json=yes; supporting-information/submission-package-manifest.md=yes; Wiley form ready gates=7 | Keep the ZIP, root .tex, compiled PDF, bibliography, class/style files, figures, tables, and package manifest together. |
-| live-reggov-author-page-refresh | manual_required | official URL recorded=https://onlinelibrary.wiley.com/page/journal/17485991/homepage/forauthors.html; record URL=matches; checked-by=present; checked-date=present; reviewed-release=paper-publication-readiness-2026-06-15-r133; expected-release=paper-publication-readiness-2026-06-15-r133; superseding-instructions=not-cleared: not cleared - HTTP HEAD returned 200 for the official author page, but the fetched body returned a Cloudflare JavaScript challenge rather than author-guideline content; human br... | Complete the live journal author-page browser review and replace the recorded non-clearance reason with none only if no superseding instructions require package changes. |
+| live-reggov-author-page-refresh | manual_required | official URL recorded=https://onlinelibrary.wiley.com/page/journal/17485991/homepage/forauthors.html; record URL=matches; checked-by=present; checked-date=present; reviewed-release=paper-publication-readiness-2026-06-15-r134; expected-release=paper-publication-readiness-2026-06-15-r134; superseding-instructions=not-cleared: not cleared - HTTP HEAD returned 200 for the official author page, but the fetched body returned a Cloudflare JavaScript challenge rather than author-guideline content; human br... | Complete the live journal author-page browser review and replace the recorded non-clearance reason with none only if no superseding instructions require package changes. |
 
 ## Interpretation
 
