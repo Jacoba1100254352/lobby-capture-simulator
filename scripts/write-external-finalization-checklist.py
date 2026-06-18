@@ -11,6 +11,7 @@ from __future__ import annotations
 
 import argparse
 import csv
+from datetime import datetime, timedelta, timezone
 import json
 import os
 import re
@@ -356,16 +357,23 @@ def sam_export_input_row() -> dict[str, str]:
         )
     if url:
         needs_key = "REPLACE_WITH_API_KEY" in url
-        status = "ready" if (not needs_key or sam_key_present) else "manual_required"
+        freshness = sam_export_url_freshness()
+        status = "ready" if (not needs_key or sam_key_present) and freshness["status"] == "fresh" else "manual_required"
         evidence = (
             f"configuredUrl={redact_url(url)}; placeholderKey={'yes' if needs_key else 'no'}; "
-            f"SAM_API_KEY={'present' if sam_key_present else 'missing'}"
+            f"SAM_API_KEY={'present' if sam_key_present else 'missing'}; "
+            f"linkFreshness={freshness['status']}; {freshness['evidence']}"
         )
+        next_action = "Keep the emailed URL in SAM_CONTRACT_AWARDS_LIVE_URL and the private key in SAM_API_KEY, then run make sam-procurement-refresh."
+        if freshness["status"] == "expired":
+            next_action = "Request a fresh SAM.gov export email, update SAM_CONTRACT_AWARDS_LIVE_URL and its timestamp metadata, then run make sam-procurement-refresh."
+        elif freshness["status"] == "unknown":
+            next_action = "Record SAM_CONTRACT_AWARDS_LIVE_URL_GENERATED_AT or EXPIRES_AT for this emailed URL, then run make sam-procurement-refresh before the token expires."
         return item(
             "sam-export-input",
             status,
             evidence,
-            "Keep the emailed URL in SAM_CONTRACT_AWARDS_LIVE_URL and the private key in SAM_API_KEY, then run make sam-procurement-refresh.",
+            next_action,
             "source-refresh",
         )
     return item(
@@ -498,6 +506,68 @@ def sam_export_next_action(status: str, blockers: list[str], shape_summary: str)
     if status == "manual_required":
         return "Resolve the SAM.gov token/quota/download condition, rerun make sam-procurement-refresh, and promote only after the audit reports candidate."
     return "Use make sam-procurement-refresh to audit, promote, refresh the live snapshot, and run paper-artifacts-check with the SAM export."
+
+
+def sam_export_url_freshness() -> dict[str, str]:
+    generated_raw = env("SAM_CONTRACT_AWARDS_LIVE_URL_GENERATED_AT")
+    expires_raw = env("SAM_CONTRACT_AWARDS_LIVE_URL_EXPIRES_AT")
+    ttl_raw = env("SAM_CONTRACT_AWARDS_LIVE_URL_VALID_MINUTES") or "60"
+    generated = parse_time(generated_raw)
+    expires = parse_time(expires_raw)
+    ttl_minutes = parse_positive_int(ttl_raw, default=60)
+    if not expires and generated:
+        expires = generated + timedelta(minutes=ttl_minutes)
+    if not generated and not expires:
+        return {
+            "status": "unknown",
+            "evidence": "generatedAt=missing; expiresAt=missing; ttlMinutes=" + str(ttl_minutes),
+        }
+    if generated_raw and not generated:
+        return {
+            "status": "unknown",
+            "evidence": f"generatedAt=unparseable; expiresAt={fmt_time(expires) or 'missing'}; ttlMinutes={ttl_minutes}",
+        }
+    if expires_raw and not expires:
+        return {
+            "status": "unknown",
+            "evidence": f"generatedAt={fmt_time(generated) or 'missing'}; expiresAt=unparseable; ttlMinutes={ttl_minutes}",
+        }
+    assert expires is not None
+    status = "fresh" if datetime.now(timezone.utc) < expires else "expired"
+    return {
+        "status": status,
+        "evidence": f"generatedAt={fmt_time(generated) or 'missing'}; expiresAt={fmt_time(expires)}; ttlMinutes={ttl_minutes}",
+    }
+
+
+def parse_time(value: str) -> datetime | None:
+    value = value.strip()
+    if not value:
+        return None
+    normalized = value
+    if normalized.endswith("Z"):
+        normalized = normalized[:-1] + "+00:00"
+    try:
+        parsed = datetime.fromisoformat(normalized)
+    except ValueError:
+        return None
+    if parsed.tzinfo is None:
+        parsed = parsed.replace(tzinfo=timezone.utc)
+    return parsed.astimezone(timezone.utc)
+
+
+def fmt_time(value: datetime | None) -> str:
+    if value is None:
+        return ""
+    return value.astimezone(timezone.utc).replace(microsecond=0).isoformat().replace("+00:00", "Z")
+
+
+def parse_positive_int(value: str, default: int) -> int:
+    try:
+        parsed = int(value)
+    except ValueError:
+        return default
+    return parsed if parsed > 0 else default
 
 
 def read_csv(path: Path) -> list[dict[str, str]]:

@@ -12,7 +12,7 @@ from __future__ import annotations
 
 import argparse
 import csv
-from datetime import datetime
+from datetime import datetime, timedelta, timezone
 import importlib.util
 import os
 from pathlib import Path
@@ -67,6 +67,16 @@ def main() -> int:
     parser.add_argument("--min-action-date-share", type=float, default=float_env("SAM_CONTRACT_AWARDS_EXPORT_MIN_ACTION_DATE_SHARE", 0.80))
     parser.add_argument("--min-competition-share", type=float, default=float_env("SAM_CONTRACT_AWARDS_EXPORT_MIN_COMPETITION_SHARE", 0.25))
     args = parser.parse_args()
+
+    freshness = sam_export_url_freshness() if args.url and not args.input else {"status": "not_applicable", "evidence": ""}
+    if freshness["status"] == "expired":
+        rows = expired_export_url_rows(freshness)
+        args.reports.mkdir(parents=True, exist_ok=True)
+        write_csv(args.reports / "sam-contract-awards-export-audit.csv", rows)
+        write_expired_url_markdown(args.reports / "sam-contract-awards-export-audit.md", rows, args, freshness)
+        print(f"Wrote {args.reports / 'sam-contract-awards-export-audit.csv'}")
+        print(f"Wrote {args.reports / 'sam-contract-awards-export-audit.md'}")
+        return 1
 
     try:
         with tempfile.TemporaryDirectory(prefix="lobby-sam-export-audit-") as tmp:
@@ -146,6 +156,27 @@ def download_failure_rows(message: str) -> list[dict[str, str]]:
             }
         )
     return rows
+
+
+def expired_export_url_rows(freshness: dict[str, str]) -> list[dict[str, str]]:
+    return [
+        {
+            "item": "promotion-readiness",
+            "status": "manual_required",
+            "value": "SAM.gov emailed export URL appears expired",
+            "threshold": "fresh SAM.gov download URL",
+            "notes": "No SAM/FPDS rows were promoted into the frozen snapshot.",
+            "nextAction": "Request a fresh SAM.gov export email, update SAM_CONTRACT_AWARDS_LIVE_URL and timestamp metadata, then rerun the audit.",
+        },
+        {
+            "item": "export-link-freshness",
+            "status": "manual_required",
+            "value": freshness["evidence"],
+            "threshold": "current time before expiresAt",
+            "notes": "SAM.gov emailed async-export download links are short-lived.",
+            "nextAction": "Use the fresh emailed URL within its validity window or set SAM_CONTRACT_AWARDS_LIVE_URL_EXPIRES_AT for the new link.",
+        },
+    ]
 
 
 def classify_download_failure(message: str) -> tuple[str, str]:
@@ -454,6 +485,10 @@ def float_env(name: str, default: float) -> float:
         return default
 
 
+def env(name: str, default: str = "") -> str:
+    return os.environ.get(name, default).strip()
+
+
 def env_path(name: str) -> Path | None:
     value = os.environ.get(name, "").strip()
     return Path(value) if value else None
@@ -605,6 +640,54 @@ def write_download_failure_markdown(
     path.write_text("\n".join(lines) + "\n", encoding="utf-8")
 
 
+def write_expired_url_markdown(
+        path: Path,
+        rows: list[dict[str, str]],
+        args: argparse.Namespace,
+        freshness: dict[str, str],
+) -> None:
+    source = redact_url(args.url)
+    lines = [
+        "# SAM Contract Awards Export Audit",
+        "",
+        (
+            "This operational audit did not download the configured SAM.gov Contract "
+            "Awards export because the local timestamp metadata says the emailed "
+            "async-extract link has expired. No export-shape checks were run and no "
+            "SAM/FPDS rows were promoted."
+        ),
+        "",
+        f"- Source: `{source}`",
+        f"- Link freshness: `{freshness['status']}`",
+        f"- Freshness evidence: `{freshness['evidence']}`",
+        "",
+        "## Export Link Checklist",
+        "",
+        "| Item | Status | Value | Threshold | Notes | Next action |",
+        "| --- | --- | --- | --- | --- | --- |",
+    ]
+    for row in rows:
+        escaped = {key: markdown_cell(value) for key, value in row.items()}
+        lines.append(
+            "| {item} | {status} | {value} | {threshold} | {notes} | {nextAction} |".format(**escaped)
+        )
+    lines.extend(
+        [
+            "",
+            "## Next Action",
+            "",
+            (
+                "Request a fresh SAM.gov Contract Awards export email, paste the new "
+                "download URL into `SAM_CONTRACT_AWARDS_LIVE_URL`, record "
+                "`SAM_CONTRACT_AWARDS_LIVE_URL_GENERATED_AT` or "
+                "`SAM_CONTRACT_AWARDS_LIVE_URL_EXPIRES_AT`, and rerun "
+                "`make sam-contract-awards-export-audit`."
+            ),
+        ]
+    )
+    path.write_text("\n".join(lines) + "\n", encoding="utf-8")
+
+
 def redact_error_message(message: str) -> str:
     redacted = re.sub(r"(api_key=)[^&\s]+", r"\1REDACTED", message)
     redacted = re.sub(r"(token=)[^&\s]+", r"\1REDACTED", redacted)
@@ -652,6 +735,61 @@ def next_export_specification(rows: list[dict[str, str]], metrics: dict[str, obj
             "  - The raw export has no recognized obligation/amount field; include action obligation or current award value columns."
         )
     return lines
+
+
+def sam_export_url_freshness() -> dict[str, str]:
+    generated_raw = env("SAM_CONTRACT_AWARDS_LIVE_URL_GENERATED_AT", "")
+    expires_raw = env("SAM_CONTRACT_AWARDS_LIVE_URL_EXPIRES_AT", "")
+    ttl_minutes = int_env("SAM_CONTRACT_AWARDS_LIVE_URL_VALID_MINUTES", 60)
+    if ttl_minutes <= 0:
+        ttl_minutes = 60
+    generated = parse_time(generated_raw)
+    expires = parse_time(expires_raw)
+    if not expires and generated:
+        expires = generated + timedelta(minutes=ttl_minutes)
+    if not generated and not expires:
+        return {
+            "status": "unknown",
+            "evidence": f"generatedAt=missing; expiresAt=missing; ttlMinutes={ttl_minutes}",
+        }
+    if generated_raw and not generated:
+        return {
+            "status": "unknown",
+            "evidence": f"generatedAt=unparseable; expiresAt={fmt_time(expires) or 'missing'}; ttlMinutes={ttl_minutes}",
+        }
+    if expires_raw and not expires:
+        return {
+            "status": "unknown",
+            "evidence": f"generatedAt={fmt_time(generated) or 'missing'}; expiresAt=unparseable; ttlMinutes={ttl_minutes}",
+        }
+    assert expires is not None
+    status = "fresh" if datetime.now(timezone.utc) < expires else "expired"
+    return {
+        "status": status,
+        "evidence": f"generatedAt={fmt_time(generated) or 'missing'}; expiresAt={fmt_time(expires)}; ttlMinutes={ttl_minutes}",
+    }
+
+
+def parse_time(value: str) -> datetime | None:
+    value = value.strip()
+    if not value:
+        return None
+    normalized = value
+    if normalized.endswith("Z"):
+        normalized = normalized[:-1] + "+00:00"
+    try:
+        parsed = datetime.fromisoformat(normalized)
+    except ValueError:
+        return None
+    if parsed.tzinfo is None:
+        parsed = parsed.replace(tzinfo=timezone.utc)
+    return parsed.astimezone(timezone.utc)
+
+
+def fmt_time(value: datetime | None) -> str:
+    if value is None:
+        return ""
+    return value.astimezone(timezone.utc).replace(microsecond=0).isoformat().replace("+00:00", "Z")
 
 
 def markdown_cell(value: str) -> str:

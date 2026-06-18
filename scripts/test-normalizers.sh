@@ -408,6 +408,7 @@ grep -q "request a fresh export email" "$tmpdir/reports/sam-contract-awards-expo
 python3 - "$tmpdir/reports/sam-contract-awards-preflight.csv" <<'PY'
 import csv
 import importlib.util
+import os
 from pathlib import Path
 import sys
 
@@ -465,13 +466,87 @@ assert "rows=1" in row["evidence"], row
 assert "representative settings" in row["nextAction"], row
 PY
 
+python3 - <<'PY'
+import importlib.util
+import os
+from pathlib import Path
+
+spec = importlib.util.spec_from_file_location(
+    "external_checklist",
+    Path("scripts/write-external-finalization-checklist.py"),
+)
+module = importlib.util.module_from_spec(spec)
+spec.loader.exec_module(module)
+
+keys = [
+    "SAM_CONTRACT_AWARDS_LIVE_URL",
+    "SAM_API_KEY",
+    "SAM_CONTRACT_AWARDS_LIVE_URL_GENERATED_AT",
+    "SAM_CONTRACT_AWARDS_LIVE_URL_EXPIRES_AT",
+    "SAM_CONTRACT_AWARDS_LIVE_URL_VALID_MINUTES",
+]
+saved = {key: os.environ.get(key) for key in keys}
+try:
+    for key in keys:
+        os.environ.pop(key, None)
+    os.environ["SAM_CONTRACT_AWARDS_LIVE_URL"] = "https://api.sam.gov/contract-awards/v1/download?api_key=REPLACE_WITH_API_KEY&token=fixture"
+    os.environ["SAM_API_KEY"] = "fixture-key"
+    row = module.sam_export_input_row()
+    assert row["status"] == "manual_required", row
+    assert "linkFreshness=unknown" in row["evidence"], row
+    assert "token=REDACTED" in row["evidence"], row
+    assert "fixture" not in row["evidence"], row
+    assert "Record SAM_CONTRACT_AWARDS_LIVE_URL_GENERATED_AT" in row["nextAction"], row
+
+    os.environ["SAM_CONTRACT_AWARDS_LIVE_URL_GENERATED_AT"] = "2099-01-01T00:00:00Z"
+    os.environ["SAM_CONTRACT_AWARDS_LIVE_URL_VALID_MINUTES"] = "60"
+    row = module.sam_export_input_row()
+    assert row["status"] == "ready", row
+    assert "linkFreshness=fresh" in row["evidence"], row
+    assert "expiresAt=2099-01-01T01:00:00Z" in row["evidence"], row
+
+    os.environ["SAM_CONTRACT_AWARDS_LIVE_URL_GENERATED_AT"] = "2000-01-01T00:00:00Z"
+    row = module.sam_export_input_row()
+    assert row["status"] == "manual_required", row
+    assert "linkFreshness=expired" in row["evidence"], row
+    assert "Request a fresh SAM.gov export email" in row["nextAction"], row
+finally:
+    for key, value in saved.items():
+        if value is None:
+            os.environ.pop(key, None)
+        else:
+            os.environ[key] = value
+PY
+
+set +e
+SAM_CONTRACT_AWARDS_LIVE_URL_GENERATED_AT=2000-01-01T00:00:00Z \
+SAM_CONTRACT_AWARDS_LIVE_URL_VALID_MINUTES=60 \
+python3 scripts/audit-sam-contract-awards-export.py \
+  --url "https://api.sam.gov/contract-awards/v1/download?api_key=REPLACE_WITH_API_KEY&token=expired-fixture" \
+  --reports "$tmpdir/reports" >/dev/null
+expired_audit_exit="$?"
+set -e
+if [ "$expired_audit_exit" -ne 1 ]; then
+  echo "Expected expired SAM export URL audit to fail closed with exit 1, got $expired_audit_exit." >&2
+  exit 1
+fi
+grep -q "promotion-readiness,manual_required,SAM.gov emailed export URL appears expired" "$tmpdir/reports/sam-contract-awards-export-audit.csv"
+grep -q "export-link-freshness,manual_required,generatedAt=2000-01-01T00:00:00Z; expiresAt=2000-01-01T01:00:00Z; ttlMinutes=60" "$tmpdir/reports/sam-contract-awards-export-audit.csv"
+grep -q "Link freshness: .expired." "$tmpdir/reports/sam-contract-awards-export-audit.md"
+grep -q "api_key=REDACTED" "$tmpdir/reports/sam-contract-awards-export-audit.md"
+grep -q "token=REDACTED" "$tmpdir/reports/sam-contract-awards-export-audit.md"
+if grep -q "expired-fixture" "$tmpdir/reports/sam-contract-awards-export-audit.md"; then
+  echo "Expired SAM export audit report leaked an emailed download token." >&2
+  exit 1
+fi
+
 mkdir -p "$tmpdir/doi-repo/paper/sections" "$tmpdir/doi-repo/reports"
 cat > "$tmpdir/doi-repo/CITATION.cff" <<'YAML'
 cff-version: 1.2.0
 title: "Lobby Capture Simulator"
-version: "paper-publication-readiness-2026-06-18-r147"
+version: "paper-publication-readiness-2026-06-18-r148"
 repository-code: "https://github.com/Jacoba1100254352/lobby-capture-simulator"
-url: "https://github.com/Jacoba1100254352/lobby-capture-simulator/releases/tag/paper-publication-readiness-2026-06-18-r147"
+url: "https://github.com/Jacoba1100254352/lobby-capture-simulator/releases/tag/paper-publication-readiness-2026-06-18-r148"
 license: MIT
 preferred-citation:
   type: article
@@ -483,7 +558,7 @@ cat > "$tmpdir/doi-repo/.zenodo.json" <<'JSON'
   "upload_type": "software",
   "related_identifiers": [
     {
-      "identifier": "https://github.com/Jacoba1100254352/lobby-capture-simulator/releases/tag/paper-publication-readiness-2026-06-18-r147",
+      "identifier": "https://github.com/Jacoba1100254352/lobby-capture-simulator/releases/tag/paper-publication-readiness-2026-06-18-r148",
       "relation": "isIdenticalTo",
       "resource_type": "software"
     },
@@ -497,7 +572,7 @@ cat > "$tmpdir/doi-repo/.zenodo.json" <<'JSON'
 JSON
 cat > "$tmpdir/doi-repo/paper/sections/submission-declarations.tex" <<'TEX'
 \submissionsection{Data and Code Availability}
-The simulator source is publicly maintained at \url{https://github.com/Jacoba1100254352/lobby-capture-simulator}. The code is released under the MIT License, and this review bundle is associated with \href{https://github.com/Jacoba1100254352/lobby-capture-simulator/releases/tag/paper-publication-readiness-2026-06-18-r147}{release r147}. Report manifests record seed and runtime provenance.
+The simulator source is publicly maintained at \url{https://github.com/Jacoba1100254352/lobby-capture-simulator}. The code is released under the MIT License, and this review bundle is associated with \href{https://github.com/Jacoba1100254352/lobby-capture-simulator/releases/tag/paper-publication-readiness-2026-06-18-r148}{release r148}. Report manifests record seed and runtime provenance.
 TEX
 cat > "$tmpdir/doi-repo/reports/final-human-readthrough.md" <<'MD'
 # Final Human Scholarly Read-Through
@@ -505,7 +580,7 @@ cat > "$tmpdir/doi-repo/reports/final-human-readthrough.md" <<'MD'
 status: pending
 signed-off-by:
 signed-off-date:
-reviewed-release: paper-publication-readiness-2026-06-18-r147
+reviewed-release: paper-publication-readiness-2026-06-18-r148
 reviewed-commit:
 doi-archive:
 MD
