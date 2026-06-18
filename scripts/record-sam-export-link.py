@@ -45,6 +45,20 @@ def main() -> int:
     parser.add_argument("--expires-at", help="UTC ISO timestamp for when the export URL expires.")
     parser.add_argument("--valid-minutes", type=int, help="Token validity window in minutes.")
     parser.add_argument(
+        "--url-selection",
+        choices=("auto", "first", "last"),
+        default="auto",
+        help=(
+            "Which URL to use when pasted input contains several SAM.gov links. "
+            "auto chooses the latest dated email URL, or the last URL when dates are absent or tied."
+        ),
+    )
+    parser.add_argument(
+        "--allow-expired",
+        action="store_true",
+        help="Record an already-expired link for fixtures or diagnostics. Normal use should request a fresh link.",
+    )
+    parser.add_argument(
         "--keep-live-csv",
         action="store_true",
         help="Do not clear SAM_CONTRACT_AWARDS_LIVE_CSV when recording a URL.",
@@ -53,14 +67,14 @@ def main() -> int:
     args = parser.parse_args()
 
     source_text = input_text(args)
-    raw_url = args.url or extract_url(source_text)
-    if not raw_url:
+    selected = select_download_url(args.url, source_text, args.url_selection)
+    if not selected["url"]:
         raise SystemExit("No SAM.gov Contract Awards download URL found in --url, --input, or stdin.")
 
-    normalized_url = normalize_download_url(raw_url)
+    normalized_url = normalize_download_url(selected["url"])
     valid_minutes = args.valid_minutes or extract_valid_minutes(source_text) or 60
     recorded_at = utc_now()
-    email_date = extract_email_date(source_text)
+    email_date = selected["emailDate"] or extract_email_date(source_text)
     if args.generated_at:
         generated_at = parse_timestamp(args.generated_at)
         time_source = "explicit_generated_at"
@@ -83,12 +97,51 @@ def main() -> int:
     if not args.keep_live_csv:
         updates["SAM_CONTRACT_AWARDS_LIVE_CSV"] = ""
 
+    if expires_at <= recorded_at and not args.allow_expired:
+        print_summary(
+            args.env,
+            updates,
+            generated_at,
+            expires_at,
+            recorded_at,
+            time_source,
+            dry_run=True,
+            url_count=selected["count"],
+            selection_note=selected["selectionNote"],
+        )
+        print(
+            "ERROR: this SAM.gov export link appears expired. Request a fresh export email and "
+            "record it within the validity window, or pass --allow-expired only for tests or diagnostics.",
+            file=sys.stderr,
+        )
+        return 1
+
     if args.dry_run:
-        print_summary(args.env, updates, generated_at, expires_at, recorded_at, time_source, dry_run=True)
+        print_summary(
+            args.env,
+            updates,
+            generated_at,
+            expires_at,
+            recorded_at,
+            time_source,
+            dry_run=True,
+            url_count=selected["count"],
+            selection_note=selected["selectionNote"],
+        )
         return 0
 
     write_env(args.env, updates)
-    print_summary(args.env, updates, generated_at, expires_at, recorded_at, time_source, dry_run=False)
+    print_summary(
+        args.env,
+        updates,
+        generated_at,
+        expires_at,
+        recorded_at,
+        time_source,
+        dry_run=False,
+        url_count=selected["count"],
+        selection_note=selected["selectionNote"],
+    )
     return 0
 
 
@@ -104,9 +157,58 @@ def input_text(args: argparse.Namespace) -> str:
     return "\n".join(chunks)
 
 
-def extract_url(text: str) -> str:
-    match = EXPORT_URL_RE.search(text)
-    return match.group(0).rstrip(".,") if match else ""
+def select_download_url(explicit_url: str | None, text: str, selection: str) -> dict[str, object]:
+    if explicit_url:
+        return {
+            "url": explicit_url,
+            "count": 1,
+            "emailDate": None,
+            "selectionNote": "explicit --url",
+        }
+    matches = list(EXPORT_URL_RE.finditer(text))
+    if not matches:
+        return {"url": "", "count": 0, "emailDate": None, "selectionNote": "none"}
+    dated_matches = [
+        (index, nearest_email_date_before(text, match.start()))
+        for index, match in enumerate(matches)
+    ]
+    if selection == "first":
+        selected_index = 0
+        note = "first URL"
+    elif selection == "last":
+        selected_index = len(matches) - 1
+        note = "last URL"
+    else:
+        dated = [(index, date) for index, date in dated_matches if date is not None]
+        if dated:
+            selected_index, _date = max(dated, key=lambda item: (item[1], item[0]))
+            note = "latest dated URL"
+        else:
+            selected_index = len(matches) - 1
+            note = "last URL because no email Date headers were found"
+    raw_url = matches[selected_index].group(0).rstrip(".,")
+    selected_date = dated_matches[selected_index][1]
+    return {
+        "url": raw_url,
+        "count": len(matches),
+        "emailDate": selected_date,
+        "selectionNote": f"{note}; selected {selected_index + 1} of {len(matches)}",
+    }
+
+
+def nearest_email_date_before(text: str, position: int) -> datetime | None:
+    candidates: list[tuple[int, datetime]] = []
+    for match in EMAIL_DATE_RE.finditer(text):
+        if match.start() >= position:
+            break
+        try:
+            parsed = parsedate_to_datetime(match.group(1).strip())
+        except (TypeError, ValueError, IndexError):
+            continue
+        if parsed.tzinfo is None:
+            parsed = parsed.replace(tzinfo=timezone.utc)
+        candidates.append((match.start(), parsed.astimezone(timezone.utc).replace(microsecond=0)))
+    return candidates[-1][1] if candidates else None
 
 
 def extract_valid_minutes(text: str) -> int:
@@ -222,9 +324,14 @@ def print_summary(
     time_source: str,
     *,
     dry_run: bool,
+    url_count: int = 1,
+    selection_note: str = "",
 ) -> None:
     verb = "Would update" if dry_run else "Updated"
     print(f"{verb} {env_path}")
+    if url_count > 1:
+        print(f"SAM_CONTRACT_AWARDS_EXPORT_LINK_COUNT={url_count}")
+        print(f"SAM_CONTRACT_AWARDS_EXPORT_LINK_SELECTION={selection_note}")
     print(f"SAM_CONTRACT_AWARDS_LIVE_URL={redacted_url(updates['SAM_CONTRACT_AWARDS_LIVE_URL'])}")
     print(f"SAM_CONTRACT_AWARDS_LIVE_URL_GENERATED_AT={format_utc(generated_at)}")
     print(f"SAM_CONTRACT_AWARDS_LIVE_URL_EXPIRES_AT={format_utc(expires_at)}")

@@ -56,7 +56,8 @@ python3 scripts/record-sam-export-link.py \
   --env "$tmpdir/sam-link.env" \
   --url "https://api.sam.gov/contract-awards/v1/download?api_key=actual-private-key&token=fresh-token&extra=1" \
   --generated-at 2026-06-18T12:00:00Z \
-  --valid-minutes 45 >"$tmpdir/sam-link.out"
+  --valid-minutes 45 \
+  --allow-expired >"$tmpdir/sam-link.out"
 grep -q '^SAM_CONTRACT_AWARDS_LIVE_CSV=$' "$tmpdir/sam-link.env"
 grep -q '^SAM_CONTRACT_AWARDS_LIVE_URL=https://api.sam.gov/contract-awards/v1/download?api_key=REPLACE_WITH_API_KEY&token=fresh-token&extra=1$' "$tmpdir/sam-link.env"
 grep -q '^SAM_CONTRACT_AWARDS_LIVE_URL_GENERATED_AT=2026-06-18T12:00:00Z$' "$tmpdir/sam-link.env"
@@ -84,7 +85,8 @@ python3 scripts/record-sam-export-link.py \
   --dry-run \
   --env "$tmpdir/sam-link.env" \
   --input "$tmpdir/sam-email.txt" \
-  --generated-at 2026-06-18T13:00:00Z >"$tmpdir/sam-email.out"
+  --generated-at 2026-06-18T13:00:00Z \
+  --allow-expired >"$tmpdir/sam-email.out"
 grep -q 'SAM_CONTRACT_AWARDS_LIVE_URL_GENERATED_AT=2026-06-18T13:00:00Z' "$tmpdir/sam-email.out"
 grep -q 'SAM_CONTRACT_AWARDS_LIVE_URL_EXPIRES_AT=2026-06-18T14:00:00Z' "$tmpdir/sam-email.out"
 grep -q 'SAM_CONTRACT_AWARDS_LIVE_URL_VALID_MINUTES=60' "$tmpdir/sam-email.out"
@@ -108,13 +110,96 @@ TXT
 python3 scripts/record-sam-export-link.py \
   --dry-run \
   --env "$tmpdir/sam-link.env" \
-  --input "$tmpdir/sam-email-date.txt" >"$tmpdir/sam-email-date.out"
+  --input "$tmpdir/sam-email-date.txt" \
+  --allow-expired >"$tmpdir/sam-email-date.out"
 grep -q 'SAM_CONTRACT_AWARDS_LIVE_URL_GENERATED_AT=2026-06-18T05:05:45Z' "$tmpdir/sam-email-date.out"
 grep -q 'SAM_CONTRACT_AWARDS_LIVE_URL_EXPIRES_AT=2026-06-18T06:05:45Z' "$tmpdir/sam-email-date.out"
 grep -q 'SAM_CONTRACT_AWARDS_LIVE_URL_TIME_SOURCE=email_date_header' "$tmpdir/sam-email-date.out"
 grep -q 'token=REDACTED' "$tmpdir/sam-email-date.out"
 if grep -q 'email-date-token' "$tmpdir/sam-email-date.out"; then
   echo "SAM export link recorder leaked an email-date token in dry-run output." >&2
+  exit 1
+fi
+cat > "$tmpdir/sam-multi-email.txt" <<'TXT'
+Date: Thu, 18 Jun 2026 01:05:45 -0400
+
+Dear user,
+
+Your file has been successfully generated and uploaded.
+
+You can download it using the link below (valid for 60 minutes):
+
+https://api.sam.gov/contract-awards/v1/download?api_key=REPLACE_WITH_API_KEY&token=older-token
+
+Date: Thu, 18 Jun 2026 01:15:45 -0400
+
+Dear user,
+
+Your file has been successfully generated and uploaded.
+
+You can download it using the link below (valid for 60 minutes):
+
+https://api.sam.gov/contract-awards/v1/download?api_key=REPLACE_WITH_API_KEY&token=newer-token
+TXT
+cat > "$tmpdir/sam-multi.env" <<'ENV'
+SAM_API_KEY=fixture-private-key
+ENV
+python3 scripts/record-sam-export-link.py \
+  --env "$tmpdir/sam-multi.env" \
+  --input "$tmpdir/sam-multi-email.txt" \
+  --allow-expired >"$tmpdir/sam-multi.out"
+grep -q '^SAM_CONTRACT_AWARDS_LIVE_URL=https://api.sam.gov/contract-awards/v1/download?api_key=REPLACE_WITH_API_KEY&token=newer-token$' "$tmpdir/sam-multi.env"
+grep -q '^SAM_CONTRACT_AWARDS_LIVE_URL_GENERATED_AT=2026-06-18T05:15:45Z$' "$tmpdir/sam-multi.env"
+grep -q 'SAM_CONTRACT_AWARDS_EXPORT_LINK_COUNT=2' "$tmpdir/sam-multi.out"
+grep -q 'SAM_CONTRACT_AWARDS_EXPORT_LINK_SELECTION=latest dated URL; selected 2 of 2' "$tmpdir/sam-multi.out"
+if grep -q 'older-token\|newer-token' "$tmpdir/sam-multi.out"; then
+  echo "SAM export multi-link recorder leaked a token in stdout." >&2
+  exit 1
+fi
+cat > "$tmpdir/sam-multi-no-date.txt" <<'TXT'
+Dear user,
+
+Your file has been successfully generated and uploaded.
+
+You can download it using the link below (valid for 60 minutes):
+
+https://api.sam.gov/contract-awards/v1/download?api_key=REPLACE_WITH_API_KEY&token=first-no-date-token
+
+Dear user,
+
+Your file has been successfully generated and uploaded.
+
+You can download it using the link below (valid for 60 minutes):
+
+https://api.sam.gov/contract-awards/v1/download?api_key=REPLACE_WITH_API_KEY&token=last-no-date-token
+TXT
+python3 scripts/record-sam-export-link.py \
+  --dry-run \
+  --env "$tmpdir/sam-link.env" \
+  --input "$tmpdir/sam-multi-no-date.txt" >"$tmpdir/sam-multi-no-date.out"
+grep -q 'SAM_CONTRACT_AWARDS_EXPORT_LINK_COUNT=2' "$tmpdir/sam-multi-no-date.out"
+grep -q 'SAM_CONTRACT_AWARDS_EXPORT_LINK_SELECTION=last URL because no email Date headers were found; selected 2 of 2' "$tmpdir/sam-multi-no-date.out"
+grep -q 'SAM_CONTRACT_AWARDS_LIVE_URL_TIME_SOURCE=recorded_at_fallback' "$tmpdir/sam-multi-no-date.out"
+if grep -q 'first-no-date-token\|last-no-date-token' "$tmpdir/sam-multi-no-date.out"; then
+  echo "SAM export multi-link no-date recorder leaked a token in dry-run output." >&2
+  exit 1
+fi
+set +e
+python3 scripts/record-sam-export-link.py \
+  --env "$tmpdir/sam-expired-reject.env" \
+  --input "$tmpdir/sam-email-date.txt" >"$tmpdir/sam-expired-reject.out" 2>"$tmpdir/sam-expired-reject.err"
+expired_record_exit="$?"
+set -e
+if [ "$expired_record_exit" -ne 1 ]; then
+  echo "Expected expired SAM export recorder to fail closed with exit 1, got $expired_record_exit." >&2
+  exit 1
+fi
+test ! -f "$tmpdir/sam-expired-reject.env"
+grep -q 'ERROR: this SAM.gov export link appears expired' "$tmpdir/sam-expired-reject.err"
+grep -q 'Would update' "$tmpdir/sam-expired-reject.out"
+grep -q 'token=REDACTED' "$tmpdir/sam-expired-reject.out"
+if grep -q 'email-date-token' "$tmpdir/sam-expired-reject.out" "$tmpdir/sam-expired-reject.err"; then
+  echo "Expired SAM export recorder leaked a token while rejecting stale input." >&2
   exit 1
 fi
 cat > "$tmpdir/sam-email-no-date.txt" <<'TXT'
