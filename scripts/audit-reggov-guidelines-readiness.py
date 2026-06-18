@@ -484,10 +484,10 @@ def supporting_information_format_size_evidence(names: set[str], sizes: dict[str
     members = supporting_information_members(names)
     oversized = oversized_supporting_members(names, sizes)
     unlabeled = unlabeled_supporting_members(names)
-    largest = max((int(sizes.get(name, 0)) for name in members), default=0)
+    largest_status = "within-limit" if members and not oversized else "over-limit"
     return (
         f"supporting members={len(members)}; "
-        f"largest={largest}; limit={SUPPORTING_INFO_MAX_BYTES}; "
+        f"largest={largest_status}; limit={SUPPORTING_INFO_MAX_BYTES}; "
         f"oversized={'; '.join(oversized) if oversized else 'none'}; "
         f"unlabeled={'; '.join(unlabeled) if unlabeled else 'none'}"
     )
