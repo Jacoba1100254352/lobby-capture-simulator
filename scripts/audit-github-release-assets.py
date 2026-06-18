@@ -41,6 +41,8 @@ RELEASE_AID_PATHS = [
     "reports/final-human-readthrough-audit.md",
     "reports/reggov-guidelines-readiness.csv",
     "reports/reggov-guidelines-readiness.md",
+    "reports/reviewer-risk-register.csv",
+    "reports/reviewer-risk-register.md",
     "reports/submission-readiness.csv",
     "reports/submission-readiness.md",
     "reports/wiley-submission-form-readiness.csv",

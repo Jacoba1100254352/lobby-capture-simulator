@@ -86,6 +86,22 @@ ASSETS = [
         "archiveNote": "Generated gate summary distinguishing mechanism-review readiness from DOI and human signoff.",
     },
     {
+        "path": "reports/reviewer-risk-register.csv",
+        "releaseAssetName": "",
+        "role": "reviewer-risk-register",
+        "includeInDoiDeposit": "source-archive",
+        "checksumMode": "tracked-source",
+        "archiveNote": "Machine-readable reviewer-risk register mapping likely objections to evidence boundaries and next actions.",
+    },
+    {
+        "path": "reports/reviewer-risk-register.md",
+        "releaseAssetName": "",
+        "role": "reviewer-risk-register",
+        "includeInDoiDeposit": "source-archive",
+        "checksumMode": "tracked-source",
+        "archiveNote": "Human-readable reviewer-risk register mapping likely objections to evidence boundaries and next actions.",
+    },
+    {
         "path": "reports/final-human-readthrough.md",
         "releaseAssetName": "",
         "role": "manual-signoff-record",

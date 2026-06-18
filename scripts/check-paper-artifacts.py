@@ -103,6 +103,8 @@ POLICY_CLAIM_LANGUAGE_AUDIT_MD = ROOT / "reports" / "policy-claim-language-audit
 POLICY_CLAIM_LANGUAGE_AUDIT_CSV = ROOT / "reports" / "policy-claim-language-audit.csv"
 SUBMISSION_READINESS_MD = ROOT / "reports" / "submission-readiness.md"
 SUBMISSION_READINESS_CSV = ROOT / "reports" / "submission-readiness.csv"
+REVIEWER_RISK_REGISTER_CSV = ROOT / "reports" / "reviewer-risk-register.csv"
+REVIEWER_RISK_REGISTER_MD = ROOT / "reports" / "reviewer-risk-register.md"
 LATEX_LOG_AUDIT_MD = ROOT / "reports" / "latex-log-audit.md"
 LATEX_LOG_AUDIT_CSV = ROOT / "reports" / "latex-log-audit.csv"
 FINAL_HUMAN_READTHROUGH = ROOT / "reports" / "final-human-readthrough.md"
@@ -129,7 +131,7 @@ DOI_DEPOSIT_PACKAGE_CHECKSUM_CSV = ROOT / "dist" / "doi-deposit-package-checksum
 DOI_DEPOSIT_PACKAGE_CHECKSUM_JSON = ROOT / "dist" / "doi-deposit-package-checksum.json"
 DOI_DEPOSIT_PACKAGE_CHECKSUM_MD = ROOT / "dist" / "doi-deposit-package-checksum.md"
 ZENODO_DEPOSIT_METADATA_JSON = ROOT / "dist" / "zenodo-deposit-metadata.json"
-RELEASE_TAG = "paper-publication-readiness-2026-06-18-r163"
+RELEASE_TAG = "paper-publication-readiness-2026-06-18-r164"
 ARCHIVE_HANDOFF_REPORT_NAMES = {
     "archive-handoff-manifest.csv",
     "archive-handoff-manifest.json",
@@ -327,6 +329,8 @@ def main() -> int:
             VALIDATION_SCOPE_COVERAGE_MD,
             REGGOV_GUIDELINES_READINESS_CSV,
             REGGOV_GUIDELINES_READINESS_MD,
+            REVIEWER_RISK_REGISTER_CSV,
+            REVIEWER_RISK_REGISTER_MD,
         ])
     )
     failures.extend(check_forbidden_local_artifacts())
@@ -356,6 +360,7 @@ def main() -> int:
     failures.extend(check_final_human_readthrough())
     failures.extend(check_final_human_readthrough_audit())
     failures.extend(check_submission_readiness_audit())
+    failures.extend(check_reviewer_risk_register())
     failures.extend(check_latex_log_audit())
     failures.extend(check_layout_and_visual_reports())
     failures.extend(check_archive_metadata())
@@ -447,6 +452,8 @@ def check_freshness() -> list[str]:
         (WILEY_SUBMISSION_FORM_READINESS_MD, wiley_submission_form_readiness_inputs()),
         (REGGOV_GUIDELINES_READINESS_CSV, reggov_guidelines_readiness_inputs()),
         (REGGOV_GUIDELINES_READINESS_MD, reggov_guidelines_readiness_inputs()),
+        (REVIEWER_RISK_REGISTER_CSV, reviewer_risk_register_inputs()),
+        (REVIEWER_RISK_REGISTER_MD, reviewer_risk_register_inputs()),
     ]
     for artifact, inputs in checks:
         if not artifact.exists():
@@ -586,6 +593,8 @@ def archive_handoff_inputs() -> list[Path]:
         CITATION_CFF,
         ZENODO_JSON,
         SUBMISSION_READINESS_MD,
+        REVIEWER_RISK_REGISTER_CSV,
+        REVIEWER_RISK_REGISTER_MD,
         FINAL_HUMAN_READTHROUGH,
         ROOT / "scripts" / "write-archive-handoff-manifest.py",
     ]
@@ -610,6 +619,8 @@ def doi_deposit_readiness_inputs() -> list[Path]:
         RELEASE_ASSET_CHECKSUM_MD,
         SUBMISSION_READINESS_CSV,
         SUBMISSION_READINESS_MD,
+        REVIEWER_RISK_REGISTER_CSV,
+        REVIEWER_RISK_REGISTER_MD,
         FINAL_HUMAN_READTHROUGH,
         CITATION_CFF,
         ZENODO_JSON,
@@ -652,12 +663,31 @@ def doi_deposit_package_inputs() -> list[Path]:
         ARCHIVE_HANDOFF_MD,
         SUBMISSION_READINESS_CSV,
         SUBMISSION_READINESS_MD,
+        REVIEWER_RISK_REGISTER_CSV,
+        REVIEWER_RISK_REGISTER_MD,
         WILEY_SUBMISSION_FORM_READINESS_CSV,
         WILEY_SUBMISSION_FORM_READINESS_MD,
         REGGOV_GUIDELINES_READINESS_CSV,
         REGGOV_GUIDELINES_READINESS_MD,
         FINAL_HUMAN_READTHROUGH,
         ROOT / "scripts" / "build-doi-deposit-package.py",
+    ]
+
+
+def reviewer_risk_register_inputs() -> list[Path]:
+    return [
+        SUBMISSION_READINESS_CSV,
+        SUBMISSION_READINESS_MD,
+        CALIBRATION_READINESS_CSV,
+        CLAIM_SOURCE_DEPENDENCY_CSV,
+        CAUSAL_CALIBRATION_TARGETS_CSV,
+        SOURCE_CAPABILITY_AUDIT_CSV,
+        SOURCE_PANEL_INVENTORY,
+        PROCUREMENT_REFRESH_READINESS_CSV,
+        FINAL_HUMAN_READTHROUGH_AUDIT_CSV,
+        POLICY_CLAIM_LANGUAGE_AUDIT_CSV,
+        ROOT / "reports" / "validation-summary.csv",
+        ROOT / "scripts" / "write-reviewer-risk-register.py",
     ]
 
 
@@ -2705,6 +2735,69 @@ def check_submission_readiness_audit() -> list[str]:
     return failures
 
 
+def check_reviewer_risk_register() -> list[str]:
+    failures: list[str] = []
+    missing = [
+        path.relative_to(ROOT)
+        for path in (REVIEWER_RISK_REGISTER_CSV, REVIEWER_RISK_REGISTER_MD)
+        if not path.exists()
+    ]
+    if missing:
+        return [f"missing reviewer risk register artifact: {path}" for path in missing]
+
+    with REVIEWER_RISK_REGISTER_CSV.open(newline="", encoding="utf-8") as source:
+        rows = {
+            row.get("riskId", ""): row
+            for row in csv.DictReader(source)
+            if row.get("riskId")
+        }
+    required_statuses = {
+        "overall-reviewer-risk-posture": {"bounded_for_mechanism_review"},
+        "self-confirming-substitution-result": {"mitigated"},
+        "composite-diagnostic-construct-validity": {"mitigated"},
+        "empirical-bridge-hidden-channel-support": {"bounded"},
+        "procurement-modification-causal-validity": {"open_calibration"},
+        "agent-based-institutional-depth": {"bounded"},
+        "result-generalizability": {"bounded"},
+        "policy-ranking-overinterpretation": {"mitigated"},
+        "reproducibility-package-integrity": {"mitigated"},
+        "journal-finalization": {"manual_required", "ready"},
+    }
+    for risk_id, expected_statuses in required_statuses.items():
+        row = rows.get(risk_id)
+        if not row:
+            failures.append(f"reviewer risk register missing risk: {risk_id}")
+            continue
+        status = row.get("status", "")
+        if status not in expected_statuses:
+            failures.append(
+                f"reviewer risk register risk {risk_id} has status={status!r}, "
+                f"expected one of {sorted(expected_statuses)}"
+            )
+        for field in ("reviewerConcern", "evidence", "currentResponse", "claimBoundary", "nextAction"):
+            if not row.get(field, "").strip():
+                failures.append(f"reviewer risk register risk {risk_id} has empty {field}")
+
+    text = REVIEWER_RISK_REGISTER_MD.read_text(encoding="utf-8")
+    required_phrases = [
+        "Reviewer Risk Register",
+        "bounded_for_mechanism_review",
+        "self-confirming-substitution-result",
+        "procurement-modification-causal-validity",
+        "calibrated policy-simulation claims",
+        "manual_required",
+        "review-control artifact",
+    ]
+    for phrase in required_phrases:
+        if phrase not in text:
+            failures.append(f"reviewer risk register markdown missing phrase: {phrase}")
+    if SUPPLEMENT_BODY.exists():
+        supplement = SUPPLEMENT_BODY.read_text(encoding="utf-8")
+        if "reviewer-risk register" not in supplement:
+            failures.append("supplement does not disclose the reviewer-risk register")
+    return failures
+
+
 def check_final_human_readthrough() -> list[str]:
     failures: list[str] = []
     if not FINAL_HUMAN_READTHROUGH.exists():
@@ -2993,6 +3086,8 @@ def check_archive_handoff_manifest() -> list[str]:
         "CITATION.cff",
         ".zenodo.json",
         "reports/submission-readiness.md",
+        "reports/reviewer-risk-register.csv",
+        "reports/reviewer-risk-register.md",
         "reports/final-human-readthrough.md",
         "reports/final-human-readthrough-audit.csv",
         "reports/final-human-readthrough-audit.md",
@@ -3114,6 +3209,8 @@ def check_doi_deposit_package() -> list[str]:
         "readiness/archive-handoff-manifest.md",
         "readiness/submission-readiness.csv",
         "readiness/submission-readiness.md",
+        "readiness/reviewer-risk-register.csv",
+        "readiness/reviewer-risk-register.md",
         "readiness/wiley-submission-form-readiness.csv",
         "readiness/wiley-submission-form-readiness.md",
         "readiness/reggov-guidelines-readiness.csv",
@@ -3170,6 +3267,7 @@ def check_doi_deposit_package() -> list[str]:
         "does not assert that a DOI has been minted",
         "primary-assets/lobby-capture-wiley-submission.zip",
         "readiness/submission-readiness.md",
+        "readiness/reviewer-risk-register.md",
     ):
         if phrase not in markdown:
             failures.append(f"DOI deposit package manifest markdown missing phrase: {phrase}")
@@ -3667,6 +3765,7 @@ def package_byte_checks() -> list[tuple[Path, str]]:
         (CALIBRATION_READINESS_MD, "supporting-information/calibration-readiness.md"),
         (POLICY_CLAIM_LANGUAGE_AUDIT_MD, "supporting-information/policy-claim-language-audit.md"),
         (SUBMISSION_READINESS_MD, "supporting-information/submission-readiness.md"),
+        (REVIEWER_RISK_REGISTER_MD, "supporting-information/reviewer-risk-register.md"),
         (LATEX_LOG_AUDIT_MD, "supporting-information/latex-log-audit.md"),
         (ROOT / "reports" / "paper-layout-audit.md", "supporting-information/paper-layout-audit.md"),
         (ROOT / "reports" / "manual-visual-audit.md", "supporting-information/manual-visual-audit.md"),

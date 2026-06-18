@@ -104,6 +104,16 @@ PACKAGE_INPUTS = [
         "submission-readiness-audit",
     ),
     PackageInput(
+        "reports/reviewer-risk-register.csv",
+        "readiness/reviewer-risk-register.csv",
+        "reviewer-risk-register",
+    ),
+    PackageInput(
+        "reports/reviewer-risk-register.md",
+        "readiness/reviewer-risk-register.md",
+        "reviewer-risk-register",
+    ),
+    PackageInput(
         "reports/wiley-submission-form-readiness.csv",
         "readiness/wiley-submission-form-readiness.csv",
         "wiley-submission-form-readiness",
@@ -303,8 +313,8 @@ def readme_text(release_tag: str) -> str:
 
         This ZIP is a convenience handoff for archive deposition. It includes
         the four primary release assets, release-machine checksums, citation and
-        Zenodo metadata, submission and journal-readiness audits, and the final
-        human read-through checklist. The DOI deposit readiness report remains
+        Zenodo metadata, submission and journal-readiness audits, the reviewer
+        risk register, and the final human read-through checklist. The DOI deposit readiness report remains
         outside this ZIP because it verifies this package after construction.
 
         This package does not assert that a DOI has been minted. After a DOI is
@@ -331,6 +341,8 @@ def readme_text(release_tag: str) -> str:
           the local Zenodo payload check and the unpublished-draft workflow.
         - readiness/submission-readiness.md states the claim boundary and
           remaining final-submission gates.
+        - readiness/reviewer-risk-register.md maps likely reviewer objections
+          to current evidence, claim boundaries, and next actions.
         - reports/doi-deposit-readiness.md in the repository/release verifies
           this package after it is built.
         """
