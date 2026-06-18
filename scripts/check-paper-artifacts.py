@@ -59,6 +59,7 @@ CLAIM_BOUNDARY_AUDIT_CSV = ROOT / "reports" / "claim-boundary-audit.csv"
 VALIDATION_GAP_TABLE = PAPER / "tables" / "validation_gap_snapshot.tex"
 CLAIM_SOURCE_DEPENDENCY_MD = ROOT / "reports" / "claim-source-dependency.md"
 CLAIM_SOURCE_DEPENDENCY_CSV = ROOT / "reports" / "claim-source-dependency.csv"
+CLAIM_LADDER_TABLE = PAPER / "tables" / "claim_ladder.tex"
 CAUSAL_CALIBRATION_TARGETS_MD = ROOT / "reports" / "causal-calibration-targets.md"
 CAUSAL_CALIBRATION_TARGETS_CSV = ROOT / "reports" / "causal-calibration-targets.csv"
 FIRST_WAVE_CAUSAL_PROTOCOLS_MD = ROOT / "reports" / "first-wave-causal-protocols.md"
@@ -118,7 +119,7 @@ DOI_DEPOSIT_PACKAGE_CHECKSUM_CSV = ROOT / "dist" / "doi-deposit-package-checksum
 DOI_DEPOSIT_PACKAGE_CHECKSUM_JSON = ROOT / "dist" / "doi-deposit-package-checksum.json"
 DOI_DEPOSIT_PACKAGE_CHECKSUM_MD = ROOT / "dist" / "doi-deposit-package-checksum.md"
 ZENODO_DEPOSIT_METADATA_JSON = ROOT / "dist" / "zenodo-deposit-metadata.json"
-RELEASE_TAG = "paper-publication-readiness-2026-06-18-r144"
+RELEASE_TAG = "paper-publication-readiness-2026-06-18-r145"
 ARCHIVE_HANDOFF_REPORT_NAMES = {
     "archive-handoff-manifest.csv",
     "archive-handoff-manifest.json",
@@ -152,12 +153,13 @@ FORBIDDEN_LOCAL_ARTIFACTS = [
     PAPER / "main.tex",
     PAPER / "main.pdf",
 ]
-FORBIDDEN_LOCAL_COPY_SUFFIX = re.compile(
-    r".+ [0-9]+\.(aux|bbl|blg|log|out|pag|pdf|tex)$",
-    re.IGNORECASE,
-)
-FORBIDDEN_DIST_COPY_SUFFIX = re.compile(
-    r"lobby-capture-wiley-submission [0-9]+\.zip$",
+FORBIDDEN_COPY_SUFFIX_ROOTS = [
+    PAPER,
+    ROOT / "reports",
+    DIST,
+]
+FORBIDDEN_COPY_SUFFIX = re.compile(
+    r".+ [0-9]+\.(aux|bbl|blg|bst|cff|cls|csv|eps|json|log|md|out|pag|pdf|sty|svg|tex|txt|zip)$",
     re.IGNORECASE,
 )
 FORBIDDEN_ZIP_MEMBERS = {
@@ -205,6 +207,7 @@ EXPECTED_ZIP_MEMBERS = {
     "tables/substitution_warning_ranking.tex",
     "tables/composite_weights.tex",
     "tables/validation_gap_snapshot.tex",
+    "tables/claim_ladder.tex",
     "tables/sensitivity_snapshot.tex",
     "tables/ablation_snapshot.tex",
     "tables/interaction_snapshot.tex",
@@ -370,16 +373,13 @@ def check_forbidden_local_artifacts() -> list[str]:
         for path in FORBIDDEN_LOCAL_ARTIFACTS
         if path.exists()
     ]
-    failures.extend(
-        f"duplicate copy-suffix paper artifact remains: {path.relative_to(ROOT)}"
-        for path in sorted(PAPER.iterdir())
-        if path.is_file() and FORBIDDEN_LOCAL_COPY_SUFFIX.fullmatch(path.name)
-    )
-    if DIST.exists():
+    for scan_root in FORBIDDEN_COPY_SUFFIX_ROOTS:
+        if not scan_root.exists():
+            continue
         failures.extend(
-            f"duplicate copy-suffix submission archive remains: {path.relative_to(ROOT)}"
-            for path in sorted(DIST.iterdir())
-            if path.is_file() and FORBIDDEN_DIST_COPY_SUFFIX.fullmatch(path.name)
+            f"duplicate copy-suffix artifact remains: {path.relative_to(ROOT)}"
+            for path in sorted(scan_root.rglob("*"))
+            if path.is_file() and FORBIDDEN_COPY_SUFFIX.fullmatch(path.name)
         )
     return failures
 
@@ -1554,7 +1554,7 @@ def check_claim_source_dependency_audit() -> list[str]:
         return failures
     missing = [
         path.relative_to(ROOT)
-        for path in (CLAIM_SOURCE_DEPENDENCY_MD, CLAIM_SOURCE_DEPENDENCY_CSV)
+        for path in (CLAIM_SOURCE_DEPENDENCY_MD, CLAIM_SOURCE_DEPENDENCY_CSV, CLAIM_LADDER_TABLE)
         if not path.exists()
     ]
     if missing:
@@ -1658,6 +1658,29 @@ def check_claim_source_dependency_audit() -> list[str]:
         for phrase in required_supplement:
             if phrase not in supplement:
                 failures.append(f"supplement does not disclose claim-source dependency artifact: {phrase}")
+    if CLAIM_LADDER_TABLE.exists():
+        claim_ladder = CLAIM_LADDER_TABLE.read_text(encoding="utf-8")
+        required_ladder_text = [
+            "Claim ladder",
+            "Internal mechanism diagnostics",
+            "Observable source moments",
+            "Hidden and substitution mechanisms",
+            "Calibrated policy-effect claims",
+            "not cleared",
+        ]
+        for phrase in required_ladder_text:
+            if phrase not in claim_ladder:
+                failures.append(f"claim ladder table missing phrase: {phrase}")
+    if REGGOV_BODY.exists():
+        reggov_body = REGGOV_BODY.read_text(encoding="utf-8")
+        required_main_claim_ladder = [
+            "tables/claim_ladder.tex",
+            "tab:claim-ladder",
+            "manuscript-level decision rule",
+        ]
+        for phrase in required_main_claim_ladder:
+            if phrase not in reggov_body:
+                failures.append(f"main paper does not disclose claim ladder artifact: {phrase}")
     return failures
 
 

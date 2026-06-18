@@ -8,7 +8,7 @@ This audit scans the final local manuscript, Wiley manuscript, and supplement La
 | Document | Status | Unresolved | Overfull hbox | Max hbox pt | Overfull vbox | Max vbox pt | VBox pages | Visual follow-up | Underfull hbox | Underfull vbox |
 | --- | --- | ---: | ---: | ---: | ---: | ---: | --- | --- | ---: | ---: |
 | local-manuscript | pass | - | 0 | 0.0000 | 0 | 0.0000 | - | not needed | 17 | 0 |
-| wiley-manuscript | pass | - | 0 | 0.0000 | 1 | 50.7244 | 1 | p1:layout pass | 28 | 4 |
+| wiley-manuscript | pass | - | 0 | 0.0000 | 1 | 50.7244 | 1 | p1:layout pass | 28 | 9 |
 | supplement | pass | - | 0 | 0.0000 | 0 | 0.0000 | - | not needed | 44 | 0 |
 
 ## Box-Warning Follow-Up

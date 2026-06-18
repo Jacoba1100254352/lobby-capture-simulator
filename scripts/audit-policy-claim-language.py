@@ -17,6 +17,7 @@ TARGET_FILES = [
     Path("paper/tables.yml"),
     Path("paper/tables/experiment_design.tex"),
     Path("paper/tables/campaign_snapshot.tex"),
+    Path("paper/tables/claim_ladder.tex"),
     Path("docs/scenario-catalog.md"),
     Path("docs/validation.md"),
     Path("docs/source-data-roadmap.md"),
