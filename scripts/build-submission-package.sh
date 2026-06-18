@@ -194,4 +194,5 @@ with zipfile.ZipFile(zip_path, "w", compression=zipfile.ZIP_DEFLATED, compressle
         info.external_attr = mode << 16
         archive.writestr(info, path.read_bytes())
 PY
+rm -rf "$STAGING_DIR"
 printf 'Wrote %s\n' "$ZIP_PATH"
