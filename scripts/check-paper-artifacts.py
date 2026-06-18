@@ -104,7 +104,7 @@ DOI_DEPOSIT_PACKAGE_CHECKSUM_CSV = ROOT / "dist" / "doi-deposit-package-checksum
 DOI_DEPOSIT_PACKAGE_CHECKSUM_JSON = ROOT / "dist" / "doi-deposit-package-checksum.json"
 DOI_DEPOSIT_PACKAGE_CHECKSUM_MD = ROOT / "dist" / "doi-deposit-package-checksum.md"
 ZENODO_DEPOSIT_METADATA_JSON = ROOT / "dist" / "zenodo-deposit-metadata.json"
-RELEASE_TAG = "paper-publication-readiness-2026-06-15-r137"
+RELEASE_TAG = "paper-publication-readiness-2026-06-15-r138"
 ARCHIVE_HANDOFF_REPORT_NAMES = {
     "archive-handoff-manifest.csv",
     "archive-handoff-manifest.json",
@@ -1999,11 +1999,27 @@ def check_first_wave_source_products() -> list[str]:
                 )
             if not (ROOT / template_path).exists():
                 failures.append(f"first-wave source product {product} template path does not exist: {template_path}")
-    if ready_rows:
+    allowed_ready_rows = {"meeting-log-or-missing-channel-note"}
+    unexpected_ready_rows = sorted(set(ready_rows) - allowed_ready_rows)
+    if unexpected_ready_rows:
         failures.append(
             "first-wave source products should not be ready in this release without a matching manuscript update: "
-            + ", ".join(sorted(ready_rows))
+            + ", ".join(unexpected_ready_rows)
         )
+    if ready_rows:
+        if set(ready_rows) != allowed_ready_rows:
+            failures.append(
+                "first-wave source products may only mark the meeting/contact missing-channel design note ready in this release: "
+                + ", ".join(sorted(ready_rows))
+            )
+        product_text = FIRST_WAVE_SOURCE_PRODUCTS_MD.read_text(encoding="utf-8")
+        for phrase in (
+            "Schema/text ready products: `1`",
+            "meeting-log or contact-register panel, or explicit missing-channel design note",
+            "Text source product contains the required missing-channel design terms",
+        ):
+            if phrase not in product_text:
+                failures.append(f"first-wave source products markdown missing ready-note boundary phrase: {phrase}")
 
     text = FIRST_WAVE_SOURCE_PRODUCTS_MD.read_text(encoding="utf-8")
     required_text = [
@@ -2102,6 +2118,7 @@ def check_first_wave_source_readiness() -> list[str]:
         "Ready to estimate: `0`",
         "Policy-simulation status: `not_cleared`",
         "Source-product schema gate",
+        "ready=1",
         "SAM/FPDS action-history export or keyed pull",
         "canonical actor identifier table",
     ]
