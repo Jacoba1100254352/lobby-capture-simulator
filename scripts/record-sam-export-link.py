@@ -28,6 +28,8 @@ TRACKED_KEYS = [
     "SAM_CONTRACT_AWARDS_LIVE_URL_GENERATED_AT",
     "SAM_CONTRACT_AWARDS_LIVE_URL_EXPIRES_AT",
     "SAM_CONTRACT_AWARDS_LIVE_URL_VALID_MINUTES",
+    "SAM_CONTRACT_AWARDS_LIVE_URL_RECORDED_AT",
+    "SAM_CONTRACT_AWARDS_LIVE_URL_TIME_SOURCE",
 ]
 
 
@@ -57,7 +59,17 @@ def main() -> int:
 
     normalized_url = normalize_download_url(raw_url)
     valid_minutes = args.valid_minutes or extract_valid_minutes(source_text) or 60
-    generated_at = parse_timestamp(args.generated_at) if args.generated_at else extract_email_date(source_text) or utc_now()
+    recorded_at = utc_now()
+    email_date = extract_email_date(source_text)
+    if args.generated_at:
+        generated_at = parse_timestamp(args.generated_at)
+        time_source = "explicit_generated_at"
+    elif email_date:
+        generated_at = email_date
+        time_source = "email_date_header"
+    else:
+        generated_at = recorded_at
+        time_source = "recorded_at_fallback"
     expires_at = parse_timestamp(args.expires_at) if args.expires_at else generated_at + timedelta(minutes=valid_minutes)
 
     updates = {
@@ -65,16 +77,18 @@ def main() -> int:
         "SAM_CONTRACT_AWARDS_LIVE_URL_GENERATED_AT": format_utc(generated_at),
         "SAM_CONTRACT_AWARDS_LIVE_URL_EXPIRES_AT": format_utc(expires_at),
         "SAM_CONTRACT_AWARDS_LIVE_URL_VALID_MINUTES": str(valid_minutes),
+        "SAM_CONTRACT_AWARDS_LIVE_URL_RECORDED_AT": format_utc(recorded_at),
+        "SAM_CONTRACT_AWARDS_LIVE_URL_TIME_SOURCE": time_source,
     }
     if not args.keep_live_csv:
         updates["SAM_CONTRACT_AWARDS_LIVE_CSV"] = ""
 
     if args.dry_run:
-        print_summary(args.env, updates, generated_at, expires_at, dry_run=True)
+        print_summary(args.env, updates, generated_at, expires_at, recorded_at, time_source, dry_run=True)
         return 0
 
     write_env(args.env, updates)
-    print_summary(args.env, updates, generated_at, expires_at, dry_run=False)
+    print_summary(args.env, updates, generated_at, expires_at, recorded_at, time_source, dry_run=False)
     return 0
 
 
@@ -204,6 +218,8 @@ def print_summary(
     updates: dict[str, str],
     generated_at: datetime,
     expires_at: datetime,
+    recorded_at: datetime,
+    time_source: str,
     *,
     dry_run: bool,
 ) -> None:
@@ -213,8 +229,16 @@ def print_summary(
     print(f"SAM_CONTRACT_AWARDS_LIVE_URL_GENERATED_AT={format_utc(generated_at)}")
     print(f"SAM_CONTRACT_AWARDS_LIVE_URL_EXPIRES_AT={format_utc(expires_at)}")
     print(f"SAM_CONTRACT_AWARDS_LIVE_URL_VALID_MINUTES={updates['SAM_CONTRACT_AWARDS_LIVE_URL_VALID_MINUTES']}")
+    print(f"SAM_CONTRACT_AWARDS_LIVE_URL_RECORDED_AT={format_utc(recorded_at)}")
+    print(f"SAM_CONTRACT_AWARDS_LIVE_URL_TIME_SOURCE={time_source}")
     if updates.get("SAM_CONTRACT_AWARDS_LIVE_CSV", None) == "":
         print("SAM_CONTRACT_AWARDS_LIVE_CSV cleared so the emailed URL is used.")
+    if time_source == "recorded_at_fallback":
+        print(
+            "WARNING: no email Date header or --generated-at timestamp was found; "
+            "expiration is estimated from when this helper ran. If the email is not new, "
+            "request a fresh SAM.gov export link."
+        )
     print("Next: make sam-procurement-refresh")
 
 

@@ -795,46 +795,73 @@ def next_export_specification(rows: list[dict[str, str]], metrics: dict[str, obj
 def sam_export_url_freshness() -> dict[str, str]:
     generated_raw = env("SAM_CONTRACT_AWARDS_LIVE_URL_GENERATED_AT", "")
     expires_raw = env("SAM_CONTRACT_AWARDS_LIVE_URL_EXPIRES_AT", "")
+    recorded_raw = env("SAM_CONTRACT_AWARDS_LIVE_URL_RECORDED_AT", "")
+    time_source = env("SAM_CONTRACT_AWARDS_LIVE_URL_TIME_SOURCE", "") or "missing"
     ttl_minutes = int_env("SAM_CONTRACT_AWARDS_LIVE_URL_VALID_MINUTES", 60)
     if ttl_minutes <= 0:
         ttl_minutes = 60
     generated = parse_time(generated_raw)
     expires = parse_time(expires_raw)
+    recorded = parse_time(recorded_raw)
     if not expires and generated:
         expires = generated + timedelta(minutes=ttl_minutes)
     if not generated and not expires:
         return {
             "status": "unknown",
-            "evidence": f"generatedAt=missing; expiresAt=missing; ttlMinutes={ttl_minutes}",
+            "evidence": freshness_evidence(None, None, ttl_minutes, recorded, time_source),
             "generatedAt": "",
             "expiresAt": "",
+            "recordedAt": fmt_time(recorded),
+            "timeSource": time_source,
             "ttlMinutes": str(ttl_minutes),
         }
     if generated_raw and not generated:
         return {
             "status": "unknown",
-            "evidence": f"generatedAt=unparseable; expiresAt={fmt_time(expires) or 'missing'}; ttlMinutes={ttl_minutes}",
+            "evidence": freshness_evidence("unparseable", expires, ttl_minutes, recorded, time_source),
             "generatedAt": "",
             "expiresAt": fmt_time(expires),
+            "recordedAt": fmt_time(recorded),
+            "timeSource": time_source,
             "ttlMinutes": str(ttl_minutes),
         }
     if expires_raw and not expires:
         return {
             "status": "unknown",
-            "evidence": f"generatedAt={fmt_time(generated) or 'missing'}; expiresAt=unparseable; ttlMinutes={ttl_minutes}",
+            "evidence": freshness_evidence(generated, "unparseable", ttl_minutes, recorded, time_source),
             "generatedAt": fmt_time(generated),
             "expiresAt": "",
+            "recordedAt": fmt_time(recorded),
+            "timeSource": time_source,
             "ttlMinutes": str(ttl_minutes),
         }
     assert expires is not None
     status = "fresh" if datetime.now(timezone.utc) < expires else "expired"
     return {
         "status": status,
-        "evidence": f"generatedAt={fmt_time(generated) or 'missing'}; expiresAt={fmt_time(expires)}; ttlMinutes={ttl_minutes}",
+        "evidence": freshness_evidence(generated, expires, ttl_minutes, recorded, time_source),
         "generatedAt": fmt_time(generated),
         "expiresAt": fmt_time(expires),
+        "recordedAt": fmt_time(recorded),
+        "timeSource": time_source,
         "ttlMinutes": str(ttl_minutes),
     }
+
+
+def freshness_evidence(
+        generated: datetime | str | None,
+        expires: datetime | str | None,
+        ttl_minutes: int,
+        recorded: datetime | None,
+        time_source: str,
+) -> str:
+    generated_text = generated if isinstance(generated, str) else fmt_time(generated) or "missing"
+    expires_text = expires if isinstance(expires, str) else fmt_time(expires) or "missing"
+    return (
+        f"generatedAt={generated_text}; expiresAt={expires_text}; "
+        f"ttlMinutes={ttl_minutes}; recordedAt={fmt_time(recorded) or 'missing'}; "
+        f"timeSource={time_source}"
+    )
 
 
 def parse_time(value: str) -> datetime | None:

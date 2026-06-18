@@ -62,6 +62,9 @@ grep -q '^SAM_CONTRACT_AWARDS_LIVE_URL=https://api.sam.gov/contract-awards/v1/do
 grep -q '^SAM_CONTRACT_AWARDS_LIVE_URL_GENERATED_AT=2026-06-18T12:00:00Z$' "$tmpdir/sam-link.env"
 grep -q '^SAM_CONTRACT_AWARDS_LIVE_URL_EXPIRES_AT=2026-06-18T12:45:00Z$' "$tmpdir/sam-link.env"
 grep -q '^SAM_CONTRACT_AWARDS_LIVE_URL_VALID_MINUTES=45$' "$tmpdir/sam-link.env"
+grep -q '^SAM_CONTRACT_AWARDS_LIVE_URL_RECORDED_AT=' "$tmpdir/sam-link.env"
+grep -q '^SAM_CONTRACT_AWARDS_LIVE_URL_TIME_SOURCE=explicit_generated_at$' "$tmpdir/sam-link.env"
+grep -q 'SAM_CONTRACT_AWARDS_LIVE_URL_TIME_SOURCE=explicit_generated_at' "$tmpdir/sam-link.out"
 grep -q 'api_key=REDACTED' "$tmpdir/sam-link.out"
 grep -q 'token=REDACTED' "$tmpdir/sam-link.out"
 if grep -q 'actual-private-key\|fresh-token' "$tmpdir/sam-link.out"; then
@@ -85,6 +88,7 @@ python3 scripts/record-sam-export-link.py \
 grep -q 'SAM_CONTRACT_AWARDS_LIVE_URL_GENERATED_AT=2026-06-18T13:00:00Z' "$tmpdir/sam-email.out"
 grep -q 'SAM_CONTRACT_AWARDS_LIVE_URL_EXPIRES_AT=2026-06-18T14:00:00Z' "$tmpdir/sam-email.out"
 grep -q 'SAM_CONTRACT_AWARDS_LIVE_URL_VALID_MINUTES=60' "$tmpdir/sam-email.out"
+grep -q 'SAM_CONTRACT_AWARDS_LIVE_URL_TIME_SOURCE=explicit_generated_at' "$tmpdir/sam-email.out"
 grep -q 'token=REDACTED' "$tmpdir/sam-email.out"
 if grep -q 'email-token' "$tmpdir/sam-email.out"; then
   echo "SAM export link recorder leaked an email token in dry-run output." >&2
@@ -107,9 +111,30 @@ python3 scripts/record-sam-export-link.py \
   --input "$tmpdir/sam-email-date.txt" >"$tmpdir/sam-email-date.out"
 grep -q 'SAM_CONTRACT_AWARDS_LIVE_URL_GENERATED_AT=2026-06-18T05:05:45Z' "$tmpdir/sam-email-date.out"
 grep -q 'SAM_CONTRACT_AWARDS_LIVE_URL_EXPIRES_AT=2026-06-18T06:05:45Z' "$tmpdir/sam-email-date.out"
+grep -q 'SAM_CONTRACT_AWARDS_LIVE_URL_TIME_SOURCE=email_date_header' "$tmpdir/sam-email-date.out"
 grep -q 'token=REDACTED' "$tmpdir/sam-email-date.out"
 if grep -q 'email-date-token' "$tmpdir/sam-email-date.out"; then
   echo "SAM export link recorder leaked an email-date token in dry-run output." >&2
+  exit 1
+fi
+cat > "$tmpdir/sam-email-no-date.txt" <<'TXT'
+Dear user,
+
+Your file has been successfully generated and uploaded.
+
+You can download it using the link below (valid for 60 minutes):
+
+https://api.sam.gov/contract-awards/v1/download?api_key=REPLACE_WITH_API_KEY&token=no-date-token
+TXT
+python3 scripts/record-sam-export-link.py \
+  --dry-run \
+  --env "$tmpdir/sam-link.env" \
+  --input "$tmpdir/sam-email-no-date.txt" >"$tmpdir/sam-email-no-date.out"
+grep -q 'SAM_CONTRACT_AWARDS_LIVE_URL_TIME_SOURCE=recorded_at_fallback' "$tmpdir/sam-email-no-date.out"
+grep -q 'WARNING: no email Date header or --generated-at timestamp was found' "$tmpdir/sam-email-no-date.out"
+grep -q 'token=REDACTED' "$tmpdir/sam-email-no-date.out"
+if grep -q 'no-date-token' "$tmpdir/sam-email-no-date.out"; then
+  echo "SAM export link recorder leaked a no-date email token in dry-run output." >&2
   exit 1
 fi
 
@@ -235,6 +260,8 @@ grep -q "Do not promote partial SAM payloads" "$tmpdir/reports/procurement-refre
 grep -q "calibrated policy-simulation claims remain outside scope" "$tmpdir/reports/procurement-refresh-readiness.md"
 grep -q "SAM_CONTRACT_AWARDS_EXTRACT_MODE=1" "$tmpdir/reports/procurement-refresh-readiness.md"
 grep -q "SAM_CONTRACT_AWARDS_OFFSET_STARTS" "$tmpdir/reports/procurement-refresh-readiness.md"
+grep -q "timeSource=recorded_at_fallback" "$tmpdir/reports/procurement-refresh-readiness.md"
+grep -q "request a fresh export email" "$tmpdir/reports/procurement-refresh-readiness.md"
 
 mkdir -p "$tmpdir/source-root/data/calibration/first-wave"
 python3 scripts/write-first-wave-source-product-templates.py --root "$tmpdir/source-root" >/dev/null
@@ -610,7 +637,7 @@ try:
             "status": "manual_required",
             "value": "quota reset occurs after emailed token expiry",
             "threshold": "SAM reset before expiresAt",
-            "notes": "generatedAt=2099-01-01T00:00:00Z; expiresAt=2099-01-01T01:00:00Z; ttlMinutes=60",
+            "notes": "generatedAt=2099-01-01T00:00:00Z; expiresAt=2099-01-01T01:00:00Z; ttlMinutes=60; recordedAt=missing; timeSource=missing",
             "nextAction": "Request a fresh SAM.gov export email after the quota reset and update SAM_CONTRACT_AWARDS_LIVE_URL metadata.",
         })
     row = module.sam_export_input_row()
@@ -646,7 +673,7 @@ if [ "$expired_audit_exit" -ne 1 ]; then
   exit 1
 fi
 grep -q "promotion-readiness,manual_required,SAM.gov emailed export URL appears expired" "$tmpdir/reports/sam-contract-awards-export-audit.csv"
-grep -q "export-link-freshness,manual_required,generatedAt=2000-01-01T00:00:00Z; expiresAt=2000-01-01T01:00:00Z; ttlMinutes=60" "$tmpdir/reports/sam-contract-awards-export-audit.csv"
+grep -q "export-link-freshness,manual_required,generatedAt=2000-01-01T00:00:00Z; expiresAt=2000-01-01T01:00:00Z; ttlMinutes=60; recordedAt=missing; timeSource=missing" "$tmpdir/reports/sam-contract-awards-export-audit.csv"
 grep -q "Link freshness: .expired." "$tmpdir/reports/sam-contract-awards-export-audit.md"
 grep -q "api_key=REDACTED" "$tmpdir/reports/sam-contract-awards-export-audit.md"
 grep -q "token=REDACTED" "$tmpdir/reports/sam-contract-awards-export-audit.md"

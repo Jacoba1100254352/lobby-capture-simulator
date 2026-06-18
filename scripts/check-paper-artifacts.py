@@ -1554,6 +1554,8 @@ def check_procurement_refresh_readiness() -> list[str]:
         "SAM_CONTRACT_AWARDS_EXTRACT_EMAIL_ID=Yes",
         "SAM_CONTRACT_AWARDS_OFFSET_STARTS",
         "api_key=REPLACE_WITH_API_KEY",
+        "timeSource=recorded_at_fallback",
+        "request a fresh export email",
     ]
     for phrase in required_text:
         if phrase not in text:
