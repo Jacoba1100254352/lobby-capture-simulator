@@ -382,7 +382,14 @@ message = (
     'failed with HTTP 429: {"code":"900804","message":"Message throttled out",'
     '"description":"You have exceeded your quota .","nextAccessTime":"2026-Jun-16 00:00:00+0000 UTC"}'
 )
-rows = module.download_failure_rows(message)
+freshness = {
+    "status": "unknown",
+    "evidence": "generatedAt=missing; expiresAt=missing; ttlMinutes=60",
+    "generatedAt": "",
+    "expiresAt": "",
+    "ttlMinutes": "60",
+}
+rows = module.download_failure_rows(message, freshness)
 assert rows[0]["status"] == "quota_blocked", rows[0]
 assert rows[1]["value"] == "HTTP 429", rows[1]
 assert rows[2]["item"] == "next-access-time", rows[2]
@@ -393,6 +400,7 @@ module.write_download_failure_markdown(
     rows,
     argparse.Namespace(url="https://api.sam.gov/contract-awards/v1/download?api_key=REPLACE_WITH_API_KEY&token=example"),
     message,
+    freshness,
 )
 PY
 grep -q "promotion-readiness,quota_blocked" "$tmpdir/reports/sam-contract-awards-export-audit.csv"
@@ -540,13 +548,155 @@ if grep -q "expired-fixture" "$tmpdir/reports/sam-contract-awards-export-audit.m
   exit 1
 fi
 
+python3 - <<'PY'
+import importlib.util
+from pathlib import Path
+
+spec = importlib.util.spec_from_file_location(
+    "sam_export_audit",
+    Path("scripts/audit-sam-contract-awards-export.py"),
+)
+module = importlib.util.module_from_spec(spec)
+spec.loader.exec_module(module)
+message = 'GET https://api.sam.gov/contract-awards/v1/download?api_key=REDACTED&token=REDACTED failed with HTTP 429: {"code":"900804","message":"Message throttled out","description":"You have exceeded your quota .You can access API after 2026-Jun-19 00:00:00+0000 UTC","nextAccessTime":"2026-Jun-19 00:00:00+0000 UTC"}'
+freshness = {
+    "status": "fresh",
+    "evidence": "generatedAt=2026-06-18T08:43:05Z; expiresAt=2026-06-18T09:43:05Z; ttlMinutes=60",
+    "generatedAt": "2026-06-18T08:43:05Z",
+    "expiresAt": "2026-06-18T09:43:05Z",
+    "ttlMinutes": "60",
+}
+rows = module.download_failure_rows(message, freshness)
+by_item = {row["item"]: row for row in rows}
+assert by_item["promotion-readiness"]["status"] == "quota_blocked", rows
+assert "request a fresh emailed export" in by_item["promotion-readiness"]["nextAction"], rows
+assert by_item["export-link-retry-window"]["status"] == "manual_required", rows
+assert "expiresAt=2026-06-18T09:43:05Z" in by_item["export-link-retry-window"]["notes"], rows
+PY
+
+python3 - "$tmpdir/reports/github-ci-status-audit.csv" <<'PY'
+import csv
+import importlib.util
+from pathlib import Path
+import sys
+
+ci_csv = Path(sys.argv[1])
+spec = importlib.util.spec_from_file_location(
+    "external_checklist",
+    Path("scripts/write-external-finalization-checklist.py"),
+)
+module = importlib.util.module_from_spec(spec)
+spec.loader.exec_module(module)
+module.GITHUB_CI_STATUS_CSV = ci_csv
+
+row = module.github_ci_status_row()
+assert row["status"] == "manual_required", row
+assert "post-release CI audit=missing" in row["evidence"], row
+
+ci_csv.parent.mkdir(parents=True, exist_ok=True)
+fields = [
+    "gate",
+    "status",
+    "workflow",
+    "branchOrTag",
+    "headSha",
+    "runId",
+    "runStatus",
+    "conclusion",
+    "url",
+    "evidence",
+    "nextAction",
+]
+with ci_csv.open("w", newline="", encoding="utf-8") as target:
+    writer = csv.DictWriter(target, fieldnames=fields, lineterminator="\n")
+    writer.writeheader()
+    writer.writerow({
+        "gate": "release-tag-target",
+        "status": "ready",
+        "workflow": "local-git",
+        "branchOrTag": "paper-publication-readiness-2026-06-18-r149",
+        "headSha": "abc123",
+        "runId": "",
+        "runStatus": "completed",
+        "conclusion": "success",
+        "url": "",
+        "evidence": "tag points at current HEAD",
+        "nextAction": "Keep the release tag on the exact commit used for the paper bundle.",
+    })
+    writer.writerow({
+        "gate": "main-ci",
+        "status": "ready",
+        "workflow": "CI",
+        "branchOrTag": "main",
+        "headSha": "abc123",
+        "runId": "111",
+        "runStatus": "completed",
+        "conclusion": "success",
+        "url": "https://github.example/run/111",
+        "evidence": "workflow=CI",
+        "nextAction": "Retain this CI evidence with the release and DOI handoff records.",
+    })
+    writer.writerow({
+        "gate": "release-tag-ci",
+        "status": "ready",
+        "workflow": "CI",
+        "branchOrTag": "paper-publication-readiness-2026-06-18-r149",
+        "headSha": "abc123",
+        "runId": "112",
+        "runStatus": "completed",
+        "conclusion": "success",
+        "url": "https://github.example/run/112",
+        "evidence": "workflow=CI",
+        "nextAction": "Retain this CI evidence with the release and DOI handoff records.",
+    })
+row = module.github_ci_status_row()
+assert row["status"] == "ready", row
+assert "ready=3" in row["evidence"], row
+assert "main=completed/success" in row["evidence"], row
+assert "tag=completed/success" in row["evidence"], row
+
+with ci_csv.open("w", newline="", encoding="utf-8") as target:
+    writer = csv.DictWriter(target, fieldnames=fields, lineterminator="\n")
+    writer.writeheader()
+    writer.writerow({
+        "gate": "release-tag-target",
+        "status": "ready",
+        "workflow": "local-git",
+        "branchOrTag": "paper-publication-readiness-2026-06-18-r149",
+        "headSha": "abc123",
+        "runId": "",
+        "runStatus": "completed",
+        "conclusion": "success",
+        "url": "",
+        "evidence": "tag points at current HEAD",
+        "nextAction": "Keep the release tag on the exact commit used for the paper bundle.",
+    })
+    writer.writerow({
+        "gate": "main-ci",
+        "status": "blocked",
+        "workflow": "CI",
+        "branchOrTag": "main",
+        "headSha": "abc123",
+        "runId": "113",
+        "runStatus": "completed",
+        "conclusion": "failure",
+        "url": "https://github.example/run/113",
+        "evidence": "workflow=CI",
+        "nextAction": "Inspect the failed GitHub Actions run and fix the repository before final submission.",
+    })
+row = module.github_ci_status_row()
+assert row["status"] == "blocked", row
+assert "blocked=1" in row["evidence"], row
+assert "main=completed/failure" in row["evidence"], row
+PY
+
 mkdir -p "$tmpdir/doi-repo/paper/sections" "$tmpdir/doi-repo/reports"
 cat > "$tmpdir/doi-repo/CITATION.cff" <<'YAML'
 cff-version: 1.2.0
 title: "Lobby Capture Simulator"
-version: "paper-publication-readiness-2026-06-18-r148"
+version: "paper-publication-readiness-2026-06-18-r149"
 repository-code: "https://github.com/Jacoba1100254352/lobby-capture-simulator"
-url: "https://github.com/Jacoba1100254352/lobby-capture-simulator/releases/tag/paper-publication-readiness-2026-06-18-r148"
+url: "https://github.com/Jacoba1100254352/lobby-capture-simulator/releases/tag/paper-publication-readiness-2026-06-18-r149"
 license: MIT
 preferred-citation:
   type: article
@@ -558,7 +708,7 @@ cat > "$tmpdir/doi-repo/.zenodo.json" <<'JSON'
   "upload_type": "software",
   "related_identifiers": [
     {
-      "identifier": "https://github.com/Jacoba1100254352/lobby-capture-simulator/releases/tag/paper-publication-readiness-2026-06-18-r148",
+      "identifier": "https://github.com/Jacoba1100254352/lobby-capture-simulator/releases/tag/paper-publication-readiness-2026-06-18-r149",
       "relation": "isIdenticalTo",
       "resource_type": "software"
     },
@@ -572,7 +722,7 @@ cat > "$tmpdir/doi-repo/.zenodo.json" <<'JSON'
 JSON
 cat > "$tmpdir/doi-repo/paper/sections/submission-declarations.tex" <<'TEX'
 \submissionsection{Data and Code Availability}
-The simulator source is publicly maintained at \url{https://github.com/Jacoba1100254352/lobby-capture-simulator}. The code is released under the MIT License, and this review bundle is associated with \href{https://github.com/Jacoba1100254352/lobby-capture-simulator/releases/tag/paper-publication-readiness-2026-06-18-r148}{release r148}. Report manifests record seed and runtime provenance.
+The simulator source is publicly maintained at \url{https://github.com/Jacoba1100254352/lobby-capture-simulator}. The code is released under the MIT License, and this review bundle is associated with \href{https://github.com/Jacoba1100254352/lobby-capture-simulator/releases/tag/paper-publication-readiness-2026-06-18-r149}{release r149}. Report manifests record seed and runtime provenance.
 TEX
 cat > "$tmpdir/doi-repo/reports/final-human-readthrough.md" <<'MD'
 # Final Human Scholarly Read-Through
@@ -580,7 +730,7 @@ cat > "$tmpdir/doi-repo/reports/final-human-readthrough.md" <<'MD'
 status: pending
 signed-off-by:
 signed-off-date:
-reviewed-release: paper-publication-readiness-2026-06-18-r148
+reviewed-release: paper-publication-readiness-2026-06-18-r149
 reviewed-commit:
 doi-archive:
 MD

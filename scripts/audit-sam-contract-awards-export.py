@@ -92,10 +92,10 @@ def main() -> int:
         if not args.url or args.input:
             raise
         message = str(error)
-        rows = download_failure_rows(message)
+        rows = download_failure_rows(message, freshness)
         args.reports.mkdir(parents=True, exist_ok=True)
         write_csv(args.reports / "sam-contract-awards-export-audit.csv", rows)
-        write_download_failure_markdown(args.reports / "sam-contract-awards-export-audit.md", rows, args, message)
+        write_download_failure_markdown(args.reports / "sam-contract-awards-export-audit.md", rows, args, message, freshness)
         print(f"Wrote {args.reports / 'sam-contract-awards-export-audit.csv'}")
         print(f"Wrote {args.reports / 'sam-contract-awards-export-audit.md'}")
         return 1
@@ -122,10 +122,11 @@ def resolved_input(args: argparse.Namespace, tmp: Path, fetcher) -> Path:
     return fetcher.download_sam_contract_awards_export_url(args.url, target)
 
 
-def download_failure_rows(message: str) -> list[dict[str, str]]:
+def download_failure_rows(message: str, freshness: dict[str, str]) -> list[dict[str, str]]:
     status, reason = classify_download_failure(message)
     http_status = first_match(HTTP_STATUS_RE, message)
     next_access = first_match(NEXT_ACCESS_RE, message)
+    retry_window_missed = quota_reset_after_link_expiry(next_access, freshness)
     rows = [
         {
             "item": "promotion-readiness",
@@ -133,7 +134,7 @@ def download_failure_rows(message: str) -> list[dict[str, str]]:
             "value": reason,
             "threshold": "downloadable export URL",
             "notes": "No SAM/FPDS rows were promoted into the frozen snapshot.",
-            "nextAction": download_failure_next_action(status, next_access),
+            "nextAction": download_failure_next_action(status, next_access, retry_window_missed),
         },
         {
             "item": "download-status",
@@ -141,7 +142,11 @@ def download_failure_rows(message: str) -> list[dict[str, str]]:
             "value": f"HTTP {http_status}" if http_status else "request failed",
             "threshold": "HTTP 200 with CSV, JSON, or ZIP payload",
             "notes": "The emailed async-export URL must be reachable before export-shape checks can run.",
-            "nextAction": "Retry the emailed URL after the upstream reset or request a fresh export.",
+            "nextAction": (
+                "Request a fresh export after the upstream reset because this emailed token expires first."
+                if retry_window_missed
+                else "Retry the emailed URL after the upstream reset or request a fresh export."
+            ),
         },
     ]
     if next_access:
@@ -152,7 +157,22 @@ def download_failure_rows(message: str) -> list[dict[str, str]]:
                 "value": next_access,
                 "threshold": "current time after SAM reset",
                 "notes": "SAM.gov returned this quota reset time.",
-                "nextAction": f"Retry after {next_access}; if the 60-minute token expired, request a new SAM export email.",
+                "nextAction": (
+                    f"Wait until {next_access}, then request a fresh SAM.gov export email."
+                    if retry_window_missed
+                    else f"Retry after {next_access}; if the 60-minute token expired, request a new SAM export email."
+                ),
+            }
+        )
+    if retry_window_missed:
+        rows.append(
+            {
+                "item": "export-link-retry-window",
+                "status": "manual_required",
+                "value": "quota reset occurs after emailed token expiry",
+                "threshold": "SAM reset before expiresAt",
+                "notes": freshness.get("evidence", "freshness metadata unavailable"),
+                "nextAction": "Request a fresh SAM.gov export email after the quota reset and update SAM_CONTRACT_AWARDS_LIVE_URL metadata.",
             }
         )
     return rows
@@ -202,7 +222,9 @@ def classify_download_failure(message: str) -> tuple[str, str]:
     return "blocked", "SAM.gov export download failed"
 
 
-def download_failure_next_action(status: str, next_access: str) -> str:
+def download_failure_next_action(status: str, next_access: str, retry_window_missed: bool = False) -> str:
+    if status == "quota_blocked" and retry_window_missed and next_access:
+        return f"Wait until {next_access}, then request a fresh emailed export because this token expires before the quota reset."
     if status == "quota_blocked" and next_access:
         return f"Retry after {next_access}; request a fresh emailed export if this token has expired."
     if status == "quota_blocked":
@@ -213,6 +235,24 @@ def download_failure_next_action(status: str, next_access: str) -> str:
 def first_match(pattern: re.Pattern[str], text: str) -> str:
     match = pattern.search(text)
     return match.group(1) if match else ""
+
+
+def quota_reset_after_link_expiry(next_access: str, freshness: dict[str, str]) -> bool:
+    reset = parse_sam_next_access(next_access)
+    expires = parse_time(freshness.get("expiresAt", ""))
+    return bool(reset and expires and reset >= expires)
+
+
+def parse_sam_next_access(value: str) -> datetime | None:
+    value = value.strip()
+    if not value:
+        return None
+    if value.endswith(" UTC"):
+        value = value[:-4]
+    try:
+        return datetime.strptime(value, "%Y-%b-%d %H:%M:%S%z").astimezone(timezone.utc)
+    except ValueError:
+        return None
 
 
 def load_fetcher():
@@ -593,8 +633,10 @@ def write_download_failure_markdown(
         rows: list[dict[str, str]],
         args: argparse.Namespace,
         message: str,
+        freshness: dict[str, str],
 ) -> None:
     source = redact_url(args.url)
+    retry_window_missed = any(row["item"] == "export-link-retry-window" for row in rows)
     lines = [
         "# SAM Contract Awards Export Audit",
         "",
@@ -608,6 +650,8 @@ def write_download_failure_markdown(
         f"- Source: `{source}`",
         f"- Download result: `{rows[0]['status']}`",
         f"- Reason: `{rows[0]['value']}`",
+        f"- Link freshness: `{freshness.get('status', 'not_applicable')}`",
+        f"- Freshness evidence: `{freshness.get('evidence', '')}`",
         "",
         "## Download Failure Checklist",
         "",
@@ -631,7 +675,11 @@ def write_download_failure_markdown(
             "## Next Action",
             "",
             (
-                "After SAM.gov allows another request, rerun "
+                "After SAM.gov allows another request, request a fresh SAM.gov Contract Awards export email, "
+                "update `SAM_CONTRACT_AWARDS_LIVE_URL` and its timestamp metadata, and rerun "
+                "`make sam-contract-awards-export-audit`."
+                if retry_window_missed
+                else "After SAM.gov allows another request, rerun "
                 "`SAM_CONTRACT_AWARDS_LIVE_URL='https://api.sam.gov/contract-awards/v1/download?api_key=REPLACE_WITH_API_KEY&token=...' "
                 "make sam-contract-awards-export-audit`. If the emailed token has expired, request a fresh export email first."
             ),
@@ -751,22 +799,34 @@ def sam_export_url_freshness() -> dict[str, str]:
         return {
             "status": "unknown",
             "evidence": f"generatedAt=missing; expiresAt=missing; ttlMinutes={ttl_minutes}",
+            "generatedAt": "",
+            "expiresAt": "",
+            "ttlMinutes": str(ttl_minutes),
         }
     if generated_raw and not generated:
         return {
             "status": "unknown",
             "evidence": f"generatedAt=unparseable; expiresAt={fmt_time(expires) or 'missing'}; ttlMinutes={ttl_minutes}",
+            "generatedAt": "",
+            "expiresAt": fmt_time(expires),
+            "ttlMinutes": str(ttl_minutes),
         }
     if expires_raw and not expires:
         return {
             "status": "unknown",
             "evidence": f"generatedAt={fmt_time(generated) or 'missing'}; expiresAt=unparseable; ttlMinutes={ttl_minutes}",
+            "generatedAt": fmt_time(generated),
+            "expiresAt": "",
+            "ttlMinutes": str(ttl_minutes),
         }
     assert expires is not None
     status = "fresh" if datetime.now(timezone.utc) < expires else "expired"
     return {
         "status": status,
         "evidence": f"generatedAt={fmt_time(generated) or 'missing'}; expiresAt={fmt_time(expires)}; ttlMinutes={ttl_minutes}",
+        "generatedAt": fmt_time(generated),
+        "expiresAt": fmt_time(expires),
+        "ttlMinutes": str(ttl_minutes),
     }
 
 

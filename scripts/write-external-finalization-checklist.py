@@ -32,6 +32,7 @@ ZENODO_PREFLIGHT_CSV = REPORTS / "zenodo-deposit-preflight.csv"
 ZENODO_DRAFT_CSV = REPORTS / "zenodo-draft-deposit.csv"
 GITHUB_ASSET_AUDIT_CSV = REPORTS / "github-release-asset-audit.csv"
 GITHUB_ASSET_AUDIT_MD = REPORTS / "github-release-asset-audit.md"
+GITHUB_CI_STATUS_CSV = REPORTS / "github-ci-status-audit.csv"
 REGGOV_GUIDELINES_CSV = REPORTS / "reggov-guidelines-readiness.csv"
 SAM_PREFLIGHT_CSV = REPORTS / "sam-contract-awards-preflight.csv"
 SAM_EXPORT_AUDIT_CSV = REPORTS / "sam-contract-awards-export-audit.csv"
@@ -75,6 +76,7 @@ def checklist_rows() -> list[dict[str, str]]:
         ),
         doi_readiness_row(),
         github_asset_audit_row(),
+        github_ci_status_row(),
         zenodo_target_row(),
         zenodo_token_row(),
         zenodo_draft_row(),
@@ -143,6 +145,39 @@ def github_asset_audit_row() -> dict[str, str]:
         "Use the verified asset digests when copying checksums into the DOI deposit record.",
         "doi",
     )
+
+
+def github_ci_status_row() -> dict[str, str]:
+    rows = read_csv(GITHUB_CI_STATUS_CSV)
+    if not rows:
+        return item(
+            "github-ci-status",
+            "manual_required",
+            "post-release CI audit=missing",
+            "After pushing main and the release tag, run make github-ci-status-audit.",
+            "doi",
+        )
+    counts = status_counts(rows)
+    blocked = counts.get("blocked", 0)
+    manual = counts.get("manual_required", 0)
+    status = "blocked" if blocked else "manual_required" if manual else "ready"
+    by_gate = keyed_rows(GITHUB_CI_STATUS_CSV, "gate")
+    main = by_gate.get("main-ci", {})
+    tag = by_gate.get("release-tag-ci", {})
+    target = by_gate.get("release-tag-target", {})
+    evidence = (
+        f"ready={counts.get('ready', 0)}; manual_required={manual}; blocked={blocked}; "
+        f"main={main.get('runStatus', 'missing')}/{main.get('conclusion', 'missing')}; "
+        f"tag={tag.get('runStatus', 'missing')}/{tag.get('conclusion', 'missing')}; "
+        f"tagTarget={target.get('status', 'missing')}"
+    )
+    if status == "ready":
+        next_action = "Retain this CI evidence with the release and DOI handoff records."
+    elif status == "blocked":
+        next_action = "Fix the failed or mismatched GitHub CI/tag state before final submission."
+    else:
+        next_action = "Wait for GitHub Actions to finish or rerun make github-ci-status-audit after the release/tag run appears."
+    return item("github-ci-status", status, evidence, next_action, "doi")
 
 
 def zenodo_target_row() -> dict[str, str]:
@@ -674,6 +709,7 @@ def markdown(rows: list[dict[str, str]]) -> str:
             "",
             "```sh",
             "make github-release-asset-audit",
+            "make github-ci-status-audit",
             "make external-finalization-checklist",
             "",
             "# After Zenodo, OSF, or another archive reserves or mints a DOI:",
