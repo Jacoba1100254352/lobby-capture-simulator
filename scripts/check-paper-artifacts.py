@@ -2966,6 +2966,7 @@ def check_reference_integrity_audit() -> list[str]:
         )
     required_audits = {
         "citation-key-summary",
+        "entry-persistent-id",
         "entry-required-fields",
         "placeholder-summary",
         "source-metadata",

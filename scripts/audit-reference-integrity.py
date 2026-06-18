@@ -119,8 +119,19 @@ def entry_metadata_rows(entries: dict[str, dict[str, object]], cited_keys: set[s
                         f"missing recommended article fields={'; '.join(missing_recommended)}",
                     )
                 )
-            if not field_present(fields, "doi"):
-                rows.append(row("entry-doi", key, "advisory", "peer-reviewed article has no DOI field recorded"))
+            if field_present(fields, "doi"):
+                rows.append(row("entry-persistent-id", key, "ready", "doi=yes"))
+            elif has_stable_article_url(fields):
+                rows.append(row("entry-persistent-id", key, "ready", "doi=no; stableUrl=yes"))
+            else:
+                rows.append(
+                    row(
+                        "entry-persistent-id",
+                        key,
+                        "advisory",
+                        "peer-reviewed article has no DOI field or stable URL recorded",
+                    )
+                )
         rows.append(row("entry-required-fields", key, "ready", "; ".join(detail_parts)))
     return rows
 
@@ -168,6 +179,14 @@ def source_metadata_rows(entries: dict[str, dict[str, object]]) -> list[dict[str
             )
         )
     return rows
+
+
+def has_stable_article_url(fields: dict[str, str]) -> bool:
+    url = str(fields.get("url", "")).strip()
+    howpublished = str(fields.get("howpublished", "")).strip()
+    note = str(fields.get("note", "")).strip()
+    candidate = " ".join([url, howpublished, note]).lower()
+    return "http://" in candidate or "https://" in candidate or "repec:" in candidate
 
 
 def parse_bibtex_entries(text: str) -> dict[str, dict[str, object]]:
@@ -323,8 +342,9 @@ def markdown(rows: list[dict[str, str]]) -> str:
         "",
         (
             "This audit checks citation-key consistency, type-specific bibliography "
-            "metadata, public-source access notes, and placeholder text. Advisory rows "
-            "record optional metadata that can still be improved without blocking the package."
+            "metadata, persistent article identifiers, public-source access notes, "
+            "and placeholder text. Advisory rows record missing persistent identifiers "
+            "that can still be improved without blocking the package."
         ),
         "",
         "## Summary",
@@ -353,8 +373,8 @@ def markdown(rows: list[dict[str, str]]) -> str:
             (
                 "`blocked` rows indicate missing cited keys, missing required fields, "
                 "placeholder text, or missing public-source access metadata. `advisory` "
-                "rows identify optional metadata such as DOI fields for older articles "
-                "or uncited bibliography entries."
+                "rows identify nonblocking metadata gaps such as article entries with "
+                "neither a DOI nor a stable URL, or uncited bibliography entries."
             ),
         ]
     )

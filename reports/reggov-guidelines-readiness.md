@@ -29,7 +29,7 @@ The live Regulation & Governance author page records free-format first submissio
 | Gate | Status | Evidence | Next action |
 | --- | --- | --- | --- |
 | journal-target-and-article-type | ready | local title=yes; Wiley title=yes; journal metadata=yes; article type=yes; target comment=yes | Keep the Wiley wrapper targeted to Regulation & Governance as an original article. |
-| word-limit | ready | approximate words=8231; preferred range=8000-10000; within preferred=yes; normal upper limit=11000; Research Forum limit=6000 | Keep the manuscript in the preferred range when feasible and below the normal upper limit. |
+| word-limit | ready | approximate words=8247; preferred range=8000-10000; within preferred=yes; normal upper limit=11000; Research Forum limit=6000 | Keep the manuscript in the preferred range when feasible and below the normal upper limit. |
 | abstract-and-keywords | ready | local abstract=yes; local keywords=yes; Wiley abstract=yes; Wiley keywords=yes; abstract words <= 150=yes; abstract words=99 | Retain extractable abstract and keyword metadata in both local and Wiley wrappers. |
 | title-page-metadata | ready | local author=yes; local affiliation=yes; local country=yes; local email=yes; Wiley author=yes; Wiley address=yes; Wiley correspondence=yes | Keep author name, affiliation, country, correspondence, and email metadata present. |
 | data-code-availability | ready | statement=yes; repository=yes; release tag=yes; license=yes; credential/raw exclusion=yes; snapshot path=yes | Maintain repository, release, license, private-credential, and source-snapshot details. |

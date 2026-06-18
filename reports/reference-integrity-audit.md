@@ -1,55 +1,73 @@
 # Reference Integrity Audit
 
-This audit checks citation-key consistency, type-specific bibliography metadata, public-source access notes, and placeholder text. Advisory rows record optional metadata that can still be improved without blocking the package.
+This audit checks citation-key consistency, type-specific bibliography metadata, persistent article identifiers, public-source access notes, and placeholder text. Advisory rows record missing persistent identifiers that can still be improved without blocking the package.
 
 ## Summary
 
-- Ready rows: `48`.
-- Advisory rows: `2`.
+- Ready rows: `68`.
+- Advisory rows: `0`.
 - Blocked rows: `0`.
 
 | Audit | Subject | Status | Detail |
 | --- | --- | --- | --- |
 | citation-key-summary | all-citations | ready | citedKeys=38; bibliographyEntries=38; missing=0; unused=0 |
 | entry-required-fields | acusMassComments2021 | ready | type=misc; cited=yes |
+| entry-persistent-id | ansolabehere2003littleMoney | ready | doi=yes |
 | entry-required-fields | ansolabehere2003littleMoney | ready | type=article; cited=yes |
+| entry-persistent-id | balla1998administrative | ready | doi=yes |
 | entry-required-fields | balla1998administrative | ready | type=article; cited=yes |
 | entry-required-fields | baumgartner2009lobbying | ready | type=book; cited=yes |
 | entry-required-fields | baumgartnerJones1993 | ready | type=book; cited=yes |
+| entry-persistent-id | bertrand2014whom | ready | doi=yes |
 | entry-required-fields | bertrand2014whom | ready | type=article; cited=yes |
+| entry-persistent-id | black2008polycentric | ready | doi=yes |
 | entry-required-fields | black2008polycentric | ready | type=article; cited=yes |
 | entry-required-fields | brennanDarkMoney2025 | ready | type=misc; cited=yes |
 | entry-required-fields | carpenterMoss2014 | ready | type=book; cited=yes |
+| entry-persistent-id | dalbo2006capture | ready | doi=yes |
 | entry-required-fields | dalbo2006capture | ready | type=article; cited=yes |
+| entry-persistent-id | deFigueiredoRichter2014 | ready | doi=yes |
 | entry-required-fields | deFigueiredoRichter2014 | ready | type=article; cited=yes |
+| entry-persistent-id | epstein1999generative | ready | doi=yes |
 | entry-required-fields | epstein1999generative | ready | type=article; cited=yes |
 | entry-required-fields | fecData | ready | type=misc; cited=yes |
 | entry-required-fields | federalRegisterApi | ready | type=misc; cited=yes |
+| entry-persistent-id | golden1998rulemaking | ready | doi=yes |
 | entry-required-fields | golden1998rulemaking | ready | type=article; cited=yes |
+| entry-persistent-id | gordonHafer2005 | ready | doi=yes |
 | entry-required-fields | gordonHafer2005 | ready | type=article; cited=yes |
+| entry-persistent-id | grimm2010odd | ready | doi=yes |
 | entry-required-fields | grimm2010odd | ready | type=article; cited=yes |
-| entry-doi | grossmanHelpman1994 | advisory | peer-reviewed article has no DOI field recorded |
+| entry-persistent-id | grossmanHelpman1994 | ready | doi=no; stableUrl=yes |
 | entry-required-fields | grossmanHelpman1994 | ready | type=article; cited=yes |
+| entry-persistent-id | hallDeardorff2006 | ready | doi=yes |
 | entry-required-fields | hallDeardorff2006 | ready | type=article; cited=yes |
 | entry-required-fields | hloga2007 | ready | type=misc; cited=yes |
 | entry-required-fields | irsEoBmf | ready | type=misc; cited=yes |
+| entry-persistent-id | kallaBroockman2016 | ready | doi=yes |
 | entry-required-fields | kallaBroockman2016 | ready | type=article; cited=yes |
 | entry-required-fields | lapiraThomas2017 | ready | type=book; cited=yes |
 | entry-required-fields | ldaData | ready | type=misc; cited=yes |
 | entry-required-fields | leviFaur2011regulation | ready | type=incollection; cited=yes |
+| entry-persistent-id | mccubbins1987administrative | ready | doi=yes |
 | entry-required-fields | mccubbins1987administrative | ready | type=article; cited=yes |
+| entry-persistent-id | naughton2009commenter | ready | doi=yes |
 | entry-required-fields | naughton2009commenter | ready | type=article; cited=yes |
 | entry-required-fields | nyagFakeComments2021 | ready | type=misc; cited=yes |
 | entry-required-fields | nycCfbData | ready | type=misc; cited=yes |
 | entry-required-fields | oecdLobbying2021 | ready | type=misc; cited=yes |
+| entry-persistent-id | pralle2003venue | ready | doi=yes |
 | entry-required-fields | pralle2003venue | ready | type=article; cited=yes |
 | entry-required-fields | regulationsGovApi | ready | type=misc; cited=yes |
 | entry-required-fields | seattleVouchers | ready | type=misc; cited=yes |
+| entry-persistent-id | stigler1971economicRegulation | ready | doi=yes |
 | entry-required-fields | stigler1971economicRegulation | ready | type=article; cited=yes |
 | entry-required-fields | usaspending | ready | type=misc; cited=yes |
+| entry-persistent-id | west2004formal | ready | doi=yes |
 | entry-required-fields | west2004formal | ready | type=article; cited=yes |
-| entry-doi | windrum2007empirical | advisory | peer-reviewed article has no DOI field recorded |
+| entry-persistent-id | windrum2007empirical | ready | doi=no; stableUrl=yes |
 | entry-required-fields | windrum2007empirical | ready | type=article; cited=yes |
+| entry-persistent-id | yackeeYackee2006 | ready | doi=yes |
 | entry-required-fields | yackeeYackee2006 | ready | type=article; cited=yes |
 | placeholder-summary | references.bib | ready | placeholderHits=0 |
 | source-metadata | fecData | ready | accessedNote=yes; url=yes |
@@ -63,4 +81,4 @@ This audit checks citation-key consistency, type-specific bibliography metadata,
 
 ## Boundary
 
-`blocked` rows indicate missing cited keys, missing required fields, placeholder text, or missing public-source access metadata. `advisory` rows identify optional metadata such as DOI fields for older articles or uncited bibliography entries.
+`blocked` rows indicate missing cited keys, missing required fields, placeholder text, or missing public-source access metadata. `advisory` rows identify nonblocking metadata gaps such as article entries with neither a DOI nor a stable URL, or uncited bibliography entries.
