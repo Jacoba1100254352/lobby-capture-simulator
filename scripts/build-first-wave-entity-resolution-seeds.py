@@ -136,7 +136,7 @@ def alias_review_rows(
     rows: list[dict[str, str]] = []
     for candidate in candidates:
         actor_id = candidate.get("candidateActorId", "")
-        for record in records_by_actor.get(actor_id, []):
+        for record in unique_review_records(records_by_actor.get(actor_id, [])):
             rows.append(
                 {
                     "auditId": f"alias-seed-{len(rows) + 1:04d}",
@@ -214,7 +214,7 @@ def false_match_rows(
     rows: list[dict[str, str]] = []
     for candidate in candidates:
         actor_id = candidate.get("candidateActorId", "")
-        records = records_by_actor.get(actor_id, [])
+        records = unique_review_records(records_by_actor.get(actor_id, []))
         for record in records[:2]:
             rows.append(
                 {
@@ -235,6 +235,30 @@ def false_match_rows(
             if len(rows) >= MAX_FALSE_MATCH_ROWS:
                 return rows
     return rows
+
+
+def unique_review_records(records: list[dict[str, str]]) -> list[dict[str, str]]:
+    """Collapse repeated source rows for manual-review samples.
+
+    Linkage candidate records can contain repeated activity rows for the same
+    actor/source identifier. Those repetitions are useful in activity panels,
+    but they waste scarce manual-review sample slots.
+    """
+    unique: list[dict[str, str]] = []
+    seen: set[tuple[str, str, str, str, str]] = set()
+    for record in records:
+        key = (
+            record.get("displayName", ""),
+            record.get("sourceSystem", ""),
+            record.get("sourceRecordId", ""),
+            record.get("matchRule", ""),
+            issue_code(record.get("issueDomain", "")),
+        )
+        if key in seen:
+            continue
+        seen.add(key)
+        unique.append(record)
+    return unique
 
 
 def linked_actor_issue_rows(

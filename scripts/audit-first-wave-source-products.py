@@ -687,7 +687,7 @@ def product_manual_review_checklist(spec: ProductSpec, status: str) -> str:
             "review logs support the canonical IDs."
         ),
         "alias-resolution-audit-sample": (
-            "Replace placeholder manualDecision, reviewer, and reviewDate values with reviewed accept/reject "
+            "Replace candidate-only manualDecision, reviewer, and reviewDate markers with reviewed accept/reject "
             "decisions; include exact and fuzzy match examples; retain enough rejected aliases to bound false "
             "positive risk, and promote only after reviewer/date provenance is complete."
         ),
