@@ -28,6 +28,7 @@ PLACEHOLDER_VALUES = {
     "none",
 }
 BOOLEAN_VALUES = {"true", "false", "yes", "no", "1", "0"}
+CANDIDATE_UNREVIEWED_STATUS = "candidate_unreviewed"
 
 
 @dataclass(frozen=True)
@@ -550,9 +551,19 @@ def audit_product(root: Path, spec: ProductSpec) -> dict[str, str]:
         semantic_issues: tuple[str, ...] = ()
         validation_notes = "Expected source product is not present."
     elif path.suffix.lower() == ".csv":
-        observed_rows, observed_columns, missing_columns, quality_issues, semantic_issues, validation_notes = audit_csv(path, spec)
+        (
+            observed_rows,
+            observed_columns,
+            missing_columns,
+            quality_issues,
+            semantic_issues,
+            validation_notes,
+            candidate_unreviewed,
+        ) = audit_csv(path, spec)
         if missing_columns:
             status = "schema_missing_columns"
+        elif candidate_unreviewed:
+            status = CANDIDATE_UNREVIEWED_STATUS
         elif observed_rows < spec.minimum_rows:
             status = "empty_schema"
             validation_notes = (
@@ -596,16 +607,17 @@ def audit_product(root: Path, spec: ProductSpec) -> dict[str, str]:
     }
 
 
-def audit_csv(path: Path, spec: ProductSpec) -> tuple[int, tuple[str, ...], tuple[str, ...], int, tuple[str, ...], str]:
+def audit_csv(path: Path, spec: ProductSpec) -> tuple[int, tuple[str, ...], tuple[str, ...], int, tuple[str, ...], str, bool]:
     try:
         with path.open(newline="", encoding="utf-8") as source:
             reader = csv.DictReader(source)
             observed_columns = tuple(reader.fieldnames or ())
             rows = list(reader)
     except OSError as error:
-        return 0, (), spec.required_columns, 1, (), f"Could not read CSV: {error}"
+        return 0, (), spec.required_columns, 1, (), f"Could not read CSV: {error}", False
     observed = set(observed_columns)
     missing = tuple(column for column in spec.required_columns if column not in observed)
+    candidate_unreviewed = is_candidate_unreviewed_product(rows)
     if missing:
         note = "Missing required schema columns."
     else:
@@ -620,8 +632,26 @@ def audit_csv(path: Path, spec: ProductSpec) -> tuple[int, tuple[str, ...], tupl
             note = "Required schema columns are present, but " + "; ".join(fragments) + "."
         else:
             note = "Required schema columns, field-level quality checks, and semantic gates pass."
-        return len(rows), observed_columns, missing, quality_issues, semantic_issues, note
-    return len(rows), observed_columns, missing, 0, (), note
+        if candidate_unreviewed:
+            note = (
+                "Candidate-only manual-review seed is present; it does not clear "
+                "source-product readiness until aliases, issue comparability, and "
+                "false matches are adjudicated. " + note
+            )
+        return len(rows), observed_columns, missing, quality_issues, semantic_issues, note, candidate_unreviewed
+    return len(rows), observed_columns, missing, 0, (), note, candidate_unreviewed
+
+
+def is_candidate_unreviewed_product(rows: list[dict[str, str]]) -> bool:
+    for row in rows:
+        values = {str(value).strip().lower() for value in row.values()}
+        if row.get("candidateOnly", "").strip().lower() == "true":
+            return True
+        if any("candidate_unreviewed" in value for value in values):
+            return True
+        if any("not_estimation_ready" in value for value in values):
+            return True
+    return False
 
 
 def csv_quality_issues(rows: list[dict[str, str]], spec: ProductSpec) -> int:
@@ -885,10 +915,12 @@ def write_csv(path: Path, rows: list[dict[str, str]]) -> None:
 
 def write_markdown(path: Path, rows: list[dict[str, str]]) -> None:
     ready = [row for row in rows if row["productStatus"] in {"schema_ready", "text_ready"}]
+    candidate_unreviewed = [row for row in rows if row["productStatus"] == CANDIDATE_UNREVIEWED_STATUS]
     missing = [row for row in rows if row["productStatus"].startswith("missing")]
     schema_issues = [
         row for row in rows
         if row["productStatus"] not in {"schema_ready", "text_ready"}
+        and row["productStatus"] != CANDIDATE_UNREVIEWED_STATUS
         and not row["productStatus"].startswith("missing")
     ]
     quality_issue_products = [
@@ -917,6 +949,7 @@ def write_markdown(path: Path, rows: list[dict[str, str]]) -> None:
         "",
         f"- Source products audited: `{len(rows)}`",
         f"- Schema/text ready products: `{len(ready)}`",
+        f"- Candidate-only unreviewed products: `{len(candidate_unreviewed)}`",
         f"- Missing products: `{len(missing)}`",
         f"- Present products with schema issues: `{len(schema_issues)}`",
         f"- Products with field-level quality issues: `{len(quality_issue_products)}`",
@@ -940,6 +973,8 @@ def write_markdown(path: Path, rows: list[dict[str, str]]) -> None:
         "## Semantic Gate Notes",
         "",
         "Semantic checks are product-level safeguards that prevent tiny or structurally incomplete files from clearing a causal source gate merely because required columns are present.",
+        "",
+        "The `candidate_unreviewed` status means the production file exists as a deterministic manual-review seed, but it cannot clear readiness until aliases, issue mappings, and false-match decisions are adjudicated.",
         "",
         "| Target | Product | Semantic issue count | Semantic issues | Validation notes |",
         "| --- | --- | ---: | --- | --- |",

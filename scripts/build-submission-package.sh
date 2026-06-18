@@ -94,6 +94,19 @@ cp "$ROOT_DIR/CITATION.cff" "$STAGING_DIR/supporting-information/CITATION.cff"
 cp "$ROOT_DIR/.zenodo.json" "$STAGING_DIR/supporting-information/zenodo.json"
 mkdir -p "$STAGING_DIR/supporting-information/source-product-templates"
 cp -R "$ROOT_DIR/docs/source-product-templates/first-wave" "$STAGING_DIR/supporting-information/source-product-templates/first-wave"
+mkdir -p "$STAGING_DIR/supporting-information/source-products/first-wave"
+for source_product in \
+  canonical-actor-identifiers.csv \
+  alias-resolution-audit-sample.csv \
+  issue-code-crosswalk.csv \
+  false-match-review-log.csv \
+  linked-actor-issue-venue-time.csv \
+  meeting-log-channel-note.md
+do
+  if [ -f "$ROOT_DIR/data/calibration/first-wave/$source_product" ]; then
+    cp "$ROOT_DIR/data/calibration/first-wave/$source_product" "$STAGING_DIR/supporting-information/source-products/first-wave/"
+  fi
+done
 mkdir -p "$STAGING_DIR/supporting-information/report-data"
 for report_artifact in "$ROOT_DIR"/reports/*.csv "$ROOT_DIR"/reports/*.md "$ROOT_DIR"/reports/*.manifest.json; do
   if [ -e "$report_artifact" ]; then

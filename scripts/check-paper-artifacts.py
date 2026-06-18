@@ -70,6 +70,17 @@ FIRST_WAVE_SOURCE_TEMPLATE_DIR = ROOT / "docs" / "source-product-templates" / "f
 FIRST_WAVE_SOURCE_TEMPLATE_MANIFEST_CSV = FIRST_WAVE_SOURCE_TEMPLATE_DIR / "manifest.csv"
 FIRST_WAVE_SOURCE_TEMPLATE_MANIFEST_MD = FIRST_WAVE_SOURCE_TEMPLATE_DIR / "manifest.md"
 FIRST_WAVE_SOURCE_TEMPLATE_README = FIRST_WAVE_SOURCE_TEMPLATE_DIR / "README.md"
+FIRST_WAVE_SOURCE_PRODUCT_DIR = ROOT / "data" / "calibration" / "first-wave"
+FIRST_WAVE_CANDIDATE_SEED_PRODUCTS = {
+    "canonical-actor-identifiers": FIRST_WAVE_SOURCE_PRODUCT_DIR / "canonical-actor-identifiers.csv",
+    "alias-resolution-audit-sample": FIRST_WAVE_SOURCE_PRODUCT_DIR / "alias-resolution-audit-sample.csv",
+    "issue-code-crosswalk": FIRST_WAVE_SOURCE_PRODUCT_DIR / "issue-code-crosswalk.csv",
+    "false-match-review-log": FIRST_WAVE_SOURCE_PRODUCT_DIR / "false-match-review-log.csv",
+    "linked-actor-issue-venue-time": FIRST_WAVE_SOURCE_PRODUCT_DIR / "linked-actor-issue-venue-time.csv",
+}
+FIRST_WAVE_TEXT_SOURCE_PRODUCTS = {
+    "meeting-log-or-missing-channel-note": FIRST_WAVE_SOURCE_PRODUCT_DIR / "meeting-log-channel-note.md",
+}
 FIRST_WAVE_LINKAGE_CANDIDATES_MD = ROOT / "reports" / "first-wave-linkage-candidates.md"
 FIRST_WAVE_LINKAGE_CANDIDATES_CSV = ROOT / "reports" / "first-wave-linkage-candidates.csv"
 FIRST_WAVE_LINKAGE_CANDIDATE_RECORDS_CSV = ROOT / "reports" / "first-wave-linkage-candidate-records.csv"
@@ -107,7 +118,7 @@ DOI_DEPOSIT_PACKAGE_CHECKSUM_CSV = ROOT / "dist" / "doi-deposit-package-checksum
 DOI_DEPOSIT_PACKAGE_CHECKSUM_JSON = ROOT / "dist" / "doi-deposit-package-checksum.json"
 DOI_DEPOSIT_PACKAGE_CHECKSUM_MD = ROOT / "dist" / "doi-deposit-package-checksum.md"
 ZENODO_DEPOSIT_METADATA_JSON = ROOT / "dist" / "zenodo-deposit-metadata.json"
-RELEASE_TAG = "paper-publication-readiness-2026-06-15-r141"
+RELEASE_TAG = "paper-publication-readiness-2026-06-18-r142"
 ARCHIVE_HANDOFF_REPORT_NAMES = {
     "archive-handoff-manifest.csv",
     "archive-handoff-manifest.json",
@@ -456,6 +467,7 @@ def submission_inputs() -> list[Path]:
         ROOT / "scripts" / "build-submission-package.sh",
         ROOT / "scripts" / "write-first-wave-causal-protocols.py",
         ROOT / "scripts" / "write-first-wave-source-product-templates.py",
+        ROOT / "scripts" / "build-first-wave-entity-resolution-seeds.py",
         ROOT / "scripts" / "audit-first-wave-source-products.py",
         ROOT / "scripts" / "build-first-wave-linkage-candidates.py",
         ROOT / "scripts" / "audit-first-wave-source-readiness.py",
@@ -498,6 +510,8 @@ def submission_inputs() -> list[Path]:
         PAPER / ".wiley-build" / "wileyNJD-Chicago.bst",
         PAPER / ".wiley-template" / "Optimal-Design-layout" / "LETTERSP.STY",
         *sorted(FIRST_WAVE_SOURCE_TEMPLATE_DIR.glob("*")),
+        *sorted(FIRST_WAVE_CANDIDATE_SEED_PRODUCTS.values()),
+        *sorted(FIRST_WAVE_TEXT_SOURCE_PRODUCTS.values()),
         *sorted((PAPER / "sections").glob("*.tex")),
         *sorted((PAPER / "tables").glob("*.tex")),
         *sorted((PAPER / "figures").glob("*.tex")),
@@ -1986,6 +2000,7 @@ def check_first_wave_source_products() -> list[str]:
         "nextAction",
     ]
     ready_rows = []
+    candidate_rows = []
     for row in rows:
         product = row.get("productKey", "<missing>")
         for field_name in required_fields:
@@ -1995,6 +2010,8 @@ def check_first_wave_source_products() -> list[str]:
             failures.append(f"first-wave source product {product} should be required in this release")
         if row.get("productStatus") in {"schema_ready", "text_ready"}:
             ready_rows.append(product)
+        if row.get("productStatus") == "candidate_unreviewed":
+            candidate_rows.append(product)
         if not row.get("expectedPath", "").startswith("data/calibration/first-wave/"):
             failures.append(
                 f"first-wave source product {product} expected path should live under data/calibration/first-wave/"
@@ -2010,12 +2027,34 @@ def check_first_wave_source_products() -> list[str]:
             if not (ROOT / template_path).exists():
                 failures.append(f"first-wave source product {product} template path does not exist: {template_path}")
     allowed_ready_rows = {"meeting-log-or-missing-channel-note"}
+    expected_candidate_rows = set(FIRST_WAVE_CANDIDATE_SEED_PRODUCTS)
     unexpected_ready_rows = sorted(set(ready_rows) - allowed_ready_rows)
     if unexpected_ready_rows:
         failures.append(
             "first-wave source products should not be ready in this release without a matching manuscript update: "
             + ", ".join(unexpected_ready_rows)
         )
+    if set(candidate_rows) != expected_candidate_rows:
+        failures.append(
+            "first-wave source products should mark exactly the entity-resolution seed products candidate_unreviewed: "
+            + ", ".join(sorted(candidate_rows))
+        )
+    for product, path in FIRST_WAVE_CANDIDATE_SEED_PRODUCTS.items():
+        if not path.exists():
+            failures.append(f"missing first-wave candidate source-product seed: {path.relative_to(ROOT)}")
+            continue
+        with path.open(newline="", encoding="utf-8") as source:
+            seed_rows = list(csv.DictReader(source))
+        if not seed_rows:
+            failures.append(f"first-wave candidate source-product seed is empty: {path.relative_to(ROOT)}")
+            continue
+        if "candidateOnly" not in seed_rows[0]:
+            failures.append(f"first-wave candidate source-product seed missing candidateOnly field: {product}")
+        if any(row.get("candidateOnly") != "true" for row in seed_rows):
+            failures.append(f"first-wave candidate source-product seed must keep candidateOnly=true: {product}")
+        combined = "\n".join(" ".join(row.values()) for row in seed_rows[:25])
+        if "candidate_unreviewed" not in combined or "does not clear" not in combined:
+            failures.append(f"first-wave candidate source-product seed missing boundary markers: {product}")
     if ready_rows:
         if set(ready_rows) != allowed_ready_rows:
             failures.append(
@@ -2025,6 +2064,7 @@ def check_first_wave_source_products() -> list[str]:
         product_text = FIRST_WAVE_SOURCE_PRODUCTS_MD.read_text(encoding="utf-8")
         for phrase in (
             "Schema/text ready products: `1`",
+            "Candidate-only unreviewed products: `5`",
             "meeting-log or contact-register panel, or explicit missing-channel design note",
             "Text source product contains the required missing-channel design terms",
         ):
@@ -2038,6 +2078,8 @@ def check_first_wave_source_products() -> list[str]:
         "Policy-simulation status: `not_cleared`",
         "Products with field-level quality issues",
         "Products with semantic gate issues",
+        "candidate_unreviewed",
+        "deterministic manual-review seed",
         "Template path",
         "Semantic Gate Notes",
         "SAM/FPDS action-history export or keyed pull",
@@ -2222,6 +2264,8 @@ def check_first_wave_source_readiness() -> list[str]:
         "Policy-simulation status: `not_cleared`",
         "Source-product schema gate",
         "ready=1",
+        "candidateOnly=5",
+        "candidate-only seed files",
         "SAM/FPDS action-history export or keyed pull",
         "canonical actor identifier table",
     ]
@@ -3358,6 +3402,14 @@ def package_byte_checks() -> list[tuple[Path, str]]:
         (path, f"supporting-information/source-product-templates/first-wave/{path.name}")
         for path in sorted(FIRST_WAVE_SOURCE_TEMPLATE_DIR.glob("*"))
         if path.is_file()
+    )
+    checks.extend(
+        (path, f"supporting-information/source-products/first-wave/{path.name}")
+        for path in sorted([
+            *FIRST_WAVE_CANDIDATE_SEED_PRODUCTS.values(),
+            *FIRST_WAVE_TEXT_SOURCE_PRODUCTS.values(),
+        ])
+        if path.exists()
     )
     checks.extend(
         (path, f"sections/{path.name}")

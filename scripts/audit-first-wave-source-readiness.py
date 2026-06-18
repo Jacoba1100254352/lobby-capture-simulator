@@ -133,14 +133,21 @@ def product_gate_summary(rows: list[dict[str, str]]) -> dict[str, str]:
     required = [row for row in rows if row.get("requirementLevel") == "required"]
     ready_statuses = {"schema_ready", "text_ready"}
     ready = [row for row in required if row.get("productStatus") in ready_statuses]
+    candidate_unreviewed = [
+        row for row in required
+        if row.get("productStatus") == "candidate_unreviewed"
+    ]
     missing = [row for row in required if row.get("productStatus", "").startswith("missing")]
     schema_issues = [
         row for row in required
         if row.get("productStatus") not in ready_statuses
+        and row.get("productStatus") != "candidate_unreviewed"
         and not row.get("productStatus", "").startswith("missing")
     ]
     if len(ready) == len(required) and required:
         gate = "schema_gate_ready"
+    elif candidate_unreviewed:
+        gate = "candidate_only_blocked"
     elif missing or schema_issues:
         gate = "schema_gate_blocked"
     else:
@@ -149,9 +156,13 @@ def product_gate_summary(rows: list[dict[str, str]]) -> dict[str, str]:
         "sourceProductGate": gate,
         "sourceProductEvidence": (
             f"required={len(required)}; ready={len(ready)}; "
+            f"candidateOnly={len(candidate_unreviewed)}; "
             f"missing={len(missing)}; schemaIssues={len(schema_issues)}"
         ),
-        "missingProducts": "; ".join(row.get("productLabel", row.get("productKey", "")) for row in missing + schema_issues),
+        "missingProducts": "; ".join(
+            row.get("productLabel", row.get("productKey", ""))
+            for row in missing + candidate_unreviewed + schema_issues
+        ),
     }
 
 
@@ -238,7 +249,7 @@ def substitution_row(
         ]),
         "blockingIssue": "Public surfaces exist, but the committed snapshot does not yet define an event panel that can estimate substitution elasticity.",
         "claimBoundary": "May guide a source-anchored substitution design; does not validate hidden-channel magnitudes or causal substitution effects.",
-        "nextAction": "Choose one named reform shock, use reports/first-wave-linkage-candidates.md to seed manual actor review, build the actor-issue-time linkage file, and record exposed plus comparison actors before inspecting outcome movement.",
+        "nextAction": "Choose one named reform shock, use the candidate-only entity-resolution seed files to prioritize manual actor review, build the actor-issue-time linkage file, and record exposed plus comparison actors before inspecting outcome movement.",
     }
 
 
@@ -343,7 +354,7 @@ def venue_row(
         ]),
         "blockingIssue": "Multiple public surfaces are present, but the committed snapshot lacks an audited entity-resolution spine.",
         "claimBoundary": "Can support a detection-measurement workplan; cannot prove venue shifting changed outcomes.",
-        "nextAction": "Start from reports/first-wave-linkage-candidates.md, build an alias table linking LDA clients, FEC spenders, docket submitters, vendors, intermediaries, and access proxies, then audit false matches before promoting the panel.",
+        "nextAction": "Start from the candidate-only entity-resolution seed files, adjudicate aliases linking LDA clients, FEC spenders, docket submitters, vendors, intermediaries, and access proxies, then audit false matches before promoting the panel.",
     }
 
 
@@ -428,7 +439,7 @@ def write_markdown(path: Path, rows: list[dict[str, str]]) -> None:
     lines = [
         "# First-Wave Source Readiness",
         "",
-        "This audit maps the first-wave causal protocols to committed source products. It is a pre-estimation gate: source products can support protocol design, but no row clears calibrated policy-simulation claims or causal effect language. Candidate linkage rows from `reports/first-wave-linkage-candidates.md` are manual-review worklists only and do not satisfy production source-product requirements.",
+        "This audit maps the first-wave causal protocols to committed source products. It is a pre-estimation gate: source products can support protocol design, but no row clears calibrated policy-simulation claims or causal effect language. Candidate linkage rows from `reports/first-wave-linkage-candidates.md` and candidate-only seed files under `data/calibration/first-wave/` are manual-review worklists only; they do not satisfy adjudicated production source-product requirements.",
         "",
         "## Summary",
         "",
