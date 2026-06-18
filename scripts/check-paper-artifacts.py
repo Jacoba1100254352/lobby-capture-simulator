@@ -116,6 +116,8 @@ LATEX_LOG_AUDIT_CSV = ROOT / "reports" / "latex-log-audit.csv"
 FINAL_HUMAN_READTHROUGH = ROOT / "reports" / "final-human-readthrough.md"
 FINAL_HUMAN_READTHROUGH_AUDIT_CSV = ROOT / "reports" / "final-human-readthrough-audit.csv"
 FINAL_HUMAN_READTHROUGH_AUDIT_MD = ROOT / "reports" / "final-human-readthrough-audit.md"
+FINAL_READTHROUGH_EVIDENCE_CSV = ROOT / "reports" / "final-readthrough-evidence.csv"
+FINAL_READTHROUGH_EVIDENCE_MD = ROOT / "reports" / "final-readthrough-evidence.md"
 ARCHIVE_HANDOFF_CSV = ROOT / "reports" / "archive-handoff-manifest.csv"
 ARCHIVE_HANDOFF_JSON = ROOT / "reports" / "archive-handoff-manifest.json"
 ARCHIVE_HANDOFF_MD = ROOT / "reports" / "archive-handoff-manifest.md"
@@ -152,6 +154,8 @@ POST_SUBMISSION_REPORT_NAMES = ARCHIVE_HANDOFF_REPORT_NAMES | {
     "wiley-submission-form-readiness.md",
     "reggov-guidelines-readiness.csv",
     "reggov-guidelines-readiness.md",
+    "final-readthrough-evidence.csv",
+    "final-readthrough-evidence.md",
 }
 LOCAL_OPERATIONAL_REPORT_PREFIXES = (
     "external-finalization-checklist.",
@@ -196,6 +200,8 @@ FORBIDDEN_ZIP_MEMBERS = {
     "supporting-information/report-data/reggov-guidelines-readiness.md",
     "supporting-information/report-data/external-finalization-checklist.csv",
     "supporting-information/report-data/external-finalization-checklist.md",
+    "supporting-information/report-data/final-readthrough-evidence.csv",
+    "supporting-information/report-data/final-readthrough-evidence.md",
 }
 TEX_BINARY_DIRS = [
     Path("/usr/local/texlive/2026basic/bin/universal-darwin"),
@@ -338,6 +344,8 @@ def main() -> int:
             REGGOV_GUIDELINES_READINESS_MD,
             REVIEWER_RISK_REGISTER_CSV,
             REVIEWER_RISK_REGISTER_MD,
+            FINAL_READTHROUGH_EVIDENCE_CSV,
+            FINAL_READTHROUGH_EVIDENCE_MD,
         ])
     )
     failures.extend(check_forbidden_local_artifacts())
@@ -367,6 +375,7 @@ def main() -> int:
     failures.extend(check_policy_claim_language_audit())
     failures.extend(check_final_human_readthrough())
     failures.extend(check_final_human_readthrough_audit())
+    failures.extend(check_final_readthrough_evidence())
     failures.extend(check_submission_readiness_audit())
     failures.extend(check_reviewer_risk_register())
     failures.extend(check_latex_log_audit())
@@ -460,6 +469,8 @@ def check_freshness() -> list[str]:
         (WILEY_SUBMISSION_FORM_READINESS_MD, wiley_submission_form_readiness_inputs()),
         (REGGOV_GUIDELINES_READINESS_CSV, reggov_guidelines_readiness_inputs()),
         (REGGOV_GUIDELINES_READINESS_MD, reggov_guidelines_readiness_inputs()),
+        (FINAL_READTHROUGH_EVIDENCE_CSV, final_readthrough_evidence_inputs()),
+        (FINAL_READTHROUGH_EVIDENCE_MD, final_readthrough_evidence_inputs()),
         (REVIEWER_RISK_REGISTER_CSV, reviewer_risk_register_inputs()),
         (REVIEWER_RISK_REGISTER_MD, reviewer_risk_register_inputs()),
     ]
@@ -680,7 +691,47 @@ def doi_deposit_package_inputs() -> list[Path]:
         REGGOV_GUIDELINES_READINESS_CSV,
         REGGOV_GUIDELINES_READINESS_MD,
         FINAL_HUMAN_READTHROUGH,
+        FINAL_HUMAN_READTHROUGH_AUDIT_CSV,
+        FINAL_HUMAN_READTHROUGH_AUDIT_MD,
+        FINAL_READTHROUGH_EVIDENCE_CSV,
+        FINAL_READTHROUGH_EVIDENCE_MD,
         ROOT / "scripts" / "build-doi-deposit-package.py",
+    ]
+
+
+def final_readthrough_evidence_inputs() -> list[Path]:
+    return [
+        FINAL_HUMAN_READTHROUGH,
+        FINAL_HUMAN_READTHROUGH_AUDIT_CSV,
+        FINAL_HUMAN_READTHROUGH_AUDIT_MD,
+        SUBMISSION_READINESS_CSV,
+        SUBMISSION_READINESS_MD,
+        REVIEWER_RISK_REGISTER_CSV,
+        REVIEWER_RISK_REGISTER_MD,
+        CLAIM_POSTURE_AUDIT_CSV,
+        CLAIM_POSTURE_AUDIT_MD,
+        POLICY_CLAIM_LANGUAGE_AUDIT_CSV,
+        POLICY_CLAIM_LANGUAGE_AUDIT_MD,
+        SOURCE_PANEL_INVENTORY,
+        SOURCE_CAPABILITY_AUDIT_CSV,
+        SOURCE_CAPABILITY_AUDIT_MD,
+        CAUSAL_CALIBRATION_TARGETS_CSV,
+        CAUSAL_CALIBRATION_TARGETS_MD,
+        LATEX_LOG_AUDIT_CSV,
+        LATEX_LOG_AUDIT_MD,
+        ROOT / "reports" / "paper-layout-audit.md",
+        ROOT / "reports" / "manual-visual-audit.md",
+        ARCHIVE_HANDOFF_CSV,
+        ARCHIVE_HANDOFF_JSON,
+        ARCHIVE_HANDOFF_MD,
+        WILEY_SUBMISSION_FORM_READINESS_CSV,
+        WILEY_SUBMISSION_FORM_READINESS_MD,
+        REGGOV_GUIDELINES_READINESS_CSV,
+        REGGOV_GUIDELINES_READINESS_MD,
+        ROOT / "paper" / "sections" / "reggov-body.tex",
+        ROOT / "paper" / "sections" / "submission-declarations.tex",
+        ROOT / "paper" / "references.bib",
+        ROOT / "scripts" / "write-final-readthrough-evidence.py",
     ]
 
 
@@ -3039,6 +3090,54 @@ def check_final_human_readthrough_audit() -> list[str]:
     return failures
 
 
+def check_final_readthrough_evidence() -> list[str]:
+    failures: list[str] = []
+    missing = [
+        path
+        for path in (FINAL_READTHROUGH_EVIDENCE_CSV, FINAL_READTHROUGH_EVIDENCE_MD)
+        if not path.exists()
+    ]
+    if missing:
+        return [f"missing final read-through evidence artifact: {path.relative_to(ROOT)}" for path in missing]
+    with FINAL_READTHROUGH_EVIDENCE_CSV.open(newline="", encoding="utf-8") as source:
+        rows = {
+            row.get("item", ""): row
+            for row in csv.DictReader(source)
+        }
+    overall = rows.get("overall-final-readthrough-evidence", {})
+    if not overall:
+        failures.append("final read-through evidence missing overall row")
+    elif overall.get("status") != "manual_required":
+        failures.append(
+            "final read-through evidence should remain manual_required, not "
+            f"{overall.get('status', '')}"
+        )
+    for index in range(1, 15):
+        item = f"scholarly-readthrough-checklist-{index:02d}"
+        row = rows.get(item)
+        if not row:
+            failures.append(f"final read-through evidence missing item: {item}")
+            continue
+        if row.get("status") == "blocked":
+            failures.append(f"final read-through evidence row is blocked: {item}")
+        if not row.get("evidenceFiles"):
+            failures.append(f"final read-through evidence row lacks evidence files: {item}")
+        if not row.get("remainingHumanAction"):
+            failures.append(f"final read-through evidence row lacks human action: {item}")
+    text = FINAL_READTHROUGH_EVIDENCE_MD.read_text(encoding="utf-8")
+    for phrase in (
+        "Final Read-Through Evidence",
+        "reviewer aid, not a human signoff",
+        "automated_support_present",
+        "external_manual_required",
+        "Human signoff remains controlled by `reports/final-human-readthrough.md`",
+        "scholarly-readthrough-checklist-14",
+    ):
+        if phrase not in text:
+            failures.append(f"final read-through evidence markdown missing phrase: {phrase}")
+    return failures
+
+
 def field_value(text: str, field_name: str) -> str:
     match = re.search(
         rf"^[^\S\n]*{re.escape(field_name)}[^\S\n]*:[^\S\n]*(.*?)[^\S\n]*$",
@@ -3334,6 +3433,8 @@ def check_doi_deposit_package() -> list[str]:
         "readiness/final-human-readthrough.md",
         "readiness/final-human-readthrough-audit.csv",
         "readiness/final-human-readthrough-audit.md",
+        "readiness/final-readthrough-evidence.csv",
+        "readiness/final-readthrough-evidence.md",
     }
     for member in sorted(required_members - set(rows_by_member)):
         failures.append(f"DOI deposit package manifest omits expected member: {member}")

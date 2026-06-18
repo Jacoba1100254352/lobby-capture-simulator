@@ -148,6 +148,16 @@ PACKAGE_INPUTS = [
         "readiness/final-human-readthrough-audit.md",
         "final-human-readthrough-audit",
     ),
+    PackageInput(
+        "reports/final-readthrough-evidence.csv",
+        "readiness/final-readthrough-evidence.csv",
+        "final-readthrough-evidence",
+    ),
+    PackageInput(
+        "reports/final-readthrough-evidence.md",
+        "readiness/final-readthrough-evidence.md",
+        "final-readthrough-evidence",
+    ),
 ]
 
 

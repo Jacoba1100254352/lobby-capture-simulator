@@ -102,13 +102,13 @@
     },
     {
       "archiveNote": "Manual final-submission read-through checklist; remains pending until signed for the release.",
-      "bytes": "5393",
+      "bytes": "5627",
       "checksumStatus": "tracked-source-verified",
       "includeInDoiDeposit": "source-archive",
       "path": "reports/final-human-readthrough.md",
       "releaseAssetName": "",
       "role": "manual-signoff-record",
-      "sha256": "fbd4bc69c49e8c693d8d4f84e32c4d64ac3b3990b7da4e422e68939846ba90a8"
+      "sha256": "ffd126d913197c821414d3e1d667bdc2b3fd026261a7b683f905003c29748e35"
     },
     {
       "archiveNote": "Machine-readable audit of the final human read-through fields and checklist state.",

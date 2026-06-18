@@ -7,7 +7,7 @@ This audit checks generated PDFs for sparse float pages, large whitespace gaps, 
 
 | PDF | Page | Blocks | Chars | Coverage | Largest gap | Float label | Status | Note |
 | --- | ---: | ---: | ---: | ---: | ---: | --- | --- | --- |
-| paper/strategic-channel-substitution-regulatory-capture.pdf | 1 | 41 | 2724 | 0.805 | 0.105 | no | pass | title/front-matter page |
+| paper/strategic-channel-substitution-regulatory-capture.pdf | 1 | 41 | 2723 | 0.805 | 0.105 | no | pass | title/front-matter page |
 | paper/strategic-channel-substitution-regulatory-capture.pdf | 2 | 47 | 3819 | 0.857 | 0.053 | no | pass | layout density acceptable |
 | paper/strategic-channel-substitution-regulatory-capture.pdf | 3 | 43 | 3316 | 0.854 | 0.055 | no | pass | layout density acceptable |
 | paper/strategic-channel-substitution-regulatory-capture.pdf | 4 | 60 | 2783 | 0.854 | 0.075 | yes | pass | layout density acceptable |
@@ -31,7 +31,7 @@ This audit checks generated PDFs for sparse float pages, large whitespace gaps, 
 | paper/strategic-channel-substitution-regulatory-capture.pdf | 22 | 56 | 3641 | 0.854 | 0.055 | no | pass | layout density acceptable |
 | paper/strategic-channel-substitution-regulatory-capture.pdf | 23 | 80 | 3148 | 0.854 | 0.055 | no | pass | references/declarations page |
 | paper/strategic-channel-substitution-regulatory-capture.pdf | 24 | 85 | 3533 | 0.854 | 0.105 | no | pass | references/declarations page |
-| paper/regulation-governance-wiley.pdf | 1 | 25 | 1253 | 0.876 | 0.385 | no | pass | title/front-matter page |
+| paper/regulation-governance-wiley.pdf | 1 | 25 | 1252 | 0.876 | 0.385 | no | pass | title/front-matter page |
 | paper/regulation-governance-wiley.pdf | 2 | 55 | 5196 | 0.943 | 0.044 | no | pass | layout density acceptable |
 | paper/regulation-governance-wiley.pdf | 3 | 54 | 5557 | 0.942 | 0.055 | no | pass | layout density acceptable |
 | paper/regulation-governance-wiley.pdf | 4 | 66 | 3458 | 0.933 | 0.074 | yes | pass | layout density acceptable |

@@ -82,6 +82,8 @@ reports/*.md
 !reports/paper-layout-audit.md
 !reports/manual-visual-audit.md
 !reports/final-human-readthrough.md
+!reports/final-readthrough-evidence.csv
+!reports/final-readthrough-evidence.md
 paper/*.aux
 paper/*.bbl
 paper/*.blg

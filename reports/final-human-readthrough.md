@@ -28,6 +28,8 @@ Leave `status` as `pending` until a human scholarly read-through has checked the
 
 ## Scholarly Read-Through Checklist
 
+Before checking these items, review `reports/final-readthrough-evidence.md`. That generated packet maps each checkbox to current automated evidence and separates mechanical support from remaining editorial, DOI, and archive actions.
+
 - [ ] Abstract states the mechanism-model contribution without implying calibrated policy-effect estimation.
 - [ ] Introduction separates model assumptions, synthetic results, and empirical bridge scope.
 - [ ] Literature positioning explains the regulatory-governance contribution relative to lobbying, capture, venue-shifting, and ABM validation work.
