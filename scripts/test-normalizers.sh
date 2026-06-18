@@ -699,7 +699,7 @@ with ci_csv.open("w", newline="", encoding="utf-8") as target:
         "gate": "release-tag-target",
         "status": "ready",
         "workflow": "local-git",
-        "branchOrTag": "paper-publication-readiness-2026-06-18-r162",
+        "branchOrTag": "paper-publication-readiness-2026-06-18-r163",
         "headSha": "abc123",
         "runId": "",
         "runStatus": "completed",
@@ -725,7 +725,7 @@ with ci_csv.open("w", newline="", encoding="utf-8") as target:
         "gate": "release-tag-ci",
         "status": "ready",
         "workflow": "CI",
-        "branchOrTag": "paper-publication-readiness-2026-06-18-r162",
+        "branchOrTag": "paper-publication-readiness-2026-06-18-r163",
         "headSha": "abc123",
         "runId": "112",
         "runStatus": "completed",
@@ -747,7 +747,7 @@ with ci_csv.open("w", newline="", encoding="utf-8") as target:
         "gate": "release-tag-target",
         "status": "ready",
         "workflow": "local-git",
-        "branchOrTag": "paper-publication-readiness-2026-06-18-r162",
+        "branchOrTag": "paper-publication-readiness-2026-06-18-r163",
         "headSha": "abc123",
         "runId": "",
         "runStatus": "completed",
@@ -779,9 +779,9 @@ mkdir -p "$tmpdir/doi-repo/paper/sections" "$tmpdir/doi-repo/reports"
 cat > "$tmpdir/doi-repo/CITATION.cff" <<'YAML'
 cff-version: 1.2.0
 title: "Lobby Capture Simulator"
-version: "paper-publication-readiness-2026-06-18-r162"
+version: "paper-publication-readiness-2026-06-18-r163"
 repository-code: "https://github.com/Jacoba1100254352/lobby-capture-simulator"
-url: "https://github.com/Jacoba1100254352/lobby-capture-simulator/releases/tag/paper-publication-readiness-2026-06-18-r162"
+url: "https://github.com/Jacoba1100254352/lobby-capture-simulator/releases/tag/paper-publication-readiness-2026-06-18-r163"
 license: MIT
 preferred-citation:
   type: article
@@ -793,7 +793,7 @@ cat > "$tmpdir/doi-repo/.zenodo.json" <<'JSON'
   "upload_type": "software",
   "related_identifiers": [
     {
-      "identifier": "https://github.com/Jacoba1100254352/lobby-capture-simulator/releases/tag/paper-publication-readiness-2026-06-18-r162",
+      "identifier": "https://github.com/Jacoba1100254352/lobby-capture-simulator/releases/tag/paper-publication-readiness-2026-06-18-r163",
       "relation": "isIdenticalTo",
       "resource_type": "software"
     },
@@ -807,7 +807,7 @@ cat > "$tmpdir/doi-repo/.zenodo.json" <<'JSON'
 JSON
 cat > "$tmpdir/doi-repo/paper/sections/submission-declarations.tex" <<'TEX'
 \submissionsection{Data and Code Availability}
-The simulator source is publicly maintained at \url{https://github.com/Jacoba1100254352/lobby-capture-simulator}. The code is released under the MIT License, and this review bundle is associated with \href{https://github.com/Jacoba1100254352/lobby-capture-simulator/releases/tag/paper-publication-readiness-2026-06-18-r162}{release r162}. Report manifests record seed and runtime provenance.
+The simulator source is publicly maintained at \url{https://github.com/Jacoba1100254352/lobby-capture-simulator}. The code is released under the MIT License, and this review bundle is associated with \href{https://github.com/Jacoba1100254352/lobby-capture-simulator/releases/tag/paper-publication-readiness-2026-06-18-r163}{release r163}. Report manifests record seed and runtime provenance.
 TEX
 cat > "$tmpdir/doi-repo/reports/final-human-readthrough.md" <<'MD'
 # Final Human Scholarly Read-Through
@@ -815,7 +815,7 @@ cat > "$tmpdir/doi-repo/reports/final-human-readthrough.md" <<'MD'
 status: pending
 signed-off-by:
 signed-off-date:
-reviewed-release: paper-publication-readiness-2026-06-18-r162
+reviewed-release: paper-publication-readiness-2026-06-18-r163
 reviewed-commit:
 doi-archive:
 MD
@@ -882,6 +882,82 @@ finally:
 assert row["status"] == "ready", row
 assert "DOI=present: 10.5281/zenodo.1234567" in row["evidence"], row
 assert "configuredDOI=10.5281/zenodo.1234567" in row["evidence"], row
+PY
+
+mkdir -p "$tmpdir/readthrough-repo/reports"
+cat > "$tmpdir/readthrough-repo/CITATION.cff" <<'YAML'
+cff-version: 1.2.0
+title: Lobby Capture Simulator
+version: "paper-publication-readiness-2026-06-18-r163"
+YAML
+cp reports/final-human-readthrough.md "$tmpdir/readthrough-repo/reports/final-human-readthrough.md"
+python3 - "$tmpdir/readthrough-repo/reports/final-human-readthrough.md" <<'PY'
+from pathlib import Path
+import re
+import sys
+
+path = Path(sys.argv[1])
+text = path.read_text(encoding="utf-8")
+for key, value in {
+    "status": "pending",
+    "signed-off-by": "",
+    "signed-off-date": "",
+    "reviewed-release": "paper-publication-readiness-2026-06-18-r163",
+    "reviewed-commit": "",
+    "doi-archive": "",
+}.items():
+    text = re.sub(rf"(?m)^{re.escape(key)}:.*$", f"{key}: {value}", text)
+if "## Scholarly Read-Through Checklist" in text:
+    head, tail = text.split("## Scholarly Read-Through Checklist", 1)
+    if "## Reviewer Notes" in tail:
+        checklist, notes = tail.split("## Reviewer Notes", 1)
+        checklist = checklist.replace("- [x] ", "- [ ] ")
+        text = head + "## Scholarly Read-Through Checklist" + checklist + "## Reviewer Notes" + notes
+path.write_text(text, encoding="utf-8")
+PY
+python3 scripts/audit-final-human-readthrough.py --root "$tmpdir/readthrough-repo" >/dev/null
+python3 - "$tmpdir/readthrough-repo/reports/final-human-readthrough-audit.csv" <<'PY'
+import csv
+import sys
+
+with open(sys.argv[1], newline="", encoding="utf-8") as source:
+    rows = {row["item"]: row for row in csv.DictReader(source)}
+overall = rows["overall-final-human-readthrough"]
+assert overall["status"] == "manual_required", overall
+assert "blocked=0" in overall["evidence"], overall
+assert rows["live-author-page-checklist-01"]["status"] == "ready", rows["live-author-page-checklist-01"]
+assert rows["scholarly-readthrough-checklist-01"]["status"] == "manual_required", rows["scholarly-readthrough-checklist-01"]
+PY
+python3 - "$tmpdir/readthrough-repo/reports/final-human-readthrough.md" <<'PY'
+from pathlib import Path
+import re
+import sys
+
+path = Path(sys.argv[1])
+text = path.read_text(encoding="utf-8")
+replacements = {
+    "status": "complete",
+    "signed-off-by": "Test Reviewer",
+    "signed-off-date": "2026-06-18",
+    "reviewed-commit": "abcdef1234567890",
+    "doi-archive": "https://doi.org/10.5281/zenodo.1234567",
+}
+for key, value in replacements.items():
+    text = re.sub(rf"(?m)^{re.escape(key)}:.*$", f"{key}: {value}", text)
+text = text.replace("- [ ] ", "- [x] ")
+path.write_text(text, encoding="utf-8")
+PY
+python3 scripts/audit-final-human-readthrough.py --root "$tmpdir/readthrough-repo" >/dev/null
+python3 - "$tmpdir/readthrough-repo/reports/final-human-readthrough-audit.csv" <<'PY'
+import csv
+import sys
+
+with open(sys.argv[1], newline="", encoding="utf-8") as source:
+    rows = {row["item"]: row for row in csv.DictReader(source)}
+overall = rows["overall-final-human-readthrough"]
+assert overall["status"] == "ready", overall
+assert "checkedChecklistItems=17/17" in overall["evidence"], overall
+assert rows["doi-archive"]["status"] == "ready", rows["doi-archive"]
 PY
 
 python3 scripts/test-source-fetchers.py

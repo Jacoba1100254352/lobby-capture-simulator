@@ -128,6 +128,16 @@ PACKAGE_INPUTS = [
         "readiness/final-human-readthrough.md",
         "manual-final-submission-signoff",
     ),
+    PackageInput(
+        "reports/final-human-readthrough-audit.csv",
+        "readiness/final-human-readthrough-audit.csv",
+        "final-human-readthrough-audit",
+    ),
+    PackageInput(
+        "reports/final-human-readthrough-audit.md",
+        "readiness/final-human-readthrough-audit.md",
+        "final-human-readthrough-audit",
+    ),
 ]
 
 

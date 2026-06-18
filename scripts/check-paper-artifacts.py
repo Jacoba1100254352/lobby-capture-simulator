@@ -106,6 +106,8 @@ SUBMISSION_READINESS_CSV = ROOT / "reports" / "submission-readiness.csv"
 LATEX_LOG_AUDIT_MD = ROOT / "reports" / "latex-log-audit.md"
 LATEX_LOG_AUDIT_CSV = ROOT / "reports" / "latex-log-audit.csv"
 FINAL_HUMAN_READTHROUGH = ROOT / "reports" / "final-human-readthrough.md"
+FINAL_HUMAN_READTHROUGH_AUDIT_CSV = ROOT / "reports" / "final-human-readthrough-audit.csv"
+FINAL_HUMAN_READTHROUGH_AUDIT_MD = ROOT / "reports" / "final-human-readthrough-audit.md"
 ARCHIVE_HANDOFF_CSV = ROOT / "reports" / "archive-handoff-manifest.csv"
 ARCHIVE_HANDOFF_JSON = ROOT / "reports" / "archive-handoff-manifest.json"
 ARCHIVE_HANDOFF_MD = ROOT / "reports" / "archive-handoff-manifest.md"
@@ -127,7 +129,7 @@ DOI_DEPOSIT_PACKAGE_CHECKSUM_CSV = ROOT / "dist" / "doi-deposit-package-checksum
 DOI_DEPOSIT_PACKAGE_CHECKSUM_JSON = ROOT / "dist" / "doi-deposit-package-checksum.json"
 DOI_DEPOSIT_PACKAGE_CHECKSUM_MD = ROOT / "dist" / "doi-deposit-package-checksum.md"
 ZENODO_DEPOSIT_METADATA_JSON = ROOT / "dist" / "zenodo-deposit-metadata.json"
-RELEASE_TAG = "paper-publication-readiness-2026-06-18-r162"
+RELEASE_TAG = "paper-publication-readiness-2026-06-18-r163"
 ARCHIVE_HANDOFF_REPORT_NAMES = {
     "archive-handoff-manifest.csv",
     "archive-handoff-manifest.json",
@@ -275,6 +277,7 @@ EXPECTED_ZIP_MEMBERS = {
     "supporting-information/paper-layout-audit.md",
     "supporting-information/manual-visual-audit.md",
     "supporting-information/final-human-readthrough.md",
+    "supporting-information/final-human-readthrough-audit.md",
     "supporting-information/submission-package-manifest.json",
     "supporting-information/submission-package-manifest.md",
     "supporting-information/CITATION.cff",
@@ -351,6 +354,7 @@ def main() -> int:
     failures.extend(check_validation_scope_coverage())
     failures.extend(check_policy_claim_language_audit())
     failures.extend(check_final_human_readthrough())
+    failures.extend(check_final_human_readthrough_audit())
     failures.extend(check_submission_readiness_audit())
     failures.extend(check_latex_log_audit())
     failures.extend(check_layout_and_visual_reports())
@@ -378,6 +382,25 @@ def main() -> int:
 
 def check_exists(paths: list[Path]) -> list[str]:
     return [f"missing required artifact: {path.relative_to(ROOT)}" for path in paths if not path.exists()]
+
+
+def git_tracked(path: Path) -> bool:
+    try:
+        relative = path.relative_to(ROOT)
+    except ValueError:
+        return False
+    try:
+        result = subprocess.run(
+            ["git", "ls-files", "--error-unmatch", str(relative)],
+            cwd=ROOT,
+            check=False,
+            stdout=subprocess.DEVNULL,
+            stderr=subprocess.DEVNULL,
+            text=True,
+        )
+    except Exception:
+        return False
+    return result.returncode == 0
 
 
 def check_forbidden_local_artifacts() -> list[str]:
@@ -2757,6 +2780,56 @@ def check_final_human_readthrough() -> list[str]:
     return failures
 
 
+def check_final_human_readthrough_audit() -> list[str]:
+    failures: list[str] = []
+    missing = [
+        path
+        for path in (FINAL_HUMAN_READTHROUGH_AUDIT_CSV, FINAL_HUMAN_READTHROUGH_AUDIT_MD)
+        if not path.exists()
+    ]
+    if missing:
+        return [f"missing final human read-through audit artifact: {path.relative_to(ROOT)}" for path in missing]
+    with FINAL_HUMAN_READTHROUGH_AUDIT_CSV.open(newline="", encoding="utf-8") as source:
+        rows = {
+            row.get("item", ""): row
+            for row in csv.DictReader(source)
+        }
+    overall = rows.get("overall-final-human-readthrough", {})
+    if not overall:
+        failures.append("final human read-through audit missing overall row")
+    elif overall.get("status") == "blocked":
+        failures.append(f"final human read-through audit is blocked: {overall.get('evidence', '')}")
+    elif overall.get("status") not in {"manual_required", "ready"}:
+        failures.append(
+            "final human read-through audit has unexpected overall status: "
+            f"{overall.get('status', '')}"
+        )
+    required_items = [
+        "status",
+        "reviewed-release",
+        "venue-target",
+        "author-guidelines-url",
+        "overall-final-human-readthrough",
+    ]
+    required_items.extend(f"scholarly-readthrough-checklist-{index:02d}" for index in range(1, 15))
+    required_items.extend(f"live-author-page-checklist-{index:02d}" for index in range(1, 4))
+    for item in required_items:
+        if item not in rows:
+            failures.append(f"final human read-through audit missing item: {item}")
+    text = FINAL_HUMAN_READTHROUGH_AUDIT_MD.read_text(encoding="utf-8")
+    for phrase in (
+        "Final Human Read-Through Audit",
+        "Manual-required",
+        "overall-final-human-readthrough",
+        "scholarly-readthrough-checklist-14",
+    ):
+        if phrase not in text:
+            failures.append(f"final human read-through audit markdown missing phrase: {phrase}")
+    if "blocked=0" not in overall.get("evidence", ""):
+        failures.append("final human read-through audit overall evidence does not record blocked=0")
+    return failures
+
+
 def field_value(text: str, field_name: str) -> str:
     match = re.search(
         rf"^[^\S\n]*{re.escape(field_name)}[^\S\n]*:[^\S\n]*(.*?)[^\S\n]*$",
@@ -2921,6 +2994,8 @@ def check_archive_handoff_manifest() -> list[str]:
         ".zenodo.json",
         "reports/submission-readiness.md",
         "reports/final-human-readthrough.md",
+        "reports/final-human-readthrough-audit.csv",
+        "reports/final-human-readthrough-audit.md",
     }
     for path in sorted(expected_paths - set(rows_by_path)):
         failures.append(f"archive handoff manifest omits expected path: {path}")
@@ -2953,6 +3028,8 @@ def check_archive_handoff_manifest() -> list[str]:
                 f"archive handoff tracked source {path} has unexpected checksumStatus={checksum_status!r}"
             )
             continue
+        if not git_tracked(source):
+            failures.append(f"archive handoff tracked source {path} is not tracked by git")
         data = source.read_bytes()
         if row.get("sha256") != hashlib.sha256(data).hexdigest():
             failures.append(f"archive handoff checksum mismatch for {path}")
@@ -3042,6 +3119,8 @@ def check_doi_deposit_package() -> list[str]:
         "readiness/reggov-guidelines-readiness.csv",
         "readiness/reggov-guidelines-readiness.md",
         "readiness/final-human-readthrough.md",
+        "readiness/final-human-readthrough-audit.csv",
+        "readiness/final-human-readthrough-audit.md",
     }
     for member in sorted(required_members - set(rows_by_member)):
         failures.append(f"DOI deposit package manifest omits expected member: {member}")
@@ -3290,6 +3369,7 @@ def check_doi_deposit_readiness() -> list[str]:
         "zenodo-preflight",
         "dist/release-asset-checksums",
         "reports/final-human-readthrough.md",
+        "reports/final-human-readthrough-audit.md",
     ]
     for phrase in required_text:
         if phrase not in text:
@@ -3591,6 +3671,7 @@ def package_byte_checks() -> list[tuple[Path, str]]:
         (ROOT / "reports" / "paper-layout-audit.md", "supporting-information/paper-layout-audit.md"),
         (ROOT / "reports" / "manual-visual-audit.md", "supporting-information/manual-visual-audit.md"),
         (FINAL_HUMAN_READTHROUGH, "supporting-information/final-human-readthrough.md"),
+        (FINAL_HUMAN_READTHROUGH_AUDIT_MD, "supporting-information/final-human-readthrough-audit.md"),
         (CITATION_CFF, "supporting-information/CITATION.cff"),
         (ZENODO_JSON, "supporting-information/zenodo.json"),
     ]

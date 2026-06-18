@@ -14,6 +14,7 @@ CITATION_CFF = ROOT / "CITATION.cff"
 ZENODO_JSON = ROOT / ".zenodo.json"
 SUBMISSION_DECLARATIONS = ROOT / "paper" / "sections" / "submission-declarations.tex"
 FINAL_HUMAN_READTHROUGH = REPORTS / "final-human-readthrough.md"
+FINAL_HUMAN_READTHROUGH_AUDIT = REPORTS / "final-human-readthrough-audit.csv"
 REGGOV_AUTHOR_GUIDELINES_URL = "https://onlinelibrary.wiley.com/page/journal/17485991/homepage/forauthors.html"
 DOI_PATTERN = re.compile(r"\b10\.\d{4,9}/[-._;()/:A-Za-z0-9]+\b")
 VERSION_PATTERN = re.compile(r"^version:\s*[\"']?([^\"'\n]+)[\"']?\s*$", re.MULTILINE)
@@ -243,6 +244,21 @@ def release_metadata_present_in_archival_files() -> bool:
 
 
 def final_human_readthrough_state() -> dict[str, str | bool]:
+    audit_rows = keyed_rows(FINAL_HUMAN_READTHROUGH_AUDIT, "item")
+    audit_overall = audit_rows.get("overall-final-human-readthrough", {})
+    if audit_overall:
+        status = audit_overall.get("status", "")
+        evidence = audit_overall.get("evidence", "final human read-through audit present")
+        if status == "ready":
+            return {
+                "complete": True,
+                "evidence": f"complete ({evidence})",
+            }
+        return {
+            "complete": False,
+            "evidence": f"not signed off ({evidence})",
+        }
+
     text = read_text(FINAL_HUMAN_READTHROUGH)
     current_release = current_release_tag()
     if not text:

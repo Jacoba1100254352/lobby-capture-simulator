@@ -27,6 +27,7 @@ CITATION = ROOT / "CITATION.cff"
 ZENODO = ROOT / ".zenodo.json"
 DECLARATIONS = ROOT / "paper" / "sections" / "submission-declarations.tex"
 FINAL_READTHROUGH = REPORTS / "final-human-readthrough.md"
+FINAL_READTHROUGH_AUDIT_CSV = REPORTS / "final-human-readthrough-audit.csv"
 DOI_READINESS_CSV = REPORTS / "doi-deposit-readiness.csv"
 ZENODO_PREFLIGHT_CSV = REPORTS / "zenodo-deposit-preflight.csv"
 ZENODO_DRAFT_CSV = REPORTS / "zenodo-draft-deposit.csv"
@@ -284,6 +285,19 @@ def doi_record_row() -> dict[str, str]:
 
 
 def human_readthrough_row(release_tag: str) -> dict[str, str]:
+    audit_rows = keyed_rows(FINAL_READTHROUGH_AUDIT_CSV, "item")
+    audit_overall = audit_rows.get("overall-final-human-readthrough", {})
+    if audit_overall:
+        audit_status = audit_overall.get("status", "manual_required")
+        status = "ready" if audit_status == "ready" else "blocked" if audit_status == "blocked" else "manual_required"
+        return item(
+            "human-scholarly-readthrough",
+            status,
+            audit_overall.get("evidence", "final human read-through audit present"),
+            audit_overall.get("nextAction", "Complete the human scholarly read-through against the exact release tag before final journal submission."),
+            "journal",
+        )
+
     text = read_text(FINAL_READTHROUGH)
     status = field_value(text, "status") or "missing"
     signer = bool(field_value(text, "signed-off-by"))

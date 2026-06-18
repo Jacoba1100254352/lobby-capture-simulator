@@ -40,6 +40,7 @@ EXPECTED_SUPPORT_MEMBERS = {
     "supporting-information/CITATION.cff",
     "supporting-information/zenodo.json",
     "supporting-information/final-human-readthrough.md",
+    "supporting-information/final-human-readthrough-audit.md",
 }
 EXPECTED_PREFIXES = {
     "figures/",

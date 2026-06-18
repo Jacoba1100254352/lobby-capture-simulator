@@ -21,6 +21,7 @@ ARCHIVE_MANIFEST = REPORTS / "archive-handoff-manifest.json"
 SUBMISSION_READINESS = REPORTS / "submission-readiness.csv"
 REGGOV_GUIDELINES_READINESS = REPORTS / "reggov-guidelines-readiness.csv"
 FINAL_READTHROUGH = REPORTS / "final-human-readthrough.md"
+FINAL_READTHROUGH_AUDIT = REPORTS / "final-human-readthrough-audit.csv"
 CHECKSUM_CSV = DIST / "release-asset-checksums.csv"
 CHECKSUM_JSON = DIST / "release-asset-checksums.json"
 CHECKSUM_MD = DIST / "release-asset-checksums.md"
@@ -60,7 +61,7 @@ def readiness_rows(release_tag: str) -> list[dict[str, str]]:
     reggov = keyed_rows(REGGOV_GUIDELINES_READINESS, "gate")
     final_readthrough = read_text(FINAL_READTHROUGH)
     doi = find_doi()
-    human_signoff = human_readthrough_complete(final_readthrough, release_tag)
+    human_signoff, human_evidence = human_readthrough_state(final_readthrough, release_tag)
     primary_assets = set(manifest.get("primaryReleaseAssets", [])) if isinstance(manifest, dict) else set()
     checksum_assets = {
         row.get("releaseAssetName", "")
@@ -131,7 +132,7 @@ def readiness_rows(release_tag: str) -> list[dict[str, str]]:
         row(
             "human-readthrough",
             "ready" if human_signoff else "manual_required",
-            human_readthrough_evidence(final_readthrough, release_tag),
+            human_evidence,
             "Complete the final human scholarly read-through against the exact release tag before final journal submission.",
         ),
         row(
@@ -188,6 +189,14 @@ def human_readthrough_complete(text: str, release_tag: str) -> bool:
         and bool(field_value(text, "reviewed-commit"))
         and field_value(text, "reviewed-release") == release_tag
     )
+
+
+def human_readthrough_state(text: str, release_tag: str) -> tuple[bool, str]:
+    audit = keyed_rows(FINAL_READTHROUGH_AUDIT, "item")
+    overall = audit.get("overall-final-human-readthrough", {})
+    if overall:
+        return overall.get("status") == "ready", overall.get("evidence", "final human read-through audit present")
+    return human_readthrough_complete(text, release_tag), human_readthrough_evidence(text, release_tag)
 
 
 def human_readthrough_evidence(text: str, release_tag: str) -> str:
@@ -427,7 +436,7 @@ def markdown(release_tag: str, rows: list[dict[str, str]]) -> str:
         lines.append(f"- `{asset}`")
     lines.extend([
         "",
-        "The tagged source archive should also preserve `CITATION.cff`, `.zenodo.json`, `reports/submission-readiness.md`, and `reports/final-human-readthrough.md` so the DOI record remains tied to the release claim boundary.",
+        "The tagged source archive should also preserve `CITATION.cff`, `.zenodo.json`, `reports/submission-readiness.md`, `reports/final-human-readthrough.md`, and `reports/final-human-readthrough-audit.md` so the DOI record remains tied to the release claim boundary and final signoff state.",
         "",
         "## Post-Release Integrity Check",
         "",
