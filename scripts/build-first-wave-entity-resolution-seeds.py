@@ -22,6 +22,9 @@ OUTPUT = ROOT / "data" / "calibration" / "first-wave"
 MAX_ALIAS_ROWS = 80
 MAX_FALSE_MATCH_ROWS = 40
 MAX_LINKED_ROWS = 1500
+MAX_SPINE_ROWS = 1500
+MAX_COMPARISON_ROWS = 80
+SUBSTITUTION_REFORM_EVENT_ID = "hloga-2007-federal-lobbying-disclosure"
 CANDIDATE_MARKER = "candidate_unreviewed_not_estimation_ready"
 CLAIM_BOUNDARY = (
     "candidate-only automated name-overlap seed; not manually adjudicated; "
@@ -42,6 +45,7 @@ def main() -> int:
     records_by_actor: dict[str, list[dict[str, str]]] = defaultdict(list)
     for record in records:
         records_by_actor[record.get("candidateActorId", "")].append(record)
+    linked_rows = linked_actor_issue_rows(candidates, records_by_actor)
 
     output.mkdir(parents=True, exist_ok=True)
     write_csv(
@@ -62,7 +66,15 @@ def main() -> int:
     )
     write_csv(
         output / "linked-actor-issue-venue-time.csv",
-        linked_actor_issue_rows(candidates, records_by_actor),
+        linked_rows,
+    )
+    write_csv(
+        output / "actor-issue-time-spine.csv",
+        actor_issue_time_spine_rows(candidates, linked_rows),
+    )
+    write_csv(
+        output / "substitution-comparison-groups.csv",
+        substitution_comparison_group_rows(candidates, linked_rows),
     )
     for filename in (
         "canonical-actor-identifiers.csv",
@@ -70,6 +82,8 @@ def main() -> int:
         "issue-code-crosswalk.csv",
         "false-match-review-log.csv",
         "linked-actor-issue-venue-time.csv",
+        "actor-issue-time-spine.csv",
+        "substitution-comparison-groups.csv",
     ):
         print(f"Wrote {output / filename}")
     return 0
@@ -255,6 +269,102 @@ def linked_actor_issue_rows(
     return rows
 
 
+def actor_issue_time_spine_rows(
+    candidates: list[dict[str, str]],
+    linked_rows: list[dict[str, str]],
+) -> list[dict[str, str]]:
+    """Create a candidate-only substitution spine from linked venue rows.
+
+    The file uses two review periods so the source-product shape can be audited,
+    but it remains explicitly marked as unreviewed and not estimation-ready.
+    """
+    candidate_by_id = {candidate.get("candidateActorId", ""): candidate for candidate in candidates}
+    rows: list[dict[str, str]] = []
+    periods = (
+        ("candidate-pre-window", "2024-01-01", "2024-06-30"),
+        ("candidate-post-window", "2024-07-01", "2024-12-31"),
+    )
+    for source_row in linked_rows:
+        actor_id = source_row.get("canonicalActorId", "")
+        exposure_group = substitution_exposure_group(candidate_by_id.get(actor_id, {}))
+        amount = half_amount(source_row.get("activityAmount", "") or source_row.get("activityMeasure", ""))
+        for period_label, period_start, period_end in periods:
+            rows.append(
+                {
+                    "canonicalActorId": actor_id,
+                    "issueCode": source_row.get("issueCode", ""),
+                    "periodStart": period_start,
+                    "periodEnd": period_end,
+                    "venue": source_row.get("venue", ""),
+                    "activityType": source_row.get("activityType", ""),
+                    "activityMeasure": amount,
+                    "activityAmount": amount,
+                    "sourceSystem": source_row.get("sourceSystem", ""),
+                    "sourceRecordId": source_row.get("sourceRecordId", ""),
+                    "exposureGroup": exposure_group,
+                    "reformEventId": SUBSTITUTION_REFORM_EVENT_ID,
+                    "activityUnits": "normalized_candidate_activity",
+                    "jurisdiction": source_row.get("jurisdiction", "candidate_unreviewed"),
+                    "matchConfidence": source_row.get("matchConfidence", "0.3500"),
+                    "candidateOnly": "true",
+                    "candidateStatus": CANDIDATE_MARKER,
+                    "notes": (
+                        f"{CLAIM_BOUNDARY}; {period_label} periodization is a review scaffold, "
+                        "not observed pre/post substitution evidence"
+                    ),
+                }
+            )
+            if len(rows) >= MAX_SPINE_ROWS:
+                return rows
+    return rows
+
+
+def substitution_comparison_group_rows(
+    candidates: list[dict[str, str]],
+    linked_rows: list[dict[str, str]],
+) -> list[dict[str, str]]:
+    issues_by_actor: dict[str, set[str]] = defaultdict(set)
+    for row in linked_rows:
+        actor_id = row.get("canonicalActorId", "")
+        issue = row.get("issueCode", "")
+        if actor_id and issue:
+            issues_by_actor[actor_id].add(issue)
+
+    rows: list[dict[str, str]] = []
+    for candidate in candidates:
+        actor_id = candidate.get("candidateActorId", "")
+        issues = sorted(issues_by_actor.get(actor_id) or {"candidate-uncoded"})
+        for issue in issues[:2]:
+            rows.append(
+                {
+                    "reformEventId": SUBSTITUTION_REFORM_EVENT_ID,
+                    "canonicalActorId": actor_id,
+                    "issueCode": issue,
+                    "comparisonGroup": substitution_exposure_group(candidate),
+                    "matchingVariables": (
+                        "candidate sourceSystems="
+                        f"{candidate.get('sourceSystems', '')}; venues={candidate.get('venues', '')}; "
+                        "matchRule=normalized-name-exact; manualReviewRequired=true"
+                    ),
+                    "prePeriodStart": "2006-01-01",
+                    "prePeriodEnd": "2007-09-13",
+                    "postPeriodStart": "2007-09-14",
+                    "postPeriodEnd": "2008-12-31",
+                    "matchScore": "0.3500",
+                    "exclusionReason": "candidate_unreviewed",
+                    "candidateOnly": "true",
+                    "candidateStatus": CANDIDATE_MARKER,
+                    "notes": (
+                        f"{CLAIM_BOUNDARY}; HLOGA windows are encoded for design review only; "
+                        "the 2024 candidate snapshot does not supply observed pre/post rows"
+                    ),
+                }
+            )
+            if len(rows) >= MAX_COMPARISON_ROWS:
+                return rows
+    return rows
+
+
 def sort_key(candidate: dict[str, str]) -> tuple[int, int, float, str]:
     return (
         -int_or_zero(candidate.get("venueCount", "")),
@@ -275,6 +385,17 @@ def infer_actor_type(candidate: dict[str, str]) -> str:
     if "electoral_money" in venues:
         return "political_spender_or_recipient_candidate"
     return "organization_candidate"
+
+
+def substitution_exposure_group(candidate: dict[str, str]) -> str:
+    venues = set(split_semicolon(candidate.get("venues", "")))
+    if {"visible_lobbying", "revolving_door"} & venues:
+        return "exposed_candidate_unreviewed"
+    return "comparison_candidate_unreviewed"
+
+
+def half_amount(value: str) -> str:
+    return format_float(float_or_zero(value) / 2.0)
 
 
 def source_ids(records: list[dict[str, str]], source_system: str) -> str:
@@ -342,6 +463,10 @@ def float_or_zero(value: str) -> float:
         return float(str(value or "0").replace(",", ""))
     except ValueError:
         return 0.0
+
+
+def format_float(value: float) -> str:
+    return f"{value:.4f}"
 
 
 def write_csv(path: Path, rows: list[dict[str, str]]) -> None:

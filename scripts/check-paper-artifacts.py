@@ -73,6 +73,8 @@ FIRST_WAVE_SOURCE_TEMPLATE_MANIFEST_MD = FIRST_WAVE_SOURCE_TEMPLATE_DIR / "manif
 FIRST_WAVE_SOURCE_TEMPLATE_README = FIRST_WAVE_SOURCE_TEMPLATE_DIR / "README.md"
 FIRST_WAVE_SOURCE_PRODUCT_DIR = ROOT / "data" / "calibration" / "first-wave"
 FIRST_WAVE_CANDIDATE_SEED_PRODUCTS = {
+    "actor-issue-time-spine": FIRST_WAVE_SOURCE_PRODUCT_DIR / "actor-issue-time-spine.csv",
+    "substitution-comparison-groups": FIRST_WAVE_SOURCE_PRODUCT_DIR / "substitution-comparison-groups.csv",
     "canonical-actor-identifiers": FIRST_WAVE_SOURCE_PRODUCT_DIR / "canonical-actor-identifiers.csv",
     "alias-resolution-audit-sample": FIRST_WAVE_SOURCE_PRODUCT_DIR / "alias-resolution-audit-sample.csv",
     "issue-code-crosswalk": FIRST_WAVE_SOURCE_PRODUCT_DIR / "issue-code-crosswalk.csv",
@@ -121,7 +123,7 @@ DOI_DEPOSIT_PACKAGE_CHECKSUM_CSV = ROOT / "dist" / "doi-deposit-package-checksum
 DOI_DEPOSIT_PACKAGE_CHECKSUM_JSON = ROOT / "dist" / "doi-deposit-package-checksum.json"
 DOI_DEPOSIT_PACKAGE_CHECKSUM_MD = ROOT / "dist" / "doi-deposit-package-checksum.md"
 ZENODO_DEPOSIT_METADATA_JSON = ROOT / "dist" / "zenodo-deposit-metadata.json"
-RELEASE_TAG = "paper-publication-readiness-2026-06-18-r153"
+RELEASE_TAG = "paper-publication-readiness-2026-06-18-r154"
 ARCHIVE_HANDOFF_REPORT_NAMES = {
     "archive-handoff-manifest.csv",
     "archive-handoff-manifest.json",
@@ -2095,10 +2097,12 @@ def check_first_wave_source_products() -> list[str]:
         product_text = FIRST_WAVE_SOURCE_PRODUCTS_MD.read_text(encoding="utf-8")
         for phrase in (
             "Schema/text ready products: `4`",
-            "Candidate-only unreviewed products: `5`",
+            "Candidate-only unreviewed products: `7`",
             "named reform-shock event file",
             "Use the committed reform-shock row",
             "do not treat this event row as substitution evidence",
+            "canonical actor-issue-time spine across at least three venues",
+            "pre/post comparison groups for exposed and unaffected actors or jurisdictions",
             "meeting-log or contact-register panel, or explicit missing-channel design note",
             "Text source product contains the required missing-channel design terms",
             "comment-body corpus",
@@ -2310,8 +2314,9 @@ def check_first_wave_source_readiness() -> list[str]:
         "Policy-simulation status: `not_cleared`",
         "Source-product schema gate",
         "ready=2",
+        "candidateOnly=2",
         "candidateOnly=5",
-        "Use the committed reform-shock event file",
+        "Manually adjudicate the candidate actor-issue-time spine and comparison groups",
         "first-wave ready products=comment-body corpus; duplicate/template cluster assignments",
         "agency-response uptake links and final-rule text movement remain absent",
         "Use the committed Regulations.gov comment corpus",

@@ -113,8 +113,8 @@ def readiness_row(
             row["currentSourceProducts"],
             "first-wave ready products=" + "; ".join(ready_labels),
         )
-    row["nextAction"] = product_aware_next_action(target, row["nextAction"], ready_labels)
-    row["blockingIssue"] = product_aware_blocking_issue(target, row["blockingIssue"], ready_labels)
+    row["nextAction"] = product_aware_next_action(target, row["nextAction"], ready_labels, product_gate)
+    row["blockingIssue"] = product_aware_blocking_issue(target, row["blockingIssue"], ready_labels, product_gate)
     if product_gate["missingProducts"]:
         row["missingSourceProducts"] = product_gate["missingProducts"]
     return {
@@ -193,8 +193,19 @@ def append_text(base: str, addition: str) -> str:
     return f"{base}; {addition}"
 
 
-def product_aware_next_action(target: str, default: str, ready_labels: list[str]) -> str:
+def product_aware_next_action(
+    target: str,
+    default: str,
+    ready_labels: list[str],
+    product_gate: dict[str, str],
+) -> str:
     ready = set(ready_labels)
+    if target == "substitution-elasticity" and product_gate.get("sourceProductGate") == "candidate_only_blocked":
+        return (
+            "Manually adjudicate the candidate actor-issue-time spine and comparison groups, "
+            "verify aliases and issue comparability, and replace candidate exposure labels with reviewed "
+            "treated and comparison assignments before inspecting outcome movement."
+        )
     if target == "substitution-elasticity" and "named reform-shock event file" in ready:
         return (
             "Use the committed reform-shock event file and meeting/contact missing-channel note, "
@@ -213,8 +224,18 @@ def product_aware_next_action(target: str, default: str, ready_labels: list[str]
     return default
 
 
-def product_aware_blocking_issue(target: str, default: str, ready_labels: list[str]) -> str:
+def product_aware_blocking_issue(
+    target: str,
+    default: str,
+    ready_labels: list[str],
+    product_gate: dict[str, str],
+) -> str:
     ready = set(ready_labels)
+    if target == "substitution-elasticity" and product_gate.get("sourceProductGate") == "candidate_only_blocked":
+        return (
+            "Candidate actor-issue-time and comparison-group files are committed, but aliases, issue "
+            "comparability, exposure groups, and pre/post windows are not manually adjudicated."
+        )
     if target == "comment-authenticity-and-uptake-effect" and {
         "comment-body corpus",
         "duplicate/template cluster assignments",
