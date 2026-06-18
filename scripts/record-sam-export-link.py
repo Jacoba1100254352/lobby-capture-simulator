@@ -10,6 +10,7 @@ from __future__ import annotations
 
 import argparse
 from datetime import datetime, timedelta, timezone
+from email.utils import parsedate_to_datetime
 import re
 import sys
 from pathlib import Path
@@ -20,6 +21,7 @@ ROOT = Path(__file__).resolve().parents[1]
 DEFAULT_ENV = ROOT / ".env"
 EXPORT_URL_RE = re.compile(r"https://api\.sam\.gov/contract-awards/v1/download\?[^\s)>\]]+")
 VALID_MINUTES_RE = re.compile(r"valid\s+for\s+(\d+)\s+minutes?", re.IGNORECASE)
+EMAIL_DATE_RE = re.compile(r"^Date:\s*(.+)$", re.IGNORECASE | re.MULTILINE)
 TRACKED_KEYS = [
     "SAM_CONTRACT_AWARDS_LIVE_CSV",
     "SAM_CONTRACT_AWARDS_LIVE_URL",
@@ -34,7 +36,10 @@ def main() -> int:
     parser.add_argument("--env", type=Path, default=DEFAULT_ENV, help="Environment file to update.")
     parser.add_argument("--url", help="SAM.gov Contract Awards download URL.")
     parser.add_argument("--input", type=Path, help="File containing the SAM.gov email or URL. Use '-' for stdin.")
-    parser.add_argument("--generated-at", help="UTC ISO timestamp for when the export URL was generated.")
+    parser.add_argument(
+        "--generated-at",
+        help="UTC ISO timestamp for when the export URL was generated. Overrides any email Date header.",
+    )
     parser.add_argument("--expires-at", help="UTC ISO timestamp for when the export URL expires.")
     parser.add_argument("--valid-minutes", type=int, help="Token validity window in minutes.")
     parser.add_argument(
@@ -52,7 +57,7 @@ def main() -> int:
 
     normalized_url = normalize_download_url(raw_url)
     valid_minutes = args.valid_minutes or extract_valid_minutes(source_text) or 60
-    generated_at = parse_timestamp(args.generated_at) if args.generated_at else utc_now()
+    generated_at = parse_timestamp(args.generated_at) if args.generated_at else extract_email_date(source_text) or utc_now()
     expires_at = parse_timestamp(args.expires_at) if args.expires_at else generated_at + timedelta(minutes=valid_minutes)
 
     updates = {
@@ -95,6 +100,19 @@ def extract_valid_minutes(text: str) -> int:
     if not match:
         return 0
     return int(match.group(1))
+
+
+def extract_email_date(text: str) -> datetime | None:
+    match = EMAIL_DATE_RE.search(text)
+    if not match:
+        return None
+    try:
+        parsed = parsedate_to_datetime(match.group(1).strip())
+    except (TypeError, ValueError, IndexError):
+        return None
+    if parsed.tzinfo is None:
+        parsed = parsed.replace(tzinfo=timezone.utc)
+    return parsed.astimezone(timezone.utc).replace(microsecond=0)
 
 
 def normalize_download_url(raw_url: str) -> str:

@@ -90,6 +90,28 @@ if grep -q 'email-token' "$tmpdir/sam-email.out"; then
   echo "SAM export link recorder leaked an email token in dry-run output." >&2
   exit 1
 fi
+cat > "$tmpdir/sam-email-date.txt" <<'TXT'
+Date: Thu, 18 Jun 2026 01:05:45 -0400
+
+Dear user,
+
+Your file has been successfully generated and uploaded.
+
+You can download it using the link below (valid for 60 minutes):
+
+https://api.sam.gov/contract-awards/v1/download?api_key=REPLACE_WITH_API_KEY&token=email-date-token
+TXT
+python3 scripts/record-sam-export-link.py \
+  --dry-run \
+  --env "$tmpdir/sam-link.env" \
+  --input "$tmpdir/sam-email-date.txt" >"$tmpdir/sam-email-date.out"
+grep -q 'SAM_CONTRACT_AWARDS_LIVE_URL_GENERATED_AT=2026-06-18T05:05:45Z' "$tmpdir/sam-email-date.out"
+grep -q 'SAM_CONTRACT_AWARDS_LIVE_URL_EXPIRES_AT=2026-06-18T06:05:45Z' "$tmpdir/sam-email-date.out"
+grep -q 'token=REDACTED' "$tmpdir/sam-email-date.out"
+if grep -q 'email-date-token' "$tmpdir/sam-email-date.out"; then
+  echo "SAM export link recorder leaked an email-date token in dry-run output." >&2
+  exit 1
+fi
 
 python3 scripts/normalize-calibration.py lda data/fixtures/normalized-lda-lobbying.csv "$tmpdir/lda.csv" >/dev/null
 python3 scripts/normalize-calibration.py fec data/fixtures/normalized-fec-campaign-finance.csv "$tmpdir/fec.csv" >/dev/null
