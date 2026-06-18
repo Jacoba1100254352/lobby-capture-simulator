@@ -45,6 +45,9 @@ DOI_PATTERN = re.compile(r"\b10\.\d{4,9}/[-._;()/:A-Za-z0-9]+\b")
 DEFAULT_API_BASE = "https://sandbox.zenodo.org/api"
 PRODUCTION_API_BASE = "https://zenodo.org/api"
 ZENODO_DEVELOPERS_URL = "https://developers.zenodo.org/"
+GENERIC_TOKEN_ENV_NAMES = ("ZENODO_ACCESS_TOKEN", "ZENODO_API_TOKEN", "ZENODO_TOKEN")
+SANDBOX_TOKEN_ENV_NAMES = ("ZENODO_SANDBOX_TOKEN",)
+PRODUCTION_TOKEN_ENV_NAMES = ("ZENODO_PRODUCTION_TOKEN",)
 
 
 def main() -> int:
@@ -120,7 +123,7 @@ def preflight_rows(metadata_payload: dict[str, Any]) -> list[dict[str, str]]:
     release_tag = release_tag_from_citation()
     metadata = metadata_payload.get("metadata", {})
     api_base = zenodo_api_base()
-    token_present = bool(os.environ.get("ZENODO_ACCESS_TOKEN") or os.environ.get("ZENODO_API_TOKEN"))
+    token_name, token_present = zenodo_token_status(api_base)
     package_ready, package_evidence = doi_package_ready()
     manifest_ready, manifest_evidence = archive_manifest_ready(release_tag)
     submission_ready, submission_evidence = submission_boundary_ready()
@@ -148,8 +151,8 @@ def preflight_rows(metadata_payload: dict[str, Any]) -> list[dict[str, str]]:
         row(
             "token",
             "manual_required" if not token_present else "ready",
-            "ZENODO_ACCESS_TOKEN=" + ("present" if token_present else "missing"),
-            "Set ZENODO_ACCESS_TOKEN in .env only when creating an unpublished draft deposit.",
+            f"tokenVariable={token_name or 'missing'}; token={'present' if token_present else 'missing'}",
+            "Set ZENODO_ACCESS_TOKEN, ZENODO_API_TOKEN, ZENODO_TOKEN, or the target-specific sandbox/production token in .env before creating an unpublished draft.",
         ),
         row(
             "doi-package",
@@ -190,9 +193,13 @@ def create_or_update_draft(
     *,
     upload_package: bool,
 ) -> tuple[list[dict[str, str]], dict[str, Any]]:
-    token = os.environ.get("ZENODO_ACCESS_TOKEN") or os.environ.get("ZENODO_API_TOKEN")
+    token_name, token = zenodo_token()
     if not token:
-        raise SystemExit("ZENODO_ACCESS_TOKEN is required for --create-draft")
+        raise SystemExit(
+            "A Zenodo token is required for --create-draft. "
+            "Set ZENODO_ACCESS_TOKEN, ZENODO_API_TOKEN, ZENODO_TOKEN, "
+            "ZENODO_SANDBOX_TOKEN, or ZENODO_PRODUCTION_TOKEN in .env."
+        )
     api_base = zenodo_api_base()
     draft_id = os.environ.get("ZENODO_DEPOSIT_ID", "").strip()
     rows: list[dict[str, str]] = []
@@ -203,11 +210,11 @@ def create_or_update_draft(
             f"{api_base}/deposit/depositions/{urllib.parse.quote(draft_id)}",
             token=token,
         )
-        rows.append(row("load-draft", "ready", f"draft id={draft_id}", "Update metadata on the existing unpublished draft."))
+        rows.append(row("load-draft", "ready", f"draft id={draft_id}; tokenVariable={token_name}", "Update metadata on the existing unpublished draft."))
     else:
         response = request_json("POST", f"{api_base}/deposit/depositions", token=token, payload={})
         draft_id = str(response.get("id", ""))
-        rows.append(row("create-draft", "ready" if draft_id else "blocked", f"draft id={draft_id or 'missing'}", "Review the unpublished draft in Zenodo."))
+        rows.append(row("create-draft", "ready" if draft_id else "blocked", f"draft id={draft_id or 'missing'}; tokenVariable={token_name}", "Review the unpublished draft in Zenodo."))
     response = request_json(
         "PUT",
         f"{api_base}/deposit/depositions/{urllib.parse.quote(draft_id)}",
@@ -319,6 +326,26 @@ def zenodo_api_base() -> str:
     if truthy(os.environ.get("ZENODO_USE_PRODUCTION", "")):
         return PRODUCTION_API_BASE
     return DEFAULT_API_BASE
+
+
+def zenodo_token_status(api_base: str | None = None) -> tuple[str, bool]:
+    name, token = zenodo_token(api_base)
+    return name, bool(token)
+
+
+def zenodo_token(api_base: str | None = None) -> tuple[str, str]:
+    base = (api_base or zenodo_api_base()).rstrip("/")
+    names: list[str] = []
+    if base == DEFAULT_API_BASE:
+        names.extend(SANDBOX_TOKEN_ENV_NAMES)
+    elif base == PRODUCTION_API_BASE:
+        names.extend(PRODUCTION_TOKEN_ENV_NAMES)
+    names.extend(GENERIC_TOKEN_ENV_NAMES)
+    for name in names:
+        value = os.environ.get(name, "").strip()
+        if value:
+            return name, value
+    return "", ""
 
 
 def doi_package_ready() -> tuple[bool, str]:
@@ -466,7 +493,7 @@ def preflight_markdown(metadata_payload: dict[str, Any], rows: list[dict[str, st
             "",
             "## Networked Draft Workflow",
             "",
-            "The safe default target only writes local metadata and this preflight report. To create an unpublished Zenodo draft, set `ZENODO_ACCESS_TOKEN` in `.env` and run `make zenodo-deposit-draft`. To upload the DOI deposit package to that unpublished draft, run `make zenodo-deposit-upload`. This workflow does not publish the Zenodo record.",
+            "The safe default target only writes local metadata and this preflight report. To create an unpublished Zenodo draft, set `ZENODO_ACCESS_TOKEN`, `ZENODO_API_TOKEN`, `ZENODO_TOKEN`, `ZENODO_SANDBOX_TOKEN`, or `ZENODO_PRODUCTION_TOKEN` in `.env` and run `make zenodo-deposit-draft`. To upload the DOI deposit package to that unpublished draft, run `make zenodo-deposit-upload`. This workflow does not publish the Zenodo record.",
             "",
         ]
     )

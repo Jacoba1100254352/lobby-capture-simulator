@@ -885,6 +885,54 @@ assert "DOI=present: 10.5281/zenodo.1234567" in row["evidence"], row
 assert "configuredDOI=10.5281/zenodo.1234567" in row["evidence"], row
 PY
 
+python3 <<'PY'
+import importlib.util
+import os
+from pathlib import Path
+
+def load(name: str, path: str):
+    spec = importlib.util.spec_from_file_location(name, Path(path))
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    return module
+
+prepare = load("prepare_zenodo", "scripts/prepare-zenodo-deposit.py")
+external = load("external_checklist", "scripts/write-external-finalization-checklist.py")
+keys = [
+    "ZENODO_ACCESS_TOKEN",
+    "ZENODO_API_TOKEN",
+    "ZENODO_TOKEN",
+    "ZENODO_SANDBOX_TOKEN",
+    "ZENODO_PRODUCTION_TOKEN",
+    "ZENODO_API_BASE",
+    "ZENODO_USE_PRODUCTION",
+]
+old = {key: os.environ.get(key) for key in keys}
+try:
+    for key in keys:
+        os.environ.pop(key, None)
+    os.environ["ZENODO_API_BASE"] = "https://sandbox.zenodo.org/api"
+    os.environ["ZENODO_SANDBOX_TOKEN"] = "sandbox-token"
+    assert prepare.zenodo_token() == ("ZENODO_SANDBOX_TOKEN", "sandbox-token")
+    assert external.zenodo_token_status() == ("ZENODO_SANDBOX_TOKEN", True)
+
+    os.environ.pop("ZENODO_SANDBOX_TOKEN", None)
+    os.environ["ZENODO_TOKEN"] = "generic-token"
+    assert prepare.zenodo_token() == ("ZENODO_TOKEN", "generic-token")
+    assert external.zenodo_token_status() == ("ZENODO_TOKEN", True)
+
+    os.environ["ZENODO_API_BASE"] = "https://zenodo.org/api"
+    os.environ["ZENODO_PRODUCTION_TOKEN"] = "production-token"
+    assert prepare.zenodo_token() == ("ZENODO_PRODUCTION_TOKEN", "production-token")
+    assert external.zenodo_token_status() == ("ZENODO_PRODUCTION_TOKEN", True)
+finally:
+    for key in keys:
+        if old[key] is None:
+            os.environ.pop(key, None)
+        else:
+            os.environ[key] = old[key]
+PY
+
 mkdir -p "$tmpdir/readthrough-repo/reports"
 cat > "$tmpdir/readthrough-repo/CITATION.cff" <<'YAML'
 cff-version: 1.2.0

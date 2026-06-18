@@ -42,6 +42,9 @@ OUT_CSV = REPORTS / "external-finalization-checklist.csv"
 OUT_MD = REPORTS / "external-finalization-checklist.md"
 VERSION_PATTERN = re.compile(r"^version:\s*[\"']?([^\"'\n]+)[\"']?\s*$", re.MULTILINE)
 DOI_PATTERN = re.compile(r"\b10\.\d{4,9}/[-._;()/:A-Za-z0-9]+\b")
+GENERIC_ZENODO_TOKEN_ENV_NAMES = ("ZENODO_ACCESS_TOKEN", "ZENODO_API_TOKEN", "ZENODO_TOKEN")
+SANDBOX_ZENODO_TOKEN_ENV_NAMES = ("ZENODO_SANDBOX_TOKEN",)
+PRODUCTION_ZENODO_TOKEN_ENV_NAMES = ("ZENODO_PRODUCTION_TOKEN",)
 SECRET_QUERY_KEYS = {"api_key", "access_token", "token", "key"}
 
 
@@ -195,12 +198,12 @@ def zenodo_target_row() -> dict[str, str]:
 
 
 def zenodo_token_row() -> dict[str, str]:
-    token_present = bool(env("ZENODO_ACCESS_TOKEN") or env("ZENODO_API_TOKEN"))
+    token_name, token_present = zenodo_token_status()
     return item(
         "zenodo-token",
         "ready" if token_present else "manual_required",
-        "ZENODO_ACCESS_TOKEN=" + ("present" if token_present else "missing"),
-        "Set ZENODO_ACCESS_TOKEN in .env before running make zenodo-deposit-draft or make zenodo-deposit-upload.",
+        f"tokenVariable={token_name or 'missing'}; token={'present' if token_present else 'missing'}",
+        "Set ZENODO_ACCESS_TOKEN, ZENODO_API_TOKEN, ZENODO_TOKEN, or the target-specific sandbox/production token in .env before running make zenodo-deposit-draft or make zenodo-deposit-upload.",
         "doi",
     )
 
@@ -672,6 +675,20 @@ def field_value(text: str, field_name: str) -> str:
 
 def env(key: str) -> str:
     return os.environ.get(key, "").strip()
+
+
+def zenodo_token_status() -> tuple[str, bool]:
+    api_base = env("ZENODO_API_BASE") or ("https://zenodo.org/api" if truthy(env("ZENODO_USE_PRODUCTION")) else "https://sandbox.zenodo.org/api")
+    names: list[str] = []
+    if api_base.rstrip("/") == "https://sandbox.zenodo.org/api":
+        names.extend(SANDBOX_ZENODO_TOKEN_ENV_NAMES)
+    elif api_base.rstrip("/") == "https://zenodo.org/api":
+        names.extend(PRODUCTION_ZENODO_TOKEN_ENV_NAMES)
+    names.extend(GENERIC_ZENODO_TOKEN_ENV_NAMES)
+    for name in names:
+        if env(name):
+            return name, True
+    return "", False
 
 
 def truthy(value: str) -> bool:
