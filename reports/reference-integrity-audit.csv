@@ -1,0 +1,51 @@
+auditKey,subject,status,detail
+citation-key-summary,all-citations,ready,citedKeys=38; bibliographyEntries=38; missing=0; unused=0
+entry-required-fields,acusMassComments2021,ready,type=misc; cited=yes
+entry-required-fields,ansolabehere2003littleMoney,ready,type=article; cited=yes
+entry-required-fields,balla1998administrative,ready,type=article; cited=yes
+entry-required-fields,baumgartner2009lobbying,ready,type=book; cited=yes
+entry-required-fields,baumgartnerJones1993,ready,type=book; cited=yes
+entry-required-fields,bertrand2014whom,ready,type=article; cited=yes
+entry-required-fields,black2008polycentric,ready,type=article; cited=yes
+entry-required-fields,brennanDarkMoney2025,ready,type=misc; cited=yes
+entry-required-fields,carpenterMoss2014,ready,type=book; cited=yes
+entry-required-fields,dalbo2006capture,ready,type=article; cited=yes
+entry-required-fields,deFigueiredoRichter2014,ready,type=article; cited=yes
+entry-required-fields,epstein1999generative,ready,type=article; cited=yes
+entry-required-fields,fecData,ready,type=misc; cited=yes
+entry-required-fields,federalRegisterApi,ready,type=misc; cited=yes
+entry-required-fields,golden1998rulemaking,ready,type=article; cited=yes
+entry-required-fields,gordonHafer2005,ready,type=article; cited=yes
+entry-required-fields,grimm2010odd,ready,type=article; cited=yes
+entry-doi,grossmanHelpman1994,advisory,peer-reviewed article has no DOI field recorded
+entry-required-fields,grossmanHelpman1994,ready,type=article; cited=yes
+entry-required-fields,hallDeardorff2006,ready,type=article; cited=yes
+entry-required-fields,hloga2007,ready,type=misc; cited=yes
+entry-required-fields,irsEoBmf,ready,type=misc; cited=yes
+entry-required-fields,kallaBroockman2016,ready,type=article; cited=yes
+entry-required-fields,lapiraThomas2017,ready,type=book; cited=yes
+entry-required-fields,ldaData,ready,type=misc; cited=yes
+entry-required-fields,leviFaur2011regulation,ready,type=incollection; cited=yes
+entry-required-fields,mccubbins1987administrative,ready,type=article; cited=yes
+entry-required-fields,naughton2009commenter,ready,type=article; cited=yes
+entry-required-fields,nyagFakeComments2021,ready,type=misc; cited=yes
+entry-required-fields,nycCfbData,ready,type=misc; cited=yes
+entry-required-fields,oecdLobbying2021,ready,type=misc; cited=yes
+entry-required-fields,pralle2003venue,ready,type=article; cited=yes
+entry-required-fields,regulationsGovApi,ready,type=misc; cited=yes
+entry-required-fields,seattleVouchers,ready,type=misc; cited=yes
+entry-required-fields,stigler1971economicRegulation,ready,type=article; cited=yes
+entry-required-fields,usaspending,ready,type=misc; cited=yes
+entry-required-fields,west2004formal,ready,type=article; cited=yes
+entry-doi,windrum2007empirical,advisory,peer-reviewed article has no DOI field recorded
+entry-required-fields,windrum2007empirical,ready,type=article; cited=yes
+entry-required-fields,yackeeYackee2006,ready,type=article; cited=yes
+placeholder-summary,references.bib,ready,placeholderHits=0
+source-metadata,fecData,ready,accessedNote=yes; url=yes
+source-metadata,federalRegisterApi,ready,accessedNote=yes; url=yes
+source-metadata,irsEoBmf,ready,accessedNote=yes; url=yes
+source-metadata,ldaData,ready,accessedNote=yes; url=yes
+source-metadata,nycCfbData,ready,accessedNote=yes; url=yes
+source-metadata,regulationsGovApi,ready,accessedNote=yes; url=yes
+source-metadata,seattleVouchers,ready,accessedNote=yes; url=yes
+source-metadata,usaspending,ready,accessedNote=yes; url=yes

@@ -159,6 +159,16 @@ PACKAGE_INPUTS = [
         "literature-positioning-audit",
     ),
     PackageInput(
+        "reports/reference-integrity-audit.csv",
+        "readiness/reference-integrity-audit.csv",
+        "reference-integrity-audit",
+    ),
+    PackageInput(
+        "reports/reference-integrity-audit.md",
+        "readiness/reference-integrity-audit.md",
+        "reference-integrity-audit",
+    ),
+    PackageInput(
         "reports/final-readthrough-evidence.csv",
         "readiness/final-readthrough-evidence.csv",
         "final-readthrough-evidence",

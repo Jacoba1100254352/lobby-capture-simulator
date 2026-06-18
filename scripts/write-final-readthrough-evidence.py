@@ -279,12 +279,20 @@ def references_row() -> dict[str, str]:
     bad_phrases = ["planned validation", "TODO", "FIXME"]
     hits = [phrase for phrase in bad_phrases if phrase.lower() in references.lower() or phrase.lower() in body.lower()]
     latex_pass = all(row.get("status") == "pass" for row in read_csv(REPORTS / "latex-log-audit.csv"))
-    status = "automated_support_present" if not hits and latex_pass else "manual_review_required"
+    audit_rows = read_csv(REPORTS / "reference-integrity-audit.csv")
+    blocked = sum(1 for row in audit_rows if row.get("status") == "blocked")
+    advisory = sum(1 for row in audit_rows if row.get("status") == "advisory")
+    ready = sum(1 for row in audit_rows if row.get("status") == "ready")
+    status = "automated_support_present" if not hits and latex_pass and audit_rows and blocked == 0 else "manual_review_required"
     return evidence_row(
         EXPECTED_ITEMS[11],
         status,
-        f"placeholderPhrases={'; '.join(hits) or 'none'}; latexLogsPass={'yes' if latex_pass else 'no'}",
-        "paper/references.bib; reports/latex-log-audit.md",
+        (
+            f"placeholderPhrases={'; '.join(hits) or 'none'}; "
+            f"latexLogsPass={'yes' if latex_pass else 'no'}; "
+            f"referenceAuditReady={ready}; referenceAuditAdvisory={advisory}; referenceAuditBlocked={blocked}"
+        ),
+        "paper/references.bib; reports/reference-integrity-audit.md; reports/latex-log-audit.md",
         "Perform a human bibliography adequacy check for venue fit and scholarly completeness.",
     )
 

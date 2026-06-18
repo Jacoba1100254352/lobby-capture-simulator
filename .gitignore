@@ -70,6 +70,8 @@ reports/*.md
 !reports/policy-claim-language-audit.md
 !reports/literature-positioning-audit.csv
 !reports/literature-positioning-audit.md
+!reports/reference-integrity-audit.csv
+!reports/reference-integrity-audit.md
 !reports/archive-handoff-manifest.csv
 !reports/archive-handoff-manifest.json
 !reports/archive-handoff-manifest.md

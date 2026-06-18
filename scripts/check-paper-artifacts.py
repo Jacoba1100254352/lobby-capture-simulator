@@ -109,6 +109,8 @@ POLICY_CLAIM_LANGUAGE_AUDIT_MD = ROOT / "reports" / "policy-claim-language-audit
 POLICY_CLAIM_LANGUAGE_AUDIT_CSV = ROOT / "reports" / "policy-claim-language-audit.csv"
 LITERATURE_POSITIONING_AUDIT_MD = ROOT / "reports" / "literature-positioning-audit.md"
 LITERATURE_POSITIONING_AUDIT_CSV = ROOT / "reports" / "literature-positioning-audit.csv"
+REFERENCE_INTEGRITY_AUDIT_MD = ROOT / "reports" / "reference-integrity-audit.md"
+REFERENCE_INTEGRITY_AUDIT_CSV = ROOT / "reports" / "reference-integrity-audit.csv"
 SUBMISSION_READINESS_MD = ROOT / "reports" / "submission-readiness.md"
 SUBMISSION_READINESS_CSV = ROOT / "reports" / "submission-readiness.csv"
 REVIEWER_RISK_REGISTER_CSV = ROOT / "reports" / "reviewer-risk-register.csv"
@@ -348,6 +350,8 @@ def main() -> int:
             REVIEWER_RISK_REGISTER_MD,
             LITERATURE_POSITIONING_AUDIT_CSV,
             LITERATURE_POSITIONING_AUDIT_MD,
+            REFERENCE_INTEGRITY_AUDIT_CSV,
+            REFERENCE_INTEGRITY_AUDIT_MD,
             FINAL_READTHROUGH_EVIDENCE_CSV,
             FINAL_READTHROUGH_EVIDENCE_MD,
         ])
@@ -378,6 +382,7 @@ def main() -> int:
     failures.extend(check_validation_scope_coverage())
     failures.extend(check_policy_claim_language_audit())
     failures.extend(check_literature_positioning_audit())
+    failures.extend(check_reference_integrity_audit())
     failures.extend(check_final_human_readthrough())
     failures.extend(check_final_human_readthrough_audit())
     failures.extend(check_final_readthrough_evidence())
@@ -476,6 +481,8 @@ def check_freshness() -> list[str]:
         (REGGOV_GUIDELINES_READINESS_MD, reggov_guidelines_readiness_inputs()),
         (LITERATURE_POSITIONING_AUDIT_CSV, literature_positioning_audit_inputs()),
         (LITERATURE_POSITIONING_AUDIT_MD, literature_positioning_audit_inputs()),
+        (REFERENCE_INTEGRITY_AUDIT_CSV, reference_integrity_audit_inputs()),
+        (REFERENCE_INTEGRITY_AUDIT_MD, reference_integrity_audit_inputs()),
         (FINAL_READTHROUGH_EVIDENCE_CSV, final_readthrough_evidence_inputs()),
         (FINAL_READTHROUGH_EVIDENCE_MD, final_readthrough_evidence_inputs()),
         (REVIEWER_RISK_REGISTER_CSV, reviewer_risk_register_inputs()),
@@ -699,6 +706,8 @@ def doi_deposit_package_inputs() -> list[Path]:
         REGGOV_GUIDELINES_READINESS_MD,
         LITERATURE_POSITIONING_AUDIT_CSV,
         LITERATURE_POSITIONING_AUDIT_MD,
+        REFERENCE_INTEGRITY_AUDIT_CSV,
+        REFERENCE_INTEGRITY_AUDIT_MD,
         FINAL_HUMAN_READTHROUGH,
         FINAL_HUMAN_READTHROUGH_AUDIT_CSV,
         FINAL_HUMAN_READTHROUGH_AUDIT_MD,
@@ -723,6 +732,8 @@ def final_readthrough_evidence_inputs() -> list[Path]:
         POLICY_CLAIM_LANGUAGE_AUDIT_MD,
         LITERATURE_POSITIONING_AUDIT_CSV,
         LITERATURE_POSITIONING_AUDIT_MD,
+        REFERENCE_INTEGRITY_AUDIT_CSV,
+        REFERENCE_INTEGRITY_AUDIT_MD,
         SOURCE_PANEL_INVENTORY,
         SOURCE_CAPABILITY_AUDIT_CSV,
         SOURCE_CAPABILITY_AUDIT_MD,
@@ -751,6 +762,17 @@ def literature_positioning_audit_inputs() -> list[Path]:
         ROOT / "paper" / "sections" / "reggov-body.tex",
         ROOT / "paper" / "references.bib",
         ROOT / "scripts" / "audit-literature-positioning.py",
+    ]
+
+
+def reference_integrity_audit_inputs() -> list[Path]:
+    return [
+        ROOT / "paper" / "strategic-channel-substitution-regulatory-capture.tex",
+        ROOT / "paper" / "regulation-governance-wiley.tex",
+        ROOT / "paper" / "sections" / "reggov-body.tex",
+        ROOT / "paper" / "sections" / "supplement-body.tex",
+        ROOT / "paper" / "references.bib",
+        ROOT / "scripts" / "audit-reference-integrity.py",
     ]
 
 
@@ -2921,6 +2943,53 @@ def check_literature_positioning_audit() -> list[str]:
     return failures
 
 
+def check_reference_integrity_audit() -> list[str]:
+    failures: list[str] = []
+    missing = [
+        path.relative_to(ROOT)
+        for path in (REFERENCE_INTEGRITY_AUDIT_MD, REFERENCE_INTEGRITY_AUDIT_CSV)
+        if not path.exists()
+    ]
+    if missing:
+        return [f"missing reference-integrity audit artifact: {path}" for path in missing]
+
+    with REFERENCE_INTEGRITY_AUDIT_CSV.open(newline="", encoding="utf-8") as source:
+        rows = list(csv.DictReader(source))
+    if not rows:
+        failures.append("reference-integrity audit has no rows")
+        return failures
+    blocked = [row for row in rows if row.get("status") == "blocked"]
+    for row in blocked:
+        failures.append(
+            "reference-integrity audit has blocking row: "
+            f"{row.get('auditKey', '')}/{row.get('subject', '')}: {row.get('detail', '')}"
+        )
+    required_audits = {
+        "citation-key-summary",
+        "entry-required-fields",
+        "placeholder-summary",
+        "source-metadata",
+    }
+    seen_audits = {row.get("auditKey", "") for row in rows}
+    for audit_key in sorted(required_audits - seen_audits):
+        failures.append(f"reference-integrity audit missing audit group: {audit_key}")
+    text = REFERENCE_INTEGRITY_AUDIT_MD.read_text(encoding="utf-8")
+    required_text = [
+        "Reference Integrity Audit",
+        "citation-key consistency",
+        "Ready rows",
+        "Advisory rows",
+        "Blocked rows: `0`",
+        "all-citations",
+        "source-metadata",
+        "placeholderHits=0",
+    ]
+    for phrase in required_text:
+        if phrase not in text:
+            failures.append(f"reference-integrity audit markdown missing phrase: {phrase}")
+    return failures
+
+
 def check_submission_readiness_audit() -> list[str]:
     failures: list[str] = []
     missing = [
@@ -3510,6 +3579,8 @@ def check_doi_deposit_package() -> list[str]:
         "readiness/final-human-readthrough-audit.md",
         "readiness/literature-positioning-audit.csv",
         "readiness/literature-positioning-audit.md",
+        "readiness/reference-integrity-audit.csv",
+        "readiness/reference-integrity-audit.md",
         "readiness/final-readthrough-evidence.csv",
         "readiness/final-readthrough-evidence.md",
     }
