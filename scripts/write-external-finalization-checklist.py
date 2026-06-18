@@ -32,6 +32,7 @@ ZENODO_DRAFT_CSV = REPORTS / "zenodo-draft-deposit.csv"
 GITHUB_ASSET_AUDIT_CSV = REPORTS / "github-release-asset-audit.csv"
 GITHUB_ASSET_AUDIT_MD = REPORTS / "github-release-asset-audit.md"
 REGGOV_GUIDELINES_CSV = REPORTS / "reggov-guidelines-readiness.csv"
+SAM_PREFLIGHT_CSV = REPORTS / "sam-contract-awards-preflight.csv"
 SAM_EXPORT_AUDIT_CSV = REPORTS / "sam-contract-awards-export-audit.csv"
 SAM_EXPORT_AUDIT_MD = REPORTS / "sam-contract-awards-export-audit.md"
 OUT_CSV = REPORTS / "external-finalization-checklist.csv"
@@ -80,6 +81,7 @@ def checklist_rows() -> list[dict[str, str]]:
         doi_record_row(),
         human_readthrough_row(release_tag),
         live_author_page_row(),
+        sam_preflight_row(),
         sam_export_input_row(),
         sam_export_audit_row(),
     ]
@@ -272,6 +274,63 @@ def live_author_page_row() -> dict[str, str]:
         row_data.get("evidence", "live author-page refresh=not recorded"),
         "Open the live Regulation & Governance author instructions and record any superseding guidance before final submission.",
         "journal",
+    )
+
+
+def sam_preflight_row() -> dict[str, str]:
+    rows = read_csv(SAM_PREFLIGHT_CSV)
+    if not rows:
+        return item(
+            "sam-keyed-preflight",
+            "manual_required",
+            "preflight=missing",
+            "Run make sam-contract-awards-preflight immediately before keyed SAM.gov API refreshes; do not promote rows unless it reports ok.",
+            "source-refresh",
+        )
+    row = rows[0]
+    status = row.get("status", "").strip()
+    rows_returned = row.get("rows", "").strip()
+    next_access = row.get("nextAccessTime", "").strip()
+    notes = row.get("notes", "").strip()
+    if status == "ok":
+        checklist_status = "ready"
+        next_action = (
+            "If a keyed refresh is intended, run scripts/run-2024-env-live-snapshot.sh "
+            "with representative settings and rebuild paper artifacts before using refreshed rows."
+        )
+    elif status == "quota_blocked":
+        checklist_status = "manual_required"
+        next_action = (
+            f"Wait until {next_access or 'the SAM.gov reset time'} or use a downloaded export "
+            "through SAM_CONTRACT_AWARDS_LIVE_CSV/URL before rerunning the preflight."
+        )
+    elif status == "missing":
+        checklist_status = "manual_required"
+        next_action = "Set SAM_API_KEY in .env before running make sam-contract-awards-preflight."
+    elif status in {"unavailable", "empty"}:
+        checklist_status = "blocked"
+        next_action = (
+            "Resolve the keyed SAM.gov access/preflight condition before any keyed live snapshot; "
+            "use the manual export path if available."
+        )
+    else:
+        checklist_status = "manual_required"
+        next_action = (
+            "Review the SAM.gov preflight status, rerun make sam-contract-awards-preflight, "
+            "or use the manual export path if available."
+        )
+    evidence = (
+        f"status={status or 'missing'}; rows={rows_returned or '0'}; "
+        f"nextAccessTime={next_access or 'none'}"
+    )
+    if notes:
+        evidence = f"{evidence}; notes={notes}"
+    return item(
+        "sam-keyed-preflight",
+        checklist_status,
+        evidence,
+        next_action,
+        "source-refresh",
     )
 
 
@@ -549,6 +608,9 @@ def markdown(rows: list[dict[str, str]]) -> str:
             "",
             "# If a SAM.gov emailed export link is configured in .env:",
             "make sam-contract-awards-export-audit",
+            "",
+            "# Before a keyed SAM.gov Contract Awards API refresh:",
+            "make sam-contract-awards-preflight",
             "",
             "# If a Zenodo token is configured and the draft should be rehearsed or updated:",
             "make zenodo-deposit-draft",

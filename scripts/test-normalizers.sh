@@ -363,6 +363,66 @@ if grep -q "token=example" "$tmpdir/reports/sam-contract-awards-export-audit.md"
 fi
 grep -q "request a fresh export email" "$tmpdir/reports/sam-contract-awards-export-audit.md"
 
+python3 - "$tmpdir/reports/sam-contract-awards-preflight.csv" <<'PY'
+import csv
+import importlib.util
+from pathlib import Path
+import sys
+
+preflight_csv = Path(sys.argv[1])
+spec = importlib.util.spec_from_file_location(
+    "external_checklist",
+    Path("scripts/write-external-finalization-checklist.py"),
+)
+module = importlib.util.module_from_spec(spec)
+spec.loader.exec_module(module)
+module.SAM_PREFLIGHT_CSV = preflight_csv
+
+row = module.sam_preflight_row()
+assert row["status"] == "manual_required", row
+assert "preflight=missing" in row["evidence"], row
+
+preflight_csv.parent.mkdir(parents=True, exist_ok=True)
+with preflight_csv.open("w", newline="", encoding="utf-8") as target:
+    writer = csv.DictWriter(
+        target,
+        fieldnames=["source", "status", "rows", "nextAccessTime", "notes"],
+        lineterminator="\n",
+    )
+    writer.writeheader()
+    writer.writerow({
+        "source": "sam-contract-awards",
+        "status": "quota_blocked",
+        "rows": "0",
+        "nextAccessTime": "2026-Jun-16 00:00:00+0000 UTC",
+        "notes": "SAM.gov quota blocked until 2026-Jun-16 00:00:00+0000 UTC; api_key=REDACTED",
+    })
+row = module.sam_preflight_row()
+assert row["status"] == "manual_required", row
+assert "status=quota_blocked" in row["evidence"], row
+assert "2026-Jun-16 00:00:00+0000 UTC" in row["evidence"], row
+assert "Wait until 2026-Jun-16 00:00:00+0000 UTC" in row["nextAction"], row
+
+with preflight_csv.open("w", newline="", encoding="utf-8") as target:
+    writer = csv.DictWriter(
+        target,
+        fieldnames=["source", "status", "rows", "nextAccessTime", "notes"],
+        lineterminator="\n",
+    )
+    writer.writeheader()
+    writer.writerow({
+        "source": "sam-contract-awards",
+        "status": "ok",
+        "rows": "1",
+        "nextAccessTime": "",
+        "notes": "preflight agency=EPA; normalized rows returned=1",
+    })
+row = module.sam_preflight_row()
+assert row["status"] == "ready", row
+assert "rows=1" in row["evidence"], row
+assert "representative settings" in row["nextAction"], row
+PY
+
 mkdir -p "$tmpdir/doi-repo/paper/sections" "$tmpdir/doi-repo/reports"
 cat > "$tmpdir/doi-repo/CITATION.cff" <<'YAML'
 cff-version: 1.2.0
