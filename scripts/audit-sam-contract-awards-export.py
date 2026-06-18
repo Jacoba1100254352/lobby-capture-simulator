@@ -172,7 +172,10 @@ def download_failure_rows(message: str, freshness: dict[str, str]) -> list[dict[
                 "value": "quota reset occurs after emailed token expiry",
                 "threshold": "SAM reset before expiresAt",
                 "notes": freshness.get("evidence", "freshness metadata unavailable"),
-                "nextAction": "Request a fresh SAM.gov export email after the quota reset and update SAM_CONTRACT_AWARDS_LIVE_URL metadata.",
+                "nextAction": (
+                    "After the quota reset, request a fresh SAM.gov export email, record it with "
+                    "make sam-contract-awards-record-export-link, then rerun the audit."
+                ),
             }
         )
     return rows
@@ -186,7 +189,10 @@ def expired_export_url_rows(freshness: dict[str, str]) -> list[dict[str, str]]:
             "value": "SAM.gov emailed export URL appears expired",
             "threshold": "fresh SAM.gov download URL",
             "notes": "No SAM/FPDS rows were promoted into the frozen snapshot.",
-            "nextAction": "Request a fresh SAM.gov export email, update SAM_CONTRACT_AWARDS_LIVE_URL and timestamp metadata, then rerun the audit.",
+            "nextAction": (
+                "Request a fresh SAM.gov export email, record it with "
+                "make sam-contract-awards-record-export-link, then rerun the audit."
+            ),
         },
         {
             "item": "export-link-freshness",
@@ -194,7 +200,10 @@ def expired_export_url_rows(freshness: dict[str, str]) -> list[dict[str, str]]:
             "value": freshness["evidence"],
             "threshold": "current time before expiresAt",
             "notes": "SAM.gov emailed async-export download links are short-lived.",
-            "nextAction": "Use the fresh emailed URL within its validity window or set SAM_CONTRACT_AWARDS_LIVE_URL_EXPIRES_AT for the new link.",
+            "nextAction": (
+                "Use make sam-contract-awards-record-export-link while the emailed URL is fresh so "
+                "expiration metadata and API-key redaction stay synchronized."
+            ),
         },
     ]
 
@@ -676,7 +685,7 @@ def write_download_failure_markdown(
             "",
             (
                 "After SAM.gov allows another request, request a fresh SAM.gov Contract Awards export email, "
-                "update `SAM_CONTRACT_AWARDS_LIVE_URL` and its timestamp metadata, and rerun "
+                "record it with `make sam-contract-awards-record-export-link < sam-email.txt`, and rerun "
                 "`make sam-contract-awards-export-audit`."
                 if retry_window_missed
                 else "After SAM.gov allows another request, rerun "
@@ -725,11 +734,9 @@ def write_expired_url_markdown(
             "## Next Action",
             "",
             (
-                "Request a fresh SAM.gov Contract Awards export email, paste the new "
-                "download URL into `SAM_CONTRACT_AWARDS_LIVE_URL`, record "
-                "`SAM_CONTRACT_AWARDS_LIVE_URL_GENERATED_AT` or "
-                "`SAM_CONTRACT_AWARDS_LIVE_URL_EXPIRES_AT`, and rerun "
-                "`make sam-contract-awards-export-audit`."
+                "Request a fresh SAM.gov Contract Awards export email, save the email body to "
+                "`sam-email.txt`, run `make sam-contract-awards-record-export-link < sam-email.txt`, "
+                "then rerun `make sam-contract-awards-export-audit` while the link is still fresh."
             ),
         ]
     )
