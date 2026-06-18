@@ -105,6 +105,10 @@ mkdir -p "$STAGING_DIR/supporting-information/source-products/first-wave"
 for source_product in \
   actor-issue-time-spine.csv \
   substitution-comparison-groups.csv \
+  sam-fpds-action-history-crosswalk.csv \
+  gao-protest-overlay.csv \
+  sam-exclusion-overlay.csv \
+  procurement-firewall-overlay.csv \
   comment-body-corpus.csv \
   comment-template-clusters.csv \
   agency-response-final-rule-linkage.csv \

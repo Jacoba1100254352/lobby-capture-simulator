@@ -706,6 +706,27 @@ def product_manual_review_checklist(spec: ProductSpec, status: str) -> str:
             "then verify each linked sourceRecordId, period, venue, activity measure, and matchConfidence against "
             "the source files."
         ),
+        "sam-fpds-action-history-crosswalk": (
+            "Replace the candidate source-surface row with a reviewed SAM.gov Contract Awards or FPDS action-history "
+            "export; verify PIID, UEI, awarding agency/subtier, recipient, action date, obligation, modification "
+            "number/type, competition coding, offer count, USAspending record ID, SAM record ID, and crosswalk "
+            "confidence; remove candidateOnly markers only after these checks pass."
+        ),
+        "gao-protest-overlay": (
+            "Replace the candidate GAO source-surface row with reviewed bid-protest decisions or docket rows; link "
+            "each protest to agency, dates, outcome, issue codes, source URL, and PIID, UEI, protester, awardee, "
+            "or vendor identifiers; remove candidateOnly markers only after these checks pass."
+        ),
+        "sam-exclusion-overlay": (
+            "Replace the candidate SAM.gov source-surface row with reviewed Exclusions API or public extract rows; "
+            "verify UEI, recipient name, exclusion type, start/end dates, excluding agency, cause, and source "
+            "provenance; remove candidateOnly markers only after these checks pass."
+        ),
+        "procurement-firewall-overlay": (
+            "Replace or supplement the FAR source-surface row with dated agency/subtier procurement-integrity, "
+            "firewall, blind-review, or inspector-general control records; verify covered officials, award classes, "
+            "effective dates, coverage rules, and source URLs; remove candidateOnly markers only after these checks pass."
+        ),
     }
     return candidate_checklists.get(
         spec.product_key,
@@ -751,6 +772,12 @@ def candidate_unreviewed_note(spec: ProductSpec) -> str:
             "Candidate-only manual-review seed is present; it does not clear "
             "source-product readiness until response sections, final-rule text movement, "
             "and uptake coding are manually adjudicated."
+        )
+    if spec.target_key == "procurement-modification-causal-capture":
+        return (
+            "Candidate-only procurement source-surface worklist is present; it does not clear "
+            "source-product readiness until action-history, protest, exclusion, and firewall rows "
+            "are populated from reviewed source records and linked to procurement identifiers."
         )
     return (
         "Candidate-only manual-review seed is present; it does not clear "
@@ -1123,7 +1150,7 @@ def write_markdown(path: Path, rows: list[dict[str, str]]) -> None:
         "",
         "Semantic checks are product-level safeguards that prevent tiny or structurally incomplete files from clearing a causal source gate merely because required columns are present.",
         "",
-        "The `candidate_unreviewed` status means the production file exists as a deterministic manual-review seed, but it cannot clear readiness until the product-specific manual checks are adjudicated. Entity-resolution seeds require alias, issue, and false-match review; the response/final-rule linkage seed requires observed response-section, final-rule movement, and uptake-coding review.",
+        "The `candidate_unreviewed` status means the production file exists as a deterministic manual-review seed, but it cannot clear readiness until the product-specific manual checks are adjudicated. Entity-resolution seeds require alias, issue, and false-match review; the response/final-rule linkage seed requires observed response-section, final-rule movement, and uptake-coding review; procurement source-surface worklists require reviewed action-history, protest, exclusion, and firewall rows linked to procurement identifiers.",
         "",
         "| Target | Product | Semantic issue count | Semantic issues | Validation notes |",
         "| --- | --- | ---: | --- | --- |",

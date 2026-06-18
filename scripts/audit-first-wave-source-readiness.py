@@ -227,6 +227,12 @@ def product_aware_next_action(
             "candidate response sections and final-rule identifiers with observed response-to-comments "
             "and final-rule text, and estimate uptake only after reviewed uptake coding."
         )
+    if target == "procurement-modification-causal-capture" and product_gate.get("sourceProductGate") == "candidate_only_blocked":
+        return (
+            "Replace the candidate procurement source-surface worklists with reviewed SAM/FPDS action-history rows, "
+            "GAO protest links, SAM exclusion rows, and dated procurement-firewall controls before estimating "
+            "procurement-modification capture or integrity effects."
+        )
     if target == "substitution-elasticity" and "named reform-shock event file" in ready:
         return (
             "Use the committed reform-shock event file and meeting/contact missing-channel note, "
@@ -261,6 +267,11 @@ def product_aware_blocking_issue(
         return (
             "Candidate response/final-rule linkage file is committed, but response sections, "
             "final-rule movement, and uptake coding are not manually adjudicated."
+        )
+    if target == "procurement-modification-causal-capture" and product_gate.get("sourceProductGate") == "candidate_only_blocked":
+        return (
+            "Candidate procurement source-surface worklists are committed for SAM/FPDS, GAO protests, SAM exclusions, "
+            "and firewall controls, but they are not reviewed source rows and cannot support estimation."
         )
     if target == "comment-authenticity-and-uptake-effect" and {
         "comment-body corpus",
@@ -558,7 +569,7 @@ def write_markdown(path: Path, rows: list[dict[str, str]]) -> None:
         f"- Partial source support: `{len(partial)}`",
         f"- Blocked source-product targets: `{len(blocked)}`",
         "- Policy-simulation status: `not_cleared`",
-        "- Source-product schema gate: `blocked_until_required_products_exist`",
+        "- Source-product schema gate: `blocked_until_required_products_are_reviewed`",
         "",
         "## Readiness Matrix",
         "",

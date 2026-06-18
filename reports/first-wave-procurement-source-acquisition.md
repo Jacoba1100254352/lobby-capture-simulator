@@ -7,7 +7,7 @@ This report turns the open procurement-calibration risk into source-specific acq
 - Acquisition products: `5`
 - Source-evidence status: `acquisition_plan_only`
 - Claim boundary: `procurement modification, protest, exclusion, competition, and firewall rows remain bounded diagnostics until linked source products pass the first-wave source-product and source-readiness gates`
-- Product statuses: `missing_required=4; not_in_source_product_gate=1`
+- Product statuses: `candidate_unreviewed=4; not_in_source_product_gate=1`
 
 ## Promotion Rule
 
@@ -17,10 +17,10 @@ A row in this report is only an acquisition instruction. To promote a procuremen
 
 | Product | Product gate | Preferred official source | Required linkage | Current blocker |
 | --- | --- | --- | --- | --- |
-| sam-fpds-action-history-crosswalk | missing_required | SAM.gov Contract Awards export or keyed Contract Awards API, reconciled against USAspending transaction rows (https://open.gsa.gov/api/contract-awards/) | PIID, UEI, awarding agency/subtier, recipient, action date, obligation, modification number/type, competition or extent-competed code, number of offers, USAspending record ID, SAM record ID, and crosswalk confidence | SAM.gov quota or extract-token availability can block acquisition; partial or diagnostic exports must not be promoted. |
-| gao-protest-overlay | missing_required | GAO Recent Bid Protest Decisions, GAO Search Decisions & Docket, and GAO Legal Products XML feed (https://www.gao.gov/legal/bid-protests/recent) | Protest ID or B-number, agency, filed date where available, decision date, outcome, issue codes, source URL, and manually reviewed PIID/UEI/vendor linkage when available | GAO decision surfaces do not reliably expose PIID/UEI fields in a machine-readable way, so award/vendor linkage is a manual review task. |
-| sam-exclusion-overlay | missing_required | SAM.gov Exclusions API and SAM.gov Entity/Exclusions Extracts Download API (https://open.gsa.gov/api/exclusions-api/) | Exclusion ID, UEI, recipient/entity name, exclusion type, activation/start date, termination/end date, excluding agency, and source URL | Official API quota and extract access must be managed; broad extracts require field normalization and source-date preservation. |
-| procurement-firewall-overlay | missing_required | Agency procurement-integrity rules, firewall memoranda, acquisition-policy supplements, inspector-general reports, and official policy archives (https://www.acquisition.gov/far/) | Firewall rule ID, agency, subtier, award type, effective date, covered officials, control type, coverage rule, and source URL | No single public API provides agency firewall controls, so acquisition is a curated document-review task over official sources. |
+| sam-fpds-action-history-crosswalk | candidate_unreviewed | SAM.gov Contract Awards export or keyed Contract Awards API, reconciled against USAspending transaction rows (https://open.gsa.gov/api/contract-awards/) | PIID, UEI, awarding agency/subtier, recipient, action date, obligation, modification number/type, competition or extent-competed code, number of offers, USAspending record ID, SAM record ID, and crosswalk confidence | SAM.gov quota or extract-token availability can block acquisition; partial or diagnostic exports must not be promoted. |
+| gao-protest-overlay | candidate_unreviewed | GAO Recent Bid Protest Decisions, GAO Search Decisions & Docket, and GAO Legal Products XML feed (https://www.gao.gov/legal/bid-protests/recent) | Protest ID or B-number, agency, filed date where available, decision date, outcome, issue codes, source URL, and manually reviewed PIID/UEI/vendor linkage when available | GAO decision surfaces do not reliably expose PIID/UEI fields in a machine-readable way, so award/vendor linkage is a manual review task. |
+| sam-exclusion-overlay | candidate_unreviewed | SAM.gov Exclusions API and SAM.gov Entity/Exclusions Extracts Download API (https://open.gsa.gov/api/exclusions-api/) | Exclusion ID, UEI, recipient/entity name, exclusion type, activation/start date, termination/end date, excluding agency, and source URL | Official API quota and extract access must be managed; broad extracts require field normalization and source-date preservation. |
+| procurement-firewall-overlay | candidate_unreviewed | Agency procurement-integrity rules, firewall memoranda, acquisition-policy supplements, inspector-general reports, and official policy archives (https://www.acquisition.gov/far/) | Firewall rule ID, agency, subtier, award type, effective date, covered officials, control type, coverage rule, and source URL | No single public API provides agency firewall controls, so acquisition is a curated document-review task over official sources. |
 | procurement-offer-competition-enrichment | not_in_source_product_gate | SAM.gov Contract Awards and USAspending transaction/action records where offer-count and competition fields are exposed (https://open.gsa.gov/api/) | PIID, UEI, extent-competed code, number of offers, award type, action date, obligation, agency, and source-system record ID | Committed USAspending action rows have weak competition-field coverage, so SAM/FPDS export promotion remains the preferred path. |
 
 ## Acquisition Details
@@ -28,7 +28,7 @@ A row in this report is only an acquisition instruction. To promote a procuremen
 ### sam-fpds-action-history-crosswalk
 
 - Expected path: `data/calibration/first-wave/sam-fpds-action-history-crosswalk.csv`
-- Source-product status: `missing_required`
+- Source-product status: `candidate_unreviewed`
 - Preferred official source: SAM.gov Contract Awards export or keyed Contract Awards API, reconciled against USAspending transaction rows (https://open.gsa.gov/api/contract-awards/)
 - Fallback: USAspending public transaction download strata already documented by the repository; use only as a bounded denominator until SAM/FPDS-style action coding is reconciled
 - Required linkage: PIID, UEI, awarding agency/subtier, recipient, action date, obligation, modification number/type, competition or extent-competed code, number of offers, USAspending record ID, SAM record ID, and crosswalk confidence
@@ -39,7 +39,7 @@ A row in this report is only an acquisition instruction. To promote a procuremen
 ### gao-protest-overlay
 
 - Expected path: `data/calibration/first-wave/gao-protest-overlay.csv`
-- Source-product status: `missing_required`
+- Source-product status: `candidate_unreviewed`
 - Preferred official source: GAO Recent Bid Protest Decisions, GAO Search Decisions & Docket, and GAO Legal Products XML feed (https://www.gao.gov/legal/bid-protests/recent)
 - Fallback: GAO Legal Products XML feed for discovery, then decision pages or PDFs for extracted fields
 - Required linkage: Protest ID or B-number, agency, filed date where available, decision date, outcome, issue codes, source URL, and manually reviewed PIID/UEI/vendor linkage when available
@@ -50,7 +50,7 @@ A row in this report is only an acquisition instruction. To promote a procuremen
 ### sam-exclusion-overlay
 
 - Expected path: `data/calibration/first-wave/sam-exclusion-overlay.csv`
-- Source-product status: `missing_required`
+- Source-product status: `candidate_unreviewed`
 - Preferred official source: SAM.gov Exclusions API and SAM.gov Entity/Exclusions Extracts Download API (https://open.gsa.gov/api/exclusions-api/)
 - Fallback: SAM_Exclusions_Public_Extract files from the official Entity/Exclusions Extracts API
 - Required linkage: Exclusion ID, UEI, recipient/entity name, exclusion type, activation/start date, termination/end date, excluding agency, and source URL
@@ -61,7 +61,7 @@ A row in this report is only an acquisition instruction. To promote a procuremen
 ### procurement-firewall-overlay
 
 - Expected path: `data/calibration/first-wave/procurement-firewall-overlay.csv`
-- Source-product status: `missing_required`
+- Source-product status: `candidate_unreviewed`
 - Preferred official source: Agency procurement-integrity rules, firewall memoranda, acquisition-policy supplements, inspector-general reports, and official policy archives (https://www.acquisition.gov/far/)
 - Fallback: Agency acquisition-policy pages and inspector-general/audit reports with source URLs and effective dates
 - Required linkage: Firewall rule ID, agency, subtier, award type, effective date, covered officials, control type, coverage rule, and source URL

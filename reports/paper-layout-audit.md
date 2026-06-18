@@ -50,16 +50,16 @@ This audit checks generated PDFs for sparse float pages, large whitespace gaps, 
 | paper/regulation-governance-wiley.pdf | 17 | 57 | 5977 | 0.943 | 0.048 | no | pass | layout density acceptable |
 | paper/regulation-governance-wiley.pdf | 18 | 129 | 6691 | 0.942 | 0.043 | no | pass | references/declarations page |
 | paper/regulation-governance-wiley.pdf | 19 | 28 | 1880 | 0.938 | 0.780 | no | pass | references/declarations page |
-| paper/supplement.pdf | 1 | 36 | 2205 | 0.838 | 0.089 | no | pass | title/front-matter page |
+| paper/supplement.pdf | 1 | 36 | 2237 | 0.838 | 0.089 | no | pass | title/front-matter page |
 | paper/supplement.pdf | 2 | 60 | 3037 | 0.887 | 0.039 | no | pass | layout density acceptable |
 | paper/supplement.pdf | 3 | 239 | 2609 | 0.891 | 0.041 | yes | pass | layout density acceptable |
 | paper/supplement.pdf | 4 | 82 | 2862 | 0.857 | 0.091 | yes | pass | layout density acceptable |
 | paper/supplement.pdf | 5 | 86 | 2445 | 0.891 | 0.038 | yes | pass | layout density acceptable |
-| paper/supplement.pdf | 6 | 68 | 2990 | 0.891 | 0.035 | no | pass | layout density acceptable |
+| paper/supplement.pdf | 6 | 68 | 3024 | 0.891 | 0.035 | no | pass | layout density acceptable |
 | paper/supplement.pdf | 7 | 63 | 4377 | 0.887 | 0.039 | no | pass | layout density acceptable |
 | paper/supplement.pdf | 8 | 70 | 3894 | 0.887 | 0.087 | yes | pass | layout density acceptable |
 | paper/supplement.pdf | 9 | 177 | 3766 | 0.891 | 0.036 | yes | pass | layout density acceptable |
-| paper/supplement.pdf | 10 | 75 | 4688 | 0.887 | 0.041 | no | pass | layout density acceptable |
-| paper/supplement.pdf | 11 | 72 | 3450 | 0.887 | 0.039 | yes | pass | layout density acceptable |
-| paper/supplement.pdf | 12 | 56 | 3096 | 0.887 | 0.051 | no | pass | references/declarations page |
-| paper/supplement.pdf | 13 | 14 | 562 | 0.887 | 0.759 | no | pass | short terminal references/declarations page |
+| paper/supplement.pdf | 10 | 70 | 4716 | 0.887 | 0.041 | no | pass | layout density acceptable |
+| paper/supplement.pdf | 11 | 72 | 3499 | 0.887 | 0.045 | no | pass | layout density acceptable |
+| paper/supplement.pdf | 12 | 61 | 3095 | 0.891 | 0.036 | yes | pass | references/declarations page |
+| paper/supplement.pdf | 13 | 17 | 864 | 0.887 | 0.708 | no | pass | short terminal references/declarations page |
