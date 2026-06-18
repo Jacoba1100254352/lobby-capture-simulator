@@ -7,8 +7,8 @@
     "supplement.pdf"
   ],
   "releaseAssetChecksumLocation": "dist/release-asset-checksums.{csv,json,md}",
-  "releaseTag": "paper-publication-readiness-2026-06-18-r177",
-  "releaseUrl": "https://github.com/Jacoba1100254352/lobby-capture-simulator/releases/tag/paper-publication-readiness-2026-06-18-r177",
+  "releaseTag": "paper-publication-readiness-2026-06-18-r178",
+  "releaseUrl": "https://github.com/Jacoba1100254352/lobby-capture-simulator/releases/tag/paper-publication-readiness-2026-06-18-r178",
   "rows": [
     {
       "archiveNote": "Primary journal submission archive with manuscript source, compiled PDFs, supporting information, generated reports, and package-member checksum manifest.",
@@ -58,7 +58,7 @@
       "path": "CITATION.cff",
       "releaseAssetName": "",
       "role": "citation-metadata",
-      "sha256": "53177d0cab4b3a2e5e79c3e2bc2daf8cc8ef6cd407ccc7485b5211b3f5646b68"
+      "sha256": "8cea480c148757afe61b178f528d39b4373a3108754f00e1bbdcd69c34f56f83"
     },
     {
       "archiveNote": "Zenodo-compatible metadata included in the tagged source archive and Wiley submission archive.",
@@ -68,7 +68,7 @@
       "path": ".zenodo.json",
       "releaseAssetName": "",
       "role": "doi-deposit-metadata",
-      "sha256": "3e6f1c82ddaa1a726c506aee8f2f791e16d9d45138cc562a55ab082400836bd3"
+      "sha256": "7287915a8518a657b793a7bc35f3520d2cc59068ca50fb5896a87d5edb5db2de"
     },
     {
       "archiveNote": "Generated gate summary distinguishing mechanism-review readiness from DOI and human signoff.",
@@ -78,7 +78,7 @@
       "path": "reports/submission-readiness.md",
       "releaseAssetName": "",
       "role": "submission-readiness-audit",
-      "sha256": "3e8b32dd0a9bb38c7ea1de054610ffdf01aafa3f0e470a096c291eb3cf9179fd"
+      "sha256": "8a8e136a9d9a75ec710894ad85ab53a068142e36e24a16a675c4d1335dacf0b8"
     },
     {
       "archiveNote": "Machine-readable reviewer-risk register mapping likely objections to evidence boundaries and next actions.",
@@ -108,7 +108,7 @@
       "path": "reports/final-human-readthrough.md",
       "releaseAssetName": "",
       "role": "manual-signoff-record",
-      "sha256": "00db4761c986c0d1cc56291b58745b5d45f46bf77ae25342bfa790b157696b07"
+      "sha256": "25882d70ce67a7813a728f18ec1b68e9a9b31830dbee054d05b69a8a3fbb8572"
     },
     {
       "archiveNote": "Machine-readable audit of the final human read-through fields and checklist state.",
@@ -118,7 +118,7 @@
       "path": "reports/final-human-readthrough-audit.csv",
       "releaseAssetName": "",
       "role": "final-human-readthrough-audit",
-      "sha256": "18f44dd45933a5e95a8ffedce5c4c809ed057148fb4f0e2fb36a97f5ee3bf4c9"
+      "sha256": "aabe4737b39ef953317e07aa088a1ca4498fe47fede98a2543491396a72df5f6"
     },
     {
       "archiveNote": "Human-readable audit of the final human read-through fields and checklist state.",
@@ -128,7 +128,7 @@
       "path": "reports/final-human-readthrough-audit.md",
       "releaseAssetName": "",
       "role": "final-human-readthrough-audit",
-      "sha256": "009c74b3924e790b5c067eb0a67d03566f3dcbf2246342b409a49bca7b377cba"
+      "sha256": "61d9cc51511a12700d02002fc9b21551f85e60fbbb8c47b201764af35f34089b"
     }
   ],
   "schema": "lobby-capture-archive-handoff-manifest-v1",
