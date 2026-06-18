@@ -219,11 +219,28 @@ def zenodo_upload_row() -> dict[str, str]:
 
 def doi_record_row() -> dict[str, str]:
     doi = recorded_doi()
+    configured_doi = normalize_doi(env("ARCHIVE_DOI") or env("ZENODO_RESERVED_DOI"))
+    if configured_doi and not doi:
+        return item(
+            "doi-recorded-in-repo",
+            "blocked",
+            f"configuredDOI={configured_doi}; recordedDOI=missing",
+            "Run make record-doi-archive, then rerun make paper-artifacts-check before treating DOI metadata as synchronized.",
+            "doi",
+        )
+    if configured_doi and doi != configured_doi:
+        return item(
+            "doi-recorded-in-repo",
+            "blocked",
+            f"configuredDOI={configured_doi}; recordedDOI={doi}",
+            "Resolve the DOI mismatch, run make record-doi-archive, and rebuild the paper artifacts before DOI publication.",
+            "doi",
+        )
     return item(
         "doi-recorded-in-repo",
         "ready" if doi else "manual_required",
-        f"DOI={'present: ' + doi if doi else 'not recorded'}",
-        "After a DOI is reserved or minted, record it in CITATION.cff, .zenodo.json, paper declarations, and final-human-readthrough.md.",
+        f"DOI={'present: ' + doi if doi else 'not recorded'}; configuredDOI={configured_doi or 'missing'}",
+        "After a DOI is reserved or minted, set ARCHIVE_DOI in .env, run make record-doi-archive, and then rerun make paper-artifacts-check.",
         "doi",
     )
 
@@ -351,6 +368,11 @@ def recorded_doi() -> str:
         if match:
             return match.group(0)
     return ""
+
+
+def normalize_doi(value: str) -> str:
+    match = DOI_PATTERN.search(value.strip())
+    return match.group(0) if match else ""
 
 
 def release_tag_from_citation() -> str:
@@ -517,6 +539,12 @@ def markdown(rows: list[dict[str, str]]) -> str:
             "",
             "```sh",
             "make github-release-asset-audit",
+            "make external-finalization-checklist",
+            "",
+            "# After Zenodo, OSF, or another archive reserves or mints a DOI:",
+            "# set ARCHIVE_DOI and optionally ARCHIVE_URL in .env",
+            "make record-doi-archive",
+            "make paper-artifacts-check",
             "make external-finalization-checklist",
             "",
             "# If a SAM.gov emailed export link is configured in .env:",

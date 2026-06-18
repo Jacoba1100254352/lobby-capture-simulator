@@ -244,6 +244,33 @@ assert "auditRows=" in row["evidence"], row
 assert "rows=18" not in row["evidence"], row
 PY
 
+python3 - <<'PY'
+import gzip
+import importlib.util
+from pathlib import Path
+
+spec = importlib.util.spec_from_file_location(
+    "fetch_source_data",
+    Path("scripts/fetch-source-data.py"),
+)
+module = importlib.util.module_from_spec(spec)
+spec.loader.exec_module(module)
+
+csv_text = """contractId.piid,modification_number,recipientName,contractingDepartmentName,contractingSubtierName,awardOrIDVTypeName,Federal Action Obligation,Recipient UEI,actionDate,extentCompetedName,numberOfOffers,typeOfContractPricingName
+68HERH24C0007,P00002,ASYNC EXPORT CONTRACTOR,ENVIRONMENTAL PROTECTION AGENCY,EPA OFFICE,DEFINITIVE CONTRACT,125000,ASYNCUEI1234,2024-06-01,FULL AND OPEN COMPETITION,4,FIRM FIXED PRICE
+"""
+
+def fake_download(_url, target):
+    target.write_bytes(gzip.compress(csv_text.encode("utf-8")))
+    return target
+
+module.download_sam_contract_awards_export_url = fake_download
+records = module.sam_contract_awards_extract_records({"token": "fixture"}, "fixture-key", "json")
+assert len(records) == 1, records
+assert records[0]["piid"] == "68HERH24C0007", records
+assert records[0]["modificationNumber"] == "P00002", records
+PY
+
 cat > "$tmpdir/sam-solicitation-only-export.csv" <<'CSV'
 contractId.piid,modification_number,recipientName,contractingDepartmentName,contractingSubtierName,awardOrIDVTypeName,Recipient UEI,solicitationDate,extentCompetedName,numberOfOffers,typeOfContractPricingName
 68HERH24C0004,0,MANUAL EXPORT CONTRACTOR,ENVIRONMENTAL PROTECTION AGENCY,EPA OFFICE,DEFINITIVE CONTRACT,EXPORTUEI1234,2024-01-15,FULL AND OPEN COMPETITION,5,FIRM FIXED PRICE
@@ -340,9 +367,9 @@ mkdir -p "$tmpdir/doi-repo/paper/sections" "$tmpdir/doi-repo/reports"
 cat > "$tmpdir/doi-repo/CITATION.cff" <<'YAML'
 cff-version: 1.2.0
 title: "Lobby Capture Simulator"
-version: "paper-publication-readiness-2026-06-15-r136"
+version: "paper-publication-readiness-2026-06-15-r137"
 repository-code: "https://github.com/Jacoba1100254352/lobby-capture-simulator"
-url: "https://github.com/Jacoba1100254352/lobby-capture-simulator/releases/tag/paper-publication-readiness-2026-06-15-r136"
+url: "https://github.com/Jacoba1100254352/lobby-capture-simulator/releases/tag/paper-publication-readiness-2026-06-15-r137"
 license: MIT
 preferred-citation:
   type: article
@@ -354,7 +381,7 @@ cat > "$tmpdir/doi-repo/.zenodo.json" <<'JSON'
   "upload_type": "software",
   "related_identifiers": [
     {
-      "identifier": "https://github.com/Jacoba1100254352/lobby-capture-simulator/releases/tag/paper-publication-readiness-2026-06-15-r136",
+      "identifier": "https://github.com/Jacoba1100254352/lobby-capture-simulator/releases/tag/paper-publication-readiness-2026-06-15-r137",
       "relation": "isIdenticalTo",
       "resource_type": "software"
     },
@@ -368,7 +395,7 @@ cat > "$tmpdir/doi-repo/.zenodo.json" <<'JSON'
 JSON
 cat > "$tmpdir/doi-repo/paper/sections/submission-declarations.tex" <<'TEX'
 \submissionsection{Data and Code Availability}
-The simulator source is publicly maintained at \url{https://github.com/Jacoba1100254352/lobby-capture-simulator}. The code is released under the MIT License, and this review bundle is associated with \href{https://github.com/Jacoba1100254352/lobby-capture-simulator/releases/tag/paper-publication-readiness-2026-06-15-r136}{release r136}. Report manifests record seed and runtime provenance.
+The simulator source is publicly maintained at \url{https://github.com/Jacoba1100254352/lobby-capture-simulator}. The code is released under the MIT License, and this review bundle is associated with \href{https://github.com/Jacoba1100254352/lobby-capture-simulator/releases/tag/paper-publication-readiness-2026-06-15-r137}{release r137}. Report manifests record seed and runtime provenance.
 TEX
 cat > "$tmpdir/doi-repo/reports/final-human-readthrough.md" <<'MD'
 # Final Human Scholarly Read-Through
@@ -376,10 +403,37 @@ cat > "$tmpdir/doi-repo/reports/final-human-readthrough.md" <<'MD'
 status: pending
 signed-off-by:
 signed-off-date:
-reviewed-release: paper-publication-readiness-2026-06-15-r136
+reviewed-release: paper-publication-readiness-2026-06-15-r137
 reviewed-commit:
 doi-archive:
 MD
+python3 - "$tmpdir/doi-repo" <<'PY'
+import importlib.util
+import os
+from pathlib import Path
+import sys
+
+root = Path(sys.argv[1])
+spec = importlib.util.spec_from_file_location(
+    "external_checklist",
+    Path("scripts/write-external-finalization-checklist.py"),
+)
+module = importlib.util.module_from_spec(spec)
+spec.loader.exec_module(module)
+module.CITATION = root / "CITATION.cff"
+module.ZENODO = root / ".zenodo.json"
+module.DECLARATIONS = root / "paper" / "sections" / "submission-declarations.tex"
+module.FINAL_READTHROUGH = root / "reports" / "final-human-readthrough.md"
+os.environ["ARCHIVE_DOI"] = "https://doi.org/10.5281/zenodo.1234567"
+try:
+    row = module.doi_record_row()
+finally:
+    os.environ.pop("ARCHIVE_DOI", None)
+assert row["status"] == "blocked", row
+assert "configuredDOI=10.5281/zenodo.1234567" in row["evidence"], row
+assert "recordedDOI=10.5281/zenodo.7654321" in row["evidence"], row
+assert "make record-doi-archive" in row["nextAction"], row
+PY
 python3 scripts/record-doi-archive.py --root "$tmpdir/doi-repo" --doi "https://doi.org/10.5281/zenodo.1234567" >/dev/null
 grep -q 'doi: "10.5281/zenodo.1234567"' "$tmpdir/doi-repo/CITATION.cff"
 grep -q '"doi": "10.5281/zenodo.1234567"' "$tmpdir/doi-repo/.zenodo.json"
@@ -391,6 +445,32 @@ fi
 grep -q 'DOI archive for this review bundle is \\href{https://doi.org/10.5281/zenodo.1234567}{10.5281/zenodo.1234567}' "$tmpdir/doi-repo/paper/sections/submission-declarations.tex"
 grep -q '^doi-archive: https://doi.org/10.5281/zenodo.1234567$' "$tmpdir/doi-repo/reports/final-human-readthrough.md"
 grep -q '^status: pending$' "$tmpdir/doi-repo/reports/final-human-readthrough.md"
+python3 - "$tmpdir/doi-repo" <<'PY'
+import importlib.util
+import os
+from pathlib import Path
+import sys
+
+root = Path(sys.argv[1])
+spec = importlib.util.spec_from_file_location(
+    "external_checklist",
+    Path("scripts/write-external-finalization-checklist.py"),
+)
+module = importlib.util.module_from_spec(spec)
+spec.loader.exec_module(module)
+module.CITATION = root / "CITATION.cff"
+module.ZENODO = root / ".zenodo.json"
+module.DECLARATIONS = root / "paper" / "sections" / "submission-declarations.tex"
+module.FINAL_READTHROUGH = root / "reports" / "final-human-readthrough.md"
+os.environ["ARCHIVE_DOI"] = "10.5281/zenodo.1234567"
+try:
+    row = module.doi_record_row()
+finally:
+    os.environ.pop("ARCHIVE_DOI", None)
+assert row["status"] == "ready", row
+assert "DOI=present: 10.5281/zenodo.1234567" in row["evidence"], row
+assert "configuredDOI=10.5281/zenodo.1234567" in row["evidence"], row
+PY
 
 python3 scripts/test-source-fetchers.py
 

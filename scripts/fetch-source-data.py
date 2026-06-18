@@ -872,21 +872,11 @@ def sam_contract_awards_extract_records(
     wait_seconds = float_env("SAM_CONTRACT_AWARDS_EXTRACT_POLL_SECONDS", 10.0, 0.0, 300.0)
     last_message = first_text(token_payload, "message", default="extract not ready")
     for attempt in range(1, attempts + 1):
-        if extract_format == "json":
-            payload = get_json(download_url)
-            records = sam_contract_award_records(payload)
-            if records:
-                return records
-            if isinstance(payload, dict):
-                last_message = first_text(payload, "message", "status", default=last_message)
-        else:
-            text = get_text(download_url)
-            records = sam_contract_awards_records_from_csv_or_message(text)
-            if records:
-                return records
-            message = sam_contract_awards_extract_message(text)
-            if message:
-                last_message = message
+        records, message = sam_contract_awards_download_records_or_message(download_url)
+        if records:
+            return records
+        if message:
+            last_message = message
         if attempt < attempts:
             time.sleep(wait_seconds)
     raise SystemExit(
@@ -921,6 +911,20 @@ def sam_contract_awards_resolved_download_url(raw_url: str, api_key: str | None 
     return url
 
 
+def sam_contract_awards_download_records_or_message(download_url: str) -> tuple[list[dict[str, object]], str]:
+    with tempfile.TemporaryDirectory(prefix="lobby-sam-extract-") as tmp:
+        target = Path(tmp) / "sam-contract-awards-extract"
+        download_sam_contract_awards_export_url(download_url, target)
+        data = target.read_bytes()
+        if not data:
+            return [], ""
+        try:
+            return sam_contract_awards_records_from_export_file(target), ""
+        except SystemExit as error:
+            text = data.decode("utf-8", errors="replace")
+            return [], sam_contract_awards_extract_message(text) or str(error)
+
+
 def download_sam_contract_awards_export_url(raw_url: str, target: Path) -> Path:
     url = sam_contract_awards_resolved_download_url(raw_url)
     if not url:
@@ -928,6 +932,17 @@ def download_sam_contract_awards_export_url(raw_url: str, target: Path) -> Path:
     target.parent.mkdir(parents=True, exist_ok=True)
     headers = {"User-Agent": "lobby-capture-simulator/0.1"}
     timeout = float_env("SOURCE_FETCH_TIMEOUT_SECONDS", 60.0, 1.0, 300.0)
+    hard_timeout = float_env("SOURCE_FETCH_HARD_TIMEOUT_SECONDS", min(timeout + 5.0, 305.0), 1.0, 600.0)
+    if shutil.which("curl") is not None:
+        try:
+            return download_url_to_file_with_curl(url, headers, target, timeout, hard_timeout)
+        except SourceHttpStatus as error:
+            detail = error.detail[:500]
+            hint = auth_hint(error.code)
+            raise SystemExit(f"GET {redact_url(url)} failed with HTTP {error.code}: {detail}{hint}") from error
+        except (subprocess.TimeoutExpired, TimeoutError, OSError) as error:
+            reason = getattr(error, "reason", str(error))
+            raise SystemExit(f"GET {redact_url(url)} failed: {reason}") from error
     request = Request(url, headers=headers, method="GET")
     try:
         with urlopen(request, timeout=timeout) as response:
@@ -939,6 +954,53 @@ def download_sam_contract_awards_export_url(raw_url: str, target: Path) -> Path:
     except (URLError, RemoteDisconnected, TimeoutError, ConnectionError, OSError) as error:
         reason = getattr(error, "reason", str(error))
         raise SystemExit(f"GET {redact_url(url)} failed: {reason}") from error
+    return target
+
+
+def download_url_to_file_with_curl(
+        url: str,
+        headers: dict[str, str],
+        target: Path,
+        timeout: float,
+        hard_timeout: float,
+) -> Path:
+    command = [
+        "curl",
+        "-sS",
+        "-L",
+        "--compressed",
+        "--connect-timeout",
+        f"{min(timeout, hard_timeout):.1f}",
+        "--max-time",
+        f"{hard_timeout:.1f}",
+        "-o",
+        str(target),
+        "-w",
+        "%{http_code}",
+    ]
+    for key, value in headers.items():
+        command.extend(["-H", f"{key}: {value}"])
+    command.append(url)
+    completed = subprocess.run(
+        command,
+        check=False,
+        capture_output=True,
+        text=True,
+        timeout=hard_timeout + 2.0,
+    )
+    status_text = completed.stdout.strip() or "000"
+    try:
+        status_code = int(status_text[-3:])
+    except ValueError:
+        status_code = 0
+    if completed.returncode != 0:
+        detail = completed.stderr.strip().replace(url, redact_url(url))[:500]
+        raise OSError(f"curl download failed with exit {completed.returncode}: {detail}")
+    if status_code >= 400:
+        detail = target.read_bytes().decode("utf-8", errors="replace")[:500] if target.exists() else ""
+        raise SourceHttpStatus(status_code, detail, {})
+    if status_code == 0:
+        raise OSError("curl download did not report an HTTP status")
     return target
 
 
