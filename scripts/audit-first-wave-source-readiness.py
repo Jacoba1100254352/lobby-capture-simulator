@@ -230,8 +230,8 @@ def product_aware_next_action(
     if target == "procurement-modification-causal-capture" and product_gate.get("sourceProductGate") == "candidate_only_blocked":
         return (
             "Replace the candidate procurement source-surface worklists with reviewed SAM/FPDS action-history rows, "
-            "GAO protest links, SAM exclusion rows, and dated procurement-firewall controls before estimating "
-            "procurement-modification capture or integrity effects."
+            "GAO protest links, SAM exclusion rows, dated procurement-firewall controls, and source-system "
+            "offer/competition enrichment before estimating procurement-modification capture or integrity effects."
         )
     if target == "substitution-elasticity" and "named reform-shock event file" in ready:
         return (
@@ -271,7 +271,7 @@ def product_aware_blocking_issue(
     if target == "procurement-modification-causal-capture" and product_gate.get("sourceProductGate") == "candidate_only_blocked":
         return (
             "Candidate procurement source-surface worklists are committed for SAM/FPDS, GAO protests, SAM exclusions, "
-            "and firewall controls, but they are not reviewed source rows and cannot support estimation."
+            "firewall controls, and offer/competition enrichment, but they are not reviewed source rows and cannot support estimation."
         )
     if target == "comment-authenticity-and-uptake-effect" and {
         "comment-body corpus",

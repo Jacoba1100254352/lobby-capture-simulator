@@ -109,6 +109,7 @@ for source_product in \
   gao-protest-overlay.csv \
   sam-exclusion-overlay.csv \
   procurement-firewall-overlay.csv \
+  procurement-offer-competition-enrichment.csv \
   comment-body-corpus.csv \
   comment-template-clusters.csv \
   agency-response-final-rule-linkage.csv \

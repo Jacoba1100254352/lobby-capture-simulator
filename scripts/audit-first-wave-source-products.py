@@ -291,6 +291,40 @@ PRODUCTS: tuple[ProductSpec, ...] = (
         next_action="Encode agency/subtier controls and effective dates for the award classes in the procurement panel.",
     ),
     ProductSpec(
+        target_key="procurement-modification-causal-capture",
+        product_key="procurement-offer-competition-enrichment",
+        label="offer-count and competition-code enrichment",
+        priority="P1",
+        requirement_level="required",
+        expected_path="data/calibration/first-wave/procurement-offer-competition-enrichment.csv",
+        acceptable_sources="SAM.gov Contract Awards, FPDS action-history records, or USAspending transaction rows when source competition fields are exposed",
+        required_columns=(
+            "piid",
+            "uei",
+            "agency",
+            "actionDate",
+            "awardType",
+            "extentCompeted",
+            "numberOfOffers",
+            "sourceSystem",
+            "sourceRecordId",
+            "sourceUrl",
+            "crosswalkConfidence",
+        ),
+        optional_columns=("recipientName", "subtier", "actionObligation", "notes"),
+        minimum_rows=5000,
+        validation_rule="CSV must preserve source-system competition and offer-count fields for award/action rows without silent imputation across SAM/FPDS and USAspending definitions.",
+        semantic_checks=(
+            "at least 1000 distinct PIID/award identifiers",
+            "at least six awarding agencies",
+            "at least two competition codes",
+            "nonempty offer-count coverage",
+            "source-system provenance populated",
+        ),
+        claim_boundary="Required before modification, protest, and firewall diagnostics can be conditioned on observed competition exposure.",
+        next_action="Populate source-specific competition and offer-count rows from SAM/FPDS or USAspending, then reconcile them with the action-history crosswalk before estimating procurement capture or integrity effects.",
+    ),
+    ProductSpec(
         target_key="comment-authenticity-and-uptake-effect",
         product_key="comment-body-corpus",
         label="comment-body corpus",
@@ -712,6 +746,11 @@ def product_manual_review_checklist(spec: ProductSpec, status: str) -> str:
             "number/type, competition coding, offer count, USAspending record ID, SAM record ID, and crosswalk "
             "confidence; remove candidateOnly markers only after these checks pass."
         ),
+        "procurement-offer-competition-enrichment": (
+            "Replace the candidate source-surface row with reviewed source-system competition rows; verify PIID, UEI, "
+            "agency, action date, award type, extent-competed code, number of offers, source-system record ID, source URL, "
+            "and crosswalk confidence; remove candidateOnly markers only after competition and offer-count coverage pass."
+        ),
         "gao-protest-overlay": (
             "Replace the candidate GAO source-surface row with reviewed bid-protest decisions or docket rows; link "
             "each protest to agency, dates, outcome, issue codes, source URL, and PIID, UEI, protester, awardee, "
@@ -776,7 +815,7 @@ def candidate_unreviewed_note(spec: ProductSpec) -> str:
     if spec.target_key == "procurement-modification-causal-capture":
         return (
             "Candidate-only procurement source-surface worklist is present; it does not clear "
-            "source-product readiness until action-history, protest, exclusion, and firewall rows "
+            "source-product readiness until action-history, protest, exclusion, firewall, and offer/competition rows "
             "are populated from reviewed source records and linked to procurement identifiers."
         )
     return (
@@ -888,6 +927,15 @@ def semantic_quality_issues(rows: list[dict[str, str]], spec: ProductSpec) -> tu
             checks.append(f"action-date span {span} days is below 270")
         if value_share(rows, "actionObligation") < 0.80:
             checks.append("action-obligation coverage below 0.80")
+    elif product == "procurement-offer-competition-enrichment":
+        checks.extend([
+            distinct_check(rows, "piid", 1000, "fewer than 1000 distinct PIID/award identifiers"),
+            distinct_check(rows, "agency", 6, "fewer than six awarding agencies"),
+            distinct_check(rows, "extentCompeted", 2, "fewer than two competition codes"),
+            distinct_check(rows, "sourceSystem", 1, "source-system provenance missing"),
+        ])
+        if value_share(rows, "numberOfOffers") < 0.80:
+            checks.append("offer-count coverage below 0.80")
     elif product == "comment-template-clusters":
         checks.append(distinct_check(rows, "clusterId", 2, "fewer than two template/duplicate clusters"))
     elif product == "canonical-actor-identifiers":
@@ -1150,7 +1198,7 @@ def write_markdown(path: Path, rows: list[dict[str, str]]) -> None:
         "",
         "Semantic checks are product-level safeguards that prevent tiny or structurally incomplete files from clearing a causal source gate merely because required columns are present.",
         "",
-        "The `candidate_unreviewed` status means the production file exists as a deterministic manual-review seed, but it cannot clear readiness until the product-specific manual checks are adjudicated. Entity-resolution seeds require alias, issue, and false-match review; the response/final-rule linkage seed requires observed response-section, final-rule movement, and uptake-coding review; procurement source-surface worklists require reviewed action-history, protest, exclusion, and firewall rows linked to procurement identifiers.",
+        "The `candidate_unreviewed` status means the production file exists as a deterministic manual-review seed, but it cannot clear readiness until the product-specific manual checks are adjudicated. Entity-resolution seeds require alias, issue, and false-match review; the response/final-rule linkage seed requires observed response-section, final-rule movement, and uptake-coding review; procurement source-surface worklists require reviewed action-history, protest, exclusion, firewall, and offer/competition rows linked to procurement identifiers.",
         "",
         "| Target | Product | Semantic issue count | Semantic issues | Validation notes |",
         "| --- | --- | ---: | --- | --- |",

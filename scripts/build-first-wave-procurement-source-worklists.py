@@ -219,11 +219,61 @@ def main() -> int:
         ],
     )
 
+    write_csv(
+        output / "procurement-offer-competition-enrichment.csv",
+        [
+            "piid",
+            "uei",
+            "agency",
+            "actionDate",
+            "awardType",
+            "extentCompeted",
+            "numberOfOffers",
+            "sourceSystem",
+            "sourceRecordId",
+            "sourceUrl",
+            "crosswalkConfidence",
+            "recipientName",
+            "subtier",
+            "actionObligation",
+            "notes",
+            "candidateOnly",
+            "candidateStatus",
+        ],
+        [
+            {
+                "piid": "candidate_unreviewed",
+                "uei": "candidate_unreviewed",
+                "agency": "candidate_unreviewed_multi_agency_environmental_strata",
+                "actionDate": "candidate_unreviewed",
+                "awardType": "candidate_unreviewed",
+                "extentCompeted": "candidate_unreviewed",
+                "numberOfOffers": "candidate_unreviewed",
+                "sourceSystem": "candidate_unreviewed",
+                "sourceRecordId": "candidate_unreviewed",
+                "sourceUrl": "https://open.gsa.gov/api/",
+                "crosswalkConfidence": "0.0000",
+                "recipientName": "candidate_unreviewed",
+                "subtier": "candidate_unreviewed",
+                "actionObligation": "candidate_unreviewed",
+                "notes": (
+                    f"{BOUNDARY}; sourceExtractedAt={SOURCE_EXTRACTED_AT}; "
+                    "replace this row with normalized SAM/FPDS or USAspending rows carrying source-system "
+                    "competition codes, offer counts, award type, action date, source identifiers, and "
+                    "crosswalk confidence before conditioning procurement-modification diagnostics"
+                ),
+                "candidateOnly": "true",
+                "candidateStatus": CANDIDATE_STATUS,
+            }
+        ],
+    )
+
     for filename in (
         "sam-fpds-action-history-crosswalk.csv",
         "gao-protest-overlay.csv",
         "sam-exclusion-overlay.csv",
         "procurement-firewall-overlay.csv",
+        "procurement-offer-competition-enrichment.csv",
     ):
         print(f"Wrote {output / filename}")
     return 0

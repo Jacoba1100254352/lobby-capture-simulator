@@ -7,7 +7,7 @@ This report turns the open procurement-calibration risk into source-specific acq
 - Acquisition products: `5`
 - Source-evidence status: `acquisition_plan_only`
 - Claim boundary: `procurement modification, protest, exclusion, competition, and firewall rows remain bounded diagnostics until linked source products pass the first-wave source-product and source-readiness gates`
-- Product statuses: `candidate_unreviewed=4; not_in_source_product_gate=1`
+- Product statuses: `candidate_unreviewed=5`
 
 ## Promotion Rule
 
@@ -21,7 +21,7 @@ A row in this report is only an acquisition instruction. To promote a procuremen
 | gao-protest-overlay | candidate_unreviewed | GAO Recent Bid Protest Decisions, GAO Search Decisions & Docket, and GAO Legal Products XML feed (https://www.gao.gov/legal/bid-protests/recent) | Protest ID or B-number, agency, filed date where available, decision date, outcome, issue codes, source URL, and manually reviewed PIID/UEI/vendor linkage when available | GAO decision surfaces do not reliably expose PIID/UEI fields in a machine-readable way, so award/vendor linkage is a manual review task. |
 | sam-exclusion-overlay | candidate_unreviewed | SAM.gov Exclusions API and SAM.gov Entity/Exclusions Extracts Download API (https://open.gsa.gov/api/exclusions-api/) | Exclusion ID, UEI, recipient/entity name, exclusion type, activation/start date, termination/end date, excluding agency, and source URL | Official API quota and extract access must be managed; broad extracts require field normalization and source-date preservation. |
 | procurement-firewall-overlay | candidate_unreviewed | Agency procurement-integrity rules, firewall memoranda, acquisition-policy supplements, inspector-general reports, and official policy archives (https://www.acquisition.gov/far/) | Firewall rule ID, agency, subtier, award type, effective date, covered officials, control type, coverage rule, and source URL | No single public API provides agency firewall controls, so acquisition is a curated document-review task over official sources. |
-| procurement-offer-competition-enrichment | not_in_source_product_gate | SAM.gov Contract Awards and USAspending transaction/action records where offer-count and competition fields are exposed (https://open.gsa.gov/api/) | PIID, UEI, extent-competed code, number of offers, award type, action date, obligation, agency, and source-system record ID | Committed USAspending action rows have weak competition-field coverage, so SAM/FPDS export promotion remains the preferred path. |
+| procurement-offer-competition-enrichment | candidate_unreviewed | SAM.gov Contract Awards and USAspending transaction/action records where offer-count and competition fields are exposed (https://open.gsa.gov/api/) | PIID, UEI, agency, action date, award type, extent-competed code, number of offers, source system, source-system record ID, source URL, and crosswalk confidence | No reviewed standalone offer/competition source product has been promoted yet; committed USAspending action rows remain denominator context until source-system competition fields clear the gate. |
 
 ## Acquisition Details
 
@@ -71,13 +71,13 @@ A row in this report is only an acquisition instruction. To promote a procuremen
 
 ### procurement-offer-competition-enrichment
 
-- Expected path: `data/calibration/first-wave/sam-fpds-action-history-crosswalk.csv`
-- Source-product status: `not_in_source_product_gate`
+- Expected path: `data/calibration/first-wave/procurement-offer-competition-enrichment.csv`
+- Source-product status: `candidate_unreviewed`
 - Preferred official source: SAM.gov Contract Awards and USAspending transaction/action records where offer-count and competition fields are exposed (https://open.gsa.gov/api/)
 - Fallback: Award-detail and latest-transaction fields from USAspending, retained as directional context when action-history fields are absent
-- Required linkage: PIID, UEI, extent-competed code, number of offers, award type, action date, obligation, agency, and source-system record ID
-- Acquisition step: Treat offer-count and competition enrichment as part of the SAM/FPDS crosswalk so modification rates can be conditioned on competition exposure.
-- Promotion gate: Competition fields must remain source-system specific and cannot be imputed silently across SAM/FPDS and USAspending definitions.
+- Required linkage: PIID, UEI, agency, action date, award type, extent-competed code, number of offers, source system, source-system record ID, source URL, and crosswalk confidence
+- Acquisition step: Populate the standalone offer/competition enrichment product from SAM/FPDS or USAspending rows with observed source competition fields, then reconcile it with the action-history crosswalk.
+- Promotion gate: The source-product gate requires at least 5,000 rows, at least 1,000 distinct PIIDs, at least six agencies, at least two competition codes, nonempty source provenance, and high offer-count coverage.
 - Claim boundary: Competition enrichment supports controls and stratification; it is not an independent capture outcome.
 
 ## Official Source Notes

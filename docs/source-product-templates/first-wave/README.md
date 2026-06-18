@@ -2,8 +2,8 @@
 
 These files are acquisition templates for the source products named by `reports/first-wave-source-products.md`.
 
-- Template products: `16`
-- CSV header templates: `15`
+- Template products: `17`
+- CSV header templates: `16`
 - Markdown design-note templates: `1`
 - Production source-product directory: `data/calibration/first-wave/`
 

@@ -68,15 +68,15 @@ SOURCE_ROWS = [
     },
     {
         "productKey": "procurement-offer-competition-enrichment",
-        "expectedPath": "data/calibration/first-wave/sam-fpds-action-history-crosswalk.csv",
+        "expectedPath": "data/calibration/first-wave/procurement-offer-competition-enrichment.csv",
         "preferredOfficialSource": "SAM.gov Contract Awards and USAspending transaction/action records where offer-count and competition fields are exposed",
         "officialSourceUrl": "https://open.gsa.gov/api/",
         "fallbackSource": "Award-detail and latest-transaction fields from USAspending, retained as directional context when action-history fields are absent",
-        "requiredLinkage": "PIID, UEI, extent-competed code, number of offers, award type, action date, obligation, agency, and source-system record ID",
-        "acquisitionStep": "Treat offer-count and competition enrichment as part of the SAM/FPDS crosswalk so modification rates can be conditioned on competition exposure.",
-        "promotionGate": "Competition fields must remain source-system specific and cannot be imputed silently across SAM/FPDS and USAspending definitions.",
+        "requiredLinkage": "PIID, UEI, agency, action date, award type, extent-competed code, number of offers, source system, source-system record ID, source URL, and crosswalk confidence",
+        "acquisitionStep": "Populate the standalone offer/competition enrichment product from SAM/FPDS or USAspending rows with observed source competition fields, then reconcile it with the action-history crosswalk.",
+        "promotionGate": "The source-product gate requires at least 5,000 rows, at least 1,000 distinct PIIDs, at least six agencies, at least two competition codes, nonempty source provenance, and high offer-count coverage.",
         "claimBoundary": "Competition enrichment supports controls and stratification; it is not an independent capture outcome.",
-        "currentBlocker": "Committed USAspending action rows have weak competition-field coverage, so SAM/FPDS export promotion remains the preferred path.",
+        "currentBlocker": "No reviewed standalone offer/competition source product has been promoted yet; committed USAspending action rows remain denominator context until source-system competition fields clear the gate.",
     },
 ]
 
