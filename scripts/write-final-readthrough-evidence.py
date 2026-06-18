@@ -130,23 +130,21 @@ def introduction_scope_row() -> dict[str, str]:
 
 
 def literature_positioning_row() -> dict[str, str]:
-    body = read_text(ROOT / "paper" / "sections" / "reggov-body.tex").lower()
-    references = read_text(ROOT / "paper" / "references.bib").lower()
-    terms = {
-        "lobbying": "lobby" in body,
-        "capture": "capture" in body,
-        "venue": "venue" in body,
-        "abm": "agent-based" in body or "agent based" in body,
-        "odd": "odd" in body or "grimm" in references,
-    }
-    present = sum(1 for value in terms.values() if value)
-    status = "manual_editorial_review_required" if present >= 4 else "manual_review_required"
+    rows = read_csv(REPORTS / "literature-positioning-audit.csv")
+    counts: dict[str, int] = {}
+    for row in rows:
+        row_status = row.get("status", "")
+        counts[row_status] = counts.get(row_status, 0) + 1
+    ready = counts.get("ready", 0)
+    partial = counts.get("partial", 0)
+    blocked = counts.get("blocked", 0)
+    status = "automated_support_present" if rows and blocked == 0 and ready >= 7 else "manual_editorial_review_required"
     return evidence_row(
         EXPECTED_ITEMS[2],
         status,
-        "positioning signals=" + "; ".join(f"{key}={'yes' if value else 'no'}" for key, value in terms.items()),
-        "paper/sections/reggov-body.tex; paper/references.bib",
-        "Judge whether the literature framing is persuasive, not merely present.",
+        f"literatureAuditReady={ready}; literatureAuditPartial={partial}; literatureAuditBlocked={blocked}",
+        "reports/literature-positioning-audit.md; paper/sections/reggov-body.tex; paper/references.bib",
+        "Judge whether the audited literature coverage is persuasive and sufficiently developed for the target venue.",
     )
 
 

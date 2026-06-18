@@ -107,6 +107,8 @@ CALIBRATION_READINESS_MD = ROOT / "reports" / "calibration-readiness.md"
 CALIBRATION_READINESS_CSV = ROOT / "reports" / "calibration-readiness.csv"
 POLICY_CLAIM_LANGUAGE_AUDIT_MD = ROOT / "reports" / "policy-claim-language-audit.md"
 POLICY_CLAIM_LANGUAGE_AUDIT_CSV = ROOT / "reports" / "policy-claim-language-audit.csv"
+LITERATURE_POSITIONING_AUDIT_MD = ROOT / "reports" / "literature-positioning-audit.md"
+LITERATURE_POSITIONING_AUDIT_CSV = ROOT / "reports" / "literature-positioning-audit.csv"
 SUBMISSION_READINESS_MD = ROOT / "reports" / "submission-readiness.md"
 SUBMISSION_READINESS_CSV = ROOT / "reports" / "submission-readiness.csv"
 REVIEWER_RISK_REGISTER_CSV = ROOT / "reports" / "reviewer-risk-register.csv"
@@ -344,6 +346,8 @@ def main() -> int:
             REGGOV_GUIDELINES_READINESS_MD,
             REVIEWER_RISK_REGISTER_CSV,
             REVIEWER_RISK_REGISTER_MD,
+            LITERATURE_POSITIONING_AUDIT_CSV,
+            LITERATURE_POSITIONING_AUDIT_MD,
             FINAL_READTHROUGH_EVIDENCE_CSV,
             FINAL_READTHROUGH_EVIDENCE_MD,
         ])
@@ -373,6 +377,7 @@ def main() -> int:
     failures.extend(check_claim_posture_audit())
     failures.extend(check_validation_scope_coverage())
     failures.extend(check_policy_claim_language_audit())
+    failures.extend(check_literature_positioning_audit())
     failures.extend(check_final_human_readthrough())
     failures.extend(check_final_human_readthrough_audit())
     failures.extend(check_final_readthrough_evidence())
@@ -469,6 +474,8 @@ def check_freshness() -> list[str]:
         (WILEY_SUBMISSION_FORM_READINESS_MD, wiley_submission_form_readiness_inputs()),
         (REGGOV_GUIDELINES_READINESS_CSV, reggov_guidelines_readiness_inputs()),
         (REGGOV_GUIDELINES_READINESS_MD, reggov_guidelines_readiness_inputs()),
+        (LITERATURE_POSITIONING_AUDIT_CSV, literature_positioning_audit_inputs()),
+        (LITERATURE_POSITIONING_AUDIT_MD, literature_positioning_audit_inputs()),
         (FINAL_READTHROUGH_EVIDENCE_CSV, final_readthrough_evidence_inputs()),
         (FINAL_READTHROUGH_EVIDENCE_MD, final_readthrough_evidence_inputs()),
         (REVIEWER_RISK_REGISTER_CSV, reviewer_risk_register_inputs()),
@@ -690,6 +697,8 @@ def doi_deposit_package_inputs() -> list[Path]:
         WILEY_SUBMISSION_FORM_READINESS_MD,
         REGGOV_GUIDELINES_READINESS_CSV,
         REGGOV_GUIDELINES_READINESS_MD,
+        LITERATURE_POSITIONING_AUDIT_CSV,
+        LITERATURE_POSITIONING_AUDIT_MD,
         FINAL_HUMAN_READTHROUGH,
         FINAL_HUMAN_READTHROUGH_AUDIT_CSV,
         FINAL_HUMAN_READTHROUGH_AUDIT_MD,
@@ -712,6 +721,8 @@ def final_readthrough_evidence_inputs() -> list[Path]:
         CLAIM_POSTURE_AUDIT_MD,
         POLICY_CLAIM_LANGUAGE_AUDIT_CSV,
         POLICY_CLAIM_LANGUAGE_AUDIT_MD,
+        LITERATURE_POSITIONING_AUDIT_CSV,
+        LITERATURE_POSITIONING_AUDIT_MD,
         SOURCE_PANEL_INVENTORY,
         SOURCE_CAPABILITY_AUDIT_CSV,
         SOURCE_CAPABILITY_AUDIT_MD,
@@ -732,6 +743,14 @@ def final_readthrough_evidence_inputs() -> list[Path]:
         ROOT / "paper" / "sections" / "submission-declarations.tex",
         ROOT / "paper" / "references.bib",
         ROOT / "scripts" / "write-final-readthrough-evidence.py",
+    ]
+
+
+def literature_positioning_audit_inputs() -> list[Path]:
+    return [
+        ROOT / "paper" / "sections" / "reggov-body.tex",
+        ROOT / "paper" / "references.bib",
+        ROOT / "scripts" / "audit-literature-positioning.py",
     ]
 
 
@@ -2846,6 +2865,62 @@ def check_policy_claim_language_audit() -> list[str]:
     return failures
 
 
+def check_literature_positioning_audit() -> list[str]:
+    failures: list[str] = []
+    missing = [
+        path.relative_to(ROOT)
+        for path in (LITERATURE_POSITIONING_AUDIT_MD, LITERATURE_POSITIONING_AUDIT_CSV)
+        if not path.exists()
+    ]
+    if missing:
+        return [f"missing literature-positioning audit artifact: {path}" for path in missing]
+
+    with LITERATURE_POSITIONING_AUDIT_CSV.open(newline="", encoding="utf-8") as source:
+        rows = {row.get("category", ""): row for row in csv.DictReader(source)}
+    required_categories = {
+        "lobbying-and-access",
+        "capture-and-governance",
+        "venue-substitution",
+        "money-in-politics",
+        "rulemaking-and-comments",
+        "revolving-door-and-intermediaries",
+        "abm-and-validation",
+        "public-data-bridge",
+    }
+    for category in sorted(required_categories - set(rows)):
+        failures.append(f"literature-positioning audit missing category: {category}")
+    for category in sorted(required_categories & set(rows)):
+        row = rows[category]
+        if row.get("status") == "blocked":
+            failures.append(f"literature-positioning audit category is blocked: {category}")
+        if row.get("bodySignals") in {"", "none"}:
+            failures.append(f"literature-positioning audit category lacks body signals: {category}")
+        if row.get("citedRequiredKeys") in {"", "none"}:
+            failures.append(f"literature-positioning audit category lacks required cited keys: {category}")
+        if row.get("missingBibliographyKeys") not in {"", "none"}:
+            failures.append(f"literature-positioning audit category has missing bibliography keys: {category}")
+
+    text = LITERATURE_POSITIONING_AUDIT_MD.read_text(encoding="utf-8")
+    required_text = [
+        "Literature Positioning Audit",
+        "regulatory-governance mechanism-model paper",
+        "lobbying-and-access",
+        "capture-and-governance",
+        "venue-substitution",
+        "money-in-politics",
+        "rulemaking-and-comments",
+        "revolving-door-and-intermediaries",
+        "abm-and-validation",
+        "public-data-bridge",
+        "Ready categories",
+        "human reader still needs to judge",
+    ]
+    for phrase in required_text:
+        if phrase not in text:
+            failures.append(f"literature-positioning audit markdown missing phrase: {phrase}")
+    return failures
+
+
 def check_submission_readiness_audit() -> list[str]:
     failures: list[str] = []
     missing = [
@@ -3433,6 +3508,8 @@ def check_doi_deposit_package() -> list[str]:
         "readiness/final-human-readthrough.md",
         "readiness/final-human-readthrough-audit.csv",
         "readiness/final-human-readthrough-audit.md",
+        "readiness/literature-positioning-audit.csv",
+        "readiness/literature-positioning-audit.md",
         "readiness/final-readthrough-evidence.csv",
         "readiness/final-readthrough-evidence.md",
     }

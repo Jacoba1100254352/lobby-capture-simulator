@@ -5,7 +5,7 @@ This generated packet maps each unchecked scholarly read-through item to current
 ## Summary
 
 - Overall status: `manual_required`
-- Status counts: `automated_support_present=11`; `external_manual_required=2`; `manual_editorial_review_required=1`; `manual_required=1`
+- Status counts: `automated_support_present=12`; `external_manual_required=2`; `manual_required=1`
 - Human signoff remains controlled by `reports/final-human-readthrough.md`.
 
 ## Evidence Matrix
@@ -14,7 +14,7 @@ This generated packet maps each unchecked scholarly read-through item to current
 | --- | --- | --- | --- | --- |
 | scholarly-readthrough-checklist-01 | automated_support_present | policy overclaim hits=0; abstract mechanism language=yes; abstract bounded-language signal=yes | paper/strategic-channel-substitution-regulatory-capture.tex; paper/regulation-governance-wiley.tex; reports/policy-claim-language-audit.md | Confirm the abstract reads as a mechanism-model contribution, not a calibrated policy-effect claim. |
 | scholarly-readthrough-checklist-02 | automated_support_present | mechanism=ready; empiricalBridge=bounded; calibratedPolicy=blocked | reports/submission-readiness.md; paper/sections/reggov-body.tex | Read the introduction for rhetorical separation of assumptions, synthetic findings, and empirical bridge limits. |
-| scholarly-readthrough-checklist-03 | manual_editorial_review_required | positioning signals=lobbying=yes; capture=yes; venue=yes; abm=yes; odd=yes | paper/sections/reggov-body.tex; paper/references.bib | Judge whether the literature framing is persuasive, not merely present. |
+| scholarly-readthrough-checklist-03 | automated_support_present | literatureAuditReady=8; literatureAuditPartial=0; literatureAuditBlocked=0 | reports/literature-positioning-audit.md; paper/sections/reggov-body.tex; paper/references.bib | Judge whether the audited literature coverage is persuasive and sufficiently developed for the target venue. |
 | scholarly-readthrough-checklist-04 | automated_support_present | latexLogsPass=yes; missingSpecArtifacts=none | docs/odd-model.md; paper/tables/composite_weights.tex; paper/tables/switch_rule_snapshot.tex; reports/latex-log-audit.md | Compare the main-text model description against the ODD supplement and generated diagnostic tables. |
 | scholarly-readthrough-checklist-05 | automated_support_present | policy overclaim hits=0; calibratedPolicyGate=not_cleared | reports/policy-claim-language-audit.md; reports/claim-posture-audit.md; reports/substitution-audit.md | Read result prose for overinterpretation despite the mechanical language audit passing. |
 | scholarly-readthrough-checklist-06 | automated_support_present | empiricalBridge=bounded; sourceLimitedPanels=10 | reports/claim-posture-audit.md; reports/source-panel-inventory.md; reports/source-capability-audit.md | Check that the manuscript describes the bridge as bounded source support rather than validation of hidden-channel magnitudes. |
