@@ -76,6 +76,7 @@ cp "$ROOT_DIR/reports/claim-source-dependency.md" "$STAGING_DIR/supporting-infor
 cp "$ROOT_DIR/reports/causal-calibration-targets.md" "$STAGING_DIR/supporting-information/causal-calibration-targets.md"
 cp "$ROOT_DIR/reports/first-wave-causal-protocols.md" "$STAGING_DIR/supporting-information/first-wave-causal-protocols.md"
 cp "$ROOT_DIR/reports/first-wave-source-products.md" "$STAGING_DIR/supporting-information/first-wave-source-products.md"
+cp "$ROOT_DIR/reports/first-wave-linkage-candidates.md" "$STAGING_DIR/supporting-information/first-wave-linkage-candidates.md"
 cp "$ROOT_DIR/reports/first-wave-source-readiness.md" "$STAGING_DIR/supporting-information/first-wave-source-readiness.md"
 cp "$ROOT_DIR/reports/claim-posture-audit.md" "$STAGING_DIR/supporting-information/claim-posture-audit.md"
 cp "$ROOT_DIR/reports/validation-summary.md" "$STAGING_DIR/supporting-information/validation-summary.md"
@@ -107,6 +108,7 @@ for report_artifact in "$ROOT_DIR"/reports/*.csv "$ROOT_DIR"/reports/*.md "$ROOT
       sam-contract-awards-export-audit.*) continue ;;
       sam-contract-awards-preflight.*) continue ;;
       usaspending-transaction-download-strata.*) continue ;;
+      first-wave-linkage-candidate-records.csv) continue ;;
     esac
     cp "$report_artifact" "$STAGING_DIR/supporting-information/report-data/"
   fi

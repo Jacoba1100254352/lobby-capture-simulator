@@ -7,8 +7,8 @@
     "supplement.pdf"
   ],
   "releaseAssetChecksumLocation": "dist/release-asset-checksums.{csv,json,md}",
-  "releaseTag": "paper-publication-readiness-2026-06-15-r140",
-  "releaseUrl": "https://github.com/Jacoba1100254352/lobby-capture-simulator/releases/tag/paper-publication-readiness-2026-06-15-r140",
+  "releaseTag": "paper-publication-readiness-2026-06-15-r141",
+  "releaseUrl": "https://github.com/Jacoba1100254352/lobby-capture-simulator/releases/tag/paper-publication-readiness-2026-06-15-r141",
   "rows": [
     {
       "archiveNote": "Primary journal submission archive with manuscript source, compiled PDFs, supporting information, generated reports, and package-member checksum manifest.",
@@ -58,7 +58,7 @@
       "path": "CITATION.cff",
       "releaseAssetName": "",
       "role": "citation-metadata",
-      "sha256": "f15fdf97dd67617e11a3d47520cd6f6d500046de4212171ca9b0a7319c502431"
+      "sha256": "a80fdbd2f25490c4d747b728440ef9ce799f6ba57fe797322bbdb6dd3cd59d17"
     },
     {
       "archiveNote": "Zenodo-compatible metadata included in the tagged source archive and Wiley submission archive.",
@@ -68,7 +68,7 @@
       "path": ".zenodo.json",
       "releaseAssetName": "",
       "role": "doi-deposit-metadata",
-      "sha256": "04f652c3f41c3c9093318c22b75486fc1e764cdd0e8a7d7c87fa34055292897f"
+      "sha256": "a8c1deed88f3e2335eed6361578e69307efccadd1f3699741da587f9fe8e9b40"
     },
     {
       "archiveNote": "Generated gate summary distinguishing mechanism-review readiness from DOI and human signoff.",
@@ -78,17 +78,17 @@
       "path": "reports/submission-readiness.md",
       "releaseAssetName": "",
       "role": "submission-readiness-audit",
-      "sha256": "093392a9976e3430381f43f21d6a1ab7de3c3cbce6f2879e4a7968286a2c0813"
+      "sha256": "f48af0bb1bf924b0dd981e3b6b32b861ac4083ce692d93cbebf46c71108427f6"
     },
     {
       "archiveNote": "Manual final-submission read-through checklist; remains pending until signed for the release.",
-      "bytes": "5254",
+      "bytes": "5265",
       "checksumStatus": "tracked-source-verified",
       "includeInDoiDeposit": "source-archive",
       "path": "reports/final-human-readthrough.md",
       "releaseAssetName": "",
       "role": "manual-signoff-record",
-      "sha256": "dafe54ab90895fa252c8d06ad019788fd41df26711d01c507a9b3680ae88cb95"
+      "sha256": "9caa0937a81ed816ed728b9c407537848453cc59e6c274e1c3bd973ba90e2ee5"
     }
   ],
   "schema": "lobby-capture-archive-handoff-manifest-v1",

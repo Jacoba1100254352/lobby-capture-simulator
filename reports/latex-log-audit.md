@@ -9,7 +9,7 @@ This audit scans the final local manuscript, Wiley manuscript, and supplement La
 | --- | --- | ---: | ---: | ---: | ---: | ---: | --- | --- | ---: | ---: |
 | local-manuscript | pass | - | 0 | 0.0000 | 0 | 0.0000 | - | not needed | 17 | 0 |
 | wiley-manuscript | pass | - | 0 | 0.0000 | 1 | 50.7244 | 1 | p1:layout pass | 28 | 4 |
-| supplement | pass | - | 0 | 0.0000 | 0 | 0.0000 | - | not needed | 46 | 0 |
+| supplement | pass | - | 0 | 0.0000 | 0 | 0.0000 | - | not needed | 44 | 0 |
 
 ## Box-Warning Follow-Up
 

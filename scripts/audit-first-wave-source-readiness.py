@@ -15,6 +15,7 @@ SOURCE_PANELS = REPORTS / "source-panel-inventory.csv"
 SOURCE_MOMENTS = REPORTS / "source-moments.csv"
 PROCUREMENT_REFRESH = REPORTS / "procurement-refresh-readiness.csv"
 SOURCE_PRODUCTS = REPORTS / "first-wave-source-products.csv"
+LINKAGE_CANDIDATES = REPORTS / "first-wave-linkage-candidates.csv"
 
 
 TARGET_ORDER = [
@@ -36,9 +37,10 @@ def main() -> int:
     moments = source_moments(args.reports / SOURCE_MOMENTS.name)
     procurement = keyed_rows(args.reports / PROCUREMENT_REFRESH.name, "item")
     products = product_rows(args.reports / SOURCE_PRODUCTS.name)
+    linkage = linkage_candidate_summary(args.reports / LINKAGE_CANDIDATES.name)
 
     rows = [
-        readiness_row(target, protocols, capabilities, panels, moments, procurement, products)
+        readiness_row(target, protocols, capabilities, panels, moments, procurement, products, linkage)
         for target in TARGET_ORDER
         if target in protocols
     ]
@@ -93,6 +95,7 @@ def readiness_row(
     moments: dict[str, dict[str, str]],
     procurement: dict[str, dict[str, str]],
     products: dict[str, list[dict[str, str]]],
+    linkage: dict[str, str],
 ) -> dict[str, str]:
     builders = {
         "substitution-elasticity": substitution_row,
@@ -100,7 +103,7 @@ def readiness_row(
         "comment-authenticity-and-uptake-effect": comment_row,
         "venue-shifting-detection-effect": venue_row,
     }
-    row = builders[target](capabilities, panels, moments, procurement)
+    row = builders[target](capabilities, panels, moments, procurement, linkage)
     protocol = protocols[target]
     product_gate = product_gate_summary(products.get(target, []))
     if product_gate["missingProducts"]:
@@ -152,11 +155,63 @@ def product_gate_summary(rows: list[dict[str, str]]) -> dict[str, str]:
     }
 
 
+def linkage_candidate_summary(path: Path) -> dict[str, str]:
+    if not path.exists():
+        return {
+            "count": "0",
+            "crossVenueCount": "0",
+            "sourceSystemMax": "0",
+            "venueMax": "0",
+            "sourceText": "cross-venue linkage candidates=missing",
+            "boundaryText": "first-wave linkage candidates: missing",
+        }
+    count = 0
+    cross_venue = 0
+    max_sources = 0
+    max_venues = 0
+    source_systems: set[str] = set()
+    venues: set[str] = set()
+    with path.open(newline="", encoding="utf-8") as source:
+        for row in csv.DictReader(source):
+            count += 1
+            if row.get("candidateType") == "cross_venue":
+                cross_venue += 1
+            max_sources = max(max_sources, int_or_zero(row.get("sourceSystemCount", "")))
+            max_venues = max(max_venues, int_or_zero(row.get("venueCount", "")))
+            source_systems.update(split_semicolon(row.get("sourceSystems", "")))
+            venues.update(split_semicolon(row.get("venues", "")))
+    if count == 0:
+        return {
+            "count": "0",
+            "crossVenueCount": "0",
+            "sourceSystemMax": "0",
+            "venueMax": "0",
+            "sourceText": "cross-venue linkage candidates=0",
+            "boundaryText": "first-wave linkage candidates: candidate report present with 0 cross-source rows",
+        }
+    return {
+        "count": str(count),
+        "crossVenueCount": str(cross_venue),
+        "sourceSystemMax": str(max_sources),
+        "venueMax": str(max_venues),
+        "sourceText": (
+            f"candidate cross-source actor keys={count}; cross-venue keys={cross_venue}; "
+            f"source systems={len(source_systems)}; venues={len(venues)}"
+        ),
+        "boundaryText": (
+            "first-wave linkage candidates: candidate-only "
+            f"({count} cross-source keys; {cross_venue} cross-venue keys; "
+            f"maxSources={max_sources}; maxVenues={max_venues})"
+        ),
+    }
+
+
 def substitution_row(
     capabilities: dict[str, dict[str, str]],
     panels: dict[str, dict[str, str]],
     moments: dict[str, dict[str, str]],
     procurement: dict[str, dict[str, str]],
+    linkage: dict[str, str],
 ) -> dict[str, str]:
     return {
         "sourceReadiness": "partial_source_support_not_estimation_ready",
@@ -167,11 +222,13 @@ def substitution_row(
             metric_text(moments, "regulatoryRows", "Regulations.gov/Federal Register rows"),
             metric_text(moments, "procurementActionRows", "USAspending action rows"),
             metric_text(moments, "intermediaryRows", "intermediary rows"),
+            linkage["sourceText"],
         ]),
         "boundedOrProxySupport": "; ".join([
             panel_text(panels, "Direct dark money"),
             panel_text(panels, "Intermediaries"),
             panel_text(panels, "Revolving door"),
+            linkage["boundaryText"],
         ]),
         "missingSourceProducts": "; ".join([
             "named reform-shock event file",
@@ -181,7 +238,7 @@ def substitution_row(
         ]),
         "blockingIssue": "Public surfaces exist, but the committed snapshot does not yet define an event panel that can estimate substitution elasticity.",
         "claimBoundary": "May guide a source-anchored substitution design; does not validate hidden-channel magnitudes or causal substitution effects.",
-        "nextAction": "Choose one named reform shock, build the actor-issue-time linkage file, and record exposed plus comparison actors before inspecting outcome movement.",
+        "nextAction": "Choose one named reform shock, use reports/first-wave-linkage-candidates.md to seed manual actor review, build the actor-issue-time linkage file, and record exposed plus comparison actors before inspecting outcome movement.",
     }
 
 
@@ -190,6 +247,7 @@ def procurement_row(
     panels: dict[str, dict[str, str]],
     moments: dict[str, dict[str, str]],
     procurement: dict[str, dict[str, str]],
+    linkage: dict[str, str],
 ) -> dict[str, str]:
     sam_capability = capabilities.get("sam-contract-awards-action-history", {})
     representative_sam = procurement.get("representative-sam-fpds-action-history", {})
@@ -224,6 +282,7 @@ def comment_row(
     panels: dict[str, dict[str, str]],
     moments: dict[str, dict[str, str]],
     procurement: dict[str, dict[str, str]],
+    linkage: dict[str, str],
 ) -> dict[str, str]:
     return {
         "sourceReadiness": "partial_source_support_not_estimation_ready",
@@ -256,6 +315,7 @@ def venue_row(
     panels: dict[str, dict[str, str]],
     moments: dict[str, dict[str, str]],
     procurement: dict[str, dict[str, str]],
+    linkage: dict[str, str],
 ) -> dict[str, str]:
     return {
         "sourceReadiness": "partial_identifier_support_not_linkage_ready",
@@ -266,11 +326,13 @@ def venue_row(
             metric_text(moments, "procurementActionRows", "procurement action rows"),
             metric_text(moments, "intermediaryRows", "intermediary rows"),
             metric_text(moments, "revolvingDoorRows", "revolving-door proxy rows"),
+            linkage["sourceText"],
         ]),
         "boundedOrProxySupport": "; ".join([
             panel_text(panels, "Direct dark money"),
             panel_text(panels, "Intermediaries"),
             panel_text(panels, "Revolving door"),
+            linkage["boundaryText"],
         ]),
         "missingSourceProducts": "; ".join([
             "canonical actor identifier table",
@@ -281,7 +343,7 @@ def venue_row(
         ]),
         "blockingIssue": "Multiple public surfaces are present, but the committed snapshot lacks an audited entity-resolution spine.",
         "claimBoundary": "Can support a detection-measurement workplan; cannot prove venue shifting changed outcomes.",
-        "nextAction": "Build an alias table linking LDA clients, FEC spenders, docket submitters, vendors, intermediaries, and access proxies, then audit false matches before promoting the panel.",
+        "nextAction": "Start from reports/first-wave-linkage-candidates.md, build an alias table linking LDA clients, FEC spenders, docket submitters, vendors, intermediaries, and access proxies, then audit false matches before promoting the panel.",
     }
 
 
@@ -314,6 +376,17 @@ def capability_text(row: dict[str, str]) -> str:
 
 def status_text(label: str, status: str) -> str:
     return f"{label}: {status or 'missing'}"
+
+
+def int_or_zero(value: str) -> int:
+    try:
+        return int(float(value or 0))
+    except ValueError:
+        return 0
+
+
+def split_semicolon(value: str) -> set[str]:
+    return {item.strip() for item in value.split(";") if item.strip()}
 
 
 def format_number(value: str) -> str:
@@ -355,7 +428,7 @@ def write_markdown(path: Path, rows: list[dict[str, str]]) -> None:
     lines = [
         "# First-Wave Source Readiness",
         "",
-        "This audit maps the first-wave causal protocols to committed source products. It is a pre-estimation gate: source products can support protocol design, but no row clears calibrated policy-simulation claims or causal effect language.",
+        "This audit maps the first-wave causal protocols to committed source products. It is a pre-estimation gate: source products can support protocol design, but no row clears calibrated policy-simulation claims or causal effect language. Candidate linkage rows from `reports/first-wave-linkage-candidates.md` are manual-review worklists only and do not satisfy production source-product requirements.",
         "",
         "## Summary",
         "",

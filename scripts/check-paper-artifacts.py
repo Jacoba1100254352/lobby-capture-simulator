@@ -70,6 +70,9 @@ FIRST_WAVE_SOURCE_TEMPLATE_DIR = ROOT / "docs" / "source-product-templates" / "f
 FIRST_WAVE_SOURCE_TEMPLATE_MANIFEST_CSV = FIRST_WAVE_SOURCE_TEMPLATE_DIR / "manifest.csv"
 FIRST_WAVE_SOURCE_TEMPLATE_MANIFEST_MD = FIRST_WAVE_SOURCE_TEMPLATE_DIR / "manifest.md"
 FIRST_WAVE_SOURCE_TEMPLATE_README = FIRST_WAVE_SOURCE_TEMPLATE_DIR / "README.md"
+FIRST_WAVE_LINKAGE_CANDIDATES_MD = ROOT / "reports" / "first-wave-linkage-candidates.md"
+FIRST_WAVE_LINKAGE_CANDIDATES_CSV = ROOT / "reports" / "first-wave-linkage-candidates.csv"
+FIRST_WAVE_LINKAGE_CANDIDATE_RECORDS_CSV = ROOT / "reports" / "first-wave-linkage-candidate-records.csv"
 FIRST_WAVE_SOURCE_READINESS_MD = ROOT / "reports" / "first-wave-source-readiness.md"
 FIRST_WAVE_SOURCE_READINESS_CSV = ROOT / "reports" / "first-wave-source-readiness.csv"
 CLAIM_POSTURE_AUDIT_MD = ROOT / "reports" / "claim-posture-audit.md"
@@ -104,7 +107,7 @@ DOI_DEPOSIT_PACKAGE_CHECKSUM_CSV = ROOT / "dist" / "doi-deposit-package-checksum
 DOI_DEPOSIT_PACKAGE_CHECKSUM_JSON = ROOT / "dist" / "doi-deposit-package-checksum.json"
 DOI_DEPOSIT_PACKAGE_CHECKSUM_MD = ROOT / "dist" / "doi-deposit-package-checksum.md"
 ZENODO_DEPOSIT_METADATA_JSON = ROOT / "dist" / "zenodo-deposit-metadata.json"
-RELEASE_TAG = "paper-publication-readiness-2026-06-15-r140"
+RELEASE_TAG = "paper-publication-readiness-2026-06-15-r141"
 ARCHIVE_HANDOFF_REPORT_NAMES = {
     "archive-handoff-manifest.csv",
     "archive-handoff-manifest.json",
@@ -127,6 +130,9 @@ LOCAL_OPERATIONAL_REPORT_PREFIXES = (
     "sam-contract-awards-preflight.",
     "usaspending-transaction-download-strata.",
 )
+SUBMISSION_REPORT_DATA_EXCLUSIONS = {
+    "first-wave-linkage-candidate-records.csv",
+}
 TRACKED_SOURCE_CHECKSUM_STATUS = "tracked-source-verified"
 RELEASE_ASSET_CHECKSUM_STATUS = "release-asset-checksum-recorded-in-dist"
 CITATION_CFF = ROOT / "CITATION.cff"
@@ -231,6 +237,7 @@ EXPECTED_ZIP_MEMBERS = {
     "supporting-information/causal-calibration-targets.md",
     "supporting-information/first-wave-causal-protocols.md",
     "supporting-information/first-wave-source-products.md",
+    "supporting-information/first-wave-linkage-candidates.md",
     "supporting-information/first-wave-source-readiness.md",
     "supporting-information/claim-posture-audit.md",
     "supporting-information/policy-claim-language-audit.md",
@@ -312,6 +319,7 @@ def main() -> int:
     failures.extend(check_first_wave_causal_protocols())
     failures.extend(check_first_wave_source_product_templates())
     failures.extend(check_first_wave_source_products())
+    failures.extend(check_first_wave_linkage_candidates())
     failures.extend(check_first_wave_source_readiness())
     failures.extend(check_claim_posture_audit())
     failures.extend(check_policy_claim_language_audit())
@@ -449,6 +457,7 @@ def submission_inputs() -> list[Path]:
         ROOT / "scripts" / "write-first-wave-causal-protocols.py",
         ROOT / "scripts" / "write-first-wave-source-product-templates.py",
         ROOT / "scripts" / "audit-first-wave-source-products.py",
+        ROOT / "scripts" / "build-first-wave-linkage-candidates.py",
         ROOT / "scripts" / "audit-first-wave-source-readiness.py",
         CITATION_CFF,
         ZENODO_JSON,
@@ -471,6 +480,7 @@ def submission_inputs() -> list[Path]:
         CAUSAL_CALIBRATION_TARGETS_MD,
         FIRST_WAVE_CAUSAL_PROTOCOLS_MD,
         FIRST_WAVE_SOURCE_PRODUCTS_MD,
+        FIRST_WAVE_LINKAGE_CANDIDATES_MD,
         FIRST_WAVE_SOURCE_READINESS_MD,
         ROOT / "reports" / "claim-posture-audit.md",
         ROOT / "reports" / "validation-summary.md",
@@ -2049,6 +2059,99 @@ def check_first_wave_source_products() -> list[str]:
     return failures
 
 
+def check_first_wave_linkage_candidates() -> list[str]:
+    failures: list[str] = []
+    missing = [
+        path.relative_to(ROOT)
+        for path in (
+            FIRST_WAVE_LINKAGE_CANDIDATES_MD,
+            FIRST_WAVE_LINKAGE_CANDIDATES_CSV,
+            FIRST_WAVE_LINKAGE_CANDIDATE_RECORDS_CSV,
+        )
+        if not path.exists()
+    ]
+    if missing:
+        return [f"missing first-wave linkage candidate artifact: {path}" for path in missing]
+
+    with FIRST_WAVE_LINKAGE_CANDIDATES_CSV.open(newline="", encoding="utf-8") as source:
+        summary_rows = list(csv.DictReader(source))
+    with FIRST_WAVE_LINKAGE_CANDIDATE_RECORDS_CSV.open(newline="", encoding="utf-8") as source:
+        record_rows = list(csv.DictReader(source))
+
+    if not summary_rows:
+        failures.append("first-wave linkage candidates summary is empty")
+    if not record_rows:
+        failures.append("first-wave linkage candidate records are empty")
+
+    required_summary_fields = {
+        "candidateActorId",
+        "normalizedName",
+        "displayName",
+        "sourceSystemCount",
+        "sourceSystems",
+        "venueCount",
+        "venues",
+        "candidateType",
+        "sourceRecordCount",
+        "candidateUse",
+        "reviewAction",
+        "claimBoundary",
+    }
+    required_record_fields = {
+        "candidateActorId",
+        "normalizedName",
+        "displayName",
+        "sourceSystem",
+        "venue",
+        "sourceFile",
+        "sourceRecordId",
+        "matchRule",
+        "candidateOnly",
+        "claimBoundary",
+    }
+    if summary_rows:
+        missing_fields = sorted(required_summary_fields - set(summary_rows[0]))
+        failures.extend(f"first-wave linkage candidates missing summary field: {field}" for field in missing_fields)
+    if record_rows:
+        missing_fields = sorted(required_record_fields - set(record_rows[0]))
+        failures.extend(f"first-wave linkage candidates missing record field: {field}" for field in missing_fields)
+
+    cross_venue_rows = [
+        row for row in summary_rows
+        if row.get("candidateType") == "cross_venue" and int_or_zero(row.get("venueCount")) >= 2
+    ]
+    if not cross_venue_rows:
+        failures.append("first-wave linkage candidates should include cross-venue candidate rows")
+    if any(row.get("candidateOnly") != "true" for row in record_rows):
+        failures.append("first-wave linkage candidate records must remain candidateOnly=true")
+    if any("not evidence" not in row.get("claimBoundary", "") for row in summary_rows[:25]):
+        failures.append("first-wave linkage candidates summary rows must preserve candidate-only claim boundaries")
+
+    text = FIRST_WAVE_LINKAGE_CANDIDATES_MD.read_text(encoding="utf-8")
+    required_text = [
+        "First-Wave Linkage Candidates",
+        "candidate-generation artifact only",
+        "Candidate status: `candidate_only_not_source_product`",
+        "Cross-venue candidate actors",
+        "Production promotion path",
+        "Automated normalized-name overlap is not evidence",
+        "linked actor-issue-venue-time",
+    ]
+    for phrase in required_text:
+        if phrase not in text:
+            failures.append(f"first-wave linkage candidates markdown missing phrase: {phrase}")
+
+    if SUPPLEMENT_BODY.exists():
+        supplement = SUPPLEMENT_BODY.read_text(encoding="utf-8")
+        for phrase in (
+            "first-wave linkage-candidate report",
+            "reports/first-wave-linkage-candidates.md",
+        ):
+            if phrase not in supplement:
+                failures.append(f"supplement does not disclose first-wave linkage candidate artifact: {phrase}")
+    return failures
+
+
 def check_first_wave_source_readiness() -> list[str]:
     failures: list[str] = []
     missing = [
@@ -3234,6 +3337,7 @@ def package_byte_checks() -> list[tuple[Path, str]]:
         (CAUSAL_CALIBRATION_TARGETS_MD, "supporting-information/causal-calibration-targets.md"),
         (FIRST_WAVE_CAUSAL_PROTOCOLS_MD, "supporting-information/first-wave-causal-protocols.md"),
         (FIRST_WAVE_SOURCE_PRODUCTS_MD, "supporting-information/first-wave-source-products.md"),
+        (FIRST_WAVE_LINKAGE_CANDIDATES_MD, "supporting-information/first-wave-linkage-candidates.md"),
         (FIRST_WAVE_SOURCE_READINESS_MD, "supporting-information/first-wave-source-readiness.md"),
         (ROOT / "reports" / "claim-posture-audit.md", "supporting-information/claim-posture-audit.md"),
         (ROOT / "reports" / "validation-summary.md", "supporting-information/validation-summary.md"),
@@ -3278,6 +3382,7 @@ def package_byte_checks() -> list[tuple[Path, str]]:
     checks.extend(
         (path, f"supporting-information/report-data/{path.name}")
         for path in report_bundle_inputs()
+        if path.name not in SUBMISSION_REPORT_DATA_EXCLUSIONS
     )
     return [(path, member) for path, member in checks if path.exists()]
 
@@ -3374,6 +3479,13 @@ def compile_supplement(temp: Path, env: dict[str, str]) -> list[str]:
                 f"`{' '.join(command)}`:\n{result.tail}"
             ]
     return []
+
+
+def int_or_zero(value: object) -> int:
+    try:
+        return int(str(value or "").strip())
+    except ValueError:
+        return 0
 
 
 class CompileResult:
