@@ -23,13 +23,18 @@ jobs:
       - name: Run tests
         run: make test
       - name: Install paper build dependencies
-        timeout-minutes: 35
+        timeout-minutes: 45
         env:
           DEBIAN_FRONTEND: noninteractive
         run: |
           set -euxo pipefail
           sudo find /etc/apt/sources.list.d -type f \( -iname '*azure-cli*' -o -iname '*microsoft*' \) -print -delete
-          sudo apt-get update -o Acquire::Retries=3
+          sudo sed -i 's|http://azure.archive.ubuntu.com/ubuntu|https://archive.ubuntu.com/ubuntu|g' \
+            /etc/apt/sources.list \
+            /etc/apt/sources.list.d/*.list \
+            /etc/apt/sources.list.d/*.sources \
+            /etc/apt/apt-mirrors.txt 2>/dev/null || true
+          sudo apt-get update -o Acquire::Retries=3 -o Acquire::http::Timeout=20 -o Acquire::https::Timeout=20
           sudo apt-get install -y -o Dpkg::Use-Pty=0 texlive-latex-recommended texlive-latex-extra texlive-fonts-recommended texlive-fonts-extra texlive-bibtex-extra texlive-pictures texlive-science inkscape poppler-utils zip unzip
       - name: Build and verify paper PDFs and submission package
         run: make paper-artifacts-check
