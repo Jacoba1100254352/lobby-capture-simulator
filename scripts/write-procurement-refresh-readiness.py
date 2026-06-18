@@ -39,6 +39,7 @@ REQUIRED_ENV_VARS = [
     "SAM_CONTRACT_AWARDS_EXPORT_MIN_UEI_SHARE",
     "SAM_CONTRACT_AWARDS_EXPORT_MIN_ACTION_DATE_SHARE",
     "SAM_CONTRACT_AWARDS_EXPORT_MIN_COMPETITION_SHARE",
+    "SAM_CONTRACT_AWARDS_ALLOW_DIAGNOSTIC_PROMOTION",
     "SAM_CONTRACT_AWARDS_EXTRACT_MODE",
     "SAM_CONTRACT_AWARDS_EXTRACT_FORMAT",
     "SAM_CONTRACT_AWARDS_EXTRACT_EMAIL_ID",
@@ -217,7 +218,7 @@ def readiness_rows(reports: Path, snapshot: Path, env_example: Path) -> list[dic
                 else "Manual SAM Contract Awards export variables are not both documented in .env.example"
             ),
             "nextAction": (
-                "Use this path when SAM API quota or extract polling blocks a representative export; run make sam-contract-awards-export-audit before snapshot promotion."
+                "Use this path when SAM API quota or extract polling blocks a representative export; run make sam-procurement-refresh so candidate status is enforced before snapshot promotion."
             ),
         },
         {
@@ -267,7 +268,7 @@ def readiness_rows(reports: Path, snapshot: Path, env_example: Path) -> list[dic
                 "The live runner classifies SAM quota failures and falls back to USAspending action rows."
             ),
             "nextAction": (
-                "Do not promote partial SAM payloads; archive rows only after a completed source run and rerun paper-artifacts-check."
+                "Do not promote partial SAM payloads, timeout logs, or diagnostic exports; archive rows only after a completed candidate source run and rerun paper-artifacts-check."
             ),
         },
         {
@@ -414,9 +415,12 @@ def write_markdown(path: Path, rows: list[dict[str, str]]) -> None:
             "If SAM.gov returns a quota or token-download failure, the audit still writes "
             "redacted `reports/sam-contract-awards-export-audit.*` files with the HTTP "
             "status and any `nextAccessTime`, but it does not promote rows. "
-            "Only after the audit clears hard breadth checks should the export be promoted "
-            "through `scripts/run-2024-env-live-snapshot.sh`. This path bypasses API quota "
-            "during normalization while still writing `data/raw/sam-contract-awards.csv` "
+            "Only after the audit reports `candidate` should the export be promoted. The "
+            "`make sam-procurement-refresh` wrapper enforces that fail-closed rule before "
+            "running `scripts/run-2024-env-live-snapshot.sh`; diagnostic exports require "
+            "the explicit `--allow-diagnostic-export` flag or "
+            "`SAM_CONTRACT_AWARDS_ALLOW_DIAGNOSTIC_PROMOTION=1`. This path bypasses API "
+            "quota during normalization while still writing `data/raw/sam-contract-awards.csv` "
             "into the standard procurement action schema."
         ),
         (
@@ -452,7 +456,7 @@ def write_markdown(path: Path, rows: list[dict[str, str]]) -> None:
         "",
         "- Respect SAM.gov 429 `nextAccessTime` values before rerunning quota-limited refreshes.",
         "- Keep `SOURCE_FETCH_CURL_FALLBACK=1` enabled when SAM responds to curl but hangs under urllib.",
-        "- Do not promote partial SAM payloads or timeout logs as source evidence.",
+        "- Do not promote partial SAM payloads, timeout logs, or diagnostic exports as source evidence unless a diagnostic-only refresh is explicitly recorded.",
         "- Rebuild with `make paper-artifacts-check` after any archived source refresh.",
         "",
         "## Readiness Checklist",

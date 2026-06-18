@@ -10,6 +10,7 @@ mode="${SAM_PROCUREMENT_REFRESH_MODE:-auto}"
 run_artifacts=1
 skip_preflight=0
 dry_run=0
+allow_diagnostic_export="${SAM_CONTRACT_AWARDS_ALLOW_DIAGNOSTIC_PROMOTION:-0}"
 
 usage() {
   cat <<'EOF'
@@ -28,6 +29,10 @@ Options:
       full paper-artifacts-check gate.
   --dry-run
       Print the commands that would run without touching network or files.
+  --allow-diagnostic-export
+      Allow a downloaded SAM export with audit status diagnostic to proceed.
+      This is not the default because diagnostic exports have coverage warnings
+      and should not be promoted during ordinary publication refreshes.
   -h, --help
       Show this help.
 EOF
@@ -53,6 +58,10 @@ while [ "$#" -gt 0 ]; do
       ;;
     --dry-run)
       dry_run=1
+      shift
+      ;;
+    --allow-diagnostic-export)
+      allow_diagnostic_export=1
       shift
       ;;
     -h|--help)
@@ -112,6 +121,26 @@ print(row.get(field, ""))
 PY
 }
 
+export_audit_value() {
+  local field="$1"
+  python3 - "$field" <<'PY'
+import csv
+import sys
+from pathlib import Path
+
+field = sys.argv[1]
+path = Path("reports/sam-contract-awards-export-audit.csv")
+if not path.exists():
+    print("")
+    raise SystemExit(0)
+with path.open(newline="", encoding="utf-8") as source:
+    for row in csv.DictReader(source):
+        if row.get("item") == "promotion-readiness":
+            print(row.get(field, ""))
+            break
+PY
+}
+
 require_ok_preflight() {
   if [ "$skip_preflight" = "1" ]; then
     echo "Skipping SAM preflight by request."
@@ -153,6 +182,64 @@ require_ok_preflight() {
   esac
 }
 
+require_promotable_export() {
+  local audit_exit="$1"
+  local status
+  local value
+  local next_action
+  status="$(export_audit_value status)"
+  value="$(export_audit_value value)"
+  next_action="$(export_audit_value nextAction)"
+  case "$status" in
+    candidate)
+      echo "SAM export audit candidate; proceeding with manual-export refresh."
+      ;;
+    diagnostic)
+      case "$allow_diagnostic_export" in
+        1|true|TRUE|yes|YES|y|Y)
+          echo "SAM export audit is diagnostic; proceeding only because diagnostic promotion was explicitly allowed." >&2
+          ;;
+        *)
+          echo "SAM export audit is diagnostic, not candidate. Not promoting into the live snapshot." >&2
+          echo "Audit evidence: ${value:-unknown}; next action: ${next_action:-inspect diagnostics before promotion}" >&2
+          exit 65
+          ;;
+      esac
+      ;;
+    quota_blocked)
+      echo "SAM export audit is quota-blocked. Not promoting into the live snapshot." >&2
+      echo "Audit evidence: ${value:-unknown}; next action: ${next_action:-retry after SAM.gov reset or request a fresh export}" >&2
+      exit 75
+      ;;
+    blocked|manual_required)
+      echo "SAM export audit status is '$status'. Not promoting into the live snapshot." >&2
+      echo "Audit evidence: ${value:-unknown}; next action: ${next_action:-request a fresh representative export}" >&2
+      exit 65
+      ;;
+    "")
+      echo "SAM export audit did not write reports/sam-contract-awards-export-audit.csv." >&2
+      exit "$audit_exit"
+      ;;
+    *)
+      echo "SAM export audit status is '$status'. Not promoting into the live snapshot." >&2
+      echo "Audit evidence: ${value:-unknown}; next action: ${next_action:-inspect audit report}" >&2
+      exit 65
+      ;;
+  esac
+}
+
+run_export_audit() {
+  if [ "$dry_run" = "1" ]; then
+    run_cmd make sam-contract-awards-export-audit
+    return
+  fi
+  set +e
+  make sam-contract-awards-export-audit
+  local audit_exit="$?"
+  set -e
+  require_promotable_export "$audit_exit"
+}
+
 run_artifact_gate_if_requested() {
   if [ "$run_artifacts" = "1" ]; then
     run_cmd make paper-artifacts-check
@@ -167,7 +254,7 @@ case "$mode" in
       echo "Manual export mode requires SAM_CONTRACT_AWARDS_LIVE_CSV or SAM_CONTRACT_AWARDS_LIVE_URL." >&2
       exit 1
     fi
-    run_cmd make sam-contract-awards-export-audit
+    run_export_audit
     run_cmd ./scripts/run-2024-env-live-snapshot.sh
     run_artifact_gate_if_requested
     ;;
