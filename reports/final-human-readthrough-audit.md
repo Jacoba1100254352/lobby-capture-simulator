@@ -6,9 +6,9 @@ This deterministic audit turns the manual final-submission read-through record i
 
 - Source: `reports/final-human-readthrough.md`
 - Overall status: `manual_required`
-- Evidence: release=paper-publication-readiness-2026-06-19-r200; status=pending; blocked=0; manual_required=19; checkedChecklistItems=3/17
-- Ready rows: `9`
-- Manual-required rows: `20`
+- Evidence: release=paper-publication-readiness-2026-06-19-r201; status=pending; blocked=0; manual_required=18; checkedChecklistItems=3/17
+- Ready rows: `10`
+- Manual-required rows: `19`
 - Blocked rows: `0`
 
 ## Audit Rows
@@ -16,7 +16,7 @@ This deterministic audit turns the manual final-submission read-through record i
 | Item | Category | Status | Evidence | Next action |
 | --- | --- | --- | --- | --- |
 | status | metadata | ready | status=pending | Use status=pending for review-bundle circulation and status=complete only after all manual checks are signed. |
-| reviewed-release | metadata | ready | reviewed-release=paper-publication-readiness-2026-06-19-r200; expected-release=paper-publication-readiness-2026-06-19-r200 | Set reviewed-release to the current release tag before final signoff. |
+| reviewed-release | metadata | ready | reviewed-release=paper-publication-readiness-2026-06-19-r201; expected-release=paper-publication-readiness-2026-06-19-r201 | Set reviewed-release to the current release tag before final signoff. |
 | venue-target | metadata | ready | venue-target=Regulation & Governance | Keep the venue target aligned with the Regulation & Governance manuscript template. |
 | author-guidelines-url | metadata | ready | url=matches | Record the official Regulation & Governance author-guidelines URL. |
 | signed-off-by | human-signoff | manual_required | signed-off-by=missing | Fill this field during the final human scholarly read-through. |
@@ -24,7 +24,7 @@ This deterministic audit turns the manual final-submission read-through record i
 | reviewed-commit | human-signoff | manual_required | reviewed-commit=missing | Fill this field during the final human scholarly read-through. |
 | doi-archive | human-signoff | manual_required | doi-archive=missing | Fill this field during the final human scholarly read-through. |
 | author-guidelines-checked-by | live-author-page | ready | author-guidelines-checked-by=present | Recheck the live Regulation & Governance author page and record any superseding instructions before final submission. |
-| author-guidelines-checked-date | live-author-page | manual_required | checked-date=2026-06-18; release-date=2026-06-19; stale=yes | Recheck the live Regulation & Governance author page and record any superseding instructions before final submission. |
+| author-guidelines-checked-date | live-author-page | ready | checked-date=2026-06-19; release-date=2026-06-19; stale=no | Recheck the live Regulation & Governance author page and record any superseding instructions before final submission. |
 | author-guidelines-superseding-instructions | live-author-page | ready | superseding-instructions=none | Recheck the live Regulation & Governance author page and record any superseding instructions before final submission. |
 | live-author-page-checklist-01 | live-author-page-checklist | ready | checked; item=Open the live author page named in `author-guidelines-url` immediately before journal submission. | Retain this checked item with the signed release record. |
 | live-author-page-checklist-02 | live-author-page-checklist | ready | checked; item=Confirm the target journal, article type, word limit, title-page expectations, disclosure expectations, supporting-information expectations, and LaTeX/package requirements still match the generated bundle. | Retain this checked item with the signed release record. |
@@ -43,4 +43,4 @@ This deterministic audit turns the manual final-submission read-through record i
 | scholarly-readthrough-checklist-12 | scholarly-readthrough-checklist | manual_required | unchecked; item=References are complete enough for the target venue and do not contain placeholder or "planned validation" entries. | Complete and check this item during the human scholarly read-through. |
 | scholarly-readthrough-checklist-13 | scholarly-readthrough-checklist | manual_required | unchecked; item=AI Use Disclosure and declarations match journal expectations. | Complete and check this item during the human scholarly read-through. |
 | scholarly-readthrough-checklist-14 | scholarly-readthrough-checklist | manual_required | unchecked; item=The final release ZIP, PDFs, supplement, reports, and metadata match the signed-off release tag. | Complete and check this item during the human scholarly read-through. |
-| overall-final-human-readthrough | record | manual_required | release=paper-publication-readiness-2026-06-19-r200; status=pending; blocked=0; manual_required=19; checkedChecklistItems=3/17 | Complete unchecked scholarly items and signoff fields before final journal submission. |
+| overall-final-human-readthrough | record | manual_required | release=paper-publication-readiness-2026-06-19-r201; status=pending; blocked=0; manual_required=18; checkedChecklistItems=3/17 | Complete unchecked scholarly items and signoff fields before final journal submission. |

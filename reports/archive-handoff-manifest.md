@@ -7,8 +7,8 @@ PDF and ZIP byte streams can differ across TeX and archive implementations. The 
 ## Summary
 
 - Schema: `lobby-capture-archive-handoff-manifest-v1`
-- Release tag: `paper-publication-readiness-2026-06-19-r200`
-- Release URL: https://github.com/Jacoba1100254352/lobby-capture-simulator/releases/tag/paper-publication-readiness-2026-06-19-r200
+- Release tag: `paper-publication-readiness-2026-06-19-r201`
+- Release URL: https://github.com/Jacoba1100254352/lobby-capture-simulator/releases/tag/paper-publication-readiness-2026-06-19-r201
 - Generated at: `2026-05-05T00:00:00Z`
 - DOI status: not asserted by this manifest
 - Release asset checksum file: `dist/release-asset-checksums.{csv,json,md}`
@@ -29,14 +29,14 @@ PDF and ZIP byte streams can differ across TeX and archive implementations. The 
 | paper/regulation-governance-wiley.pdf | regulation-governance-wiley.pdf | wiley-rendered-manuscript | yes | release-asset-checksum-recorded-in-dist | see-dist-release-asset-checksums | `see-dist-release-asset-checksums` |
 | paper/strategic-channel-substitution-regulatory-capture.pdf | strategic-channel-substitution-regulatory-capture.pdf | local-rendered-manuscript | yes | release-asset-checksum-recorded-in-dist | see-dist-release-asset-checksums | `see-dist-release-asset-checksums` |
 | paper/supplement.pdf | supplement.pdf | supporting-information-pdf | yes | release-asset-checksum-recorded-in-dist | see-dist-release-asset-checksums | `see-dist-release-asset-checksums` |
-| CITATION.cff | - | citation-metadata | source-archive | tracked-source-verified | 1286 | `3286aff7ef8167e97744d83240cc4e57b25f3de34bd5eaeef16ea61b1e253682` |
-| .zenodo.json | - | doi-deposit-metadata | source-archive | tracked-source-verified | 1490 | `77ad50761a77203b8850c4732a50520ad294101ca58af77b20a4046c7c62efa4` |
-| reports/submission-readiness.md | - | submission-readiness-audit | source-archive | tracked-source-verified | 5114 | `6e098856eaa456f41a47acc3d640cae72b51a7c366e9c0ac547d01252f9197fa` |
-| reports/reviewer-risk-register.csv | - | reviewer-risk-register | source-archive | tracked-source-verified | 7024 | `ccfcb65372d4e36dcbb520a74da78bf0396ec56e657b7f7a2ea7e83477e70ced` |
-| reports/reviewer-risk-register.md | - | reviewer-risk-register | source-archive | tracked-source-verified | 8196 | `c7589acfa0eacf235e643da7fc68d8ad9a129e9bb19bdf45b5d0446352f914b4` |
-| reports/final-human-readthrough.md | - | manual-signoff-record | source-archive | tracked-source-verified | 6276 | `bfe952e2482baf051d60d6f69ae60ab6bf35f736995fa0f1675c32d255852334` |
-| reports/final-human-readthrough-audit.csv | - | final-human-readthrough-audit | source-archive | tracked-source-verified | 6905 | `a8d2b218fdd5b2b56038ee8a5ae8b3b4688d289db91b764af394f347f4f2ef9a` |
-| reports/final-human-readthrough-audit.md | - | final-human-readthrough-audit | source-archive | tracked-source-verified | 7871 | `796d03bcd64447789ef13c8ebb8871bb992d8d3631048eaeff5092a2c33758c6` |
+| CITATION.cff | - | citation-metadata | source-archive | tracked-source-verified | 1286 | `c8c1748c5b14e7668fb10e139d1ef70838ac4ae7fccd68c83e2c96fb12b75459` |
+| .zenodo.json | - | doi-deposit-metadata | source-archive | tracked-source-verified | 1490 | `de3900b9c9a88b0ed234c3703630670aa0ef2b18f749e5475b20cab37590b38c` |
+| reports/submission-readiness.md | - | submission-readiness-audit | source-archive | tracked-source-verified | 5027 | `36df22c3413421ec4c47591e1beb18319f9a46a3b16959602df61c293098ea92` |
+| reports/reviewer-risk-register.csv | - | reviewer-risk-register | source-archive | tracked-source-verified | 6954 | `2ec3f65be278a901ba52f120b51e172c3443189ec35e6bd2c24d82069b3d7b4b` |
+| reports/reviewer-risk-register.md | - | reviewer-risk-register | source-archive | tracked-source-verified | 8126 | `57265c7748ca53590657b872ea35d78cc7b0c68c68a3fec492a85749876b53fe` |
+| reports/final-human-readthrough.md | - | manual-signoff-record | source-archive | tracked-source-verified | 7250 | `7f50aa1f7b5f08ce27ae1c851f4d30688f7dccd2edc8900c5b2690154b236049` |
+| reports/final-human-readthrough-audit.csv | - | final-human-readthrough-audit | source-archive | tracked-source-verified | 6894 | `57a99422e651382ac772035f8bc75b8f9802990c6cdec91de512300d7e91d768` |
+| reports/final-human-readthrough-audit.md | - | final-human-readthrough-audit | source-archive | tracked-source-verified | 7861 | `610d916f47e13e05dd32fae355fbacb6f431fa177dfe85951a2c80dc7bf7e085` |
 
 ## Archive Use
 

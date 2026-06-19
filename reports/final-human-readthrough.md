@@ -3,13 +3,13 @@
 status: pending
 signed-off-by:
 signed-off-date:
-reviewed-release: paper-publication-readiness-2026-06-19-r200
+reviewed-release: paper-publication-readiness-2026-06-19-r201
 reviewed-commit:
 doi-archive:
 venue-target: Regulation & Governance
 author-guidelines-url: https://onlinelibrary.wiley.com/page/journal/17485991/homepage/forauthors.html
 author-guidelines-checked-by: Codex Playwright live browser check
-author-guidelines-checked-date: 2026-06-18
+author-guidelines-checked-date: 2026-06-19
 author-guidelines-superseding-instructions: none
 
 ## Purpose
@@ -52,5 +52,7 @@ Before checking these items, review `reports/final-readthrough-evidence.md`. Tha
 2026-06-18 live-author-page browser check carried forward for the r187 update: Codex used Playwright to load the official Regulation & Governance author page in a browser context. The page title was `Regulation & Governance` and the page exposed the journal-specific author guidelines, marked `Author Guidelines updated April 2025`. The check confirmed free-format first submission, double-anonymized review, at least three suggested reviewers, normal article submissions not normally accepted above 11,000 words, Research Forum limit of 6,000 words, preferred first-submission length of 8,000-10,000 words, abstract limit of 150 words, data sharing expected, LaTeX accepted with a peer-review PDF and source/supporting files, separate title-page/main-text/figure expectations, and separate supporting-information expectations. No superseding instruction was found that requires changing the generated review bundle. DOI archiving and human scholarly read-through signoff remain pending.
 
 2026-06-19 r198-prep live-author-page refresh attempt: Codex opened the official `author-guidelines-url` with Playwright from the release machine. Wiley served a Cloudflare "Performing security verification" page titled `Just a moment...` and did not expose the journal-specific author-guideline text after an additional wait. The June 18 content check is therefore retained as historical evidence only; the generated audits now require the checked date to be on or after the current release date before the live author-page refresh gate can clear.
+
+2026-06-19 r201 live-author-page browser refresh: Codex opened the official `author-guidelines-url` with Playwright from the release machine. Wiley initially served a security-verification interstitial, then the browser session resolved to the `Regulation & Governance` author-guidelines page. The page exposed the journal-specific author-guideline contents and the `Author Guidelines updated April 2025` marker. The refresh confirmed the same relevant submission surface recorded on June 18: free-format first submission, double-anonymized review, suggested-reviewer expectations, original-article word-limit expectations, Research Forum limit, abstract limit, data-sharing expectations, title-page/main-text/figure file expectations, supporting-information expectations, and LaTeX/source-package compatibility. No superseding instruction was found that requires changing the generated review bundle. DOI archiving and human scholarly read-through signoff remain pending.
 
 Record any final editorial changes requested before journal submission here. If changes are made after signoff, return `status` to `pending`, update `reviewed-release`, rerun `make paper-artifacts-check`, and repeat the read-through.
