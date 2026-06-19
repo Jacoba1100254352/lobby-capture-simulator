@@ -138,6 +138,8 @@ def classify_page(
         return "fail", "page is too sparse; likely float-only or mostly blank"
     if has_float_label and characters < 700:
         return "fail", "figure/table page has too little surrounding readable text"
+    if has_float_label and largest_gap > 0.24 and characters < 2_500:
+        return "fail", "float page has a large vertical whitespace gap with limited surrounding text"
     if largest_gap > 0.62 and characters < 1_600:
         return "fail", "large vertical whitespace gap with little text"
     if coverage < 0.52 and characters < 1_000:
