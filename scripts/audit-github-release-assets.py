@@ -53,6 +53,11 @@ RELEASE_AID_PATHS = [
 
 
 def main() -> int:
+    if "--print-upload-paths" in sys.argv:
+        for asset in expected_assets().values():
+            print(asset["sourcePath"])
+        return 0
+
     release_tag = release_tag_from_citation()
     expected = expected_assets()
     release, gh_error = github_release(release_tag)
