@@ -42,6 +42,11 @@ class PackageInput:
 
 PACKAGE_INPUTS = [
     PackageInput(
+        "dist/lobby-capture-wiley-blinded-review.zip",
+        "primary-assets/lobby-capture-wiley-blinded-review.zip",
+        "wiley-blinded-review-archive",
+    ),
+    PackageInput(
         "dist/lobby-capture-wiley-submission.zip",
         "primary-assets/lobby-capture-wiley-submission.zip",
         "wiley-submission-archive",
@@ -122,6 +127,16 @@ PACKAGE_INPUTS = [
         "reports/wiley-submission-form-readiness.md",
         "readiness/wiley-submission-form-readiness.md",
         "wiley-submission-form-readiness",
+    ),
+    PackageInput(
+        "reports/blinded-review-package-readiness.csv",
+        "readiness/blinded-review-package-readiness.csv",
+        "blinded-review-package-readiness",
+    ),
+    PackageInput(
+        "reports/blinded-review-package-readiness.md",
+        "readiness/blinded-review-package-readiness.md",
+        "blinded-review-package-readiness",
     ),
     PackageInput(
         "reports/reggov-guidelines-readiness.csv",
@@ -362,7 +377,7 @@ def readme_text(release_tag: str) -> str:
         Release URL: https://github.com/Jacoba1100254352/lobby-capture-simulator/releases/tag/{release_tag}
 
         This ZIP is a convenience handoff for archive deposition. It includes
-        the four primary release assets, release-machine checksums, citation and
+        the five primary release assets, release-machine checksums, citation and
         Zenodo metadata, submission and journal-readiness audits, the reviewer
         risk register, and the final human read-through checklist. The DOI deposit readiness report remains
         outside this ZIP because it verifies this package after construction.
@@ -372,6 +387,7 @@ def readme_text(release_tag: str) -> str:
         and reports/final-human-readthrough.md, then rerun make paper-artifacts-check.
 
         Primary assets:
+        - primary-assets/lobby-capture-wiley-blinded-review.zip
         - primary-assets/lobby-capture-wiley-submission.zip
         - primary-assets/regulation-governance-wiley.pdf
         - primary-assets/strategic-channel-substitution-regulatory-capture.pdf

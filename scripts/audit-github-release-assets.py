@@ -34,6 +34,8 @@ RELEASE_AID_PATHS = [
     "reports/archive-handoff-manifest.csv",
     "reports/archive-handoff-manifest.json",
     "reports/archive-handoff-manifest.md",
+    "reports/blinded-review-package-readiness.csv",
+    "reports/blinded-review-package-readiness.md",
     "reports/doi-deposit-readiness.csv",
     "reports/doi-deposit-readiness.md",
     "reports/final-human-readthrough.md",

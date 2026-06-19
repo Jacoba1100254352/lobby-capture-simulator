@@ -270,6 +270,7 @@ def data_code_row() -> dict[str, str]:
 def archive_handoff_row() -> dict[str, str]:
     rows = read_csv(REPORTS / "archive-handoff-manifest.csv")
     expected_assets = {
+        "lobby-capture-wiley-blinded-review.zip",
         "lobby-capture-wiley-submission.zip",
         "regulation-governance-wiley.pdf",
         "strategic-channel-substitution-regulatory-capture.pdf",
@@ -277,11 +278,11 @@ def archive_handoff_row() -> dict[str, str]:
     }
     assets = {row.get("releaseAssetName", "") for row in rows if row.get("includeInDoiDeposit") == "yes"}
     checksum_rows = [row for row in rows if row.get("checksumStatus") == "release-asset-checksum-recorded-in-dist"]
-    status = "automated_support_present" if expected_assets == assets and len(checksum_rows) == 4 else "manual_review_required"
+    status = "automated_support_present" if expected_assets == assets and len(checksum_rows) == 5 else "manual_review_required"
     return evidence_row(
         EXPECTED_ITEMS[9],
         status,
-        f"primaryAssets={len(assets)}/4; releaseAssetChecksumRows={len(checksum_rows)}",
+        f"primaryAssets={len(assets)}/5; releaseAssetChecksumRows={len(checksum_rows)}",
         "reports/archive-handoff-manifest.md; dist/release-asset-checksums.md",
         "Use the checksum files during archive deposition and record the final DOI afterward.",
     )
@@ -367,7 +368,7 @@ def final_bundle_row() -> dict[str, str]:
             f"archiveReleaseTag={archive_tag or 'missing'}; "
             f"doiReleaseMetadata={'matches' if release_identity_ready else 'missing_or_mismatch'}"
         ),
-        "CITATION.cff; reports/archive-handoff-manifest.md; reports/doi-deposit-readiness.md; reports/submission-readiness.md; reports/reggov-guidelines-readiness.md; dist/lobby-capture-wiley-submission.zip",
+        "CITATION.cff; reports/archive-handoff-manifest.md; reports/doi-deposit-readiness.md; reports/submission-readiness.md; reports/reggov-guidelines-readiness.md; dist/lobby-capture-wiley-submission.zip; dist/lobby-capture-wiley-blinded-review.zip",
         "After any edit, rerun the full artifact gate and repeat this read-through evidence check.",
     )
 

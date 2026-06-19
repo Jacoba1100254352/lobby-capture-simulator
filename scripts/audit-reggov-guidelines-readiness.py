@@ -26,7 +26,9 @@ SUPPLEMENT_TEX = PAPER / "supplement.tex"
 SUPPLEMENT_PDF = PAPER / "supplement.pdf"
 SUBMISSION_DECLARATIONS = PAPER / "sections" / "submission-declarations.tex"
 SUBMISSION_ZIP = DIST / "lobby-capture-wiley-submission.zip"
+BLINDED_REVIEW_ZIP = DIST / "lobby-capture-wiley-blinded-review.zip"
 WILEY_FORM_CSV = REPORTS / "wiley-submission-form-readiness.csv"
+BLINDED_REVIEW_CSV = REPORTS / "blinded-review-package-readiness.csv"
 
 PREFERRED_MIN_WORDS = 8000
 PREFERRED_MAX_WORDS = 10000
@@ -69,6 +71,7 @@ def guideline_rows() -> list[dict[str, str]]:
     figure_wrappers = sorted((PAPER / "figures").glob("*.tex"))
     tables = sorted((PAPER / "tables").glob("*.tex"))
     wiley_form_rows = read_gate_rows(WILEY_FORM_CSV)
+    blinded_review_rows = read_gate_rows(BLINDED_REVIEW_CSV)
     live_author_page = live_author_page_refresh_state()
 
     rows = [
@@ -100,6 +103,12 @@ def guideline_rows() -> list[dict[str, str]]:
             "ready" if title_metadata_ready(local, wiley) else "blocked",
             title_metadata_evidence(local, wiley),
             "Keep author name, affiliation, country, correspondence, and email metadata present.",
+        ),
+        row(
+            "double-anonymized-review-package",
+            "ready" if blinded_review_ready(blinded_review_rows) else "blocked",
+            blinded_review_evidence(blinded_review_rows),
+            "Keep the separate blinded review ZIP compiled, redacted, and paired with a separate title page.",
         ),
         row(
             "data-code-availability",
@@ -576,6 +585,46 @@ def latex_submission_evidence(
         f"encrypted={yes_no(bool(package['encrypted']))}; members={len(names)}; "
         + "; ".join(f"{name}={yes_no(name in names)}" for name in required)
         + f"; Wiley form ready gates={ready_form_gates}"
+    )
+
+
+def blinded_review_ready(rows: dict[str, dict[str, str]]) -> bool:
+    required = {
+        "package-present",
+        "expected-files",
+        "upload-surface",
+        "source-redaction",
+        "rendered-redaction",
+        "separate-title-page",
+        "manifest",
+        "standalone-compile",
+    }
+    return BLINDED_REVIEW_ZIP.exists() and all(
+        rows.get(gate, {}).get("status") == "ready" for gate in required
+    )
+
+
+def blinded_review_evidence(rows: dict[str, dict[str, str]]) -> str:
+    required = [
+        "package-present",
+        "expected-files",
+        "upload-surface",
+        "source-redaction",
+        "rendered-redaction",
+        "separate-title-page",
+        "manifest",
+        "standalone-compile",
+    ]
+    ready = sum(1 for gate in required if rows.get(gate, {}).get("status") == "ready")
+    blocked = [
+        gate
+        for gate in required
+        if rows.get(gate, {}).get("status") not in {"ready"}
+    ]
+    return (
+        f"zip exists={yes_no(BLINDED_REVIEW_ZIP.exists())}; "
+        f"ready gates={ready}/{len(required)}; "
+        f"blocked/missing gates={'; '.join(blocked) if blocked else 'none'}"
     )
 
 

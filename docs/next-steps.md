@@ -45,11 +45,11 @@ The simulator now has a lobbying-centered model core with calibration fixtures, 
 - `make tables` regenerates paper table inputs from report CSV snapshots using `paper/tables.yml`.
 - `make figures` regenerates the paper's numbered SVG/PDF figure assets and LaTeX wrappers.
 - Adaptive institutions now include per-client/per-domain funding memory, regulator queue pressure, watchdog monitoring budget allocation, adaptation speed, and reform-decay pressure.
-- The paper now has a Regulation & Governance framing, a Wiley-template wrapper, a word-count check, a standalone submission-package check, a release-tag exactness gate, and a separate submission strategy note.
+- The paper now has a Regulation & Governance framing, a Wiley-template wrapper, a word-count check, standalone source-package and blinded-review-package checks, a release-tag exactness gate, and a separate submission strategy note.
 
 ## 1. Maintain the Regulation & Governance submission package
 
-The main manuscript, supplement, Wiley wrapper, generated figures/tables, and submission ZIP are now built through the review pipeline. Future edits should preserve that separation rather than moving implementation inventory back into the main article.
+The main manuscript, supplement, Wiley wrapper, generated figures/tables, full source ZIP, and blinded review ZIP are now built through the review pipeline. Future edits should preserve that separation rather than moving implementation inventory back into the main article.
 
 Deliverables:
 
@@ -60,7 +60,7 @@ Deliverables:
 - when a DOI is reserved or minted, set `ARCHIVE_DOI` in `.env`, run `make record-doi-archive`, and then rerun `make paper-artifacts-check` so every generated readiness report and package carries the recorded archive identifier;
 - run `make external-finalization-checklist` while preparing DOI, Zenodo, journal-finalization, or SAM.gov export steps; this ignored checklist sources `.env` and summarizes private/live-state readiness without changing the deterministic review bundle;
 - advance the release tag in `scripts/check-paper-artifacts.py` and `paper/sections/submission-declarations.tex` whenever the review bundle changes;
-- prepare a separate anonymized package only if the paper is retargeted to a double-blind venue.
+- preserve the separate double-anonymized package whenever the Regulation & Governance target is retained; the full source package and blinded review package serve different submission/reproducibility purposes.
 
 ## 2. Expand the empirical source panels beyond the current 2024 EPA/ENV snapshot
 

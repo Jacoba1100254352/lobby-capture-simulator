@@ -33,6 +33,7 @@ ZENODO_PREFLIGHT_MD = REPORTS / "zenodo-deposit-preflight.md"
 VERSION_PATTERN = re.compile(r"^version:\s*[\"']?([^\"'\n]+)[\"']?\s*$", re.MULTILINE)
 DOI_PATTERN = re.compile(r"\b10\.\d{4,9}/[-._;()/:A-Za-z0-9]+\b")
 EXPECTED_PRIMARY_ASSETS = {
+    "lobby-capture-wiley-blinded-review.zip",
     "lobby-capture-wiley-submission.zip",
     "regulation-governance-wiley.pdf",
     "strategic-channel-substitution-regulatory-capture.pdf",

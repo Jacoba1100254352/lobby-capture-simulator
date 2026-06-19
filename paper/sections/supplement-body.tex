@@ -115,15 +115,15 @@ The reproducible report pipeline writes:
   \item validation summary, validation-scope coverage audit, classified calibration queue, and calibration-readiness audit;
   \item substitution audit with distortion-failure, warning, and channel-shift tradeoff labels;
   \item LaTeX log audit checking final manuscript, Wiley, and supplement logs for unresolved citation, reference, fatal error, or rerun-required states;
-  \item generated paper tables, figures, local PDF, Wiley PDF, supplement PDF, and Wiley submission archive;
+  \item generated paper tables, figures, local PDF, Wiley PDF, supplement PDF, full Wiley source archive, and blinded review archive;
   \item submission-readiness audit synthesizing claim posture, empirical-bridge scope, policy-language, layout, visual, and reproducibility gates;
   \item reviewer-risk register mapping likely reviewer objections to current evidence, manuscript response, claim boundary, and next action;
-  \item post-package Regulation \& Governance guideline-readiness audit checking journal target metadata, word limit, title-page metadata, declarations, figures, tables, supporting information, and LaTeX package contents while leaving the live author-page refresh as a manual final-submission control.
+  \item post-package Regulation \& Governance guideline-readiness audit checking journal target metadata, word limit, title-page metadata, double-anonymized review-package readiness, declarations, figures, tables, supporting information, and LaTeX package contents while leaving the live author-page refresh as a manual final-submission control.
 \end{itemize}
 
-The Wiley submission archive includes a package-member checksum manifest alongside its supporting-information files and generated report bundle. The artifact checker compares packaged report files against the repository copies and validates the package manifest against ZIP member bytes so the reviewer bundle cannot silently omit or stale-copy a generated report.
+The full Wiley source archive includes a package-member checksum manifest alongside its supporting-information files and generated report bundle. The blinded review archive includes an anonymous main manuscript, anonymous supplement, separate title page, selected supporting information, and its own package-member checksum manifest. The artifact checker compares packaged report files against the repository copies where applicable, validates package manifests against ZIP member bytes, compiles extracted packages from their roots, and checks that review-facing blinded files do not expose author or public repository identifiers.
 
-The separate archive-handoff manifest is generated after the Wiley archive is built. It records the DOI-deposit asset set and stable source-metadata checksums. Local release-machine checksums for the rendered PDFs and submission ZIP are written under \texttt{dist/release-asset-checksums.*}; those ignored files are intended for release-upload or DOI-deposit verification and are kept outside the Wiley ZIP.
+The separate archive-handoff manifest is generated after the Wiley archives are built. It records the DOI-deposit asset set and stable source-metadata checksums. Local release-machine checksums for the rendered PDFs and ZIP archives are written under \texttt{dist/release-asset-checksums.*}; those ignored files are intended for release-upload or DOI-deposit verification and are kept outside the Wiley ZIPs.
 
 The canonical local check is:
 
@@ -171,7 +171,7 @@ The submission-readiness audit in \texttt{reports/submission-readiness.md} summa
 
 The reviewer-risk register in \texttt{reports/reviewer-risk-register.md} translates that posture into expected reviewer concerns. Each row records the concern, current manuscript or package response, claim boundary, evidence source, and next action. This reviewer-risk register is intended as a reviewer-facing control surface for construct-validity and overinterpretation risks; it is not an additional empirical result.
 
-The repository release includes a Regulation \& Governance guideline-readiness audit at \path{reports/reggov-guidelines-readiness.md}. It records the locally verifiable journal and Wiley submission checks plus the recorded live author-page browser refresh, is generated after the Wiley ZIP, and is not copied into that ZIP. Its expected state is \texttt{ready}: committed files, the generated Wiley package, and the recorded live author-page refresh satisfy the checked format surface, while DOI archiving and human scholarly signoff remain final-submission controls.
+The repository release includes a Regulation \& Governance guideline-readiness audit at \path{reports/reggov-guidelines-readiness.md}. It records the locally verifiable journal and Wiley submission checks plus the recorded live author-page browser refresh, is generated after the Wiley ZIPs, and is not copied into those ZIPs. Its expected state is \texttt{ready}: committed files, the generated full source package, the generated blinded review package, and the recorded live author-page refresh satisfy the checked format surface, while DOI archiving and human scholarly signoff remain final-submission controls.
 
 \section{Decision Rules and Parameters}
 

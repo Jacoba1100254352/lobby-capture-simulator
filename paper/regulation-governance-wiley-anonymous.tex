@@ -1,0 +1,59 @@
+% Target venue: Regulation & Governance (Wiley).
+% Anonymous main-manuscript wrapper for double-anonymized review.
+\documentclass{USG}
+
+\newcommand{\blindreview}{}
+
+\usepackage{amsmath}
+\usepackage{array}
+\usepackage{booktabs}
+\usepackage{xcolor}
+\usepackage{graphicx}
+\usepackage{url}
+\usepackage[authoryear]{NJDnatbib}
+\bibliographystyle{wileyNJD-Chicago}
+
+\hypersetup{
+  hidelinks,
+  pdftitle={Strategic Channel Substitution in Regulatory Capture: An Agent-Based Model of Anti-Capture Reform},
+  pdfauthor={Anonymous},
+  pdfkeywords={regulation, governance, lobbying, regulatory capture, computational simulation, transparency, enforcement}
+}
+
+\graphicspath{{./images/}{./.wiley-template/Optimal-Design-layout/images/}{./figures/}}
+
+\articletype{ORIGINAL ARTICLE}
+\journal{Regulation \& Governance}
+\volume{0}
+\copyyear{2026}
+\startpage{1}
+\articledoi{}
+
+\begin{document}
+
+\title{Strategic Channel Substitution in Regulatory Capture: An Agent-Based Model of Anti-Capture Reform}
+\author[1]{Author details withheld for double-anonymized review}
+\authormark{ANONYMOUS}
+\titlemark{STRATEGIC CHANNEL SUBSTITUTION IN REGULATORY CAPTURE}
+\address[1]{\orgname{Author details withheld for double-anonymized review}}
+\corres{Author details withheld for double-anonymized review.}
+\fundingInfo{No external funding is reported.}
+\keywords{regulation | governance | lobbying | regulatory capture | computational simulation | transparency | enforcement}
+
+\abstract[ABSTRACT]{Regulatory capture persists because organized interests can move influence across venues when reforms close visible routes. This article introduces the Lobby Capture Simulator, a Java-based mechanism model in which lobby organizations and funders allocate finite budgets across access, technical and public information, legal pressure, campaign finance, dark money, revolving-door access, intermediaries, and defensive anti-reform spending. Public administrative data are used as distributional anchors and validation diagnostics rather than causal estimates. Synthetic experiments illustrate how reforms that suppress visible channels can leave modeled hidden influence intact through venue, messenger, financing, and intermediary substitution.}
+
+\maketitle
+\clearpage
+
+\input{sections/reggov-body}
+
+\newcommand{\submissionsection}[1]{\bmsubsection*{#1}}
+\input{sections/submission-declarations}
+
+\begingroup
+\small
+\setlength{\bibsep}{0pt}
+\bibliography{references}
+\endgroup
+
+\end{document}

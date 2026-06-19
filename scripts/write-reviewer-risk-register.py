@@ -242,7 +242,7 @@ def risk_rows(context: dict[str, object]) -> list[dict[str, str]]:
             "mitigated",
             join(
                 f"reproducible bundle={submission.get('reproducible-review-bundle', {}).get('status', 'missing')}",
-                "Wiley package, DOI package, archive handoff, and package manifest are checked by paper-artifacts gate",
+                "Full Wiley package, blinded review package, DOI package, archive handoff, and package manifests are checked by paper-artifacts gate",
             ),
             "The generated ZIP and DOI handoff contain report data, checksums, citation metadata, and supporting information for review.",
             "A reproducible review bundle does not by itself imply DOI publication or journal final-submission signoff.",

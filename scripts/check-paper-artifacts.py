@@ -27,6 +27,7 @@ LOCAL_PDF = PAPER / f"{LOCAL_BASENAME}.pdf"
 WILEY_PDF = PAPER / "regulation-governance-wiley.pdf"
 SUPPLEMENT_PDF = PAPER / "supplement.pdf"
 SUBMISSION_ZIP = DIST / "lobby-capture-wiley-submission.zip"
+BLINDED_REVIEW_ZIP = DIST / "lobby-capture-wiley-blinded-review.zip"
 LATEX_LOGS = [
     PAPER / f"{LOCAL_BASENAME}.log",
     PAPER / "regulation-governance-wiley.log",
@@ -139,6 +140,8 @@ WILEY_SUBMISSION_FORM_READINESS_CSV = ROOT / "reports" / "wiley-submission-form-
 WILEY_SUBMISSION_FORM_READINESS_MD = ROOT / "reports" / "wiley-submission-form-readiness.md"
 REGGOV_GUIDELINES_READINESS_CSV = ROOT / "reports" / "reggov-guidelines-readiness.csv"
 REGGOV_GUIDELINES_READINESS_MD = ROOT / "reports" / "reggov-guidelines-readiness.md"
+BLINDED_REVIEW_PACKAGE_READINESS_CSV = ROOT / "reports" / "blinded-review-package-readiness.csv"
+BLINDED_REVIEW_PACKAGE_READINESS_MD = ROOT / "reports" / "blinded-review-package-readiness.md"
 RELEASE_ASSET_CHECKSUM_CSV = ROOT / "dist" / "release-asset-checksums.csv"
 RELEASE_ASSET_CHECKSUM_JSON = ROOT / "dist" / "release-asset-checksums.json"
 RELEASE_ASSET_CHECKSUM_MD = ROOT / "dist" / "release-asset-checksums.md"
@@ -149,7 +152,7 @@ DOI_DEPOSIT_PACKAGE_CHECKSUM_CSV = ROOT / "dist" / "doi-deposit-package-checksum
 DOI_DEPOSIT_PACKAGE_CHECKSUM_JSON = ROOT / "dist" / "doi-deposit-package-checksum.json"
 DOI_DEPOSIT_PACKAGE_CHECKSUM_MD = ROOT / "dist" / "doi-deposit-package-checksum.md"
 ZENODO_DEPOSIT_METADATA_JSON = ROOT / "dist" / "zenodo-deposit-metadata.json"
-RELEASE_TAG = "paper-publication-readiness-2026-06-19-r201"
+RELEASE_TAG = "paper-publication-readiness-2026-06-19-r202"
 ARCHIVE_HANDOFF_REPORT_NAMES = {
     "archive-handoff-manifest.csv",
     "archive-handoff-manifest.json",
@@ -414,6 +417,7 @@ def main() -> int:
     failures.extend(check_zenodo_deposit_preflight())
     failures.extend(check_doi_deposit_readiness())
     failures.extend(check_wiley_submission_form_readiness())
+    failures.extend(check_blinded_review_package_readiness())
     failures.extend(check_reggov_guidelines_readiness())
     failures.extend(check_release_tag_exactness())
     failures.extend(check_submission_zip())
@@ -3607,6 +3611,7 @@ def check_archive_handoff_manifest() -> list[str]:
         if row.get("path")
     }
     expected_paths = {
+        "dist/lobby-capture-wiley-blinded-review.zip",
         "dist/lobby-capture-wiley-submission.zip",
         "paper/regulation-governance-wiley.pdf",
         f"paper/{LOCAL_BASENAME}.pdf",
@@ -3661,6 +3666,7 @@ def check_archive_handoff_manifest() -> list[str]:
 
     primary_assets = set(manifest.get("primaryReleaseAssets", []))
     expected_assets = {
+        "lobby-capture-wiley-blinded-review.zip",
         "lobby-capture-wiley-submission.zip",
         "regulation-governance-wiley.pdf",
         f"{LOCAL_BASENAME}.pdf",
@@ -3711,6 +3717,7 @@ def check_doi_deposit_package() -> list[str]:
     if not isinstance(members, list):
         return [*failures, "DOI deposit package manifest members field is not a list"]
     expected_primary = {
+        "primary-assets/lobby-capture-wiley-blinded-review.zip",
         "primary-assets/lobby-capture-wiley-submission.zip",
         "primary-assets/regulation-governance-wiley.pdf",
         f"primary-assets/{LOCAL_BASENAME}.pdf",
@@ -3741,6 +3748,8 @@ def check_doi_deposit_package() -> list[str]:
         "readiness/reviewer-risk-register.md",
         "readiness/wiley-submission-form-readiness.csv",
         "readiness/wiley-submission-form-readiness.md",
+        "readiness/blinded-review-package-readiness.csv",
+        "readiness/blinded-review-package-readiness.md",
         "readiness/reggov-guidelines-readiness.csv",
         "readiness/reggov-guidelines-readiness.md",
         "readiness/final-human-readthrough.md",
@@ -3803,7 +3812,9 @@ def check_doi_deposit_package() -> list[str]:
         "DOI Deposit Package Manifest",
         RELEASE_TAG,
         "does not assert that a DOI has been minted",
+        "primary-assets/lobby-capture-wiley-blinded-review.zip",
         "primary-assets/lobby-capture-wiley-submission.zip",
+        "readiness/blinded-review-package-readiness.md",
         "readiness/submission-readiness.md",
         "readiness/reviewer-risk-register.md",
         "readiness/candidate-source-leakage-audit.md",
@@ -4067,6 +4078,56 @@ def check_wiley_submission_form_readiness() -> list[str]:
     return failures
 
 
+def check_blinded_review_package_readiness() -> list[str]:
+    failures: list[str] = []
+    if not BLINDED_REVIEW_ZIP.exists():
+        failures.append(f"missing blinded review package: {BLINDED_REVIEW_ZIP.relative_to(ROOT)}")
+    for path in (BLINDED_REVIEW_PACKAGE_READINESS_CSV, BLINDED_REVIEW_PACKAGE_READINESS_MD):
+        if not path.exists():
+            failures.append(f"missing blinded review package readiness report: {path.relative_to(ROOT)}")
+    if failures:
+        return failures
+
+    try:
+        with BLINDED_REVIEW_PACKAGE_READINESS_CSV.open(newline="", encoding="utf-8") as source:
+            rows = {row.get("gate", ""): row for row in csv.DictReader(source)}
+    except OSError as error:
+        return [f"could not read blinded review package readiness CSV: {error}"]
+
+    expected = {
+        "package-present",
+        "expected-files",
+        "upload-surface",
+        "source-redaction",
+        "rendered-redaction",
+        "separate-title-page",
+        "manifest",
+        "standalone-compile",
+    }
+    for gate_name in sorted(expected):
+        row = rows.get(gate_name)
+        if not row:
+            failures.append(f"blinded review package readiness missing gate: {gate_name}")
+            continue
+        if row.get("status") != "ready":
+            failures.append(
+                f"blinded review package gate {gate_name} has status={row.get('status', '')}, expected ready"
+            )
+    text = BLINDED_REVIEW_PACKAGE_READINESS_MD.read_text(encoding="utf-8")
+    required_text = [
+        "Blinded Review Package Readiness",
+        "double-anonymized Regulation & Governance review package",
+        "title page",
+        "source-redaction",
+        "rendered-redaction",
+        "standalone-compile",
+    ]
+    for phrase in required_text:
+        if phrase not in text:
+            failures.append(f"blinded review package readiness markdown missing phrase: {phrase}")
+    return failures
+
+
 def check_reggov_guidelines_readiness() -> list[str]:
     failures: list[str] = []
     for path in (REGGOV_GUIDELINES_READINESS_CSV, REGGOV_GUIDELINES_READINESS_MD):
@@ -4086,6 +4147,7 @@ def check_reggov_guidelines_readiness() -> list[str]:
         "word-limit": {"ready"},
         "abstract-and-keywords": {"ready"},
         "title-page-metadata": {"ready"},
+        "double-anonymized-review-package": {"ready"},
         "data-code-availability": {"ready"},
         "ai-funding-conflict-disclosures": {"ready"},
         "figures-and-tables": {"ready"},
@@ -4117,6 +4179,7 @@ def check_reggov_guidelines_readiness() -> list[str]:
         "150",
         "three suggested reviewers",
         "double-anonymized review",
+        "double-anonymized-review-package",
         "Data and Code Availability",
         "AI Use Disclosure",
         "10 MB",

@@ -83,6 +83,8 @@ reports/*.md
 !reports/doi-deposit-readiness.md
 !reports/wiley-submission-form-readiness.csv
 !reports/wiley-submission-form-readiness.md
+!reports/blinded-review-package-readiness.csv
+!reports/blinded-review-package-readiness.md
 !reports/reggov-guidelines-readiness.csv
 !reports/reggov-guidelines-readiness.md
 !reports/paper-layout-audit.md

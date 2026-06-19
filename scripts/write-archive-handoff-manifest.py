@@ -30,6 +30,14 @@ LOCAL_CHECKSUM_STATUS = "local-release-asset-sha256"
 
 ASSETS = [
     {
+        "path": "dist/lobby-capture-wiley-blinded-review.zip",
+        "releaseAssetName": "lobby-capture-wiley-blinded-review.zip",
+        "role": "wiley-blinded-review-archive",
+        "includeInDoiDeposit": "yes",
+        "checksumMode": "release-asset",
+        "archiveNote": "Double-anonymized review archive with anonymous main manuscript, anonymous supplement, separate title page, figures, tables, references, selected supporting information, and package-member checksum manifest.",
+    },
+    {
         "path": "dist/lobby-capture-wiley-submission.zip",
         "releaseAssetName": "lobby-capture-wiley-submission.zip",
         "role": "wiley-submission-archive",
