@@ -8,6 +8,7 @@ import csv
 import gzip
 import hashlib
 import html
+from html.parser import HTMLParser
 from io import BytesIO, StringIO
 import json
 import multiprocessing
@@ -26,7 +27,7 @@ from http.client import RemoteDisconnected
 from datetime import date, datetime
 from pathlib import Path
 from urllib.error import HTTPError, URLError
-from urllib.parse import parse_qsl, quote_plus, urlencode, urlsplit, urlunsplit
+from urllib.parse import parse_qsl, quote_plus, urlencode, urljoin, urlsplit, urlunsplit
 from urllib.request import Request, urlopen
 
 
@@ -58,6 +59,9 @@ def main() -> int:
 
     regulatory = subparsers.add_parser("regulatory", help="Fetch Regulations.gov or Federal Register records.")
     regulatory.add_argument("--output", type=Path, default=Path("data/raw/regulatory-dockets.csv"))
+
+    oira_meetings = subparsers.add_parser("oira-meetings", help="Fetch Reginfo.gov EO 12866 public meeting disclosures.")
+    oira_meetings.add_argument("--output", type=Path, default=Path("data/raw/oira-meetings.csv"))
 
     usaspending = subparsers.add_parser("usaspending", help="Fetch USAspending award records.")
     usaspending.add_argument("--output", type=Path, default=Path("data/raw/usaspending-awards.csv"))
@@ -103,6 +107,8 @@ def main() -> int:
         return fetch_revolving_door(args.output)
     if args.kind == "regulatory":
         return fetch_regulatory(args.output)
+    if args.kind == "oira-meetings":
+        return fetch_oira_meetings(args.output)
     if args.kind == "usaspending":
         return fetch_usaspending(args.output)
     if args.kind == "usaspending-actions":
@@ -576,6 +582,251 @@ def fetch_regulatory(output: Path) -> int:
         source_name,
     )
     return 0
+
+
+OIRA_MEETING_FIELDS = [
+    "meetingId",
+    "rin",
+    "agency",
+    "subagency",
+    "ruleTitle",
+    "stage",
+    "meetingStatus",
+    "meetingDate",
+    "meetingTime",
+    "meetingDateTime",
+    "requestorOrganization",
+    "requestorName",
+    "requestorClient",
+    "sourceUrl",
+    "detailFetched",
+    "participantDisclosure",
+    "clientDisclosure",
+    "sourceSystem",
+    "notes",
+]
+
+
+def fetch_oira_meetings(output: Path) -> int:
+    base = os.environ.get("REGINFO_BASE_URL", "https://www.reginfo.gov").rstrip("/")
+    url = os.environ.get(
+        "REGINFO_EO_MEETINGS_URL",
+        f"{base}/public/do/eom12866SearchResults?pubId=&rin=&viewRule=true",
+    )
+    source_html = read_env_text_file("REGINFO_EO_MEETINGS_SOURCE_HTML")
+    html_text = source_html if source_html else get_text(url)
+    max_rows = int_env("REGINFO_EO_MEETINGS_MAX_ROWS", 100, 1, 5000)
+    rows = parse_oira_meeting_results(html_text, base, max_rows)
+    if os.environ.get("REGINFO_EO_MEETINGS_FETCH_DETAILS", "1") != "0":
+        detail_limit = int_env("REGINFO_EO_MEETINGS_DETAIL_LIMIT", 25, 0, max_rows)
+        detail_fixture = read_env_text_file("REGINFO_EO_MEETINGS_DETAIL_HTML")
+        for index, row in enumerate(rows):
+            if index >= detail_limit:
+                break
+            row.update(oira_detail_defaults(f"detail fetch skipped after limit={detail_limit}"))
+            try:
+                detail_html = detail_fixture if detail_fixture else get_text(str(row["sourceUrl"]))
+                row.update(parse_oira_meeting_detail(detail_html))
+                row["detailFetched"] = True
+                row["notes"] = "public Reginfo.gov EO 12866 meeting disclosure"
+            except SystemExit as error:
+                row.update(oira_detail_defaults(f"detail fetch failed: {str(error)[:160]}"))
+    write_rows(output, OIRA_MEETING_FIELDS, rows, "Reginfo.gov EO 12866 meetings")
+    return 0
+
+
+class TableRowParser(HTMLParser):
+    def __init__(self) -> None:
+        super().__init__(convert_charrefs=True)
+        self.rows: list[list[dict[str, str]]] = []
+        self.in_row = False
+        self.in_cell = False
+        self.current_cells: list[dict[str, str]] = []
+        self.current_text: list[str] = []
+        self.current_href = ""
+
+    def handle_starttag(self, tag: str, attrs: list[tuple[str, str | None]]) -> None:
+        if tag.lower() == "tr":
+            self.in_row = True
+            self.current_cells = []
+        elif self.in_row and tag.lower() == "td":
+            self.in_cell = True
+            self.current_text = []
+            self.current_href = ""
+        elif self.in_cell and tag.lower() == "a":
+            attrs_dict = {key.lower(): value or "" for key, value in attrs}
+            href = attrs_dict.get("href", "")
+            if "viewEO12866Meeting" in href:
+                self.current_href = href
+
+    def handle_data(self, data: str) -> None:
+        if self.in_cell:
+            self.current_text.append(data)
+
+    def handle_endtag(self, tag: str) -> None:
+        lowered = tag.lower()
+        if lowered == "td" and self.in_cell:
+            self.current_cells.append(
+                {
+                    "text": normalize_html_space(" ".join(self.current_text)),
+                    "href": self.current_href,
+                }
+            )
+            self.in_cell = False
+            self.current_text = []
+            self.current_href = ""
+        elif lowered == "tr" and self.in_row:
+            if self.current_cells:
+                self.rows.append(self.current_cells)
+            self.in_row = False
+
+
+class TextParser(HTMLParser):
+    def __init__(self) -> None:
+        super().__init__(convert_charrefs=True)
+        self.parts: list[str] = []
+
+    def handle_data(self, data: str) -> None:
+        self.parts.append(data)
+
+    def text(self) -> str:
+        return normalize_html_space(" ".join(self.parts))
+
+
+def parse_oira_meeting_results(html_text: str, base_url: str, max_rows: int) -> list[dict[str, object]]:
+    parser = TableRowParser()
+    parser.feed(html_text)
+    rows: list[dict[str, object]] = []
+    for cells in parser.rows:
+        if len(cells) < 5 or "viewEO12866Meeting" not in cells[0].get("href", ""):
+            continue
+        source_url = urljoin(base_url + "/", cells[0]["href"])
+        query = dict(parse_qsl(urlsplit(source_url).query, keep_blank_values=True))
+        meeting_date, meeting_time = parse_oira_meeting_datetime(cells[0]["text"])
+        agency, subagency = split_agency_subagency(cells[1]["text"] or query.get("acronym", ""))
+        rows.append(
+            {
+                "meetingId": query.get("meetingId", ""),
+                "rin": query.get("rin", ""),
+                "agency": agency,
+                "subagency": subagency,
+                "ruleTitle": cells[2]["text"],
+                "stage": cells[3]["text"],
+                "meetingStatus": cells[4]["text"],
+                "meetingDate": meeting_date,
+                "meetingTime": meeting_time,
+                "meetingDateTime": cells[0]["text"],
+                "requestorOrganization": "",
+                "requestorName": "",
+                "requestorClient": "",
+                "sourceUrl": source_url,
+                "detailFetched": False,
+                "participantDisclosure": False,
+                "clientDisclosure": False,
+                "sourceSystem": "reginfo-eo12866-meetings",
+                "notes": "results-list row only; detail not fetched",
+            }
+        )
+        if len(rows) >= max_rows:
+            break
+    return rows
+
+
+def parse_oira_meeting_detail(html_text: str) -> dict[str, object]:
+    parser = TextParser()
+    parser.feed(html_text)
+    text = parser.text()
+    stop_labels = oira_detail_stop_labels()
+    title = labeled_text(text, "Title:", ["Agency/Subagency:", "Stage of Rulemaking:", "Meeting Date/Time:", "Requestor:", *stop_labels])
+    agency_text = labeled_text(text, "Agency/Subagency:", ["Stage of Rulemaking:", "Meeting Date/Time:", "Requestor:", *stop_labels])
+    stage = labeled_text(text, "Stage of Rulemaking:", ["Meeting Date/Time:", "Requestor:", *stop_labels])
+    meeting_datetime = labeled_text(text, "Meeting Date/Time:", ["Requestor:", "Requestor's Name:", "Requestor's Client:", *stop_labels])
+    requestor = labeled_text(text, "Requestor:", ["Requestor's Name:", "Requestor's Client:", *stop_labels])
+    requestor_name = labeled_text(text, "Requestor's Name:", ["Requestor's Client:", *stop_labels])
+    requestor_client = labeled_text(text, "Requestor's Client:", stop_labels)
+    meeting_date, meeting_time = parse_oira_meeting_datetime(meeting_datetime)
+    agency, subagency = split_agency_subagency(agency_text)
+    output: dict[str, object] = {
+        "requestorOrganization": requestor,
+        "requestorName": requestor_name,
+        "requestorClient": requestor_client,
+        "participantDisclosure": bool(requestor or requestor_name or requestor_client),
+        "clientDisclosure": bool(requestor_client),
+    }
+    if title:
+        output["ruleTitle"] = title
+    if agency:
+        output["agency"] = agency
+    if subagency:
+        output["subagency"] = subagency
+    if stage:
+        output["stage"] = stage
+    if meeting_datetime:
+        output["meetingDateTime"] = meeting_datetime
+        output["meetingDate"] = meeting_date
+        output["meetingTime"] = meeting_time
+    return output
+
+
+def oira_detail_defaults(notes: str) -> dict[str, object]:
+    return {
+        "detailFetched": False,
+        "participantDisclosure": False,
+        "clientDisclosure": False,
+        "notes": notes,
+    }
+
+
+def read_env_text_file(name: str) -> str:
+    value = os.environ.get(name, "").strip()
+    if not value:
+        return ""
+    return Path(value).read_text(encoding="utf-8")
+
+
+def normalize_html_space(value: str) -> str:
+    return " ".join(html.unescape(value).split())
+
+
+def labeled_text(text: str, label: str, next_labels: list[str]) -> str:
+    start = text.find(label)
+    if start < 0:
+        return ""
+    start += len(label)
+    end_candidates = [text.find(next_label, start) for next_label in next_labels]
+    end_candidates = [index for index in end_candidates if index >= 0]
+    end = min(end_candidates) if end_candidates else len(text)
+    return text[start:end].strip()
+
+
+def oira_detail_stop_labels() -> list[str]:
+    return [
+        "function downloadFileOrShowMessage",
+        "Something went wrong when downloading this file.",
+        "Reginfo.gov An official website",
+        "An official website of the U.S. General Services Administration",
+        "About Us About GSA",
+    ]
+
+
+def parse_oira_meeting_datetime(value: str) -> tuple[str, str]:
+    text = value.strip()
+    for fmt in ("%m/%d/%Y %I:%M %p", "%m/%d/%Y"):
+        try:
+            parsed = datetime.strptime(text, fmt)
+            meeting_time = "" if fmt == "%m/%d/%Y" else parsed.strftime("%H:%M")
+            return parsed.date().isoformat(), meeting_time
+        except ValueError:
+            continue
+    return "", ""
+
+
+def split_agency_subagency(value: str) -> tuple[str, str]:
+    text = value.strip()
+    if "/" not in text:
+        return text, ""
+    agency, subagency = text.split("/", 1)
+    return agency.strip(), subagency.strip()
 
 
 def fetch_usaspending(output: Path) -> int:

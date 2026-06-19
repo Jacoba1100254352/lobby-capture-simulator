@@ -44,6 +44,7 @@ def extract_scope(scope: str, root: Path, prefix: str) -> list[dict[str, str]]:
         root / f"{prefix}dark-money.csv",
     ))
     rows.extend(regulatory_moments(scope, root / f"{prefix}regulatory-dockets.csv"))
+    rows.extend(oira_meeting_moments(scope, root / f"{prefix}oira-meetings.csv"))
     rows.extend(usaspending_moments(
         scope,
         root / f"{prefix}usaspending-awards.csv",
@@ -164,6 +165,33 @@ def regulatory_moments(scope: str, path: Path) -> list[dict[str, str]]:
         moment(scope, "regulatory", "commentAuthenticationShareMean", average([number(row.get("authenticationShare")) for row in rows]), "observed_proxy", "mean normalized authentication share"),
         moment(scope, "regulatory", "commentFloodingIndex", comment_flooding_index(rows, by_docket), "proxy", "combined top-docket concentration, template share, and low-authentication pressure"),
         moment(scope, "regulatory", "technicalClaimCredibilityMean", average([number(row.get("technicalClaimCredibility")) for row in rows]), "proxy", "mean normalized technical claim credibility"),
+    ]
+
+
+def oira_meeting_moments(scope: str, path: Path) -> list[dict[str, str]]:
+    rows = read_rows(path)
+    if not rows:
+        return [moment(scope, "oira-meetings", "oiraMeetingRows", 0.0, "observed", f"{path} missing or empty")]
+    by_requestor = grouped_count(rows, "requestorOrganization")
+    by_client = grouped_count(rows, "requestorClient")
+    by_agency = grouped_count(rows, "agency")
+    by_rin = grouped_count(rows, "rin")
+    detail_rows = [row for row in rows if flag(row.get("detailFetched"))]
+    participant_rows = [row for row in rows if flag(row.get("participantDisclosure"))]
+    client_rows = [row for row in rows if flag(row.get("clientDisclosure"))]
+    completed_rows = [row for row in rows if "completed" in row.get("meetingStatus", "").lower()]
+    scheduled_rows = [row for row in rows if "scheduled" in row.get("meetingStatus", "").lower()]
+    return [
+        moment(scope, "oira-meetings", "oiraMeetingRows", len(rows), "observed", "normalized Reginfo.gov EO 12866 public meeting rows"),
+        moment(scope, "oira-meetings", "oiraMeetingDetailFetchedShare", safe_divide(len(detail_rows), len(rows)), "diagnostic", "share of meeting rows with detail pages fetched"),
+        moment(scope, "oira-meetings", "oiraMeetingParticipantDisclosureShare", safe_divide(len(participant_rows), len(rows)), "observed", "share of rows with requestor or participant disclosure fields populated"),
+        moment(scope, "oira-meetings", "oiraMeetingClientDisclosureShare", safe_divide(len(client_rows), len(rows)), "observed", "share of rows with requestor-client disclosure"),
+        moment(scope, "oira-meetings", "oiraMeetingAgencyCount", len([key for key in by_agency if key != "unknown"]), "observed", "distinct agency acronyms in normalized EO 12866 meeting rows"),
+        moment(scope, "oira-meetings", "oiraMeetingRinCount", len([key for key in by_rin if key != "unknown"]), "observed", "distinct RINs in normalized EO 12866 meeting rows"),
+        moment(scope, "oira-meetings", "oiraMeetingRequestorTop3Share", top_share(by_requestor, 3), "observed_proxy", "top three requestors by normalized EO 12866 meeting count"),
+        moment(scope, "oira-meetings", "oiraMeetingClientTop3Share", top_share(by_client, 3), "observed_proxy", "top three requestor clients by normalized EO 12866 meeting count"),
+        moment(scope, "oira-meetings", "oiraMeetingCompletedShare", safe_divide(len(completed_rows), len(rows)), "observed", "share of rows marked completed"),
+        moment(scope, "oira-meetings", "oiraMeetingScheduledShare", safe_divide(len(scheduled_rows), len(rows)), "observed", "share of rows marked scheduled"),
     ]
 
 
@@ -684,6 +712,15 @@ def representativeness_warnings(rows: list[dict[str, str]]) -> list[str]:
     elif metric_value(rows, "snapshot", "intermediary", "intermediaryDonorDisclosureMean") < 0.50:
         warnings.append(
             "Snapshot intermediary donor/source disclosure is low; hidden-routing claims should remain source-diagnostic rather than causal."
+        )
+    oira_rows = metric_value(rows, "snapshot", "oira-meetings", "oiraMeetingRows")
+    if oira_rows <= 0:
+        warnings.append(
+            "Snapshot contains no Reginfo.gov EO 12866 meeting rows; meeting-disclosure and public-access concentration remain unanchored."
+        )
+    elif metric_value(rows, "snapshot", "oira-meetings", "oiraMeetingClientDisclosureShare") < 0.50:
+        warnings.append(
+            "Snapshot EO 12866 meeting rows have limited requestor-client disclosure coverage; access-channel diagnostics should remain source-bounded."
         )
     if metric_value(rows, "snapshot", "usaspending", "procurementKnownUeiShare") < 0.50:
         warnings.append(

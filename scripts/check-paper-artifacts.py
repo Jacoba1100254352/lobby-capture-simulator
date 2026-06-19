@@ -1149,6 +1149,7 @@ def check_source_capability_audit() -> list[str]:
         "usaspending-national-action-panel",
         "usaspending-bulk-transaction-download-panel",
         "lda-covered-position-revolving-door",
+        "reginfo-eo12866-meeting-logs",
         "irs-527-political-organizations",
         "licensed-access-overlays",
     }
@@ -1198,6 +1199,14 @@ def check_source_capability_audit() -> list[str]:
         failures.append(
             "LDA covered-position revolving-door capability should be active and usable"
         )
+    if rows["reginfo-eo12866-meeting-logs"].get("capabilityStatus") not in {
+        "active-usable",
+        "active-bounded",
+        "missing",
+    }:
+        failures.append(
+            "Reginfo EO 12866 meeting-log capability should be active or explicitly missing from the committed snapshot"
+        )
     if rows["irs-527-political-organizations"].get("capabilityStatus") != "active-usable":
         failures.append(
             "IRS 527 political-organization capability should be active and usable"
@@ -1211,6 +1220,7 @@ def check_source_capability_audit() -> list[str]:
             "SAM_CONTRACT_AWARDS_OFFSET_STARTS",
             "SAM_CONTRACT_AWARDS_EXTRACT_MODE",
             "api_key=REPLACE_WITH_API_KEY",
+            "Reginfo.gov EO 12866",
     ):
         if phrase not in text:
             failures.append(f"source capability audit markdown missing phrase: {phrase}")

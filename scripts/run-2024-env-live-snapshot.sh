@@ -87,7 +87,7 @@ record_usaspending_procurement_actions_failure() {
   fi
 }
 
-rm -f data/raw/lda-lobbying.csv data/raw/fec-campaign-finance.csv data/raw/public-financing.csv data/raw/dark-money.csv data/raw/regulatory-dockets.csv data/raw/usaspending-awards.csv data/raw/usaspending-procurement-bridge.csv data/raw/usaspending-procurement-actions.csv data/raw/usaspending-procurement-national-actions.csv data/raw/sam-contract-awards.csv data/raw/revolving-door.csv data/raw/intermediaries.csv
+rm -f data/raw/lda-lobbying.csv data/raw/fec-campaign-finance.csv data/raw/public-financing.csv data/raw/dark-money.csv data/raw/regulatory-dockets.csv data/raw/oira-meetings.csv data/raw/usaspending-awards.csv data/raw/usaspending-procurement-bridge.csv data/raw/usaspending-procurement-actions.csv data/raw/usaspending-procurement-national-actions.csv data/raw/sam-contract-awards.csv data/raw/revolving-door.csv data/raw/intermediaries.csv
 
 for period in first_quarter second_quarter third_quarter fourth_quarter; do
   SOURCE_RAW_DIR="$raw_dir/lda-$period" \
@@ -260,6 +260,19 @@ if SOURCE_RAW_DIR="$raw_dir/federal-register" \
   printf "federal-register,ok,normalized rows appended\n" >> "$status_file"
 else
   printf "federal-register,unavailable,upstream request returned no rows or failed\n" >> "$status_file"
+fi
+
+if [ "${OIRA_MEETINGS_SOURCE_NATIVE:-1}" = "1" ]; then
+  if SOURCE_RAW_DIR="$raw_dir/oira-meetings" \
+    REGINFO_EO_MEETINGS_MAX_ROWS="${REGINFO_EO_MEETINGS_MAX_ROWS:-100}" \
+    REGINFO_EO_MEETINGS_DETAIL_LIMIT="${REGINFO_EO_MEETINGS_DETAIL_LIMIT:-25}" \
+      python3 scripts/fetch-source-data.py oira-meetings --output data/raw/oira-meetings.csv; then
+    printf "oira-meetings,ok,normalized Reginfo.gov EO 12866 meeting rows written\n" >> "$status_file"
+  else
+    printf "oira-meetings,unavailable,Reginfo.gov EO 12866 meeting request failed or returned no rows\n" >> "$status_file"
+  fi
+else
+  printf "oira-meetings,missing,Reginfo.gov EO 12866 meeting source disabled\n" >> "$status_file"
 fi
 
 if SOURCE_RAW_DIR="$raw_dir/usaspending" \

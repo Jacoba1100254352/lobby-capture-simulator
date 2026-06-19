@@ -151,6 +151,21 @@ CAPABILITIES = [
         ),
     },
     {
+        "capability": "reginfo-eo12866-meeting-logs",
+        "mechanism": "Public OIRA meeting disclosure and requestor/client access diagnostics",
+        "implementedRoute": (
+            "no-key Reginfo.gov EO 12866 results-page importer with optional detail-page "
+            "fetching for requestor, requestor name, and requestor-client fields"
+        ),
+        "snapshotSource": "oira-meetings",
+        "panel": "OIRA EO 12866 meeting logs",
+        "neededFor": "Meeting-disclosure and access-channel source diagnostics",
+        "nextAction": (
+            "Link requestors and clients to LDA, docket, FEC, intermediary, procurement, and "
+            "rulemaking-outcome identifiers before estimating access-channel substitution elasticity."
+        ),
+    },
+    {
         "capability": "irs-527-political-organizations",
         "mechanism": "Campaign-adjacent 527 intermediary receipts and disbursements",
         "implementedRoute": "source-native IRS POFD Form 8872 bounded slice",

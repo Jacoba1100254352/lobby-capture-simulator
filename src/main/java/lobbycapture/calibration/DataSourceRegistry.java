@@ -15,6 +15,7 @@ public final class DataSourceRegistry
 				"FEC campaign finance data",
 				"Federal Register API",
 				"Regulations.gov API",
+				"Reginfo.gov EO 12866 public meeting disclosures",
 				"Voteview",
 				"govinfo Bill Status XML",
 				"Seattle Democracy Voucher data",

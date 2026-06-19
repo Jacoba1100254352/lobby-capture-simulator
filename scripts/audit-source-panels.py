@@ -86,6 +86,21 @@ PANELS = [
         "action": "Supplement LDA covered-position rows with OGE, FACA, witness, LegiStorm/OpenSecrets, or archived personnel movement exports.",
     },
     {
+        "panel": "OIRA EO 12866 meeting logs",
+        "metric": "oiraMeetingRows",
+        "mechanism": "Public meeting disclosure, requestor/client visibility, and access concentration",
+        "evidenceClass": "direct public meeting disclosure",
+        "minimum": 1.0,
+        "good": 50.0,
+        "missing": "no Reginfo.gov EO 12866 meeting rows are present in the pinned snapshot",
+        "thin": "EO 12866 meeting rows are present but too sparse for cross-agency access-concentration calibration",
+        "contextMetrics": [
+            ("oiraMeetingClientDisclosureShare", "requestor-client disclosure share"),
+            ("oiraMeetingRequestorTop3Share", "top-three requestor share"),
+        ],
+        "action": "Broaden Reginfo.gov EO 12866 meeting rows, fetch detail pages for requestor/client fields, and link requestors or clients to LDA, docket, FEC, intermediary, and procurement identifiers before estimating substitution elasticity.",
+    },
+    {
         "panel": "Procurement identifiers",
         "metric": "procurementKnownPiidShare",
         "mechanism": "Vendor and award-path matching for procurement influence",

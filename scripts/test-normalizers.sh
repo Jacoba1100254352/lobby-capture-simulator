@@ -295,6 +295,24 @@ assert len(rows) == 5, len(rows)
 assert rows[1]["modificationNumber"] == "P00001", rows[1]
 assert rows[1]["exPostModification"] == "true", rows[1]
 PY
+REGINFO_EO_MEETINGS_SOURCE_HTML=data/fixtures/source-native/reginfo-eo-meetings-results.html \
+REGINFO_EO_MEETINGS_DETAIL_HTML=data/fixtures/source-native/reginfo-eo-meeting-detail.html \
+REGINFO_EO_MEETINGS_MAX_ROWS=1 \
+REGINFO_EO_MEETINGS_DETAIL_LIMIT=1 \
+python3 scripts/fetch-source-data.py oira-meetings --output "$tmpdir/oira-meetings.csv" >/dev/null
+python3 - "$tmpdir/oira-meetings.csv" <<'PY'
+import csv
+import sys
+with open(sys.argv[1], newline="", encoding="utf-8") as source:
+    rows = list(csv.DictReader(source))
+assert len(rows) == 1, len(rows)
+row = rows[0]
+assert row["meetingId"] == "1456873", row
+assert row["rin"] == "0906-ZA23", row
+assert row["requestorClient"] == "RWC-340B", row
+assert row["detailFetched"] == "True", row
+assert row["clientDisclosure"] == "True", row
+PY
 
 printf 'client,amount\nA,1\n' > "$tmpdir/bad-lda.csv"
 if python3 scripts/normalize-calibration.py lda "$tmpdir/bad-lda.csv" "$tmpdir/out.csv" >"$tmpdir/bad.out" 2>"$tmpdir/bad.err"; then
@@ -354,9 +372,11 @@ grep -q "procurementActionModificationRows" "$tmpdir/reports/source-moments.csv"
 grep -q "procurementLimitedCompetitionShare" "$tmpdir/reports/source-moments.csv"
 grep -q "revolvingDoorFormerOfficialShare" "$tmpdir/reports/source-moments.csv"
 grep -q "intermediaryPoliticalSpendShare" "$tmpdir/reports/source-moments.csv"
+grep -q "oiraMeetingRows" "$tmpdir/reports/source-moments.csv"
 python3 scripts/audit-source-panels.py --source-moments "$tmpdir/reports/source-moments.csv" --output "$tmpdir/reports" >/dev/null
 test -s "$tmpdir/reports/source-panel-inventory.csv"
 grep -q "Direct dark money" "$tmpdir/reports/source-panel-inventory.md"
+grep -q "OIRA EO 12866 meeting logs" "$tmpdir/reports/source-panel-inventory.md"
 grep -q "Fixture scaffold?" "$tmpdir/reports/source-panel-inventory.md"
 python3 scripts/audit-source-capabilities.py --reports "$tmpdir/reports" --snapshot data/snapshots/2024-env >/dev/null
 test -s "$tmpdir/reports/source-capability-audit.csv"
