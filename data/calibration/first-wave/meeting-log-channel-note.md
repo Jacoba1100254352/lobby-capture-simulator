@@ -1,27 +1,34 @@
 # Meeting/Contact Channel Missingness Design Note
 
-This source product documents the missing meeting/contact channel for the
-first-wave substitution-elasticity protocol. It is a boundary artifact, not a
-meeting-log panel, contact-register panel, or estimation dataset.
+This source product documents the partial meeting/contact channel for the
+first-wave substitution-elasticity protocol. It is a boundary artifact, not an
+estimation dataset or a clearance to treat access-channel substitution as
+observed.
 
 ## Meeting Or Contact Source Availability
 
 The current committed source surfaces include LDA visible-lobbying rows,
 OpenFEC campaign-finance rows, Regulations.gov and Federal Register rulemaking
-rows, USAspending/SAM procurement rows where available, and intermediary or
-public-financing rows from IRS, ProPublica, New York City, and Seattle sources.
-Those sources support visible activity, money flows, comments, procurement
-actions, and intermediary capacity within their stated limits.
+rows, USAspending/SAM procurement rows where available, intermediary or
+public-financing rows from IRS, ProPublica, New York City, and Seattle sources,
+and a small Reginfo.gov EO 12866 public meeting-log panel. Those sources support
+visible activity, money flows, comments, procurement actions, intermediary
+capacity, and bounded public access-disclosure diagnostics within their stated
+limits.
 
-No committed source panel currently contains machine-readable meeting logs,
-agency calendars, visitor logs, contact registers, or equivalent direct-access
-records linked to actor, issue, venue, date, and outcome fields. LDA records can
-identify agencies, covered official positions, and issue codes, but they do not
-observe individual meetings or private contacts. The public source roadmap lists
-personnel and access records such as official names, agency positions, dates,
-employers, committee or hearing identifiers, FACA records, House witness
-disclosures, OGE records, and meeting logs as planned source families rather
-than committed estimation panels.
+The committed OIRA panel contains machine-readable public meeting disclosures
+with meeting date, agency, RIN, rule title, requestor, requestor-client where
+available, and source URL fields. It is useful as a bounded access-channel
+source surface, but it is too sparse and too weakly linked to actors, outcomes,
+and other venues to estimate substitution elasticity. The current panel is not a
+representative contact-register, agency-calendar, visitor-log, or private-access
+dataset. LDA records can identify agencies, covered official positions, and
+issue codes, but they do not observe individual meetings or private contacts.
+The public source roadmap still lists broader personnel and access records such
+as official names, agency positions, dates, employers, committee or hearing
+identifiers, FACA records, House witness disclosures, OGE records, richer meeting
+logs, and contact registers as planned source families rather than committed
+estimation panels.
 
 ## Missingness Assessment
 
@@ -34,34 +41,38 @@ office, record-retention rule, visitor-log practice, calendar disclosure rule,
 and whether an interaction occurs through a vendor, association, law firm,
 consultant, or former official.
 
-Because the present bundle does not contain an observed meeting/contact panel,
-the first-wave substitution-elasticity protocol must not treat unchanged public
+Because the present bundle contains only a thin public OIRA meeting panel, the
+first-wave substitution-elasticity protocol must not treat unchanged public
 activity in other venues as evidence that private-access substitution is absent.
-The missing meeting/contact channel remains an omitted-channel risk for any
-future cross-source substitution estimate until a direct access panel or an
-explicit latent-channel sensitivity design is added.
+The meeting/contact channel remains an omitted-channel risk for any future
+cross-source substitution estimate until a broader direct access panel, a linked
+public-meeting panel with outcome fields, or an explicit latent-channel
+sensitivity design is added.
 
 ## Substitution Handling
 
-The current simulator keeps meeting and contact substitution synthetic. Meeting
-log leak scenarios are stress tests for reform-design diagnostics; they are not
-estimated effects from observed access records.
+The current simulator keeps meeting and contact substitution synthetic. The
+OIRA rows can document that a public meeting-disclosure surface exists, but
+meeting-log leak scenarios remain stress tests for reform-design diagnostics;
+they are not estimated effects from observed access records.
 
 Before a first-wave substitution estimate can be promoted, the protocol must
 take one of three documented paths:
 
-1. add a machine-readable meeting/contact panel with actor, issue, date, venue,
-   source-record, and outcome linkage fields;
+1. add a broader machine-readable meeting/contact panel with actor, issue, date,
+   venue, source-record, completeness, and outcome linkage fields;
 2. retain the channel as a latent access-pressure term with a declared
    sensitivity range; or
-3. proxy access pressure through LDA agency, covered-position, and issue fields
-   while clearly reporting that private meetings remain unobserved.
+3. proxy access pressure through LDA agency, covered-position, issue fields, and
+   the thin public OIRA meeting surface while clearly reporting that private
+   meetings remain mostly unobserved.
 
 The required sensitivity check is to compare the substitution design with the
-meeting/contact channel excluded, bounded as latent access pressure, and proxied
-through LDA agency or covered-position fields. Stability across those cases can
-support a narrower design hypothesis, but it must not be described as causal
-evidence about private-access substitution without an observed access panel.
+meeting/contact channel excluded, bounded as latent access pressure, proxied
+through LDA agency or covered-position fields, and proxied through the thin OIRA
+meeting surface. Stability across those cases can support a narrower design
+hypothesis, but it must not be described as causal evidence about private-access
+substitution without an observed access panel.
 
 ## Provenance
 
@@ -69,7 +80,9 @@ evidence about private-access substitution without an observed access panel.
   - `docs/source-data-roadmap.md`
   - `reports/first-wave-source-products.md`
   - `reports/first-wave-source-readiness.md`
+  - `reports/source-panel-inventory.md`
+  - `reports/source-capability-audit.md`
   - `data/snapshots/2024-env/manifest.json`
-- Extracted at: 2026-06-18
+- Extracted at: 2026-06-19
 - Reviewer: Codex
-- Notes: This note is intended to clear only the explicit missing-channel design-note requirement for the source-product gate. It does not clear the named reform-shock event file, actor-issue-time spine, pre/post comparison groups, meeting-log panel, or any causal substitution-elasticity estimate.
+- Notes: This note is intended to clear only the explicit partial-access-channel design-note requirement for the source-product gate. It does not clear the named reform-shock event file, actor-issue-time spine, pre/post comparison groups, representative meeting-log panel, or any causal substitution-elasticity estimate.
