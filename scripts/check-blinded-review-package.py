@@ -116,7 +116,8 @@ def readiness_rows(package: dict[str, object]) -> list[dict[str, str]]:
             "upload-surface",
             "ready" if 0 < upload_bytes <= MAX_UPLOAD_BYTES and not unsupported else "blocked",
             (
-                f"bytes={upload_bytes}; limit={MAX_UPLOAD_BYTES}; "
+                f"size={'within-limit' if 0 < upload_bytes <= MAX_UPLOAD_BYTES else 'outside-limit'}; "
+                f"limit={MAX_UPLOAD_BYTES}; "
                 f"unsupported members={'; '.join(unsupported) if unsupported else 'none'}"
             ),
             "Keep the blinded review ZIP within Wiley's upload size limit and free of unsupported executable/script formats.",
