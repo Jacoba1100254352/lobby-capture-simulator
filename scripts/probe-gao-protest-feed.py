@@ -29,6 +29,7 @@ REPORTS = ROOT / "reports"
 DEFAULT_FEED_URL = "https://www.gao.gov/rss/reportslegal.xml"
 DEFAULT_RECENT_PAGE_URL = "https://www.gao.gov/legal/bid-protests/recent"
 DEFAULT_OUTPUT_PREFIX = REPORTS / "gao-protest-feed-preflight"
+DEFAULT_RECENT_PAGE_FALLBACK = ROOT / "data" / "fixtures" / "source-native" / "gao-recent-bid-protests.html"
 CANDIDATE_BOUNDARY = (
     "candidate-only GAO protest discovery row; does not clear the "
     "gao-protest-overlay source-product gate until PIID, UEI, agency, vendor, "
@@ -105,6 +106,15 @@ def main() -> int:
         "--recent-page-input",
         type=Path,
         help="Read recent-decisions HTML from a local fixture instead of the network.",
+    )
+    parser.add_argument(
+        "--recent-page-fallback-input",
+        type=Path,
+        default=Path(os.environ.get("GAO_RECENT_BID_PROTESTS_FALLBACK_INPUT", DEFAULT_RECENT_PAGE_FALLBACK.as_posix())),
+        help=(
+            "Fallback recent-decisions HTML fixture used when the live GAO recent page is blocked. "
+            "Set to an empty path to disable fallback enrichment."
+        ),
     )
     parser.add_argument(
         "--skip-recent-page",
@@ -205,7 +215,16 @@ def enrich_from_recent_page(rows: list[dict[str, str]], metadata: dict[str, str]
     except Exception as exc:
         metadata["recentPageSource"] = args.recent_page_input.as_posix() if args.recent_page_input else args.recent_page_url
         metadata["recentPageError"] = f"{type(exc).__name__}: {exc}"
-        return
+        if args.recent_page_input:
+            return
+        fallback = fallback_recent_page(args)
+        if not fallback:
+            return
+        fallback_source, html_text = fallback
+        source_label = fallback_source
+        metadata["recentPageSource"] = fallback_source
+        metadata["recentPageFallback"] = f"live recent page unavailable; used {fallback_source}"
+        outcomes = recent_page_outcomes(html_text)
     enriched = 0
     for row in rows:
         if row.get("outcomeHint"):
@@ -214,6 +233,7 @@ def enrich_from_recent_page(rows: list[dict[str, str]], metadata: dict[str, str]
         if not outcome:
             continue
         row["outcomeHint"] = outcome
+        row["outcomeHintSource"] = metadata.get("recentPageSource", "")
         row["manualReviewNeeds"] = manual_review_needs(
             row.get("agencyHint", ""),
             row.get("awardeeNameHint", ""),
@@ -247,6 +267,16 @@ def read_recent_page(args: argparse.Namespace) -> tuple[str, str]:
         raise RuntimeError(f"GAO recent page HTTP {exc.code}: {detail}") from exc
     except URLError as exc:
         raise RuntimeError(f"GAO recent page request failed: {exc.reason}") from exc
+
+
+def fallback_recent_page(args: argparse.Namespace) -> tuple[str, str] | None:
+    path = args.recent_page_fallback_input
+    if not path or str(path).strip() == "":
+        return None
+    resolved = path if path.is_absolute() else ROOT / path
+    if not resolved.exists():
+        return None
+    return resolved.as_posix(), resolved.read_text(encoding="utf-8")
 
 
 def recent_page_outcomes(html_text: str) -> dict[str, str]:
@@ -348,6 +378,7 @@ def parse_feed(xml_text: str, source_label: str, max_items: int) -> tuple[list[d
                 "protesterNameHint": title if likely else "",
                 "awardeeNameHint": awardee,
                 "outcomeHint": outcome,
+                "outcomeHintSource": "",
                 "issueCodeHints": issues,
                 "description": description,
                 "piid": "",
@@ -374,6 +405,7 @@ def write_csv(path: Path, rows: list[dict[str, str]]) -> None:
         "protesterNameHint",
         "awardeeNameHint",
         "outcomeHint",
+        "outcomeHintSource",
         "issueCodeHints",
         "description",
         "piid",
@@ -431,6 +463,7 @@ def overlay_candidate_row(row: dict[str, str]) -> dict[str, str]:
         f"reviewPriority={row.get('reviewPriority', '')}; "
         f"manualReviewNeeds={review_needs}; "
         f"feedPublishedAt={row.get('publishedAt', '')}; "
+        f"outcomeHintSource={row.get('outcomeHintSource', '') or 'rss_or_unavailable'}; "
         "not estimation ready until agency, filed date, outcome, issue coding, "
         "PIID/UEI or reviewed vendor linkage, and source-page details are adjudicated"
     )
@@ -477,6 +510,8 @@ def write_markdown(path: Path, rows: list[dict[str, str]], metadata: dict[str, s
         lines.append(f"- Error: `{md(error)}`")
     if metadata.get("recentPageError"):
         lines.append(f"- Recent page enrichment error: `{md(metadata.get('recentPageError', ''))}`")
+    if metadata.get("recentPageFallback"):
+        lines.append(f"- Recent page fallback: `{md(metadata.get('recentPageFallback', ''))}`")
     lines.extend(
         [
             "",
