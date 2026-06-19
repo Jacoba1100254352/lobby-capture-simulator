@@ -145,7 +145,7 @@ DOI_DEPOSIT_PACKAGE_CHECKSUM_CSV = ROOT / "dist" / "doi-deposit-package-checksum
 DOI_DEPOSIT_PACKAGE_CHECKSUM_JSON = ROOT / "dist" / "doi-deposit-package-checksum.json"
 DOI_DEPOSIT_PACKAGE_CHECKSUM_MD = ROOT / "dist" / "doi-deposit-package-checksum.md"
 ZENODO_DEPOSIT_METADATA_JSON = ROOT / "dist" / "zenodo-deposit-metadata.json"
-RELEASE_TAG = "paper-publication-readiness-2026-06-18-r185"
+RELEASE_TAG = "paper-publication-readiness-2026-06-18-r186"
 ARCHIVE_HANDOFF_REPORT_NAMES = {
     "archive-handoff-manifest.csv",
     "archive-handoff-manifest.json",
@@ -2752,11 +2752,14 @@ def check_first_wave_source_readiness() -> list[str]:
     table_text = FIRST_WAVE_SOURCE_READINESS_TABLE.read_text(encoding="utf-8")
     for phrase in (
         "First-wave source-readiness gate",
+        "First-wave source-readiness gate for causal-calibration upgrades (continued)",
+        ">{\\raggedright\\arraybackslash}p{0.18\\linewidth}",
         "Substitution elasticity",
         "Procurement modification",
         "Comment authenticity",
         "Venue-shifting detection",
         "candidate-only blocked",
+        "Continued on next page",
     ):
         if phrase not in table_text:
             failures.append(f"first-wave source readiness table missing phrase: {phrase}")

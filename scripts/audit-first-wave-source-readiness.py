@@ -614,16 +614,27 @@ def md(value: str) -> str:
 def write_latex_table(path: Path, rows: list[dict[str, str]]) -> None:
     lines = [
         "\\begin{footnotesize}",
-        "\\begin{longtable}{p{0.18\\linewidth}p{0.18\\linewidth}p{0.25\\linewidth}p{0.25\\linewidth}}",
+        "\\begin{longtable}{"
+        ">{\\raggedright\\arraybackslash}p{0.18\\linewidth}"
+        ">{\\raggedright\\arraybackslash}p{0.18\\linewidth}"
+        ">{\\raggedright\\arraybackslash}p{0.25\\linewidth}"
+        ">{\\raggedright\\arraybackslash}p{0.25\\linewidth}"
+        "}",
         "\\caption{First-wave source-readiness gate for causal-calibration upgrades.}\\label{tab:first-wave-source-readiness}\\\\",
         "\\toprule",
         "Target & Source-product gate & Ready products & Blocking products \\\\",
         "\\midrule",
         "\\endfirsthead",
+        "\\caption[]{First-wave source-readiness gate for causal-calibration upgrades (continued).}\\\\",
         "\\toprule",
         "Target & Source-product gate & Ready products & Blocking products \\\\",
         "\\midrule",
         "\\endhead",
+        "\\midrule",
+        "\\multicolumn{4}{r}{Continued on next page}\\\\",
+        "\\endfoot",
+        "\\bottomrule",
+        "\\endlastfoot",
     ]
     for row in rows:
         lines.append(
@@ -634,12 +645,7 @@ def write_latex_table(path: Path, rows: list[dict[str, str]]) -> None:
                 blocking=tex(compact_items(row.get("blockingSourceProducts", ""))),
             )
         )
-    lines.extend([
-        "\\bottomrule",
-        "\\end{longtable}",
-        "\\end{footnotesize}",
-        "",
-    ])
+    lines.extend(["\\end{longtable}", "\\end{footnotesize}", ""])
     path.write_text("\n".join(lines), encoding="utf-8")
 
 

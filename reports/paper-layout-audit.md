@@ -59,7 +59,7 @@ This audit checks generated PDFs for sparse float pages, large whitespace gaps, 
 | paper/supplement.pdf | 7 | 63 | 4377 | 0.887 | 0.039 | no | pass | layout density acceptable |
 | paper/supplement.pdf | 8 | 70 | 3894 | 0.887 | 0.087 | yes | pass | layout density acceptable |
 | paper/supplement.pdf | 9 | 177 | 3766 | 0.891 | 0.036 | yes | pass | layout density acceptable |
-| paper/supplement.pdf | 10 | 88 | 4060 | 0.887 | 0.054 | yes | pass | layout density acceptable |
-| paper/supplement.pdf | 11 | 86 | 3588 | 0.885 | 0.042 | no | pass | layout density acceptable |
-| paper/supplement.pdf | 12 | 70 | 3212 | 0.887 | 0.039 | yes | pass | references/declarations page |
-| paper/supplement.pdf | 13 | 49 | 2703 | 0.891 | 0.231 | no | pass | references/declarations page |
+| paper/supplement.pdf | 10 | 67 | 3858 | 0.887 | 0.116 | yes | pass | layout density acceptable |
+| paper/supplement.pdf | 11 | 91 | 3383 | 0.890 | 0.037 | yes | pass | layout density acceptable |
+| paper/supplement.pdf | 12 | 67 | 3088 | 0.887 | 0.074 | yes | pass | references/declarations page |
+| paper/supplement.pdf | 13 | 61 | 3328 | 0.891 | 0.036 | no | pass | references/declarations page |
