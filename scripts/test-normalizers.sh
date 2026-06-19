@@ -980,6 +980,35 @@ grep -q 'Likely bid-protest rows: `2`' "$tmpdir/gao-protest-feed-preflight.md"
 grep -q "does not clear the procurement calibration gate" "$tmpdir/gao-protest-feed-preflight.md"
 grep -q "data/calibration/first-wave/gao-protest-overlay.csv" "$tmpdir/gao-protest-feed-preflight.md"
 
+python3 - "$tmpdir/gao-protest-feed-preflight.csv" "$tmpdir/gao-protest-feed-preflight.md" "$tmpdir/missing-gao.csv" "$tmpdir/missing-gao.md" <<'PY'
+import importlib.util
+from pathlib import Path
+import sys
+
+spec = importlib.util.spec_from_file_location(
+    "external_checklist",
+    Path("scripts/write-external-finalization-checklist.py"),
+)
+module = importlib.util.module_from_spec(spec)
+spec.loader.exec_module(module)
+module.GAO_PROTEST_PREFLIGHT_CSV = Path(sys.argv[1])
+module.GAO_PROTEST_PREFLIGHT_MD = Path(sys.argv[2])
+row = module.gao_protest_preflight_row()
+assert row["status"] == "ready", row
+assert "rows=3" in row["evidence"], row
+assert "likelyBidProtests=2" in row["evidence"], row
+assert "candidateOnly=3" in row["evidence"], row
+assert "data/calibration/first-wave/gao-protest-overlay.csv" in row["nextAction"], row
+assert "clears no source-evidence gate" in row["nextAction"], row
+
+module.GAO_PROTEST_PREFLIGHT_CSV = Path(sys.argv[3])
+module.GAO_PROTEST_PREFLIGHT_MD = Path(sys.argv[4])
+row = module.gao_protest_preflight_row()
+assert row["status"] == "manual_required", row
+assert "preflight=missing" in row["evidence"], row
+assert "make gao-protest-feed-preflight" in row["nextAction"], row
+PY
+
 python3 - "$tmpdir/sam-retry-window-audit.md" <<'PY'
 import importlib.util
 from pathlib import Path

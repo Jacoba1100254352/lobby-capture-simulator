@@ -4,7 +4,7 @@
 The paper artifact gate is intentionally offline and deterministic. This helper
 collects local environment state and post-release operational reports into a
 single handoff report without changing tracked publication artifacts or
-asserting that a DOI, journal signoff, or SAM/FPDS panel is complete.
+asserting that a DOI, journal signoff, or refreshed procurement panel is complete.
 """
 
 from __future__ import annotations
@@ -40,6 +40,8 @@ SAM_PREFLIGHT_CSV = REPORTS / "sam-contract-awards-preflight.csv"
 SAM_EXCLUSIONS_PREFLIGHT_CSV = REPORTS / "sam-exclusions-preflight.csv"
 SAM_EXPORT_AUDIT_CSV = REPORTS / "sam-contract-awards-export-audit.csv"
 SAM_EXPORT_AUDIT_MD = REPORTS / "sam-contract-awards-export-audit.md"
+GAO_PROTEST_PREFLIGHT_CSV = REPORTS / "gao-protest-feed-preflight.csv"
+GAO_PROTEST_PREFLIGHT_MD = REPORTS / "gao-protest-feed-preflight.md"
 SNAPSHOT_LIVE_STATUS_CSV = ROOT / "data" / "snapshots" / "2024-env" / "live-run-status.csv"
 OUT_CSV = REPORTS / "external-finalization-checklist.csv"
 OUT_MD = REPORTS / "external-finalization-checklist.md"
@@ -86,6 +88,7 @@ def checklist_rows() -> list[dict[str, str]]:
         doi_record_row(),
         human_readthrough_row(release_tag),
         live_author_page_row(),
+        gao_protest_preflight_row(),
         sam_preflight_row(),
         sam_exclusions_preflight_row(),
         sam_snapshot_refresh_row(),
@@ -376,6 +379,74 @@ def live_author_page_row() -> dict[str, str]:
         row_data.get("evidence", "live author-page refresh=not recorded"),
         row_data.get("nextAction", default_next_action) or default_next_action,
         "journal",
+    )
+
+
+def gao_protest_preflight_row() -> dict[str, str]:
+    rows = read_csv(GAO_PROTEST_PREFLIGHT_CSV)
+    summary = read_text(GAO_PROTEST_PREFLIGHT_MD)
+    if not rows and not summary:
+        return item(
+            "gao-protest-feed-preflight",
+            "manual_required",
+            "preflight=missing",
+            (
+                "Run make gao-protest-feed-preflight to build the no-key GAO bid-protest discovery "
+                "worklist; promote reviewed rows only through data/calibration/first-wave/gao-protest-overlay.csv."
+            ),
+            "source-refresh",
+        )
+
+    summary_status = markdown_summary_value(summary, "Status") or ("ready" if rows else "missing")
+    generated_at = markdown_summary_value(summary, "Generated at")
+    feed_source = markdown_summary_value(summary, "Feed source")
+    last_build = markdown_summary_value(summary, "Last build date")
+    likely = sum(1 for row in rows if row.get("likelyBidProtest", "").strip().lower() == "true")
+    high_priority = sum(1 for row in rows if row.get("reviewPriority", "").strip().lower() == "high")
+    candidate_only = sum(
+        1
+        for row in rows
+        if row.get("linkageStatus", "").strip().lower() == "candidate_unreviewed"
+    )
+    evidence_parts = [
+        f"status={summary_status}",
+        f"rows={len(rows)}",
+        f"likelyBidProtests={likely}",
+        f"highPriority={high_priority}",
+        f"candidateOnly={candidate_only}",
+    ]
+    if generated_at:
+        evidence_parts.append(f"generatedAt={generated_at}")
+    if last_build:
+        evidence_parts.append(f"lastBuildDate={last_build}")
+    if feed_source:
+        evidence_parts.append(f"source={feed_source}")
+    evidence = "; ".join(evidence_parts)
+
+    if summary_status == "ready" and rows and likely > 0:
+        status = "ready"
+        next_action = (
+            "Review high-priority candidate rows and promote only manually linked protest evidence through "
+            "data/calibration/first-wave/gao-protest-overlay.csv; this worklist alone clears no source-evidence gate."
+        )
+    elif summary_status == "unavailable":
+        status = "manual_required"
+        next_action = (
+            "Rerun make gao-protest-feed-preflight or manually review GAO bid-protest source pages; "
+            "do not promote candidate rows until the overlay file contains reviewed linkage fields."
+        )
+    else:
+        status = "manual_required"
+        next_action = (
+            "Rerun make gao-protest-feed-preflight and verify likely bid-protest rows before starting "
+            "manual overlay review in data/calibration/first-wave/gao-protest-overlay.csv."
+        )
+    return item(
+        "gao-protest-feed-preflight",
+        status,
+        evidence,
+        next_action,
+        "source-refresh",
     )
 
 
@@ -889,6 +960,15 @@ def field_value(text: str, field_name: str) -> str:
     return match.group(1).strip() if match else ""
 
 
+def markdown_summary_value(text: str, label: str) -> str:
+    match = re.search(
+        rf"^-\s+{re.escape(label)}:\s+`?([^`\n]+)`?\s*$",
+        text,
+        re.MULTILINE,
+    )
+    return match.group(1).strip() if match else ""
+
+
 def release_tag_git_state(release_tag: str) -> dict[str, str]:
     if not release_tag:
         return {"status": "blocked", "evidence": "release=missing"}
@@ -984,7 +1064,7 @@ def markdown(rows: list[dict[str, str]]) -> str:
     lines = [
         "# External Finalization Checklist",
         "",
-        "This ignored operational checklist consolidates local environment state, post-release asset verification, DOI handoff status, journal-finalization items, and SAM.gov export readiness. It is not part of the deterministic paper artifact gate and does not assert that a DOI, journal submission, or promoted SAM/FPDS panel exists.",
+        "This ignored operational checklist consolidates local environment state, post-release asset verification, DOI handoff status, journal-finalization items, and procurement source-refresh readiness. It is not part of the deterministic paper artifact gate and does not assert that a DOI, journal submission, or promoted procurement panel exists.",
         "",
         "## Summary",
         "",
@@ -1035,6 +1115,9 @@ def markdown(rows: list[dict[str, str]]) -> str:
             "# For audit-only diagnostics without snapshot promotion:",
             "make sam-contract-awards-export-audit",
             "",
+            "# No-key GAO bid-protest discovery worklist:",
+            "make gao-protest-feed-preflight",
+            "",
             "# Before a keyed SAM.gov Contract Awards API refresh:",
             "make sam-contract-awards-preflight",
             "# Use the mode-specific checks before the guarded wrapper chooses that mode:",
@@ -1052,6 +1135,7 @@ def markdown(rows: list[dict[str, str]]) -> str:
             "- `manual_required` means the next step depends on a private credential, a live website, or a human signoff.",
             "- `blocked` means a configured input or post-release check disagrees with the expected state for that category.",
             "- A source-refresh `blocked` item blocks promotion of that live source into a refreshed snapshot; it does not invalidate the current released review bundle unless the manuscript is regenerated to rely on that source.",
+            "- Candidate GAO protest rows must be reviewed and promoted through `data/calibration/first-wave/gao-protest-overlay.csv` before they become source evidence.",
             "- A candidate SAM export still must be promoted through the live snapshot and full paper artifact gate before it affects manuscript evidence.",
             "- A Zenodo draft or upload is not a published DOI record until the record is explicitly published and the DOI is recorded in repository metadata.",
             "",
