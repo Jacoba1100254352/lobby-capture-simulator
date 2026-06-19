@@ -10,6 +10,7 @@ external DOI/archive action.
 from __future__ import annotations
 
 import csv
+import json
 import re
 from pathlib import Path
 
@@ -344,14 +345,46 @@ def final_bundle_row() -> dict[str, str]:
     submission = keyed_rows(REPORTS / "submission-readiness.csv", "gate")
     bundle = submission.get("reproducible-review-bundle", {})
     guideline = keyed_rows(REPORTS / "reggov-guidelines-readiness.csv", "gate").get("latex-submission-files", {})
-    status = "automated_support_present" if bundle.get("status") == "ready" and guideline.get("status") == "ready" else "manual_review_required"
+    release_tag = release_tag_from_citation()
+    archive_manifest = read_json(REPORTS / "archive-handoff-manifest.json")
+    archive_tag = str(archive_manifest.get("releaseTag", ""))
+    doi_release = keyed_rows(REPORTS / "doi-deposit-readiness.csv", "gate").get("release-metadata", {})
+    release_identity_ready = bool(release_tag) and archive_tag == release_tag and release_tag in doi_release.get("evidence", "")
+    status = (
+        "automated_support_present"
+        if bundle.get("status") == "ready"
+        and guideline.get("status") == "ready"
+        and release_identity_ready
+        else "manual_review_required"
+    )
     return evidence_row(
         EXPECTED_ITEMS[13],
         status,
-        f"reviewBundle={bundle.get('status', 'missing')}; latexSubmissionFiles={guideline.get('status', 'missing')}",
-        "reports/submission-readiness.md; reports/reggov-guidelines-readiness.md; dist/lobby-capture-wiley-submission.zip",
+        (
+            f"reviewBundle={bundle.get('status', 'missing')}; "
+            f"latexSubmissionFiles={guideline.get('status', 'missing')}; "
+            f"releaseTag={release_tag or 'missing'}; "
+            f"archiveReleaseTag={archive_tag or 'missing'}; "
+            f"doiReleaseMetadata={'matches' if release_identity_ready else 'missing_or_mismatch'}"
+        ),
+        "CITATION.cff; reports/archive-handoff-manifest.md; reports/doi-deposit-readiness.md; reports/submission-readiness.md; reports/reggov-guidelines-readiness.md; dist/lobby-capture-wiley-submission.zip",
         "After any edit, rerun the full artifact gate and repeat this read-through evidence check.",
     )
+
+
+def release_tag_from_citation() -> str:
+    match = re.search(r"^version:\s*[\"']?([^\"'\n]+)[\"']?\s*$", read_text(ROOT / "CITATION.cff"), re.MULTILINE)
+    return match.group(1).strip() if match else ""
+
+
+def read_json(path: Path) -> dict[str, object]:
+    if not path.exists():
+        return {}
+    try:
+        data = json.loads(path.read_text(encoding="utf-8"))
+    except json.JSONDecodeError:
+        return {}
+    return data if isinstance(data, dict) else {}
 
 
 def find_doi() -> str:
