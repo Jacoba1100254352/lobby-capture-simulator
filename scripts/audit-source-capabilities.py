@@ -77,6 +77,26 @@ CAPABILITIES = [
         ),
     },
     {
+        "capability": "sam-exclusions-overlay",
+        "mechanism": "Public procurement exclusion and integrity overlay",
+        "implementedRoute": (
+            "operational SAM.gov Exclusions API preflight through make sam-exclusions-preflight "
+            "plus a public SAM_Exclusions_Public_Extract fallback path; the preflight records "
+            "redacted access, quota, and sample-shape state only"
+        ),
+        "snapshotSource": "",
+        "panel": "",
+        "neededFor": (
+            "Procurement integrity controls and exclusion overlays for procurement modification "
+            "causal-calibration claims"
+        ),
+        "nextAction": (
+            "After SAM quota resets, run make sam-exclusions-preflight, then populate reviewed "
+            "sam-exclusion-overlay rows with UEI, recipient, exclusion type, dates, agency, cause, "
+            "and source provenance before rerunning first-wave gates."
+        ),
+    },
+    {
         "capability": "usaspending-stratified-action-panel",
         "mechanism": "Bounded transaction/action procurement diagnostics",
         "implementedRoute": "source-native USAspending transaction/action fetcher",
@@ -240,6 +260,8 @@ def classify_capability(
 ) -> str:
     if capability == "licensed-access-overlays":
         return "planned-overlay"
+    if capability == "sam-exclusions-overlay":
+        return "implemented-not-promoted"
     if capability == "direct-dark-money-routing":
         if panel_status == "usable":
             return "active-usable"
@@ -441,6 +463,11 @@ def write_markdown(path: Path, rows: list[dict[str, str]]) -> None:
                 "`api_key=REPLACE_WITH_API_KEY` download links, or keyed `SAM_API_KEY` runs can "
                 "use `SAM_CONTRACT_AWARDS_EXTRACT_MODE` for asynchronous extracts and "
                 "`SAM_CONTRACT_AWARDS_OFFSET_STARTS` for non-adjacent synchronous page-index strata."
+            ),
+            (
+                "- SAM.gov Exclusions route: `make sam-exclusions-preflight` records redacted "
+                "quota/access/sample-shape status for the exclusion-overlay acquisition path, "
+                "but no exclusion rows support claims until a reviewed calibration CSV is promoted."
             ),
             (
                 "- USAspending procurement route: no-key action, national action, and bulk-summary "

@@ -37,6 +37,7 @@ GITHUB_ASSET_AUDIT_MD = REPORTS / "github-release-asset-audit.md"
 GITHUB_CI_STATUS_CSV = REPORTS / "github-ci-status-audit.csv"
 REGGOV_GUIDELINES_CSV = REPORTS / "reggov-guidelines-readiness.csv"
 SAM_PREFLIGHT_CSV = REPORTS / "sam-contract-awards-preflight.csv"
+SAM_EXCLUSIONS_PREFLIGHT_CSV = REPORTS / "sam-exclusions-preflight.csv"
 SAM_EXPORT_AUDIT_CSV = REPORTS / "sam-contract-awards-export-audit.csv"
 SAM_EXPORT_AUDIT_MD = REPORTS / "sam-contract-awards-export-audit.md"
 SNAPSHOT_LIVE_STATUS_CSV = ROOT / "data" / "snapshots" / "2024-env" / "live-run-status.csv"
@@ -86,6 +87,7 @@ def checklist_rows() -> list[dict[str, str]]:
         human_readthrough_row(release_tag),
         live_author_page_row(),
         sam_preflight_row(),
+        sam_exclusions_preflight_row(),
         sam_snapshot_refresh_row(),
         sam_export_input_row(),
         sam_export_audit_row(),
@@ -427,6 +429,56 @@ def sam_preflight_row() -> dict[str, str]:
         evidence = f"{evidence}; notes={notes}"
     return item(
         "sam-keyed-preflight",
+        checklist_status,
+        evidence,
+        next_action,
+        "source-refresh",
+    )
+
+
+def sam_exclusions_preflight_row() -> dict[str, str]:
+    rows = read_csv(SAM_EXCLUSIONS_PREFLIGHT_CSV)
+    if not rows:
+        return item(
+            "sam-exclusions-preflight",
+            "manual_required",
+            "preflight=missing",
+            "Run make sam-exclusions-preflight before building or updating the SAM exclusion overlay; do not promote rows from the operational report.",
+            "source-refresh",
+        )
+    row = rows[0]
+    status = row.get("status", "").strip()
+    records = row.get("records", "").strip()
+    next_access = row.get("nextAccessTime", "").strip()
+    notes = row.get("notes", "").strip()
+    if status == "ok":
+        checklist_status = "ready"
+        next_action = (
+            "Use the live Exclusions API only to populate reviewed rows in "
+            "data/calibration/first-wave/sam-exclusion-overlay.csv, then rerun the first-wave and paper artifact gates."
+        )
+    elif status == "quota_blocked":
+        checklist_status = "manual_required"
+        next_action = f"Wait until {next_access or 'the SAM.gov reset time'}, then rerun make sam-exclusions-preflight before exclusion-overlay acquisition."
+    elif status == "missing":
+        checklist_status = "manual_required"
+        next_action = "Set SAM_API_KEY in .env before running make sam-exclusions-preflight."
+    elif status in {"unavailable", "empty"}:
+        checklist_status = "manual_required"
+        next_action = (
+            "Review the Exclusions API response or query settings; use the official public extract path if the synchronous endpoint remains unavailable."
+        )
+    else:
+        checklist_status = "manual_required"
+        next_action = "Review the SAM Exclusions preflight status and rerun make sam-exclusions-preflight before relying on the exclusion overlay path."
+    evidence = (
+        f"status={status or 'missing'}; records={records or '0'}; "
+        f"nextAccessTime={next_access or 'none'}"
+    )
+    if notes:
+        evidence = f"{evidence}; notes={notes}"
+    return item(
+        "sam-exclusions-preflight",
         checklist_status,
         evidence,
         next_action,

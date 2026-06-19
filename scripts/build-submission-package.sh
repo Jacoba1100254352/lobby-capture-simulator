@@ -143,6 +143,7 @@ for report_artifact in "$ROOT_DIR"/reports/*.csv "$ROOT_DIR"/reports/*.md "$ROOT
       gao-protest-feed-preflight.*) continue ;;
       sam-contract-awards-export-audit.*) continue ;;
       sam-contract-awards-preflight.*) continue ;;
+      sam-exclusions-preflight.*) continue ;;
       usaspending-transaction-download-strata.*) continue ;;
       first-wave-linkage-candidate-records.csv) continue ;;
     esac
