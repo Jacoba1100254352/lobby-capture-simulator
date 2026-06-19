@@ -145,7 +145,7 @@ DOI_DEPOSIT_PACKAGE_CHECKSUM_CSV = ROOT / "dist" / "doi-deposit-package-checksum
 DOI_DEPOSIT_PACKAGE_CHECKSUM_JSON = ROOT / "dist" / "doi-deposit-package-checksum.json"
 DOI_DEPOSIT_PACKAGE_CHECKSUM_MD = ROOT / "dist" / "doi-deposit-package-checksum.md"
 ZENODO_DEPOSIT_METADATA_JSON = ROOT / "dist" / "zenodo-deposit-metadata.json"
-RELEASE_TAG = "paper-publication-readiness-2026-06-18-r186"
+RELEASE_TAG = "paper-publication-readiness-2026-06-18-r187"
 ARCHIVE_HANDOFF_REPORT_NAMES = {
     "archive-handoff-manifest.csv",
     "archive-handoff-manifest.json",
@@ -2397,6 +2397,11 @@ def check_first_wave_source_products() -> list[str]:
         if quality_issue_count not in {"", "0"} and not row.get("qualityIssueExamples", "").strip():
             failures.append(
                 f"first-wave source product {product} has quality issues but no example field-level issue"
+            )
+        if quality_issue_count not in {"", "0"}:
+            failures.append(
+                f"first-wave source product {product} has field-level quality issues in a release artifact: "
+                f"{quality_issue_count}"
             )
         if not row.get("expectedPath", "").startswith("data/calibration/first-wave/"):
             failures.append(

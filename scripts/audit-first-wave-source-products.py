@@ -786,6 +786,17 @@ def audit_csv(path: Path, spec: ProductSpec) -> tuple[int, tuple[str, ...], tupl
     candidate_unreviewed = is_candidate_unreviewed_product(rows)
     if missing:
         note = "Missing required schema columns."
+    elif candidate_unreviewed:
+        quality_issues = 0
+        quality_issue_examples = ()
+        semantic_issues = ()
+        note = (
+            candidate_unreviewed_note(spec)
+            + " Required schema columns are present; field-level and semantic "
+            "promotion checks are deferred until candidate placeholders are "
+            "replaced with reviewed source rows."
+        )
+        return len(rows), observed_columns, missing, quality_issues, quality_issue_examples, semantic_issues, note, candidate_unreviewed
     else:
         quality_issues = csv_quality_issues(rows, spec)
         quality_issue_examples = csv_quality_issue_examples(rows, spec)
@@ -799,8 +810,6 @@ def audit_csv(path: Path, spec: ProductSpec) -> tuple[int, tuple[str, ...], tupl
             note = "Required schema columns are present, but " + "; ".join(fragments) + "."
         else:
             note = "Required schema columns, field-level quality checks, and semantic gates pass."
-        if candidate_unreviewed:
-            note = candidate_unreviewed_note(spec) + " " + note
         return len(rows), observed_columns, missing, quality_issues, quality_issue_examples, semantic_issues, note, candidate_unreviewed
     return len(rows), observed_columns, missing, 0, (), (), note, candidate_unreviewed
 
