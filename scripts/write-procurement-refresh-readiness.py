@@ -399,7 +399,10 @@ def write_markdown(path: Path, rows: list[dict[str, str]]) -> None:
         "## Refresh Modes",
         "",
         (
-            "Run `make sam-contract-awards-preflight` immediately before keyed SAM.gov API modes. "
+            "Run a mode-matched SAM.gov preflight immediately before keyed API modes: "
+            "`make sam-contract-awards-preflight-extract` before asynchronous extract mode, "
+            "`make sam-contract-awards-preflight-offset` before synchronous offset mode, or "
+            "`make sam-contract-awards-preflight` for the default synchronous access check. "
             "The preflight makes a one-row redacted Contract Awards request and writes ignored "
             "operational reports under `reports/sam-contract-awards-preflight.*`. Manual export "
             "normalization does not spend SAM API quota."

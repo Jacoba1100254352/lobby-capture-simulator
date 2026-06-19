@@ -146,7 +146,23 @@ require_ok_preflight() {
     echo "Skipping SAM preflight by request."
     return
   fi
-  run_cmd make sam-contract-awards-preflight
+  local preflight_mode
+  local preflight_target
+  case "$mode" in
+    extract)
+      preflight_mode="1"
+      preflight_target="sam-contract-awards-preflight-extract"
+      ;;
+    offset)
+      preflight_mode="0"
+      preflight_target="sam-contract-awards-preflight-offset"
+      ;;
+    *)
+      preflight_mode="${SAM_CONTRACT_AWARDS_PREFLIGHT_EXTRACT_MODE:-0}"
+      preflight_target="sam-contract-awards-preflight"
+      ;;
+  esac
+  run_cmd make "$preflight_target"
   if [ "$dry_run" = "1" ]; then
     return
   fi
@@ -158,7 +174,7 @@ require_ok_preflight() {
   notes="$(preflight_value notes)"
   case "$status" in
     ok)
-      echo "SAM preflight ok; proceeding with $mode refresh."
+      echo "SAM preflight ok for extractMode=$preflight_mode; proceeding with $mode refresh."
       ;;
     quota_blocked)
       echo "SAM preflight is quota-blocked. Next access time: ${next_access:-unknown}." >&2

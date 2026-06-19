@@ -39,6 +39,7 @@ REGGOV_GUIDELINES_CSV = REPORTS / "reggov-guidelines-readiness.csv"
 SAM_PREFLIGHT_CSV = REPORTS / "sam-contract-awards-preflight.csv"
 SAM_EXPORT_AUDIT_CSV = REPORTS / "sam-contract-awards-export-audit.csv"
 SAM_EXPORT_AUDIT_MD = REPORTS / "sam-contract-awards-export-audit.md"
+SNAPSHOT_LIVE_STATUS_CSV = ROOT / "data" / "snapshots" / "2024-env" / "live-run-status.csv"
 OUT_CSV = REPORTS / "external-finalization-checklist.csv"
 OUT_MD = REPORTS / "external-finalization-checklist.md"
 VERSION_PATTERN = re.compile(r"^version:\s*[\"']?([^\"'\n]+)[\"']?\s*$", re.MULTILINE)
@@ -85,6 +86,7 @@ def checklist_rows() -> list[dict[str, str]]:
         human_readthrough_row(release_tag),
         live_author_page_row(),
         sam_preflight_row(),
+        sam_snapshot_refresh_row(),
         sam_export_input_row(),
         sam_export_audit_row(),
     ]
@@ -432,6 +434,58 @@ def sam_preflight_row() -> dict[str, str]:
     )
 
 
+def sam_snapshot_refresh_row() -> dict[str, str]:
+    rows = read_csv(SNAPSHOT_LIVE_STATUS_CSV)
+    if not rows:
+        return item(
+            "sam-snapshot-refresh-status",
+            "manual_required",
+            "snapshot live-run status=missing",
+            "Run make sam-procurement-refresh or snapshot-2024-env before treating SAM/FPDS source status as current.",
+            "source-refresh",
+        )
+    row = next((candidate for candidate in rows if candidate.get("source") == "sam-contract-awards"), {})
+    if not row:
+        return item(
+            "sam-snapshot-refresh-status",
+            "manual_required",
+            "sam-contract-awards live-run row=missing",
+            "Rerun the guarded SAM procurement refresh so the snapshot records whether SAM/FPDS rows were promoted, unavailable, or quota-blocked.",
+            "source-refresh",
+        )
+    status = row.get("status", "").strip() or "missing"
+    notes = row.get("notes", "").strip()
+    next_access = sam_next_access_from_notes(notes)
+    if status == "ok":
+        checklist_status = "ready"
+        next_action = "Keep the promoted SAM/FPDS snapshot row with the artifact bundle and rerun paper-artifacts-check after any source change."
+    elif status == "quota_blocked":
+        checklist_status = "manual_required"
+        next_action = (
+            f"Wait until {next_access or 'the SAM.gov reset time'}, or use a fresh downloaded SAM export, "
+            "before trying to promote SAM/FPDS rows again."
+        )
+    elif status in {"unavailable", "missing"}:
+        checklist_status = "manual_required"
+        next_action = "Use the manual export path or a mode-matched keyed preflight before rerunning make sam-procurement-refresh."
+    elif status in {"fixture", "skipped"}:
+        checklist_status = "manual_required"
+        next_action = "Do not treat SAM/FPDS evidence as promoted unless this row reports ok with nonzero normalized rows."
+    else:
+        checklist_status = "manual_required"
+        next_action = "Review the SAM snapshot live-run status before relying on the procurement source bridge."
+    evidence = f"status={status}; notes={notes or 'missing'}"
+    if next_access:
+        evidence = f"{evidence}; nextAccessTime={next_access}"
+    return item(
+        "sam-snapshot-refresh-status",
+        checklist_status,
+        evidence,
+        next_action,
+        "source-refresh",
+    )
+
+
 def sam_export_input_row() -> dict[str, str]:
     csv_path = env("SAM_CONTRACT_AWARDS_LIVE_CSV")
     url = env("SAM_CONTRACT_AWARDS_LIVE_URL")
@@ -628,6 +682,11 @@ def sam_export_next_action(status: str, blockers: list[str], shape_summary: str)
     if status == "manual_required":
         return "Resolve the SAM.gov token/quota/download condition, rerun make sam-procurement-refresh, and promote only after the audit reports candidate."
     return "Use make sam-procurement-refresh to audit, promote, refresh the live snapshot, and run paper-artifacts-check with the SAM export."
+
+
+def sam_next_access_from_notes(notes: str) -> str:
+    match = re.search(r"until ([^;,\n]+UTC)", notes)
+    return match.group(1).strip() if match else ""
 
 
 def sam_export_url_freshness() -> dict[str, str]:
@@ -879,6 +938,9 @@ def markdown(rows: list[dict[str, str]]) -> str:
             "",
             "# Before a keyed SAM.gov Contract Awards API refresh:",
             "make sam-contract-awards-preflight",
+            "# Use the mode-specific checks before the guarded wrapper chooses that mode:",
+            "make sam-contract-awards-preflight-extract",
+            "make sam-contract-awards-preflight-offset",
             "",
             "# If a Zenodo token is configured and the draft should be rehearsed or updated:",
             "make zenodo-deposit-draft",

@@ -687,7 +687,55 @@ row = module.sam_preflight_row()
 assert row["status"] == "ready", row
 assert "rows=1" in row["evidence"], row
 assert "representative settings" in row["nextAction"], row
+
+live_status_csv = preflight_csv.parent / "live-run-status.csv"
+module.SNAPSHOT_LIVE_STATUS_CSV = live_status_csv
+row = module.sam_snapshot_refresh_row()
+assert row["status"] == "manual_required", row
+assert "snapshot live-run status=missing" in row["evidence"], row
+
+with live_status_csv.open("w", newline="", encoding="utf-8") as target:
+    writer = csv.DictWriter(
+        target,
+        fieldnames=["source", "status", "notes"],
+        lineterminator="\n",
+    )
+    writer.writeheader()
+    writer.writerow({
+        "source": "sam-contract-awards",
+        "status": "quota_blocked",
+        "notes": "SAM.gov quota blocked until 2026-Jun-20 00:00:00+0000 UTC; mode=1; fallback=USAspending action rows",
+    })
+row = module.sam_snapshot_refresh_row()
+assert row["status"] == "manual_required", row
+assert "status=quota_blocked" in row["evidence"], row
+assert "nextAccessTime=2026-Jun-20 00:00:00+0000 UTC" in row["evidence"], row
+assert "Wait until 2026-Jun-20 00:00:00+0000 UTC" in row["nextAction"], row
+
+with live_status_csv.open("w", newline="", encoding="utf-8") as target:
+    writer = csv.DictWriter(
+        target,
+        fieldnames=["source", "status", "notes"],
+        lineterminator="\n",
+    )
+    writer.writeheader()
+    writer.writerow({
+        "source": "sam-contract-awards",
+        "status": "ok",
+        "notes": "normalized SAM.gov Contract Awards rows written",
+    })
+row = module.sam_snapshot_refresh_row()
+assert row["status"] == "ready", row
+assert "status=ok" in row["evidence"], row
 PY
+
+extract_dry_run="$(SAM_PROCUREMENT_REFRESH_MODE=extract ./scripts/refresh-sam-procurement-panel.sh --dry-run --no-artifacts)"
+printf '%s\n' "$extract_dry_run" | grep -q "sam-contract-awards-preflight-extract"
+printf '%s\n' "$extract_dry_run" | grep -q "SAM_CONTRACT_AWARDS_EXTRACT_MODE=1"
+
+offset_dry_run="$(SAM_PROCUREMENT_REFRESH_MODE=offset ./scripts/refresh-sam-procurement-panel.sh --dry-run --no-artifacts)"
+printf '%s\n' "$offset_dry_run" | grep -q "sam-contract-awards-preflight-offset"
+printf '%s\n' "$offset_dry_run" | grep -q "SAM_CONTRACT_AWARDS_EXTRACT_MODE=0"
 
 python3 - "$tmpdir/reports/sam-contract-awards-export-audit-for-input.csv" <<'PY'
 import csv
