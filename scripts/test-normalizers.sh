@@ -427,6 +427,41 @@ grep -q "Products with field-level quality issues" "$tmpdir/reports/first-wave-s
 grep -q "Field Quality Notes" "$tmpdir/reports/first-wave-source-products.md"
 grep -q 'line 2 `eventName`: missing or placeholder value `TODO`' "$tmpdir/reports/first-wave-source-products.md"
 
+mkdir -p "$tmpdir/gao-root/data/calibration/first-wave"
+python3 scripts/write-first-wave-source-product-templates.py --root "$tmpdir/gao-root" >/dev/null
+cat > "$tmpdir/gao-root/data/calibration/first-wave/gao-protest-overlay.csv" <<'CSV'
+protestId,piid,uei,agency,filedDate,decisionDate,outcome,issueCodes,sourceUrl,docketNumber,protesterName,awardeeName,notes
+B-424306,not_found_public_gao_page,not_found_public_gao_page,Department of the Air Force,,2026-06-03,denied,technical evaluation; price tradeoff,https://www.gao.gov/products/b-424306,B-424306,DarkStar Intelligence LLC,Starlo Training Solutions LLC,source page reviewed; vendor linkage only
+CSV
+python3 scripts/audit-first-wave-source-products.py --root "$tmpdir/gao-root" --reports "$tmpdir/reports" >/dev/null
+grep -q "gao-protest-overlay,.*partial_schema_quality_issues" "$tmpdir/reports/first-wave-source-products.csv"
+grep -q "filed-date coverage below 1.00 (0.00)" "$tmpdir/reports/first-wave-source-products.csv"
+grep -q "no PIID or UEI award identifiers present; overlay remains vendor-only" "$tmpdir/reports/first-wave-source-products.csv"
+grep -q "Observed rows 1 are also below minimum 25" "$tmpdir/reports/first-wave-source-products.csv"
+
+{
+  echo "protestId,piid,uei,agency,filedDate,decisionDate,outcome,issueCodes,sourceUrl,docketNumber,protesterName,awardeeName,notes"
+  i=1
+  while [ "$i" -le 25 ]; do
+    printf 'B-REVIEW-%02d,not_found_public_gao_page,not_found_public_gao_page,Department of Example,2026-01-%02d,2026-02-%02d,denied,technical evaluation; best value,https://www.gao.gov/products/b-review-%02d,B-REVIEW-%02d,Reviewed Protester %02d,Reviewed Awardee %02d,source page reviewed; vendor linkage only\n' "$i" "$i" "$i" "$i" "$i" "$i" "$i"
+    i=$((i + 1))
+  done
+} > "$tmpdir/gao-root/data/calibration/first-wave/gao-protest-overlay.csv"
+python3 scripts/audit-first-wave-source-products.py --root "$tmpdir/gao-root" --reports "$tmpdir/reports" >/dev/null
+grep -q "gao-protest-overlay,.*schema_quality_issues" "$tmpdir/reports/first-wave-source-products.csv"
+grep -q "no PIID or UEI award identifiers present; overlay remains vendor-only" "$tmpdir/reports/first-wave-source-products.csv"
+
+{
+  echo "protestId,piid,uei,agency,filedDate,decisionDate,outcome,issueCodes,sourceUrl,docketNumber,protesterName,awardeeName,notes"
+  i=1
+  while [ "$i" -le 25 ]; do
+    printf 'B-LINKED-%02d,PIID%05d,UEI%09d,Department of Example,2026-01-%02d,2026-02-%02d,denied,technical evaluation; best value,https://www.gao.gov/products/b-linked-%02d,B-LINKED-%02d,Linked Protester %02d,Linked Awardee %02d,source page plus award linkage reviewed\n' "$i" "$i" "$i" "$i" "$i" "$i" "$i" "$i" "$i"
+    i=$((i + 1))
+  done
+} > "$tmpdir/gao-root/data/calibration/first-wave/gao-protest-overlay.csv"
+python3 scripts/audit-first-wave-source-products.py --root "$tmpdir/gao-root" --reports "$tmpdir/reports" >/dev/null
+grep -q "gao-protest-overlay,.*schema_ready" "$tmpdir/reports/first-wave-source-products.csv"
+
 cat > "$tmpdir/sam-export.csv" <<'CSV'
 contractId.piid,modification_number,recipientName,contractingDepartmentName,contractingSubtierName,awardOrIDVTypeName,Federal Action Obligation,Recipient UEI,actionDate,extentCompetedName,numberOfOffers,typeOfContractPricingName
 68HERH24C0004,0,MANUAL EXPORT CONTRACTOR,ENVIRONMENTAL PROTECTION AGENCY,EPA OFFICE,DEFINITIVE CONTRACT,1250000,EXPORTUEI1234,2024-01-15,FULL AND OPEN COMPETITION,5,FIRM FIXED PRICE

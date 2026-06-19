@@ -193,6 +193,17 @@ def manual_adjudication_burden_row() -> dict[str, str]:
 
 def source_product_status_row() -> dict[str, str]:
     product_rows = read_csv(REPORTS / "first-wave-source-products.csv")
+    allowed_statuses = {
+        "schema_ready",
+        "text_ready",
+        "candidate_unreviewed",
+        "empty_schema",
+        "partial_reviewed_below_minimum",
+        "partial_schema_quality_issues",
+        "schema_missing_columns",
+        "schema_quality_issues",
+        "text_missing_terms",
+    }
     candidate_products = [
         row.get("productKey", "")
         for row in product_rows
@@ -208,7 +219,7 @@ def source_product_status_row() -> dict[str, str]:
     invalid_statuses = [
         f"{row.get('productKey', '')}:{row.get('productStatus', '')}"
         for row in product_rows
-        if row.get("productStatus") not in {"schema_ready", "text_ready", "candidate_unreviewed"}
+        if row.get("productStatus") not in allowed_statuses
     ]
     status = "pass" if len(candidate_products) == 13 and not promoted_candidate_products and not invalid_statuses else "fail"
     return audit_row(

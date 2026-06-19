@@ -17,6 +17,11 @@ PLACEHOLDER_VALUES = {
     "",
     "example",
     "example value",
+    "not found",
+    "not available",
+    "not_found",
+    "not_found_public_gao_page",
+    "not_reported",
     "placeholder",
     "sample",
     "tbd",
@@ -29,6 +34,10 @@ PLACEHOLDER_VALUES = {
 }
 BOOLEAN_VALUES = {"true", "false", "yes", "no", "1", "0"}
 CANDIDATE_UNREVIEWED_STATUS = "candidate_unreviewed"
+EMPTY_SCHEMA_STATUS = "empty_schema"
+PARTIAL_BELOW_MINIMUM_STATUS = "partial_reviewed_below_minimum"
+PARTIAL_QUALITY_STATUS = "partial_schema_quality_issues"
+SCHEMA_QUALITY_STATUS = "schema_quality_issues"
 
 
 @dataclass(frozen=True)
@@ -600,14 +609,26 @@ def audit_product(root: Path, spec: ProductSpec) -> dict[str, str]:
             status = "schema_missing_columns"
         elif candidate_unreviewed:
             status = CANDIDATE_UNREVIEWED_STATUS
-        elif observed_rows < spec.minimum_rows:
-            status = "empty_schema"
+        elif observed_rows == 0 and spec.minimum_rows > 0:
+            status = EMPTY_SCHEMA_STATUS
             validation_notes = (
-                f"Schema columns are present, but observed rows {observed_rows} "
-                f"are below minimum {spec.minimum_rows}."
+                f"Schema columns are present, but no observed rows are available; minimum "
+                f"{spec.minimum_rows} reviewed rows are required."
             )
         elif quality_issues or semantic_issues:
-            status = "schema_quality_issues"
+            status = PARTIAL_QUALITY_STATUS if observed_rows < spec.minimum_rows else SCHEMA_QUALITY_STATUS
+            if observed_rows < spec.minimum_rows:
+                validation_notes = (
+                    validation_notes
+                    + " "
+                    + f"Observed rows {observed_rows} are also below minimum {spec.minimum_rows}."
+                )
+        elif observed_rows < spec.minimum_rows:
+            status = PARTIAL_BELOW_MINIMUM_STATUS
+            validation_notes = (
+                f"Schema columns and field-level checks pass, but observed rows {observed_rows} "
+                f"are below minimum {spec.minimum_rows}."
+            )
         else:
             status = "schema_ready"
     else:
@@ -936,6 +957,19 @@ def semantic_quality_issues(rows: list[dict[str, str]], spec: ProductSpec) -> tu
             checks.append(f"action-date span {span} days is below 270")
         if value_share(rows, "actionObligation") < 0.80:
             checks.append("action-obligation coverage below 0.80")
+    elif product == "gao-protest-overlay":
+        checks.extend([
+            coverage_check(rows, "agency", 1.00, "agency coverage below 1.00"),
+            coverage_check(rows, "filedDate", 1.00, "filed-date coverage below 1.00"),
+            coverage_check(rows, "decisionDate", 1.00, "decision-date coverage below 1.00"),
+            coverage_check(rows, "outcome", 1.00, "outcome coding coverage below 1.00"),
+            coverage_check(rows, "issueCodes", 1.00, "issue-code coverage below 1.00"),
+            coverage_check(rows, "sourceUrl", 1.00, "source-URL coverage below 1.00"),
+        ])
+        if row_linkage_share(rows, ("piid", "uei", "protesterName", "awardeeName")) < 1.00:
+            checks.append("PIID/UEI/protester/awardee linkage coverage below 1.00")
+        if row_linkage_share(rows, ("piid", "uei")) == 0.00:
+            checks.append("no PIID or UEI award identifiers present; overlay remains vendor-only")
     elif product == "procurement-offer-competition-enrichment":
         checks.extend([
             distinct_check(rows, "piid", 1000, "fewer than 1000 distinct PIID/award identifiers"),
@@ -975,11 +1009,16 @@ def distinct_check(rows: list[dict[str, str]], column: str, minimum: int, messag
     return "" if len(distinct_values(rows, column)) >= minimum else message
 
 
+def coverage_check(rows: list[dict[str, str]], column: str, minimum: float, message: str) -> str:
+    share = value_share(rows, column)
+    return "" if share >= minimum else f"{message} ({share:.2f})"
+
+
 def distinct_values(rows: list[dict[str, str]], column: str) -> set[str]:
     return {
         value
         for value in (normalize_cell(row.get(column, "")) for row in rows)
-        if value and value.lower() not in PLACEHOLDER_VALUES
+        if is_present_value(value)
     }
 
 
@@ -1009,9 +1048,26 @@ def value_share(rows: list[dict[str, str]], column: str) -> float:
         return 0.0
     present = [
         row for row in rows
-        if normalize_cell(row.get(column, "")).lower() not in PLACEHOLDER_VALUES
+        if is_present_value(row.get(column, ""))
     ]
     return len(present) / len(rows)
+
+
+def row_linkage_share(rows: list[dict[str, str]], columns: tuple[str, ...]) -> float:
+    if not rows:
+        return 0.0
+    linked = [
+        row for row in rows
+        if any(is_present_value(row.get(column, "")) for column in columns)
+    ]
+    return len(linked) / len(rows)
+
+
+def is_present_value(value: str | None) -> bool:
+    normalized = normalize_cell(value).lower()
+    if not normalized or normalized in PLACEHOLDER_VALUES:
+        return False
+    return "candidate_unreviewed" not in normalized
 
 
 def source_system_values(rows: list[dict[str, str]]) -> set[str]:
@@ -1020,7 +1076,7 @@ def source_system_values(rows: list[dict[str, str]]) -> set[str]:
         value = normalize_cell(row.get("sourceSystems", ""))
         for part in re_split_source_systems(value):
             normalized = part.strip().lower()
-            if normalized and normalized not in PLACEHOLDER_VALUES:
+            if is_present_value(normalized):
                 systems.add(normalized)
     return systems
 
@@ -1184,7 +1240,7 @@ def write_markdown(path: Path, rows: list[dict[str, str]]) -> None:
         f"- Schema/text ready products: `{len(ready)}`",
         f"- Candidate-only unreviewed products: `{len(candidate_unreviewed)}`",
         f"- Missing products: `{len(missing)}`",
-        f"- Present products with schema issues: `{len(schema_issues)}`",
+        f"- Present products with schema, quality, or row-count issues: `{len(schema_issues)}`",
         f"- Products with field-level quality issues: `{len(quality_issue_products)}`",
         f"- Products with semantic gate issues: `{len(semantic_issue_products)}`",
         f"- Targets with all required products ready: `{len(ready_targets)}`",
@@ -1208,6 +1264,8 @@ def write_markdown(path: Path, rows: list[dict[str, str]]) -> None:
         "Semantic checks are product-level safeguards that prevent tiny or structurally incomplete files from clearing a causal source gate merely because required columns are present.",
         "",
         "The `candidate_unreviewed` status means the production file exists as a deterministic manual-review seed, but it cannot clear readiness until the product-specific manual checks are adjudicated. Entity-resolution seeds require alias, issue, and false-match review; the response/final-rule linkage seed requires observed response-section, final-rule movement, and uptake-coding review; procurement source-surface worklists require reviewed action-history, protest, exclusion, firewall, and offer/competition rows linked to procurement identifiers.",
+        "",
+        "The `partial_reviewed_below_minimum` and `partial_schema_quality_issues` statuses mean reviewer-supplied rows are present, but they still do not clear the source-product gate because row-count, field-quality, or semantic requirements are unmet.",
         "",
         "| Target | Product | Semantic issue count | Semantic issues | Validation notes |",
         "| --- | --- | ---: | --- | --- |",

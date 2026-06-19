@@ -7,7 +7,7 @@ These files are acquisition templates for the source products named by `reports/
 - Markdown design-note templates: `1`
 - Production source-product directory: `data/calibration/first-wave/`
 
-Do not treat these templates as evidence. They are stored under `docs/source-product-templates/first-wave/` so the production audit continues to require real source files with rows, provenance, protocol-specific coverage, field-level quality checks, and product-level semantic gates.
+Do not treat these templates as evidence. They are stored under `docs/source-product-templates/first-wave/` so the production audit continues to require real source files with rows, provenance, protocol-specific coverage, field-level quality checks, and product-level semantic gates. Partial reviewed files can narrow the work queue, but they do not clear the gate until minimum-row and product-specific semantic checks pass.
 
 Regenerate this directory with:
 

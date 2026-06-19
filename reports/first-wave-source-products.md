@@ -8,7 +8,7 @@ This generated schema/acquisition gate turns the first-wave causal protocols int
 - Schema/text ready products: `4`
 - Candidate-only unreviewed products: `13`
 - Missing products: `0`
-- Present products with schema issues: `0`
+- Present products with schema, quality, or row-count issues: `0`
 - Products with field-level quality issues: `0`
 - Products with semantic gate issues: `0`
 - Targets with all required products ready: `0`
@@ -41,6 +41,8 @@ This generated schema/acquisition gate turns the first-wave causal protocols int
 Semantic checks are product-level safeguards that prevent tiny or structurally incomplete files from clearing a causal source gate merely because required columns are present.
 
 The `candidate_unreviewed` status means the production file exists as a deterministic manual-review seed, but it cannot clear readiness until the product-specific manual checks are adjudicated. Entity-resolution seeds require alias, issue, and false-match review; the response/final-rule linkage seed requires observed response-section, final-rule movement, and uptake-coding review; procurement source-surface worklists require reviewed action-history, protest, exclusion, firewall, and offer/competition rows linked to procurement identifiers.
+
+The `partial_reviewed_below_minimum` and `partial_schema_quality_issues` statuses mean reviewer-supplied rows are present, but they still do not clear the source-product gate because row-count, field-quality, or semantic requirements are unmet.
 
 | Target | Product | Semantic issue count | Semantic issues | Validation notes |
 | --- | --- | ---: | --- | --- |
