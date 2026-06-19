@@ -4,7 +4,7 @@ This audit scans the manuscript, supplement, generated-table sources, and paper-
 
 ## Summary
 
-- Watched keys: `calibrated-policy-simulation`, `calibrated-reform-effects`, `policy-effect-language`, `representative-hidden-channel`, `representative-scenario-language`, `causal-effect-language`, `policy-ranking-language`
+- Watched keys: `calibrated-policy-simulation`, `calibrated-reform-effects`, `policy-effect-language`, `representative-hidden-channel`, `representative-scenario-language`, `causal-effect-language`, `policy-ranking-language`, `saturation-result-language`
 - Bounded watched-language hits: `69`
 - Required boundary phrases present: `9`
 - Overclaim hits: `0`

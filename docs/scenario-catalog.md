@@ -89,7 +89,7 @@ Each scenario uses the same core engine and changes the reform regime, channel i
 ## Interpretation Notes
 
 - Scenarios are comparative stress tests, not calibrated policy forecasts.
-- High-capture rows establish mechanism contrast; low-capture bundle rows show where the current parameterization saturates anti-capture success.
+- High-capture rows establish mechanism contrast; low-capture bundle rows show where the parameterization creates a strong-formal-control comparison point rather than a calibrated success rate.
 - Hidden-capture, total-distortion, hidden-influence, preserved-influence, venue-substitution, messenger-substitution, and evasion-shift columns should be read with capture rates. A low capture rate alone is not a model claim that the reform eliminates influence.
 - Influence-network columns should be read as synthetic path diagnostics: network opacity, intermediary centrality, procurement exposure, revolving-door bridges, comment-network load, and venue-shift load identify where influence is moving when a reform changes visible lobbying.
 - The preferred synthetic reform comparison is the lowest total influence distortion, not the highest nominal reform success or lowest visible capture.

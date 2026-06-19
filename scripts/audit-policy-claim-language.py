@@ -37,6 +37,7 @@ WATCH_PATTERNS = [
     ("representative-scenario-language", re.compile(r"representative (?:scenario|scenarios|baseline|campaign snapshot|results?)", re.IGNORECASE)),
     ("causal-effect-language", re.compile(r"causal (?:effect|effects|estimate|estimates)", re.IGNORECASE)),
     ("policy-ranking-language", re.compile(r"policy ranking", re.IGNORECASE)),
+    ("saturation-result-language", re.compile(r"(?:near saturated observed capture|saturates? anti-capture success)", re.IGNORECASE)),
 ]
 
 BOUNDARY_TERMS = [
@@ -223,7 +224,7 @@ def write_markdown(path: Path, rows: list[dict[str, str]]) -> None:
         "",
         "## Summary",
         "",
-        "- Watched keys: `calibrated-policy-simulation`, `calibrated-reform-effects`, `policy-effect-language`, `representative-hidden-channel`, `representative-scenario-language`, `causal-effect-language`, `policy-ranking-language`",
+        "- Watched keys: `calibrated-policy-simulation`, `calibrated-reform-effects`, `policy-effect-language`, `representative-hidden-channel`, `representative-scenario-language`, `causal-effect-language`, `policy-ranking-language`, `saturation-result-language`",
         f"- Bounded watched-language hits: `{counts['bounded_context']}`",
         f"- Required boundary phrases present: `{counts['required_boundary_present']}`",
         f"- Overclaim hits: `{counts['overclaim']}`",
