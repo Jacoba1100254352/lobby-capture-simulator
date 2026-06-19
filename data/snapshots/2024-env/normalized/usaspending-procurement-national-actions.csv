@@ -583,7 +583,6 @@ SPE60724FDQYQ,SIGNATURE FLIGHT SUPPORT LLC,Department of Defense,Defense Logisti
 SPE60724FAA3K,SIGNATURE FLIGHT SUPPORT LLC,Department of Defense,Defense Logistics Agency,DELIVERY ORDER,0.0004,procurement,1,F36BCNU67CL3,SPE60724FAA3K,0,2023-10-23,unknown,0,false,false,false,false,false
 SPE60724FFBKX,SIGNATURE FLIGHT SUPPORT LLC,Department of Defense,Defense Logistics Agency,DELIVERY ORDER,0.0003,procurement,1,F36BCNU67CL3,SPE60724FFBKX,0,2024-09-17,unknown,0,false,false,false,false,false
 SPE2D624F87V1,DOVE MEDICAL SUPPLY LLC,Department of Defense,Defense Logistics Agency,DELIVERY ORDER,0.0000,procurement,1,XM73EN1LAVE7,SPE2D624F87V1,0,2023-12-27,unknown,0,false,false,false,false,false
-75N95024F00043,"AXLE INFORMATICS, LLC",Department of Health and Human Services,National Institutes of Health,DELIVERY ORDER,0.4680,procurement,1,J4DNP7JJ1MU3,75N95024F00043,0,2024-02-15,unknown,0,false,false,false,false,false
 SPE4A624P2773,WEIBEL SCIENTIFIC A/S,Department of Defense,Defense Logistics Agency,PURCHASE ORDER,0.0180,procurement,1,MNEKGLL3CZL5,SPE4A624P2773,0,2023-10-27,unknown,0,false,false,false,false,false
 SPE60724FB2NL,WOOD COUNTY AIRPORT AUTHORITY,Department of Defense,Defense Logistics Agency,DELIVERY ORDER,0.0014,procurement,1,TYDZX41ZN7E7,SPE60724FB2NL,0,2023-12-16,unknown,0,false,false,false,false,false
 SPE60724FC93J,SIGNATURE FLIGHT SUPPORT LLC,Department of Defense,Defense Logistics Agency,DELIVERY ORDER,0.0002,procurement,1,F36BCNU67CL3,SPE60724FC93J,0,2024-02-22,unknown,0,false,false,false,false,false
@@ -999,6 +998,7 @@ SPE60724FF685,WOOD COUNTY AIRPORT AUTHORITY,Department of Defense,Defense Logist
 SPE30024FL7TC,US FOODS INC,Department of Defense,Defense Logistics Agency,DELIVERY ORDER,0.0013,procurement,1,JM2PSZ26CGJ6,SPE30024FL7TC,0,2024-05-23,unknown,0,false,false,false,false,false
 SPE3SU24F1YVW,"OAKES FARMS FOOD & DISTRIBUTION SERVICES, LLC",Department of Defense,Defense Logistics Agency,DELIVERY ORDER,0.0016,procurement,1,ZQPUBCWB1JM1,SPE3SU24F1YVW,0,2023-10-25,unknown,0,false,false,false,false,false
 SPE30024FGW20,"NORFOLK BANANA DISTRIBUTORS, INC.",Department of Defense,Defense Logistics Agency,DELIVERY ORDER,0.0020,procurement,1,V5FGJ4NKYK61,SPE30024FGW20,0,2023-11-28,unknown,0,false,false,false,false,false
+SPE4A524P3277,GMS INTERNATIONAL CORPORATION,Department of Defense,Defense Logistics Agency,PURCHASE ORDER,0.0149,procurement,1,S157YT3NUSU5,SPE4A524P3277,0,2024-01-05,unknown,0,false,false,false,false,false
 N6899424F0009,SAAJ LLC,Department of Defense,Department of the Navy,BPA CALL,0.0021,procurement,1,KFJQUGB25MJ3,N6899424F0009,0,2023-10-01,unknown,0,false,false,false,false,false
 FA875124FG040,"ENTERPRISE TECHNOLOGY SOLUTIONS, INC.",Department of Defense,Department of the Air Force,DELIVERY ORDER,0.0216,procurement,1,FBRMCGPMN963,FA875124FG040,0,2023-10-01,unknown,0,false,false,false,false,false
 SPE60724FA742,AVFUEL CORP,Department of Defense,Defense Logistics Agency,DELIVERY ORDER,0.0009,procurement,1,EVM5L8672MN5,SPE60724FA742,0,2023-10-01,unknown,0,false,false,false,false,false
@@ -1485,7 +1485,6 @@ FA448424FG029,"NOVATIO ENGINEERING, INC.",Department of Defense,Department of th
 36C26124N0180,COUNTY OF CONTRA COSTA,Department of Veterans Affairs,Department of Veterans Affairs,DELIVERY ORDER,0.1971,procurement,1,C88YLPTJJSY1,36C26124N0180,0,2023-10-01,unknown,0,false,false,false,false,false
 N6899424F0003,SAAJ LLC,Department of Defense,Department of the Navy,BPA CALL,0.0071,procurement,1,KFJQUGB25MJ3,N6899424F0003,0,2023-10-01,unknown,0,false,false,false,false,false
 FA302024F0018,SAG SPORTS OFFICIALS,Department of Defense,Department of the Air Force,DELIVERY ORDER,0.0791,procurement,1,LBGWXCALZFJ9,FA302024F0018,0,2023-10-01,unknown,0,false,false,false,false,false
-36C25623F0280,"MINBURN TECHNOLOGY GROUP, LLC",Department of Veterans Affairs,Department of Veterans Affairs,DELIVERY ORDER,0.0495,procurement,1,WN8JFVZTBCA5,36C25623F0280,P00001,2023-10-01,unknown,0,false,true,false,false,false
 FA460824FG057,"ATP GOV, LLC",Department of Defense,Department of the Air Force,BPA CALL,0.0243,procurement,1,WH8LLL6HAX95,FA460824FG057,0,2023-10-01,unknown,0,false,false,false,false,false
 FA460824FG074,SAN ANGELO CROSS TEXAS SUPPLY LLC,Department of Defense,Department of the Air Force,DELIVERY ORDER,0.0180,procurement,1,CGKBB9KL1RA3,FA460824FG074,0,2023-10-01,unknown,0,false,false,false,false,false
 FA251724FG143,IDSC HOLDINGS LLC,Department of Defense,Department of the Air Force,DELIVERY ORDER,0.0119,procurement,1,SJL9Q452QBL5,FA251724FG143,0,2023-10-01,unknown,0,false,false,false,false,false
@@ -1499,3 +1498,4 @@ FA441924FG024,"CITISCO, LLC",Department of Defense,Department of the Air Force,D
 FA303021P0047,ROYAL ARC WELDING CO,Department of Defense,Department of the Air Force,PURCHASE ORDER,0.0117,procurement,1,CYLNP5U9YV65,FA303021P0047,P00006,2023-10-01,unknown,0,false,true,false,false,false
 FA560624FG058,MENSCH MILL & LUMBER CORP,Department of Defense,Department of the Air Force,DELIVERY ORDER,0.0187,procurement,1,EHS4JC4K9HQ4,FA560624FG058,0,2023-10-01,unknown,0,false,false,false,false,false
 FA860124FG281,"CAPRICE ELECTRONICS, INC",Department of Defense,Department of the Air Force,DELIVERY ORDER,0.0220,procurement,1,MKZJBAQV2BM3,FA860124FG281,0,2023-10-01,unknown,0,false,false,false,false,false
+FA520924F9017,"TEPCO ENERGY PARTNER, INCORPORATED",Department of Defense,Department of the Air Force,DELIVERY ORDER,3.9110,procurement,1,ELDJAEPKFDB5,FA520924F9017,0,2023-10-01,unknown,0,false,false,false,false,false

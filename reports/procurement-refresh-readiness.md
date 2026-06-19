@@ -11,9 +11,9 @@ This no-network preflight describes how to refresh the procurement bridge withou
 
 ## Current SAM Status
 
-- Status: `unavailable`.
-- Evidence: SAM.gov Contract Awards request failed; mode=1; format=json; filterCount=12; pageSize=100; maxPages=1; offsetPageStarts=0+10+50; fallback=USAspending action rows
-- Next action: Use SAM_CONTRACT_AWARDS_LIVE_CSV/SAM_CONTRACT_AWARDS_LIVE_URL for a downloaded export, or run make sam-contract-awards-preflight immediately before a keyed API snapshot.
+- Status: `quota_blocked`.
+- Evidence: SAM.gov quota blocked until 2026-Jun-20 00:00:00+0000 UTC; mode=1; format=json; filterCount=12; pageSize=100; maxPages=1; offsetPageStarts=0+10+50; fallback=USAspending action rows
+- Next action: Wait until 2026-Jun-20 00:00:00+0000 UTC before rerunning SAM.
 
 ## Refresh Modes
 
@@ -38,10 +38,10 @@ Run `make sam-contract-awards-preflight` immediately before keyed SAM.gov API mo
 | --- | --- | --- | --- |
 | provenance | informational | 2026-05-05T00:00:00Z | Regenerate this report with make procurement-refresh-readiness after source-status changes. |
 | sam-control-variables | ready | All SAM_CONTRACT_AWARDS controls documented in .env.example | Fill real values in .env only; do not commit private keys or raw payload archives. |
-| sam-live-status | unavailable | SAM.gov Contract Awards request failed; mode=1; format=json; filterCount=12; pageSize=100; maxPages=1; offsetPageStarts=0+10+50; fallback=USAspending action rows | Use SAM_CONTRACT_AWARDS_LIVE_CSV/SAM_CONTRACT_AWARDS_LIVE_URL for a downloaded export, or run make sam-contract-awards-preflight immediately before a keyed API snapshot. |
+| sam-live-status | quota_blocked | SAM.gov quota blocked until 2026-Jun-20 00:00:00+0000 UTC; mode=1; format=json; filterCount=12; pageSize=100; maxPages=1; offsetPageStarts=0+10+50; fallback=USAspending action rows | Wait until 2026-Jun-20 00:00:00+0000 UTC before rerunning SAM. |
 | representative-sam-fpds-action-history | blocked | SAM/FPDS action-history rows in frozen snapshot: 0; promotion readiness: blocked; distinct awards: 0; agencies: 0; date span: 0 days; PIID coverage: 0.0000; action-date coverage: 0.0000 | Use SAM/FPDS action-history exports to crosswalk USAspending modification coding and add exclusions, offer counts, protests, and firewall overlays before clearing procurement modification capture. |
 | national-usaspending-concentration-panel | ready | National-volume USAspending action rows for concentration diagnostics: 1500 | Keep this panel as a fallback concentration diagnostic; prefer the archived bulk summary when present. |
-| bounded-usaspending-fallback | ready | USAspending action rows remain available as bounded diagnostics: 28104 | Keep this fallback for schema checks and directional diagnostics, but do not treat it as volume-representative calibration. |
+| bounded-usaspending-fallback | ready | USAspending action rows remain available as bounded diagnostics: 28103 | Keep this fallback for schema checks and directional diagnostics, but do not treat it as volume-representative calibration. |
 | usaspending-bulk-transaction-strata | ready | Archived USAspending bulk summary rows: 6449101; agencies: 12; promotion readiness: candidate | Use the archived summary as the public transaction-history denominator; rerun the bulk download only when refreshing or expanding the archive. |
 | p1-procurement-calibration-actions | clear | P1 procurement source-gap actions: 0 | No P1 procurement source-gap actions remain; next procurement work is SAM/FPDS coding reconciliation, protest/exclusion/firewall overlays, and independent causal calibration. |
 | manual-export-path | ready | SAM_CONTRACT_AWARDS_LIVE_CSV/SAM_CONTRACT_AWARDS_LIVE_URL can normalize a downloaded Contract Awards CSV/JSON/ZIP export | Use this path when SAM API quota or extract polling blocks a representative export; run make sam-procurement-refresh so candidate status is enforced before snapshot promotion. |

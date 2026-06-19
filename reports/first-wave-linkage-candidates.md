@@ -5,7 +5,7 @@ This report mines the frozen normalized source snapshot for automated actor-name
 ## Summary
 
 - Candidate status: `candidate_only_not_source_product`
-- Candidate source records scanned: `35631`
+- Candidate source records scanned: `35632`
 - Cross-source candidate actors: `659`
 - Cross-venue candidate actors: `140`
 - Source systems represented: `9`
@@ -21,8 +21,8 @@ This report mines the frozen normalized source snapshot for automated actor-name
 | LDA | 242 |
 | LDA revolving-door proxy | 803 |
 | OpenFEC | 2536 |
-| Public financing | 138 |
-| USAspending agency actions | 28096 |
+| Public financing | 140 |
+| USAspending agency actions | 28095 |
 | USAspending awards | 200 |
 | USAspending national actions | 1500 |
 
@@ -30,11 +30,11 @@ This report mines the frozen normalized source snapshot for automated actor-name
 
 | Venue | Candidate records |
 | --- | ---: |
-| countervailing_finance | 138 |
+| countervailing_finance | 140 |
 | electoral_money | 2536 |
 | intermediary | 1706 |
 | opaque_nonprofit_or_dark_money | 410 |
-| procurement | 29796 |
+| procurement | 29795 |
 | revolving_door | 803 |
 | visible_lobbying | 242 |
 

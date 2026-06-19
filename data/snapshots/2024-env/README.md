@@ -27,12 +27,12 @@ The current command freezes whatever normalized files are present under `data/ra
 | --- | ---: | --- | --- |
 | lda | 121 | live | `data/snapshots/2024-env/normalized/lda-lobbying.csv` |
 | fec | 1268 | live | `data/snapshots/2024-env/normalized/fec-campaign-finance.csv` |
-| public-financing | 135 | live | `data/snapshots/2024-env/normalized/public-financing.csv` |
+| public-financing | 136 | live | `data/snapshots/2024-env/normalized/public-financing.csv` |
 | dark-money | 330 | live | `data/snapshots/2024-env/normalized/dark-money.csv` |
 | regulatory | 200 | live | `data/snapshots/2024-env/normalized/regulatory-dockets.csv` |
 | usaspending | 200 | live | `data/snapshots/2024-env/normalized/usaspending-awards.csv` |
 | usaspending-procurement-bridge | 150 | live | `data/snapshots/2024-env/normalized/usaspending-procurement-bridge.csv` |
-| usaspending-procurement-actions | 28104 | live | `data/snapshots/2024-env/normalized/usaspending-procurement-actions.csv` |
+| usaspending-procurement-actions | 28103 | live | `data/snapshots/2024-env/normalized/usaspending-procurement-actions.csv` |
 | usaspending-procurement-national-actions | 1500 | live | `data/snapshots/2024-env/normalized/usaspending-procurement-national-actions.csv` |
 | usaspending-procurement-bulk-summary | 6449101 | copied | `data/snapshots/2024-env/normalized/usaspending-procurement-bulk-summary.json` |
 | sam-contract-awards | 0 | unavailable | `data/snapshots/2024-env/normalized/sam-contract-awards.csv` |

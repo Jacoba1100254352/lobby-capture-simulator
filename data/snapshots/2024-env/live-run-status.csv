@@ -18,7 +18,7 @@ federal-register,ok,normalized rows appended
 usaspending,ok,normalized EPA award rows written
 usaspending-procurement-bridge,ok,normalized multi-agency procurement bridge rows written
 usaspending-procurement-national-actions,ok,normalized national-volume USAspending procurement action rows written; agencyFilter=ALL; periodBuckets=annual; pageSize=100; maxPages=5; sortSpecs=Transaction Amount:desc;Mod:asc;Action Date:asc
-sam-contract-awards,unavailable,SAM.gov Contract Awards request failed; mode=1; format=json; filterCount=12; pageSize=100; maxPages=1; offsetPageStarts=0+10+50; fallback=USAspending action rows
+sam-contract-awards,quota_blocked,SAM.gov quota blocked until 2026-Jun-20 00:00:00+0000 UTC; mode=1; format=json; filterCount=12; pageSize=100; maxPages=1; offsetPageStarts=0+10+50; fallback=USAspending action rows
 usaspending-procurement-actions,ok,normalized USAspending procurement action rows written after SAM fallback
 revolving-door,ok,derived normalized covered-position rows from LDA source
 intermediary,ok,NYC CFB intermediary rows; IRS EO BMF nonprofit/association capacity rows; IRS POFD Form 8872 527 rows
