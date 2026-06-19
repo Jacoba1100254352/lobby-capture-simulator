@@ -185,12 +185,25 @@ def empirical_bridge_row() -> dict[str, str]:
     claim = keyed_rows(REPORTS / "claim-posture-audit.csv", "gate").get("Empirical bridge", {})
     panels = read_csv(REPORTS / "source-panel-inventory.csv")
     source_limited = [row for row in panels if is_source_limited_panel(row)]
-    status = "automated_support_present" if claim.get("status") == "bounded" and source_limited else "manual_review_required"
+    leakage_rows = read_csv(REPORTS / "candidate-source-leakage-audit.csv")
+    leakage_failures = [row for row in leakage_rows if row.get("status") == "fail"]
+    status = (
+        "automated_support_present"
+        if claim.get("status") == "bounded"
+        and source_limited
+        and leakage_rows
+        and not leakage_failures
+        else "manual_review_required"
+    )
     return evidence_row(
         EXPECTED_ITEMS[5],
         status,
-        f"empiricalBridge={claim.get('status', 'missing')}; sourceLimitedPanels={len(source_limited)}",
-        "reports/claim-posture-audit.md; reports/source-panel-inventory.md; reports/source-capability-audit.md",
+        (
+            f"empiricalBridge={claim.get('status', 'missing')}; "
+            f"sourceLimitedPanels={len(source_limited)}; "
+            f"candidateLeakageFailures={len(leakage_failures)}"
+        ),
+        "reports/claim-posture-audit.md; reports/source-panel-inventory.md; reports/source-capability-audit.md; reports/candidate-source-leakage-audit.md",
         "Check that the manuscript describes the bridge as bounded source support rather than validation of hidden-channel magnitudes.",
     )
 

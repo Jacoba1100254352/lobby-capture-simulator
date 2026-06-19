@@ -103,6 +103,8 @@ FIRST_WAVE_LINKAGE_CANDIDATE_RECORDS_CSV = ROOT / "reports" / "first-wave-linkag
 FIRST_WAVE_SOURCE_READINESS_MD = ROOT / "reports" / "first-wave-source-readiness.md"
 FIRST_WAVE_SOURCE_READINESS_CSV = ROOT / "reports" / "first-wave-source-readiness.csv"
 FIRST_WAVE_SOURCE_READINESS_TABLE = PAPER / "tables" / "first_wave_source_readiness.tex"
+CANDIDATE_SOURCE_LEAKAGE_AUDIT_MD = ROOT / "reports" / "candidate-source-leakage-audit.md"
+CANDIDATE_SOURCE_LEAKAGE_AUDIT_CSV = ROOT / "reports" / "candidate-source-leakage-audit.csv"
 CLAIM_POSTURE_AUDIT_MD = ROOT / "reports" / "claim-posture-audit.md"
 CLAIM_POSTURE_AUDIT_CSV = ROOT / "reports" / "claim-posture-audit.csv"
 VALIDATION_SCOPE_COVERAGE_MD = ROOT / "reports" / "validation-scope-coverage.md"
@@ -147,7 +149,7 @@ DOI_DEPOSIT_PACKAGE_CHECKSUM_CSV = ROOT / "dist" / "doi-deposit-package-checksum
 DOI_DEPOSIT_PACKAGE_CHECKSUM_JSON = ROOT / "dist" / "doi-deposit-package-checksum.json"
 DOI_DEPOSIT_PACKAGE_CHECKSUM_MD = ROOT / "dist" / "doi-deposit-package-checksum.md"
 ZENODO_DEPOSIT_METADATA_JSON = ROOT / "dist" / "zenodo-deposit-metadata.json"
-RELEASE_TAG = "paper-publication-readiness-2026-06-18-r188"
+RELEASE_TAG = "paper-publication-readiness-2026-06-18-r189"
 ARCHIVE_HANDOFF_REPORT_NAMES = {
     "archive-handoff-manifest.csv",
     "archive-handoff-manifest.json",
@@ -289,6 +291,7 @@ EXPECTED_ZIP_MEMBERS = {
     "supporting-information/first-wave-source-products.md",
     "supporting-information/first-wave-linkage-candidates.md",
     "supporting-information/first-wave-source-readiness.md",
+    "supporting-information/candidate-source-leakage-audit.md",
     "supporting-information/claim-posture-audit.md",
     "supporting-information/policy-claim-language-audit.md",
     "supporting-information/submission-readiness.md",
@@ -362,6 +365,8 @@ def main() -> int:
             REFERENCE_INTEGRITY_AUDIT_MD,
             PAPER_STRUCTURE_AUDIT_CSV,
             PAPER_STRUCTURE_AUDIT_MD,
+            CANDIDATE_SOURCE_LEAKAGE_AUDIT_CSV,
+            CANDIDATE_SOURCE_LEAKAGE_AUDIT_MD,
             FINAL_READTHROUGH_EVIDENCE_CSV,
             FINAL_READTHROUGH_EVIDENCE_MD,
         ])
@@ -388,6 +393,7 @@ def main() -> int:
     failures.extend(check_first_wave_source_products())
     failures.extend(check_first_wave_linkage_candidates())
     failures.extend(check_first_wave_source_readiness())
+    failures.extend(check_candidate_source_leakage_audit())
     failures.extend(check_claim_posture_audit())
     failures.extend(check_validation_scope_coverage())
     failures.extend(check_policy_claim_language_audit())
@@ -496,6 +502,8 @@ def check_freshness() -> list[str]:
         (REFERENCE_INTEGRITY_AUDIT_MD, reference_integrity_audit_inputs()),
         (PAPER_STRUCTURE_AUDIT_CSV, paper_structure_audit_inputs()),
         (PAPER_STRUCTURE_AUDIT_MD, paper_structure_audit_inputs()),
+        (CANDIDATE_SOURCE_LEAKAGE_AUDIT_CSV, candidate_source_leakage_audit_inputs()),
+        (CANDIDATE_SOURCE_LEAKAGE_AUDIT_MD, candidate_source_leakage_audit_inputs()),
         (FINAL_READTHROUGH_EVIDENCE_CSV, final_readthrough_evidence_inputs()),
         (FINAL_READTHROUGH_EVIDENCE_MD, final_readthrough_evidence_inputs()),
         (REVIEWER_RISK_REGISTER_CSV, reviewer_risk_register_inputs()),
@@ -586,6 +594,7 @@ def submission_inputs() -> list[Path]:
         FIRST_WAVE_SOURCE_PRODUCTS_MD,
         FIRST_WAVE_LINKAGE_CANDIDATES_MD,
         FIRST_WAVE_SOURCE_READINESS_MD,
+        CANDIDATE_SOURCE_LEAKAGE_AUDIT_MD,
         ROOT / "reports" / "claim-posture-audit.md",
         ROOT / "reports" / "validation-summary.md",
         ROOT / "reports" / "substitution-audit.md",
@@ -724,6 +733,8 @@ def doi_deposit_package_inputs() -> list[Path]:
         REFERENCE_INTEGRITY_AUDIT_MD,
         PAPER_STRUCTURE_AUDIT_CSV,
         PAPER_STRUCTURE_AUDIT_MD,
+        CANDIDATE_SOURCE_LEAKAGE_AUDIT_CSV,
+        CANDIDATE_SOURCE_LEAKAGE_AUDIT_MD,
         FINAL_HUMAN_READTHROUGH,
         FINAL_HUMAN_READTHROUGH_AUDIT_CSV,
         FINAL_HUMAN_READTHROUGH_AUDIT_MD,
@@ -753,6 +764,8 @@ def final_readthrough_evidence_inputs() -> list[Path]:
         SOURCE_PANEL_INVENTORY,
         SOURCE_CAPABILITY_AUDIT_CSV,
         SOURCE_CAPABILITY_AUDIT_MD,
+        CANDIDATE_SOURCE_LEAKAGE_AUDIT_CSV,
+        CANDIDATE_SOURCE_LEAKAGE_AUDIT_MD,
         CAUSAL_CALIBRATION_TARGETS_CSV,
         CAUSAL_CALIBRATION_TARGETS_MD,
         LATEX_LOG_AUDIT_CSV,
@@ -803,6 +816,20 @@ def paper_structure_audit_inputs() -> list[Path]:
         *sorted((PAPER / "tables").glob("*.tex")),
         *sorted((PAPER / "figures").glob("*.tex")),
         ROOT / "scripts" / "audit-paper-structure.py",
+    ]
+
+
+def candidate_source_leakage_audit_inputs() -> list[Path]:
+    return [
+        FIRST_WAVE_SOURCE_PRODUCTS_CSV,
+        FIRST_WAVE_SOURCE_PRODUCTS_MD,
+        FIRST_WAVE_SOURCE_READINESS_CSV,
+        FIRST_WAVE_SOURCE_READINESS_MD,
+        CAUSAL_CALIBRATION_TARGETS_CSV,
+        CAUSAL_CALIBRATION_TARGETS_MD,
+        ROOT / "scripts" / "audit-candidate-source-leakage.py",
+        *sorted(FIRST_WAVE_CANDIDATE_SEED_PRODUCTS.values()),
+        *sorted(FIRST_WAVE_TEXT_SOURCE_PRODUCTS.values()),
     ]
 
 
@@ -2796,6 +2823,54 @@ def check_first_wave_source_readiness() -> list[str]:
     return failures
 
 
+def check_candidate_source_leakage_audit() -> list[str]:
+    failures: list[str] = []
+    missing = [
+        path.relative_to(ROOT)
+        for path in (CANDIDATE_SOURCE_LEAKAGE_AUDIT_CSV, CANDIDATE_SOURCE_LEAKAGE_AUDIT_MD)
+        if not path.exists()
+    ]
+    if missing:
+        return [f"missing candidate-source leakage audit artifact: {path}" for path in missing]
+
+    with CANDIDATE_SOURCE_LEAKAGE_AUDIT_CSV.open(newline="", encoding="utf-8") as source:
+        rows = list(csv.DictReader(source))
+    if not rows:
+        failures.append("candidate-source leakage audit has no rows")
+    required_items = {
+        "candidate-file-markers",
+        "source-product-status",
+        "source-readiness-status",
+        "calibrated-claim-boundary",
+        "summary",
+    }
+    present_items = {row.get("item", "") for row in rows}
+    failures.extend(
+        f"candidate-source leakage audit missing item: {item}"
+        for item in sorted(required_items - present_items)
+    )
+    for row in rows:
+        if row.get("status") == "fail":
+            failures.append(
+                "candidate-source leakage audit has failing row: "
+                f"{row.get('item', '')}: {row.get('value', '')}"
+            )
+
+    text = CANDIDATE_SOURCE_LEAKAGE_AUDIT_MD.read_text(encoding="utf-8")
+    required_text = [
+        "Candidate Source Leakage Audit",
+        "Failures: `0`",
+        "candidate_unreviewed",
+        "readyToEstimate=0",
+        "calibratedPolicy=blocked",
+        "cannot support ready-to-estimate or calibrated policy-effect claims",
+    ]
+    for phrase in required_text:
+        if phrase not in text:
+            failures.append(f"candidate-source leakage audit markdown missing phrase: {phrase}")
+    return failures
+
+
 def check_claim_posture_audit() -> list[str]:
     failures: list[str] = []
     if not SOURCE_PANEL_INVENTORY.exists():
@@ -3676,6 +3751,8 @@ def check_doi_deposit_package() -> list[str]:
         "readiness/reference-integrity-audit.md",
         "readiness/paper-structure-audit.csv",
         "readiness/paper-structure-audit.md",
+        "readiness/candidate-source-leakage-audit.csv",
+        "readiness/candidate-source-leakage-audit.md",
         "readiness/final-readthrough-evidence.csv",
         "readiness/final-readthrough-evidence.md",
     }
@@ -3728,6 +3805,7 @@ def check_doi_deposit_package() -> list[str]:
         "primary-assets/lobby-capture-wiley-submission.zip",
         "readiness/submission-readiness.md",
         "readiness/reviewer-risk-register.md",
+        "readiness/candidate-source-leakage-audit.md",
     ):
         if phrase not in markdown:
             failures.append(f"DOI deposit package manifest markdown missing phrase: {phrase}")
@@ -4220,6 +4298,7 @@ def package_byte_checks() -> list[tuple[Path, str]]:
         (FIRST_WAVE_SOURCE_PRODUCTS_MD, "supporting-information/first-wave-source-products.md"),
         (FIRST_WAVE_LINKAGE_CANDIDATES_MD, "supporting-information/first-wave-linkage-candidates.md"),
         (FIRST_WAVE_SOURCE_READINESS_MD, "supporting-information/first-wave-source-readiness.md"),
+        (CANDIDATE_SOURCE_LEAKAGE_AUDIT_MD, "supporting-information/candidate-source-leakage-audit.md"),
         (ROOT / "reports" / "claim-posture-audit.md", "supporting-information/claim-posture-audit.md"),
         (ROOT / "reports" / "validation-summary.md", "supporting-information/validation-summary.md"),
         (VALIDATION_SCOPE_COVERAGE_MD, "supporting-information/validation-scope-coverage.md"),

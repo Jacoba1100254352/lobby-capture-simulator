@@ -179,6 +179,16 @@ PACKAGE_INPUTS = [
         "paper-structure-audit",
     ),
     PackageInput(
+        "reports/candidate-source-leakage-audit.csv",
+        "readiness/candidate-source-leakage-audit.csv",
+        "candidate-source-leakage-audit",
+    ),
+    PackageInput(
+        "reports/candidate-source-leakage-audit.md",
+        "readiness/candidate-source-leakage-audit.md",
+        "candidate-source-leakage-audit",
+    ),
+    PackageInput(
         "reports/final-readthrough-evidence.csv",
         "readiness/final-readthrough-evidence.csv",
         "final-readthrough-evidence",

@@ -60,6 +60,8 @@ reports/*.md
 !reports/first-wave-linkage-candidates.md
 !reports/first-wave-source-readiness.csv
 !reports/first-wave-source-readiness.md
+!reports/candidate-source-leakage-audit.csv
+!reports/candidate-source-leakage-audit.md
 !reports/claim-posture-audit.csv
 !reports/claim-posture-audit.md
 !reports/calibration-queue.csv

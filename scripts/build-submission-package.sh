@@ -82,6 +82,7 @@ cp "$ROOT_DIR/reports/first-wave-causal-protocols.md" "$STAGING_DIR/supporting-i
 cp "$ROOT_DIR/reports/first-wave-source-products.md" "$STAGING_DIR/supporting-information/first-wave-source-products.md"
 cp "$ROOT_DIR/reports/first-wave-linkage-candidates.md" "$STAGING_DIR/supporting-information/first-wave-linkage-candidates.md"
 cp "$ROOT_DIR/reports/first-wave-source-readiness.md" "$STAGING_DIR/supporting-information/first-wave-source-readiness.md"
+cp "$ROOT_DIR/reports/candidate-source-leakage-audit.md" "$STAGING_DIR/supporting-information/candidate-source-leakage-audit.md"
 cp "$ROOT_DIR/reports/claim-posture-audit.md" "$STAGING_DIR/supporting-information/claim-posture-audit.md"
 cp "$ROOT_DIR/reports/validation-summary.md" "$STAGING_DIR/supporting-information/validation-summary.md"
 cp "$ROOT_DIR/reports/validation-scope-coverage.md" "$STAGING_DIR/supporting-information/validation-scope-coverage.md"
