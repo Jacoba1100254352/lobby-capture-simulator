@@ -877,9 +877,10 @@ grep -q 'Likely bid-protest rows: `2`' "$tmpdir/gao-protest-feed-preflight.md"
 grep -q "does not clear the procurement calibration gate" "$tmpdir/gao-protest-feed-preflight.md"
 grep -q "data/calibration/first-wave/gao-protest-overlay.csv" "$tmpdir/gao-protest-feed-preflight.md"
 
-python3 - <<'PY'
+python3 - "$tmpdir/sam-retry-window-audit.md" <<'PY'
 import importlib.util
 from pathlib import Path
+import sys
 
 spec = importlib.util.spec_from_file_location(
     "sam_export_audit",
@@ -901,7 +902,22 @@ assert by_item["promotion-readiness"]["status"] == "quota_blocked", rows
 assert "request a fresh emailed export" in by_item["promotion-readiness"]["nextAction"], rows
 assert by_item["export-link-retry-window"]["status"] == "manual_required", rows
 assert "expiresAt=2026-06-18T09:43:05Z" in by_item["export-link-retry-window"]["notes"], rows
+module.write_download_failure_markdown(
+    Path(sys.argv[1]),
+    rows,
+    type("Args", (), {
+        "url": "https://api.sam.gov/contract-awards/v1/download?api_key=REPLACE_WITH_API_KEY&token=fixture-token"
+    })(),
+    message,
+    freshness,
+)
 PY
+grep -q "Link retry window: .missed; SAM reset occurs after the emailed token expiry." "$tmpdir/sam-retry-window-audit.md"
+grep -q "Link freshness at audit time: .fresh." "$tmpdir/sam-retry-window-audit.md"
+if grep -q "fixture-token" "$tmpdir/sam-retry-window-audit.md"; then
+  echo "Retry-window SAM export audit report leaked an emailed download token." >&2
+  exit 1
+fi
 
 python3 - "$tmpdir/reports/github-ci-status-audit.csv" <<'PY'
 import csv

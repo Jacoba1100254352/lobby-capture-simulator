@@ -659,8 +659,12 @@ def write_download_failure_markdown(
         f"- Source: `{source}`",
         f"- Download result: `{rows[0]['status']}`",
         f"- Reason: `{rows[0]['value']}`",
-        f"- Link freshness: `{freshness.get('status', 'not_applicable')}`",
+        f"- Link freshness at audit time: `{freshness.get('status', 'not_applicable')}`",
         f"- Freshness evidence: `{freshness.get('evidence', '')}`",
+        *(
+            ["- Link retry window: `missed; SAM reset occurs after the emailed token expiry`"]
+            if retry_window_missed else []
+        ),
         "",
         "## Download Failure Checklist",
         "",
