@@ -18,11 +18,9 @@ run_package_stack() {
 }
 
 run_finalization_pass() {
-  python3 scripts/write-final-readthrough-evidence.py
   run_package_stack
   python3 scripts/write-final-readthrough-evidence.py
   run_package_stack
-  python3 scripts/write-final-readthrough-evidence.py
 }
 
 pass=1

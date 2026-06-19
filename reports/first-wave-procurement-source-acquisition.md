@@ -41,9 +41,9 @@ A row in this report is only an acquisition instruction. To promote a procuremen
 - Expected path: `data/calibration/first-wave/gao-protest-overlay.csv`
 - Source-product status: `candidate_unreviewed`
 - Preferred official source: GAO Recent Bid Protest Decisions, GAO Search Decisions & Docket, and GAO Legal Products XML feed (https://www.gao.gov/legal/bid-protests/recent; https://www.gao.gov/rss/reportslegal.xml)
-- Fallback: Run make gao-protest-feed-preflight against the GAO Legal Products XML feed for discovery; the ignored worklist extracts B-numbers, decision dates, protester names, agency hints, awardee hints, coarse issue-code hints, and visible outcome language before source-page review
+- Fallback: Run make gao-protest-feed-preflight against the GAO Legal Products XML feed for ignored discovery, or make gao-protest-overlay-candidates to materialize likely protest rows into the tracked overlay with candidateOnly=true; the parser extracts B-numbers, decision dates, protester names, agency hints, awardee hints, coarse issue-code hints, and visible outcome language before source-page review
 - Required linkage: Protest ID or B-number, agency, filed date where available, decision date, outcome, issue codes, source URL, and manually reviewed PIID/UEI/vendor linkage when available
-- Acquisition step: Run make gao-protest-feed-preflight to build an ignored GAO protest discovery worklist, review the high-priority rows against official decision pages or PDFs, then manually link decisions to PIID, UEI or vendor, agency, outcome, and issue fields before promotion.
+- Acquisition step: Run make gao-protest-overlay-candidates to refresh the candidate-only GAO protest review queue, review the high-priority rows against official decision pages or PDFs, then manually link decisions to PIID, UEI or vendor, agency, filed date, outcome, and issue fields before promotion.
 - Promotion gate: Each row needs a source URL plus PIID or vendor linkage; unmatched protests remain context rows and cannot clear the product gate.
 - Claim boundary: GAO protest rows measure observed dispute outcomes; this source does not identify lobbying exposure or capture without linked award/action and actor records.
 
@@ -82,7 +82,7 @@ A row in this report is only an acquisition instruction. To promote a procuremen
 
 ## Official Source Notes
 
-- GAO Recent Bid Protest Decisions and Search Decisions & Docket are the official protest-discovery surfaces; the GAO Legal Products XML feed can be used as a machine-readable discovery queue for new protest decisions. The local preflight extracts discovery hints only and keeps the resulting report ignored until reviewed rows are promoted through `data/calibration/first-wave/gao-protest-overlay.csv`.
+- GAO Recent Bid Protest Decisions and Search Decisions & Docket are the official protest-discovery surfaces; the GAO Legal Products XML feed can be used as a machine-readable discovery queue for new protest decisions. The local preflight extracts discovery hints only; `make gao-protest-overlay-candidates` can copy likely protest rows into `data/calibration/first-wave/gao-protest-overlay.csv` with `candidateOnly=true`, and those rows remain non-evidence until reviewed source-page and award/vendor linkages replace the candidate markers.
 - SAM.gov Exclusions API returns public exclusion records in paginated JSON and can also initiate CSV/JSON extracts; the Entity/Exclusions Extracts API can download public exclusion extracts such as `SAM_Exclusions_Public_Extract` files. The local `make sam-exclusions-preflight` target records redacted quota/access state only and does not promote exclusion rows.
 - SAM.gov Contract Awards remains the preferred source for Contract Awards action-history fields; USAspending transaction/action rows remain a bounded fallback until SAM/FPDS-style definitions are reconciled.
 - Procurement firewall coverage is a document-review product, not an API product. Dated agency policies, acquisition supplements, firewall memoranda, and official audit reports must be encoded with source URLs and coverage rules.

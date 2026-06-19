@@ -33,7 +33,7 @@ def main() -> int:
     output = args.output if args.output.is_absolute() else ROOT / args.output
     output.mkdir(parents=True, exist_ok=True)
 
-    write_csv(
+    write_seed_csv(
         output / "sam-fpds-action-history-crosswalk.csv",
         [
             "piid",
@@ -89,7 +89,7 @@ def main() -> int:
         ],
     )
 
-    write_csv(
+    write_seed_csv(
         output / "gao-protest-overlay.csv",
         [
             "protestId",
@@ -133,7 +133,7 @@ def main() -> int:
         ],
     )
 
-    write_csv(
+    write_seed_csv(
         output / "sam-exclusion-overlay.csv",
         [
             "exclusionId",
@@ -173,7 +173,7 @@ def main() -> int:
         ],
     )
 
-    write_csv(
+    write_seed_csv(
         output / "procurement-firewall-overlay.csv",
         [
             "firewallRuleId",
@@ -219,7 +219,7 @@ def main() -> int:
         ],
     )
 
-    write_csv(
+    write_seed_csv(
         output / "procurement-offer-competition-enrichment.csv",
         [
             "piid",
@@ -268,15 +268,27 @@ def main() -> int:
         ],
     )
 
-    for filename in (
-        "sam-fpds-action-history-crosswalk.csv",
-        "gao-protest-overlay.csv",
-        "sam-exclusion-overlay.csv",
-        "procurement-firewall-overlay.csv",
-        "procurement-offer-competition-enrichment.csv",
-    ):
-        print(f"Wrote {output / filename}")
     return 0
+
+
+def write_seed_csv(path: Path, fields: list[str], rows: list[dict[str, str]]) -> None:
+    if schema_compatible(path, fields):
+        print(f"Preserved {path}")
+        return
+    write_csv(path, fields, rows)
+    print(f"Wrote {path}")
+
+
+def schema_compatible(path: Path, fields: list[str]) -> bool:
+    if not path.exists():
+        return False
+    try:
+        with path.open(newline="", encoding="utf-8") as source:
+            reader = csv.DictReader(source)
+            observed = set(reader.fieldnames or ())
+    except OSError:
+        return False
+    return set(fields).issubset(observed)
 
 
 def write_csv(path: Path, fields: list[str], rows: list[dict[str, str]]) -> None:

@@ -32,6 +32,10 @@ CANDIDATE_BOUNDARY = (
     "gao-protest-overlay source-product gate until PIID, UEI, agency, vendor, "
     "outcome, and issue linkage are manually reviewed"
 )
+SOURCE_PRODUCT_BOUNDARY = (
+    "candidate-only procurement source-surface worklist; does not clear "
+    "first-wave source-product, procurement-modification, or causal-calibration gates"
+)
 PROTEST_RE = re.compile(r"\bprotests?\b", re.IGNORECASE)
 B_NUMBER_RE = re.compile(r"\bB-\d+(?:\.\d+)?(?:,\s*B-\d+(?:\.\d+)?)*\b", re.IGNORECASE)
 DEPARTMENT_RE = re.compile(
@@ -95,6 +99,15 @@ def main() -> int:
         action="store_true",
         help="Exit nonzero when the feed could not be read or no likely protest rows are found.",
     )
+    parser.add_argument(
+        "--overlay-candidate-output",
+        type=Path,
+        help=(
+            "Optional path for a candidate-only gao-protest-overlay CSV. "
+            "Only likely bid-protest discovery rows are written, and every row "
+            "keeps candidateOnly=true so source-product gates cannot promote it."
+        ),
+    )
     args = parser.parse_args()
 
     output_prefix = args.output_prefix if args.output_prefix.is_absolute() else ROOT / args.output_prefix
@@ -119,6 +132,10 @@ def main() -> int:
     write_markdown(output_prefix.with_suffix(".md"), rows, metadata, status, error)
     print(f"Wrote {display_path(output_prefix.with_suffix('.csv'))}")
     print(f"Wrote {display_path(output_prefix.with_suffix('.md'))}")
+    if args.overlay_candidate_output:
+        overlay_path = args.overlay_candidate_output if args.overlay_candidate_output.is_absolute() else ROOT / args.overlay_candidate_output
+        write_overlay_candidates(overlay_path, rows)
+        print(f"Wrote {display_path(overlay_path)}")
     if args.strict and (status == "unavailable" or not any(row.get("likelyBidProtest") == "true" for row in rows)):
         return 1
     return 0
@@ -226,6 +243,70 @@ def write_csv(path: Path, rows: list[dict[str, str]]) -> None:
         writer = csv.DictWriter(destination, fieldnames=fieldnames, lineterminator="\n")
         writer.writeheader()
         writer.writerows(rows)
+
+
+def write_overlay_candidates(path: Path, rows: list[dict[str, str]]) -> None:
+    """Write likely protest rows in the first-wave GAO overlay schema.
+
+    These are review worklist rows, not source evidence. The candidate markers
+    are deliberately repeated on every row so the source-product audit defers
+    field and semantic checks until a reviewer replaces discovery hints with
+    adjudicated values.
+    """
+    fieldnames = [
+        "protestId",
+        "piid",
+        "uei",
+        "agency",
+        "filedDate",
+        "decisionDate",
+        "outcome",
+        "issueCodes",
+        "sourceUrl",
+        "docketNumber",
+        "protesterName",
+        "awardeeName",
+        "notes",
+        "candidateOnly",
+        "candidateStatus",
+    ]
+    path.parent.mkdir(parents=True, exist_ok=True)
+    likely_rows = [row for row in rows if row.get("likelyBidProtest") == "true"]
+    with path.open("w", newline="", encoding="utf-8") as destination:
+        writer = csv.DictWriter(destination, fieldnames=fieldnames, lineterminator="\n")
+        writer.writeheader()
+        for row in likely_rows:
+            writer.writerow(overlay_candidate_row(row))
+
+
+def overlay_candidate_row(row: dict[str, str]) -> dict[str, str]:
+    review_needs = row.get("manualReviewNeeds", "")
+    notes = (
+        f"{SOURCE_PRODUCT_BOUNDARY}; "
+        "candidate-only GAO RSS discovery row; "
+        f"reviewPriority={row.get('reviewPriority', '')}; "
+        f"manualReviewNeeds={review_needs}; "
+        f"feedPublishedAt={row.get('publishedAt', '')}; "
+        "not estimation ready until agency, filed date, outcome, issue coding, "
+        "PIID/UEI or reviewed vendor linkage, and source-page details are adjudicated"
+    )
+    return {
+        "protestId": row.get("protestId", "") or "candidate_unreviewed",
+        "piid": "candidate_unreviewed",
+        "uei": "candidate_unreviewed",
+        "agency": row.get("agencyHint", "") or "candidate_unreviewed",
+        "filedDate": "candidate_unreviewed",
+        "decisionDate": row.get("decisionDate", "") or "candidate_unreviewed",
+        "outcome": row.get("outcomeHint", "") or "candidate_unreviewed",
+        "issueCodes": row.get("issueCodeHints", "") or "candidate_unreviewed",
+        "sourceUrl": row.get("sourceUrl", "") or "https://www.gao.gov/legal/bid-protests/recent",
+        "docketNumber": row.get("protestId", "") or "candidate_unreviewed",
+        "protesterName": row.get("protesterNameHint", "") or "candidate_unreviewed",
+        "awardeeName": row.get("awardeeNameHint", "") or "candidate_unreviewed",
+        "notes": notes,
+        "candidateOnly": "true",
+        "candidateStatus": "candidate_unreviewed_not_estimation_ready",
+    }
 
 
 def write_markdown(path: Path, rows: list[dict[str, str]], metadata: dict[str, str], status: str, error: str) -> None:

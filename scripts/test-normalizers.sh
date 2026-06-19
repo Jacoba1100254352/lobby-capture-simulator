@@ -991,9 +991,11 @@ fi
 python3 scripts/probe-gao-protest-feed.py \
   --input data/fixtures/source-native/gao-legal-products-feed.xml \
   --output-prefix "$tmpdir/gao-protest-feed-preflight" \
+  --overlay-candidate-output "$tmpdir/gao-overlay-candidates.csv" \
   --strict >/dev/null
 test -s "$tmpdir/gao-protest-feed-preflight.csv"
 test -s "$tmpdir/gao-protest-feed-preflight.md"
+test -s "$tmpdir/gao-overlay-candidates.csv"
 python3 - "$tmpdir/gao-protest-feed-preflight.csv" <<'PY'
 import csv
 import sys
@@ -1009,6 +1011,27 @@ assert first["agencyHint"] == "Department of the Air Force", first
 assert first["linkageStatus"] == "candidate_unreviewed", first
 assert "candidate-only GAO protest discovery row" in first["notes"], first
 assert "does not clear the gao-protest-overlay source-product gate" in first["notes"], first
+PY
+python3 - "$tmpdir/gao-overlay-candidates.csv" <<'PY'
+import csv
+import sys
+
+with open(sys.argv[1], newline="", encoding="utf-8") as source:
+    rows = list(csv.DictReader(source))
+assert len(rows) == 2, rows
+first = rows[0]
+assert first["protestId"] == "B-424306", first
+assert first["piid"] == "candidate_unreviewed", first
+assert first["uei"] == "candidate_unreviewed", first
+assert first["agency"] == "Department of the Air Force", first
+assert first["filedDate"] == "candidate_unreviewed", first
+assert first["decisionDate"] == "2026-06-17", first
+assert first["candidateOnly"] == "true", first
+assert first["candidateStatus"] == "candidate_unreviewed_not_estimation_ready", first
+assert "candidate-only procurement source-surface worklist" in first["notes"], first
+assert "does not clear first-wave source-product, procurement-modification, or causal-calibration gates" in first["notes"], first
+assert "manualReviewNeeds=piid_or_uei_linkage" in first["notes"], first
+assert not any(row["protestId"] == "B-333111" for row in rows), rows
 PY
 grep -q "GAO Protest Feed Preflight" "$tmpdir/gao-protest-feed-preflight.md"
 grep -q 'Likely bid-protest rows: `2`' "$tmpdir/gao-protest-feed-preflight.md"
