@@ -493,6 +493,10 @@ def write_markdown(path: Path, rows: list[dict[str, str]]) -> None:
                 "- Revolving-door route: LDA covered-position rows support exposure diagnostics, "
                 "but documented post-employment movement still requires an additional personnel source."
             ),
+            (
+                "- Reginfo.gov EO 12866 meeting route: no-key public meeting rows provide a bounded "
+                "access-disclosure bridge for requestor, client, agency, RIN, and rule-title diagnostics."
+            ),
         ]
     )
     lines.extend(

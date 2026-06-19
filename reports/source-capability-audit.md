@@ -4,6 +4,7 @@ This audit separates implemented live-source routes from the empirical support a
 
 ## Summary
 
+- active-bounded: `1`
 - active-representative: `1`
 - active-usable: `5`
 - implemented-not-promoted: `1`
@@ -17,6 +18,7 @@ This audit separates implemented live-source routes from the empirical support a
 - SAM.gov Exclusions route: `make sam-exclusions-preflight` records redacted quota/access/sample-shape status for the exclusion-overlay acquisition path, but no exclusion rows support claims until a reviewed calibration CSV is promoted.
 - USAspending procurement route: no-key action, national action, and bulk-summary panels remain separate from SAM.gov Contract Awards rows so procurement provenance is auditable.
 - Revolving-door route: LDA covered-position rows support exposure diagnostics, but documented post-employment movement still requires an additional personnel source.
+- Reginfo.gov EO 12866 meeting route: no-key public meeting rows provide a bounded access-disclosure bridge for requestor, client, agency, RIN, and rule-title diagnostics.
 
 | Capability | Snapshot source | Rows | Panel status | Capability status | Snapshot quality | Snapshot plan | Needed for | Next action |
 | --- | --- | ---: | --- | --- | --- | --- | --- | --- |
@@ -27,5 +29,6 @@ This audit separates implemented live-source routes from the empirical support a
 | usaspending-national-action-panel | usaspending-procurement-national-actions (ok) | 1500 | usable | active-usable | not-applicable | normalized national-volume USAspending procurement action rows written; agencyFilter=ALL; periodBuckets=annual; pageSize=100; maxPages=5; sortSpecs=Transaction Amount:desc;Mod:asc;Action Date:asc | Stronger public procurement concentration diagnostics | Use this no-key national-volume panel as a fallback concentration diagnostic; prefer the archived bulk summary when present and keep modification incidence blocked on benchmark/coding reconciliation. |
 | usaspending-bulk-transaction-download-panel | usaspending-procurement-bulk-summary (present) | 6449101 | usable | active-representative | not-applicable | Active rows are present in the frozen snapshot. | Procurement modification denominator robustness and calibrated policy-simulation claim review | Use the compact frozen summary for public transaction-history diagnostics; archive the full normalized CSV/ZIP payloads externally only when full byte-for-byte reproduction is required. |
 | lda-covered-position-revolving-door | revolving-door (ok) | 803 | usable | active-usable | not-applicable | derived normalized covered-position rows from LDA source | Revolving-door access mechanism diagnostics | Supplement with OGE, FACA, witness, LegiStorm/OpenSecrets, or archived personnel-movement exports before claiming representative post-employment movement. |
+| reginfo-eo12866-meeting-logs | oira-meetings (present) | 10 | thin | active-bounded | not-applicable | Active rows are present in the frozen snapshot. | Meeting-disclosure and access-channel source diagnostics | Link requestors and clients to LDA, docket, FEC, intermediary, procurement, and rulemaking-outcome identifiers before estimating access-channel substitution elasticity. |
 | irs-527-political-organizations | intermediary (ok) | 1353 | usable | active-usable | not-applicable | NYC CFB intermediary rows; IRS EO BMF nonprofit/association capacity rows; IRS POFD Form 8872 527 rows | Intermediary and campaign-adjacent substitution diagnostics | Broaden beyond the bounded alphabetic slice while preserving 527 rows as distinct from 501(c)(4)/(c)(6) dark-money evidence. |
 | licensed-access-overlays | not-promoted (not-promoted) | 0 | not-promoted | planned-overlay | not-applicable | No active committed rows. | Representative hidden-channel, intermediary, and personnel-movement validation | Implement importer-specific schemas only after licensing and export fields are fixed enough to preserve reproducibility. |

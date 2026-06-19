@@ -2030,12 +2030,15 @@ def check_claim_source_dependency_audit() -> list[str]:
             if rows[claim].get("status") != "bounded":
                 failures.append(f"claim-source dependency should be bounded while weak panels remain: {claim}")
         not_cleared_expected = {
-            "procurement-modification-capture",
             "calibrated-policy-simulation",
         }
         for claim in not_cleared_expected:
             if rows[claim].get("status") != "not_cleared":
                 failures.append(f"claim-source dependency should not be cleared while weak panels remain: {claim}")
+        if rows["procurement-modification-capture"].get("status") == "cleared":
+            failures.append(
+                "claim-source dependency should stay bounded, not cleared, while procurement modification panels remain denominator-mapped"
+            )
     revolving_panel = next((panel for panel in panels if panel.get("panel") == "Revolving door"), {})
     if revolving_panel.get("status") == "usable" and rows["revolving-door-cooling-off"].get("status") != "bounded":
         failures.append("revolving-door source dependency should remain bounded because the usable panel is LDA proxy/thin evidence")

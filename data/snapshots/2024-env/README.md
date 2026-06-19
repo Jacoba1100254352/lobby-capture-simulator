@@ -30,6 +30,7 @@ The current command freezes whatever normalized files are present under `data/ra
 | public-financing | 136 | live | `data/snapshots/2024-env/normalized/public-financing.csv` |
 | dark-money | 330 | live | `data/snapshots/2024-env/normalized/dark-money.csv` |
 | regulatory | 200 | live | `data/snapshots/2024-env/normalized/regulatory-dockets.csv` |
+| oira-meetings | 10 | copied | `data/snapshots/2024-env/normalized/oira-meetings.csv` |
 | usaspending | 200 | live | `data/snapshots/2024-env/normalized/usaspending-awards.csv` |
 | usaspending-procurement-bridge | 150 | live | `data/snapshots/2024-env/normalized/usaspending-procurement-bridge.csv` |
 | usaspending-procurement-actions | 28103 | live | `data/snapshots/2024-env/normalized/usaspending-procurement-actions.csv` |

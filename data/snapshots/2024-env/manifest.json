@@ -1,7 +1,7 @@
 {
   "snapshot": "2024-env",
-  "generatedAt": "2026-06-19T00:27:38.595735+00:00",
-  "gitCommit": "50bd74c",
+  "generatedAt": "2026-06-19T17:39:06.558184+00:00",
+  "gitCommit": "6b579f3",
   "gitTreeState": "clean",
   "gitTreeStateScope": "working tree status excluding generated 2024-env snapshot, reports, paper tables, and paper figures",
   "scope": {
@@ -62,6 +62,16 @@
       "sha256": "b26e7797586e1e00048e265c0c850a239f09fd5268c8b2b42e4e8e278978c4b7",
       "status": "live",
       "statusNotes": "regulations-gov: ok (normalized rows appended); federal-register: ok (normalized rows appended)"
+    },
+    {
+      "source": "oira-meetings",
+      "description": "Reginfo.gov EO 12866 public meeting disclosures for meeting-date, agency, RIN, rule-title, requestor, and requestor-client visibility diagnostics.",
+      "requestTemplate": "REGINFO_EO_MEETINGS_MAX_ROWS=100 REGINFO_EO_MEETINGS_DETAIL_LIMIT=25 python3 scripts/fetch-source-data.py oira-meetings --output data/raw/oira-meetings.csv",
+      "normalizedFile": "data/snapshots/2024-env/normalized/oira-meetings.csv",
+      "rowCount": 10,
+      "sha256": "9bb4c0ca9473fc1f4b3c5e43b82f0d212652193814d22b597fa2ff5e5ac4f6a2",
+      "status": "copied",
+      "statusNotes": "normalized file copied from data/raw"
     },
     {
       "source": "usaspending",

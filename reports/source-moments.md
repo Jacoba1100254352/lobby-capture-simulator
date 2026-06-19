@@ -4,6 +4,7 @@ These are direct moments from normalized calibration tables. They are source dia
 
 ## Representativeness Warnings
 
+- Snapshot EO 12866 meeting rows have limited requestor-client disclosure coverage; access-channel diagnostics should remain source-bounded.
 - Snapshot procurement uses an archived USAspending bulk transaction summary (6449101 rows) as the preferred public denominator; remaining procurement evidence work is SAM/FPDS coding reconciliation, protest/exclusion/firewall overlays, and causal calibration rather than bulk acquisition.
 - Snapshot procurement modification incidence differs by denominator: action-row share 0.1702, distinct-award share 0.1067, and amount-weighted share 0.5955; the benchmark crosswalk keeps these denominators separate while SAM/FPDS coding and causal calibration remain future evidence work.
 
@@ -59,6 +60,16 @@ These are direct moments from normalized calibration tables. They are source dia
 | snapshot | regulatory | `commentAuthenticationShareMean` | 0.3200 | observed_proxy | mean normalized authentication share |
 | snapshot | regulatory | `commentFloodingIndex` | 0.3072 | proxy | combined top-docket concentration, template share, and low-authentication pressure |
 | snapshot | regulatory | `technicalClaimCredibilityMean` | 0.5000 | proxy | mean normalized technical claim credibility |
+| snapshot | oira-meetings | `oiraMeetingRows` | 10.0000 | observed | normalized Reginfo.gov EO 12866 public meeting rows |
+| snapshot | oira-meetings | `oiraMeetingDetailFetchedShare` | 1.0000 | diagnostic | share of meeting rows with detail pages fetched |
+| snapshot | oira-meetings | `oiraMeetingParticipantDisclosureShare` | 1.0000 | observed | share of rows with requestor or participant disclosure fields populated |
+| snapshot | oira-meetings | `oiraMeetingClientDisclosureShare` | 0.4000 | observed | share of rows with requestor-client disclosure |
+| snapshot | oira-meetings | `oiraMeetingAgencyCount` | 3.0000 | observed | distinct agency acronyms in normalized EO 12866 meeting rows |
+| snapshot | oira-meetings | `oiraMeetingRinCount` | 4.0000 | observed | distinct RINs in normalized EO 12866 meeting rows |
+| snapshot | oira-meetings | `oiraMeetingRequestorTop3Share` | 0.3000 | observed_proxy | top three requestors by normalized EO 12866 meeting count |
+| snapshot | oira-meetings | `oiraMeetingClientTop3Share` | 0.8000 | observed_proxy | top three requestor clients by normalized EO 12866 meeting count |
+| snapshot | oira-meetings | `oiraMeetingCompletedShare` | 0.0000 | observed | share of rows marked completed |
+| snapshot | oira-meetings | `oiraMeetingScheduledShare` | 1.0000 | observed | share of rows marked scheduled |
 | snapshot | usaspending | `procurementRows` | 200.0000 | observed | normalized USAspending award rows |
 | snapshot | usaspending | `procurementBridgeRows` | 150.0000 | observed | multi-agency USAspending bridge rows, if available |
 | snapshot | usaspending | `procurementActionRows` | 28103.0000 | observed | primary procurement action denominator from stratified USAspending transaction/action rows |
@@ -217,6 +228,16 @@ These are direct moments from normalized calibration tables. They are source dia
 | fixture | regulatory | `commentAuthenticationShareMean` | 0.3100 | observed_proxy | mean normalized authentication share |
 | fixture | regulatory | `commentFloodingIndex` | 0.4888 | proxy | combined top-docket concentration, template share, and low-authentication pressure |
 | fixture | regulatory | `technicalClaimCredibilityMean` | 0.4875 | proxy | mean normalized technical claim credibility |
+| fixture | oira-meetings | `oiraMeetingRows` | 1.0000 | observed | normalized Reginfo.gov EO 12866 public meeting rows |
+| fixture | oira-meetings | `oiraMeetingDetailFetchedShare` | 1.0000 | diagnostic | share of meeting rows with detail pages fetched |
+| fixture | oira-meetings | `oiraMeetingParticipantDisclosureShare` | 1.0000 | observed | share of rows with requestor or participant disclosure fields populated |
+| fixture | oira-meetings | `oiraMeetingClientDisclosureShare` | 1.0000 | observed | share of rows with requestor-client disclosure |
+| fixture | oira-meetings | `oiraMeetingAgencyCount` | 1.0000 | observed | distinct agency acronyms in normalized EO 12866 meeting rows |
+| fixture | oira-meetings | `oiraMeetingRinCount` | 1.0000 | observed | distinct RINs in normalized EO 12866 meeting rows |
+| fixture | oira-meetings | `oiraMeetingRequestorTop3Share` | 1.0000 | observed_proxy | top three requestors by normalized EO 12866 meeting count |
+| fixture | oira-meetings | `oiraMeetingClientTop3Share` | 1.0000 | observed_proxy | top three requestor clients by normalized EO 12866 meeting count |
+| fixture | oira-meetings | `oiraMeetingCompletedShare` | 0.0000 | observed | share of rows marked completed |
+| fixture | oira-meetings | `oiraMeetingScheduledShare` | 1.0000 | observed | share of rows marked scheduled |
 | fixture | usaspending | `procurementRows` | 5.0000 | observed | normalized USAspending award rows |
 | fixture | usaspending | `procurementBridgeRows` | 0.0000 | observed | multi-agency USAspending bridge rows, if available |
 | fixture | usaspending | `procurementActionRows` | 5.0000 | observed | primary procurement action denominator from stratified USAspending transaction/action rows |

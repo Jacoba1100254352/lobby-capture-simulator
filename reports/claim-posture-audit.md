@@ -6,8 +6,8 @@ This audit summarizes which claim posture is cleared by the current source panel
 
 | Gate | Status | Evidence | Claim boundary | Next action |
 | --- | --- | --- | --- | --- |
-| Mechanism-model article | cleared | 0 validation misses, 0 unknown validations, 0 unresolved coverage-gap source panels, 7 usable but source-limited support panels, 0 article-blocking dependency claims not cleared | The manuscript can present a transparent mechanism model and synthetic stress tests under explicit source limits. | Keep empirical language tied to source moments, source gaps, and model diagnostics. |
-| Empirical bridge | bounded | 0 source-gap validations, 0 unresolved weak-status panels, 7 usable but source-limited support panels; 5 bounded claim dependencies | The bridge constrains plausible ranges and flags evidence gaps; it does not validate hidden-channel magnitudes. | Prioritize SAM/FPDS coding reconciliation, protest/exclusion/firewall overlays, nonprofit-routing beyond the top-EIN Schedule I slice, and post-employment revolving-door overlays; broaden electoral-communication and public-financing rows as secondary coverage upgrades. |
+| Mechanism-model article | cleared | 0 validation misses, 0 unknown validations, 1 unresolved coverage-gap source panels, 7 usable but source-limited support panels, 0 article-blocking dependency claims not cleared | The manuscript can present a transparent mechanism model and synthetic stress tests under explicit source limits. | Keep empirical language tied to source moments, source gaps, and model diagnostics. |
+| Empirical bridge | bounded | 0 source-gap validations, 1 unresolved weak-status panels, 7 usable but source-limited support panels; 5 bounded claim dependencies | The bridge constrains plausible ranges and flags evidence gaps; it does not validate hidden-channel magnitudes. | Prioritize SAM/FPDS coding reconciliation, protest/exclusion/firewall overlays, nonprofit-routing beyond the top-EIN Schedule I slice, and post-employment revolving-door overlays; broaden electoral-communication and public-financing rows as secondary coverage upgrades. |
 | Calibrated policy-simulation claim | not_cleared | validation queue P1=0, P2=0; causal targets P1=4, P2=6; 1 claim dependencies not cleared; calibrated-policy dependency=not_cleared; open causal targets=10 | The current artifact should not claim calibrated reform effects or representative national hidden-channel magnitudes. | Clear the causal-calibration target matrix, add stronger source panels, and rerun validation before using calibrated policy-simulation language. |
 | Reproducibility and layout bundle | cleared | layout failures=0, visual checklist=pass | The generated review bundle is reproducible when the paper artifact gate passes. | Rerun the full artifact gate after any source, table, figure, LaTeX, or package change. |
 
@@ -22,7 +22,8 @@ This audit summarizes which claim posture is cleared by the current source panel
 
 ## Unresolved Coverage-Gap Source Panels
 
-- Source panels with status thin, warning, fixture-only, or missing: `0`
+- Source panels with status thin, warning, fixture-only, or missing: `1`
+- `OIRA EO 12866 meeting logs` (thin): EO 12866 meeting rows are present but too sparse for cross-agency access-concentration calibration; requestor-client disclosure share=0.4000, top-three requestor share=0.3000
 
 ## Usable But Source-Limited Support Panels
 
