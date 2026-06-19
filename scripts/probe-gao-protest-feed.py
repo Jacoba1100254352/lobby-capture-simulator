@@ -15,6 +15,7 @@ import csv
 from datetime import datetime, timezone
 from email.utils import parsedate_to_datetime
 import html
+from html.parser import HTMLParser
 import os
 import re
 from pathlib import Path
@@ -26,6 +27,7 @@ import xml.etree.ElementTree as ET
 ROOT = Path(__file__).resolve().parents[1]
 REPORTS = ROOT / "reports"
 DEFAULT_FEED_URL = "https://www.gao.gov/rss/reportslegal.xml"
+DEFAULT_RECENT_PAGE_URL = "https://www.gao.gov/legal/bid-protests/recent"
 DEFAULT_OUTPUT_PREFIX = REPORTS / "gao-protest-feed-preflight"
 CANDIDATE_BOUNDARY = (
     "candidate-only GAO protest discovery row; does not clear the "
@@ -95,6 +97,21 @@ def main() -> int:
         help="Network timeout for the feed request.",
     )
     parser.add_argument(
+        "--recent-page-url",
+        default=os.environ.get("GAO_RECENT_BID_PROTESTS_URL", DEFAULT_RECENT_PAGE_URL),
+        help="GAO recent bid-protest decisions page used to enrich outcome hints.",
+    )
+    parser.add_argument(
+        "--recent-page-input",
+        type=Path,
+        help="Read recent-decisions HTML from a local fixture instead of the network.",
+    )
+    parser.add_argument(
+        "--skip-recent-page",
+        action="store_true",
+        help="Skip recent-decisions page enrichment and use the RSS feed only.",
+    )
+    parser.add_argument(
         "--strict",
         action="store_true",
         help="Exit nonzero when the feed could not be read or no likely protest rows are found.",
@@ -115,6 +132,7 @@ def main() -> int:
     try:
         source_label, xml_text = read_xml(args)
         rows, metadata = parse_feed(xml_text, source_label, args.max_items)
+        enrich_from_recent_page(rows, metadata, args)
         status = "ready" if any(row["likelyBidProtest"] == "true" for row in rows) else "manual_required"
         error = ""
     except Exception as exc:
@@ -163,6 +181,132 @@ def read_xml(args: argparse.Namespace) -> tuple[str, str]:
         raise RuntimeError(f"GAO feed HTTP {exc.code}: {detail}") from exc
     except URLError as exc:
         raise RuntimeError(f"GAO feed request failed: {exc.reason}") from exc
+
+
+def enrich_from_recent_page(rows: list[dict[str, str]], metadata: dict[str, str], args: argparse.Namespace) -> None:
+    """Attach official recent-page outcome hints when available.
+
+    The RSS feed is the discovery surface, while the GAO recent-decisions page
+    often exposes short outcome sentences such as "We deny the protest." The
+    enrichment is still a source hint, not adjudicated outcome coding.
+    """
+    metadata["recentPageSource"] = ""
+    metadata["recentPageOutcomeHints"] = "0"
+    metadata["recentPageError"] = ""
+    if args.skip_recent_page:
+        metadata["recentPageSource"] = "skipped"
+        return
+    if args.input and not args.recent_page_input:
+        metadata["recentPageSource"] = "skipped_for_feed_fixture"
+        return
+    try:
+        source_label, html_text = read_recent_page(args)
+        outcomes = recent_page_outcomes(html_text)
+    except Exception as exc:
+        metadata["recentPageSource"] = args.recent_page_input.as_posix() if args.recent_page_input else args.recent_page_url
+        metadata["recentPageError"] = f"{type(exc).__name__}: {exc}"
+        return
+    enriched = 0
+    for row in rows:
+        if row.get("outcomeHint"):
+            continue
+        outcome = outcome_for_row(row, outcomes)
+        if not outcome:
+            continue
+        row["outcomeHint"] = outcome
+        row["manualReviewNeeds"] = manual_review_needs(
+            row.get("agencyHint", ""),
+            row.get("awardeeNameHint", ""),
+            row.get("outcomeHint", ""),
+            row.get("issueCodeHints", ""),
+        )
+        enriched += 1
+    metadata["recentPageSource"] = source_label
+    metadata["recentPageOutcomeHints"] = str(enriched)
+
+
+def read_recent_page(args: argparse.Namespace) -> tuple[str, str]:
+    if args.recent_page_input:
+        path = args.recent_page_input if args.recent_page_input.is_absolute() else ROOT / args.recent_page_input
+        return path.as_posix(), path.read_text(encoding="utf-8")
+    request = Request(
+        args.recent_page_url,
+        headers={
+            "User-Agent": os.environ.get(
+                "GAO_PROTEST_FEED_USER_AGENT",
+                "lobby-capture-simulator/1.0 (+https://github.com/Jacoba1100254352/lobby-capture-simulator)",
+            )
+        },
+    )
+    try:
+        with urlopen(request, timeout=args.timeout_seconds) as response:
+            encoding = response.headers.get_content_charset() or "utf-8"
+            return args.recent_page_url, response.read().decode(encoding, errors="replace")
+    except HTTPError as exc:
+        detail = exc.read().decode("utf-8", errors="replace")[:300]
+        raise RuntimeError(f"GAO recent page HTTP {exc.code}: {detail}") from exc
+    except URLError as exc:
+        raise RuntimeError(f"GAO recent page request failed: {exc.reason}") from exc
+
+
+def recent_page_outcomes(html_text: str) -> dict[str, str]:
+    tokens = visible_text_tokens(html_text)
+    outcomes: dict[str, str] = {}
+    for index, token in enumerate(tokens):
+        b_numbers = split_b_numbers(token)
+        if not b_numbers:
+            continue
+        outcome = ""
+        for previous in reversed(tokens[max(0, index - 8) : index]):
+            candidate = outcome_hint(previous)
+            if candidate:
+                outcome = candidate
+                break
+        if not outcome:
+            continue
+        for b_number in b_numbers:
+            outcomes.setdefault(b_number, outcome)
+    return outcomes
+
+
+def visible_text_tokens(html_text: str) -> list[str]:
+    parser = VisibleTextParser()
+    parser.feed(html_text)
+    return [token for token in (clean_text(value) for value in parser.tokens) if token]
+
+
+class VisibleTextParser(HTMLParser):
+    def __init__(self) -> None:
+        super().__init__(convert_charrefs=True)
+        self.tokens: list[str] = []
+        self._skip_depth = 0
+
+    def handle_starttag(self, tag: str, attrs: list[tuple[str, str | None]]) -> None:
+        if tag.lower() in {"script", "style", "noscript"}:
+            self._skip_depth += 1
+
+    def handle_endtag(self, tag: str) -> None:
+        if tag.lower() in {"script", "style", "noscript"} and self._skip_depth:
+            self._skip_depth -= 1
+
+    def handle_data(self, data: str) -> None:
+        if not self._skip_depth and data.strip():
+            self.tokens.append(data)
+
+
+def outcome_for_row(row: dict[str, str], outcomes: dict[str, str]) -> str:
+    for value in (row.get("protestId", ""), row.get("guid", ""), row.get("sourceUrl", "")):
+        for b_number in split_b_numbers(value):
+            if b_number in outcomes:
+                return outcomes[b_number]
+    return ""
+
+
+def split_b_numbers(value: str) -> list[str]:
+    found: list[str] = []
+    for match in B_NUMBER_RE.finditer(value or ""):
+        found.extend(part.strip().upper() for part in match.group(0).split(",") if part.strip())
+    return list(dict.fromkeys(found))
 
 
 def parse_feed(xml_text: str, source_label: str, max_items: int) -> tuple[list[dict[str, str]], dict[str, str]]:
@@ -321,6 +465,8 @@ def write_markdown(path: Path, rows: list[dict[str, str]], metadata: dict[str, s
         f"- Status: `{status}`",
         f"- Feed title: `{metadata.get('feedTitle', '')}`",
         f"- Feed source: `{metadata.get('source', '')}`",
+        f"- Recent page source: `{metadata.get('recentPageSource', '')}`",
+        f"- Outcome hints from recent page: `{metadata.get('recentPageOutcomeHints', '0')}`",
         f"- Last build date: `{metadata.get('lastBuildDate', '')}`",
         f"- Generated at: `{metadata.get('generatedAt', '')}`",
         f"- Items scanned: `{len(rows)}`",
@@ -329,6 +475,8 @@ def write_markdown(path: Path, rows: list[dict[str, str]], metadata: dict[str, s
     ]
     if error:
         lines.append(f"- Error: `{md(error)}`")
+    if metadata.get("recentPageError"):
+        lines.append(f"- Recent page enrichment error: `{md(metadata.get('recentPageError', ''))}`")
     lines.extend(
         [
             "",
@@ -338,17 +486,18 @@ def write_markdown(path: Path, rows: list[dict[str, str]], metadata: dict[str, s
             "",
             "## Likely Protest Rows",
             "",
-            "| Protest ID | Protester | Decision date | Agency hint | Awardee hint | Issue hints | Priority | Source |",
-            "| --- | --- | --- | --- | --- | --- | --- | --- |",
+            "| Protest ID | Protester | Decision date | Outcome hint | Agency hint | Awardee hint | Issue hints | Priority | Source |",
+            "| --- | --- | --- | --- | --- | --- | --- | --- | --- |",
         ]
     )
     if likely:
         for row in likely[:25]:
             lines.append(
-                "| {protest} | {title} | {date} | {agency} | {awardee} | {issues} | {priority} | {source} |".format(
+                "| {protest} | {title} | {date} | {outcome} | {agency} | {awardee} | {issues} | {priority} | {source} |".format(
                     protest=md(row["protestId"]),
                     title=md(row["title"]),
                     date=md(row["decisionDate"]),
+                    outcome=md(row["outcomeHint"]),
                     agency=md(row["agencyHint"]),
                     awardee=md(row["awardeeNameHint"]),
                     issues=md(row["issueCodeHints"]),
@@ -357,13 +506,13 @@ def write_markdown(path: Path, rows: list[dict[str, str]], metadata: dict[str, s
                 )
             )
     else:
-        lines.append("| none |  |  |  |  |  |  |  |")
+        lines.append("| none |  |  |  |  |  |  |  |  |")
     lines.extend(
         [
             "",
             "## Review Fields",
             "",
-            "The parser extracts B-numbers, protester names, decision dates, agency hints, awardee hints, coarse issue-code hints, and any outcome language visible in the RSS item. These are discovery fields only. Manual promotion still requires reviewed PIID, UEI or vendor linkage, outcome coding, issue coding, and source records in `data/calibration/first-wave/gao-protest-overlay.csv`.",
+            "The parser extracts B-numbers, protester names, decision dates, agency hints, awardee hints, coarse issue-code hints, outcome language visible in the RSS item, and short outcome sentences from the official recent-decisions page when available. These are discovery fields only. Manual promotion still requires reviewed PIID, UEI or vendor linkage, outcome coding, issue coding, and source records in `data/calibration/first-wave/gao-protest-overlay.csv`.",
         ]
     )
     path.write_text("\n".join(lines) + "\n", encoding="utf-8")
