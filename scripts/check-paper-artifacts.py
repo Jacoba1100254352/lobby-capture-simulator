@@ -100,6 +100,7 @@ FIRST_WAVE_LINKAGE_CANDIDATES_CSV = ROOT / "reports" / "first-wave-linkage-candi
 FIRST_WAVE_LINKAGE_CANDIDATE_RECORDS_CSV = ROOT / "reports" / "first-wave-linkage-candidate-records.csv"
 FIRST_WAVE_SOURCE_READINESS_MD = ROOT / "reports" / "first-wave-source-readiness.md"
 FIRST_WAVE_SOURCE_READINESS_CSV = ROOT / "reports" / "first-wave-source-readiness.csv"
+FIRST_WAVE_SOURCE_READINESS_TABLE = PAPER / "tables" / "first_wave_source_readiness.tex"
 CLAIM_POSTURE_AUDIT_MD = ROOT / "reports" / "claim-posture-audit.md"
 CLAIM_POSTURE_AUDIT_CSV = ROOT / "reports" / "claim-posture-audit.csv"
 VALIDATION_SCOPE_COVERAGE_MD = ROOT / "reports" / "validation-scope-coverage.md"
@@ -144,7 +145,7 @@ DOI_DEPOSIT_PACKAGE_CHECKSUM_CSV = ROOT / "dist" / "doi-deposit-package-checksum
 DOI_DEPOSIT_PACKAGE_CHECKSUM_JSON = ROOT / "dist" / "doi-deposit-package-checksum.json"
 DOI_DEPOSIT_PACKAGE_CHECKSUM_MD = ROOT / "dist" / "doi-deposit-package-checksum.md"
 ZENODO_DEPOSIT_METADATA_JSON = ROOT / "dist" / "zenodo-deposit-metadata.json"
-RELEASE_TAG = "paper-publication-readiness-2026-06-18-r184"
+RELEASE_TAG = "paper-publication-readiness-2026-06-18-r185"
 ARCHIVE_HANDOFF_REPORT_NAMES = {
     "archive-handoff-manifest.csv",
     "archive-handoff-manifest.json",
@@ -239,6 +240,7 @@ EXPECTED_ZIP_MEMBERS = {
     "tables/composite_weights.tex",
     "tables/validation_gap_snapshot.tex",
     "tables/claim_ladder.tex",
+    "tables/first_wave_source_readiness.tex",
     "tables/sensitivity_snapshot.tex",
     "tables/ablation_snapshot.tex",
     "tables/interaction_snapshot.tex",
@@ -2632,6 +2634,7 @@ def check_first_wave_source_readiness() -> list[str]:
         for path in (
             FIRST_WAVE_SOURCE_READINESS_MD,
             FIRST_WAVE_SOURCE_READINESS_CSV,
+            FIRST_WAVE_SOURCE_READINESS_TABLE,
         )
         if not path.exists()
     ]
@@ -2660,6 +2663,7 @@ def check_first_wave_source_readiness() -> list[str]:
         "sourceReadiness",
         "sourceProductGate",
         "sourceProductEvidence",
+        "readySourceProducts",
         "currentSourceProducts",
         "boundedOrProxySupport",
         "missingSourceProducts",
@@ -2740,9 +2744,22 @@ def check_first_wave_source_readiness() -> list[str]:
         for phrase in (
             "first-wave source-readiness audit",
             "reports/first-wave-source-readiness.md",
+            "Table~\\ref{tab:first-wave-source-readiness}",
+            "\\input{tables/first_wave_source_readiness.tex}",
         ):
             if phrase not in supplement:
                 failures.append(f"supplement does not disclose first-wave source readiness artifact: {phrase}")
+    table_text = FIRST_WAVE_SOURCE_READINESS_TABLE.read_text(encoding="utf-8")
+    for phrase in (
+        "First-wave source-readiness gate",
+        "Substitution elasticity",
+        "Procurement modification",
+        "Comment authenticity",
+        "Venue-shifting detection",
+        "candidate-only blocked",
+    ):
+        if phrase not in table_text:
+            failures.append(f"first-wave source readiness table missing phrase: {phrase}")
     return failures
 
 

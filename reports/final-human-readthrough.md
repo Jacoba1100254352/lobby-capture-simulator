@@ -3,7 +3,7 @@
 status: pending
 signed-off-by:
 signed-off-date:
-reviewed-release: paper-publication-readiness-2026-06-18-r184
+reviewed-release: paper-publication-readiness-2026-06-18-r185
 reviewed-commit:
 doi-archive:
 venue-target: Regulation & Governance
@@ -49,6 +49,6 @@ Before checking these items, review `reports/final-readthrough-evidence.md`. Tha
 
 2026-06-15 live-author-page access attempt: Codex checked `author-guidelines-url` from the release machine. The official URL was reachable at the HTTP header level, but the fetched HTML body was a Cloudflare "Just a moment..." challenge and did not expose the journal-specific author-guideline text.
 
-2026-06-18 live-author-page browser check carried forward for the r184 update: Codex used Playwright to load the official Regulation & Governance author page in a browser context. The page title was `Regulation & Governance` and the page exposed the journal-specific author guidelines, marked `Author Guidelines updated April 2025`. The check confirmed free-format first submission, double-anonymized review, at least three suggested reviewers, normal article submissions not normally accepted above 11,000 words, Research Forum limit of 6,000 words, preferred first-submission length of 8,000-10,000 words, abstract limit of 150 words, data sharing expected, LaTeX accepted with a peer-review PDF and source/supporting files, separate title-page/main-text/figure expectations, and separate supporting-information expectations. No superseding instruction was found that requires changing the generated review bundle. DOI archiving and human scholarly read-through signoff remain pending.
+2026-06-18 live-author-page browser check carried forward for the r185 update: Codex used Playwright to load the official Regulation & Governance author page in a browser context. The page title was `Regulation & Governance` and the page exposed the journal-specific author guidelines, marked `Author Guidelines updated April 2025`. The check confirmed free-format first submission, double-anonymized review, at least three suggested reviewers, normal article submissions not normally accepted above 11,000 words, Research Forum limit of 6,000 words, preferred first-submission length of 8,000-10,000 words, abstract limit of 150 words, data sharing expected, LaTeX accepted with a peer-review PDF and source/supporting files, separate title-page/main-text/figure expectations, and separate supporting-information expectations. No superseding instruction was found that requires changing the generated review bundle. DOI archiving and human scholarly read-through signoff remain pending.
 
 Record any final editorial changes requested before journal submission here. If changes are made after signoff, return `status` to `pending`, update `reviewed-release`, rerun `make paper-artifacts-check`, and repeat the read-through.

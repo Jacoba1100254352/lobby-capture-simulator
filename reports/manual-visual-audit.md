@@ -32,6 +32,7 @@ This report complements the scripted layout audit. Figure rows check generated S
 | `distortion_decomposition.tex` | layout pass | layout pass | layout pass | layout pass |  |
 | `experiment_design.tex` | layout pass | layout pass | layout pass | layout pass |  |
 | `first_wave_causal_protocols.tex` | layout pass | layout pass | layout pass | layout pass |  |
+| `first_wave_source_readiness.tex` | layout pass | layout pass | layout pass | layout pass |  |
 | `full_campaign_appendix.tex` | layout pass | layout pass | layout pass | layout pass |  |
 | `interaction_snapshot.tex` | layout pass | layout pass | layout pass | layout pass |  |
 | `mechanism_comparison.tex` | layout pass | layout pass | layout pass | layout pass |  |

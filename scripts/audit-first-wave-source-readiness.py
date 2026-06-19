@@ -9,6 +9,7 @@ from pathlib import Path
 
 
 REPORTS = Path("reports")
+PAPER_TABLES = Path("paper") / "tables"
 PROTOCOLS = REPORTS / "first-wave-causal-protocols.csv"
 SOURCE_CAPABILITIES = REPORTS / "source-capability-audit.csv"
 SOURCE_PANELS = REPORTS / "source-panel-inventory.csv"
@@ -29,6 +30,7 @@ TARGET_ORDER = [
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--reports", type=Path, default=REPORTS)
+    parser.add_argument("--paper-tables", type=Path, default=PAPER_TABLES)
     args = parser.parse_args()
 
     protocols = keyed_rows(args.reports / PROTOCOLS.name, "targetKey")
@@ -45,10 +47,13 @@ def main() -> int:
         if target in protocols
     ]
     args.reports.mkdir(parents=True, exist_ok=True)
+    args.paper_tables.mkdir(parents=True, exist_ok=True)
     write_csv(args.reports / "first-wave-source-readiness.csv", rows)
     write_markdown(args.reports / "first-wave-source-readiness.md", rows)
+    write_latex_table(args.paper_tables / "first_wave_source_readiness.tex", rows)
     print(f"Wrote {args.reports / 'first-wave-source-readiness.csv'}")
     print(f"Wrote {args.reports / 'first-wave-source-readiness.md'}")
+    print(f"Wrote {args.paper_tables / 'first_wave_source_readiness.tex'}")
     return 0
 
 
@@ -119,12 +124,14 @@ def readiness_row(
     row["candidateOnlySourceProducts"] = product_gate["candidateOnlyProducts"] or "none"
     row["schemaIssueSourceProducts"] = product_gate["schemaIssueProducts"] or "none"
     row["blockingSourceProducts"] = product_gate["blockingProducts"] or "none"
+    row["readySourceProducts"] = "; ".join(ready_labels) if ready_labels else "none"
     return {
         "targetKey": target,
         "protocolStatus": protocol.get("protocolStatus", ""),
         "sourceReadiness": row["sourceReadiness"],
         "sourceProductGate": product_gate["sourceProductGate"],
         "sourceProductEvidence": product_gate["sourceProductEvidence"],
+        "readySourceProducts": row["readySourceProducts"],
         "currentSourceProducts": row["currentSourceProducts"],
         "boundedOrProxySupport": row["boundedOrProxySupport"],
         "missingSourceProducts": row["missingSourceProducts"],
@@ -537,6 +544,7 @@ def write_csv(path: Path, rows: list[dict[str, str]]) -> None:
         "sourceReadiness",
         "sourceProductGate",
         "sourceProductEvidence",
+        "readySourceProducts",
         "currentSourceProducts",
         "boundedOrProxySupport",
         "missingSourceProducts",
@@ -601,6 +609,82 @@ def write_markdown(path: Path, rows: list[dict[str, str]]) -> None:
 
 def md(value: str) -> str:
     return str(value).replace("|", "\\|").replace("\n", " ")
+
+
+def write_latex_table(path: Path, rows: list[dict[str, str]]) -> None:
+    lines = [
+        "\\begin{footnotesize}",
+        "\\begin{longtable}{p{0.18\\linewidth}p{0.18\\linewidth}p{0.25\\linewidth}p{0.25\\linewidth}}",
+        "\\caption{First-wave source-readiness gate for causal-calibration upgrades.}\\label{tab:first-wave-source-readiness}\\\\",
+        "\\toprule",
+        "Target & Source-product gate & Ready products & Blocking products \\\\",
+        "\\midrule",
+        "\\endfirsthead",
+        "\\toprule",
+        "Target & Source-product gate & Ready products & Blocking products \\\\",
+        "\\midrule",
+        "\\endhead",
+    ]
+    for row in rows:
+        lines.append(
+            "{target} & {gate} & {ready} & {blocking} \\\\".format(
+                target=tex(short_target(row.get("targetKey", ""))),
+                gate=tex(readable_gate(row.get("sourceProductGate", ""))),
+                ready=tex(compact_items(row.get("readySourceProducts", ""))),
+                blocking=tex(compact_items(row.get("blockingSourceProducts", ""))),
+            )
+        )
+    lines.extend([
+        "\\bottomrule",
+        "\\end{longtable}",
+        "\\end{footnotesize}",
+        "",
+    ])
+    path.write_text("\n".join(lines), encoding="utf-8")
+
+
+def short_target(target: str) -> str:
+    labels = {
+        "substitution-elasticity": "Substitution elasticity",
+        "procurement-modification-causal-capture": "Procurement modification",
+        "comment-authenticity-and-uptake-effect": "Comment authenticity",
+        "venue-shifting-detection-effect": "Venue-shifting detection",
+    }
+    return labels.get(target, target.replace("-", " "))
+
+
+def readable_gate(value: str) -> str:
+    labels = {
+        "schema_gate_ready": "ready",
+        "candidate_only_blocked": "candidate-only blocked",
+        "schema_gate_blocked": "schema blocked",
+        "schema_gate_missing_report": "report missing",
+        "schema_gate_not_evaluated": "not evaluated",
+    }
+    return labels.get(value, value.replace("_", " "))
+
+
+def compact_items(value: str) -> str:
+    value = value.strip()
+    if not value or value == "none":
+        return "none"
+    return "; ".join(item.strip() for item in value.split(";") if item.strip())
+
+
+def tex(value: str) -> str:
+    replacements = {
+        "\\": "\\textbackslash{}",
+        "&": "\\&",
+        "%": "\\%",
+        "$": "\\$",
+        "#": "\\#",
+        "_": "\\_",
+        "{": "\\{",
+        "}": "\\}",
+        "~": "\\textasciitilde{}",
+        "^": "\\textasciicircum{}",
+    }
+    return "".join(replacements.get(char, char) for char in str(value))
 
 
 if __name__ == "__main__":
