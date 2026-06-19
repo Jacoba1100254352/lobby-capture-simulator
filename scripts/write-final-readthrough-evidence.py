@@ -203,12 +203,22 @@ def layout_visual_row() -> dict[str, str]:
     submission = keyed_rows(REPORTS / "submission-readiness.csv", "gate")
     layout = submission.get("layout-and-visual-audit", {})
     latex_pass = all(row.get("status") == "pass" for row in read_csv(REPORTS / "latex-log-audit.csv"))
-    status = "automated_support_present" if layout.get("status") == "ready" and latex_pass else "manual_review_required"
+    structure_rows = read_csv(REPORTS / "paper-structure-audit.csv")
+    structure_failures = [row for row in structure_rows if row.get("status") == "fail"]
+    status = (
+        "automated_support_present"
+        if layout.get("status") == "ready" and latex_pass and structure_rows and not structure_failures
+        else "manual_review_required"
+    )
     return evidence_row(
         EXPECTED_ITEMS[6],
         status,
-        f"layoutVisualGate={layout.get('status', 'missing')}; latexLogsPass={'yes' if latex_pass else 'no'}",
-        "reports/paper-layout-audit.md; reports/manual-visual-audit.md; reports/latex-log-audit.md",
+        (
+            f"layoutVisualGate={layout.get('status', 'missing')}; "
+            f"latexLogsPass={'yes' if latex_pass else 'no'}; "
+            f"structureFailures={len(structure_failures)}"
+        ),
+        "reports/paper-layout-audit.md; reports/paper-structure-audit.md; reports/manual-visual-audit.md; reports/latex-log-audit.md",
         "Visually inspect the Wiley PDF one last time, especially figure placement and table readability.",
     )
 

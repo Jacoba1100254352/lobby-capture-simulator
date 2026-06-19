@@ -1,0 +1,25 @@
+document,check,status,evidence,nextAction
+main,duplicate-labels,pass,none,Ensure every LaTeX label is unique within the expanded source.
+main,missing-reference-labels,pass,none,Define each referenced table or figure label.
+main,reference-prefixes,pass,all Figure/Table references use matching label prefixes,Use Figure references only for fig: labels and Table references only for tab: labels.
+main,fig-first-reference-order,pass,figure first references follow source order,Reference figures in the order they appear in the expanded source.
+main,tab-first-reference-order,pass,table first references follow source order,Reference tables in the order they appear in the expanded source.
+main,duplicate-captions,pass,none,Keep repeated floats from carrying duplicate captions in the same expanded source.
+main,unreferenced-floats,info,none,Included but unreferenced floats are allowed in supporting material; inspect if the main article grows.
+main,summary,info,figures=6; tables=14; references=20,Use this count to spot accidental float drift after manuscript edits.
+wiley,duplicate-labels,pass,none,Ensure every LaTeX label is unique within the expanded source.
+wiley,missing-reference-labels,pass,none,Define each referenced table or figure label.
+wiley,reference-prefixes,pass,all Figure/Table references use matching label prefixes,Use Figure references only for fig: labels and Table references only for tab: labels.
+wiley,fig-first-reference-order,pass,figure first references follow source order,Reference figures in the order they appear in the expanded source.
+wiley,tab-first-reference-order,pass,table first references follow source order,Reference tables in the order they appear in the expanded source.
+wiley,duplicate-captions,pass,none,Keep repeated floats from carrying duplicate captions in the same expanded source.
+wiley,unreferenced-floats,info,none,Included but unreferenced floats are allowed in supporting material; inspect if the main article grows.
+wiley,summary,info,figures=6; tables=14; references=20,Use this count to spot accidental float drift after manuscript edits.
+supplement,duplicate-labels,pass,none,Ensure every LaTeX label is unique within the expanded source.
+supplement,missing-reference-labels,pass,none,Define each referenced table or figure label.
+supplement,reference-prefixes,pass,all Figure/Table references use matching label prefixes,Use Figure references only for fig: labels and Table references only for tab: labels.
+supplement,fig-first-reference-order,pass,figure first references follow source order,Reference figures in the order they appear in the expanded source.
+supplement,tab-first-reference-order,pass,table first references follow source order,Reference tables in the order they appear in the expanded source.
+supplement,duplicate-captions,pass,none,Keep repeated floats from carrying duplicate captions in the same expanded source.
+supplement,unreferenced-floats,info,none,Included but unreferenced floats are allowed in supporting material; inspect if the main article grows.
+supplement,summary,info,figures=0; tables=6; references=6,Use this count to spot accidental float drift after manuscript edits.

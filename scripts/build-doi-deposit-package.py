@@ -169,6 +169,16 @@ PACKAGE_INPUTS = [
         "reference-integrity-audit",
     ),
     PackageInput(
+        "reports/paper-structure-audit.csv",
+        "readiness/paper-structure-audit.csv",
+        "paper-structure-audit",
+    ),
+    PackageInput(
+        "reports/paper-structure-audit.md",
+        "readiness/paper-structure-audit.md",
+        "paper-structure-audit",
+    ),
+    PackageInput(
         "reports/final-readthrough-evidence.csv",
         "readiness/final-readthrough-evidence.csv",
         "final-readthrough-evidence",

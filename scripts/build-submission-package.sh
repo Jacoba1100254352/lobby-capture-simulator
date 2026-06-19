@@ -94,6 +94,7 @@ cp "$ROOT_DIR/reports/submission-readiness.md" "$STAGING_DIR/supporting-informat
 cp "$ROOT_DIR/reports/reviewer-risk-register.md" "$STAGING_DIR/supporting-information/reviewer-risk-register.md"
 cp "$ROOT_DIR/reports/latex-log-audit.md" "$STAGING_DIR/supporting-information/latex-log-audit.md"
 cp "$ROOT_DIR/reports/paper-layout-audit.md" "$STAGING_DIR/supporting-information/paper-layout-audit.md"
+cp "$ROOT_DIR/reports/paper-structure-audit.md" "$STAGING_DIR/supporting-information/paper-structure-audit.md"
 cp "$ROOT_DIR/reports/manual-visual-audit.md" "$STAGING_DIR/supporting-information/manual-visual-audit.md"
 cp "$ROOT_DIR/reports/final-human-readthrough.md" "$STAGING_DIR/supporting-information/final-human-readthrough.md"
 cp "$ROOT_DIR/reports/final-human-readthrough-audit.md" "$STAGING_DIR/supporting-information/final-human-readthrough-audit.md"

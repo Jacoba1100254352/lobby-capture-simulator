@@ -56,6 +56,8 @@ PROCUREMENT_REFRESH_READINESS_CSV = ROOT / "reports" / "procurement-refresh-read
 FIRST_WAVE_PROCUREMENT_SOURCE_ACQUISITION_MD = ROOT / "reports" / "first-wave-procurement-source-acquisition.md"
 FIRST_WAVE_PROCUREMENT_SOURCE_ACQUISITION_CSV = ROOT / "reports" / "first-wave-procurement-source-acquisition.csv"
 LAYOUT_AUDIT = ROOT / "reports" / "paper-layout-audit.md"
+PAPER_STRUCTURE_AUDIT_CSV = ROOT / "reports" / "paper-structure-audit.csv"
+PAPER_STRUCTURE_AUDIT_MD = ROOT / "reports" / "paper-structure-audit.md"
 MANUAL_VISUAL_AUDIT = ROOT / "reports" / "manual-visual-audit.md"
 CLAIM_BOUNDARY_AUDIT_MD = ROOT / "reports" / "claim-boundary-audit.md"
 CLAIM_BOUNDARY_AUDIT_CSV = ROOT / "reports" / "claim-boundary-audit.csv"
@@ -145,7 +147,7 @@ DOI_DEPOSIT_PACKAGE_CHECKSUM_CSV = ROOT / "dist" / "doi-deposit-package-checksum
 DOI_DEPOSIT_PACKAGE_CHECKSUM_JSON = ROOT / "dist" / "doi-deposit-package-checksum.json"
 DOI_DEPOSIT_PACKAGE_CHECKSUM_MD = ROOT / "dist" / "doi-deposit-package-checksum.md"
 ZENODO_DEPOSIT_METADATA_JSON = ROOT / "dist" / "zenodo-deposit-metadata.json"
-RELEASE_TAG = "paper-publication-readiness-2026-06-18-r187"
+RELEASE_TAG = "paper-publication-readiness-2026-06-18-r188"
 ARCHIVE_HANDOFF_REPORT_NAMES = {
     "archive-handoff-manifest.csv",
     "archive-handoff-manifest.json",
@@ -298,6 +300,7 @@ EXPECTED_ZIP_MEMBERS = {
     "supporting-information/calibration-queue.md",
     "supporting-information/calibration-readiness.md",
     "supporting-information/paper-layout-audit.md",
+    "supporting-information/paper-structure-audit.md",
     "supporting-information/manual-visual-audit.md",
     "supporting-information/final-human-readthrough.md",
     "supporting-information/final-human-readthrough-audit.md",
@@ -357,6 +360,8 @@ def main() -> int:
             LITERATURE_POSITIONING_AUDIT_MD,
             REFERENCE_INTEGRITY_AUDIT_CSV,
             REFERENCE_INTEGRITY_AUDIT_MD,
+            PAPER_STRUCTURE_AUDIT_CSV,
+            PAPER_STRUCTURE_AUDIT_MD,
             FINAL_READTHROUGH_EVIDENCE_CSV,
             FINAL_READTHROUGH_EVIDENCE_MD,
         ])
@@ -394,6 +399,7 @@ def main() -> int:
     failures.extend(check_submission_readiness_audit())
     failures.extend(check_reviewer_risk_register())
     failures.extend(check_latex_log_audit())
+    failures.extend(check_paper_structure_audit())
     failures.extend(check_layout_and_visual_reports())
     failures.extend(check_archive_metadata())
     failures.extend(check_archive_handoff_manifest())
@@ -488,6 +494,8 @@ def check_freshness() -> list[str]:
         (LITERATURE_POSITIONING_AUDIT_MD, literature_positioning_audit_inputs()),
         (REFERENCE_INTEGRITY_AUDIT_CSV, reference_integrity_audit_inputs()),
         (REFERENCE_INTEGRITY_AUDIT_MD, reference_integrity_audit_inputs()),
+        (PAPER_STRUCTURE_AUDIT_CSV, paper_structure_audit_inputs()),
+        (PAPER_STRUCTURE_AUDIT_MD, paper_structure_audit_inputs()),
         (FINAL_READTHROUGH_EVIDENCE_CSV, final_readthrough_evidence_inputs()),
         (FINAL_READTHROUGH_EVIDENCE_MD, final_readthrough_evidence_inputs()),
         (REVIEWER_RISK_REGISTER_CSV, reviewer_risk_register_inputs()),
@@ -588,6 +596,7 @@ def submission_inputs() -> list[Path]:
         SUBMISSION_READINESS_MD,
         LATEX_LOG_AUDIT_MD,
         ROOT / "reports" / "paper-layout-audit.md",
+        PAPER_STRUCTURE_AUDIT_MD,
         ROOT / "reports" / "manual-visual-audit.md",
         *report_bundle_inputs(),
         PAPER / ".wiley-build" / "USG.cls",
@@ -713,6 +722,8 @@ def doi_deposit_package_inputs() -> list[Path]:
         LITERATURE_POSITIONING_AUDIT_MD,
         REFERENCE_INTEGRITY_AUDIT_CSV,
         REFERENCE_INTEGRITY_AUDIT_MD,
+        PAPER_STRUCTURE_AUDIT_CSV,
+        PAPER_STRUCTURE_AUDIT_MD,
         FINAL_HUMAN_READTHROUGH,
         FINAL_HUMAN_READTHROUGH_AUDIT_CSV,
         FINAL_HUMAN_READTHROUGH_AUDIT_MD,
@@ -747,6 +758,8 @@ def final_readthrough_evidence_inputs() -> list[Path]:
         LATEX_LOG_AUDIT_CSV,
         LATEX_LOG_AUDIT_MD,
         ROOT / "reports" / "paper-layout-audit.md",
+        PAPER_STRUCTURE_AUDIT_CSV,
+        PAPER_STRUCTURE_AUDIT_MD,
         ROOT / "reports" / "manual-visual-audit.md",
         ARCHIVE_HANDOFF_CSV,
         ARCHIVE_HANDOFF_JSON,
@@ -778,6 +791,18 @@ def reference_integrity_audit_inputs() -> list[Path]:
         ROOT / "paper" / "sections" / "supplement-body.tex",
         ROOT / "paper" / "references.bib",
         ROOT / "scripts" / "audit-reference-integrity.py",
+    ]
+
+
+def paper_structure_audit_inputs() -> list[Path]:
+    return [
+        ROOT / "paper" / "strategic-channel-substitution-regulatory-capture.tex",
+        ROOT / "paper" / "regulation-governance-wiley.tex",
+        ROOT / "paper" / "supplement.tex",
+        *sorted((PAPER / "sections").glob("*.tex")),
+        *sorted((PAPER / "tables").glob("*.tex")),
+        *sorted((PAPER / "figures").glob("*.tex")),
+        ROOT / "scripts" / "audit-paper-structure.py",
     ]
 
 
@@ -3307,6 +3332,8 @@ def check_final_readthrough_evidence() -> list[str]:
         "automated_support_present",
         "external_manual_required",
         "Human signoff remains controlled by `reports/final-human-readthrough.md`",
+        "structureFailures=0",
+        "reports/paper-structure-audit.md",
         "scholarly-readthrough-checklist-14",
     ):
         if phrase not in text:
@@ -3361,6 +3388,40 @@ def check_latex_log_audit() -> list[str]:
     for phrase in required_text:
         if phrase not in text:
             failures.append(f"LaTeX log audit markdown missing phrase: {phrase}")
+    return failures
+
+
+def check_paper_structure_audit() -> list[str]:
+    failures: list[str] = []
+    missing = [
+        path.relative_to(ROOT)
+        for path in (PAPER_STRUCTURE_AUDIT_CSV, PAPER_STRUCTURE_AUDIT_MD)
+        if not path.exists()
+    ]
+    if missing:
+        return [f"missing paper structure audit artifact: {path}" for path in missing]
+
+    with PAPER_STRUCTURE_AUDIT_CSV.open(newline="", encoding="utf-8") as source:
+        rows = list(csv.DictReader(source))
+    if not rows:
+        failures.append("paper structure audit has no rows")
+    for row in rows:
+        if row.get("status") == "fail":
+            failures.append(
+                "paper structure audit has failing row: "
+                f"{row.get('document', '')}/{row.get('check', '')}: {row.get('evidence', '')}"
+            )
+    text = PAPER_STRUCTURE_AUDIT_MD.read_text(encoding="utf-8")
+    required_text = [
+        "Paper Structure Audit",
+        "Failures: `0`",
+        "fig-first-reference-order",
+        "tab-first-reference-order",
+        "unreferenced-floats",
+    ]
+    for phrase in required_text:
+        if phrase not in text:
+            failures.append(f"paper structure audit markdown missing phrase: {phrase}")
     return failures
 
 
@@ -3613,6 +3674,8 @@ def check_doi_deposit_package() -> list[str]:
         "readiness/literature-positioning-audit.md",
         "readiness/reference-integrity-audit.csv",
         "readiness/reference-integrity-audit.md",
+        "readiness/paper-structure-audit.csv",
+        "readiness/paper-structure-audit.md",
         "readiness/final-readthrough-evidence.csv",
         "readiness/final-readthrough-evidence.md",
     }

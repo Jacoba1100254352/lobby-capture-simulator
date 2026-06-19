@@ -84,6 +84,8 @@ reports/*.md
 !reports/reggov-guidelines-readiness.csv
 !reports/reggov-guidelines-readiness.md
 !reports/paper-layout-audit.md
+!reports/paper-structure-audit.csv
+!reports/paper-structure-audit.md
 !reports/manual-visual-audit.md
 !reports/final-human-readthrough.md
 !reports/final-readthrough-evidence.csv
