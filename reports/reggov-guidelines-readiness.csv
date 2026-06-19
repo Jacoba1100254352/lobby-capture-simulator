@@ -1,6 +1,6 @@
 gate,status,evidence,nextAction
 journal-target-and-article-type,ready,local title=yes; Wiley title=yes; journal metadata=yes; article type=yes; target comment=yes,Keep the Wiley wrapper targeted to Regulation & Governance as an original article.
-word-limit,ready,approximate words=8483; preferred range=8000-10000; within preferred=yes; normal upper limit=11000; Research Forum limit=6000,Keep the manuscript in the preferred range when feasible and below the normal upper limit.
+word-limit,ready,approximate words=8502; preferred range=8000-10000; within preferred=yes; normal upper limit=11000; Research Forum limit=6000,Keep the manuscript in the preferred range when feasible and below the normal upper limit.
 abstract-and-keywords,ready,local abstract=yes; local keywords=yes; Wiley abstract=yes; Wiley keywords=yes; abstract words <= 150=yes; abstract words=99,Retain extractable abstract and keyword metadata in both local and Wiley wrappers.
 title-page-metadata,ready,local author=yes; local affiliation=yes; local country=yes; local email=yes; Wiley author=yes; Wiley address=yes; Wiley correspondence=yes,"Keep author name, affiliation, country, correspondence, and email metadata present."
 double-anonymized-review-package,ready,zip exists=yes; ready gates=8/8; blocked/missing gates=none,"Keep the separate blinded review ZIP compiled, redacted, and paired with a separate title page."

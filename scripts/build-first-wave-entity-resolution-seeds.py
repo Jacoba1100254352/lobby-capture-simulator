@@ -120,9 +120,13 @@ def canonical_actor_rows(
                 "state": "not_reviewed",
                 "candidateOnly": "true",
                 "candidateStatus": CANDIDATE_MARKER,
+                "linkageEvidenceClass": candidate_evidence_class(candidate),
+                "reviewPriority": candidate_review_priority(candidate),
+                "reviewPriorityScore": candidate_review_score(candidate),
+                "reviewRiskFlags": candidate_risk_flags(candidate),
                 "notes": (
                     f"{CLAIM_BOUNDARY}; sourceRecordCount={candidate.get('sourceRecordCount', '0')}; "
-                    f"venues={candidate.get('venues', '')}"
+                    f"venues={candidate.get('venues', '')}; {candidate_review_note(candidate)}"
                 ),
             }
         )
@@ -150,7 +154,11 @@ def alias_review_rows(
                     "reviewDate": "not_reviewed",
                     "confidenceScore": "0.3500",
                     "candidateOnly": "true",
-                    "notes": CLAIM_BOUNDARY,
+                    "linkageEvidenceClass": candidate_evidence_class(candidate),
+                    "reviewPriority": candidate_review_priority(candidate),
+                    "reviewPriorityScore": candidate_review_score(candidate),
+                    "reviewRiskFlags": candidate_risk_flags(candidate),
+                    "notes": f"{CLAIM_BOUNDARY}; {candidate_review_note(candidate)}",
                 }
             )
             if len(rows) >= MAX_ALIAS_ROWS:
@@ -184,6 +192,10 @@ def issue_crosswalk_rows(
                 "reviewDate": "not_reviewed",
                 "candidateOnly": "true",
                 "candidateStatus": CANDIDATE_MARKER,
+                "linkageEvidenceClass": candidate_evidence_class_by_issue(candidates, issue),
+                "reviewPriority": "P2-manual-review",
+                "reviewPriorityScore": "0.4500",
+                "reviewRiskFlags": "issue-crosswalk-unreviewed",
             }
         )
     while len(rows) < 3:
@@ -202,6 +214,10 @@ def issue_crosswalk_rows(
                 "reviewDate": "not_reviewed",
                 "candidateOnly": "true",
                 "candidateStatus": CANDIDATE_MARKER,
+                "linkageEvidenceClass": "issue-placeholder",
+                "reviewPriority": "P3-manual-review",
+                "reviewPriorityScore": "0.3500",
+                "reviewRiskFlags": "issue-placeholder",
             }
         )
     return rows
@@ -230,6 +246,10 @@ def false_match_rows(
                     "reviewDate": "not_reviewed",
                     "confidenceScore": "0.3500",
                     "candidateOnly": "true",
+                    "linkageEvidenceClass": candidate_evidence_class(candidate),
+                    "reviewPriority": candidate_review_priority(candidate),
+                    "reviewPriorityScore": candidate_review_score(candidate),
+                    "reviewRiskFlags": candidate_risk_flags(candidate),
                 }
             )
             if len(rows) >= MAX_FALSE_MATCH_ROWS:
@@ -268,6 +288,7 @@ def linked_actor_issue_rows(
     rows: list[dict[str, str]] = []
     candidate_by_id = {candidate.get("candidateActorId", ""): candidate for candidate in candidates}
     for actor_id in sorted(candidate_by_id, key=lambda key: sort_key(candidate_by_id[key])):
+        candidate = candidate_by_id.get(actor_id, {})
         for record in records_by_actor.get(actor_id, []):
             rows.append(
                 {
@@ -285,7 +306,11 @@ def linked_actor_issue_rows(
                     "jurisdiction": "candidate_unreviewed",
                     "candidateOnly": "true",
                     "candidateStatus": CANDIDATE_MARKER,
-                    "notes": CLAIM_BOUNDARY,
+                    "linkageEvidenceClass": candidate_evidence_class(candidate),
+                    "reviewPriority": candidate_review_priority(candidate),
+                    "reviewPriorityScore": candidate_review_score(candidate),
+                    "reviewRiskFlags": candidate_risk_flags(candidate),
+                    "notes": f"{CLAIM_BOUNDARY}; {candidate_review_note(candidate)}",
                 }
             )
             if len(rows) >= MAX_LINKED_ROWS:
@@ -332,9 +357,14 @@ def actor_issue_time_spine_rows(
                     "matchConfidence": source_row.get("matchConfidence", "0.3500"),
                     "candidateOnly": "true",
                     "candidateStatus": CANDIDATE_MARKER,
+                    "linkageEvidenceClass": source_row.get("linkageEvidenceClass", "candidate-name-overlap"),
+                    "reviewPriority": source_row.get("reviewPriority", "P3-manual-review"),
+                    "reviewPriorityScore": source_row.get("reviewPriorityScore", "0.3500"),
+                    "reviewRiskFlags": source_row.get("reviewRiskFlags", "candidate-review-required"),
                     "notes": (
                         f"{CLAIM_BOUNDARY}; {period_label} periodization is a review scaffold, "
-                        "not observed pre/post substitution evidence"
+                        "not observed pre/post substitution evidence; "
+                        f"{source_row.get('reviewPriority', 'P3-manual-review')} review queue"
                     ),
                 }
             )
@@ -378,9 +408,14 @@ def substitution_comparison_group_rows(
                     "exclusionReason": "candidate_unreviewed",
                     "candidateOnly": "true",
                     "candidateStatus": CANDIDATE_MARKER,
+                    "linkageEvidenceClass": candidate_evidence_class(candidate),
+                    "reviewPriority": candidate_review_priority(candidate),
+                    "reviewPriorityScore": candidate_review_score(candidate),
+                    "reviewRiskFlags": candidate_risk_flags(candidate),
                     "notes": (
                         f"{CLAIM_BOUNDARY}; HLOGA windows are encoded for design review only; "
-                        "the 2024 candidate snapshot does not supply observed pre/post rows"
+                        "the 2024 candidate snapshot does not supply observed pre/post rows; "
+                        f"{candidate_review_note(candidate)}"
                     ),
                 }
             )
@@ -391,11 +426,63 @@ def substitution_comparison_group_rows(
 
 def sort_key(candidate: dict[str, str]) -> tuple[int, int, float, str]:
     return (
+        priority_rank(candidate.get("reviewPriority", "")),
+        -float_or_zero(candidate.get("reviewPriorityScore", "")),
         -int_or_zero(candidate.get("venueCount", "")),
         -int_or_zero(candidate.get("sourceSystemCount", "")),
         -float_or_zero(candidate.get("totalActivityAmount", "")),
         candidate.get("normalizedName", ""),
     )
+
+
+def candidate_review_priority(candidate: dict[str, str]) -> str:
+    return candidate.get("reviewPriority") or "P3-manual-review"
+
+
+def candidate_review_score(candidate: dict[str, str]) -> str:
+    return candidate.get("reviewPriorityScore") or "0.3500"
+
+
+def candidate_evidence_class(candidate: dict[str, str]) -> str:
+    return candidate.get("linkageEvidenceClass") or "candidate-name-overlap"
+
+
+def candidate_risk_flags(candidate: dict[str, str]) -> str:
+    return candidate.get("reviewRiskFlags") or "candidate-review-required"
+
+
+def candidate_review_note(candidate: dict[str, str]) -> str:
+    return (
+        f"reviewPriority={candidate_review_priority(candidate)}; "
+        f"reviewPriorityScore={candidate_review_score(candidate)}; "
+        f"linkageEvidenceClass={candidate_evidence_class(candidate)}; "
+        f"reviewRiskFlags={candidate_risk_flags(candidate)}"
+    )
+
+
+def priority_rank(priority: str) -> int:
+    if priority.startswith("P1"):
+        return 0
+    if priority.startswith("P2"):
+        return 1
+    if priority.startswith("P3"):
+        return 2
+    return 3
+
+
+def candidate_evidence_class_by_issue(candidates: list[dict[str, str]], issue: str) -> str:
+    matching = [
+        candidate
+        for candidate in candidates
+        if issue in split_semicolon(candidate.get("issueDomains", ""))
+    ]
+    if any(candidate_evidence_class(candidate) == "shared-source-identifier-overlap" for candidate in matching):
+        return "shared-source-identifier-overlap"
+    if any(candidate_evidence_class(candidate) == "three-plus-venue-name-overlap" for candidate in matching):
+        return "three-plus-venue-name-overlap"
+    if matching:
+        return "cross-venue-name-overlap"
+    return "issue-crosswalk-candidate"
 
 
 def infer_actor_type(candidate: dict[str, str]) -> str:

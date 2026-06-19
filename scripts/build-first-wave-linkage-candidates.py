@@ -207,6 +207,9 @@ def summarize_candidates(records: list[dict[str, str]]) -> list[dict[str, str]]:
         venues = sorted({row["venue"] for row in members})
         issues = sorted({row["issueDomain"] for row in members if row["issueDomain"]})
         total_amount = sum(parse_float(row.get("activityAmount", "")) for row in members)
+        evidence_class = linkage_evidence_class(members, source_systems, venues)
+        priority_score = review_priority_score(members, source_systems, venues, total_amount)
+        risk_flags = review_risk_flags(members, source_systems, venues, issues)
         display_counter = Counter(row["displayName"] for row in members if row["displayName"])
         display_name = display_counter.most_common(1)[0][0] if display_counter else members[0]["normalizedName"]
         samples = []
@@ -227,10 +230,14 @@ def summarize_candidates(records: list[dict[str, str]]) -> list[dict[str, str]]:
                 "sourceRecordCount": str(len(members)),
                 "issueDomains": "; ".join(issues),
                 "totalActivityAmount": format_float(total_amount),
+                "linkageEvidenceClass": evidence_class,
+                "reviewPriority": review_priority(priority_score),
+                "reviewPriorityScore": format_float(priority_score),
+                "reviewRiskFlags": "; ".join(risk_flags) if risk_flags else "none",
                 "sourceRecordSamples": " | ".join(samples),
                 "candidateUse": "seed canonical actor table, alias review sample, and linked actor-issue-venue-time panel",
                 "reviewAction": (
-                    "manually adjudicate aliases, source identifiers, false positives, and issue comparability "
+                    f"{review_priority(priority_score)}: manually adjudicate aliases, source identifiers, false positives, and issue comparability "
                     "before promoting any row under data/calibration/first-wave/"
                 ),
                 "claimBoundary": (
@@ -242,12 +249,122 @@ def summarize_candidates(records: list[dict[str, str]]) -> list[dict[str, str]]:
     return sorted(
         rows,
         key=lambda row: (
+            priority_rank(row.get("reviewPriority", "")),
+            -parse_float(row.get("reviewPriorityScore", "")),
             -int(row["venueCount"]),
             -int(row["sourceSystemCount"]),
             -parse_float(row["totalActivityAmount"]),
             row["normalizedName"],
         ),
     )
+
+
+def linkage_evidence_class(
+    records: list[dict[str, str]],
+    source_systems: list[str],
+    venues: list[str],
+) -> str:
+    if shared_identifier_evidence(records):
+        return "shared-source-identifier-overlap"
+    if len(venues) >= 3:
+        return "three-plus-venue-name-overlap"
+    if len(venues) >= 2:
+        return "cross-venue-name-overlap"
+    if len(source_systems) >= 2:
+        return "same-venue-multi-source-name-overlap"
+    return "single-source-name-only"
+
+
+def shared_identifier_evidence(records: list[dict[str, str]]) -> bool:
+    systems_by_identifier: dict[str, set[str]] = defaultdict(set)
+    for record in records:
+        for identifier in stable_identifiers(record):
+            systems_by_identifier[identifier].add(record.get("sourceSystem", ""))
+    return any(len(systems) >= 2 for systems in systems_by_identifier.values())
+
+
+def stable_identifiers(record: dict[str, str]) -> list[str]:
+    source_system = record.get("sourceSystem", "")
+    source_record_id = record.get("sourceRecordId", "").strip()
+    identifiers: list[str] = []
+    if source_system in {"IRS/ProPublica dark-money bridge", "Intermediary bridge"}:
+        if re.fullmatch(r"\d{9}", source_record_id):
+            identifiers.append(f"ein:{source_record_id}")
+    if source_system.startswith("USAspending"):
+        parts = [part.strip() for part in source_record_id.split("|")]
+        if len(parts) >= 3 and parts[2]:
+            identifiers.append(f"uei:{parts[2]}")
+    return identifiers
+
+
+def review_priority_score(
+    records: list[dict[str, str]],
+    source_systems: list[str],
+    venues: list[str],
+    total_amount: float,
+) -> float:
+    score = 0.20
+    if shared_identifier_evidence(records):
+        score += 0.25
+    if len(venues) >= 3:
+        score += 0.20
+    elif len(venues) >= 2:
+        score += 0.12
+    if len(source_systems) >= 3:
+        score += 0.10
+    elif len(source_systems) >= 2:
+        score += 0.05
+    if len(records) >= 10:
+        score += 0.08
+    elif len(records) >= 2:
+        score += 0.04
+    if total_amount >= 1.0:
+        score += 0.10
+    elif total_amount >= 0.1:
+        score += 0.05
+    if len(venues) < 2:
+        score -= 0.08
+    return max(0.05, min(0.95, score))
+
+
+def review_priority(score: float) -> str:
+    if score >= 0.65:
+        return "P1-manual-review"
+    if score >= 0.45:
+        return "P2-manual-review"
+    return "P3-manual-review"
+
+
+def priority_rank(priority: str) -> int:
+    if priority.startswith("P1"):
+        return 0
+    if priority.startswith("P2"):
+        return 1
+    if priority.startswith("P3"):
+        return 2
+    return 3
+
+
+def review_risk_flags(
+    records: list[dict[str, str]],
+    source_systems: list[str],
+    venues: list[str],
+    issues: list[str],
+) -> list[str]:
+    flags: list[str] = []
+    if len(venues) < 2:
+        flags.append("same-venue-only")
+    if "procurement" in venues:
+        flags.append("procurement-name-overlap-requires-UEI-review")
+    if "revolving_door" in venues and "visible_lobbying" in venues:
+        flags.append("covered-position-proxy-not-person-movement")
+    if any(system == "OpenFEC" for system in source_systems):
+        flags.append("committee-name-may-not-identify-actor-control")
+    if len(venues) >= 2 and not shared_identifier_evidence(records):
+        flags.append("name-only-cross-venue")
+    if not issues:
+        flags.append("issue-uncoded")
+    return flags[:5]
 
 
 def write_csv(path: Path, rows: list[dict[str, str]]) -> None:
@@ -282,6 +399,10 @@ def write_csv(path: Path, rows: list[dict[str, str]]) -> None:
             "sourceRecordCount",
             "issueDomains",
             "totalActivityAmount",
+            "linkageEvidenceClass",
+            "reviewPriority",
+            "reviewPriorityScore",
+            "reviewRiskFlags",
             "sourceRecordSamples",
             "candidateUse",
             "reviewAction",
@@ -296,6 +417,8 @@ def write_csv(path: Path, rows: list[dict[str, str]]) -> None:
 def write_markdown(path: Path, rows: list[dict[str, str]], records: list[dict[str, str]]) -> None:
     source_counts = Counter(row["sourceSystem"] for row in records)
     venue_counts = Counter(row["venue"] for row in records)
+    priority_counts = Counter(row.get("reviewPriority", "unclassified") for row in rows)
+    evidence_counts = Counter(row.get("linkageEvidenceClass", "unclassified") for row in rows)
     cross_venue_count = sum(1 for row in rows if row.get("candidateType") == "cross_venue")
     pair_counts: Counter[tuple[str, str]] = Counter()
     cross_venue_pair_counts: Counter[tuple[str, str]] = Counter()
@@ -320,13 +443,36 @@ def write_markdown(path: Path, rows: list[dict[str, str]], records: list[dict[st
         f"- Cross-venue candidate actors: `{cross_venue_count}`",
         f"- Source systems represented: `{len(source_counts)}`",
         f"- Venues represented: `{len(venue_counts)}`",
+        f"- P1 manual-review candidates: `{priority_counts.get('P1-manual-review', 0)}`",
         "- Production promotion path: manually adjudicate candidates into `data/calibration/first-wave/canonical-actor-identifiers.csv`, `alias-resolution-audit-sample.csv`, `false-match-review-log.csv`, and `linked-actor-issue-venue-time.csv` before any estimation.",
+        "",
+        "## Review Triage",
+        "",
+        "Review priority is a deterministic worklist ordering, not an adjudicated confidence score. It gives higher priority to shared public identifiers, more venues, more source systems, repeated source rows, and larger normalized activity while flagging likely false-match risks.",
+        "",
+        "| Review priority | Candidate actors |",
+        "| --- | ---: |",
+    ]
+    for priority, count in sorted(priority_counts.items(), key=lambda item: (priority_rank(item[0]), item[0])):
+        lines.append(f"| {priority} | {count} |")
+    if not priority_counts:
+        lines.append("| none | 0 |")
+    lines.extend([
+        "",
+        "| Linkage evidence class | Candidate actors |",
+        "| --- | ---: |",
+    ])
+    for evidence_class, count in sorted(evidence_counts.items(), key=lambda item: (-item[1], item[0])):
+        lines.append(f"| {evidence_class} | {count} |")
+    if not evidence_counts:
+        lines.append("| none | 0 |")
+    lines.extend([
         "",
         "## Source Coverage",
         "",
         "| Source system | Candidate records |",
         "| --- | ---: |",
-    ]
+    ])
     lines.extend(f"| {source} | {count} |" for source, count in sorted(source_counts.items()))
     lines.extend([
         "",
@@ -364,8 +510,8 @@ def write_markdown(path: Path, rows: list[dict[str, str]], records: list[dict[st
         "",
         "## Top Candidate Actors",
         "",
-        "| Candidate | Type | Sources | Venues | Records | Activity | Review action |",
-        "| --- | --- | --- | --- | ---: | ---: | --- |",
+        "| Candidate | Priority | Evidence class | Type | Sources | Venues | Records | Activity | Risk flags | Review action |",
+        "| --- | --- | --- | --- | --- | --- | ---: | ---: | --- | --- |",
     ])
     for row in rows[:TOP_MARKDOWN_ROWS]:
         lines.append(
@@ -373,18 +519,21 @@ def write_markdown(path: Path, rows: list[dict[str, str]], records: list[dict[st
             + " | ".join(
                 [
                     escape_md(row["displayName"]),
+                    row["reviewPriority"],
+                    row["linkageEvidenceClass"],
                     row["candidateType"],
                     escape_md(row["sourceSystems"]),
                     escape_md(row["venues"]),
                     row["sourceRecordCount"],
                     row["totalActivityAmount"],
+                    escape_md(row["reviewRiskFlags"]),
                     escape_md(row["reviewAction"]),
                 ]
             )
             + " |"
         )
     if not rows:
-        lines.append("| none |  |  |  | 0 | 0.0000 | Add source rows before linkage review. |")
+        lines.append("| none |  |  |  |  |  | 0 | 0.0000 |  | Add source rows before linkage review. |")
 
     lines.extend([
         "",

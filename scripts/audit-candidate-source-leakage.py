@@ -12,6 +12,7 @@ state leaks into ready-to-estimate or calibrated-claim gates.
 from __future__ import annotations
 
 import csv
+from collections import Counter
 from pathlib import Path
 
 
@@ -36,6 +37,7 @@ def audit_rows() -> list[dict[str, str]]:
     rows = [
         candidate_file_markers_row(),
         manual_adjudication_burden_row(),
+        candidate_review_triage_row(),
         source_product_status_row(),
         source_readiness_status_row(),
         calibrated_claim_boundary_row(),
@@ -187,6 +189,89 @@ def manual_adjudication_burden_row() -> dict[str, str]:
         details=(
             f"byTarget: {target_summary} || largestProducts: {largest_summary} || "
             f"minimumRowShortfalls: {'; '.join(minimum_row_shortfalls) or 'none'}"
+        ),
+    )
+
+
+def candidate_review_triage_row() -> dict[str, str]:
+    product_rows = read_csv(REPORTS / "first-wave-source-products.csv")
+    candidate_products = [
+        row
+        for row in product_rows
+        if row.get("productStatus") == "candidate_unreviewed"
+    ]
+    priority_counts: Counter[str] = Counter()
+    evidence_counts: Counter[str] = Counter()
+    risk_counts: Counter[str] = Counter()
+    triage_rows = 0
+    missing_priority_files: list[str] = []
+    invalid_priorities: list[str] = []
+
+    for product in candidate_products:
+        product_key = product.get("productKey", "")
+        path = ROOT / product.get("expectedPath", "")
+        if not path.exists() or path.suffix.lower() != ".csv":
+            continue
+        rows = read_csv(path)
+        if not rows:
+            continue
+        if "reviewPriority" not in rows[0]:
+            if product_key in {
+                "canonical-actor-identifiers",
+                "alias-resolution-audit-sample",
+                "issue-code-crosswalk",
+                "false-match-review-log",
+                "linked-actor-issue-venue-time",
+                "actor-issue-time-spine",
+                "substitution-comparison-groups",
+            }:
+                missing_priority_files.append(product_key)
+            continue
+        for row in rows:
+            priority = row.get("reviewPriority", "").strip()
+            if priority:
+                priority_counts[priority] += 1
+                triage_rows += 1
+                if priority not in {"P1-manual-review", "P2-manual-review", "P3-manual-review"}:
+                    invalid_priorities.append(f"{product_key}:{priority}")
+            evidence = row.get("linkageEvidenceClass", "").strip()
+            if evidence:
+                evidence_counts[evidence] += 1
+            for flag in split_semicolon(row.get("reviewRiskFlags", "")):
+                if flag and flag != "none":
+                    risk_counts[flag] += 1
+
+    status = (
+        "pass"
+        if triage_rows > 0
+        and priority_counts.get("P1-manual-review", 0) > 0
+        and not missing_priority_files
+        and not invalid_priorities
+        else "fail"
+    )
+    priority_summary = counter_summary(priority_counts)
+    evidence_summary = counter_summary(evidence_counts)
+    risk_summary = counter_summary(risk_counts, limit=6)
+    return audit_row(
+        "candidate-review-triage",
+        status,
+        (
+            f"triageRows={triage_rows}; priorities={priority_summary}; "
+            f"evidenceClasses={len(evidence_counts)}; riskFlags={len(risk_counts)}"
+        ),
+        "triageRows>0; P1-manual-review>0; invalidPriorities=0",
+        (
+            "Entity-resolution and substitution candidate rows carry deterministic "
+            "review-priority and linkage-evidence fields while remaining candidate-only."
+        ),
+        (
+            "Use P1 rows as the first manual adjudication queue; do not treat "
+            "reviewPriorityScore as adjudicated match confidence."
+        ),
+        details=(
+            f"evidenceClasses: {evidence_summary} || riskFlags: {risk_summary} || "
+            f"missingPriorityFiles: {'; '.join(missing_priority_files) or 'none'} || "
+            f"invalidPriorities: {'; '.join(invalid_priorities[:10]) or 'none'}"
         ),
     )
 
@@ -384,6 +469,17 @@ def int_or_zero(value: str) -> int:
         return 0
 
 
+def split_semicolon(value: str) -> list[str]:
+    return [part.strip() for part in (value or "").split(";") if part.strip()]
+
+
+def counter_summary(counter: Counter[str], limit: int | None = None) -> str:
+    items = sorted(counter.items(), key=lambda item: (-item[1], item[0]))
+    if limit is not None:
+        items = items[:limit]
+    return "; ".join(f"{key}={count}" for key, count in items) or "none"
+
+
 def read_csv(path: Path) -> list[dict[str, str]]:
     if not path.exists():
         return []
@@ -466,6 +562,15 @@ def markdown(rows: list[dict[str, str]]) -> str:
             "",
         ])
         for detail in burden["details"].split(" || "):
+            lines.append(f"- {detail}")
+    triage = next((row for row in rows if row["item"] == "candidate-review-triage"), None)
+    if triage and triage.get("details"):
+        lines.extend([
+            "",
+            "## Candidate Review Triage",
+            "",
+        ])
+        for detail in triage["details"].split(" || "):
             lines.append(f"- {detail}")
     if failures:
         lines.extend(["", "## Failure Details", ""])
