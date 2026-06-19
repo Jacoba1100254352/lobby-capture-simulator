@@ -39,6 +39,29 @@ DEPARTMENT_RE = re.compile(
     r"National Aeronautics and Space Administration|Small Business Administration|Department of Defense|"
     r"Department of the Army|Department of the Navy|Department of the Air Force)\b"
 )
+AWARDEE_RE = re.compile(
+    r"\b(?:award(?: of)?|issuance|issued|selection)\b.{0,90}?\bto\s+(.+?)(?:,?\s+(?:a|an|the)\s+|,\s+of\b|[.;]|$)",
+    re.IGNORECASE,
+)
+OUTCOME_PATTERNS = (
+    ("sustained", re.compile(r"\bsustain(?:s|ed|ing)?\b", re.IGNORECASE)),
+    ("denied", re.compile(r"\bdeny(?:ies|ied|ing)?\b", re.IGNORECASE)),
+    ("dismissed", re.compile(r"\bdismiss(?:es|ed|ing)?\b", re.IGNORECASE)),
+    ("withdrawn", re.compile(r"\bwithdraw(?:s|n|ing)?\b", re.IGNORECASE)),
+    ("corrective_action", re.compile(r"\bcorrective action\b", re.IGNORECASE)),
+)
+ISSUE_PATTERNS = (
+    ("technical-evaluation", re.compile(r"\btechnical(?:ly)?\b|\bevaluation\b", re.IGNORECASE)),
+    ("past-performance", re.compile(r"\bpast performance\b", re.IGNORECASE)),
+    ("price-cost", re.compile(r"\bprice\b|\bcost\b", re.IGNORECASE)),
+    ("best-value", re.compile(r"\bbest[- ]value\b", re.IGNORECASE)),
+    ("small-business-status", re.compile(r"\bsmall business\b|\bSDVOSB\b|\bservice-disabled\b", re.IGNORECASE)),
+    ("solicitation-terms", re.compile(r"\bsolicitation\b|\brequest for proposals?\b|\bRFP\b", re.IGNORECASE)),
+    ("organizational-conflict", re.compile(r"\borganizational conflict\b|\bOCI\b|\bconflict of interest\b", re.IGNORECASE)),
+    ("responsibility", re.compile(r"\bresponsib(?:le|ility)\b", re.IGNORECASE)),
+    ("timeliness", re.compile(r"\btimely\b|\btimeliness\b|\blate\b", re.IGNORECASE)),
+    ("jurisdiction", re.compile(r"\bjurisdiction\b|\btask order\b|\bcall order\b", re.IGNORECASE)),
+)
 
 
 def main() -> int:
@@ -147,6 +170,10 @@ def parse_feed(xml_text: str, source_label: str, max_items: int) -> tuple[list[d
         b_numbers = b_numbers_from([guid, link, title, description])
         likely = bool(PROTEST_RE.search(combined))
         decision_at = iso_datetime(pub_date)
+        agency = agency_hint(combined)
+        awardee = awardee_hint(description)
+        outcome = outcome_hint(combined)
+        issues = issue_hints(combined)
         rows.append(
             {
                 "protestId": b_numbers or protest_id_from_link(link, guid),
@@ -156,11 +183,16 @@ def parse_feed(xml_text: str, source_label: str, max_items: int) -> tuple[list[d
                 "publishedAt": decision_at,
                 "decisionDate": decision_at[:10] if decision_at else "",
                 "likelyBidProtest": "true" if likely else "false",
-                "agencyHint": agency_hint(combined),
+                "agencyHint": agency,
                 "protesterNameHint": title if likely else "",
+                "awardeeNameHint": awardee,
+                "outcomeHint": outcome,
+                "issueCodeHints": issues,
                 "description": description,
                 "piid": "",
                 "uei": "",
+                "reviewPriority": review_priority(likely, agency, awardee, issues),
+                "manualReviewNeeds": manual_review_needs(agency, awardee, outcome, issues),
                 "linkageStatus": "candidate_unreviewed",
                 "notes": CANDIDATE_BOUNDARY,
             }
@@ -179,9 +211,14 @@ def write_csv(path: Path, rows: list[dict[str, str]]) -> None:
         "likelyBidProtest",
         "agencyHint",
         "protesterNameHint",
+        "awardeeNameHint",
+        "outcomeHint",
+        "issueCodeHints",
         "description",
         "piid",
         "uei",
+        "reviewPriority",
+        "manualReviewNeeds",
         "linkageStatus",
         "notes",
     ]
@@ -220,24 +257,34 @@ def write_markdown(path: Path, rows: list[dict[str, str]], metadata: dict[str, s
             "",
             "## Likely Protest Rows",
             "",
-            "| Protest ID | Title | Decision date | Agency hint | Source | Linkage status |",
-            "| --- | --- | --- | --- | --- | --- |",
+            "| Protest ID | Protester | Decision date | Agency hint | Awardee hint | Issue hints | Priority | Source |",
+            "| --- | --- | --- | --- | --- | --- | --- | --- |",
         ]
     )
     if likely:
         for row in likely[:25]:
             lines.append(
-                "| {protest} | {title} | {date} | {agency} | {source} | {status} |".format(
+                "| {protest} | {title} | {date} | {agency} | {awardee} | {issues} | {priority} | {source} |".format(
                     protest=md(row["protestId"]),
                     title=md(row["title"]),
                     date=md(row["decisionDate"]),
                     agency=md(row["agencyHint"]),
+                    awardee=md(row["awardeeNameHint"]),
+                    issues=md(row["issueCodeHints"]),
+                    priority=md(row["reviewPriority"]),
                     source=md(row["sourceUrl"]),
-                    status=md(row["linkageStatus"]),
                 )
             )
     else:
-        lines.append("| none |  |  |  |  |  |")
+        lines.append("| none |  |  |  |  |  |  |  |")
+    lines.extend(
+        [
+            "",
+            "## Review Fields",
+            "",
+            "The parser extracts B-numbers, protester names, decision dates, agency hints, awardee hints, coarse issue-code hints, and any outcome language visible in the RSS item. These are discovery fields only. Manual promotion still requires reviewed PIID, UEI or vendor linkage, outcome coding, issue coding, and source records in `data/calibration/first-wave/gao-protest-overlay.csv`.",
+        ]
+    )
     path.write_text("\n".join(lines) + "\n", encoding="utf-8")
 
 
@@ -263,6 +310,53 @@ def agency_hint(text_value: str) -> str:
     if possessive:
         return clean_text(possessive.group(1))[:120]
     return ""
+
+
+def awardee_hint(text_value: str) -> str:
+    match = AWARDEE_RE.search(text_value)
+    if not match:
+        return ""
+    value = clean_text(match.group(1))
+    value = value.replace("\u2026", "...")
+    value = re.sub(r"^(?:a|an|the)\s+", "", value, flags=re.IGNORECASE)
+    value = re.sub(r",?\s+(?:a|an|the)(?:\s+|\.\.\.)?$", "", value, flags=re.IGNORECASE)
+    value = re.sub(r"\s*\([^)]*$", "", value)
+    value = value.rstrip(" ,.;")
+    return value[:120]
+
+
+def outcome_hint(text_value: str) -> str:
+    outcomes = [label for label, pattern in OUTCOME_PATTERNS if pattern.search(text_value)]
+    return ";".join(dict.fromkeys(outcomes))
+
+
+def issue_hints(text_value: str) -> str:
+    issues = [label for label, pattern in ISSUE_PATTERNS if pattern.search(text_value)]
+    return ";".join(dict.fromkeys(issues))
+
+
+def review_priority(likely: bool, agency: str, awardee: str, issues: str) -> str:
+    if not likely:
+        return "not_bid_protest"
+    observed = sum(1 for value in (agency, awardee, issues) if value)
+    if observed >= 2:
+        return "high"
+    if observed == 1:
+        return "medium"
+    return "needs_source_page_review"
+
+
+def manual_review_needs(agency: str, awardee: str, outcome: str, issues: str) -> str:
+    needs = ["piid_or_uei_linkage"]
+    if not agency:
+        needs.append("agency")
+    if not awardee:
+        needs.append("awardee_or_vendor")
+    if not outcome:
+        needs.append("outcome")
+    if not issues:
+        needs.append("issue_codes")
+    return ";".join(needs)
 
 
 def iso_datetime(value: str) -> str:
