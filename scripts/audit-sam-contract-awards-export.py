@@ -103,6 +103,8 @@ def main() -> int:
     metrics = export_metrics(normalized_rows)
     metrics.update(raw_field_metrics(fetcher, raw_records))
     rows = checklist_rows(args, metrics)
+    if args.url and not args.input:
+        rows.insert(1, export_link_freshness_row(freshness))
     args.reports.mkdir(parents=True, exist_ok=True)
     write_csv(args.reports / "sam-contract-awards-export-audit.csv", rows)
     write_markdown(args.reports / "sam-contract-awards-export-audit.md", rows, metrics, args)
@@ -136,6 +138,7 @@ def download_failure_rows(message: str, freshness: dict[str, str]) -> list[dict[
             "notes": "No SAM/FPDS rows were promoted into the frozen snapshot.",
             "nextAction": download_failure_next_action(status, next_access, retry_window_missed),
         },
+        export_link_freshness_row(freshness),
         {
             "item": "download-status",
             "status": status,
@@ -194,18 +197,32 @@ def expired_export_url_rows(freshness: dict[str, str]) -> list[dict[str, str]]:
                 "make sam-contract-awards-record-export-link, then rerun the audit."
             ),
         },
-        {
-            "item": "export-link-freshness",
-            "status": "manual_required",
-            "value": freshness["evidence"],
-            "threshold": "current time before expiresAt",
-            "notes": "SAM.gov emailed async-export download links are short-lived.",
-            "nextAction": (
-                "Use make sam-contract-awards-record-export-link while the emailed URL is fresh so "
-                "expiration metadata and API-key redaction stay synchronized."
-            ),
-        },
+        export_link_freshness_row(freshness),
     ]
+
+
+def export_link_freshness_row(freshness: dict[str, str]) -> dict[str, str]:
+    status = freshness.get("status", "unknown")
+    if status == "fresh":
+        row_status = "ready"
+        next_action = "Rerun this audit after recording any new emailed SAM.gov export link."
+    elif status == "expired":
+        row_status = "manual_required"
+        next_action = "Request and record a fresh SAM.gov export link before retrying the audit."
+    else:
+        row_status = "manual_required"
+        next_action = (
+            "Record the SAM.gov export link with make sam-contract-awards-record-export-link "
+            "or make sam-contract-awards-record-fresh-link so timestamp metadata is available."
+        )
+    return {
+        "item": "export-link-freshness",
+        "status": row_status,
+        "value": freshness.get("evidence", ""),
+        "threshold": "matches current SAM_CONTRACT_AWARDS_LIVE_URL metadata",
+        "notes": "Non-secret timestamp metadata used to detect stale audits after a new emailed link is recorded.",
+        "nextAction": next_action,
+    }
 
 
 def classify_download_failure(message: str) -> tuple[str, str]:

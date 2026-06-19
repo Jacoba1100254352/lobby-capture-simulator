@@ -455,6 +455,15 @@ grep -q "SAM_CONTRACT_AWARDS_LIVE_URL" "$tmpdir/reports/sam-contract-awards-expo
 grep -q "REPLACE_WITH_API_KEY" "$tmpdir/reports/sam-contract-awards-export-audit.md"
 grep -q "raw-action-date-candidate-share" "$tmpdir/reports/sam-contract-awards-export-audit.csv"
 
+python3 - "$tmpdir/reports/sam-contract-awards-export-audit.csv" <<'PY'
+import csv
+import sys
+
+with open(sys.argv[1], newline="", encoding="utf-8") as source:
+    items = {row["item"]: row for row in csv.DictReader(source)}
+assert "export-link-freshness" not in items, items
+PY
+
 python3 - "$tmpdir/reports/sam-contract-awards-export-audit.csv" "$tmpdir/sam-export.csv" <<'PY'
 import importlib.util
 import os
@@ -561,6 +570,99 @@ assert "Do not promote this SAM export" in row["nextAction"], row
 assert "action-history export" in row["nextAction"], row
 PY
 
+python3 - "$tmpdir/reports" <<'PY'
+import argparse
+import csv
+import importlib.util
+import os
+from pathlib import Path
+import sys
+
+reports = Path(sys.argv[1])
+audit_path = Path("scripts/audit-sam-contract-awards-export.py")
+audit_spec = importlib.util.spec_from_file_location("sam_export_audit", audit_path)
+audit = importlib.util.module_from_spec(audit_spec)
+audit_spec.loader.exec_module(audit)
+
+message = (
+    "GET https://api.sam.gov/contract-awards/v1/download?api_key=REDACTED&token=example "
+    "failed with HTTP 429: {\"code\":\"900804\",\"message\":\"Message throttled out\","
+    "\"description\":\"You have exceeded your quota .\","
+    "\"nextAccessTime\":\"2026-Jun-20 00:00:00+0000 UTC\"}"
+)
+freshness = {
+    "status": "fresh",
+    "evidence": (
+        "generatedAt=2026-06-19T11:12:53Z; expiresAt=2026-06-19T12:12:53Z; "
+        "ttlMinutes=60; recordedAt=2026-06-19T11:12:53Z; timeSource=test"
+    ),
+    "generatedAt": "2026-06-19T11:12:53Z",
+    "expiresAt": "2026-06-19T12:12:53Z",
+    "recordedAt": "2026-06-19T11:12:53Z",
+    "timeSource": "test",
+    "ttlMinutes": "60",
+}
+rows = audit.download_failure_rows(message, freshness)
+items = {row["item"]: row for row in rows}
+assert items["export-link-freshness"]["status"] == "ready", items
+assert items["export-link-freshness"]["value"] == freshness["evidence"], items
+assert items["export-link-retry-window"]["notes"] == freshness["evidence"], items
+audit.write_csv(reports / "sam-contract-awards-export-audit.csv", rows)
+audit.write_download_failure_markdown(
+    reports / "sam-contract-awards-export-audit.md",
+    rows,
+    argparse.Namespace(url="https://api.sam.gov/contract-awards/v1/download?api_key=REPLACE_WITH_API_KEY&token=example"),
+    message,
+    freshness,
+)
+
+check_path = Path("scripts/write-external-finalization-checklist.py")
+check_spec = importlib.util.spec_from_file_location("external_checklist", check_path)
+checklist = importlib.util.module_from_spec(check_spec)
+check_spec.loader.exec_module(checklist)
+checklist.SAM_EXPORT_AUDIT_CSV = reports / "sam-contract-awards-export-audit.csv"
+os.environ["SAM_CONTRACT_AWARDS_LIVE_URL"] = "https://api.sam.gov/contract-awards/v1/download?api_key=REPLACE_WITH_API_KEY&token=example"
+os.environ["SAM_API_KEY"] = "fixture-private-key"
+os.environ["SAM_CONTRACT_AWARDS_LIVE_URL_GENERATED_AT"] = "2026-06-19T11:12:53Z"
+os.environ["SAM_CONTRACT_AWARDS_LIVE_URL_EXPIRES_AT"] = "2026-06-19T12:12:53Z"
+os.environ["SAM_CONTRACT_AWARDS_LIVE_URL_VALID_MINUTES"] = "60"
+os.environ["SAM_CONTRACT_AWARDS_LIVE_URL_RECORDED_AT"] = "2026-06-19T11:12:53Z"
+os.environ["SAM_CONTRACT_AWARDS_LIVE_URL_TIME_SOURCE"] = "test"
+try:
+    row = checklist.sam_export_audit_row()
+    assert row["status"] == "manual_required", row
+    assert "promotion=quota_blocked" in row["evidence"], row
+    assert "auditRows=5" in row["evidence"], row
+
+    os.environ["SAM_CONTRACT_AWARDS_LIVE_URL_GENERATED_AT"] = "2026-06-19T11:59:00Z"
+    os.environ["SAM_CONTRACT_AWARDS_LIVE_URL_EXPIRES_AT"] = "2026-06-19T12:59:00Z"
+    os.environ["SAM_CONTRACT_AWARDS_LIVE_URL_RECORDED_AT"] = "2026-06-19T11:59:00Z"
+    row = checklist.sam_export_audit_row()
+    assert row["status"] == "manual_required", row
+    assert "staleAudit=present" in row["evidence"], row
+    assert "auditLinkFreshness=mismatch" in row["evidence"], row
+
+    os.environ["SAM_CONTRACT_AWARDS_LIVE_CSV"] = str(reports / "active-export.csv")
+    os.environ["SAM_CONTRACT_AWARDS_LIVE_URL"] = ""
+    row = checklist.sam_export_audit_row()
+finally:
+    for name in [
+        "SAM_CONTRACT_AWARDS_LIVE_CSV",
+        "SAM_CONTRACT_AWARDS_LIVE_URL",
+        "SAM_API_KEY",
+        "SAM_CONTRACT_AWARDS_LIVE_URL_GENERATED_AT",
+        "SAM_CONTRACT_AWARDS_LIVE_URL_EXPIRES_AT",
+        "SAM_CONTRACT_AWARDS_LIVE_URL_VALID_MINUTES",
+        "SAM_CONTRACT_AWARDS_LIVE_URL_RECORDED_AT",
+        "SAM_CONTRACT_AWARDS_LIVE_URL_TIME_SOURCE",
+    ]:
+        os.environ.pop(name, None)
+assert row["status"] == "manual_required", row
+assert "staleAudit=present" in row["evidence"], row
+assert "currentInput=csv" in row["evidence"], row
+assert "auditInput=url" in row["evidence"], row
+PY
+
 cat > "$tmpdir/sam-wrapper-blocked-export.csv" <<'CSV'
 contractId.piid,modification_number,recipientName,contractingDepartmentName,contractingSubtierName,awardOrIDVTypeName,Federal Action Obligation,Recipient UEI,actionDate,extentCompetedName,numberOfOffers,typeOfContractPricingName
 68HERH24C9999,0,WRAPPER BLOCKED CONTRACTOR,ENVIRONMENTAL PROTECTION AGENCY,EPA OFFICE,DEFINITIVE CONTRACT,1250000,WRAPUEI1234,2024-01-15,FULL AND OPEN COMPETITION,5,FIRM FIXED PRICE
@@ -605,10 +707,11 @@ freshness = {
     "ttlMinutes": "60",
 }
 rows = module.download_failure_rows(message, freshness)
-assert rows[0]["status"] == "quota_blocked", rows[0]
-assert rows[1]["value"] == "HTTP 429", rows[1]
-assert rows[2]["item"] == "next-access-time", rows[2]
-assert "2026-Jun-16 00:00:00+0000 UTC" in rows[2]["value"], rows[2]
+items = {row["item"]: row for row in rows}
+assert items["promotion-readiness"]["status"] == "quota_blocked", items
+assert items["export-link-freshness"]["status"] == "manual_required", items
+assert items["download-status"]["value"] == "HTTP 429", items
+assert "2026-Jun-16 00:00:00+0000 UTC" in items["next-access-time"]["value"], items
 module.write_csv(reports / "sam-contract-awards-export-audit.csv", rows)
 module.write_download_failure_markdown(
     reports / "sam-contract-awards-export-audit.md",

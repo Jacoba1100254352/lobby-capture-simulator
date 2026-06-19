@@ -623,6 +623,53 @@ def sam_export_audit_row() -> dict[str, str]:
             "Run make sam-procurement-refresh after configuring a SAM export CSV or emailed URL; the wrapper audits first and promotes only candidate exports.",
             "source-refresh",
         )
+    current_csv = env("SAM_CONTRACT_AWARDS_LIVE_CSV")
+    current_url = env("SAM_CONTRACT_AWARDS_LIVE_URL")
+    audit_freshness = audit_item_value(rows, "export-link-freshness")
+    if current_csv and audit_freshness:
+        return item(
+            "sam-export-audit",
+            "manual_required",
+            (
+                "staleAudit=present; currentInput=csv; auditInput=url; "
+                f"auditLinkFreshness={audit_freshness}"
+            ),
+            (
+                "Rerun make sam-contract-awards-export-audit or make sam-procurement-refresh; "
+                "the existing export audit was generated for an emailed URL, not the active CSV."
+            ),
+            "source-refresh",
+        )
+    if current_url:
+        current_freshness = sam_export_url_freshness()
+        if not audit_freshness:
+            return item(
+                "sam-export-audit",
+                "manual_required",
+                (
+                    "staleAudit=unknown; currentInput=url; auditLinkFreshness=missing; "
+                    f"currentLinkFreshness={current_freshness['status']}; {current_freshness['evidence']}"
+                ),
+                (
+                    "Rerun make sam-contract-awards-export-audit or make sam-procurement-refresh after "
+                    "recording the current SAM.gov export URL so audit evidence matches the active link."
+                ),
+                "source-refresh",
+            )
+        if audit_freshness != current_freshness["evidence"]:
+            return item(
+                "sam-export-audit",
+                "manual_required",
+                (
+                    "staleAudit=present; currentInput=url; auditLinkFreshness=mismatch; "
+                    f"currentLinkFreshness={current_freshness['status']}; {current_freshness['evidence']}"
+                ),
+                (
+                    "Rerun make sam-contract-awards-export-audit or make sam-procurement-refresh; "
+                    "the existing export audit was generated for a different emailed link."
+                ),
+                "source-refresh",
+            )
     promotion = next((row for row in rows if row.get("item") == "promotion-readiness"), rows[0])
     promotion_status = promotion.get("status", "")
     source_rows = audit_item_value(rows, "row-count") or "missing"
@@ -640,7 +687,7 @@ def sam_export_audit_row() -> dict[str, str]:
         promotion_summary = f"{promotion_summary}; hardBlockers={'+'.join(hard_blockers)}"
     if shape_summary:
         promotion_summary = f"{promotion_summary}; {shape_summary}"
-    if not (env("SAM_CONTRACT_AWARDS_LIVE_CSV") or env("SAM_CONTRACT_AWARDS_LIVE_URL")):
+    if not (current_csv or current_url):
         return item(
             "sam-export-audit",
             "manual_required",
