@@ -35,6 +35,7 @@ def main() -> int:
 def audit_rows() -> list[dict[str, str]]:
     rows = [
         candidate_file_markers_row(),
+        manual_adjudication_burden_row(),
         source_product_status_row(),
         source_readiness_status_row(),
         calibrated_claim_boundary_row(),
@@ -86,6 +87,107 @@ def candidate_file_markers_row() -> dict[str, str]:
             "checklist is completed and the source-product/readiness reports are regenerated."
         ),
         details="; ".join([*missing_files, *unmarked_files]),
+    )
+
+
+def manual_adjudication_burden_row() -> dict[str, str]:
+    product_rows = read_csv(REPORTS / "first-wave-source-products.csv")
+    candidate_products = [
+        row
+        for row in product_rows
+        if row.get("productStatus") == "candidate_unreviewed"
+    ]
+    target_counts: dict[str, dict[str, int]] = {}
+    priority_counts: dict[str, int] = {}
+    candidate_rows = 0
+    marker_rows = 0
+    reviewed_rows = 0
+    reviewer_date_gaps = 0
+    minimum_row_shortfalls: list[str] = []
+    largest_products: list[tuple[int, str]] = []
+
+    for product in candidate_products:
+        product_key = product.get("productKey", "")
+        target = product.get("targetKey", "unknown")
+        priority = product.get("priority", "unknown")
+        priority_counts[priority] = priority_counts.get(priority, 0) + 1
+        target_bucket = target_counts.setdefault(
+            target,
+            {"products": 0, "rows": 0, "markers": 0, "reviewerDateGaps": 0},
+        )
+        target_bucket["products"] += 1
+        path = ROOT / product.get("expectedPath", "")
+        if not path.exists() or path.suffix.lower() != ".csv":
+            continue
+        rows = read_csv(path)
+        row_count = len(rows)
+        minimum_rows = int_or_zero(product.get("minimumRows", ""))
+        marked_rows = 0
+        local_reviewer_date_gaps = 0
+        for row in rows:
+            if row_is_marked_candidate(row):
+                marked_rows += 1
+            else:
+                reviewed_rows += 1
+            if reviewer_date_gap(row):
+                local_reviewer_date_gaps += 1
+        candidate_rows += row_count
+        marker_rows += marked_rows
+        reviewer_date_gaps += local_reviewer_date_gaps
+        target_bucket["rows"] += row_count
+        target_bucket["markers"] += marked_rows
+        target_bucket["reviewerDateGaps"] += local_reviewer_date_gaps
+        largest_products.append((row_count, product_key))
+        if row_count < minimum_rows:
+            minimum_row_shortfalls.append(
+                f"{product_key}:{row_count}/{minimum_rows}"
+            )
+
+    largest_products.sort(reverse=True)
+    target_summary = "; ".join(
+        f"{target}:products={values['products']},rows={values['rows']},markers={values['markers']}"
+        for target, values in sorted(target_counts.items())
+    )
+    priority_summary = "; ".join(
+        f"{priority}={count}"
+        for priority, count in sorted(priority_counts.items())
+    )
+    largest_summary = "; ".join(
+        f"{product}={count}"
+        for count, product in largest_products[:5]
+    )
+    status = (
+        "pass"
+        if candidate_products
+        and candidate_rows > 0
+        and candidate_rows == marker_rows
+        and reviewed_rows == 0
+        else "fail"
+    )
+    return audit_row(
+        "manual-adjudication-burden",
+        status,
+        (
+            f"candidateProducts={len(candidate_products)}; candidateRows={candidate_rows}; "
+            f"markerRows={marker_rows}; reviewedRows={reviewed_rows}; "
+            f"reviewerDateGaps={reviewer_date_gaps}; "
+            f"minimumRowShortfalls={len(minimum_row_shortfalls)}; priorities={priority_summary}"
+        ),
+        "candidateRows=markerRows; reviewedRows=0 while candidate gate is active",
+        (
+            "The remaining empirical work is measurable manual adjudication, not "
+            "untracked missingness: candidate files identify source-product rows that "
+            "must be reviewed before promotion."
+        ),
+        (
+            "Prioritize the largest P1/P2 candidate products, replace candidate markers "
+            "with reviewed source rows, and rerun first-wave source-product, readiness, "
+            "candidate-leakage, and artifact gates before strengthening claims."
+        ),
+        details=(
+            f"byTarget: {target_summary} || largestProducts: {largest_summary} || "
+            f"minimumRowShortfalls: {'; '.join(minimum_row_shortfalls) or 'none'}"
+        ),
     )
 
 
@@ -221,13 +323,7 @@ def candidate_markers(path: Path) -> tuple[bool, int, int]:
             return False, 0, 0
         marked_rows = 0
         for row in rows:
-            values = " ".join(str(value) for value in row.values()).lower()
-            if (
-                row.get("candidateOnly", "").lower() == "true"
-                or "candidate_unreviewed" in values
-                or "candidate-only" in values
-                or "does not clear" in values
-            ):
+            if row_is_marked_candidate(row):
                 marked_rows += 1
         return marked_rows == len(rows), marked_rows, len(rows)
     lowered = text.lower()
@@ -246,6 +342,35 @@ def has_candidate_marker(path: Path) -> bool:
         marker in text
         for marker in ("candidateonly", "candidate_unreviewed", "candidate-only")
     )
+
+
+def row_is_marked_candidate(row: dict[str, str]) -> bool:
+    values = " ".join(str(value) for value in row.values()).lower()
+    return (
+        row.get("candidateOnly", "").lower() == "true"
+        or "candidate_unreviewed" in values
+        or "candidate-only" in values
+        or "does not clear" in values
+    )
+
+
+def reviewer_date_gap(row: dict[str, str]) -> bool:
+    reviewer = row.get("reviewer", "").strip().lower()
+    review_date = row.get("reviewDate", "").strip().lower()
+    if not reviewer and not review_date:
+        return False
+    return reviewer in {"", "not_reviewed", "candidate_unreviewed"} or review_date in {
+        "",
+        "not_reviewed",
+        "candidate_unreviewed",
+    }
+
+
+def int_or_zero(value: str) -> int:
+    try:
+        return int(float(value or 0))
+    except ValueError:
+        return 0
 
 
 def read_csv(path: Path) -> list[dict[str, str]]:
@@ -322,6 +447,15 @@ def markdown(rows: list[dict[str, str]]) -> str:
                 nextAction=cell(audit_row["nextAction"]),
             )
         )
+    burden = next((row for row in rows if row["item"] == "manual-adjudication-burden"), None)
+    if burden and burden.get("details"):
+        lines.extend([
+            "",
+            "## Manual Adjudication Burden",
+            "",
+        ])
+        for detail in burden["details"].split(" || "):
+            lines.append(f"- {detail}")
     if failures:
         lines.extend(["", "## Failure Details", ""])
         for audit_row in failures:
