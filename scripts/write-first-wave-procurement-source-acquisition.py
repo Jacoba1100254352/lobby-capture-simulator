@@ -10,12 +10,14 @@ bounded diagnostic to an empirical or causal claim.
 from __future__ import annotations
 
 import csv
+import os
 from collections import Counter
 from pathlib import Path
 
 
 REPORTS = Path("reports")
 FIRST_WAVE_SOURCE_PRODUCTS = REPORTS / "first-wave-source-products.csv"
+SAM_EXPORT_AUDIT = REPORTS / "sam-contract-awards-export-audit.csv"
 
 SOURCE_ROWS = [
     {
@@ -84,23 +86,29 @@ SOURCE_ROWS = [
 def main() -> int:
     REPORTS.mkdir(parents=True, exist_ok=True)
     product_status = source_product_status()
+    sam_audit = sam_export_audit_summary()
     rows = []
     for row in SOURCE_ROWS:
         status_row = product_status.get(row["productKey"], {})
+        source_row = dict(row)
+        if row["productKey"] == "sam-fpds-action-history-crosswalk" and sam_audit["status"] != "not_run":
+            source_row["currentBlocker"] = (
+                f"{row['currentBlocker']} SAM export audit handling: {sam_audit['summary']}"
+            )
         rows.append(
             {
-                "productKey": row["productKey"],
-                "expectedPath": row["expectedPath"],
+                "productKey": source_row["productKey"],
+                "expectedPath": source_row["expectedPath"],
                 "sourceProductStatus": status_row.get("productStatus", "not_in_source_product_gate"),
                 "requirementLevel": status_row.get("requirementLevel", "supporting"),
                 "priority": status_row.get("priority", "P1"),
                 "minimumRows": status_row.get("minimumRows", ""),
-                **row,
+                **source_row,
             }
         )
 
     write_csv(REPORTS / "first-wave-procurement-source-acquisition.csv", rows)
-    write_markdown(REPORTS / "first-wave-procurement-source-acquisition.md", rows)
+    write_markdown(REPORTS / "first-wave-procurement-source-acquisition.md", rows, sam_audit)
     print("Wrote reports/first-wave-procurement-source-acquisition.csv")
     print("Wrote reports/first-wave-procurement-source-acquisition.md")
     return 0
@@ -111,6 +119,47 @@ def source_product_status() -> dict[str, dict[str, str]]:
         return {}
     with FIRST_WAVE_SOURCE_PRODUCTS.open(newline="", encoding="utf-8") as source:
         return {row.get("productKey", ""): row for row in csv.DictReader(source)}
+
+
+def sam_export_audit_summary() -> dict[str, str]:
+    if os.environ.get("INCLUDE_LOCAL_SAM_EXPORT_AUDIT", "").strip().lower() not in {"1", "true", "yes"}:
+        return {
+            "status": "local_time_bound",
+            "summary": (
+                "live SAM export-audit results are local, quota-dependent, and not embedded in "
+                "the committed acquisition report unless INCLUDE_LOCAL_SAM_EXPORT_AUDIT=1 is set"
+            ),
+            "nextAction": (
+                "Record a fresh emailed SAM export link, run make sam-contract-awards-export-audit, "
+                "and inspect reports/sam-contract-awards-export-audit.* before attempting promotion."
+            ),
+        }
+    if not SAM_EXPORT_AUDIT.exists():
+        return {
+            "status": "not_run",
+            "summary": "no SAM export audit has been generated",
+            "nextAction": "Run make sam-contract-awards-export-audit after recording a live export link.",
+        }
+    with SAM_EXPORT_AUDIT.open(newline="", encoding="utf-8") as source:
+        rows = list(csv.DictReader(source))
+    by_item = {row.get("item", ""): row for row in rows}
+    promotion = by_item.get("promotion-readiness", {})
+    freshness = by_item.get("export-link-freshness", {})
+    retry = by_item.get("export-link-retry-window", {})
+    status = promotion.get("status") or "unknown"
+    value = promotion.get("value") or "promotion-readiness row missing"
+    freshness_value = freshness.get("value", "")
+    retry_value = retry.get("value", "")
+    parts = [value]
+    if retry_value:
+        parts.append(retry_value)
+    if freshness_value:
+        parts.append(f"link metadata: {freshness_value}")
+    return {
+        "status": status,
+        "summary": "; ".join(parts),
+        "nextAction": promotion.get("nextAction", "") or "Review the SAM export audit before attempting promotion.",
+    }
 
 
 def write_csv(path: Path, rows: list[dict[str, str]]) -> None:
@@ -136,7 +185,7 @@ def write_csv(path: Path, rows: list[dict[str, str]]) -> None:
         writer.writerows(rows)
 
 
-def write_markdown(path: Path, rows: list[dict[str, str]]) -> None:
+def write_markdown(path: Path, rows: list[dict[str, str]], sam_audit: dict[str, str]) -> None:
     status_counts = Counter(row["sourceProductStatus"] for row in rows)
     lines = [
         "# First-Wave Procurement Source Acquisition",
@@ -149,6 +198,7 @@ def write_markdown(path: Path, rows: list[dict[str, str]]) -> None:
         "- Source-evidence status: `acquisition_plan_only`",
         "- Claim boundary: `procurement modification, protest, exclusion, competition, and firewall rows remain bounded diagnostics until linked source products pass the first-wave source-product and source-readiness gates`",
         f"- Product statuses: `{format_counts(status_counts)}`",
+        f"- SAM export audit handling: `{sam_audit['status']}` - {sam_audit['summary']}",
         "",
         "## Promotion Rule",
         "",
@@ -199,6 +249,7 @@ def write_markdown(path: Path, rows: list[dict[str, str]]) -> None:
             "- GAO Recent Bid Protest Decisions and Search Decisions & Docket are the official protest-discovery surfaces; the GAO Legal Products XML feed can be used as a machine-readable discovery queue for new protest decisions. The local preflight extracts discovery hints only; `make gao-protest-overlay-candidates` can copy likely protest rows into `data/calibration/first-wave/gao-protest-overlay.csv` with `candidateOnly=true`, and those rows remain non-evidence until reviewed source-page and award/vendor linkages replace the candidate markers.",
             "- SAM.gov Exclusions API returns public exclusion records in paginated JSON and can also initiate CSV/JSON extracts; the Entity/Exclusions Extracts API can download public exclusion extracts such as `SAM_Exclusions_Public_Extract` files. The local `make sam-exclusions-preflight` target records redacted quota/access state only and does not promote exclusion rows.",
             "- SAM.gov Contract Awards remains the preferred source for Contract Awards action-history fields; USAspending transaction/action rows remain a bounded fallback until SAM/FPDS-style definitions are reconciled.",
+            f"- SAM export next action: {sam_audit['nextAction']}",
             "- Procurement firewall coverage is a document-review product, not an API product. Dated agency policies, acquisition supplements, firewall memoranda, and official audit reports must be encoded with source URLs and coverage rules.",
             "",
         ]
