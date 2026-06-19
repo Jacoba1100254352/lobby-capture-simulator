@@ -11,12 +11,14 @@ from __future__ import annotations
 import argparse
 import csv
 import re
+from datetime import date
 from pathlib import Path
 
 
 DEFAULT_ROOT = Path(__file__).resolve().parents[1]
 REGGOV_AUTHOR_GUIDELINES_URL = "https://onlinelibrary.wiley.com/page/journal/17485991/homepage/forauthors.html"
 VERSION_PATTERN = re.compile(r"^version:\s*[\"']?([^\"'\n]+)[\"']?\s*$", re.MULTILINE)
+DATE_RELEASED_PATTERN = re.compile(r"^date-released:\s*[\"']?([^\"'\n]+)[\"']?\s*$", re.MULTILINE)
 DOI_PATTERN = re.compile(r"\b10\.\d{4,9}/[-._;()/:A-Za-z0-9]+\b")
 NO_SUPERSEDING_VALUES = {
     "none",
@@ -100,6 +102,7 @@ def main() -> int:
 def audit_rows(root: Path, path: Path) -> list[dict[str, str]]:
     text = read_text(path)
     release_tag = release_tag_from_citation(root)
+    release_date = release_date_from_citation(root)
     fields = {name: field_value(text, name) for name in REQUIRED_FIELDS + SIGNOFF_FIELDS + LIVE_AUTHOR_PAGE_FIELDS}
     status = fields["status"].strip().lower()
     completed_status = status == "complete"
@@ -162,12 +165,14 @@ def audit_rows(root: Path, path: Path) -> list[dict[str, str]]:
         live_ready = bool(value)
         if name == "author-guidelines-superseding-instructions":
             live_ready = value.strip().lower() in NO_SUPERSEDING_VALUES
+        elif name == "author-guidelines-checked-date":
+            live_ready = live_author_check_date_ready(value, release_date)
         rows.append(
             row(
                 name,
                 "live-author-page",
                 "ready" if live_ready else "blocked" if completed_status else "manual_required",
-                live_evidence(name, value),
+                live_evidence(name, value, release_date),
                 "Recheck the live Regulation & Governance author page and record any superseding instructions before final submission.",
             )
         )
@@ -252,12 +257,21 @@ def checklist_items(text: str) -> dict[str, bool]:
     return items
 
 
-def live_evidence(name: str, value: str) -> str:
+def live_evidence(name: str, value: str, release_date: date | None = None) -> str:
     if name == "author-guidelines-superseding-instructions":
         normalized = value.strip().lower()
         if normalized in NO_SUPERSEDING_VALUES:
             return "superseding-instructions=none"
         return f"superseding-instructions={value or 'missing'}"
+    if name == "author-guidelines-checked-date":
+        parsed = parse_iso_date(value)
+        release = release_date.isoformat() if release_date else "missing"
+        if not value:
+            return f"checked-date=missing; release-date={release}"
+        if not parsed:
+            return f"checked-date=invalid:{value}; release-date={release}"
+        stale = bool(release_date and parsed < release_date)
+        return f"checked-date={parsed.isoformat()}; release-date={release}; stale={'yes' if stale else 'no'}"
     return f"{name}={'present' if value else 'missing'}"
 
 
@@ -273,6 +287,29 @@ def field_value(text: str, field_name: str) -> str:
 def release_tag_from_citation(root: Path) -> str:
     match = VERSION_PATTERN.search(read_text(root / "CITATION.cff"))
     return match.group(1).strip() if match else ""
+
+
+def release_date_from_citation(root: Path) -> date | None:
+    match = DATE_RELEASED_PATTERN.search(read_text(root / "CITATION.cff"))
+    if not match:
+        return None
+    return parse_iso_date(match.group(1).strip())
+
+
+def live_author_check_date_ready(value: str, release_date: date | None) -> bool:
+    checked = parse_iso_date(value)
+    if not checked:
+        return False
+    if release_date and checked < release_date:
+        return False
+    return True
+
+
+def parse_iso_date(value: str) -> date | None:
+    try:
+        return date.fromisoformat(value.strip())
+    except ValueError:
+        return None
 
 
 def read_text(path: Path) -> str:

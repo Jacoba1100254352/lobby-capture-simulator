@@ -13,7 +13,7 @@ Use this before creating a journal submission archive or public release tag.
 - `reports/reviewer-risk-register.md` reports `bounded_for_mechanism_review` and contains no empty evidence, claim-boundary, or next-action fields. Its bounded and open-calibration rows should match the claim-source dependency and causal-calibration target reports.
 - `reports/final-human-readthrough.md` remains `pending` for review-bundle circulation and must be completed by a human reviewer for the exact current release tag before final journal submission. `reports/final-human-readthrough-audit.md` should show no `blocked` rows; unchecked scholarly items may remain `manual_required` until final submission signoff.
 - `reports/wiley-submission-form-readiness.md` reports mechanical upload status `ready`; the journal-specific author-guidelines row may remain `manual_required` until the final live submission check.
-- `reports/reggov-guidelines-readiness.md` reports whether the Regulation & Governance/Wiley guideline surface is ready for the current release. If the live author-page refresh is not recorded, it remains `ready_with_manual_live_check`; if it is recorded with no superseding instructions, the guideline status may be `ready`. Final submission still cannot clear until DOI archiving and human scholarly read-through signoff are complete.
+- `reports/reggov-guidelines-readiness.md` reports whether the Regulation & Governance/Wiley guideline surface is ready for the current release. If the live author-page refresh is not recorded, or if the recorded checked date predates the current `CITATION.cff` release date, it remains `ready_with_manual_live_check`; if it is recorded for the current release with no superseding instructions, the guideline status may be `ready`. Final submission still cannot clear until DOI archiving and human scholarly read-through signoff are complete.
 
 ## Archive Metadata
 
@@ -21,7 +21,7 @@ Use this before creating a journal submission archive or public release tag.
 - Create a GitHub release for the tag and attach the Wiley submission ZIP, Wiley PDF, and supplement PDF.
 - Confirm `CITATION.cff`, `.zenodo.json`, `scripts/check-paper-artifacts.py`, and `paper/sections/submission-declarations.tex` all name the same release tag.
 - If a Zenodo, OSF, or institutional archive DOI is created, record it in `paper/sections/submission-declarations.tex`; otherwise, the data availability statement should cite the GitHub release URL without saying that the archive is unfinished.
-- Immediately before final submission, open the live Regulation & Governance author page and record the checker, date, URL, and superseding-instruction status in `reports/final-human-readthrough.md`.
+- Immediately before final submission, open the live Regulation & Governance author page and record the checker, date, URL, and superseding-instruction status in `reports/final-human-readthrough.md`; the recorded checked date must be on or after the current release date.
 - Confirm the release archive includes normalized snapshots, report CSVs, generated tables, generated figure sources, generated PDF figures, the manuscript PDF, supplement PDF, and the Wiley submission archive.
 - Confirm the Wiley submission archive includes `supporting-information/CITATION.cff` and `supporting-information/zenodo.json`.
 - Confirm the Wiley submission archive includes `supporting-information/submission-package-manifest.json` and `.md`; `make paper-artifacts-check` must validate those checksums against the ZIP members.

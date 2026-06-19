@@ -6,6 +6,7 @@ from __future__ import annotations
 import csv
 import re
 import zipfile
+from datetime import date
 from pathlib import Path
 
 
@@ -43,6 +44,7 @@ WILEY_SUPPORTING_INFO_URL = (
 )
 SUPPORTING_INFO_MAX_BYTES = 10 * 1024 * 1024
 VERSION_PATTERN = re.compile(r"^version:\s*[\"']?([^\"'\n]+)[\"']?\s*$", re.MULTILINE)
+DATE_RELEASED_PATTERN = re.compile(r"^date-released:\s*[\"']?([^\"'\n]+)[\"']?\s*$", re.MULTILINE)
 
 
 def main() -> int:
@@ -152,9 +154,12 @@ def guideline_rows() -> list[dict[str, str]]:
 def live_author_page_refresh_state() -> dict[str, str | bool]:
     text = read_text(FINAL_HUMAN_READTHROUGH)
     current_release = current_release_tag()
+    release_date = current_release_date()
     reviewed_release = field_value(text, "reviewed-release")
     checked_by = field_value(text, "author-guidelines-checked-by")
     checked_date = field_value(text, "author-guidelines-checked-date")
+    parsed_checked_date = parse_iso_date(checked_date)
+    date_current = bool(parsed_checked_date and (not release_date or parsed_checked_date >= release_date))
     url = field_value(text, "author-guidelines-url")
     superseding = field_value(text, "author-guidelines-superseding-instructions")
     superseding_normalized = superseding.strip().lower()
@@ -168,7 +173,7 @@ def live_author_page_refresh_state() -> dict[str, str | bool]:
         [
             reviewed_release == current_release,
             checked_by,
-            checked_date,
+            date_current,
             url == REGGOV_AUTHOR_GUIDELINES_URL,
             no_superseding,
         ]
@@ -177,7 +182,7 @@ def live_author_page_refresh_state() -> dict[str, str | bool]:
         f"official URL recorded={REGGOV_AUTHOR_GUIDELINES_URL}; "
         f"record URL={'matches' if url == REGGOV_AUTHOR_GUIDELINES_URL else 'missing/mismatch'}; "
         f"checked-by={'present' if checked_by else 'missing'}; "
-        f"checked-date={'present' if checked_date else 'missing'}; "
+        f"checked-date={checked_date_evidence(checked_date, parsed_checked_date, release_date)}; "
         f"reviewed-release={reviewed_release or 'missing'}; "
         f"expected-release={current_release or 'missing'}; "
         f"superseding-instructions={superseding_evidence(superseding, no_superseding)}"
@@ -617,6 +622,30 @@ def field_value(text: str, field_name: str) -> str:
 def current_release_tag() -> str:
     match = VERSION_PATTERN.search(read_text(CITATION_CFF))
     return match.group(1).strip() if match else ""
+
+
+def current_release_date() -> date | None:
+    match = DATE_RELEASED_PATTERN.search(read_text(CITATION_CFF))
+    if not match:
+        return None
+    return parse_iso_date(match.group(1).strip())
+
+
+def checked_date_evidence(value: str, parsed: date | None, release_date: date | None) -> str:
+    release = release_date.isoformat() if release_date else "missing"
+    if not value:
+        return f"missing; release-date={release}"
+    if not parsed:
+        return f"invalid:{value}; release-date={release}"
+    stale = bool(release_date and parsed < release_date)
+    return f"{parsed.isoformat()}; release-date={release}; stale={'yes' if stale else 'no'}"
+
+
+def parse_iso_date(value: str) -> date | None:
+    try:
+        return date.fromisoformat(value.strip())
+    except ValueError:
+        return None
 
 
 def row(gate: str, status: str, evidence_text: str, next_action: str) -> dict[str, str]:

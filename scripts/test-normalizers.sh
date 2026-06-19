@@ -1301,6 +1301,7 @@ cat > "$tmpdir/readthrough-repo/CITATION.cff" <<'YAML'
 cff-version: 1.2.0
 title: Lobby Capture Simulator
 version: "paper-publication-readiness-2026-06-18-r167"
+date-released: "2026-06-18"
 YAML
 cp reports/final-human-readthrough.md "$tmpdir/readthrough-repo/reports/final-human-readthrough.md"
 python3 - "$tmpdir/readthrough-repo/reports/final-human-readthrough.md" <<'PY'
@@ -1339,6 +1340,97 @@ assert overall["status"] == "manual_required", overall
 assert "blocked=0" in overall["evidence"], overall
 assert rows["live-author-page-checklist-01"]["status"] == "ready", rows["live-author-page-checklist-01"]
 assert rows["scholarly-readthrough-checklist-01"]["status"] == "manual_required", rows["scholarly-readthrough-checklist-01"]
+PY
+cat > "$tmpdir/readthrough-repo/CITATION.cff" <<'YAML'
+cff-version: 1.2.0
+title: Lobby Capture Simulator
+version: "paper-publication-readiness-2026-06-19-r168"
+date-released: "2026-06-19"
+YAML
+python3 - "$tmpdir/readthrough-repo/reports/final-human-readthrough.md" <<'PY'
+from pathlib import Path
+import re
+import sys
+
+path = Path(sys.argv[1])
+text = path.read_text(encoding="utf-8")
+for key, value in {
+    "reviewed-release": "paper-publication-readiness-2026-06-19-r168",
+    "author-guidelines-checked-date": "2026-06-18",
+}.items():
+    text = re.sub(rf"(?m)^{re.escape(key)}:.*$", f"{key}: {value}", text)
+path.write_text(text, encoding="utf-8")
+PY
+python3 scripts/audit-final-human-readthrough.py --root "$tmpdir/readthrough-repo" >/dev/null
+python3 - "$tmpdir/readthrough-repo/reports/final-human-readthrough-audit.csv" "$tmpdir/readthrough-repo" <<'PY'
+import csv
+import importlib.util
+import sys
+from pathlib import Path
+
+with open(sys.argv[1], newline="", encoding="utf-8") as source:
+    rows = {row["item"]: row for row in csv.DictReader(source)}
+checked_date = rows["author-guidelines-checked-date"]
+overall = rows["overall-final-human-readthrough"]
+assert checked_date["status"] == "manual_required", checked_date
+assert "stale=yes" in checked_date["evidence"], checked_date
+assert overall["status"] == "manual_required", overall
+assert "blocked=0" in overall["evidence"], overall
+
+root = Path(sys.argv[2])
+for module_name, module_path in [
+    ("reggov_guidelines", "scripts/audit-reggov-guidelines-readiness.py"),
+    ("submission_readiness", "scripts/audit-submission-readiness.py"),
+]:
+    spec = importlib.util.spec_from_file_location(module_name, module_path)
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    module.CITATION_CFF = root / "CITATION.cff"
+    module.FINAL_HUMAN_READTHROUGH = root / "reports" / "final-human-readthrough.md"
+    state = module.live_author_page_refresh_state()
+    assert state["ready"] is False, (module_name, state)
+    assert "stale=yes" in state["evidence"], (module_name, state)
+PY
+python3 - "$tmpdir/readthrough-repo/reports/final-human-readthrough.md" <<'PY'
+from pathlib import Path
+import re
+import sys
+
+path = Path(sys.argv[1])
+text = path.read_text(encoding="utf-8")
+text = re.sub(
+    r"(?m)^author-guidelines-checked-date:.*$",
+    "author-guidelines-checked-date: 2026-06-19",
+    text,
+)
+path.write_text(text, encoding="utf-8")
+PY
+python3 scripts/audit-final-human-readthrough.py --root "$tmpdir/readthrough-repo" >/dev/null
+python3 - "$tmpdir/readthrough-repo/reports/final-human-readthrough-audit.csv" "$tmpdir/readthrough-repo" <<'PY'
+import csv
+import importlib.util
+import sys
+from pathlib import Path
+
+with open(sys.argv[1], newline="", encoding="utf-8") as source:
+    rows = {row["item"]: row for row in csv.DictReader(source)}
+checked_date = rows["author-guidelines-checked-date"]
+assert checked_date["status"] == "ready", checked_date
+assert "stale=no" in checked_date["evidence"], checked_date
+
+root = Path(sys.argv[2])
+for module_name, module_path in [
+    ("reggov_guidelines", "scripts/audit-reggov-guidelines-readiness.py"),
+    ("submission_readiness", "scripts/audit-submission-readiness.py"),
+]:
+    spec = importlib.util.spec_from_file_location(module_name, module_path)
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    module.CITATION_CFF = root / "CITATION.cff"
+    module.FINAL_HUMAN_READTHROUGH = root / "reports" / "final-human-readthrough.md"
+    state = module.live_author_page_refresh_state()
+    assert state["ready"] is True, (module_name, state)
+    assert "stale=no" in state["evidence"], (module_name, state)
 PY
 python3 - "$tmpdir/readthrough-repo/reports/final-human-readthrough.md" <<'PY'
 from pathlib import Path

@@ -4,9 +4,9 @@ This audit checks the locally verifiable Regulation & Governance and Wiley submi
 
 ## Summary
 
-- Automated guideline status: `ready`
-- Ready gates: `11`
-- Manual-required gates: `0`
+- Automated guideline status: `ready_with_manual_live_check`
+- Ready gates: `10`
+- Manual-required gates: `1`
 - Blocked gates: `0`
 - Preferred word range checked: `preferred 8,000-10,000; normal upper limit 11,000` words including abstract, references, endnotes, tables, and figures
 - Research Forum word limit noted: `6000` words
@@ -38,7 +38,7 @@ The live Regulation & Governance author page records free-format first submissio
 | supporting-information | ready | supplement.tex=yes; supplement.pdf=yes; supporting-information/ODD-model.md=yes; supporting-information/scenario-catalog.md=yes; supporting-information/validation-plan.md=yes; supporting-information/source-data-roadmap.md=yes; supporting-information/submission-readiness.md=yes; supporting-information/final-human-readthrough.md=yes; supporting-information/final-human-readthrough-audit.md=yes; supporting-information/final-readthrough-evidence.md=yes; report-data files=87 | Keep supplement files, ODD model, scenario catalog, validation plan, source roadmap, and report data in the package. |
 | supporting-information-format-size | ready | supporting members=169; largest=within-limit; limit=10485760; oversized=none; unlabeled=none | Keep every supporting-information member clearly labeled and at or below Wiley's 10 MB per-file guidance. |
 | latex-submission-files | ready | exists=yes; readable=yes; encrypted=no; members=226; strategic-channel-substitution-regulatory-capture.tex=yes; strategic-channel-substitution-regulatory-capture.pdf=yes; references.bib=yes; USG.cls=yes; lettersp.sty=yes; wileyNJD-Chicago.bst=yes; supporting-information/submission-package-manifest.json=yes; supporting-information/submission-package-manifest.md=yes; Wiley form ready gates=7 | Keep the ZIP, root .tex, compiled PDF, bibliography, class/style files, figures, tables, and package manifest together. |
-| live-reggov-author-page-refresh | ready | official URL recorded=https://onlinelibrary.wiley.com/page/journal/17485991/homepage/forauthors.html; record URL=matches; checked-by=present; checked-date=present; reviewed-release=paper-publication-readiness-2026-06-19-r197; expected-release=paper-publication-readiness-2026-06-19-r197; superseding-instructions=none | Keep the recorded live author-page check with the final signoff. |
+| live-reggov-author-page-refresh | manual_required | official URL recorded=https://onlinelibrary.wiley.com/page/journal/17485991/homepage/forauthors.html; record URL=matches; checked-by=present; checked-date=2026-06-18; release-date=2026-06-19; stale=yes; reviewed-release=paper-publication-readiness-2026-06-19-r198; expected-release=paper-publication-readiness-2026-06-19-r198; superseding-instructions=none | Complete the live journal author-page browser review and replace the recorded non-clearance reason with none only if no superseding instructions require package changes. |
 
 ## Interpretation
 
