@@ -22,6 +22,7 @@ from paper_release_metadata import (
 
 REPORTS = Path("reports")
 PAPER_TABLES = Path("paper") / "tables"
+FIRST_WAVE_SOURCE_PRODUCTS = Path("data") / "calibration" / "first-wave"
 PROTOCOLS = REPORTS / "first-wave-causal-protocols.csv"
 SOURCE_CAPABILITIES = REPORTS / "source-capability-audit.csv"
 SOURCE_PANELS = REPORTS / "source-panel-inventory.csv"
@@ -30,6 +31,7 @@ PROCUREMENT_REFRESH = REPORTS / "procurement-refresh-readiness.csv"
 SOURCE_PRODUCTS = REPORTS / "first-wave-source-products.csv"
 LINKAGE_CANDIDATES = REPORTS / "first-wave-linkage-candidates.csv"
 CROSS_VENUE_ADJUDICATION = REPORTS / "first-wave-cross-venue-adjudication.csv"
+HLOGA_TREATMENT_DATE = "2007-09-14"
 
 
 TARGET_ORDER = [
@@ -591,14 +593,24 @@ def substitution_row(
 
 
 def historical_lda_panel_text() -> str:
-    path = REPORTS / "substitution-historical-lda-panel.csv"
+    path = FIRST_WAVE_SOURCE_PRODUCTS / "substitution-historical-lda-panel.csv"
     if not path.exists():
         return "historical LDA treated panel=not run"
     rows = read_csv(path)
-    prepost_actors = sum(1 for row in rows if row.get("status") == "prepost_source_rows")
-    panel_rows = sum(int_or_zero(row.get("panelRows", "")) for row in rows)
-    pre_rows = sum(int_or_zero(row.get("preRows", "")) for row in rows)
-    post_rows = sum(int_or_zero(row.get("postRows", "")) for row in rows)
+    pre_actors = {
+        row.get("canonicalActorId", "")
+        for row in rows
+        if row.get("periodEnd", "") < HLOGA_TREATMENT_DATE
+    }
+    post_actors = {
+        row.get("canonicalActorId", "")
+        for row in rows
+        if row.get("periodStart", "") >= HLOGA_TREATMENT_DATE
+    }
+    prepost_actors = len((pre_actors & post_actors) - {""})
+    panel_rows = len(rows)
+    pre_rows = sum(row.get("periodEnd", "") < HLOGA_TREATMENT_DATE for row in rows)
+    post_rows = sum(row.get("periodStart", "") >= HLOGA_TREATMENT_DATE for row in rows)
     return (
         "historical LDA treated panel="
         f"prepostActors={prepost_actors}; rows={panel_rows}; preRows={pre_rows}; postRows={post_rows}"
@@ -606,14 +618,24 @@ def historical_lda_panel_text() -> str:
 
 
 def state_lobbying_control_panel_text() -> str:
-    path = REPORTS / "substitution-state-lobbying-control-panel.csv"
+    path = FIRST_WAVE_SOURCE_PRODUCTS / "substitution-state-lobbying-control-panel.csv"
     if not path.exists():
         return "state-lobbying control panel=not run"
     rows = read_csv(path)
-    prepost_controls = sum(1 for row in rows if row.get("status") == "prepost_control_source_rows")
-    panel_rows = sum(int_or_zero(row.get("sourceRows", "")) for row in rows)
-    pre_rows = sum(int_or_zero(row.get("preRows", "")) for row in rows)
-    post_rows = sum(int_or_zero(row.get("postRows", "")) for row in rows)
+    pre_controls = {
+        row.get("canonicalActorId", "")
+        for row in rows
+        if row.get("periodEnd", "") < HLOGA_TREATMENT_DATE
+    }
+    post_controls = {
+        row.get("canonicalActorId", "")
+        for row in rows
+        if row.get("periodStart", "") >= HLOGA_TREATMENT_DATE
+    }
+    prepost_controls = len((pre_controls & post_controls) - {""})
+    panel_rows = len(rows)
+    pre_rows = sum(row.get("periodEnd", "") < HLOGA_TREATMENT_DATE for row in rows)
+    post_rows = sum(row.get("periodStart", "") >= HLOGA_TREATMENT_DATE for row in rows)
     return (
         "Colorado state-lobbying control panel="
         f"prepostControls={prepost_controls}; rows={panel_rows}; preRows={pre_rows}; postRows={post_rows}"

@@ -31,6 +31,28 @@ PACKET_MODULE = importlib.util.module_from_spec(PACKET_SPEC)
 sys.modules[PACKET_SPEC.name] = PACKET_MODULE
 PACKET_SPEC.loader.exec_module(PACKET_MODULE)
 
+PROMOTER_SCRIPT = Path(__file__).with_name("promote-first-wave-reviewed-entity-products.py")
+PROMOTER_SPEC = importlib.util.spec_from_file_location(
+    "promote_first_wave_reviewed_entity_products",
+    PROMOTER_SCRIPT,
+)
+if PROMOTER_SPEC is None or PROMOTER_SPEC.loader is None:
+    raise RuntimeError(f"Could not import {PROMOTER_SCRIPT}")
+PROMOTER_MODULE = importlib.util.module_from_spec(PROMOTER_SPEC)
+sys.modules[PROMOTER_SPEC.name] = PROMOTER_MODULE
+PROMOTER_SPEC.loader.exec_module(PROMOTER_MODULE)
+
+READINESS_SCRIPT = Path(__file__).with_name("audit-first-wave-source-readiness.py")
+READINESS_SPEC = importlib.util.spec_from_file_location(
+    "audit_first_wave_source_readiness",
+    READINESS_SCRIPT,
+)
+if READINESS_SPEC is None or READINESS_SPEC.loader is None:
+    raise RuntimeError(f"Could not import {READINESS_SCRIPT}")
+READINESS_MODULE = importlib.util.module_from_spec(READINESS_SPEC)
+sys.modules[READINESS_SPEC.name] = READINESS_MODULE
+READINESS_SPEC.loader.exec_module(READINESS_MODULE)
+
 
 PERIODS = (
     ("2007", "mid_year", "2007-01-01", "2007-06-30"),
@@ -54,6 +76,46 @@ CONTROL_DATES = (
 
 
 class SubstitutionDiagnosticsTests(unittest.TestCase):
+    def test_tracked_source_products_drive_reproducible_enrichment(self) -> None:
+        with tempfile.TemporaryDirectory() as temp_dir:
+            source_products = Path(temp_dir) / "first-wave"
+            source_products.mkdir()
+            historical = (
+                "canonicalActorId,periodStart,periodEnd\n"
+                "treated-1,2007-01-01,2007-06-30\n"
+                "treated-1,2008-01-01,2008-03-31\n"
+            )
+            controls = (
+                "canonicalActorId,periodStart,periodEnd\n"
+                "control-1,2007-05-01,2007-05-01\n"
+                "control-1,2008-05-01,2008-05-01\n"
+            )
+            (source_products / "substitution-historical-lda-panel.csv").write_text(
+                historical,
+                encoding="utf-8",
+            )
+            (source_products / "substitution-state-lobbying-control-panel.csv").write_text(
+                controls,
+                encoding="utf-8",
+            )
+            self.assertEqual(
+                PROMOTER_MODULE.ROOT / "data" / "snapshots" / "2024-env" / "normalized",
+                PROMOTER_MODULE.RAW,
+            )
+            with mock.patch.object(
+                READINESS_MODULE,
+                "FIRST_WAVE_SOURCE_PRODUCTS",
+                source_products,
+            ):
+                self.assertIn(
+                    "prepostActors=1; rows=2; preRows=1; postRows=1",
+                    READINESS_MODULE.historical_lda_panel_text(),
+                )
+                self.assertIn(
+                    "prepostControls=1; rows=2; preRows=1; postRows=1",
+                    READINESS_MODULE.state_lobbying_control_panel_text(),
+                )
+
     def test_optional_historical_diagnostics_do_not_change_reproducible_packet(self) -> None:
         with tempfile.TemporaryDirectory() as temp_dir:
             reports = Path(temp_dir) / "reports"

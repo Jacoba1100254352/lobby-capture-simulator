@@ -22,7 +22,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 REPORTS = ROOT / "reports"
 OUTPUT = ROOT / "data" / "calibration" / "first-wave"
-RAW = ROOT / "data" / "raw"
+RAW = ROOT / "data" / "snapshots" / "2024-env" / "normalized"
 REVIEWER = "codex-source-audit"
 DEFAULT_REVIEW_DATE = "2026-06-28"
 SUBSTITUTION_REFORM_EVENT_ID = "hloga-2007-federal-lobbying-disclosure"
