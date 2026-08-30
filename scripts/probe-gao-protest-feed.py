@@ -39,6 +39,14 @@ SOURCE_PRODUCT_BOUNDARY = (
     "candidate-only procurement source-surface worklist; does not clear "
     "first-wave source-product, procurement-modification, or causal-calibration gates"
 )
+
+
+def portable_source_label(path: Path) -> str:
+    resolved = path if path.is_absolute() else (ROOT / path).resolve()
+    try:
+        return resolved.relative_to(ROOT).as_posix()
+    except ValueError:
+        return resolved.name
 PROTEST_RE = re.compile(r"\bprotests?\b", re.IGNORECASE)
 B_NUMBER_RE = re.compile(r"\bB-\d+(?:\.\d+)?(?:,\s*B-\d+(?:\.\d+)?)*\b", re.IGNORECASE)
 DEPARTMENT_RE = re.compile(
@@ -248,7 +256,7 @@ def enrich_from_recent_page(rows: list[dict[str, str]], metadata: dict[str, str]
 def read_recent_page(args: argparse.Namespace) -> tuple[str, str]:
     if args.recent_page_input:
         path = args.recent_page_input if args.recent_page_input.is_absolute() else ROOT / args.recent_page_input
-        return path.as_posix(), path.read_text(encoding="utf-8")
+        return portable_source_label(path), path.read_text(encoding="utf-8")
     request = Request(
         args.recent_page_url,
         headers={
@@ -276,7 +284,7 @@ def fallback_recent_page(args: argparse.Namespace) -> tuple[str, str] | None:
     resolved = path if path.is_absolute() else ROOT / path
     if not resolved.exists():
         return None
-    return resolved.as_posix(), resolved.read_text(encoding="utf-8")
+    return portable_source_label(resolved), resolved.read_text(encoding="utf-8")
 
 
 def recent_page_outcomes(html_text: str) -> dict[str, str]:

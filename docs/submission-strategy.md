@@ -100,8 +100,8 @@ The practical reason not to use ACM now is that ACM's template is production inf
 
 ## Source Links
 
-- Deep Research venue report: `/Users/jacobanderson/Downloads/Deep Research Reports/Lobby Simulator/deep-research-report_journal-conference.md`
-- Congress Institutional Simulator ACM paper reference: `/Users/jacobanderson/Documents/simulators/Congress Institutional Simulator/paper/README.md`
+- Local Deep Research venue report, not committed here: `deep-research-report_journal-conference.md`
+- Congress Institutional Simulator ACM paper reference: `../Congress Institutional Simulator/paper/README.md`
 - Wiley figure-preparation guidance: <https://authorservices-ppd.wiley.com/author-resources/Journal-Authors/Prepare/manuscript-preparation-guidelines.html/figure-preparation.html>
 - Wiley LaTeX authoring template: <https://authors.wiley.com/author-resources/Journal-Authors/Prepare/latex-template.html>
 - Wiley submission help and data-availability guidance: <https://authors.wiley.com/help/submitting-your-manuscript.html>

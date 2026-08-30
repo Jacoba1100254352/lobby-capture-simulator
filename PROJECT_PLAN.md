@@ -570,12 +570,12 @@ Status: implemented for the public review bundle. Future work should focus on st
 
 Start by copying these into the new namespace and immediately renaming/reframing them:
 
-- `/Users/jacobanderson/Documents/simulators/Congress Institutional Simulator/src/main/java/congresssim/util/Values.java` -> `src/main/java/lobbycapture/util/Values.java`
-- `/Users/jacobanderson/Documents/simulators/Congress Institutional Simulator/src/main/java/congresssim/model/LobbyCaptureStrategy.java` -> `src/main/java/lobbycapture/strategy/InfluenceChannel.java`
-- `/Users/jacobanderson/Documents/simulators/Congress Institutional Simulator/src/main/java/congresssim/institution/BudgetedLobbyingProcess.java` -> reference only while writing `LobbyAllocationEngine.java`
-- `/Users/jacobanderson/Documents/simulators/Congress Institutional Simulator/src/main/java/congresssim/institution/LobbyAuditProcess.java` -> reference only while writing `EnforcementAgency.java`
-- `/Users/jacobanderson/Documents/simulators/Congress Institutional Simulator/src/main/java/congresssim/institution/LobbyTransparencyProcess.java` -> reference only while writing `TransparencySystem.java`
-- `/Users/jacobanderson/Documents/simulators/Congress Institutional Simulator/src/main/java/congresssim/simulation/ScenarioReport.java` -> `src/main/java/lobbycapture/metrics/ScenarioReport.java`
-- `/Users/jacobanderson/Documents/simulators/Congress Institutional Simulator/src/main/java/congresssim/experiment/CampaignRunner.java` -> `src/main/java/lobbycapture/reporting/CampaignRunner.java`
+- `../Congress Institutional Simulator/src/main/java/congresssim/util/Values.java` -> `src/main/java/lobbycapture/util/Values.java`
+- `../Congress Institutional Simulator/src/main/java/congresssim/model/LobbyCaptureStrategy.java` -> `src/main/java/lobbycapture/strategy/InfluenceChannel.java`
+- `../Congress Institutional Simulator/src/main/java/congresssim/institution/BudgetedLobbyingProcess.java` -> reference only while writing `LobbyAllocationEngine.java`
+- `../Congress Institutional Simulator/src/main/java/congresssim/institution/LobbyAuditProcess.java` -> reference only while writing `EnforcementAgency.java`
+- `../Congress Institutional Simulator/src/main/java/congresssim/institution/LobbyTransparencyProcess.java` -> reference only while writing `TransparencySystem.java`
+- `../Congress Institutional Simulator/src/main/java/congresssim/simulation/ScenarioReport.java` -> `src/main/java/lobbycapture/metrics/ScenarioReport.java`
+- `../Congress Institutional Simulator/src/main/java/congresssim/experiment/CampaignRunner.java` -> `src/main/java/lobbycapture/reporting/CampaignRunner.java`
 
 The first implementation slice should prove this model can answer one core question: when organized interests face a meaningful anti-capture reform threat, do they shift from ordinary policy capture to defensive reform blocking, and which reforms remain effective after that adaptation?
