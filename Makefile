@@ -176,7 +176,7 @@ first-wave-linkage-candidates:
 	python3 scripts/build-first-wave-linkage-candidates.py
 
 first-wave-cross-venue-adjudication: first-wave-linkage-candidates
-	python3 scripts/write-first-wave-cross-venue-adjudication.py
+	python3 scripts/write-first-wave-cross-venue-adjudication.py --raw data/snapshots/2024-env/normalized
 
 first-wave-entity-resolution-seeds: first-wave-linkage-candidates
 	python3 scripts/build-first-wave-entity-resolution-seeds.py
