@@ -56,6 +56,19 @@ PROCUREMENT_REFRESH_READINESS_MD = ROOT / "reports" / "procurement-refresh-readi
 PROCUREMENT_REFRESH_READINESS_CSV = ROOT / "reports" / "procurement-refresh-readiness.csv"
 FIRST_WAVE_PROCUREMENT_SOURCE_ACQUISITION_MD = ROOT / "reports" / "first-wave-procurement-source-acquisition.md"
 FIRST_WAVE_PROCUREMENT_SOURCE_ACQUISITION_CSV = ROOT / "reports" / "first-wave-procurement-source-acquisition.csv"
+PROCUREMENT_CAUSAL_UPGRADE_PACKET_MD = ROOT / "reports" / "procurement-causal-upgrade-packet.md"
+PROCUREMENT_CAUSAL_UPGRADE_PACKET_CSV = ROOT / "reports" / "procurement-causal-upgrade-packet.csv"
+SUBSTITUTION_CAUSAL_UPGRADE_PACKET_MD = ROOT / "reports" / "substitution-causal-upgrade-packet.md"
+SUBSTITUTION_CAUSAL_UPGRADE_PACKET_CSV = ROOT / "reports" / "substitution-causal-upgrade-packet.csv"
+SUBSTITUTION_ESTIMATION_DIAGNOSTICS_MD = ROOT / "reports" / "substitution-estimation-diagnostics.md"
+SUBSTITUTION_ESTIMATION_DIAGNOSTICS_CSV = ROOT / "reports" / "substitution-estimation-diagnostics.csv"
+SUBSTITUTION_ESTIMATION_EVENT_STUDY_CSV = ROOT / "reports" / "substitution-estimation-event-study.csv"
+SUBSTITUTION_ESTIMATION_LEAVE_ONE_ACTOR_CSV = ROOT / "reports" / "substitution-estimation-leave-one-actor.csv"
+SUBSTITUTION_ESTIMATION_FIGURE = ROOT / "reports" / "substitution-estimation-specification-contrast.svg"
+COMMENT_CAUSAL_UPGRADE_PACKET_MD = ROOT / "reports" / "comment-causal-upgrade-packet.md"
+COMMENT_CAUSAL_UPGRADE_PACKET_CSV = ROOT / "reports" / "comment-causal-upgrade-packet.csv"
+VENUE_CAUSAL_UPGRADE_PACKET_MD = ROOT / "reports" / "venue-causal-upgrade-packet.md"
+VENUE_CAUSAL_UPGRADE_PACKET_CSV = ROOT / "reports" / "venue-causal-upgrade-packet.csv"
 LAYOUT_AUDIT = ROOT / "reports" / "paper-layout-audit.md"
 PAPER_STRUCTURE_AUDIT_CSV = ROOT / "reports" / "paper-structure-audit.csv"
 PAPER_STRUCTURE_AUDIT_MD = ROOT / "reports" / "paper-structure-audit.md"
@@ -78,34 +91,47 @@ FIRST_WAVE_SOURCE_TEMPLATE_MANIFEST_CSV = FIRST_WAVE_SOURCE_TEMPLATE_DIR / "mani
 FIRST_WAVE_SOURCE_TEMPLATE_MANIFEST_MD = FIRST_WAVE_SOURCE_TEMPLATE_DIR / "manifest.md"
 FIRST_WAVE_SOURCE_TEMPLATE_README = FIRST_WAVE_SOURCE_TEMPLATE_DIR / "README.md"
 FIRST_WAVE_SOURCE_PRODUCT_DIR = ROOT / "data" / "calibration" / "first-wave"
-FIRST_WAVE_CANDIDATE_SEED_PRODUCTS = {
+SUBSTITUTION_ESTIMATION_PANEL = FIRST_WAVE_SOURCE_PRODUCT_DIR / "substitution-estimation-panel.csv"
+FIRST_WAVE_REVIEWED_ENTITY_PRODUCTS = {
     "actor-issue-time-spine": FIRST_WAVE_SOURCE_PRODUCT_DIR / "actor-issue-time-spine.csv",
     "substitution-comparison-groups": FIRST_WAVE_SOURCE_PRODUCT_DIR / "substitution-comparison-groups.csv",
-    "sam-fpds-action-history-crosswalk": FIRST_WAVE_SOURCE_PRODUCT_DIR / "sam-fpds-action-history-crosswalk.csv",
-    "gao-protest-overlay": FIRST_WAVE_SOURCE_PRODUCT_DIR / "gao-protest-overlay.csv",
-    "sam-exclusion-overlay": FIRST_WAVE_SOURCE_PRODUCT_DIR / "sam-exclusion-overlay.csv",
-    "procurement-firewall-overlay": FIRST_WAVE_SOURCE_PRODUCT_DIR / "procurement-firewall-overlay.csv",
-    "procurement-offer-competition-enrichment": FIRST_WAVE_SOURCE_PRODUCT_DIR / "procurement-offer-competition-enrichment.csv",
-    "agency-response-final-rule-linkage": FIRST_WAVE_SOURCE_PRODUCT_DIR / "agency-response-final-rule-linkage.csv",
     "canonical-actor-identifiers": FIRST_WAVE_SOURCE_PRODUCT_DIR / "canonical-actor-identifiers.csv",
     "alias-resolution-audit-sample": FIRST_WAVE_SOURCE_PRODUCT_DIR / "alias-resolution-audit-sample.csv",
     "issue-code-crosswalk": FIRST_WAVE_SOURCE_PRODUCT_DIR / "issue-code-crosswalk.csv",
     "false-match-review-log": FIRST_WAVE_SOURCE_PRODUCT_DIR / "false-match-review-log.csv",
     "linked-actor-issue-venue-time": FIRST_WAVE_SOURCE_PRODUCT_DIR / "linked-actor-issue-venue-time.csv",
 }
+FIRST_WAVE_CANDIDATE_SEED_PRODUCTS = {
+    "sam-fpds-action-history-crosswalk": FIRST_WAVE_SOURCE_PRODUCT_DIR / "sam-fpds-action-history-crosswalk.csv",
+    "gao-protest-overlay": FIRST_WAVE_SOURCE_PRODUCT_DIR / "gao-protest-overlay.csv",
+    "sam-exclusion-overlay": FIRST_WAVE_SOURCE_PRODUCT_DIR / "sam-exclusion-overlay.csv",
+    "procurement-offer-competition-enrichment": FIRST_WAVE_SOURCE_PRODUCT_DIR / "procurement-offer-competition-enrichment.csv",
+    "agency-response-final-rule-linkage": FIRST_WAVE_SOURCE_PRODUCT_DIR / "agency-response-final-rule-linkage.csv",
+}
 FIRST_WAVE_TEXT_SOURCE_PRODUCTS = {
     "comment-body-corpus": FIRST_WAVE_SOURCE_PRODUCT_DIR / "comment-body-corpus.csv",
     "duplicate-template-clusters": FIRST_WAVE_SOURCE_PRODUCT_DIR / "comment-template-clusters.csv",
     "meeting-log-or-missing-channel-note": FIRST_WAVE_SOURCE_PRODUCT_DIR / "meeting-log-channel-note.md",
+    "procurement-firewall-overlay": FIRST_WAVE_SOURCE_PRODUCT_DIR / "procurement-firewall-overlay.csv",
+}
+FIRST_WAVE_SOURCE_PRODUCT_FILES = {
+    **FIRST_WAVE_REVIEWED_ENTITY_PRODUCTS,
+    **FIRST_WAVE_CANDIDATE_SEED_PRODUCTS,
+    **FIRST_WAVE_TEXT_SOURCE_PRODUCTS,
 }
 FIRST_WAVE_LINKAGE_CANDIDATES_MD = ROOT / "reports" / "first-wave-linkage-candidates.md"
 FIRST_WAVE_LINKAGE_CANDIDATES_CSV = ROOT / "reports" / "first-wave-linkage-candidates.csv"
 FIRST_WAVE_LINKAGE_CANDIDATE_RECORDS_CSV = ROOT / "reports" / "first-wave-linkage-candidate-records.csv"
+FIRST_WAVE_CROSS_VENUE_ADJUDICATION_MD = ROOT / "reports" / "first-wave-cross-venue-adjudication.md"
+FIRST_WAVE_CROSS_VENUE_ADJUDICATION_CSV = ROOT / "reports" / "first-wave-cross-venue-adjudication.csv"
+FIRST_WAVE_CROSS_VENUE_ADJUDICATION_RECORDS_CSV = ROOT / "reports" / "first-wave-cross-venue-adjudication-records.csv"
 FIRST_WAVE_SOURCE_READINESS_MD = ROOT / "reports" / "first-wave-source-readiness.md"
 FIRST_WAVE_SOURCE_READINESS_CSV = ROOT / "reports" / "first-wave-source-readiness.csv"
 FIRST_WAVE_SOURCE_READINESS_TABLE = PAPER / "tables" / "first_wave_source_readiness.tex"
 CANDIDATE_SOURCE_LEAKAGE_AUDIT_MD = ROOT / "reports" / "candidate-source-leakage-audit.md"
 CANDIDATE_SOURCE_LEAKAGE_AUDIT_CSV = ROOT / "reports" / "candidate-source-leakage-audit.csv"
+FIRST_WAVE_MANUAL_ADJUDICATION_PLAN_MD = ROOT / "reports" / "first-wave-manual-adjudication-plan.md"
+FIRST_WAVE_MANUAL_ADJUDICATION_PLAN_CSV = ROOT / "reports" / "first-wave-manual-adjudication-plan.csv"
 CLAIM_POSTURE_AUDIT_MD = ROOT / "reports" / "claim-posture-audit.md"
 CLAIM_POSTURE_AUDIT_CSV = ROOT / "reports" / "claim-posture-audit.csv"
 VALIDATION_SCOPE_COVERAGE_MD = ROOT / "reports" / "validation-scope-coverage.md"
@@ -136,6 +162,8 @@ ZENODO_DEPOSIT_PREFLIGHT_CSV = ROOT / "reports" / "zenodo-deposit-preflight.csv"
 ZENODO_DEPOSIT_PREFLIGHT_MD = ROOT / "reports" / "zenodo-deposit-preflight.md"
 DOI_DEPOSIT_READINESS_CSV = ROOT / "reports" / "doi-deposit-readiness.csv"
 DOI_DEPOSIT_READINESS_MD = ROOT / "reports" / "doi-deposit-readiness.md"
+MECHANISM_REVIEW_CIRCULATION_READINESS_CSV = ROOT / "reports" / "mechanism-review-circulation-readiness.csv"
+MECHANISM_REVIEW_CIRCULATION_READINESS_MD = ROOT / "reports" / "mechanism-review-circulation-readiness.md"
 WILEY_SUBMISSION_FORM_READINESS_CSV = ROOT / "reports" / "wiley-submission-form-readiness.csv"
 WILEY_SUBMISSION_FORM_READINESS_MD = ROOT / "reports" / "wiley-submission-form-readiness.md"
 REGGOV_GUIDELINES_READINESS_CSV = ROOT / "reports" / "reggov-guidelines-readiness.csv"
@@ -167,8 +195,12 @@ POST_SUBMISSION_REPORT_NAMES = ARCHIVE_HANDOFF_REPORT_NAMES | {
     "wiley-submission-form-readiness.md",
     "reggov-guidelines-readiness.csv",
     "reggov-guidelines-readiness.md",
+    "blinded-review-package-readiness.csv",
+    "blinded-review-package-readiness.md",
     "final-readthrough-evidence.csv",
     "final-readthrough-evidence.md",
+    "mechanism-review-circulation-readiness.csv",
+    "mechanism-review-circulation-readiness.md",
 }
 LOCAL_OPERATIONAL_REPORT_PREFIXES = (
     "external-finalization-checklist.",
@@ -213,10 +245,14 @@ FORBIDDEN_ZIP_MEMBERS = {
     "supporting-information/report-data/wiley-submission-form-readiness.md",
     "supporting-information/report-data/reggov-guidelines-readiness.csv",
     "supporting-information/report-data/reggov-guidelines-readiness.md",
+    "supporting-information/report-data/blinded-review-package-readiness.csv",
+    "supporting-information/report-data/blinded-review-package-readiness.md",
     "supporting-information/report-data/external-finalization-checklist.csv",
     "supporting-information/report-data/external-finalization-checklist.md",
     "supporting-information/report-data/final-readthrough-evidence.csv",
     "supporting-information/report-data/final-readthrough-evidence.md",
+    "supporting-information/report-data/mechanism-review-circulation-readiness.csv",
+    "supporting-information/report-data/mechanism-review-circulation-readiness.md",
 }
 TEX_BINARY_DIRS = [
     Path("/usr/local/texlive/2026basic/bin/universal-darwin"),
@@ -288,6 +324,10 @@ EXPECTED_ZIP_MEMBERS = {
     "supporting-information/procurement-benchmark-crosswalk.md",
     "supporting-information/procurement-refresh-readiness.md",
     "supporting-information/first-wave-procurement-source-acquisition.md",
+    "supporting-information/procurement-causal-upgrade-packet.md",
+    "supporting-information/substitution-causal-upgrade-packet.md",
+    "supporting-information/comment-causal-upgrade-packet.md",
+    "supporting-information/venue-causal-upgrade-packet.md",
     "supporting-information/claim-boundary-audit.md",
     "supporting-information/claim-source-dependency.md",
     "supporting-information/causal-calibration-targets.md",
@@ -296,6 +336,7 @@ EXPECTED_ZIP_MEMBERS = {
     "supporting-information/first-wave-linkage-candidates.md",
     "supporting-information/first-wave-source-readiness.md",
     "supporting-information/candidate-source-leakage-audit.md",
+    "supporting-information/first-wave-manual-adjudication-plan.md",
     "supporting-information/claim-posture-audit.md",
     "supporting-information/policy-claim-language-audit.md",
     "supporting-information/submission-readiness.md",
@@ -335,6 +376,12 @@ EXPECTED_ZIP_MEMBERS = {
     "supporting-information/source-product-templates/first-wave/issue-code-crosswalk.csv",
     "supporting-information/source-product-templates/first-wave/false-match-review-log.csv",
     "supporting-information/source-product-templates/first-wave/linked-actor-issue-venue-time.csv",
+    "supporting-information/source-products/first-wave/substitution-estimation-panel.csv",
+    "supporting-information/report-data/substitution-estimation-diagnostics.csv",
+    "supporting-information/report-data/substitution-estimation-diagnostics.md",
+    "supporting-information/report-data/substitution-estimation-event-study.csv",
+    "supporting-information/report-data/substitution-estimation-leave-one-actor.csv",
+    "supporting-information/report-data/substitution-estimation-specification-contrast.svg",
 }
 
 
@@ -371,8 +418,29 @@ def main() -> int:
             PAPER_STRUCTURE_AUDIT_MD,
             CANDIDATE_SOURCE_LEAKAGE_AUDIT_CSV,
             CANDIDATE_SOURCE_LEAKAGE_AUDIT_MD,
+            FIRST_WAVE_CROSS_VENUE_ADJUDICATION_CSV,
+            FIRST_WAVE_CROSS_VENUE_ADJUDICATION_RECORDS_CSV,
+            FIRST_WAVE_CROSS_VENUE_ADJUDICATION_MD,
+            FIRST_WAVE_MANUAL_ADJUDICATION_PLAN_CSV,
+            FIRST_WAVE_MANUAL_ADJUDICATION_PLAN_MD,
+            PROCUREMENT_CAUSAL_UPGRADE_PACKET_CSV,
+            PROCUREMENT_CAUSAL_UPGRADE_PACKET_MD,
+            SUBSTITUTION_CAUSAL_UPGRADE_PACKET_CSV,
+            SUBSTITUTION_CAUSAL_UPGRADE_PACKET_MD,
+            SUBSTITUTION_ESTIMATION_PANEL,
+            SUBSTITUTION_ESTIMATION_DIAGNOSTICS_CSV,
+            SUBSTITUTION_ESTIMATION_DIAGNOSTICS_MD,
+            SUBSTITUTION_ESTIMATION_EVENT_STUDY_CSV,
+            SUBSTITUTION_ESTIMATION_LEAVE_ONE_ACTOR_CSV,
+            SUBSTITUTION_ESTIMATION_FIGURE,
+            COMMENT_CAUSAL_UPGRADE_PACKET_CSV,
+            COMMENT_CAUSAL_UPGRADE_PACKET_MD,
+            VENUE_CAUSAL_UPGRADE_PACKET_CSV,
+            VENUE_CAUSAL_UPGRADE_PACKET_MD,
             FINAL_READTHROUGH_EVIDENCE_CSV,
             FINAL_READTHROUGH_EVIDENCE_MD,
+            MECHANISM_REVIEW_CIRCULATION_READINESS_CSV,
+            MECHANISM_REVIEW_CIRCULATION_READINESS_MD,
         ])
     )
     failures.extend(check_forbidden_local_artifacts())
@@ -389,6 +457,11 @@ def main() -> int:
     failures.extend(check_procurement_benchmark_crosswalk())
     failures.extend(check_procurement_refresh_readiness())
     failures.extend(check_first_wave_procurement_source_acquisition())
+    failures.extend(check_procurement_causal_upgrade_packet())
+    failures.extend(check_substitution_estimation_diagnostics())
+    failures.extend(check_substitution_causal_upgrade_packet())
+    failures.extend(check_comment_causal_upgrade_packet())
+    failures.extend(check_venue_causal_upgrade_packet())
     failures.extend(check_claim_boundary_audit())
     failures.extend(check_claim_source_dependency_audit())
     failures.extend(check_causal_calibration_targets())
@@ -396,8 +469,10 @@ def main() -> int:
     failures.extend(check_first_wave_source_product_templates())
     failures.extend(check_first_wave_source_products())
     failures.extend(check_first_wave_linkage_candidates())
+    failures.extend(check_first_wave_cross_venue_adjudication())
     failures.extend(check_first_wave_source_readiness())
     failures.extend(check_candidate_source_leakage_audit())
+    failures.extend(check_first_wave_manual_adjudication_plan())
     failures.extend(check_claim_posture_audit())
     failures.extend(check_validation_scope_coverage())
     failures.extend(check_policy_claim_language_audit())
@@ -416,6 +491,7 @@ def main() -> int:
     failures.extend(check_doi_deposit_package())
     failures.extend(check_zenodo_deposit_preflight())
     failures.extend(check_doi_deposit_readiness())
+    failures.extend(check_mechanism_review_circulation_readiness())
     failures.extend(check_wiley_submission_form_readiness())
     failures.extend(check_blinded_review_package_readiness())
     failures.extend(check_reggov_guidelines_readiness())
@@ -497,6 +573,8 @@ def check_freshness() -> list[str]:
         (ZENODO_DEPOSIT_METADATA_JSON, zenodo_deposit_preflight_inputs()),
         (DOI_DEPOSIT_READINESS_CSV, doi_deposit_readiness_inputs()),
         (DOI_DEPOSIT_READINESS_MD, doi_deposit_readiness_inputs()),
+        (MECHANISM_REVIEW_CIRCULATION_READINESS_CSV, mechanism_review_circulation_readiness_inputs()),
+        (MECHANISM_REVIEW_CIRCULATION_READINESS_MD, mechanism_review_circulation_readiness_inputs()),
         (WILEY_SUBMISSION_FORM_READINESS_CSV, wiley_submission_form_readiness_inputs()),
         (WILEY_SUBMISSION_FORM_READINESS_MD, wiley_submission_form_readiness_inputs()),
         (REGGOV_GUIDELINES_READINESS_CSV, reggov_guidelines_readiness_inputs()),
@@ -509,6 +587,25 @@ def check_freshness() -> list[str]:
         (PAPER_STRUCTURE_AUDIT_MD, paper_structure_audit_inputs()),
         (CANDIDATE_SOURCE_LEAKAGE_AUDIT_CSV, candidate_source_leakage_audit_inputs()),
         (CANDIDATE_SOURCE_LEAKAGE_AUDIT_MD, candidate_source_leakage_audit_inputs()),
+        (FIRST_WAVE_CROSS_VENUE_ADJUDICATION_CSV, first_wave_cross_venue_adjudication_inputs()),
+        (FIRST_WAVE_CROSS_VENUE_ADJUDICATION_RECORDS_CSV, first_wave_cross_venue_adjudication_inputs()),
+        (FIRST_WAVE_CROSS_VENUE_ADJUDICATION_MD, first_wave_cross_venue_adjudication_inputs()),
+        (FIRST_WAVE_MANUAL_ADJUDICATION_PLAN_CSV, first_wave_manual_adjudication_plan_inputs()),
+        (FIRST_WAVE_MANUAL_ADJUDICATION_PLAN_MD, first_wave_manual_adjudication_plan_inputs()),
+        (PROCUREMENT_CAUSAL_UPGRADE_PACKET_CSV, procurement_causal_upgrade_packet_inputs()),
+        (PROCUREMENT_CAUSAL_UPGRADE_PACKET_MD, procurement_causal_upgrade_packet_inputs()),
+        (SUBSTITUTION_CAUSAL_UPGRADE_PACKET_CSV, substitution_causal_upgrade_packet_inputs()),
+        (SUBSTITUTION_CAUSAL_UPGRADE_PACKET_MD, substitution_causal_upgrade_packet_inputs()),
+        (SUBSTITUTION_ESTIMATION_PANEL, substitution_estimation_diagnostic_inputs()),
+        (SUBSTITUTION_ESTIMATION_DIAGNOSTICS_CSV, substitution_estimation_diagnostic_inputs()),
+        (SUBSTITUTION_ESTIMATION_DIAGNOSTICS_MD, substitution_estimation_diagnostic_inputs()),
+        (SUBSTITUTION_ESTIMATION_EVENT_STUDY_CSV, substitution_estimation_diagnostic_inputs()),
+        (SUBSTITUTION_ESTIMATION_LEAVE_ONE_ACTOR_CSV, substitution_estimation_diagnostic_inputs()),
+        (SUBSTITUTION_ESTIMATION_FIGURE, substitution_estimation_diagnostic_inputs()),
+        (COMMENT_CAUSAL_UPGRADE_PACKET_CSV, comment_causal_upgrade_packet_inputs()),
+        (COMMENT_CAUSAL_UPGRADE_PACKET_MD, comment_causal_upgrade_packet_inputs()),
+        (VENUE_CAUSAL_UPGRADE_PACKET_CSV, venue_causal_upgrade_packet_inputs()),
+        (VENUE_CAUSAL_UPGRADE_PACKET_MD, venue_causal_upgrade_packet_inputs()),
         (FINAL_READTHROUGH_EVIDENCE_CSV, final_readthrough_evidence_inputs()),
         (FINAL_READTHROUGH_EVIDENCE_MD, final_readthrough_evidence_inputs()),
         (REVIEWER_RISK_REGISTER_CSV, reviewer_risk_register_inputs()),
@@ -570,11 +667,18 @@ def submission_inputs() -> list[Path]:
         ROOT / "scripts" / "write-first-wave-causal-protocols.py",
         ROOT / "scripts" / "write-first-wave-source-product-templates.py",
         ROOT / "scripts" / "build-first-wave-entity-resolution-seeds.py",
+        ROOT / "scripts" / "promote-first-wave-reviewed-entity-products.py",
         ROOT / "scripts" / "build-first-wave-comment-linkage-seeds.py",
         ROOT / "scripts" / "audit-first-wave-source-products.py",
         ROOT / "scripts" / "build-first-wave-linkage-candidates.py",
         ROOT / "scripts" / "audit-first-wave-source-readiness.py",
         ROOT / "scripts" / "write-first-wave-procurement-source-acquisition.py",
+        ROOT / "scripts" / "write-first-wave-manual-adjudication-plan.py",
+        ROOT / "scripts" / "write-procurement-causal-upgrade-packet.py",
+        ROOT / "scripts" / "write-substitution-causal-upgrade-packet.py",
+        ROOT / "scripts" / "estimate-substitution-diagnostics.py",
+        ROOT / "scripts" / "write-comment-causal-upgrade-packet.py",
+        ROOT / "scripts" / "write-venue-causal-upgrade-packet.py",
         CITATION_CFF,
         ZENODO_JSON,
         ROOT / "docs" / "odd-model.md",
@@ -592,6 +696,10 @@ def submission_inputs() -> list[Path]:
         PROCUREMENT_BENCHMARK_CROSSWALK_MD,
         PROCUREMENT_REFRESH_READINESS_MD,
         FIRST_WAVE_PROCUREMENT_SOURCE_ACQUISITION_MD,
+        PROCUREMENT_CAUSAL_UPGRADE_PACKET_MD,
+        SUBSTITUTION_CAUSAL_UPGRADE_PACKET_MD,
+        COMMENT_CAUSAL_UPGRADE_PACKET_MD,
+        VENUE_CAUSAL_UPGRADE_PACKET_MD,
         ROOT / "reports" / "claim-boundary-audit.md",
         ROOT / "reports" / "claim-source-dependency.md",
         CAUSAL_CALIBRATION_TARGETS_MD,
@@ -600,6 +708,7 @@ def submission_inputs() -> list[Path]:
         FIRST_WAVE_LINKAGE_CANDIDATES_MD,
         FIRST_WAVE_SOURCE_READINESS_MD,
         CANDIDATE_SOURCE_LEAKAGE_AUDIT_MD,
+        FIRST_WAVE_MANUAL_ADJUDICATION_PLAN_MD,
         ROOT / "reports" / "claim-posture-audit.md",
         ROOT / "reports" / "validation-summary.md",
         ROOT / "reports" / "substitution-audit.md",
@@ -617,8 +726,8 @@ def submission_inputs() -> list[Path]:
         PAPER / ".wiley-build" / "wileyNJD-Chicago.bst",
         PAPER / ".wiley-template" / "Optimal-Design-layout" / "LETTERSP.STY",
         *sorted(FIRST_WAVE_SOURCE_TEMPLATE_DIR.glob("*")),
-        *sorted(FIRST_WAVE_CANDIDATE_SEED_PRODUCTS.values()),
-        *sorted(FIRST_WAVE_TEXT_SOURCE_PRODUCTS.values()),
+        *sorted(FIRST_WAVE_SOURCE_PRODUCT_FILES.values()),
+        SUBSTITUTION_ESTIMATION_PANEL,
         *sorted((PAPER / "sections").glob("*.tex")),
         *sorted((PAPER / "tables").glob("*.tex")),
         *sorted((PAPER / "figures").glob("*.tex")),
@@ -641,6 +750,7 @@ def report_bundle_inputs() -> list[Path]:
             *sorted((ROOT / "reports").glob("*.csv")),
             *sorted((ROOT / "reports").glob("*.md")),
             *sorted((ROOT / "reports").glob("*.manifest.json")),
+            *sorted((ROOT / "reports").glob("*.svg")),
         ]
         if path.name not in POST_SUBMISSION_REPORT_NAMES
         and not path.name.startswith(LOCAL_OPERATIONAL_REPORT_PREFIXES)
@@ -693,6 +803,37 @@ def doi_deposit_readiness_inputs() -> list[Path]:
     ]
 
 
+def mechanism_review_circulation_readiness_inputs() -> list[Path]:
+    return [
+        SUBMISSION_ZIP,
+        BLINDED_REVIEW_ZIP,
+        DOI_DEPOSIT_PACKAGE,
+        SUBMISSION_READINESS_CSV,
+        SUBMISSION_READINESS_MD,
+        DOI_DEPOSIT_READINESS_CSV,
+        DOI_DEPOSIT_READINESS_MD,
+        REVIEWER_RISK_REGISTER_CSV,
+        REVIEWER_RISK_REGISTER_MD,
+        CANDIDATE_SOURCE_LEAKAGE_AUDIT_CSV,
+        CANDIDATE_SOURCE_LEAKAGE_AUDIT_MD,
+        FIRST_WAVE_SOURCE_READINESS_CSV,
+        FIRST_WAVE_SOURCE_READINESS_MD,
+        FINAL_READTHROUGH_EVIDENCE_CSV,
+        FINAL_READTHROUGH_EVIDENCE_MD,
+        CLAIM_SOURCE_DEPENDENCY_CSV,
+        CLAIM_SOURCE_DEPENDENCY_MD,
+        CAUSAL_CALIBRATION_TARGETS_CSV,
+        CAUSAL_CALIBRATION_TARGETS_MD,
+        WILEY_SUBMISSION_FORM_READINESS_CSV,
+        WILEY_SUBMISSION_FORM_READINESS_MD,
+        BLINDED_REVIEW_PACKAGE_READINESS_CSV,
+        BLINDED_REVIEW_PACKAGE_READINESS_MD,
+        REGGOV_GUIDELINES_READINESS_CSV,
+        REGGOV_GUIDELINES_READINESS_MD,
+        ROOT / "scripts" / "audit-mechanism-review-circulation.py",
+    ]
+
+
 def zenodo_deposit_preflight_inputs() -> list[Path]:
     return [
         DOI_DEPOSIT_PACKAGE,
@@ -740,6 +881,22 @@ def doi_deposit_package_inputs() -> list[Path]:
         PAPER_STRUCTURE_AUDIT_MD,
         CANDIDATE_SOURCE_LEAKAGE_AUDIT_CSV,
         CANDIDATE_SOURCE_LEAKAGE_AUDIT_MD,
+        FIRST_WAVE_MANUAL_ADJUDICATION_PLAN_CSV,
+        FIRST_WAVE_MANUAL_ADJUDICATION_PLAN_MD,
+        PROCUREMENT_CAUSAL_UPGRADE_PACKET_CSV,
+        PROCUREMENT_CAUSAL_UPGRADE_PACKET_MD,
+        SUBSTITUTION_CAUSAL_UPGRADE_PACKET_CSV,
+        SUBSTITUTION_CAUSAL_UPGRADE_PACKET_MD,
+        SUBSTITUTION_ESTIMATION_PANEL,
+        SUBSTITUTION_ESTIMATION_DIAGNOSTICS_CSV,
+        SUBSTITUTION_ESTIMATION_DIAGNOSTICS_MD,
+        SUBSTITUTION_ESTIMATION_EVENT_STUDY_CSV,
+        SUBSTITUTION_ESTIMATION_LEAVE_ONE_ACTOR_CSV,
+        SUBSTITUTION_ESTIMATION_FIGURE,
+        COMMENT_CAUSAL_UPGRADE_PACKET_CSV,
+        COMMENT_CAUSAL_UPGRADE_PACKET_MD,
+        VENUE_CAUSAL_UPGRADE_PACKET_CSV,
+        VENUE_CAUSAL_UPGRADE_PACKET_MD,
         FINAL_HUMAN_READTHROUGH,
         FINAL_HUMAN_READTHROUGH_AUDIT_CSV,
         FINAL_HUMAN_READTHROUGH_AUDIT_MD,
@@ -771,6 +928,16 @@ def final_readthrough_evidence_inputs() -> list[Path]:
         SOURCE_CAPABILITY_AUDIT_MD,
         CANDIDATE_SOURCE_LEAKAGE_AUDIT_CSV,
         CANDIDATE_SOURCE_LEAKAGE_AUDIT_MD,
+        FIRST_WAVE_MANUAL_ADJUDICATION_PLAN_CSV,
+        FIRST_WAVE_MANUAL_ADJUDICATION_PLAN_MD,
+        PROCUREMENT_CAUSAL_UPGRADE_PACKET_CSV,
+        PROCUREMENT_CAUSAL_UPGRADE_PACKET_MD,
+        SUBSTITUTION_CAUSAL_UPGRADE_PACKET_CSV,
+        SUBSTITUTION_CAUSAL_UPGRADE_PACKET_MD,
+        COMMENT_CAUSAL_UPGRADE_PACKET_CSV,
+        COMMENT_CAUSAL_UPGRADE_PACKET_MD,
+        VENUE_CAUSAL_UPGRADE_PACKET_CSV,
+        VENUE_CAUSAL_UPGRADE_PACKET_MD,
         CAUSAL_CALIBRATION_TARGETS_CSV,
         CAUSAL_CALIBRATION_TARGETS_MD,
         LATEX_LOG_AUDIT_CSV,
@@ -817,17 +984,148 @@ def paper_structure_audit_inputs() -> list[Path]:
     ]
 
 
+def first_wave_cross_venue_adjudication_inputs() -> list[Path]:
+    return [
+        FIRST_WAVE_LINKAGE_CANDIDATES_CSV,
+        FIRST_WAVE_LINKAGE_CANDIDATE_RECORDS_CSV,
+        ROOT / "data" / "raw" / "dark-money.csv",
+        ROOT / "data" / "raw" / "intermediaries.csv",
+        ROOT / "data" / "raw" / "usaspending-procurement-actions.csv",
+        ROOT / "scripts" / "write-first-wave-cross-venue-adjudication.py",
+        ROOT / "scripts" / "paper_release_metadata.py",
+        CITATION_CFF,
+    ]
+
+
 def candidate_source_leakage_audit_inputs() -> list[Path]:
     return [
         FIRST_WAVE_SOURCE_PRODUCTS_CSV,
         FIRST_WAVE_SOURCE_PRODUCTS_MD,
         FIRST_WAVE_SOURCE_READINESS_CSV,
         FIRST_WAVE_SOURCE_READINESS_MD,
+        FIRST_WAVE_CROSS_VENUE_ADJUDICATION_CSV,
+        FIRST_WAVE_CROSS_VENUE_ADJUDICATION_RECORDS_CSV,
+        FIRST_WAVE_CROSS_VENUE_ADJUDICATION_MD,
         CAUSAL_CALIBRATION_TARGETS_CSV,
         CAUSAL_CALIBRATION_TARGETS_MD,
         ROOT / "scripts" / "audit-candidate-source-leakage.py",
-        *sorted(FIRST_WAVE_CANDIDATE_SEED_PRODUCTS.values()),
-        *sorted(FIRST_WAVE_TEXT_SOURCE_PRODUCTS.values()),
+        *sorted(FIRST_WAVE_SOURCE_PRODUCT_FILES.values()),
+    ]
+
+
+def first_wave_manual_adjudication_plan_inputs() -> list[Path]:
+    return [
+        FIRST_WAVE_SOURCE_PRODUCTS_CSV,
+        FIRST_WAVE_SOURCE_PRODUCTS_MD,
+        FIRST_WAVE_SOURCE_READINESS_CSV,
+        FIRST_WAVE_SOURCE_READINESS_MD,
+        CANDIDATE_SOURCE_LEAKAGE_AUDIT_CSV,
+        CANDIDATE_SOURCE_LEAKAGE_AUDIT_MD,
+        ROOT / "scripts" / "write-first-wave-manual-adjudication-plan.py",
+        *sorted(FIRST_WAVE_SOURCE_PRODUCT_FILES.values()),
+    ]
+
+
+def procurement_causal_upgrade_packet_inputs() -> list[Path]:
+    return [
+        CAUSAL_CALIBRATION_TARGETS_CSV,
+        CAUSAL_CALIBRATION_TARGETS_MD,
+        FIRST_WAVE_CAUSAL_PROTOCOLS_CSV,
+        FIRST_WAVE_CAUSAL_PROTOCOLS_MD,
+        FIRST_WAVE_SOURCE_PRODUCTS_CSV,
+        FIRST_WAVE_SOURCE_PRODUCTS_MD,
+        FIRST_WAVE_SOURCE_READINESS_CSV,
+        FIRST_WAVE_SOURCE_READINESS_MD,
+        FIRST_WAVE_PROCUREMENT_SOURCE_ACQUISITION_CSV,
+        FIRST_WAVE_PROCUREMENT_SOURCE_ACQUISITION_MD,
+        FIRST_WAVE_MANUAL_ADJUDICATION_PLAN_CSV,
+        FIRST_WAVE_MANUAL_ADJUDICATION_PLAN_MD,
+        PROCUREMENT_DENOMINATOR_AUDIT_CSV,
+        PROCUREMENT_DENOMINATOR_AUDIT_MD,
+        PROCUREMENT_MODIFICATION_COMPOSITION_AUDIT_CSV,
+        PROCUREMENT_MODIFICATION_COMPOSITION_AUDIT_MD,
+        CLAIM_SOURCE_DEPENDENCY_CSV,
+        CLAIM_SOURCE_DEPENDENCY_MD,
+        ROOT / "scripts" / "write-procurement-causal-upgrade-packet.py",
+    ]
+
+
+def substitution_causal_upgrade_packet_inputs() -> list[Path]:
+    return [
+        CAUSAL_CALIBRATION_TARGETS_CSV,
+        CAUSAL_CALIBRATION_TARGETS_MD,
+        FIRST_WAVE_CAUSAL_PROTOCOLS_CSV,
+        FIRST_WAVE_CAUSAL_PROTOCOLS_MD,
+        FIRST_WAVE_SOURCE_PRODUCTS_CSV,
+        FIRST_WAVE_SOURCE_PRODUCTS_MD,
+        FIRST_WAVE_SOURCE_READINESS_CSV,
+        FIRST_WAVE_SOURCE_READINESS_MD,
+        FIRST_WAVE_MANUAL_ADJUDICATION_PLAN_CSV,
+        FIRST_WAVE_MANUAL_ADJUDICATION_PLAN_MD,
+        CANDIDATE_SOURCE_LEAKAGE_AUDIT_CSV,
+        CANDIDATE_SOURCE_LEAKAGE_AUDIT_MD,
+        CLAIM_SOURCE_DEPENDENCY_CSV,
+        CLAIM_SOURCE_DEPENDENCY_MD,
+        ROOT / "reports" / "substitution-historical-lda-panel.csv",
+        ROOT / "reports" / "substitution-historical-lda-panel.md",
+        ROOT / "reports" / "substitution-state-lobbying-control-panel.csv",
+        ROOT / "reports" / "substitution-state-lobbying-control-panel.md",
+        SUBSTITUTION_ESTIMATION_DIAGNOSTICS_CSV,
+        SUBSTITUTION_ESTIMATION_DIAGNOSTICS_MD,
+        SUBSTITUTION_ESTIMATION_EVENT_STUDY_CSV,
+        SUBSTITUTION_ESTIMATION_LEAVE_ONE_ACTOR_CSV,
+        SUBSTITUTION_ESTIMATION_FIGURE,
+        ROOT / "scripts" / "write-substitution-causal-upgrade-packet.py",
+    ]
+
+
+def substitution_estimation_diagnostic_inputs() -> list[Path]:
+    return [
+        FIRST_WAVE_SOURCE_PRODUCT_DIR / "substitution-historical-lda-panel.csv",
+        FIRST_WAVE_SOURCE_PRODUCT_DIR / "substitution-state-lobbying-control-panel.csv",
+        ROOT / "scripts" / "estimate-substitution-diagnostics.py",
+        ROOT / "scripts" / "paper_release_metadata.py",
+        CITATION_CFF,
+    ]
+
+
+def comment_causal_upgrade_packet_inputs() -> list[Path]:
+    return [
+        CAUSAL_CALIBRATION_TARGETS_CSV,
+        CAUSAL_CALIBRATION_TARGETS_MD,
+        FIRST_WAVE_CAUSAL_PROTOCOLS_CSV,
+        FIRST_WAVE_CAUSAL_PROTOCOLS_MD,
+        FIRST_WAVE_SOURCE_PRODUCTS_CSV,
+        FIRST_WAVE_SOURCE_PRODUCTS_MD,
+        FIRST_WAVE_SOURCE_READINESS_CSV,
+        FIRST_WAVE_SOURCE_READINESS_MD,
+        FIRST_WAVE_MANUAL_ADJUDICATION_PLAN_CSV,
+        FIRST_WAVE_MANUAL_ADJUDICATION_PLAN_MD,
+        CANDIDATE_SOURCE_LEAKAGE_AUDIT_CSV,
+        CANDIDATE_SOURCE_LEAKAGE_AUDIT_MD,
+        CLAIM_SOURCE_DEPENDENCY_CSV,
+        CLAIM_SOURCE_DEPENDENCY_MD,
+        ROOT / "scripts" / "write-comment-causal-upgrade-packet.py",
+    ]
+
+
+def venue_causal_upgrade_packet_inputs() -> list[Path]:
+    return [
+        CAUSAL_CALIBRATION_TARGETS_CSV,
+        CAUSAL_CALIBRATION_TARGETS_MD,
+        FIRST_WAVE_CAUSAL_PROTOCOLS_CSV,
+        FIRST_WAVE_CAUSAL_PROTOCOLS_MD,
+        FIRST_WAVE_SOURCE_PRODUCTS_CSV,
+        FIRST_WAVE_SOURCE_PRODUCTS_MD,
+        FIRST_WAVE_SOURCE_READINESS_CSV,
+        FIRST_WAVE_SOURCE_READINESS_MD,
+        FIRST_WAVE_MANUAL_ADJUDICATION_PLAN_CSV,
+        FIRST_WAVE_MANUAL_ADJUDICATION_PLAN_MD,
+        CANDIDATE_SOURCE_LEAKAGE_AUDIT_CSV,
+        CANDIDATE_SOURCE_LEAKAGE_AUDIT_MD,
+        CLAIM_SOURCE_DEPENDENCY_CSV,
+        CLAIM_SOURCE_DEPENDENCY_MD,
+        ROOT / "scripts" / "write-venue-causal-upgrade-packet.py",
     ]
 
 
@@ -1145,6 +1443,7 @@ def check_source_capability_audit() -> list[str]:
     required = {
         "direct-dark-money-routing",
         "sam-contract-awards-action-history",
+        "sam-exclusions-overlay",
         "usaspending-stratified-action-panel",
         "usaspending-national-action-panel",
         "usaspending-bulk-transaction-download-panel",
@@ -1173,6 +1472,13 @@ def check_source_capability_audit() -> list[str]:
         failures.append(
             "SAM Contract Awards capability status should be implemented-not-active, quota-blocked, or active-bounded"
         )
+    if "SAM.gov quota blocked until" in rows["sam-contract-awards-action-history"].get("snapshotPlan", ""):
+        failures.append("SAM Contract Awards capability snapshot plan must qualify elapsed quota timestamps as recorded reset evidence")
+    exclusions_next_action = rows["sam-exclusions-overlay"].get("nextAction", "")
+    if "After SAM quota resets" in exclusions_next_action:
+        failures.append("SAM exclusions overlay next action must not tell readers to wait on a stale quota reset")
+    if "make sam-exclusions-preflight" not in exclusions_next_action:
+        failures.append("SAM exclusions overlay next action must preserve the preflight route")
     if rows["usaspending-stratified-action-panel"].get("capabilityStatus") not in {
         "active-usable",
         "active-bounded",
@@ -1475,6 +1781,8 @@ def check_procurement_denominator_audit() -> list[str]:
         failures.append(
             "SAM Contract Awards cannot be marked ok without committed action rows"
         )
+    if "SAM.gov quota blocked until" in rows["sam-contract-awards"].get("statusNote", ""):
+        failures.append("procurement denominator audit must qualify elapsed SAM quota timestamps as recorded reset evidence")
     text = PROCUREMENT_DENOMINATOR_AUDIT_MD.read_text(encoding="utf-8")
     required_text = [
         "Procurement Denominator Audit",
@@ -1536,6 +1844,8 @@ def check_procurement_modification_composition_audit() -> list[str]:
         failures.append("procurement modification composition audit missing SAM Contract Awards source summary")
     elif sam.get("snapshotStatus") == "ok" and audit_number(sam.get("rows")) <= 0:
         failures.append("SAM Contract Awards cannot be marked ok in the composition audit without committed rows")
+    if sam and "SAM.gov quota blocked until" in sam.get("statusNote", ""):
+        failures.append("procurement modification composition audit must qualify elapsed SAM quota timestamps as recorded reset evidence")
 
     group_types = {row.get("groupType", "") for row in rows}
     for group_type in ("agency", "awardType", "recipient"):
@@ -1700,6 +2010,23 @@ def check_procurement_refresh_readiness() -> list[str]:
         failures.append("procurement refresh readiness must keep the procurement claim boundary bounded")
     if "calibrated policy-simulation claims remain outside scope" not in rows["claim-boundary"].get("evidence", ""):
         failures.append("procurement refresh readiness must keep calibrated policy-simulation claims outside scope")
+    sam_next_action = rows["sam-live-status"].get("nextAction", "")
+    if "Wait until 2026-Jun-20 00:00:00+0000 UTC before rerunning SAM" in sam_next_action:
+        failures.append("procurement refresh readiness still contains the stale June 20 wait instruction")
+    if "when it has elapsed" in sam_next_action:
+        failures.append("procurement refresh readiness must classify the recorded SAM reset date instead of using an open-ended wait")
+    if "SAM.gov quota blocked until" in rows["sam-live-status"].get("evidence", ""):
+        failures.append("procurement refresh readiness must qualify elapsed SAM quota timestamps as recorded reset evidence")
+    if (
+        "2026-Jun-20 00:00:00+0000 UTC" in rows["sam-live-status"].get("evidence", "")
+        and "has elapsed" not in sam_next_action
+    ):
+        failures.append("procurement refresh readiness must treat the June 20 SAM reset evidence as elapsed")
+    if rows["sam-live-status"].get("status") == "quota_blocked":
+        if "recorded SAM.gov reset time" not in sam_next_action:
+            failures.append("quota-blocked SAM live status must describe the recorded reset time without a stale wait")
+        if "fresh downloaded SAM export" not in sam_next_action:
+            failures.append("quota-blocked SAM live status must keep the fresh downloaded export path visible")
 
     text = PROCUREMENT_REFRESH_READINESS_MD.read_text(encoding="utf-8")
     required_text = [
@@ -1715,6 +2042,7 @@ def check_procurement_refresh_readiness() -> list[str]:
         "--assume-fresh",
         "timeSource=recorded_at_fallback",
         "request a fresh export email",
+        "recorded SAM.gov reset time",
     ]
     for phrase in required_text:
         if phrase not in text:
@@ -1736,7 +2064,14 @@ def check_first_wave_procurement_source_acquisition() -> list[str]:
         return [f"missing first-wave procurement source acquisition artifact: {path}" for path in missing]
 
     with FIRST_WAVE_PROCUREMENT_SOURCE_ACQUISITION_CSV.open(newline="", encoding="utf-8") as source:
-        rows = {row.get("productKey", ""): row for row in csv.DictReader(source)}
+        row_list = list(csv.DictReader(source))
+    failures.extend(
+        check_csv_release_metadata(
+            row_list,
+            "first-wave procurement source acquisition",
+        )
+    )
+    rows = {row.get("productKey", ""): row for row in row_list}
     required = {
         "sam-fpds-action-history-crosswalk",
         "gao-protest-overlay",
@@ -1793,6 +2128,12 @@ def check_first_wave_procurement_source_acquisition() -> list[str]:
                     f"first-wave procurement source acquisition {product} missing phrase: {phrase}"
                 )
     text = FIRST_WAVE_PROCUREMENT_SOURCE_ACQUISITION_MD.read_text(encoding="utf-8")
+    failures.extend(
+        check_markdown_release_metadata(
+            text,
+            "first-wave procurement source acquisition",
+        )
+    )
     required_text = [
         "First-Wave Procurement Source Acquisition",
         "acquisition_plan_only",
@@ -1810,6 +2151,763 @@ def check_first_wave_procurement_source_acquisition() -> list[str]:
         supplement = SUPPLEMENT_BODY.read_text(encoding="utf-8")
         if "first-wave procurement source-acquisition report" not in supplement:
             failures.append("supplement does not disclose the first-wave procurement source-acquisition report")
+    return failures
+
+
+def check_procurement_causal_upgrade_packet() -> list[str]:
+    failures: list[str] = []
+    missing = [
+        path.relative_to(ROOT)
+        for path in (
+            PROCUREMENT_CAUSAL_UPGRADE_PACKET_MD,
+            PROCUREMENT_CAUSAL_UPGRADE_PACKET_CSV,
+        )
+        if not path.exists()
+    ]
+    if missing:
+        return [f"missing procurement causal upgrade packet artifact: {path}" for path in missing]
+
+    with PROCUREMENT_CAUSAL_UPGRADE_PACKET_CSV.open(newline="", encoding="utf-8") as source:
+        row_list = list(csv.DictReader(source))
+    failures.extend(
+        check_csv_release_metadata(
+            row_list,
+            "procurement causal upgrade packet",
+        )
+    )
+    rows = {row.get("productKey", ""): row for row in row_list}
+    required = {
+        "sam-fpds-action-history-crosswalk",
+        "procurement-offer-competition-enrichment",
+        "gao-protest-overlay",
+        "sam-exclusion-overlay",
+        "procurement-firewall-overlay",
+    }
+    missing_products = sorted(required - set(rows))
+    failures.extend(
+        f"procurement causal upgrade packet missing product: {product}"
+        for product in missing_products
+    )
+    if missing_products:
+        return failures
+
+    for product, row in rows.items():
+        if row.get("targetKey") != "procurement-modification-causal-capture":
+            failures.append(f"procurement causal upgrade row {product} has wrong targetKey")
+        if row.get("targetStatus") != "denominator_mapped_not_causal":
+            failures.append(
+                f"procurement causal upgrade row {product} has targetStatus={row.get('targetStatus', '')}"
+            )
+        if row.get("policyClaimStatus") != "not_cleared":
+            failures.append(
+                f"procurement causal upgrade row {product} has policyClaimStatus={row.get('policyClaimStatus', '')}"
+            )
+        if row.get("blocksPolicySimulation") != "yes":
+            failures.append(
+                f"procurement causal upgrade row {product} should block policy simulation"
+            )
+        if "calibrated policy-simulation" not in row.get("barredClaim", ""):
+            failures.append(
+                f"procurement causal upgrade row {product} missing calibrated-policy barred claim"
+            )
+        if "source-product" not in row.get("promotionRequirement", "") and product != "procurement-firewall-overlay":
+            failures.append(
+                f"procurement causal upgrade row {product} promotion requirement omits source-product gate"
+            )
+
+    expected_states = {
+        "sam-fpds-action-history-crosswalk": "candidate_worklist_not_evidence",
+        "procurement-offer-competition-enrichment": "candidate_worklist_not_evidence",
+        "gao-protest-overlay": "candidate_worklist_not_evidence",
+        "sam-exclusion-overlay": "candidate_worklist_not_evidence",
+        "procurement-firewall-overlay": "schema_ready_bounded_control",
+    }
+    for product, state in expected_states.items():
+        if rows[product].get("evidenceGateState") != state:
+            failures.append(
+                f"procurement causal upgrade row {product} has evidenceGateState="
+                f"{rows[product].get('evidenceGateState', '')}, expected {state}"
+            )
+    phrase_expectations = {
+        "sam-fpds-action-history-crosswalk": [
+            "modification coding",
+            "SAM/FPDS",
+            "USAspending",
+            "outcomes",
+        ],
+        "procurement-offer-competition-enrichment": [
+            "competition",
+            "offer-count",
+            "controls",
+        ],
+        "gao-protest-overlay": [
+            "GAO",
+            "dispute outcomes",
+            "PIID/UEI",
+        ],
+        "sam-exclusion-overlay": [
+            "exclusion",
+            "debarment",
+            "UEI",
+        ],
+        "procurement-firewall-overlay": [
+            "EPAAR",
+            "bounded",
+            "control-design",
+        ],
+    }
+    for product, phrases in phrase_expectations.items():
+        row_text = " ".join(rows[product].values())
+        for phrase in phrases:
+            if phrase not in row_text:
+                failures.append(f"procurement causal upgrade row {product} missing phrase: {phrase}")
+
+    text = PROCUREMENT_CAUSAL_UPGRADE_PACKET_MD.read_text(encoding="utf-8")
+    failures.extend(
+        check_markdown_release_metadata(
+            text,
+            "procurement causal upgrade packet",
+        )
+    )
+    required_text = [
+        "Procurement Causal Upgrade Packet",
+        "not source evidence",
+        "does not clear calibrated policy-simulation or causal procurement-capture claims",
+        "denominator-mapped procurement diagnostics only",
+        "Target status: `denominator_mapped_not_causal`",
+        "Policy-claim status: `not_cleared`",
+        "Source-product gate: `candidate_only_blocked`",
+        "SAM/FPDS action-history",
+        "offer-count",
+        "GAO protest",
+        "SAM exclusion",
+        "procurement firewall",
+        "Denominator Separation",
+        "not causal capture estimates",
+        "Regeneration Rule",
+        "procurement-causal-upgrade-packet",
+    ]
+    for phrase in required_text:
+        if phrase not in text:
+            failures.append(f"procurement causal upgrade packet markdown missing phrase: {phrase}")
+    if SUPPLEMENT_BODY.exists():
+        supplement = SUPPLEMENT_BODY.read_text(encoding="utf-8")
+        if "procurement causal-upgrade packet" not in supplement:
+            failures.append("supplement does not disclose the procurement causal-upgrade packet")
+    return failures
+
+
+def check_substitution_estimation_diagnostics() -> list[str]:
+    failures: list[str] = []
+    required_paths = (
+        SUBSTITUTION_ESTIMATION_PANEL,
+        SUBSTITUTION_ESTIMATION_DIAGNOSTICS_CSV,
+        SUBSTITUTION_ESTIMATION_DIAGNOSTICS_MD,
+        SUBSTITUTION_ESTIMATION_EVENT_STUDY_CSV,
+        SUBSTITUTION_ESTIMATION_LEAVE_ONE_ACTOR_CSV,
+        SUBSTITUTION_ESTIMATION_FIGURE,
+    )
+    missing = [path.relative_to(ROOT) for path in required_paths if not path.exists()]
+    if missing:
+        return [f"missing substitution estimation diagnostic artifact: {path}" for path in missing]
+
+    with SUBSTITUTION_ESTIMATION_DIAGNOSTICS_CSV.open(newline="", encoding="utf-8") as source:
+        diagnostic_list = list(csv.DictReader(source))
+    failures.extend(
+        check_csv_release_metadata(
+            diagnostic_list,
+            "substitution estimation diagnostics",
+        )
+    )
+    diagnostics = {row.get("diagnosticId", ""): row for row in diagnostic_list}
+    required_ids = {
+        "lda_issue_row_deduplication",
+        "lda_revision_deduplication",
+        "colorado_repeated_receipt_key_deduplication",
+        "balanced_actor_quarter_panel",
+        "treatment_source_system_separation",
+        "common_outcome_semantics",
+        "actor_issue_unit_comparability",
+        "clean_pre_period_depth",
+        "independent_clean_placebo_depth",
+        "primary_actor_quarter_did",
+        "single_interval_pretrend_check",
+        "clean_pre_hloga_2007q2_placebo",
+        "balanced_two_quarter_window",
+        "calendar_2008_post_window",
+        "late_2008_post_window",
+        "within_group_p95_winsorized",
+        "leave_one_actor_stability",
+        "overall_effect_model_and_falsification_gate",
+    }
+    for diagnostic_id in sorted(required_ids - set(diagnostics)):
+        failures.append(f"substitution estimation diagnostics missing row: {diagnostic_id}")
+    if required_ids - set(diagnostics):
+        return failures
+
+    overall = diagnostics["overall_effect_model_and_falsification_gate"]
+    if overall.get("status") != "effect_model_and_falsification_gates_not_cleared":
+        failures.append(
+            "substitution estimation overall gate should remain "
+            "effect_model_and_falsification_gates_not_cleared"
+        )
+    if overall.get("gateResult") != "fail":
+        failures.append("substitution estimation overall gate should fail")
+    if "no causal substitution effect" not in overall.get("claimBoundary", ""):
+        failures.append("substitution estimation overall row lacks the no-causal claim boundary")
+
+    for diagnostic_id in (
+        "treatment_source_system_separation",
+        "common_outcome_semantics",
+        "actor_issue_unit_comparability",
+        "clean_pre_period_depth",
+        "independent_clean_placebo_depth",
+        "single_interval_pretrend_check",
+        "leave_one_actor_stability",
+    ):
+        if diagnostics[diagnostic_id].get("gateResult") != "fail":
+            failures.append(f"substitution estimation gate should fail: {diagnostic_id}")
+    issue_evidence = diagnostics["actor_issue_unit_comparability"].get("evidence", "")
+    if "treatedIssueCodes=36; controlIssueCodes=7; sharedIssueCodes=0" not in issue_evidence:
+        failures.append(
+            "substitution issue-comparability gate should report the live 36/7/0 source-taxonomy counts"
+        )
+    control_repeat_evidence = diagnostics[
+        "colorado_repeated_receipt_key_deduplication"
+    ].get("evidence", "")
+    if (
+        "repeatedReceiptRowsExcluded=9; receiptKeyGroups=9; "
+        "reportMetadataConflictGroups=9"
+    ) not in control_repeat_evidence:
+        failures.append(
+            "substitution Colorado cleaning row should disclose all nine report-metadata conflicts"
+        )
+
+    primary = diagnostics["primary_actor_quarter_did"]
+    try:
+        primary_estimate = float(primary.get("estimate", ""))
+        primary_lower = float(primary.get("lower95", ""))
+        primary_upper = float(primary.get("upper95", ""))
+    except ValueError:
+        failures.append("substitution estimation primary row has non-numeric estimate or interval")
+    else:
+        if not (-0.31 < primary_estimate < -0.27):
+            failures.append(
+                f"substitution estimation primary estimate drifted unexpectedly: {primary_estimate}"
+            )
+        if not (primary_lower < 0 < primary_upper):
+            failures.append("substitution estimation primary actor-bootstrap interval should span zero")
+    if primary.get("status") != "diagnostic_only":
+        failures.append("substitution estimation primary row should remain diagnostic_only")
+    if "bootstrapReps=10000; baseSeed=20070914" not in primary.get("evidence", ""):
+        failures.append("substitution estimation primary row should record the committed bootstrap count and seed")
+
+    pretrend = diagnostics["single_interval_pretrend_check"]
+    if pretrend.get("status") != "not_testable_as_trend":
+        failures.append("substitution pre-trend row should remain not_testable_as_trend")
+    placebo = diagnostics["clean_pre_hloga_2007q2_placebo"]
+    if placebo.get("status") != "does_not_reassure":
+        failures.append("substitution clean placebo should remain does_not_reassure")
+
+    with SUBSTITUTION_ESTIMATION_PANEL.open(newline="", encoding="utf-8") as source:
+        panel_rows = list(csv.DictReader(source))
+    panel_keys = {
+        (row.get("canonicalActorId", ""), row.get("quarter", ""))
+        for row in panel_rows
+    }
+    if len(panel_rows) != 264:
+        failures.append(f"substitution estimation panel should have 264 rows, found {len(panel_rows)}")
+    if len(panel_keys) != len(panel_rows):
+        failures.append("substitution estimation panel has duplicate actor-quarter keys")
+    treated_actors = {
+        row.get("canonicalActorId", "")
+        for row in panel_rows
+        if row.get("comparisonGroup") == "treated_hloga_lda_client"
+    }
+    control_actors = {
+        row.get("canonicalActorId", "")
+        for row in panel_rows
+        if row.get("comparisonGroup") == "control_unaffected_colorado_state_lobbying_jurisdiction"
+    }
+    if len(treated_actors) != 8 or len(control_actors) != 25:
+        failures.append(
+            "substitution estimation panel actor counts should be treated=8 and control=25"
+        )
+    for actor_id in sorted(treated_actors | control_actors):
+        actor_quarters = {
+            row.get("quarter", "")
+            for row in panel_rows
+            if row.get("canonicalActorId") == actor_id
+        }
+        if len(actor_quarters) != 8:
+            failures.append(
+                f"substitution estimation panel actor {actor_id} should have eight quarters"
+            )
+
+    with SUBSTITUTION_ESTIMATION_EVENT_STUDY_CSV.open(newline="", encoding="utf-8") as source:
+        event_rows = list(csv.DictReader(source))
+    failures.extend(
+        check_csv_release_metadata(
+            event_rows,
+            "substitution estimation event-study diagnostics",
+        )
+    )
+    if len(event_rows) != 8:
+        failures.append(f"substitution event-study table should have 8 rows, found {len(event_rows)}")
+    event_quarter = next((row for row in event_rows if row.get("quarter") == "2007Q3"), {})
+    if event_quarter.get("includedInPrimary") != "no" or event_quarter.get("eventQuarter") != "yes":
+        failures.append("substitution event-study table should exclude 2007Q3 from the primary contrast")
+
+    with SUBSTITUTION_ESTIMATION_LEAVE_ONE_ACTOR_CSV.open(newline="", encoding="utf-8") as source:
+        leave_rows = list(csv.DictReader(source))
+    failures.extend(
+        check_csv_release_metadata(
+            leave_rows,
+            "substitution leave-one-actor diagnostics",
+        )
+    )
+    if len(leave_rows) != len(treated_actors | control_actors):
+        failures.append("substitution leave-one-actor table should contain one row per panel actor")
+    sign_flips = [row for row in leave_rows if row.get("signStable") == "no"]
+    if len(sign_flips) != 1:
+        failures.append(
+            f"substitution leave-one-actor diagnostics should record one sign flip, found {len(sign_flips)}"
+        )
+
+    text = SUBSTITUTION_ESTIMATION_DIAGNOSTICS_MD.read_text(encoding="utf-8")
+    failures.extend(
+        check_markdown_release_metadata(
+            text,
+            "substitution estimation diagnostics",
+        )
+    )
+    for phrase in (
+        "HLOGA Substitution Estimation Diagnostics",
+        "effect_model_and_falsification_gates_not_cleared",
+        "The Descriptive Contrast Is Negative but Not Stable Enough for Inference",
+        "Structural Design Gates Fail Before Causal Interpretation",
+        "cannot calculate a substitution elasticity",
+        "Falsification and Sensitivity Checks Do Not Clear the Design",
+        "What the Current Design Can and Cannot Support",
+        "10,000` repetitions and base seed `20070914",
+        "no causal substitution effect",
+        "substitution-estimation-specification-contrast.svg",
+    ):
+        if phrase not in text:
+            failures.append(f"substitution estimation diagnostics markdown missing phrase: {phrase}")
+
+    figure = SUBSTITUTION_ESTIMATION_FIGURE.read_text(encoding="utf-8")
+    for phrase in (
+        "<svg",
+        "HLOGA diagnostic specification contrasts",
+        "diagnostic values are not causal effects",
+        "primary 95% actor-bootstrap interval shown",
+    ):
+        if phrase not in figure:
+            failures.append(f"substitution estimation figure missing phrase: {phrase}")
+    return failures
+
+
+def check_substitution_causal_upgrade_packet() -> list[str]:
+    failures: list[str] = []
+    missing = [
+        path.relative_to(ROOT)
+        for path in (
+            SUBSTITUTION_CAUSAL_UPGRADE_PACKET_MD,
+            SUBSTITUTION_CAUSAL_UPGRADE_PACKET_CSV,
+        )
+        if not path.exists()
+    ]
+    if missing:
+        return [f"missing substitution causal upgrade packet artifact: {path}" for path in missing]
+
+    with SUBSTITUTION_CAUSAL_UPGRADE_PACKET_CSV.open(newline="", encoding="utf-8") as source:
+        row_list = list(csv.DictReader(source))
+    failures.extend(
+        check_csv_release_metadata(
+            row_list,
+            "substitution causal upgrade packet",
+        )
+    )
+    rows = {row.get("productKey", ""): row for row in row_list}
+    required = {
+        "substitution-reform-shocks",
+        "actor-issue-time-spine",
+        "substitution-comparison-groups",
+        "meeting-log-or-missing-channel-note",
+    }
+    missing_products = sorted(required - set(rows))
+    failures.extend(
+        f"substitution causal upgrade packet missing product: {product}"
+        for product in missing_products
+    )
+    if missing_products:
+        return failures
+
+    for product, row in rows.items():
+        if row.get("targetKey") != "substitution-elasticity":
+            failures.append(f"substitution causal upgrade row {product} has wrong targetKey")
+        if row.get("targetStatus") != "open_design_needed":
+            failures.append(
+                f"substitution causal upgrade row {product} has targetStatus={row.get('targetStatus', '')}"
+            )
+        if row.get("policyClaimStatus") != "not_cleared":
+            failures.append(
+                f"substitution causal upgrade row {product} has policyClaimStatus={row.get('policyClaimStatus', '')}"
+            )
+        if row.get("blocksPolicySimulation") != "yes":
+            failures.append(
+                f"substitution causal upgrade row {product} should block policy simulation"
+            )
+        if "calibrated policy-simulation" not in row.get("barredClaim", ""):
+            failures.append(
+                f"substitution causal upgrade row {product} missing calibrated-policy barred claim"
+            )
+
+    expected_states = {
+        "substitution-reform-shocks": "schema_ready_design_anchor_not_effect_evidence",
+        "actor-issue-time-spine": "reviewed_treated_control_actor_time_panel_source_ready_not_effect_clearance",
+        "substitution-comparison-groups": "reviewed_treated_control_assignment_source_ready_not_effect_clearance",
+        "meeting-log-or-missing-channel-note": "missing_channel_design_note_not_estimation_panel",
+    }
+    for product, state in expected_states.items():
+        if rows[product].get("evidenceGateState") != state:
+            failures.append(
+                f"substitution causal upgrade row {product} has evidenceGateState="
+                f"{rows[product].get('evidenceGateState', '')}, expected {state}"
+            )
+    phrase_expectations = {
+        "substitution-reform-shocks": [
+            "HLOGA",
+            "design",
+            "not observed substitution evidence",
+        ],
+        "actor-issue-time-spine": [
+            "actor",
+            "issue",
+            "exact-ID",
+            "Colorado state-lobbying control rows",
+            "source-ready design input",
+        ],
+        "substitution-comparison-groups": [
+            "treated federal LDA clients",
+            "Colorado unaffected-jurisdiction controls",
+            "observed pre/post source windows",
+            "excluded",
+        ],
+        "meeting-log-or-missing-channel-note": [
+            "private meeting/contact substitution",
+            "unobserved",
+            "sensitivity design",
+        ],
+    }
+    for product, phrases in phrase_expectations.items():
+        row_text = " ".join(rows[product].values())
+        for phrase in phrases:
+            if phrase not in row_text:
+                failures.append(f"substitution causal upgrade row {product} missing phrase: {phrase}")
+
+    text = SUBSTITUTION_CAUSAL_UPGRADE_PACKET_MD.read_text(encoding="utf-8")
+    failures.extend(
+        check_markdown_release_metadata(
+            text,
+            "substitution causal upgrade packet",
+        )
+    )
+    required_text = [
+        "Substitution Causal Upgrade Packet",
+        "not effect evidence",
+        "does not clear calibrated policy-simulation or causal substitution-elasticity claims",
+        "mechanism stress tests and qualitative substitution warnings only",
+        "Target status: `open_design_needed`",
+        "Policy-claim status: `not_cleared`",
+        "Source-product gate: `schema_gate_ready`",
+        "HLOGA reform-shock anchor",
+        "reviewed exact-ID actor-time slice",
+        "treated/control comparison-assignment rows",
+        "Effect-Model Diagnostic Result",
+        "effect_model_and_falsification_gates_not_cleared",
+        "reports/substitution-estimation-diagnostics.md",
+        "no causal HLOGA effect or cross-channel substitution elasticity",
+        "Candidate Leakage Boundary",
+        "source-ready design inputs, not effect estimates",
+        "Access-Channel Missingness",
+        "not a representative contact-register panel",
+        "Regeneration Rule",
+        "substitution-causal-upgrade-packet",
+    ]
+    for phrase in required_text:
+        if phrase not in text:
+            failures.append(f"substitution causal upgrade packet markdown missing phrase: {phrase}")
+    if SUPPLEMENT_BODY.exists():
+        supplement = SUPPLEMENT_BODY.read_text(encoding="utf-8")
+        if "substitution causal-upgrade packet" not in supplement:
+            failures.append("supplement does not disclose the substitution causal-upgrade packet")
+    return failures
+
+
+def check_comment_causal_upgrade_packet() -> list[str]:
+    failures: list[str] = []
+    missing = [
+        path.relative_to(ROOT)
+        for path in (
+            COMMENT_CAUSAL_UPGRADE_PACKET_MD,
+            COMMENT_CAUSAL_UPGRADE_PACKET_CSV,
+        )
+        if not path.exists()
+    ]
+    if missing:
+        return [f"missing comment causal upgrade packet artifact: {path}" for path in missing]
+
+    with COMMENT_CAUSAL_UPGRADE_PACKET_CSV.open(newline="", encoding="utf-8") as source:
+        row_list = list(csv.DictReader(source))
+    failures.extend(
+        check_csv_release_metadata(
+            row_list,
+            "comment causal upgrade packet",
+        )
+    )
+    rows = {row.get("productKey", ""): row for row in row_list}
+    required = {
+        "comment-body-corpus",
+        "duplicate-template-clusters",
+        "agency-response-final-rule-linkage",
+    }
+    missing_products = sorted(required - set(rows))
+    failures.extend(
+        f"comment causal upgrade packet missing product: {product}"
+        for product in missing_products
+    )
+    if missing_products:
+        return failures
+
+    for product, row in rows.items():
+        if row.get("targetKey") != "comment-authenticity-and-uptake-effect":
+            failures.append(f"comment causal upgrade row {product} has wrong targetKey")
+        if row.get("targetStatus") != "bounded_source_moments":
+            failures.append(
+                f"comment causal upgrade row {product} has targetStatus={row.get('targetStatus', '')}"
+            )
+        if row.get("policyClaimStatus") != "not_cleared":
+            failures.append(
+                f"comment causal upgrade row {product} has policyClaimStatus={row.get('policyClaimStatus', '')}"
+            )
+        if row.get("blocksPolicySimulation") != "yes":
+            failures.append(
+                f"comment causal upgrade row {product} should block policy simulation"
+            )
+        if "calibrated policy-simulation" not in row.get("barredClaim", ""):
+            failures.append(
+                f"comment causal upgrade row {product} missing calibrated-policy barred claim"
+            )
+
+    expected_states = {
+        "comment-body-corpus": "schema_ready_comment_corpus_not_effect_evidence",
+        "duplicate-template-clusters": "schema_ready_cluster_scaffold_not_effect_evidence",
+        "agency-response-final-rule-linkage": "candidate_worklist_not_evidence",
+    }
+    for product, state in expected_states.items():
+        if rows[product].get("evidenceGateState") != state:
+            failures.append(
+                f"comment causal upgrade row {product} has evidenceGateState="
+                f"{rows[product].get('evidenceGateState', '')}, expected {state}"
+            )
+    phrase_expectations = {
+        "comment-body-corpus": [
+            "comment text",
+            "source provenance",
+            "not agency response",
+        ],
+        "duplicate-template-clusters": [
+            "duplicate/template",
+            "technical-content",
+            "not uptake evidence",
+        ],
+        "agency-response-final-rule-linkage": [
+            "response section",
+            "final-rule",
+            "uptake coding",
+        ],
+    }
+    for product, phrases in phrase_expectations.items():
+        row_text = " ".join(rows[product].values())
+        for phrase in phrases:
+            if phrase not in row_text:
+                failures.append(f"comment causal upgrade row {product} missing phrase: {phrase}")
+
+    text = COMMENT_CAUSAL_UPGRADE_PACKET_MD.read_text(encoding="utf-8")
+    failures.extend(
+        check_markdown_release_metadata(
+            text,
+            "comment causal upgrade packet",
+        )
+    )
+    required_text = [
+        "Comment Causal Upgrade Packet",
+        "not source evidence",
+        "does not clear calibrated policy-simulation or causal comment-uptake claims",
+        "comment-record and mechanism diagnostics only",
+        "Target status: `bounded_source_moments`",
+        "Policy-claim status: `not_cleared`",
+        "Source-product gate: `candidate_only_blocked`",
+        "comment-body corpus",
+        "duplicate/template cluster assignments",
+        "agency response text and final-rule linkage",
+        "Candidate Linkage Boundary",
+        "not observed agency uptake evidence",
+        "Response And Final-Rule Missingness",
+        "not a causal uptake panel",
+        "Regeneration Rule",
+        "comment-causal-upgrade-packet",
+    ]
+    for phrase in required_text:
+        if phrase not in text:
+            failures.append(f"comment causal upgrade packet markdown missing phrase: {phrase}")
+    if SUPPLEMENT_BODY.exists():
+        supplement = SUPPLEMENT_BODY.read_text(encoding="utf-8")
+        if "comment causal-upgrade packet" not in supplement:
+            failures.append("supplement does not disclose the comment causal-upgrade packet")
+    return failures
+
+
+def check_venue_causal_upgrade_packet() -> list[str]:
+    failures: list[str] = []
+    missing = [
+        path.relative_to(ROOT)
+        for path in (
+            VENUE_CAUSAL_UPGRADE_PACKET_MD,
+            VENUE_CAUSAL_UPGRADE_PACKET_CSV,
+        )
+        if not path.exists()
+    ]
+    if missing:
+        return [f"missing venue causal upgrade packet artifact: {path}" for path in missing]
+
+    with VENUE_CAUSAL_UPGRADE_PACKET_CSV.open(newline="", encoding="utf-8") as source:
+        row_list = list(csv.DictReader(source))
+    failures.extend(
+        check_csv_release_metadata(
+            row_list,
+            "venue causal upgrade packet",
+        )
+    )
+    rows = {row.get("productKey", ""): row for row in row_list}
+    required = {
+        "canonical-actor-identifiers",
+        "alias-resolution-audit-sample",
+        "issue-code-crosswalk",
+        "false-match-review-log",
+        "linked-actor-issue-venue-time",
+    }
+    missing_products = sorted(required - set(rows))
+    failures.extend(
+        f"venue causal upgrade packet missing product: {product}"
+        for product in missing_products
+    )
+    if missing_products:
+        return failures
+
+    for product, row in rows.items():
+        if row.get("targetKey") != "venue-shifting-detection-effect":
+            failures.append(f"venue causal upgrade row {product} has wrong targetKey")
+        if row.get("targetStatus") != "open_linkage_needed":
+            failures.append(
+                f"venue causal upgrade row {product} has targetStatus={row.get('targetStatus', '')}"
+            )
+        if row.get("policyClaimStatus") != "not_cleared":
+            failures.append(
+                f"venue causal upgrade row {product} has policyClaimStatus={row.get('policyClaimStatus', '')}"
+            )
+        if row.get("blocksPolicySimulation") != "yes":
+            failures.append(
+                f"venue causal upgrade row {product} should block policy simulation"
+            )
+        if "calibrated policy-simulation" not in row.get("barredClaim", ""):
+            failures.append(
+                f"venue causal upgrade row {product} missing calibrated-policy barred claim"
+            )
+
+    expected_states = {
+        "canonical-actor-identifiers": "reviewed_identifier_spine_source_product_ready_not_effect_clearance",
+        "alias-resolution-audit-sample": "reviewed_alias_audit_source_product_ready_not_effect_clearance",
+        "issue-code-crosswalk": "reviewed_issue_taxonomy_crosswalk_source_product_ready_not_effect_clearance",
+        "false-match-review-log": "reviewed_false_match_sample_source_product_ready_not_effect_clearance",
+        "linked-actor-issue-venue-time": "reviewed_linked_panel_source_product_ready_not_effect_clearance",
+    }
+    for product, state in expected_states.items():
+        if rows[product].get("evidenceGateState") != state:
+            failures.append(
+                f"venue causal upgrade row {product} has evidenceGateState="
+                f"{rows[product].get('evidenceGateState', '')}, expected {state}"
+            )
+    phrase_expectations = {
+        "canonical-actor-identifiers": [
+            "canonical actors",
+            "source identifiers",
+            "parent/subsidiary",
+        ],
+        "alias-resolution-audit-sample": [
+            "exact-ID",
+            "reviewed decisions",
+            "effect clearance",
+        ],
+        "issue-code-crosswalk": [
+            "issue",
+            "docket",
+            "procurement",
+            "electoral-purpose",
+        ],
+        "false-match-review-log": [
+            "false-positive",
+            "false-negative",
+            "confidence evidence",
+        ],
+        "linked-actor-issue-venue-time": [
+            "sourceRecordId",
+            "activity measures",
+            "matchConfidence",
+        ],
+    }
+    for product, phrases in phrase_expectations.items():
+        row_text = " ".join(rows[product].values())
+        for phrase in phrases:
+            if phrase not in row_text:
+                failures.append(f"venue causal upgrade row {product} missing phrase: {phrase}")
+
+    text = VENUE_CAUSAL_UPGRADE_PACKET_MD.read_text(encoding="utf-8")
+    failures.extend(
+        check_markdown_release_metadata(
+            text,
+            "venue causal upgrade packet",
+        )
+    )
+    required_text = [
+        "Venue Causal Upgrade Packet",
+        "not effect evidence",
+        "does not clear calibrated policy-simulation or causal venue-shifting claims",
+        "synthetic cross-venue detection diagnostics only",
+        "Target status: `open_linkage_needed`",
+        "Policy-claim status: `not_cleared`",
+        "Source-product gate: `schema_gate_ready`",
+        "canonical actor identifier table",
+        "alias-resolution rules and manual audit sample",
+        "issue-code crosswalk across venues",
+        "false-positive and false-negative review log",
+        "linked actor-issue-venue-time output table",
+        "Entity-Resolution Boundary",
+        "not observed venue-shifting effect evidence",
+        "Issue-Comparability And False-Match Missingness",
+        "not a complete cross-venue estimation panel",
+        "Regeneration Rule",
+        "venue-causal-upgrade-packet",
+    ]
+    for phrase in required_text:
+        if phrase not in text:
+            failures.append(f"venue causal upgrade packet markdown missing phrase: {phrase}")
+    if SUPPLEMENT_BODY.exists():
+        supplement = SUPPLEMENT_BODY.read_text(encoding="utf-8")
+        if "venue causal-upgrade packet" not in supplement:
+            failures.append("supplement does not disclose the venue causal-upgrade packet")
     return failures
 
 
@@ -2137,12 +3235,33 @@ def check_causal_calibration_targets() -> list[str]:
         failures.append("causal calibration target audit should distinguish P1 targets")
     if not any(row.get("priority") == "P2" for row in rows):
         failures.append("causal calibration target audit should distinguish P2 targets")
+    for row in blockers:
+        target = row.get("targetKey", "unknown-target")
+        allowed = row.get("allowedCurrentClaim", "")
+        barred = row.get("barredClaim", "")
+        trigger = row.get("claimUpgradeTrigger", "")
+        if not allowed:
+            failures.append(f"causal calibration target missing allowed-current-claim boundary: {target}")
+        elif "current manuscript may use" not in allowed:
+            failures.append(f"causal calibration target allowed-current-claim boundary is not manuscript-facing: {target}")
+        if not barred:
+            failures.append(f"causal calibration target missing barred-claim boundary: {target}")
+        elif "Do not claim" not in barred or "calibrated policy-simulation effects" not in barred:
+            failures.append(f"causal calibration target barred-claim boundary is incomplete: {target}")
+        if not trigger:
+            failures.append(f"causal calibration target missing claim-upgrade trigger: {target}")
+        elif not trigger.startswith("Upgrade only after:"):
+            failures.append(f"causal calibration target claim-upgrade trigger must be explicit: {target}")
 
     text = CAUSAL_CALIBRATION_TARGETS_MD.read_text(encoding="utf-8")
     required_text = [
         "Causal Calibration Targets",
         "independent causal evidence",
         "Blocking calibrated policy-simulation claims",
+        "Claim Boundary Matrix",
+        "Allowed current claim",
+        "Claim still barred",
+        "manuscript guardrails",
         "Target Matrix",
         "hidden-donor-routing-magnitude",
         "procurement-modification-causal-capture",
@@ -2174,6 +3293,12 @@ def check_first_wave_causal_protocols() -> list[str]:
 
     with FIRST_WAVE_CAUSAL_PROTOCOLS_CSV.open(newline="", encoding="utf-8") as source:
         rows = list(csv.DictReader(source))
+    failures.extend(
+        check_csv_release_metadata(
+            rows,
+            "first-wave causal protocols",
+        )
+    )
     expected = {
         "substitution-elasticity",
         "procurement-modification-causal-capture",
@@ -2214,6 +3339,12 @@ def check_first_wave_causal_protocols() -> list[str]:
             )
 
     text = FIRST_WAVE_CAUSAL_PROTOCOLS_MD.read_text(encoding="utf-8")
+    failures.extend(
+        check_markdown_release_metadata(
+            text,
+            "first-wave causal protocols",
+        )
+    )
     required_text = [
         "First-Wave Causal Protocols",
         "does not clear calibrated policy-simulation claims",
@@ -2391,6 +3522,12 @@ def check_first_wave_source_products() -> list[str]:
 
     with FIRST_WAVE_SOURCE_PRODUCTS_CSV.open(newline="", encoding="utf-8") as source:
         rows = list(csv.DictReader(source))
+    failures.extend(
+        check_csv_release_metadata(
+            rows,
+            "first-wave source products",
+        )
+    )
     expected_targets = {
         "substitution-elasticity",
         "procurement-modification-causal-capture",
@@ -2481,9 +3618,17 @@ def check_first_wave_source_products() -> list[str]:
             if not (ROOT / template_path).exists():
                 failures.append(f"first-wave source product {product} template path does not exist: {template_path}")
     allowed_ready_rows = {
+        "alias-resolution-audit-sample",
+        "actor-issue-time-spine",
+        "canonical-actor-identifiers",
         "comment-body-corpus",
         "duplicate-template-clusters",
+        "false-match-review-log",
+        "issue-code-crosswalk",
+        "linked-actor-issue-venue-time",
         "meeting-log-or-missing-channel-note",
+        "procurement-firewall-overlay",
+        "substitution-comparison-groups",
         "substitution-reform-shocks",
     }
     expected_candidate_rows = set(FIRST_WAVE_CANDIDATE_SEED_PRODUCTS)
@@ -2514,27 +3659,41 @@ def check_first_wave_source_products() -> list[str]:
         combined = "\n".join(" ".join(row.values()) for row in seed_rows[:25])
         if "candidate_unreviewed" not in combined or "does not clear" not in combined:
             failures.append(f"first-wave candidate source-product seed missing boundary markers: {product}")
+    for product, path in FIRST_WAVE_REVIEWED_ENTITY_PRODUCTS.items():
+        row = next((candidate for candidate in rows if candidate.get("productKey") == product), {})
+        if not path.exists():
+            failures.append(f"missing first-wave reviewed entity source product: {path.relative_to(ROOT)}")
+            continue
+        if row.get("productStatus") == "candidate_unreviewed":
+            failures.append(f"first-wave reviewed entity product should not remain candidate_unreviewed: {product}")
+        if has_candidate_marker(path):
+            failures.append(f"first-wave reviewed entity product still contains candidate markers: {product}")
     if ready_rows:
         if set(ready_rows) != allowed_ready_rows:
             failures.append(
-                "first-wave source products may only mark the bounded HLOGA reform-shock row, meeting/contact missing-channel design note, comment-body corpus, and duplicate/template cluster product ready in this release: "
+                "first-wave source products may only mark the bounded HLOGA reform-shock row, source-ready substitution actor-time/comparison products, meeting/contact missing-channel design note, reviewed exact-ID entity-resolution products, comment-body corpus, duplicate/template cluster product, and EPAAR procurement-firewall control row ready in this release: "
                 + ", ".join(sorted(ready_rows))
             )
         product_text = FIRST_WAVE_SOURCE_PRODUCTS_MD.read_text(encoding="utf-8")
         for phrase in (
-            "Schema/text ready products: `4`",
-            "Candidate-only unreviewed products: `13`",
+            "Schema/text ready products: `12`",
+            "Candidate-only unreviewed products: `5`",
+            "Present products with schema, quality, or row-count issues: `0`",
             "named reform-shock event file",
             "Use the committed reform-shock row",
             "do not treat this event row as substitution evidence",
+            "source-product gate",
             "SAM/FPDS action-history export or keyed pull",
             "Candidate-only procurement source-surface worklist",
             "reviewed SAM.gov Contract Awards or FPDS action-history",
             "GAO protest overlay",
             "SAM exclusion overlay",
             "procurement firewall or integrity-control overlay",
+            "Use this bounded procurement-firewall control row",
+            "does not clear SAM/FPDS action-history, protest, exclusion, offer-count, or causal procurement-modification gates",
             "offer-count and competition-code enrichment",
             "canonical actor-issue-time spine across at least three venues",
+            "Use this ready source product as an input to the target protocol",
             "pre/post comparison groups for exposed and unaffected actors or jurisdictions",
             "meeting-log or contact-register panel, or explicit missing-channel design note",
             "Text source product contains the required missing-channel design terms",
@@ -2547,6 +3706,9 @@ def check_first_wave_source_products() -> list[str]:
             "agency response text and final-rule linkage",
             "Candidate-only manual-review seed is present",
             "response sections, final-rule text movement, and uptake coding are manually adjudicated",
+            "alias-resolution rules and manual audit sample",
+            "issue-code crosswalk across venues",
+            "false-positive and false-negative review log",
             "Manual Promotion Checklists",
             "remove candidateOnly markers only after",
         ):
@@ -2554,6 +3716,12 @@ def check_first_wave_source_products() -> list[str]:
                 failures.append(f"first-wave source products markdown missing ready-note boundary phrase: {phrase}")
 
     text = FIRST_WAVE_SOURCE_PRODUCTS_MD.read_text(encoding="utf-8")
+    failures.extend(
+        check_markdown_release_metadata(
+            text,
+            "first-wave source products",
+        )
+    )
     required_text = [
         "First-Wave Source Products",
         "schema/acquisition gate",
@@ -2566,7 +3734,8 @@ def check_first_wave_source_products() -> list[str]:
         "candidate_unreviewed",
         "deterministic manual-review seed",
         "manual-review worklists until these checks are completed",
-        "procurement source-surface worklists require reviewed action-history, protest, exclusion, firewall, and offer/competition rows",
+        "remaining candidate procurement source-surface worklists require reviewed action-history, protest, exclusion, and offer/competition rows",
+        "ready procurement-firewall row remains bounded control-design evidence, not an estimation panel",
         "Template path",
         "Semantic Gate Notes",
         "Manual Promotion Checklists",
@@ -2576,7 +3745,7 @@ def check_first_wave_source_products() -> list[str]:
         "duplicate/template cluster assignments",
         "agency response text and final-rule linkage",
         "Candidate-only procurement source-surface worklist",
-        "does not clear source-product readiness until action-history, protest, exclusion, firewall, and offer/competition rows",
+        "does not clear source-product readiness until the remaining action-history, protest, exclusion, and offer/competition rows",
     ]
     for phrase in required_text:
         if phrase not in text:
@@ -2593,6 +3762,9 @@ def check_first_wave_source_products() -> list[str]:
             "not an actor-time panel or substitution estimate",
             "comment-body corpus",
             "duplicate/template clusters",
+            "bounded EPAAR Part 1503 procurement-firewall control row",
+            "not an estimation panel",
+            "broader procurement-firewall coverage beyond the bounded EPAAR row",
             "candidate-only response/final-rule linkage",
             "first-wave source-product audit",
             "manual promotion",
@@ -2600,6 +3772,19 @@ def check_first_wave_source_products() -> list[str]:
             if phrase not in supplement:
                 failures.append(f"supplement does not disclose first-wave source product artifact: {phrase}")
     return failures
+
+
+def has_candidate_marker(path: Path) -> bool:
+    if not path.exists() or path.suffix.lower() != ".csv":
+        return False
+    with path.open(newline="", encoding="utf-8") as source:
+        for row in csv.DictReader(source):
+            values = " ".join(str(value) for value in row.values()).lower()
+            if row.get("candidateOnly", "").lower() == "true":
+                return True
+            if "candidate_unreviewed" in values or "not_estimation_ready" in values:
+                return True
+    return False
 
 
 def check_first_wave_linkage_candidates() -> list[str]:
@@ -2703,6 +3888,120 @@ def check_first_wave_linkage_candidates() -> list[str]:
     return failures
 
 
+def check_first_wave_cross_venue_adjudication() -> list[str]:
+    failures: list[str] = []
+    missing = [
+        path.relative_to(ROOT)
+        for path in (
+            FIRST_WAVE_CROSS_VENUE_ADJUDICATION_MD,
+            FIRST_WAVE_CROSS_VENUE_ADJUDICATION_CSV,
+            FIRST_WAVE_CROSS_VENUE_ADJUDICATION_RECORDS_CSV,
+        )
+        if not path.exists()
+    ]
+    if missing:
+        return [f"missing first-wave cross-venue adjudication artifact: {path}" for path in missing]
+
+    with FIRST_WAVE_CROSS_VENUE_ADJUDICATION_CSV.open(newline="", encoding="utf-8") as source:
+        rows = list(csv.DictReader(source))
+    with FIRST_WAVE_CROSS_VENUE_ADJUDICATION_RECORDS_CSV.open(newline="", encoding="utf-8") as source:
+        record_rows = list(csv.DictReader(source))
+    failures.extend(check_csv_release_metadata(rows, "first-wave cross-venue adjudication"))
+    failures.extend(check_csv_release_metadata(record_rows, "first-wave cross-venue adjudication records"))
+
+    required_summary_fields = {
+        "candidateActorId",
+        "normalizedName",
+        "primaryName",
+        "decision",
+        "promotedToReviewedPanel",
+        "evidenceRule",
+        "reviewedVenues",
+        "sourceSystems",
+        "sourceRecordCount",
+        "reviewedRecordCount",
+        "heldRecordCount",
+        "rejectedRecordCount",
+        "confirmedIdentifiers",
+        "sourceEvidence",
+        "reviewer",
+        "reviewDate",
+        "confidenceScore",
+        "riskDisposition",
+        "estimationReadinessContribution",
+        "claimBoundary",
+        "nextAction",
+    }
+    required_record_fields = {
+        "candidateActorId",
+        "actorDecision",
+        "recordDecision",
+        "promotedToReviewedPanel",
+        "sourceSystem",
+        "venue",
+        "sourceFile",
+        "sourceRecordId",
+        "rawEvidenceStatus",
+        "rawEvidence",
+        "claimBoundary",
+    }
+    if rows:
+        missing_fields = sorted(required_summary_fields - set(rows[0]))
+        failures.extend(
+            f"first-wave cross-venue adjudication missing summary field: {field}"
+            for field in missing_fields
+        )
+    else:
+        failures.append("first-wave cross-venue adjudication summary is empty")
+    if record_rows:
+        missing_fields = sorted(required_record_fields - set(record_rows[0]))
+        failures.extend(
+            f"first-wave cross-venue adjudication missing record field: {field}"
+            for field in missing_fields
+        )
+    else:
+        failures.append("first-wave cross-venue adjudication records are empty")
+
+    accepted = [row for row in rows if row.get("promotedToReviewedPanel") == "yes"]
+    accepted_records = [row for row in record_rows if row.get("recordDecision") == "reviewed_accept"]
+    if len(accepted) <= 0:
+        failures.append("first-wave cross-venue adjudication should accept at least one source-backed actor")
+    if len(accepted_records) <= 0:
+        failures.append("first-wave cross-venue adjudication should accept at least one source-backed record")
+    if any("EIN=" not in row.get("confirmedIdentifiers", "") for row in accepted):
+        failures.append("first-wave cross-venue adjudication accepted actor lacks confirmed EIN evidence")
+    if any(row.get("rawEvidenceStatus") != "source_confirmed" for row in accepted_records):
+        failures.append("first-wave cross-venue adjudication accepted record lacks source confirmation")
+    if any("does not clear" not in row.get("claimBoundary", "") for row in accepted):
+        failures.append("first-wave cross-venue adjudication accepted rows must keep claim-boundary text")
+    if any(row.get("decision") == "ready_to_estimate" for row in rows):
+        failures.append("first-wave cross-venue adjudication must not mark any row ready_to_estimate")
+    if not any(row.get("decision") == "rejected_same_venue_only_not_cross_venue" for row in rows):
+        failures.append("first-wave cross-venue adjudication should reject same-venue-only candidates from the cross-venue panel")
+    if not any(row.get("decision", "").startswith("held_") for row in rows):
+        failures.append("first-wave cross-venue adjudication should retain held manual-review rows")
+
+    text = FIRST_WAVE_CROSS_VENUE_ADJUDICATION_MD.read_text(encoding="utf-8")
+    failures.extend(check_markdown_release_metadata(text, "first-wave cross-venue adjudication"))
+    required_text = [
+        "First-Wave Cross-Venue Adjudication",
+        "reviewed slice",
+        "Reviewed accepted actors",
+        "Reviewed accepted records",
+        "Source-product status: `partial_reviewed_slice_not_estimation_ready`",
+        "Ready to estimate: `0`",
+        "Policy-simulation status: `not_cleared`",
+        "accepted_exact_ein_cross_venue_reviewed",
+        "exact-shared-ein-dark-money-intermediary-v1",
+        "does not clear",
+        "below the linked-panel threshold",
+    ]
+    for phrase in required_text:
+        if phrase not in text:
+            failures.append(f"first-wave cross-venue adjudication markdown missing phrase: {phrase}")
+    return failures
+
+
 def check_first_wave_source_readiness() -> list[str]:
     failures: list[str] = []
     missing = [
@@ -2719,6 +4018,12 @@ def check_first_wave_source_readiness() -> list[str]:
 
     with FIRST_WAVE_SOURCE_READINESS_CSV.open(newline="", encoding="utf-8") as source:
         rows = list(csv.DictReader(source))
+    failures.extend(
+        check_csv_release_metadata(
+            rows,
+            "first-wave source readiness",
+        )
+    )
     expected = {
         "substitution-elasticity",
         "procurement-modification-causal-capture",
@@ -2783,6 +4088,12 @@ def check_first_wave_source_readiness() -> list[str]:
         failures.append("first-wave source readiness should keep procurement modification blocked")
 
     text = FIRST_WAVE_SOURCE_READINESS_MD.read_text(encoding="utf-8")
+    failures.extend(
+        check_markdown_release_metadata(
+            text,
+            "first-wave source readiness",
+        )
+    )
     required_text = [
         "First-Wave Source Readiness",
         "pre-estimation gate",
@@ -2792,18 +4103,26 @@ def check_first_wave_source_readiness() -> list[str]:
         "Blocked source-product targets",
         "Candidate-only source products",
         "Schema/quality issue products",
+        "ready=4",
         "ready=2",
+        "ready=5",
+        "candidateOnly=0",
         "candidateOnly=1",
-        "candidateOnly=2",
-        "candidateOnly=5",
+        "candidateOnly=4",
+        "| substitution-elasticity | source_products_ready_substitution_design_only | schema_gate_ready",
         "| comment-authenticity-and-uptake-effect | partial_source_support_not_estimation_ready | candidate_only_blocked",
-        "| venue-shifting-detection-effect | partial_identifier_support_not_linkage_ready | candidate_only_blocked",
+        "| venue-shifting-detection-effect | source_products_ready_detection_design_only | schema_gate_ready",
         "| procurement-modification-causal-capture | blocked_by_sam_fps_crosswalk_and_overlays | candidate_only_blocked",
         "none | agency response text and final-rule linkage | none",
         "candidate procurement source-surface worklists",
-        "SAM/FPDS action-history export or keyed pull; GAO protest overlay; SAM exclusion overlay; procurement firewall or integrity-control overlay; offer-count and competition-code enrichment",
-        "Replace the candidate procurement source-surface worklists with reviewed SAM/FPDS action-history rows",
-        "Manually adjudicate the candidate actor-issue-time spine and comparison groups",
+        "SAM/FPDS action-history export or keyed pull; GAO protest overlay; SAM exclusion overlay; offer-count and competition-code enrichment",
+        "first-wave ready products=procurement firewall or integrity-control overlay",
+        "Retain the reviewed procurement-firewall control row, then replace the remaining candidate procurement source-surface worklists (SAM/FPDS action-history export or keyed pull",
+        "Use the source-ready HLOGA treated/control panel as an estimation-design input",
+        "The required substitution source products now clear schema and semantic gates",
+        "Colorado state-lobbying unaffected-jurisdiction control rows",
+        "The reviewed exact-ID entity-resolution source products now clear schema and row-count gates",
+        "Use the reviewed exact-ID linked panel as a source-ready detection-design input",
         "first-wave ready products=comment-body corpus; duplicate/template cluster assignments",
         "Candidate response/final-rule linkage file is committed",
         "Manually adjudicate the candidate response/final-rule linkage file",
@@ -2882,7 +4201,7 @@ def check_candidate_source_leakage_audit() -> list[str]:
         "Failures: `0`",
         "candidate_unreviewed",
         "Candidate Review Triage",
-        "review-priority and linkage-evidence fields",
+        "product-specific acquisition notes",
         "reviewPriorityScore",
         "readyToEstimate=0",
         "calibratedPolicy=blocked",
@@ -2891,6 +4210,100 @@ def check_candidate_source_leakage_audit() -> list[str]:
     for phrase in required_text:
         if phrase not in text:
             failures.append(f"candidate-source leakage audit markdown missing phrase: {phrase}")
+    return failures
+
+
+def check_first_wave_manual_adjudication_plan() -> list[str]:
+    failures: list[str] = []
+    missing = [
+        path.relative_to(ROOT)
+        for path in (
+            FIRST_WAVE_MANUAL_ADJUDICATION_PLAN_CSV,
+            FIRST_WAVE_MANUAL_ADJUDICATION_PLAN_MD,
+        )
+        if not path.exists()
+    ]
+    if missing:
+        return [f"missing first-wave manual adjudication plan artifact: {path}" for path in missing]
+
+    with FIRST_WAVE_MANUAL_ADJUDICATION_PLAN_CSV.open(newline="", encoding="utf-8") as source:
+        rows = list(csv.DictReader(source))
+    if len(rows) != len(FIRST_WAVE_CANDIDATE_SEED_PRODUCTS):
+        failures.append(
+            "first-wave manual adjudication plan should include one row per candidate seed "
+            f"product ({len(FIRST_WAVE_CANDIDATE_SEED_PRODUCTS)}), found {len(rows)}"
+        )
+    by_product = {row.get("productKey", ""): row for row in rows}
+    for product_key in FIRST_WAVE_CANDIDATE_SEED_PRODUCTS:
+        row = by_product.get(product_key)
+        if not row:
+            failures.append(f"first-wave manual adjudication plan missing product: {product_key}")
+            continue
+        if row.get("promotionState") != "manual_review_required":
+            failures.append(
+                f"first-wave manual adjudication product {product_key} has unexpected "
+                f"promotionState={row.get('promotionState', '')}"
+            )
+        if int_or_zero(row.get("candidateRows", "")) <= 0:
+            failures.append(f"first-wave manual adjudication product {product_key} has no candidate rows")
+        if int_or_zero(row.get("firstReviewBatchSize", "")) <= 0:
+            failures.append(
+                f"first-wave manual adjudication product {product_key} has no first-review batch"
+            )
+        if "row" not in row.get("firstReviewBatchRows", ""):
+            failures.append(
+                f"first-wave manual adjudication product {product_key} omits row-level review identifiers"
+            )
+        if not row.get("firstReviewBatchFocus", "").strip():
+            failures.append(
+                f"first-wave manual adjudication product {product_key} omits review focus"
+            )
+        if row.get("targetSourceProductGate") != "candidate_only_blocked":
+            failures.append(
+                f"first-wave manual adjudication product {product_key} has target gate "
+                f"{row.get('targetSourceProductGate', '')}, expected candidate_only_blocked"
+            )
+        if "paper-artifacts-check" not in row.get("promotionCommand", ""):
+            failures.append(
+                f"first-wave manual adjudication product {product_key} promotion command omits artifact gate"
+            )
+
+    text = FIRST_WAVE_MANUAL_ADJUDICATION_PLAN_MD.read_text(encoding="utf-8")
+    required_text = [
+        "First-Wave Manual Adjudication Plan",
+        "Candidate-only products are manual-review queues, not evidence",
+        "Ready-to-estimate status remains blocked: `yes`",
+        "No calibrated policy-simulation claim clears from this plan",
+        "Promotion command sequence",
+        "make first-wave-source-products first-wave-source-readiness first-wave-manual-adjudication-plan candidate-source-leakage-audit paper-artifacts-check",
+        "reviewPriorityScore",
+        "not adjudicated match confidence",
+        "first-review batch lists candidate row identifiers",
+        "Product Queue",
+        "First Review Batch",
+        "First rows to inspect",
+        "Review focus",
+        "Promotion Checklists",
+        "Claim Boundary",
+        "SAM/FPDS action-history export or keyed pull",
+        "agency response text and final-rule linkage",
+        "offer-count and competition-code enrichment",
+    ]
+    for phrase in required_text:
+        if phrase not in text:
+            failures.append(f"first-wave manual adjudication plan markdown missing phrase: {phrase}")
+
+    if SUPPLEMENT_BODY.exists():
+        supplement = SUPPLEMENT_BODY.read_text(encoding="utf-8")
+        for phrase in (
+            "first-wave manual adjudication plan",
+            "reports/first-wave-manual-adjudication-plan.md",
+            "candidate-row counts",
+            "row-level first-review batches",
+            "exact regeneration command sequence",
+        ):
+            if phrase not in supplement:
+                failures.append(f"supplement does not disclose first-wave manual adjudication plan: {phrase}")
     return failures
 
 
@@ -3156,7 +4569,14 @@ def check_submission_readiness_audit() -> list[str]:
         return [f"missing submission-readiness audit artifact: {path}" for path in missing]
 
     with SUBMISSION_READINESS_CSV.open(newline="", encoding="utf-8") as source:
-        rows = {row.get("gate", ""): row for row in csv.DictReader(source)}
+        row_list = list(csv.DictReader(source))
+    failures.extend(
+        check_csv_release_metadata(
+            row_list,
+            "submission-readiness audit",
+        )
+    )
+    rows = {row.get("gate", ""): row for row in row_list}
     required = {
         "mechanism-manuscript": {"ready"},
         "empirical-bridge-scope": {"bounded"},
@@ -3179,6 +4599,12 @@ def check_submission_readiness_audit() -> list[str]:
             )
 
     text = SUBMISSION_READINESS_MD.read_text(encoding="utf-8")
+    failures.extend(
+        check_markdown_release_metadata(
+            text,
+            "submission-readiness audit",
+        )
+    )
     required_text = [
         "ready_for_mechanism_review",
         "bounded empirical bridge",
@@ -3210,6 +4636,15 @@ def check_reviewer_risk_register() -> list[str]:
     ]
     if missing:
         return [f"missing reviewer risk register artifact: {path}" for path in missing]
+
+    citation_text = CITATION_CFF.read_text(encoding="utf-8") if CITATION_CFF.exists() else ""
+    release_date = field_value(citation_text, "date-released").strip('"')
+    expected_csv_metadata = {
+        "releaseTag": RELEASE_TAG,
+        "releaseDate": release_date,
+    }
+    if re.fullmatch(r"\d{4}-\d{2}-\d{2}", release_date):
+        expected_csv_metadata["generatedAt"] = f"{release_date}T00:00:00Z"
 
     with REVIEWER_RISK_REGISTER_CSV.open(newline="", encoding="utf-8") as source:
         rows = {
@@ -3243,10 +4678,17 @@ def check_reviewer_risk_register() -> list[str]:
         for field in ("reviewerConcern", "evidence", "currentResponse", "claimBoundary", "nextAction"):
             if not row.get(field, "").strip():
                 failures.append(f"reviewer risk register risk {risk_id} has empty {field}")
+        for field, expected in expected_csv_metadata.items():
+            if row.get(field, "") != expected:
+                failures.append(
+                    f"reviewer risk register risk {risk_id} has {field}={row.get(field, '')!r}, "
+                    f"expected {expected!r}"
+                )
 
     text = REVIEWER_RISK_REGISTER_MD.read_text(encoding="utf-8")
     required_phrases = [
         "Reviewer Risk Register",
+        f"Release tag: `{RELEASE_TAG}`",
         "bounded_for_mechanism_review",
         "self-confirming-substitution-result",
         "procurement-modification-causal-validity",
@@ -3254,6 +4696,9 @@ def check_reviewer_risk_register() -> list[str]:
         "manual_required",
         "review-control artifact",
     ]
+    if re.fullmatch(r"\d{4}-\d{2}-\d{2}", release_date):
+        required_phrases.append(f"Generated at: `{release_date}T00:00:00Z`")
+        required_phrases.append(f"Release date: `{release_date}`")
     for phrase in required_phrases:
         if phrase not in text:
             failures.append(f"reviewer risk register markdown missing phrase: {phrase}")
@@ -3329,6 +4774,7 @@ def check_final_human_readthrough() -> list[str]:
     required_phrases = [
         "Scholarly Read-Through Checklist",
         "Live Regulation & Governance Author-Page Refresh",
+        "do not clear same-day final-submission freshness",
         "Data and Code Availability",
         "AI Use Disclosure",
         "make paper-artifacts-check",
@@ -3381,6 +4827,7 @@ def check_final_human_readthrough_audit() -> list[str]:
         "Manual-required",
         "overall-final-human-readthrough",
         "scholarly-readthrough-checklist-14",
+        "same-day final-submission freshness is tracked by reports/external-finalization-checklist.md",
     ):
         if phrase not in text:
             failures.append(f"final human read-through audit markdown missing phrase: {phrase}")
@@ -3421,17 +4868,30 @@ def check_final_readthrough_evidence() -> list[str]:
             failures.append(f"final read-through evidence row is blocked: {item}")
         if not row.get("evidenceFiles"):
             failures.append(f"final read-through evidence row lacks evidence files: {item}")
+        if not row.get("reviewAnchors"):
+            failures.append(f"final read-through evidence row lacks review anchors: {item}")
         if not row.get("remainingHumanAction"):
             failures.append(f"final read-through evidence row lacks human action: {item}")
+        if not row.get("signoffPrompt"):
+            failures.append(f"final read-through evidence row lacks signoff prompt: {item}")
     text = FINAL_READTHROUGH_EVIDENCE_MD.read_text(encoding="utf-8")
     for phrase in (
         "Final Read-Through Evidence",
         "reviewer aid, not a human signoff",
+        "Review anchors",
+        "Signoff prompt",
         "automated_support_present",
         "external_manual_required",
         "Human signoff remains controlled by `reports/final-human-readthrough.md`",
         "structureFailures=0",
         "reports/paper-structure-audit.md",
+        "manualAdjudicationProducts=",
+        "reports/first-wave-manual-adjudication-plan.md",
+        "reports/substitution-causal-upgrade-packet.md",
+        "reports/comment-causal-upgrade-packet.md",
+        "reports/venue-causal-upgrade-packet.md",
+        "paper/regulation-governance-wiley.pdf",
+        "Do not set reports/final-human-readthrough.md status to complete",
         "scholarly-readthrough-checklist-14",
     ):
         if phrase not in text:
@@ -3446,6 +4906,47 @@ def field_value(text: str, field_name: str) -> str:
         re.IGNORECASE | re.MULTILINE,
     )
     return match.group(1).strip() if match else ""
+
+
+def expected_release_metadata() -> dict[str, str]:
+    citation_text = CITATION_CFF.read_text(encoding="utf-8") if CITATION_CFF.exists() else ""
+    release_date = field_value(citation_text, "date-released").strip('"')
+    metadata = {
+        "releaseTag": RELEASE_TAG,
+        "releaseDate": release_date,
+    }
+    if re.fullmatch(r"\d{4}-\d{2}-\d{2}", release_date):
+        metadata["generatedAt"] = f"{release_date}T00:00:00Z"
+    return metadata
+
+
+def check_csv_release_metadata(rows: list[dict[str, str]], label: str) -> list[str]:
+    failures: list[str] = []
+    metadata = expected_release_metadata()
+    for index, row in enumerate(rows, start=2):
+        row_id = row.get("targetKey") or row.get("productKey") or row.get("riskId") or f"row {index}"
+        for field, expected in metadata.items():
+            if row.get(field, "") != expected:
+                failures.append(
+                    f"{label} {row_id} has {field}={row.get(field, '')!r}, expected {expected!r}"
+                )
+    return failures
+
+
+def check_markdown_release_metadata(text: str, label: str) -> list[str]:
+    failures: list[str] = []
+    metadata = expected_release_metadata()
+    required_phrases = [
+        f"Release tag: `{metadata['releaseTag']}`",
+        f"Release date: `{metadata['releaseDate']}`",
+    ]
+    generated_at = metadata.get("generatedAt")
+    if generated_at:
+        required_phrases.append(f"Generated at: `{generated_at}`")
+    for phrase in required_phrases:
+        if phrase not in text:
+            failures.append(f"{label} markdown missing release metadata phrase: {phrase}")
+    return failures
 
 
 def check_latex_log_audit() -> list[str]:
@@ -3781,6 +5282,22 @@ def check_doi_deposit_package() -> list[str]:
         "readiness/paper-structure-audit.md",
         "readiness/candidate-source-leakage-audit.csv",
         "readiness/candidate-source-leakage-audit.md",
+        "readiness/first-wave-manual-adjudication-plan.csv",
+        "readiness/first-wave-manual-adjudication-plan.md",
+        "readiness/procurement-causal-upgrade-packet.csv",
+        "readiness/procurement-causal-upgrade-packet.md",
+        "readiness/substitution-causal-upgrade-packet.csv",
+        "readiness/substitution-causal-upgrade-packet.md",
+        "readiness/substitution-estimation-panel.csv",
+        "readiness/substitution-estimation-diagnostics.csv",
+        "readiness/substitution-estimation-diagnostics.md",
+        "readiness/substitution-estimation-event-study.csv",
+        "readiness/substitution-estimation-leave-one-actor.csv",
+        "readiness/substitution-estimation-specification-contrast.svg",
+        "readiness/comment-causal-upgrade-packet.csv",
+        "readiness/comment-causal-upgrade-packet.md",
+        "readiness/venue-causal-upgrade-packet.csv",
+        "readiness/venue-causal-upgrade-packet.md",
         "readiness/final-readthrough-evidence.csv",
         "readiness/final-readthrough-evidence.md",
     }
@@ -3836,6 +5353,12 @@ def check_doi_deposit_package() -> list[str]:
         "readiness/submission-readiness.md",
         "readiness/reviewer-risk-register.md",
         "readiness/candidate-source-leakage-audit.md",
+        "readiness/first-wave-manual-adjudication-plan.md",
+        "readiness/procurement-causal-upgrade-packet.md",
+        "readiness/substitution-causal-upgrade-packet.md",
+        "readiness/substitution-estimation-diagnostics.md",
+        "readiness/comment-causal-upgrade-packet.md",
+        "readiness/venue-causal-upgrade-packet.md",
     ):
         if phrase not in markdown:
             failures.append(f"DOI deposit package manifest markdown missing phrase: {phrase}")
@@ -3983,9 +5506,16 @@ def check_doi_deposit_readiness() -> list[str]:
 
     try:
         with DOI_DEPOSIT_READINESS_CSV.open(newline="", encoding="utf-8") as source:
-            rows = {row.get("gate", ""): row for row in csv.DictReader(source)}
+            row_list = list(csv.DictReader(source))
     except OSError as error:
         return [f"could not read DOI deposit readiness CSV: {error}"]
+    failures.extend(
+        check_csv_release_metadata(
+            row_list,
+            "DOI deposit readiness",
+        )
+    )
+    rows = {row.get("gate", ""): row for row in row_list}
     expected_statuses = {
         "release-metadata": {"ready"},
         "primary-release-assets": {"ready"},
@@ -4024,6 +5554,12 @@ def check_doi_deposit_readiness() -> list[str]:
             failures.append("DOI deposit readiness says DOI is ready but no DOI appears in metadata")
 
     text = DOI_DEPOSIT_READINESS_MD.read_text(encoding="utf-8")
+    failures.extend(
+        check_markdown_release_metadata(
+            text,
+            "DOI deposit readiness",
+        )
+    )
     required_text = [
         "DOI Deposit Readiness",
         RELEASE_TAG,
@@ -4043,6 +5579,94 @@ def check_doi_deposit_readiness() -> list[str]:
     return failures
 
 
+def check_mechanism_review_circulation_readiness() -> list[str]:
+    failures: list[str] = []
+    for path in (
+        MECHANISM_REVIEW_CIRCULATION_READINESS_CSV,
+        MECHANISM_REVIEW_CIRCULATION_READINESS_MD,
+    ):
+        if not path.exists():
+            failures.append(
+                f"missing mechanism-review circulation readiness report: {path.relative_to(ROOT)}"
+            )
+    if failures:
+        return failures
+
+    try:
+        with MECHANISM_REVIEW_CIRCULATION_READINESS_CSV.open(newline="", encoding="utf-8") as source:
+            row_list = list(csv.DictReader(source))
+    except OSError as error:
+        return [f"could not read mechanism-review circulation readiness CSV: {error}"]
+    failures.extend(
+        check_csv_release_metadata(
+            row_list,
+            "mechanism-review circulation readiness",
+        )
+    )
+    rows = {row.get("gate", ""): row for row in row_list}
+    expected_statuses = {
+        "review-posture": {"ready"},
+        "automated-artifact-build-and-package-gates": {"ready"},
+        "package-surfaces": {"ready"},
+        "calibrated-policy-claim-boundary": {"ready"},
+        "candidate-source-product-boundary": {"ready"},
+        "reviewer-risk-boundary": {"ready"},
+        "final-readthrough-evidence-boundary": {"ready"},
+        "final-journal-submission-boundary": {"ready"},
+        "overall-mechanism-review-circulation": {"ready_for_mechanism_review"},
+    }
+    for gate_name, statuses in expected_statuses.items():
+        row = rows.get(gate_name)
+        if not row:
+            failures.append(f"mechanism-review circulation readiness missing gate: {gate_name}")
+            continue
+        if row.get("status") not in statuses:
+            failures.append(
+                f"mechanism-review circulation gate {gate_name} has status={row.get('status', '')}, "
+                f"expected one of {sorted(statuses)}"
+            )
+    blocked = [gate for gate, row in rows.items() if row.get("status") == "blocked"]
+    for gate_name in sorted(blocked):
+        failures.append(f"mechanism-review circulation readiness has blocked gate: {gate_name}")
+
+    boundary = rows.get("calibrated-policy-claim-boundary", {})
+    for phrase in (
+        "submissionCalibrated=blocked",
+        "dependency=not_cleared",
+        "blocksPolicySimulation=10",
+    ):
+        if phrase not in boundary.get("evidence", ""):
+            failures.append(f"mechanism-review circulation claim boundary missing evidence phrase: {phrase}")
+    final_boundary = rows.get("final-journal-submission-boundary", {})
+    if "doiRecord=manual_required" not in final_boundary.get("evidence", ""):
+        failures.append("mechanism-review circulation report should keep DOI record manual-required in current posture")
+    if "humanReadthrough=manual_required" not in final_boundary.get("evidence", ""):
+        failures.append("mechanism-review circulation report should keep human read-through manual-required in current posture")
+
+    text = MECHANISM_REVIEW_CIRCULATION_READINESS_MD.read_text(encoding="utf-8")
+    failures.extend(
+        check_markdown_release_metadata(
+            text,
+            "mechanism-review circulation readiness",
+        )
+    )
+    required_text = [
+        "Mechanism-Review Circulation Readiness",
+        "ready_for_mechanism_review",
+        "Blocked gates: `0`",
+        "not a DOI record",
+        "not a human scholarly signoff",
+        "not a calibrated policy-effect clearance",
+        "calibrated policy-effect claims remain blocked",
+        "final journal-submission claims remain uncleared",
+        "all automated artifact, build, packaging, and claim-boundary checks represented here are passing",
+    ]
+    for phrase in required_text:
+        if phrase not in text:
+            failures.append(f"mechanism-review circulation readiness markdown missing phrase: {phrase}")
+    return failures
+
+
 def check_wiley_submission_form_readiness() -> list[str]:
     failures: list[str] = []
     for path in (WILEY_SUBMISSION_FORM_READINESS_CSV, WILEY_SUBMISSION_FORM_READINESS_MD):
@@ -4053,9 +5677,16 @@ def check_wiley_submission_form_readiness() -> list[str]:
 
     try:
         with WILEY_SUBMISSION_FORM_READINESS_CSV.open(newline="", encoding="utf-8") as source:
-            rows = {row.get("gate", ""): row for row in csv.DictReader(source)}
+            row_list = list(csv.DictReader(source))
     except OSError as error:
         return [f"could not read Wiley submission form readiness CSV: {error}"]
+    failures.extend(
+        check_csv_release_metadata(
+            row_list,
+            "Wiley submission form readiness",
+        )
+    )
+    rows = {row.get("gate", ""): row for row in row_list}
     expected_statuses = {
         "submission-archive-present": {"ready"},
         "upload-size": {"ready"},
@@ -4081,6 +5712,12 @@ def check_wiley_submission_form_readiness() -> list[str]:
         failures.append(f"Wiley submission form readiness has blocked gate: {gate_name}")
 
     text = WILEY_SUBMISSION_FORM_READINESS_MD.read_text(encoding="utf-8")
+    failures.extend(
+        check_markdown_release_metadata(
+            text,
+            "Wiley submission form readiness",
+        )
+    )
     required_text = [
         "Wiley Submission Form Readiness",
         "Mechanical upload status: `ready`",
@@ -4156,9 +5793,16 @@ def check_reggov_guidelines_readiness() -> list[str]:
 
     try:
         with REGGOV_GUIDELINES_READINESS_CSV.open(newline="", encoding="utf-8") as source:
-            rows = {row.get("gate", ""): row for row in csv.DictReader(source)}
+            row_list = list(csv.DictReader(source))
     except OSError as error:
         return [f"could not read Regulation & Governance guideline readiness CSV: {error}"]
+    failures.extend(
+        check_csv_release_metadata(
+            row_list,
+            "Regulation & Governance guideline readiness",
+        )
+    )
+    rows = {row.get("gate", ""): row for row in row_list}
 
     expected_statuses = {
         "journal-target-and-article-type": {"ready"},
@@ -4189,6 +5833,12 @@ def check_reggov_guidelines_readiness() -> list[str]:
         failures.append(f"Regulation & Governance guideline readiness has blocked gate: {gate_name}")
 
     text = REGGOV_GUIDELINES_READINESS_MD.read_text(encoding="utf-8")
+    failures.extend(
+        check_markdown_release_metadata(
+            text,
+            "Regulation & Governance guideline readiness",
+        )
+    )
     required_text = [
         "Regulation & Governance Guideline Readiness",
         "Automated guideline status:",
@@ -4373,14 +6023,38 @@ def package_byte_checks() -> list[tuple[Path, str]]:
             FIRST_WAVE_PROCUREMENT_SOURCE_ACQUISITION_MD,
             "supporting-information/first-wave-procurement-source-acquisition.md",
         ),
+        (
+            PROCUREMENT_CAUSAL_UPGRADE_PACKET_MD,
+            "supporting-information/procurement-causal-upgrade-packet.md",
+        ),
+        (
+            SUBSTITUTION_CAUSAL_UPGRADE_PACKET_MD,
+            "supporting-information/substitution-causal-upgrade-packet.md",
+        ),
+        (
+            COMMENT_CAUSAL_UPGRADE_PACKET_MD,
+            "supporting-information/comment-causal-upgrade-packet.md",
+        ),
+        (
+            VENUE_CAUSAL_UPGRADE_PACKET_MD,
+            "supporting-information/venue-causal-upgrade-packet.md",
+        ),
         (ROOT / "reports" / "claim-boundary-audit.md", "supporting-information/claim-boundary-audit.md"),
         (ROOT / "reports" / "claim-source-dependency.md", "supporting-information/claim-source-dependency.md"),
         (CAUSAL_CALIBRATION_TARGETS_MD, "supporting-information/causal-calibration-targets.md"),
         (FIRST_WAVE_CAUSAL_PROTOCOLS_MD, "supporting-information/first-wave-causal-protocols.md"),
         (FIRST_WAVE_SOURCE_PRODUCTS_MD, "supporting-information/first-wave-source-products.md"),
         (FIRST_WAVE_LINKAGE_CANDIDATES_MD, "supporting-information/first-wave-linkage-candidates.md"),
+        (
+            FIRST_WAVE_CROSS_VENUE_ADJUDICATION_MD,
+            "supporting-information/first-wave-cross-venue-adjudication.md",
+        ),
         (FIRST_WAVE_SOURCE_READINESS_MD, "supporting-information/first-wave-source-readiness.md"),
         (CANDIDATE_SOURCE_LEAKAGE_AUDIT_MD, "supporting-information/candidate-source-leakage-audit.md"),
+        (
+            FIRST_WAVE_MANUAL_ADJUDICATION_PLAN_MD,
+            "supporting-information/first-wave-manual-adjudication-plan.md",
+        ),
         (ROOT / "reports" / "claim-posture-audit.md", "supporting-information/claim-posture-audit.md"),
         (ROOT / "reports" / "validation-summary.md", "supporting-information/validation-summary.md"),
         (VALIDATION_SCOPE_COVERAGE_MD, "supporting-information/validation-scope-coverage.md"),
@@ -4399,6 +6073,10 @@ def package_byte_checks() -> list[tuple[Path, str]]:
         (FINAL_READTHROUGH_EVIDENCE_MD, "supporting-information/final-readthrough-evidence.md"),
         (CITATION_CFF, "supporting-information/CITATION.cff"),
         (ZENODO_JSON, "supporting-information/zenodo.json"),
+        (
+            SUBSTITUTION_ESTIMATION_PANEL,
+            "supporting-information/source-products/first-wave/substitution-estimation-panel.csv",
+        ),
     ]
     checks.extend(
         (path, f"supporting-information/source-product-templates/first-wave/{path.name}")
@@ -4408,8 +6086,7 @@ def package_byte_checks() -> list[tuple[Path, str]]:
     checks.extend(
         (path, f"supporting-information/source-products/first-wave/{path.name}")
         for path in sorted([
-            *FIRST_WAVE_CANDIDATE_SEED_PRODUCTS.values(),
-            *FIRST_WAVE_TEXT_SOURCE_PRODUCTS.values(),
+            *FIRST_WAVE_SOURCE_PRODUCT_FILES.values(),
         ])
         if path.exists()
     )

@@ -5,8 +5,20 @@ from __future__ import annotations
 
 import csv
 import re
+import sys
 from datetime import date
 from pathlib import Path
+
+SCRIPT_DIR = Path(__file__).resolve().parent
+if str(SCRIPT_DIR) not in sys.path:
+    sys.path.insert(0, str(SCRIPT_DIR))
+
+from paper_release_metadata import (
+    RELEASE_METADATA_FIELDS,
+    metadata_summary_lines,
+    release_metadata,
+    with_release_metadata,
+)
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -23,9 +35,10 @@ DATE_RELEASED_PATTERN = re.compile(r"^date-released:\s*[\"']?([^\"'\n]+)[\"']?\s
 
 
 def main() -> int:
-    rows = readiness_rows()
+    metadata = release_metadata()
+    rows = with_release_metadata(readiness_rows(), metadata)
     write_csv(REPORTS / "submission-readiness.csv", rows)
-    write_markdown(REPORTS / "submission-readiness.md", rows)
+    write_markdown(REPORTS / "submission-readiness.md", rows, metadata)
     print("Wrote reports/submission-readiness.csv")
     print("Wrote reports/submission-readiness.md")
     return 0
@@ -191,6 +204,10 @@ def final_journal_submission_gate() -> dict[str, str]:
         missing_actions.append(
             "open and record the live Regulation & Governance author-page refresh"
         )
+    elif status != "ready":
+        missing_actions.append(
+            "rerun make external-finalization-checklist immediately before submission to verify same-day live author-page freshness"
+        )
     next_action = "; ".join(missing_actions) if missing_actions else "Final submission externalities are cleared."
     cleared = []
     if archive_doi:
@@ -198,7 +215,7 @@ def final_journal_submission_gate() -> dict[str, str]:
     if human_signoff:
         cleared.append("human editorial signoff")
     if author_page_ready:
-        cleared.append("live author-page refresh")
+        cleared.append("release-record live author-page refresh")
     remaining = []
     if not archive_doi:
         remaining.append("archive")
@@ -211,7 +228,8 @@ def final_journal_submission_gate() -> dict[str, str]:
         if status == "ready"
         else (
             f"Final journal submission still requires {', '.join(remaining)}; "
-            f"cleared external items={', '.join(cleared) if cleared else 'none'}; "
+            f"cleared release-record external items={', '.join(cleared) if cleared else 'none'}; "
+            "same-day live author-page freshness is tracked by the external finalization checklist; "
             "mechanism-review circulation can proceed without treating this gate as cleared."
         )
     )
@@ -222,7 +240,7 @@ def final_journal_submission_gate() -> dict[str, str]:
             f"release metadata={'present' if release_metadata_present else 'missing'}; "
             f"DOI archive={'present: ' + archive_doi if archive_doi else 'not detected'}; "
             f"human scholarly read-through={readthrough['evidence']}; "
-            f"live author-page refresh={author_page['evidence']}"
+            f"release-record live author-page refresh={author_page['evidence']}"
         ),
         implication,
         next_action,
@@ -416,14 +434,21 @@ def write_csv(path: Path, rows: list[dict[str, str]]) -> None:
     with path.open("w", newline="", encoding="utf-8") as target:
         writer = csv.DictWriter(
             target,
-            fieldnames=["gate", "status", "evidence", "submissionImplication", "nextAction"],
+            fieldnames=[
+                *RELEASE_METADATA_FIELDS,
+                "gate",
+                "status",
+                "evidence",
+                "submissionImplication",
+                "nextAction",
+            ],
             lineterminator="\n",
         )
         writer.writeheader()
         writer.writerows(rows)
 
 
-def write_markdown(path: Path, rows: list[dict[str, str]]) -> None:
+def write_markdown(path: Path, rows: list[dict[str, str]], metadata: dict[str, str]) -> None:
     summary = rows[-1]
     lines = [
         "# Submission Readiness Audit",
@@ -432,6 +457,7 @@ def write_markdown(path: Path, rows: list[dict[str, str]]) -> None:
         "",
         "## Overall Posture",
         "",
+        *metadata_summary_lines(metadata),
         f"- Status: `{summary['status']}`",
         f"- Evidence: {summary['evidence']}",
         f"- Submission implication: {summary['submissionImplication']}",

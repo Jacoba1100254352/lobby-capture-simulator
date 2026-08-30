@@ -5,9 +5,21 @@ from __future__ import annotations
 
 import argparse
 import csv
+import sys
 from dataclasses import dataclass
 from datetime import datetime
 from pathlib import Path
+
+SCRIPT_DIR = Path(__file__).resolve().parent
+if str(SCRIPT_DIR) not in sys.path:
+    sys.path.insert(0, str(SCRIPT_DIR))
+
+from paper_release_metadata import (
+    RELEASE_METADATA_FIELDS,
+    metadata_summary_lines,
+    release_metadata,
+    with_release_metadata,
+)
 
 
 ROOT = Path(".")
@@ -574,10 +586,11 @@ def main() -> int:
     parser.add_argument("--reports", type=Path, default=REPORTS)
     args = parser.parse_args()
 
-    rows = [audit_product(args.root, spec) for spec in PRODUCTS]
+    metadata = release_metadata()
+    rows = with_release_metadata([audit_product(args.root, spec) for spec in PRODUCTS], metadata)
     args.reports.mkdir(parents=True, exist_ok=True)
     write_csv(args.reports / "first-wave-source-products.csv", rows)
-    write_markdown(args.reports / "first-wave-source-products.md", rows)
+    write_markdown(args.reports / "first-wave-source-products.md", rows, metadata)
     print(f"Wrote {args.reports / 'first-wave-source-products.csv'}")
     print(f"Wrote {args.reports / 'first-wave-source-products.md'}")
     return 0
@@ -696,6 +709,12 @@ def product_next_action(spec: ProductSpec, status: str) -> str:
             return (
                 "Use these reproducible pre-review clusters with the comment-body corpus; "
                 "link clusters to response sections and final-rule text before estimating uptake."
+            )
+        if spec.product_key == "procurement-firewall-overlay":
+            return (
+                "Use this bounded procurement-firewall control row as control-design evidence only; "
+                "it does not clear SAM/FPDS action-history, protest, exclusion, offer-count, "
+                "or causal procurement-modification gates."
             )
         return "Use this ready source product as an input to the target protocol; keep provenance and claim boundaries attached."
     return spec.next_action
@@ -845,7 +864,8 @@ def candidate_unreviewed_note(spec: ProductSpec) -> str:
     if spec.target_key == "procurement-modification-causal-capture":
         return (
             "Candidate-only procurement source-surface worklist is present; it does not clear "
-            "source-product readiness until action-history, protest, exclusion, firewall, and offer/competition rows "
+            "source-product readiness until the remaining action-history, protest, exclusion, "
+            "and offer/competition rows "
             "are populated from reviewed source records and linked to procurement identifiers."
         )
     return (
@@ -941,12 +961,23 @@ def semantic_quality_issues(rows: list[dict[str, str]], spec: ProductSpec) -> tu
             distinct_check(rows, "periodStart", 2, "fewer than two analysis periods"),
             distinct_check(rows, "canonicalActorId", 5, "fewer than five canonical actors"),
         ])
+        exposure_groups = {
+            normalize_cell(row.get("exposureGroup", "")).lower()
+            for row in rows
+        }
+        if not any(token in group for group in exposure_groups for token in ("exposed", "treated", "treatment")):
+            checks.append("no reviewed exposed or treated exposure-group rows")
+        if not any(token in group for group in exposure_groups for token in ("comparison", "control", "unaffected")):
+            checks.append("no reviewed comparison or control exposure-group rows")
+        checks.extend(substitution_shock_window_issues(rows))
     elif product == "substitution-comparison-groups":
         groups = {normalize_cell(row.get("comparisonGroup", "")).lower() for row in rows}
         if not any(token in group for group in groups for token in ("exposed", "treated", "treatment")):
             checks.append("no exposed or treated comparison-group rows")
         if not any(token in group for group in groups for token in ("comparison", "control", "unaffected")):
             checks.append("no comparison or control rows")
+        if not actor_issue_time_has_prepost_rows():
+            checks.append("comparison windows lack matching actor-issue-time source rows before and after the treatment start")
     elif product == "sam-fpds-action-history-crosswalk":
         checks.extend([
             distinct_check(rows, "piid", 1000, "fewer than 1000 distinct PIID/award identifiers"),
@@ -989,6 +1020,16 @@ def semantic_quality_issues(rows: list[dict[str, str]], spec: ProductSpec) -> tu
         checks.append(distinct_check(rows, "matchRule", 1, "no match rule represented"))
     elif product == "issue-code-crosswalk":
         checks.append(distinct_check(rows, "issueCode", 3, "fewer than three issue concepts"))
+        mapping_columns = {
+            "ldaIssueCode": "no reviewed LDA issue-code mappings",
+            "docketTerms": "no reviewed docket-term mappings",
+            "naicsCodes": "no reviewed NAICS mappings",
+            "pscCodes": "no reviewed PSC mappings",
+            "fecPurposeTerms": "no reviewed FEC purpose-term mappings",
+        }
+        for column, message in mapping_columns.items():
+            if not any(is_reviewed_mapping_value(row.get(column, "")) for row in rows):
+                checks.append(message)
     elif product == "false-match-review-log":
         decisions = {normalize_cell(row.get("decision", "")).lower() for row in rows}
         positive = {"accept", "accepted", "match", "matched", "true_positive", "true positive"}
@@ -1003,6 +1044,63 @@ def semantic_quality_issues(rows: list[dict[str, str]], spec: ProductSpec) -> tu
             distinct_check(rows, "canonicalActorId", 5, "fewer than five canonical actors"),
         ])
     return tuple(check for check in checks if check)
+
+
+def substitution_shock_window_issues(rows: list[dict[str, str]]) -> list[str]:
+    shocks = substitution_shocks_by_event()
+    if not shocks:
+        return ["no readable substitution reform-shock treatment date"]
+    by_event: dict[str, dict[str, bool]] = {}
+    for row in rows:
+        event_id = normalize_cell(row.get("reformEventId", ""))
+        treatment_start = shocks.get(event_id)
+        if treatment_start is None:
+            continue
+        period_start = parse_iso_date(normalize_cell(row.get("periodStart", "")))
+        period_end = parse_iso_date(normalize_cell(row.get("periodEnd", "")))
+        if period_start is None or period_end is None:
+            continue
+        coverage = by_event.setdefault(event_id, {"pre": False, "post": False})
+        if period_end < treatment_start:
+            coverage["pre"] = True
+        if period_start >= treatment_start:
+            coverage["post"] = True
+    issues: list[str] = []
+    for event_id, treatment_start in shocks.items():
+        coverage = by_event.get(event_id, {"pre": False, "post": False})
+        date_label = treatment_start.date().isoformat()
+        if not coverage["pre"]:
+            issues.append(f"no observed actor-issue-time rows before {event_id} treatment start {date_label}")
+        if not coverage["post"]:
+            issues.append(f"no observed actor-issue-time rows on or after {event_id} treatment start {date_label}")
+    return issues
+
+
+def actor_issue_time_has_prepost_rows() -> bool:
+    path = ROOT / "data/calibration/first-wave/actor-issue-time-spine.csv"
+    try:
+        with path.open(newline="", encoding="utf-8") as source:
+            rows = list(csv.DictReader(source))
+    except OSError:
+        return False
+    issues = substitution_shock_window_issues(rows)
+    return not any(issue.startswith("no observed actor-issue-time rows") for issue in issues)
+
+
+def substitution_shocks_by_event() -> dict[str, datetime]:
+    path = ROOT / "data/calibration/first-wave/substitution-reform-shocks.csv"
+    try:
+        with path.open(newline="", encoding="utf-8") as source:
+            rows = list(csv.DictReader(source))
+    except OSError:
+        return {}
+    shocks: dict[str, datetime] = {}
+    for row in rows:
+        event_id = normalize_cell(row.get("reformEventId", ""))
+        treatment_start = parse_iso_date(normalize_cell(row.get("treatmentStartDate", "")))
+        if event_id and treatment_start is not None:
+            shocks[event_id] = treatment_start
+    return shocks
 
 
 def distinct_check(rows: list[dict[str, str]], column: str, minimum: int, message: str) -> str:
@@ -1079,6 +1177,20 @@ def source_system_values(rows: list[dict[str, str]]) -> set[str]:
             if is_present_value(normalized):
                 systems.add(normalized)
     return systems
+
+
+def is_reviewed_mapping_value(value: str | None) -> bool:
+    normalized = normalize_cell(value).lower()
+    if not is_present_value(normalized):
+        return False
+    blocked_prefixes = (
+        "not_observed",
+        "not_reviewed",
+        "unmapped",
+        "missing",
+        "pending",
+    )
+    return not normalized.startswith(blocked_prefixes)
 
 
 def re_split_source_systems(value: str) -> list[str]:
@@ -1170,6 +1282,7 @@ def audit_text(path: Path, spec: ProductSpec) -> tuple[int, tuple[str, ...], tup
 
 def write_csv(path: Path, rows: list[dict[str, str]]) -> None:
     fieldnames = [
+        *RELEASE_METADATA_FIELDS,
         "targetKey",
         "productKey",
         "productLabel",
@@ -1202,7 +1315,7 @@ def write_csv(path: Path, rows: list[dict[str, str]]) -> None:
         writer.writerows(rows)
 
 
-def write_markdown(path: Path, rows: list[dict[str, str]]) -> None:
+def write_markdown(path: Path, rows: list[dict[str, str]], metadata: dict[str, str]) -> None:
     ready = [row for row in rows if row["productStatus"] in {"schema_ready", "text_ready"}]
     candidate_unreviewed = [row for row in rows if row["productStatus"] == CANDIDATE_UNREVIEWED_STATUS]
     missing = [row for row in rows if row["productStatus"].startswith("missing")]
@@ -1236,6 +1349,7 @@ def write_markdown(path: Path, rows: list[dict[str, str]]) -> None:
         "",
         "## Summary",
         "",
+        *metadata_summary_lines(metadata),
         f"- Source products audited: `{len(rows)}`",
         f"- Schema/text ready products: `{len(ready)}`",
         f"- Candidate-only unreviewed products: `{len(candidate_unreviewed)}`",
@@ -1263,7 +1377,7 @@ def write_markdown(path: Path, rows: list[dict[str, str]]) -> None:
         "",
         "Semantic checks are product-level safeguards that prevent tiny or structurally incomplete files from clearing a causal source gate merely because required columns are present.",
         "",
-        "The `candidate_unreviewed` status means the production file exists as a deterministic manual-review seed, but it cannot clear readiness until the product-specific manual checks are adjudicated. Entity-resolution seeds require alias, issue, and false-match review; the response/final-rule linkage seed requires observed response-section, final-rule movement, and uptake-coding review; procurement source-surface worklists require reviewed action-history, protest, exclusion, firewall, and offer/competition rows linked to procurement identifiers.",
+        "The `candidate_unreviewed` status means the production file exists as a deterministic manual-review seed, but it cannot clear readiness until the product-specific manual checks are adjudicated. Entity-resolution seeds require alias, issue, and false-match review; the response/final-rule linkage seed requires observed response-section, final-rule movement, and uptake-coding review; the remaining candidate procurement source-surface worklists require reviewed action-history, protest, exclusion, and offer/competition rows linked to procurement identifiers. A ready procurement-firewall row remains bounded control-design evidence, not an estimation panel.",
         "",
         "The `partial_reviewed_below_minimum` and `partial_schema_quality_issues` statuses mean reviewer-supplied rows are present, but they still do not clear the source-product gate because row-count, field-quality, or semantic requirements are unmet.",
         "",

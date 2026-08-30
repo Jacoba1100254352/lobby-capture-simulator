@@ -4,7 +4,9 @@ This audit checks whether the release has the metadata, asset list, checksum han
 
 ## Summary
 
+- Generated at: `2026-06-19T00:00:00Z`
 - Release tag: `paper-publication-readiness-2026-06-19-r208`
+- Release date: `2026-06-19`
 - Ready gates: `6`
 - Manual-required gates: `3`
 - Blocked gates: `0`
@@ -17,12 +19,12 @@ This audit checks whether the release has the metadata, asset list, checksum han
 | release-metadata | ready | CITATION release=paper-publication-readiness-2026-06-19-r208; Zenodo related release=present | Use these metadata as the deposit record source. |
 | primary-release-assets | ready | manifest assets=5; expected assets=5 | Deposit the primary assets listed in the archive handoff manifest. |
 | release-asset-checksums | ready | checksum files=present; checksum asset rows=5 | Attach or retain dist/release-asset-checksums.* with the DOI record. |
-| doi-deposit-package | ready | package=present; manifest=present; manifest members=37; zip members=39; primary assets=5/5; zip integrity=ok; package checksum=ok | Upload or retain dist/lobby-capture-doi-deposit-package.zip as the single archive handoff package when the repository-to-archive integration does not preserve release assets directly. |
+| doi-deposit-package | ready | package=present; manifest=present; manifest members=53; zip members=55; primary assets=5/5; zip integrity=ok; package checksum=ok | Upload or retain dist/lobby-capture-doi-deposit-package.zip as the single archive handoff package when the repository-to-archive integration does not preserve release assets directly. |
 | zenodo-preflight | ready | preflight rows=8; blocked=0; manual_required=3 | Run make zenodo-deposit-preflight before creating an unpublished Zenodo draft. |
 | claim-boundary | ready | overall submission posture=ready_for_mechanism_review | Keep the DOI record description bounded to mechanism-model review unless policy-calibration gates later clear. |
 | doi-record | manual_required | DOI=not recorded in citation, deposit metadata, or declarations | After minting a Zenodo, OSF, or journal-linked archive DOI, record it in CITATION.cff, .zenodo.json, submission declarations, and the final read-through record. |
 | human-readthrough | manual_required | release=paper-publication-readiness-2026-06-19-r208; status=pending; blocked=0; manual_required=18; checkedChecklistItems=3/17 | Complete the final human scholarly read-through against the exact release tag before final journal submission. |
-| final-journal-submission | manual_required | submission final gate=manual_required; doi=missing; human signoff=pending; live author-page refresh=ready | Do not treat the bundle as final-journal-submission ready until DOI, human signoff, and live author-page refresh are all recorded. |
+| final-journal-submission | manual_required | submission final gate=manual_required; doi=missing; human signoff=pending; live author-page refresh=releaseRecord=ready; same-day freshness checked by external-finalization-checklist | Do not treat the bundle as final-journal-submission ready until DOI, human signoff, and a same-day live author-page refresh are all recorded. |
 
 ## Deposit Asset Set
 

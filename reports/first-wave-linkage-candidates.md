@@ -5,12 +5,12 @@ This report mines the frozen normalized source snapshot for automated actor-name
 ## Summary
 
 - Candidate status: `candidate_only_not_source_product`
-- Candidate source records scanned: `35632`
-- Cross-source candidate actors: `659`
-- Cross-venue candidate actors: `140`
-- Source systems represented: `9`
-- Venues represented: `7`
-- P1 manual-review candidates: `103`
+- Candidate source records scanned: `38389`
+- Cross-source candidate actors: `1067`
+- Cross-venue candidate actors: `548`
+- Source systems represented: `10`
+- Venues represented: `8`
+- P1 manual-review candidates: `499`
 - Production promotion path: manually adjudicate candidates into `data/calibration/first-wave/canonical-actor-identifiers.csv`, `alias-resolution-audit-sample.csv`, `false-match-review-log.csv`, and `linked-actor-issue-venue-time.csv` before any estimation.
 
 ## Review Triage
@@ -19,26 +19,28 @@ Review priority is a deterministic worklist ordering, not an adjudicated confide
 
 | Review priority | Candidate actors |
 | --- | ---: |
-| P1-manual-review | 103 |
-| P2-manual-review | 555 |
-| P3-manual-review | 1 |
+| P1-manual-review | 499 |
+| P2-manual-review | 564 |
+| P3-manual-review | 4 |
 
 | Linkage evidence class | Candidate actors |
 | --- | ---: |
-| shared-source-identifier-overlap | 615 |
-| cross-venue-name-overlap | 43 |
+| shared-source-identifier-overlap | 1010 |
+| cross-venue-name-overlap | 54 |
+| three-plus-venue-name-overlap | 2 |
 | same-venue-multi-source-name-overlap | 1 |
 
 ## Source Coverage
 
 | Source system | Candidate records |
 | --- | ---: |
-| IRS/ProPublica dark-money bridge | 410 |
-| Intermediary bridge | 1706 |
+| IRS/ProPublica dark-money bridge | 653 |
+| Intermediary bridge | 4206 |
 | LDA | 242 |
 | LDA revolving-door proxy | 803 |
 | OpenFEC | 2536 |
 | Public financing | 140 |
+| Reginfo.gov EO 12866 meetings | 14 |
 | USAspending agency actions | 28095 |
 | USAspending awards | 200 |
 | USAspending national actions | 1500 |
@@ -47,10 +49,11 @@ Review priority is a deterministic worklist ordering, not an adjudicated confide
 
 | Venue | Candidate records |
 | --- | ---: |
+| access_meetings | 14 |
 | countervailing_finance | 140 |
 | electoral_money | 2536 |
-| intermediary | 1706 |
-| opaque_nonprofit_or_dark_money | 410 |
+| intermediary | 4206 |
+| opaque_nonprofit_or_dark_money | 653 |
 | procurement | 29795 |
 | revolving_door | 803 |
 | visible_lobbying | 242 |
@@ -59,77 +62,81 @@ Review priority is a deterministic worklist ordering, not an adjudicated confide
 
 | Source pair | Candidate actors |
 | --- | ---: |
+| IRS/ProPublica dark-money bridge + Intermediary bridge | 499 |
 | USAspending agency actions + USAspending national actions | 432 |
-| IRS/ProPublica dark-money bridge + Intermediary bridge | 97 |
 | USAspending agency actions + USAspending awards | 93 |
 | LDA + LDA revolving-door proxy | 34 |
+| Intermediary bridge + USAspending agency actions | 13 |
 | USAspending awards + USAspending national actions | 6 |
-| Intermediary bridge + USAspending agency actions | 5 |
+| Intermediary bridge + OpenFEC | 3 |
 | IRS/ProPublica dark-money bridge + OpenFEC | 1 |
 | IRS/ProPublica dark-money bridge + USAspending agency actions | 1 |
 | Intermediary bridge + LDA revolving-door proxy | 1 |
-| Intermediary bridge + OpenFEC | 1 |
+| LDA revolving-door proxy + Reginfo.gov EO 12866 meetings | 1 |
 | LDA revolving-door proxy + USAspending agency actions | 1 |
 | OpenFEC + USAspending agency actions | 1 |
+| Reginfo.gov EO 12866 meetings + USAspending agency actions | 1 |
 
 ## Cross-Venue Source Pair Counts
 
 | Source pair | Cross-venue candidate actors |
 | --- | ---: |
-| IRS/ProPublica dark-money bridge + Intermediary bridge | 97 |
+| IRS/ProPublica dark-money bridge + Intermediary bridge | 499 |
 | LDA + LDA revolving-door proxy | 34 |
-| Intermediary bridge + USAspending agency actions | 5 |
+| Intermediary bridge + USAspending agency actions | 13 |
+| Intermediary bridge + OpenFEC | 3 |
 | IRS/ProPublica dark-money bridge + OpenFEC | 1 |
 | IRS/ProPublica dark-money bridge + USAspending agency actions | 1 |
 | Intermediary bridge + LDA revolving-door proxy | 1 |
-| Intermediary bridge + OpenFEC | 1 |
+| LDA revolving-door proxy + Reginfo.gov EO 12866 meetings | 1 |
 | LDA revolving-door proxy + USAspending agency actions | 1 |
 | OpenFEC + USAspending agency actions | 1 |
+| Reginfo.gov EO 12866 meetings + USAspending agency actions | 1 |
 
 ## Top Candidate Actors
 
 | Candidate | Priority | Evidence class | Type | Sources | Venues | Records | Activity | Risk flags | Review action |
 | --- | --- | --- | --- | --- | --- | ---: | ---: | --- | --- |
+| American Bankers Association | P1-manual-review | shared-source-identifier-overlap | cross_venue | IRS/ProPublica dark-money bridge; Intermediary bridge; OpenFEC | electoral_money; intermediary; opaque_nonprofit_or_dark_money | 11 | 4.5185 | committee-name-may-not-identify-actor-control | P1-manual-review: manually adjudicate aliases, source identifiers, false positives, and issue comparability before promoting any row under data/calibration/first-wave/ |
 | ALLIANCE FOR TELECOMMUNICATIONS INDUSTRY SOLUTIONS | P1-manual-review | shared-source-identifier-overlap | cross_venue | IRS/ProPublica dark-money bridge; Intermediary bridge; USAspending agency actions | intermediary; opaque_nonprofit_or_dark_money; procurement | 4 | 0.3244 | procurement-name-overlap-requires-UEI-review | P1-manual-review: manually adjudicate aliases, source identifiers, false positives, and issue comparability before promoting any row under data/calibration/first-wave/ |
+| Ab Foundation | P1-manual-review | shared-source-identifier-overlap | cross_venue | IRS/ProPublica dark-money bridge; Intermediary bridge | intermediary; opaque_nonprofit_or_dark_money | 12 | 60.8043 | none | P1-manual-review: manually adjudicate aliases, source identifiers, false positives, and issue comparability before promoting any row under data/calibration/first-wave/ |
+| American Action Network Inc | P1-manual-review | shared-source-identifier-overlap | cross_venue | IRS/ProPublica dark-money bridge; Intermediary bridge | intermediary; opaque_nonprofit_or_dark_money | 14 | 30.5093 | none | P1-manual-review: manually adjudicate aliases, source identifiers, false positives, and issue comparability before promoting any row under data/calibration/first-wave/ |
+| National Restaurant Association | P1-manual-review | shared-source-identifier-overlap | cross_venue | IRS/ProPublica dark-money bridge; Intermediary bridge | intermediary; opaque_nonprofit_or_dark_money | 46 | 5.4309 | none | P1-manual-review: manually adjudicate aliases, source identifiers, false positives, and issue comparability before promoting any row under data/calibration/first-wave/ |
 | BERGER ACTION FUND INC | P1-manual-review | shared-source-identifier-overlap | cross_venue | IRS/ProPublica dark-money bridge; Intermediary bridge | intermediary; opaque_nonprofit_or_dark_money | 2 | 7.6408 | none | P1-manual-review: manually adjudicate aliases, source identifiers, false positives, and issue comparability before promoting any row under data/calibration/first-wave/ |
 | American Petroleum Institute | P1-manual-review | shared-source-identifier-overlap | cross_venue | IRS/ProPublica dark-money bridge; Intermediary bridge | intermediary; opaque_nonprofit_or_dark_money | 9 | 6.3054 | none | P1-manual-review: manually adjudicate aliases, source identifiers, false positives, and issue comparability before promoting any row under data/calibration/first-wave/ |
+| CTIA-THE WIRELESS ASSOCIATION | P1-manual-review | shared-source-identifier-overlap | cross_venue | IRS/ProPublica dark-money bridge; Intermediary bridge | intermediary; opaque_nonprofit_or_dark_money | 2 | 2.5036 | none | P1-manual-review: manually adjudicate aliases, source identifiers, false positives, and issue comparability before promoting any row under data/calibration/first-wave/ |
 | CREDIT UNION NATIONAL ASSOCIATION INC | P1-manual-review | shared-source-identifier-overlap | cross_venue | IRS/ProPublica dark-money bridge; Intermediary bridge | intermediary; opaque_nonprofit_or_dark_money | 2 | 2.4939 | none | P1-manual-review: manually adjudicate aliases, source identifiers, false positives, and issue comparability before promoting any row under data/calibration/first-wave/ |
 | EDISON ELECTRIC INSTITUTE | P1-manual-review | shared-source-identifier-overlap | cross_venue | IRS/ProPublica dark-money bridge; Intermediary bridge | intermediary; opaque_nonprofit_or_dark_money | 2 | 2.4437 | none | P1-manual-review: manually adjudicate aliases, source identifiers, false positives, and issue comparability before promoting any row under data/calibration/first-wave/ |
 | INVESTMENT COMPANY INSTITUTE | P1-manual-review | shared-source-identifier-overlap | cross_venue | IRS/ProPublica dark-money bridge; Intermediary bridge | intermediary; opaque_nonprofit_or_dark_money | 2 | 1.9961 | none | P1-manual-review: manually adjudicate aliases, source identifiers, false positives, and issue comparability before promoting any row under data/calibration/first-wave/ |
+| AMERICAN COUNCIL OF LIFE INSURERS INC | P1-manual-review | shared-source-identifier-overlap | cross_venue | IRS/ProPublica dark-money bridge; Intermediary bridge | intermediary; opaque_nonprofit_or_dark_money | 2 | 1.8547 | none | P1-manual-review: manually adjudicate aliases, source identifiers, false positives, and issue comparability before promoting any row under data/calibration/first-wave/ |
 | CENTER FOR VOTER INFORMATION | P1-manual-review | shared-source-identifier-overlap | cross_venue | IRS/ProPublica dark-money bridge; Intermediary bridge | intermediary; opaque_nonprofit_or_dark_money | 3 | 1.7604 | none | P1-manual-review: manually adjudicate aliases, source identifiers, false positives, and issue comparability before promoting any row under data/calibration/first-wave/ |
+| ELECTRONIC PAYMENTS COALITION INC | P1-manual-review | shared-source-identifier-overlap | cross_venue | IRS/ProPublica dark-money bridge; Intermediary bridge | intermediary; opaque_nonprofit_or_dark_money | 2 | 1.7464 | none | P1-manual-review: manually adjudicate aliases, source identifiers, false positives, and issue comparability before promoting any row under data/calibration/first-wave/ |
+| REPUBLICAN JEWISH COALITION | P1-manual-review | shared-source-identifier-overlap | cross_venue | IRS/ProPublica dark-money bridge; Intermediary bridge | intermediary; opaque_nonprofit_or_dark_money | 3 | 1.4948 | none | P1-manual-review: manually adjudicate aliases, source identifiers, false positives, and issue comparability before promoting any row under data/calibration/first-wave/ |
 | NATIONAL ASSOCIATION OF MANUFACTURERS OF THE USA | P1-manual-review | shared-source-identifier-overlap | cross_venue | IRS/ProPublica dark-money bridge; Intermediary bridge | intermediary; opaque_nonprofit_or_dark_money | 2 | 1.4811 | none | P1-manual-review: manually adjudicate aliases, source identifiers, false positives, and issue comparability before promoting any row under data/calibration/first-wave/ |
+| MORTGAGE BANKERS ASSOCIATION OF AMERICA | P1-manual-review | shared-source-identifier-overlap | cross_venue | IRS/ProPublica dark-money bridge; Intermediary bridge | intermediary; opaque_nonprofit_or_dark_money | 2 | 1.4316 | none | P1-manual-review: manually adjudicate aliases, source identifiers, false positives, and issue comparability before promoting any row under data/calibration/first-wave/ |
+| NUCLEAR ENERGY INSTITUTE INC | P1-manual-review | shared-source-identifier-overlap | cross_venue | IRS/ProPublica dark-money bridge; Intermediary bridge | intermediary; opaque_nonprofit_or_dark_money | 2 | 1.4247 | none | P1-manual-review: manually adjudicate aliases, source identifiers, false positives, and issue comparability before promoting any row under data/calibration/first-wave/ |
 | PLASTICS INDUSTRY ASSOCIATION INC | P1-manual-review | shared-source-identifier-overlap | cross_venue | IRS/ProPublica dark-money bridge; Intermediary bridge | intermediary; opaque_nonprofit_or_dark_money | 2 | 1.4061 | none | P1-manual-review: manually adjudicate aliases, source identifiers, false positives, and issue comparability before promoting any row under data/calibration/first-wave/ |
+| ADVANCED MEDICAL TECHNOLOGY ASSOCIATION | P1-manual-review | shared-source-identifier-overlap | cross_venue | IRS/ProPublica dark-money bridge; Intermediary bridge | intermediary; opaque_nonprofit_or_dark_money | 2 | 1.3147 | none | P1-manual-review: manually adjudicate aliases, source identifiers, false positives, and issue comparability before promoting any row under data/calibration/first-wave/ |
+| PHARMACEUTICAL CARE MANAGEMENT ASSOCIATION | P1-manual-review | shared-source-identifier-overlap | cross_venue | IRS/ProPublica dark-money bridge; Intermediary bridge | intermediary; opaque_nonprofit_or_dark_money | 2 | 1.3005 | none | P1-manual-review: manually adjudicate aliases, source identifiers, false positives, and issue comparability before promoting any row under data/calibration/first-wave/ |
+| THE FAIRNESS PROJECT | P1-manual-review | shared-source-identifier-overlap | cross_venue | IRS/ProPublica dark-money bridge; Intermediary bridge | intermediary; opaque_nonprofit_or_dark_money | 2 | 1.2328 | none | P1-manual-review: manually adjudicate aliases, source identifiers, false positives, and issue comparability before promoting any row under data/calibration/first-wave/ |
 | AMERICAN GAS ASSOCIATION | P1-manual-review | shared-source-identifier-overlap | cross_venue | IRS/ProPublica dark-money bridge; Intermediary bridge | intermediary; opaque_nonprofit_or_dark_money | 2 | 1.0157 | none | P1-manual-review: manually adjudicate aliases, source identifiers, false positives, and issue comparability before promoting any row under data/calibration/first-wave/ |
 | ENTERTAINMENT SOFTWARE ASSOCIATION | P1-manual-review | shared-source-identifier-overlap | cross_venue | IRS/ProPublica dark-money bridge; Intermediary bridge | intermediary; opaque_nonprofit_or_dark_money | 2 | 0.9776 | none | P1-manual-review: manually adjudicate aliases, source identifiers, false positives, and issue comparability before promoting any row under data/calibration/first-wave/ |
 | NATIONAL ASSOCIATION OF SOCIAL WORKERS INC | P1-manual-review | shared-source-identifier-overlap | cross_venue | IRS/ProPublica dark-money bridge; Intermediary bridge | intermediary; opaque_nonprofit_or_dark_money | 2 | 0.9157 | none | P1-manual-review: manually adjudicate aliases, source identifiers, false positives, and issue comparability before promoting any row under data/calibration/first-wave/ |
+| SOLAR ENERGY INDUSTRIES ASSOCIATION INC | P1-manual-review | shared-source-identifier-overlap | cross_venue | IRS/ProPublica dark-money bridge; Intermediary bridge | intermediary; opaque_nonprofit_or_dark_money | 2 | 0.9027 | none | P1-manual-review: manually adjudicate aliases, source identifiers, false positives, and issue comparability before promoting any row under data/calibration/first-wave/ |
 | CRUISE LINES INTERNATIONAL ASSOCIATION INC | P1-manual-review | shared-source-identifier-overlap | cross_venue | IRS/ProPublica dark-money bridge; Intermediary bridge | intermediary; opaque_nonprofit_or_dark_money | 2 | 0.8919 | none | P1-manual-review: manually adjudicate aliases, source identifiers, false positives, and issue comparability before promoting any row under data/calibration/first-wave/ |
 | RECORD INDUSTRY ASSOCIATION OF AMERICA INC | P1-manual-review | shared-source-identifier-overlap | cross_venue | IRS/ProPublica dark-money bridge; Intermediary bridge | intermediary; opaque_nonprofit_or_dark_money | 2 | 0.8913 | none | P1-manual-review: manually adjudicate aliases, source identifiers, false positives, and issue comparability before promoting any row under data/calibration/first-wave/ |
+| NATIONAL ASSOCIATION OF REAL ESTATE INVESTMENT TRUST INC | P1-manual-review | shared-source-identifier-overlap | cross_venue | IRS/ProPublica dark-money bridge; Intermediary bridge | intermediary; opaque_nonprofit_or_dark_money | 2 | 0.8739 | none | P1-manual-review: manually adjudicate aliases, source identifiers, false positives, and issue comparability before promoting any row under data/calibration/first-wave/ |
 | FUTURES INDUSTRY ASSOCIATION | P1-manual-review | shared-source-identifier-overlap | cross_venue | IRS/ProPublica dark-money bridge; Intermediary bridge | intermediary; opaque_nonprofit_or_dark_money | 2 | 0.8659 | none | P1-manual-review: manually adjudicate aliases, source identifiers, false positives, and issue comparability before promoting any row under data/calibration/first-wave/ |
+| BANK POLICY INSTITUTE | P1-manual-review | shared-source-identifier-overlap | cross_venue | IRS/ProPublica dark-money bridge; Intermediary bridge | intermediary; opaque_nonprofit_or_dark_money | 2 | 0.8475 | none | P1-manual-review: manually adjudicate aliases, source identifiers, false positives, and issue comparability before promoting any row under data/calibration/first-wave/ |
 | AMERICAN ASSOCIATION FOR JUSTICE | P1-manual-review | shared-source-identifier-overlap | cross_venue | IRS/ProPublica dark-money bridge; Intermediary bridge | intermediary; opaque_nonprofit_or_dark_money | 2 | 0.8297 | none | P1-manual-review: manually adjudicate aliases, source identifiers, false positives, and issue comparability before promoting any row under data/calibration/first-wave/ |
+| CENTER FOR AMERICAN PROGRESS ACTION FUND | P1-manual-review | shared-source-identifier-overlap | cross_venue | IRS/ProPublica dark-money bridge; Intermediary bridge | intermediary; opaque_nonprofit_or_dark_money | 2 | 0.8283 | none | P1-manual-review: manually adjudicate aliases, source identifiers, false positives, and issue comparability before promoting any row under data/calibration/first-wave/ |
+| INSTITUTE OF INTERNATIONAL FINANCE INC | P1-manual-review | shared-source-identifier-overlap | cross_venue | IRS/ProPublica dark-money bridge; Intermediary bridge | intermediary; opaque_nonprofit_or_dark_money | 2 | 0.8200 | none | P1-manual-review: manually adjudicate aliases, source identifiers, false positives, and issue comparability before promoting any row under data/calibration/first-wave/ |
+| AMERICAN PUBLIC TRANSIT ASSOCIATION | P1-manual-review | shared-source-identifier-overlap | cross_venue | IRS/ProPublica dark-money bridge; Intermediary bridge | intermediary; opaque_nonprofit_or_dark_money | 2 | 0.8051 | none | P1-manual-review: manually adjudicate aliases, source identifiers, false positives, and issue comparability before promoting any row under data/calibration/first-wave/ |
+| ASSOCIATION OF CORPORATE COUNSEL | P1-manual-review | shared-source-identifier-overlap | cross_venue | IRS/ProPublica dark-money bridge; Intermediary bridge | intermediary; opaque_nonprofit_or_dark_money | 3 | 0.7945 | none | P1-manual-review: manually adjudicate aliases, source identifiers, false positives, and issue comparability before promoting any row under data/calibration/first-wave/ |
+| NATIONAL CONFECTIONERS ASSOCIATION | P1-manual-review | shared-source-identifier-overlap | cross_venue | IRS/ProPublica dark-money bridge; Intermediary bridge | intermediary; opaque_nonprofit_or_dark_money | 2 | 0.7801 | none | P1-manual-review: manually adjudicate aliases, source identifiers, false positives, and issue comparability before promoting any row under data/calibration/first-wave/ |
 | INTERNATIONAL BAR ASSOCIATION | P1-manual-review | shared-source-identifier-overlap | cross_venue | IRS/ProPublica dark-money bridge; Intermediary bridge | intermediary; opaque_nonprofit_or_dark_money | 2 | 0.7572 | none | P1-manual-review: manually adjudicate aliases, source identifiers, false positives, and issue comparability before promoting any row under data/calibration/first-wave/ |
+| NATIONAL MULTIFAMILY HOUSING COUNCIL | P1-manual-review | shared-source-identifier-overlap | cross_venue | IRS/ProPublica dark-money bridge; Intermediary bridge | intermediary; opaque_nonprofit_or_dark_money | 2 | 0.7101 | none | P1-manual-review: manually adjudicate aliases, source identifiers, false positives, and issue comparability before promoting any row under data/calibration/first-wave/ |
 | COUNCIL OF INSURANCE AGENTS & BROKERS | P1-manual-review | shared-source-identifier-overlap | cross_venue | IRS/ProPublica dark-money bridge; Intermediary bridge | intermediary; opaque_nonprofit_or_dark_money | 2 | 0.7052 | none | P1-manual-review: manually adjudicate aliases, source identifiers, false positives, and issue comparability before promoting any row under data/calibration/first-wave/ |
-| B S A BUSINESS SOFTWARE ALLIANCE | P1-manual-review | shared-source-identifier-overlap | cross_venue | IRS/ProPublica dark-money bridge; Intermediary bridge | intermediary; opaque_nonprofit_or_dark_money | 2 | 0.7031 | none | P1-manual-review: manually adjudicate aliases, source identifiers, false positives, and issue comparability before promoting any row under data/calibration/first-wave/ |
-| HEALTHCARE DISTRIBUTION ALLIANCE HDA | P1-manual-review | shared-source-identifier-overlap | cross_venue | IRS/ProPublica dark-money bridge; Intermediary bridge | intermediary; opaque_nonprofit_or_dark_money | 2 | 0.6815 | none | P1-manual-review: manually adjudicate aliases, source identifiers, false positives, and issue comparability before promoting any row under data/calibration/first-wave/ |
-| AMERICAN HOTEL & LODGING ASSOCIATION DIRECTORY CORPORATION | P1-manual-review | shared-source-identifier-overlap | cross_venue | IRS/ProPublica dark-money bridge; Intermediary bridge | intermediary; opaque_nonprofit_or_dark_money | 2 | 0.6596 | none | P1-manual-review: manually adjudicate aliases, source identifiers, false positives, and issue comparability before promoting any row under data/calibration/first-wave/ |
-| PERSONAL CARE PRODUCTS COUNCIL | P1-manual-review | shared-source-identifier-overlap | cross_venue | IRS/ProPublica dark-money bridge; Intermediary bridge | intermediary; opaque_nonprofit_or_dark_money | 2 | 0.6040 | none | P1-manual-review: manually adjudicate aliases, source identifiers, false positives, and issue comparability before promoting any row under data/calibration/first-wave/ |
-| AMERICAN IMMIGRATION LAWYERS ASSOCIATION | P1-manual-review | shared-source-identifier-overlap | cross_venue | IRS/ProPublica dark-money bridge; Intermediary bridge | intermediary; opaque_nonprofit_or_dark_money | 2 | 0.5443 | none | P1-manual-review: manually adjudicate aliases, source identifiers, false positives, and issue comparability before promoting any row under data/calibration/first-wave/ |
-| RETAIL INDUSTRY LEADERS ASSOCIATION INC | P1-manual-review | shared-source-identifier-overlap | cross_venue | IRS/ProPublica dark-money bridge; Intermediary bridge | intermediary; opaque_nonprofit_or_dark_money | 2 | 0.5372 | none | P1-manual-review: manually adjudicate aliases, source identifiers, false positives, and issue comparability before promoting any row under data/calibration/first-wave/ |
-| INFORMATION TECHNOLOGY INDUSTRY COUNCIL LTD | P1-manual-review | shared-source-identifier-overlap | cross_venue | IRS/ProPublica dark-money bridge; Intermediary bridge | intermediary; opaque_nonprofit_or_dark_money | 2 | 0.5333 | none | P1-manual-review: manually adjudicate aliases, source identifiers, false positives, and issue comparability before promoting any row under data/calibration/first-wave/ |
-| U S RUSSIA FOUNDATION FOR ECNOMIC ADVANCEMENT AND THE RULE OF LAW | P1-manual-review | shared-source-identifier-overlap | cross_venue | IRS/ProPublica dark-money bridge; Intermediary bridge | intermediary; opaque_nonprofit_or_dark_money | 2 | 0.4990 | none | P1-manual-review: manually adjudicate aliases, source identifiers, false positives, and issue comparability before promoting any row under data/calibration/first-wave/ |
-| ASSOCIATION OF AMERICAN PUBLISHERS INC | P1-manual-review | shared-source-identifier-overlap | cross_venue | IRS/ProPublica dark-money bridge; Intermediary bridge | intermediary; opaque_nonprofit_or_dark_money | 3 | 0.4546 | none | P1-manual-review: manually adjudicate aliases, source identifiers, false positives, and issue comparability before promoting any row under data/calibration/first-wave/ |
-| AMERICAN CLEANING INSTITUTE | P1-manual-review | shared-source-identifier-overlap | cross_venue | IRS/ProPublica dark-money bridge; Intermediary bridge | intermediary; opaque_nonprofit_or_dark_money | 2 | 0.3863 | none | P1-manual-review: manually adjudicate aliases, source identifiers, false positives, and issue comparability before promoting any row under data/calibration/first-wave/ |
-| FINANCIAL SERVICES INSTITUTE INC | P1-manual-review | shared-source-identifier-overlap | cross_venue | IRS/ProPublica dark-money bridge; Intermediary bridge | intermediary; opaque_nonprofit_or_dark_money | 2 | 0.2899 | none | P1-manual-review: manually adjudicate aliases, source identifiers, false positives, and issue comparability before promoting any row under data/calibration/first-wave/ |
-| PUBLIC AFFAIRS COUNCIL INC | P1-manual-review | shared-source-identifier-overlap | cross_venue | IRS/ProPublica dark-money bridge; Intermediary bridge | intermediary; opaque_nonprofit_or_dark_money | 2 | 0.2843 | none | P1-manual-review: manually adjudicate aliases, source identifiers, false positives, and issue comparability before promoting any row under data/calibration/first-wave/ |
-| NATIONAL PHARMACEUTICAL COUNCIL INC | P1-manual-review | shared-source-identifier-overlap | cross_venue | IRS/ProPublica dark-money bridge; Intermediary bridge | intermediary; opaque_nonprofit_or_dark_money | 2 | 0.2623 | none | P1-manual-review: manually adjudicate aliases, source identifiers, false positives, and issue comparability before promoting any row under data/calibration/first-wave/ |
-| NATIONAL GAY & LESBIAN CHAMBER OF COMMERCE | P1-manual-review | shared-source-identifier-overlap | cross_venue | IRS/ProPublica dark-money bridge; Intermediary bridge | intermediary; opaque_nonprofit_or_dark_money | 2 | 0.2585 | none | P1-manual-review: manually adjudicate aliases, source identifiers, false positives, and issue comparability before promoting any row under data/calibration/first-wave/ |
-| NATIONAL ASSOCIATION OF CLEAN WATER AGENCIES | P1-manual-review | shared-source-identifier-overlap | cross_venue | IRS/ProPublica dark-money bridge; Intermediary bridge | intermediary; opaque_nonprofit_or_dark_money | 2 | 0.2573 | none | P1-manual-review: manually adjudicate aliases, source identifiers, false positives, and issue comparability before promoting any row under data/calibration/first-wave/ |
-| NATIONAL ASSOCIATION OF THEATRE OWNERS | P1-manual-review | shared-source-identifier-overlap | cross_venue | IRS/ProPublica dark-money bridge; Intermediary bridge | intermediary; opaque_nonprofit_or_dark_money | 2 | 0.2573 | none | P1-manual-review: manually adjudicate aliases, source identifiers, false positives, and issue comparability before promoting any row under data/calibration/first-wave/ |
-| INSURED RETIREMENT INSTITUTE INC | P1-manual-review | shared-source-identifier-overlap | cross_venue | IRS/ProPublica dark-money bridge; Intermediary bridge | intermediary; opaque_nonprofit_or_dark_money | 2 | 0.2228 | none | P1-manual-review: manually adjudicate aliases, source identifiers, false positives, and issue comparability before promoting any row under data/calibration/first-wave/ |
-| AMERICAN CLINICAL LABORATORY ASSOCIATION | P1-manual-review | shared-source-identifier-overlap | cross_venue | IRS/ProPublica dark-money bridge; Intermediary bridge | intermediary; opaque_nonprofit_or_dark_money | 2 | 0.2189 | none | P1-manual-review: manually adjudicate aliases, source identifiers, false positives, and issue comparability before promoting any row under data/calibration/first-wave/ |
-| AMERICAN IRON AND STEEL INSTITUTE | P1-manual-review | shared-source-identifier-overlap | cross_venue | IRS/ProPublica dark-money bridge; Intermediary bridge | intermediary; opaque_nonprofit_or_dark_money | 2 | 0.1931 | none | P1-manual-review: manually adjudicate aliases, source identifiers, false positives, and issue comparability before promoting any row under data/calibration/first-wave/ |
-| ASSOCIATION FOR HEALTH CENTER AFFILIATED HEALTH PLANS | P1-manual-review | shared-source-identifier-overlap | cross_venue | IRS/ProPublica dark-money bridge; Intermediary bridge | intermediary; opaque_nonprofit_or_dark_money | 2 | 0.1923 | none | P1-manual-review: manually adjudicate aliases, source identifiers, false positives, and issue comparability before promoting any row under data/calibration/first-wave/ |
-| US CHINA BUSINESS COUNCIL | P1-manual-review | shared-source-identifier-overlap | cross_venue | IRS/ProPublica dark-money bridge; Intermediary bridge | intermediary; opaque_nonprofit_or_dark_money | 2 | 0.1816 | none | P1-manual-review: manually adjudicate aliases, source identifiers, false positives, and issue comparability before promoting any row under data/calibration/first-wave/ |
-| HOUSEHOLD & COMMERICAL PRODUCTS ASSOCIATION INC | P1-manual-review | shared-source-identifier-overlap | cross_venue | IRS/ProPublica dark-money bridge; Intermediary bridge | intermediary; opaque_nonprofit_or_dark_money | 2 | 0.1792 | none | P1-manual-review: manually adjudicate aliases, source identifiers, false positives, and issue comparability before promoting any row under data/calibration/first-wave/ |
 
 ## Claim Boundary
 

@@ -83,63 +83,63 @@
     },
     {
       "archiveNote": "Generated gate summary distinguishing mechanism-review readiness from DOI and human signoff.",
-      "bytes": "5027",
+      "bytes": "5408",
       "checksumStatus": "tracked-source-verified",
       "includeInDoiDeposit": "source-archive",
       "path": "reports/submission-readiness.md",
       "releaseAssetName": "",
       "role": "submission-readiness-audit",
-      "sha256": "0b83dbcaaa8cc69fb77f45be31ed85927659f8c6f5af7efba322fcaa0a04dbfa"
+      "sha256": "7b83ff9a606a188da15ebae79683be99fff05a36de60040ea67d5cf5d3011ca3"
     },
     {
       "archiveNote": "Machine-readable reviewer-risk register mapping likely objections to evidence boundaries and next actions.",
-      "bytes": "7000",
+      "bytes": "7926",
       "checksumStatus": "tracked-source-verified",
       "includeInDoiDeposit": "source-archive",
       "path": "reports/reviewer-risk-register.csv",
       "releaseAssetName": "",
       "role": "reviewer-risk-register",
-      "sha256": "dd7de993e173da19ded2dfb1ded941f37d6da4ada90725e236aab1e98e64866e"
+      "sha256": "30b6785b46e59c691c75129f49c6a9c538382f7f3b2430a110eafbccc27152fd"
     },
     {
       "archiveNote": "Human-readable reviewer-risk register mapping likely objections to evidence boundaries and next actions.",
-      "bytes": "8172",
+      "bytes": "8393",
       "checksumStatus": "tracked-source-verified",
       "includeInDoiDeposit": "source-archive",
       "path": "reports/reviewer-risk-register.md",
       "releaseAssetName": "",
       "role": "reviewer-risk-register",
-      "sha256": "b1061a0939c9e8bf17a6e4be510b13e221ddd5e439ceeea2e0f032f95adb97f8"
+      "sha256": "7e1b083fb272f79b92c12a3e8c76d935765677ccec26994dfc1488d19b64b3ec"
     },
     {
       "archiveNote": "Manual final-submission read-through checklist; remains pending until signed for the release.",
-      "bytes": "7245",
+      "bytes": "8236",
       "checksumStatus": "tracked-source-verified",
       "includeInDoiDeposit": "source-archive",
       "path": "reports/final-human-readthrough.md",
       "releaseAssetName": "",
       "role": "manual-signoff-record",
-      "sha256": "eac77b6d6ae3c0ba2429b3378db3ab0687ef94fbe9aacd5fd4f219b76e1dbb8a"
+      "sha256": "903a35cff10ff353f1170791a950a297be9d495687a401bc52ab87716b0a6d99"
     },
     {
       "archiveNote": "Machine-readable audit of the final human read-through fields and checklist state.",
-      "bytes": "6894",
+      "bytes": "7432",
       "checksumStatus": "tracked-source-verified",
       "includeInDoiDeposit": "source-archive",
       "path": "reports/final-human-readthrough-audit.csv",
       "releaseAssetName": "",
       "role": "final-human-readthrough-audit",
-      "sha256": "2a294e0439930f05bd8c4f27c05209dcb58ac15eb873ad4c8b76b64ea88ba7a6"
+      "sha256": "3fceb77176c9beda584cc9e3570dbd77082e7ede4d119b9d76be917b5ce7bd3f"
     },
     {
       "archiveNote": "Human-readable audit of the final human read-through fields and checklist state.",
-      "bytes": "7861",
+      "bytes": "8399",
       "checksumStatus": "tracked-source-verified",
       "includeInDoiDeposit": "source-archive",
       "path": "reports/final-human-readthrough-audit.md",
       "releaseAssetName": "",
       "role": "final-human-readthrough-audit",
-      "sha256": "b7de36add24967bf1abc1e99e29fda8fd960099613dbffab00de57ebbc9abd6f"
+      "sha256": "e5cef5b672ee335f7d318b9e2413c7d37b37860add9380595863cfbec7056153"
     }
   ],
   "schema": "lobby-capture-archive-handoff-manifest-v1",

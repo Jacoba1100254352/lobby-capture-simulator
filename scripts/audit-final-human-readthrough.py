@@ -47,10 +47,16 @@ LIVE_AUTHOR_PAGE_FIELDS = [
     "author-guidelines-superseding-instructions",
 ]
 
+LIVE_AUTHOR_PAGE_NEXT_ACTION = (
+    "This row checks the release-record author-page evidence only; same-day final-submission "
+    "freshness is tracked by reports/external-finalization-checklist.md. Recheck the live "
+    "Regulation & Governance author page and record any superseding instructions before final submission."
+)
+
 EXPECTED_LIVE_CHECKLIST = [
-    "Open the live author page named in `author-guidelines-url` immediately before journal submission.",
+    "Open the live author page named in `author-guidelines-url` for the release-record check.",
     "Confirm the target journal, article type, word limit, title-page expectations, disclosure expectations, supporting-information expectations, and LaTeX/package requirements still match the generated bundle.",
-    "Record checker, date, and superseding-instruction status in the fields above.",
+    "Record checker, release-record date, and superseding-instruction status in the fields above.",
 ]
 
 EXPECTED_SCHOLARLY_CHECKLIST = [
@@ -173,7 +179,7 @@ def audit_rows(root: Path, path: Path) -> list[dict[str, str]]:
                 "live-author-page",
                 "ready" if live_ready else "blocked" if completed_status else "manual_required",
                 live_evidence(name, value, release_date),
-                "Recheck the live Regulation & Governance author page and record any superseding instructions before final submission.",
+                LIVE_AUTHOR_PAGE_NEXT_ACTION,
             )
         )
 
@@ -267,11 +273,21 @@ def live_evidence(name: str, value: str, release_date: date | None = None) -> st
         parsed = parse_iso_date(value)
         release = release_date.isoformat() if release_date else "missing"
         if not value:
-            return f"checked-date=missing; release-date={release}"
+            return (
+                f"checked-date=missing; release-date={release}; releaseFreshness=missing; "
+                "sameDayFinalization=external_checklist"
+            )
         if not parsed:
-            return f"checked-date=invalid:{value}; release-date={release}"
+            return (
+                f"checked-date=invalid:{value}; release-date={release}; releaseFreshness=invalid; "
+                "sameDayFinalization=external_checklist"
+            )
         stale = bool(release_date and parsed < release_date)
-        return f"checked-date={parsed.isoformat()}; release-date={release}; stale={'yes' if stale else 'no'}"
+        return (
+            f"checked-date={parsed.isoformat()}; release-date={release}; "
+            f"stale={'yes' if stale else 'no'}; releaseFreshness={'stale' if stale else 'ready'}; "
+            "sameDayFinalization=external_checklist"
+        )
     return f"{name}={'present' if value else 'missing'}"
 
 

@@ -219,8 +219,23 @@ def target_rows(dependency_rows: list[dict[str, str]]) -> list[dict[str, str]]:
         row = dict(target)
         row["policyClaimStatus"] = policy_status
         row["blocksPolicySimulation"] = "yes" if target["status"] != "cleared" else "no"
+        row.update(claim_boundary_fields(target))
         rows.append(row)
     return rows
+
+
+def claim_boundary_fields(target: dict[str, str]) -> dict[str, str]:
+    return {
+        "allowedCurrentClaim": (
+            f"The current manuscript may use this target for {target['permittedUse'].lower()} only, "
+            "under the stated source and design limits."
+        ),
+        "barredClaim": (
+            f"Do not claim that current evidence estimates the {target['estimand'].lower()} or clears "
+            "calibrated policy-simulation effects."
+        ),
+        "claimUpgradeTrigger": f"Upgrade only after: {target['clearanceCriterion']}",
+    }
 
 
 def write_csv(path: Path, rows: list[dict[str, str]]) -> None:
@@ -235,6 +250,9 @@ def write_csv(path: Path, rows: list[dict[str, str]]) -> None:
         "currentSupport",
         "status",
         "permittedUse",
+        "allowedCurrentClaim",
+        "barredClaim",
+        "claimUpgradeTrigger",
         "clearanceCriterion",
         "nextAction",
         "firstStudyDesign",
@@ -280,13 +298,30 @@ def write_markdown(path: Path, rows: list[dict[str, str]]) -> None:
         f"- Cleared targets: `{counts.get('cleared', 0)}`",
         f"- Policy claim status: `{rows[0].get('policyClaimStatus', 'missing') if rows else 'missing'}`",
         "",
-        "## Minimum Viable Causal Upgrade Path",
+        "## Claim Boundary Matrix",
         "",
-        "The first-wave rows are the shortest source-to-manuscript path for making the next version less dependent on synthetic stress tests. Clearing one of them would improve the empirical bridge for a specific mechanism; it would not clear calibrated policy-simulation claims unless the clearance criterion and claim-source dependencies also clear.",
+        "Every blocking target below has a permitted current use, a barred claim, and an upgrade trigger. These rows are manuscript guardrails: they say what the current mechanism-model article may say without converting an open causal target into a policy-effect claim.",
         "",
-        "| Target | Priority | First study design | Minimum data product | Manuscript impact |",
-        "| --- | --- | --- | --- | --- |",
+        "| Target | Allowed current claim | Claim still barred | Upgrade trigger |",
+        "| --- | --- | --- | --- |",
     ]
+    for row in all_upgrades:
+        lines.append(
+            "| {targetKey} | {allowedCurrentClaim} | {barredClaim} | {claimUpgradeTrigger} |".format(
+                **{key: md(value) for key, value in row.items()}
+            )
+        )
+    lines.extend(
+        [
+            "",
+            "## Minimum Viable Causal Upgrade Path",
+            "",
+            "The first-wave rows are the shortest source-to-manuscript path for making the next version less dependent on synthetic stress tests. Clearing one of them would improve the empirical bridge for a specific mechanism; it would not clear calibrated policy-simulation claims unless the clearance criterion and claim-source dependencies also clear.",
+            "",
+            "| Target | Priority | First study design | Minimum data product | Manuscript impact |",
+            "| --- | --- | --- | --- | --- |",
+        ]
+    )
     for row in first_wave:
         lines.append(
             "| {targetKey} | {priority} | {firstStudyDesign} | {minimumDataProduct} | {manuscriptImpact} |".format(

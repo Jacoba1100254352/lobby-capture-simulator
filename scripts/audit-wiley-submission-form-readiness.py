@@ -4,8 +4,20 @@
 from __future__ import annotations
 
 import csv
+import sys
 import zipfile
 from pathlib import Path
+
+SCRIPT_DIR = Path(__file__).resolve().parent
+if str(SCRIPT_DIR) not in sys.path:
+    sys.path.insert(0, str(SCRIPT_DIR))
+
+from paper_release_metadata import (
+    RELEASE_METADATA_FIELDS,
+    metadata_summary_lines,
+    release_metadata,
+    with_release_metadata,
+)
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -42,6 +54,7 @@ EXPECTED_SUPPORT_MEMBERS = {
     "supporting-information/final-human-readthrough.md",
     "supporting-information/final-human-readthrough-audit.md",
     "supporting-information/final-readthrough-evidence.md",
+    "supporting-information/first-wave-manual-adjudication-plan.md",
 }
 EXPECTED_PREFIXES = {
     "figures/",
@@ -52,11 +65,12 @@ EXPECTED_PREFIXES = {
 
 
 def main() -> int:
-    rows = readiness_rows()
+    metadata = release_metadata()
+    rows = with_release_metadata(readiness_rows(), metadata)
     REPORTS.mkdir(parents=True, exist_ok=True)
     write_csv(REPORTS / "wiley-submission-form-readiness.csv", rows)
     (REPORTS / "wiley-submission-form-readiness.md").write_text(
-        markdown(rows),
+        markdown(rows, metadata),
         encoding="utf-8",
     )
     print("Wrote reports/wiley-submission-form-readiness.csv")
@@ -228,14 +242,14 @@ def write_csv(path: Path, rows: list[dict[str, str]]) -> None:
     with path.open("w", newline="", encoding="utf-8") as target:
         writer = csv.DictWriter(
             target,
-            fieldnames=["gate", "status", "evidence", "nextAction"],
+            fieldnames=[*RELEASE_METADATA_FIELDS, "gate", "status", "evidence", "nextAction"],
             lineterminator="\n",
         )
         writer.writeheader()
         writer.writerows(rows)
 
 
-def markdown(rows: list[dict[str, str]]) -> str:
+def markdown(rows: list[dict[str, str]], metadata: dict[str, str]) -> str:
     ready = sum(1 for item in rows if item["status"] == "ready")
     manual = sum(1 for item in rows if item["status"] == "manual_required")
     blocked = sum(1 for item in rows if item["status"] == "blocked")
@@ -247,6 +261,7 @@ def markdown(rows: list[dict[str, str]]) -> str:
         "",
         "## Summary",
         "",
+        *metadata_summary_lines(metadata),
         f"- Mechanical upload status: `{mechanical}`",
         f"- Ready gates: `{ready}`",
         f"- Manual-required gates: `{manual}`",

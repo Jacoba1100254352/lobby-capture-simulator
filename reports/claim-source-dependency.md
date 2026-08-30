@@ -26,10 +26,10 @@ This audit maps manuscript claim families to the source panels and source moment
 | Claim family | Status | Usable dependencies | Source-limited usable dependencies | Weak dependencies | Moment checks |
 | --- | --- | --- | --- | --- | --- |
 | Lobbying disclosure surface | cleared | none | none | none | ldaRows=121 (ok); lobbyingClientTop3Share=0.8898 (ok) |
-| Visible electoral money | cleared | Outside spending | none | none | fecRows=1268 (ok); outsideSpendingRows=998 (ok) |
+| Visible electoral money | cleared | Outside spending | none | none | fecRows=1268 (ok); outsideSpendingRows=1241 (ok) |
 | Rulemaking comments | cleared | none | none | none | regulatoryRows=200 (ok); commentTemplateShareMean=0.46 (ok); commentAuthenticationShareMean=0.32 (ok) |
 | Procurement identifiers | cleared | Procurement identifiers | none | none | procurementRows=200 (ok); procurementKnownPiidShare=1 (ok); procurementSingleBidShare=0.1098 (ok) |
-| Strategic substitution mechanism | bounded | Direct dark money; Outside spending; Intermediaries; IRS 527 political organizations; Revolving door; Procurement identifiers | Direct dark money (direct-proxy-bounded); Intermediaries (proxy-bounded); Revolving door (proxy-thin) | none | outsideSpendingRows=998 (ok); intermediaryRows=1353 (ok); intermediary527Rows=500 (ok); revolvingDoorRows=803 (ok) |
+| Strategic substitution mechanism | bounded | Direct dark money; Outside spending; Intermediaries; IRS 527 political organizations; Revolving door; Procurement identifiers | Direct dark money (direct-proxy-bounded); Intermediaries (proxy-bounded); Revolving door (proxy-thin) | none | outsideSpendingRows=1241 (ok); intermediaryRows=3853 (ok); intermediary527Rows=500 (ok); revolvingDoorRows=803 (ok) |
 | Public-financing counterweight | bounded | Public financing | Public financing (program-bounded) | none | publicFinancingRows=136 (ok); publicFinancingProgramCount=2 (ok) |
 | Revolving-door access | bounded | Revolving door | Revolving door (proxy-thin) | none | revolvingDoorRows=803 (ok); revolvingDoorConfidenceMean=0.74 (ok) |
 | Hidden-channel magnitude | bounded | Direct dark money; Electoral communications; Revolving door | Direct dark money (direct-proxy-bounded); Revolving door (proxy-thin) | none | darkMoneyDirectRoutingRows=80 (ok); electoralCommunicationRows=268 (ok) |

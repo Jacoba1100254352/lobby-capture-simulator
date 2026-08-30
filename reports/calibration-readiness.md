@@ -6,30 +6,30 @@ This audit separates hard blockers for calibrated policy-simulation claims from 
 
 | Gate | Status | Evidence | Claim boundary | Next action |
 | --- | --- | --- | --- | --- |
-| mechanism-model-readiness | cleared | claimPosture=cleared; fit=337; partial=0; miss=0; unknown=0 | Mechanism-model manuscript claims can proceed when misses and unknowns are zero and claim posture is cleared. | Keep synthetic results framed as mechanism diagnostics under explicit source limits. |
+| mechanism-model-readiness | cleared | claimPosture=cleared; fit=336; partial=1; miss=0; unknown=0 | Mechanism-model manuscript claims can proceed when misses and unknowns are zero and claim posture is cleared. | Keep synthetic results framed as mechanism diagnostics under explicit source limits. |
 | empirical-bridge-readiness | bounded | claimPosture=bounded; 0 source-gap validations, 1 unresolved weak-status panels, 7 usable but source-limited support panels; 5 bounded claim dependencies | Empirical bridge rows can support distributional anchors and validation-gap diagnostics; bounded status means stronger hidden-channel, procurement-capture, or policy-effect claims remain outside scope. | Clear bounded claim-source dependencies before describing the empirical bridge as fully cleared. |
 | calibrated-policy-readiness | blocked | claimPosture=not_cleared; validation_queue P0=0; validation_queue P1=0; validation_queue P2=0; misses=0; unknown=0; source_gaps=0; causal_targets P1=4; causal_targets P2=6; open_causal_targets=10 | Calibrated policy-simulation claims require both the validation-calibration queue and the independent causal-calibration target matrix to clear. | Clear the causal-calibration target matrix and add stronger source panels before using calibrated policy-simulation language. |
-| soft-validation-scope | cleared | P3=0; not_applicable=21; covered_elsewhere=21; partial_elsewhere=0; coverage_gaps=0; none | P3 partials and not-applicable rows are validation-scope, scenario-family, or benchmark-review work; they do not by themselves clear or block calibrated empirical claims when the same benchmark is covered elsewhere. | Resolve P3 rows or validation-scope coverage gaps by documenting benchmark scope, splitting scenario families, or adding targeted stress scenarios before treating them as calibration evidence. |
+| soft-validation-scope | nonblocking | P3=1; not_applicable=21; covered_elsewhere=16; partial_elsewhere=5; coverage_gaps=0; model-tuning=1 | P3 partials and not-applicable rows are validation-scope, scenario-family, or benchmark-review work; they do not by themselves clear or block calibrated empirical claims when the same benchmark is covered elsewhere. | Resolve P3 rows or validation-scope coverage gaps by documenting benchmark scope, splitting scenario families, or adding targeted stress scenarios before treating them as calibration evidence. |
 | source-gap-boundary | cleared | source_gaps=0 | Source gaps identify evidence panels that cannot test a benchmark directly. | Do not upgrade bounded source moments into empirical validation without representative source rows. |
 
 ## Counts
 
-- Validation fits: `337`
-- Validation partials: `0`
+- Validation fits: `336`
+- Validation partials: `1`
 - Validation misses: `0`
 - Validation source gaps: `0`
 - Validation unknowns: `0`
 - Validation not applicable: `21`
-- Validation-scope covered elsewhere: `21`
+- Validation-scope covered elsewhere: `16`
 - Validation-scope coverage gaps: `0`
 - Validation-queue P0: `0`
 - Validation-queue P1: `0`
 - Validation-queue P2: `0`
-- Validation-queue P3: `0`
+- Validation-queue P3: `1`
 - Open causal calibration targets: `10`
 - Open causal P1 targets: `4`
 - Open causal P2 targets: `6`
 
 ## P3 Work Queue
 
-- No P3 calibration-scope rows remain.
+- `largeDonorDependence` in `lobby-capture-campaign.csv`: model-tuning; inspect remaining campaign/outside rows and tune allocation-to-source concentration only where high-end outside spending is intended

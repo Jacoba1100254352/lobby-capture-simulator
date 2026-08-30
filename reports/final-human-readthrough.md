@@ -20,11 +20,13 @@ This file is the manual final-submission signoff record for the review bundle. I
 
 Leave `status` as `pending` until a human scholarly read-through has checked the exact release named in `reviewed-release`. To clear the human-read-through portion of the final-submission gate, update `status`, `signed-off-by`, `signed-off-date`, `reviewed-commit`, and `doi-archive` as appropriate after the final read-through. To clear the live author-page portion, record `author-guidelines-checked-by`, `author-guidelines-checked-date`, and set `author-guidelines-superseding-instructions` to `none` only if the live page has no journal-specific instruction requiring package changes. The automated audit also requires the reviewed release to match the current `CITATION.cff` release tag and the author-guidelines checked date to be on or after the current `CITATION.cff` release date.
 
-## Live Regulation & Governance Author-Page Refresh
+## Live Regulation & Governance Author-Page Refresh Record
 
-- [x] Open the live author page named in `author-guidelines-url` immediately before journal submission.
+- [x] Open the live author page named in `author-guidelines-url` for the release-record check.
 - [x] Confirm the target journal, article type, word limit, title-page expectations, disclosure expectations, supporting-information expectations, and LaTeX/package requirements still match the generated bundle.
-- [x] Record checker, date, and superseding-instruction status in the fields above.
+- [x] Record checker, release-record date, and superseding-instruction status in the fields above.
+
+These checked items document the release-record author-page evidence for `reviewed-release`; they do not clear same-day final-submission freshness. Before journal submission, repeat the browser-visible author-page check, update `author-guidelines-checked-date` to the submission-day check date only if the page exposes the journal-specific guidance, record any superseding instructions, and rerun `make external-finalization-checklist`.
 
 ## Scholarly Read-Through Checklist
 
@@ -54,5 +56,7 @@ Before checking these items, review `reports/final-readthrough-evidence.md`. Tha
 2026-06-19 r198-prep live-author-page refresh attempt: Codex opened the official `author-guidelines-url` with Playwright from the release machine. Wiley served a Cloudflare "Performing security verification" page titled `Just a moment...` and did not expose the journal-specific author-guideline text after an additional wait. The June 18 content check is therefore retained as historical evidence only; the generated audits now require the checked date to be on or after the current release date before the live author-page refresh gate can clear.
 
 2026-06-19 live-author-page browser refresh: Codex opened the official `author-guidelines-url` with Playwright from the release machine. Wiley initially served a security-verification interstitial, then the browser session resolved to the `Regulation & Governance` author-guidelines page. The page exposed the journal-specific author-guideline contents and the `Author Guidelines updated April 2025` marker. The refresh confirmed the same relevant submission surface recorded on June 18: free-format first submission, double-anonymized review, suggested-reviewer expectations, original-article word-limit expectations, Research Forum limit, abstract limit, data-sharing expectations, title-page/main-text/figure file expectations, supporting-information expectations, and LaTeX/source-package compatibility. No superseding instruction was found that requires changing the generated review bundle. DOI archiving and human scholarly read-through signoff remain pending.
+
+2026-06-27 live-author-page refresh attempt: Codex opened the official `author-guidelines-url` with Playwright from the release machine. Wiley served a Cloudflare "Performing security verification" interstitial titled `Just a moment...` and did not expose the journal-specific author-guideline text after an additional wait. This attempt is not recorded as a successful author-guideline refresh; final submission still requires a same-day browser-visible author-page check and any superseding instructions must be recorded before signoff.
 
 Record any final editorial changes requested before journal submission here. If changes are made after signoff, return `status` to `pending`, update `reviewed-release`, rerun `make paper-artifacts-check`, and repeat the read-through.

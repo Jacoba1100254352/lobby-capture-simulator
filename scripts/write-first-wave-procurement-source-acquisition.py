@@ -11,8 +11,20 @@ from __future__ import annotations
 
 import csv
 import os
+import sys
 from collections import Counter
 from pathlib import Path
+
+SCRIPT_DIR = Path(__file__).resolve().parent
+if str(SCRIPT_DIR) not in sys.path:
+    sys.path.insert(0, str(SCRIPT_DIR))
+
+from paper_release_metadata import (
+    RELEASE_METADATA_FIELDS,
+    metadata_summary_lines,
+    release_metadata,
+    with_release_metadata,
+)
 
 
 REPORTS = Path("reports")
@@ -65,8 +77,8 @@ SOURCE_ROWS = [
         "requiredLinkage": "Firewall rule ID, agency, subtier, award type, effective date, covered officials, control type, coverage rule, and source URL",
         "acquisitionStep": "Start with the agencies represented in the action-history crosswalk, then encode dated procurement-integrity controls and coverage rules for the relevant award classes.",
         "promotionGate": "At least one dated control rule with agency and covered-official fields is required; generic policy descriptions without dates stay as notes.",
-        "claimBoundary": "Firewall rows represent observed institutional controls; they do not establish compliance or enforcement without audit or outcome linkage.",
-        "currentBlocker": "No single public API provides agency firewall controls, so acquisition is a curated document-review task over official sources.",
+        "claimBoundary": "Firewall rows represent observed institutional controls; they do not establish compliance or enforcement without audit or outcome linkage. The committed EPAAR row is bounded EPA control-design evidence, not a broad procurement-firewall panel.",
+        "currentBlocker": "The bounded EPAAR row clears the narrow firewall-control schema; broader agency firewall coverage remains a curated document-review task over official sources.",
     },
     {
         "productKey": "procurement-offer-competition-enrichment",
@@ -85,6 +97,7 @@ SOURCE_ROWS = [
 
 def main() -> int:
     REPORTS.mkdir(parents=True, exist_ok=True)
+    metadata = release_metadata()
     product_status = source_product_status()
     sam_audit = sam_export_audit_summary()
     rows = []
@@ -106,9 +119,15 @@ def main() -> int:
                 **source_row,
             }
         )
+    rows = with_release_metadata(rows, metadata)
 
     write_csv(REPORTS / "first-wave-procurement-source-acquisition.csv", rows)
-    write_markdown(REPORTS / "first-wave-procurement-source-acquisition.md", rows, sam_audit)
+    write_markdown(
+        REPORTS / "first-wave-procurement-source-acquisition.md",
+        rows,
+        sam_audit,
+        metadata,
+    )
     print("Wrote reports/first-wave-procurement-source-acquisition.csv")
     print("Wrote reports/first-wave-procurement-source-acquisition.md")
     return 0
@@ -164,6 +183,7 @@ def sam_export_audit_summary() -> dict[str, str]:
 
 def write_csv(path: Path, rows: list[dict[str, str]]) -> None:
     fieldnames = [
+        *RELEASE_METADATA_FIELDS,
         "productKey",
         "expectedPath",
         "sourceProductStatus",
@@ -185,7 +205,12 @@ def write_csv(path: Path, rows: list[dict[str, str]]) -> None:
         writer.writerows(rows)
 
 
-def write_markdown(path: Path, rows: list[dict[str, str]], sam_audit: dict[str, str]) -> None:
+def write_markdown(
+        path: Path,
+        rows: list[dict[str, str]],
+        sam_audit: dict[str, str],
+        metadata: dict[str, str],
+) -> None:
     status_counts = Counter(row["sourceProductStatus"] for row in rows)
     lines = [
         "# First-Wave Procurement Source Acquisition",
@@ -194,9 +219,10 @@ def write_markdown(path: Path, rows: list[dict[str, str]], sam_audit: dict[str, 
         "",
         "## Summary",
         "",
+        *metadata_summary_lines(metadata),
         f"- Acquisition products: `{len(rows)}`",
         "- Source-evidence status: `acquisition_plan_only`",
-        "- Claim boundary: `procurement modification, protest, exclusion, competition, and firewall rows remain bounded diagnostics until linked source products pass the first-wave source-product and source-readiness gates`",
+        "- Claim boundary: `the EPAAR firewall row is bounded control-design evidence; procurement modification, protest, exclusion, competition, and broader firewall rows remain bounded diagnostics until linked source products pass the first-wave source-product and source-readiness gates`",
         f"- Product statuses: `{format_counts(status_counts)}`",
         f"- SAM export audit handling: `{sam_audit['status']}` - {sam_audit['summary']}",
         "",

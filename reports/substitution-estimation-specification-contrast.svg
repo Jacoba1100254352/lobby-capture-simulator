@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="940" viewBox="0 0 1600 940" role="img" aria-labelledby="title desc">
+<title id="title">HLOGA diagnostic specification contrasts</title>
+<desc id="desc">Horizontal dot and interval chart of source-confounded actor-level log activity contrasts across the primary, alternative-window, winsorized, and placebo specifications.</desc>
+<style>
+text{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;fill:#202124;letter-spacing:0}
+.title{font-size:38px;font-weight:700}.subtitle{font-size:21px;fill:#4d5156}
+.label{font-size:21px}.value{font-size:19px;font-family:ui-monospace,SFMono-Regular,Menlo,monospace}
+.tick{font-size:17px;fill:#5f6368;font-family:ui-monospace,SFMono-Regular,Menlo,monospace}
+.grid{stroke:#e2e5e9;stroke-width:2}.zero{stroke:#202124;stroke-width:3}
+.interval{stroke:#1f5a8a;stroke-width:7;stroke-linecap:round}.cap{stroke:#1f5a8a;stroke-width:4}
+.note{font-size:17px;fill:#5f6368}
+</style>
+<rect x="0" y="0" width="1600" height="940" fill="#ffffff"/>
+<text x="72" y="72" class="title">HLOGA diagnostic specification contrasts</text>
+<text x="72" y="112" class="subtitle">Actor-level log activity; primary 95% actor-bootstrap interval shown; diagnostic values are not causal effects</text>
+<line x1="683.0" y1="166" x2="683.0" y2="833" class="grid"/>
+<text x="683.0" y="869" text-anchor="middle" class="tick">-1.00</text>
+<line x1="915.4" y1="166" x2="915.4" y2="833" class="grid"/>
+<text x="915.4" y="869" text-anchor="middle" class="tick">-0.50</text>
+<line x1="1147.7" y1="166" x2="1147.7" y2="833" class="zero"/>
+<text x="1147.7" y="869" text-anchor="middle" class="tick">+0.00</text>
+<line x1="1380.0" y1="166" x2="1380.0" y2="833" class="grid"/>
+<text x="1380.0" y="869" text-anchor="middle" class="tick">+0.50</text>
+<line x1="572.8" y1="279.3" x2="1307.2" y2="279.3" class="interval"/>
+<line x1="572.8" y1="265.3" x2="572.8" y2="293.3" class="cap"/>
+<line x1="1307.2" y1="265.3" x2="1307.2" y2="293.3" class="cap"/>
+<text x="482" y="197.0" text-anchor="end" class="label">Clean pre-HLOGA 2007Q2 placebo</text>
+<rect x="1347.2" y="180.0" width="20" height="20" fill="#ffffff" stroke="#c17c00" stroke-width="5"/>
+<text x="1532" y="197.0" text-anchor="end" class="value">+0.451</text>
+<text x="482" y="286.3" text-anchor="end" class="label">Primary window</text>
+<circle cx="1013.0" cy="279.3" r="11" fill="#1f5a8a" stroke="#153e5f" stroke-width="3"/>
+<text x="1532" y="286.3" text-anchor="end" class="value">-0.290</text>
+<text x="482" y="375.6" text-anchor="end" class="label">Balanced two-quarter post window</text>
+<circle cx="945.8" cy="368.6" r="11" fill="#1f5a8a" stroke="#153e5f" stroke-width="3"/>
+<text x="1532" y="375.6" text-anchor="end" class="value">-0.435</text>
+<text x="482" y="464.9" text-anchor="end" class="label">Calendar 2008 post window</text>
+<circle cx="1029.6" cy="457.9" r="11" fill="#1f5a8a" stroke="#153e5f" stroke-width="3"/>
+<text x="1532" y="464.9" text-anchor="end" class="value">-0.254</text>
+<text x="482" y="554.1" text-anchor="end" class="label">Late 2008 post window</text>
+<circle cx="1062.3" cy="547.1" r="11" fill="#1f5a8a" stroke="#153e5f" stroke-width="3"/>
+<text x="1532" y="554.1" text-anchor="end" class="value">-0.184</text>
+<text x="482" y="643.4" text-anchor="end" class="label">Within-group p95 winsorized</text>
+<circle cx="1018.0" cy="636.4" r="11" fill="#ffffff" stroke="#1f5a8a" stroke-width="5"/>
+<text x="1532" y="643.4" text-anchor="end" class="value">-0.279</text>
+<text x="482" y="732.7" text-anchor="end" class="label">Post-treatment 2008Q2 timing placebo</text>
+<rect x="1203.3" y="715.7" width="20" height="20" fill="#ffffff" stroke="#c17c00" stroke-width="5"/>
+<text x="1532" y="732.7" text-anchor="end" class="value">+0.141</text>
+<text x="482" y="822.0" text-anchor="end" class="label">Post-treatment 2008Q3 timing placebo</text>
+<rect x="1203.2" y="805.0" width="20" height="20" fill="#ffffff" stroke="#c17c00" stroke-width="5"/>
+<text x="1532" y="822.0" text-anchor="end" class="value">+0.141</text>
+<text x="965.0" y="910" text-anchor="middle" class="note">Treated mean change minus Colorado-control mean change in log1p reported activity dollars</text>
+<text x="72" y="910" class="note">HLOGA event quarter excluded from primary window</text>
+</svg>

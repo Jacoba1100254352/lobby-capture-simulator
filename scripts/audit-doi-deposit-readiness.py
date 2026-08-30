@@ -7,8 +7,20 @@ import csv
 import hashlib
 import json
 import re
+import sys
 import zipfile
 from pathlib import Path
+
+SCRIPT_DIR = Path(__file__).resolve().parent
+if str(SCRIPT_DIR) not in sys.path:
+    sys.path.insert(0, str(SCRIPT_DIR))
+
+from paper_release_metadata import (
+    RELEASE_METADATA_FIELDS,
+    metadata_summary_lines,
+    release_metadata,
+    with_release_metadata,
+)
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -42,12 +54,13 @@ EXPECTED_PRIMARY_ASSETS = {
 
 
 def main() -> int:
-    release_tag = release_tag_from_citation()
-    rows = readiness_rows(release_tag)
+    metadata = release_metadata()
+    release_tag = metadata["releaseTag"]
+    rows = with_release_metadata(readiness_rows(release_tag), metadata)
     REPORTS.mkdir(parents=True, exist_ok=True)
     write_csv(REPORTS / "doi-deposit-readiness.csv", rows)
     (REPORTS / "doi-deposit-readiness.md").write_text(
-        markdown(release_tag, rows),
+        markdown(release_tag, rows, metadata),
         encoding="utf-8",
     )
     print("Wrote reports/doi-deposit-readiness.csv")
@@ -80,6 +93,10 @@ def readiness_rows(release_tag: str) -> list[dict[str, str]]:
     submission_ok = submission.get("overall-submission-posture", {}).get("status") == "ready_for_mechanism_review"
     final_gate_status = submission.get("final-journal-submission", {}).get("status", "")
     live_author_page_status = reggov.get("live-reggov-author-page-refresh", {}).get("status", "missing")
+    live_author_page_evidence = (
+        f"releaseRecord={live_author_page_status}; "
+        "same-day freshness checked by external-finalization-checklist"
+    )
 
     rows = [
         row(
@@ -143,9 +160,9 @@ def readiness_rows(release_tag: str) -> list[dict[str, str]]:
                 f"submission final gate={final_gate_status or 'missing'}; "
                 f"doi={'present' if doi else 'missing'}; "
                 f"human signoff={'complete' if human_signoff else 'pending'}; "
-                f"live author-page refresh={live_author_page_status}"
+                f"live author-page refresh={live_author_page_evidence}"
             ),
-            "Do not treat the bundle as final-journal-submission ready until DOI, human signoff, and live author-page refresh are all recorded.",
+            "Do not treat the bundle as final-journal-submission ready until DOI, human signoff, and a same-day live author-page refresh are all recorded.",
         ),
     ]
     return rows
@@ -384,14 +401,14 @@ def write_csv(path: Path, rows: list[dict[str, str]]) -> None:
     with path.open("w", newline="", encoding="utf-8") as target:
         writer = csv.DictWriter(
             target,
-            fieldnames=["gate", "status", "evidence", "nextAction"],
+            fieldnames=[*RELEASE_METADATA_FIELDS, "gate", "status", "evidence", "nextAction"],
             lineterminator="\n",
         )
         writer.writeheader()
         writer.writerows(rows)
 
 
-def markdown(release_tag: str, rows: list[dict[str, str]]) -> str:
+def markdown(release_tag: str, rows: list[dict[str, str]], metadata: dict[str, str]) -> str:
     ready = sum(1 for row in rows if row["status"] == "ready")
     manual = sum(1 for row in rows if row["status"] == "manual_required")
     blocked = sum(1 for row in rows if row["status"] == "blocked")
@@ -406,7 +423,7 @@ def markdown(release_tag: str, rows: list[dict[str, str]]) -> str:
         "",
         "## Summary",
         "",
-        f"- Release tag: `{release_tag}`",
+        *metadata_summary_lines(metadata),
         f"- Ready gates: `{ready}`",
         f"- Manual-required gates: `{manual}`",
         f"- Blocked gates: `{blocked}`",

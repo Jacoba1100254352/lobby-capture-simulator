@@ -16,7 +16,7 @@ MAIN_CLASS := lobbycapture.Main
 TEST_CLASSES := lobbycapture.SimulatorTests
 PAPER_BASENAME := strategic-channel-substitution-regulatory-capture
 
-.PHONY: compile script-checks test run campaign mechanism-comparison sensitivity ablation interactions portfolio source-moments source-panel-inventory source-capability-audit dark-money-bridge-audit intermediary-bridge-audit revolving-door-bridge-audit procurement-denominator-audit procurement-modification-composition-audit procurement-benchmark-crosswalk procurement-refresh-readiness first-wave-procurement-source-acquisition sam-contract-awards-preflight sam-contract-awards-preflight-extract sam-contract-awards-preflight-offset sam-exclusions-preflight sam-contract-awards-export-audit sam-contract-awards-record-export-link sam-contract-awards-record-fresh-link usaspending-transaction-download-strata gao-protest-feed-preflight gao-protest-overlay-candidates sam-procurement-refresh claim-boundary-audit claim-source-dependency-audit causal-calibration-targets first-wave-causal-protocols first-wave-source-product-templates first-wave-entity-resolution-seeds first-wave-comment-products first-wave-comment-linkage-seeds first-wave-procurement-source-worklists first-wave-source-products first-wave-linkage-candidates first-wave-source-readiness candidate-source-leakage-audit claim-posture-audit validation-scope-coverage calibration-readiness-audit policy-claim-language-audit literature-positioning-audit reference-integrity-audit final-human-readthrough-audit paper-structure-audit final-readthrough-evidence submission-readiness-audit reviewer-risk-register archive-handoff-audit github-release-upload-paths github-release-asset-audit github-ci-status-audit release-postflight zenodo-deposit-preflight zenodo-deposit-draft zenodo-deposit-upload record-doi-archive doi-deposit-readiness-audit external-finalization-checklist wiley-submission-form-readiness-audit reggov-guidelines-readiness-audit doi-deposit-package latex-log-audit calibration-queue validate snapshot-2024-env tables figures scrub-copy-suffix-artifacts paper paper-build paper-supplement-build paper-supplement paper-word-count wiley-template wiley-tex-deps paper-wiley paper-wiley-build submission-package submission-package-build submission-package-check blinded-review-package blinded-review-package-build blinded-review-package-check paper-layout-audit visual-review-checklist paper-artifacts paper-artifacts-check clean
+.PHONY: compile script-checks test run campaign mechanism-comparison sensitivity ablation interactions portfolio source-moments source-panel-inventory source-capability-audit dark-money-bridge-audit intermediary-bridge-audit revolving-door-bridge-audit procurement-denominator-audit procurement-modification-composition-audit procurement-benchmark-crosswalk procurement-refresh-readiness first-wave-procurement-source-acquisition procurement-causal-upgrade-packet substitution-historical-source-access substitution-historical-lda-panel substitution-state-lobbying-control-panel substitution-estimation-diagnostics substitution-causal-upgrade-packet comment-causal-upgrade-packet venue-causal-upgrade-packet sam-contract-awards-preflight sam-contract-awards-preflight-extract sam-contract-awards-preflight-offset sam-exclusions-preflight sam-contract-awards-export-audit sam-contract-awards-record-export-link sam-contract-awards-record-fresh-link usaspending-transaction-download-strata gao-protest-feed-preflight gao-protest-overlay-candidates sam-procurement-refresh claim-boundary-audit claim-source-dependency-audit causal-calibration-targets first-wave-causal-protocols first-wave-source-product-templates first-wave-entity-resolution-seeds first-wave-reviewed-entity-products first-wave-comment-products first-wave-comment-linkage-seeds first-wave-procurement-source-worklists first-wave-source-products first-wave-linkage-candidates first-wave-cross-venue-adjudication first-wave-source-readiness candidate-source-leakage-audit first-wave-manual-adjudication-plan claim-posture-audit validation-scope-coverage calibration-readiness-audit policy-claim-language-audit literature-positioning-audit reference-integrity-audit final-human-readthrough-audit paper-structure-audit final-readthrough-evidence submission-readiness-audit reviewer-risk-register archive-handoff-audit github-release-upload-paths github-release-asset-audit github-ci-status-audit release-postflight zenodo-deposit-preflight zenodo-deposit-draft zenodo-deposit-upload record-doi-archive doi-deposit-readiness-audit mechanism-review-circulation-readiness external-finalization-checklist wiley-submission-form-readiness-audit reggov-guidelines-readiness-audit doi-deposit-package latex-log-audit calibration-queue validate snapshot-2024-env tables figures scrub-copy-suffix-artifacts paper paper-build paper-supplement-build paper-supplement paper-word-count wiley-template wiley-tex-deps paper-wiley paper-wiley-build submission-package submission-package-build submission-package-check blinded-review-package blinded-review-package-build blinded-review-package-check paper-layout-audit visual-review-checklist paper-artifacts paper-artifacts-check clean
 
 compile:
 	@mkdir -p out/classes
@@ -34,6 +34,7 @@ test: script-checks compile
 	@for test_class in $(TEST_CLASSES); do \
 		$(JAVA) -cp out/classes:out/test-classes $$test_class || exit $$?; \
 	done
+	python3 scripts/test-substitution-estimation-diagnostics.py
 	./scripts/test-normalizers.sh
 
 run: compile
@@ -89,6 +90,30 @@ procurement-refresh-readiness: source-capability-audit procurement-denominator-a
 
 first-wave-procurement-source-acquisition: first-wave-source-products procurement-refresh-readiness
 	python3 scripts/write-first-wave-procurement-source-acquisition.py
+
+procurement-causal-upgrade-packet: causal-calibration-targets first-wave-causal-protocols first-wave-source-readiness first-wave-procurement-source-acquisition first-wave-manual-adjudication-plan procurement-denominator-audit procurement-modification-composition-audit claim-source-dependency-audit
+	python3 scripts/write-procurement-causal-upgrade-packet.py
+
+substitution-causal-upgrade-packet: causal-calibration-targets first-wave-causal-protocols first-wave-source-readiness first-wave-manual-adjudication-plan candidate-source-leakage-audit claim-source-dependency-audit substitution-estimation-diagnostics
+	python3 scripts/write-substitution-causal-upgrade-packet.py
+
+substitution-historical-source-access:
+	python3 scripts/audit-substitution-historical-source-access.py
+
+substitution-historical-lda-panel:
+	python3 scripts/build-substitution-historical-lda-panel.py
+
+substitution-state-lobbying-control-panel:
+	python3 scripts/build-substitution-state-lobbying-control-panel.py
+
+substitution-estimation-diagnostics:
+	python3 scripts/estimate-substitution-diagnostics.py
+
+comment-causal-upgrade-packet: causal-calibration-targets first-wave-causal-protocols first-wave-source-readiness first-wave-manual-adjudication-plan candidate-source-leakage-audit claim-source-dependency-audit
+	python3 scripts/write-comment-causal-upgrade-packet.py
+
+venue-causal-upgrade-packet: causal-calibration-targets first-wave-causal-protocols first-wave-source-readiness first-wave-manual-adjudication-plan candidate-source-leakage-audit claim-source-dependency-audit
+	python3 scripts/write-venue-causal-upgrade-packet.py
 
 sam-contract-awards-preflight:
 	python3 scripts/probe-sam-contract-awards.py
@@ -150,8 +175,14 @@ first-wave-source-product-templates:
 first-wave-linkage-candidates:
 	python3 scripts/build-first-wave-linkage-candidates.py
 
+first-wave-cross-venue-adjudication: first-wave-linkage-candidates
+	python3 scripts/write-first-wave-cross-venue-adjudication.py
+
 first-wave-entity-resolution-seeds: first-wave-linkage-candidates
 	python3 scripts/build-first-wave-entity-resolution-seeds.py
+
+first-wave-reviewed-entity-products: first-wave-entity-resolution-seeds first-wave-cross-venue-adjudication
+	python3 scripts/promote-first-wave-reviewed-entity-products.py
 
 first-wave-comment-products:
 	@. ./scripts/load-env.sh; python3 scripts/build-first-wave-comment-products.py
@@ -162,14 +193,17 @@ first-wave-comment-linkage-seeds:
 first-wave-procurement-source-worklists:
 	python3 scripts/build-first-wave-procurement-source-worklists.py
 
-first-wave-source-products: first-wave-causal-protocols first-wave-source-product-templates first-wave-entity-resolution-seeds first-wave-comment-linkage-seeds first-wave-procurement-source-worklists
+first-wave-source-products: first-wave-causal-protocols first-wave-source-product-templates first-wave-reviewed-entity-products first-wave-comment-linkage-seeds first-wave-procurement-source-worklists
 	python3 scripts/audit-first-wave-source-products.py
 
-first-wave-source-readiness: first-wave-causal-protocols first-wave-source-products first-wave-linkage-candidates source-capability-audit procurement-refresh-readiness
+first-wave-source-readiness: first-wave-causal-protocols first-wave-source-products first-wave-linkage-candidates first-wave-cross-venue-adjudication source-capability-audit procurement-refresh-readiness
 	python3 scripts/audit-first-wave-source-readiness.py
 
-candidate-source-leakage-audit: first-wave-source-products first-wave-source-readiness causal-calibration-targets
+candidate-source-leakage-audit: first-wave-source-products first-wave-source-readiness first-wave-cross-venue-adjudication causal-calibration-targets
 	python3 scripts/audit-candidate-source-leakage.py
+
+first-wave-manual-adjudication-plan: candidate-source-leakage-audit
+	python3 scripts/write-first-wave-manual-adjudication-plan.py
 
 snapshot-2024-env:
 	python3 scripts/create-2024-env-snapshot.py
@@ -257,13 +291,13 @@ paper-wiley-build: scrub-copy-suffix-artifacts wiley-template
 
 paper-wiley: tables figures paper-wiley-build
 
-submission-package-build: scrub-copy-suffix-artifacts reviewer-risk-register first-wave-procurement-source-acquisition candidate-source-leakage-audit latex-log-audit policy-claim-language-audit literature-positioning-audit reference-integrity-audit submission-readiness-audit paper-layout-audit paper-structure-audit visual-review-checklist
+submission-package-build: scrub-copy-suffix-artifacts reviewer-risk-register first-wave-procurement-source-acquisition candidate-source-leakage-audit first-wave-manual-adjudication-plan procurement-causal-upgrade-packet substitution-causal-upgrade-packet comment-causal-upgrade-packet venue-causal-upgrade-packet latex-log-audit policy-claim-language-audit literature-positioning-audit reference-integrity-audit submission-readiness-audit paper-layout-audit paper-structure-audit visual-review-checklist
 	./scripts/build-submission-package.sh
 
 submission-package-check: submission-package-build
 	./scripts/check-submission-package.sh
 
-submission-package: paper-wiley paper-supplement paper-word-count visual-review-checklist latex-log-audit policy-claim-language-audit literature-positioning-audit reference-integrity-audit submission-readiness-audit reviewer-risk-register first-wave-causal-protocols first-wave-source-product-templates first-wave-linkage-candidates first-wave-entity-resolution-seeds first-wave-source-products first-wave-source-readiness candidate-source-leakage-audit first-wave-procurement-source-acquisition submission-package-build submission-package-check archive-handoff-audit
+submission-package: paper-wiley paper-supplement paper-word-count visual-review-checklist latex-log-audit policy-claim-language-audit literature-positioning-audit reference-integrity-audit submission-readiness-audit reviewer-risk-register first-wave-causal-protocols first-wave-source-product-templates first-wave-linkage-candidates first-wave-entity-resolution-seeds first-wave-source-products first-wave-source-readiness candidate-source-leakage-audit first-wave-manual-adjudication-plan first-wave-procurement-source-acquisition procurement-causal-upgrade-packet substitution-causal-upgrade-packet comment-causal-upgrade-packet venue-causal-upgrade-packet submission-package-build submission-package-check archive-handoff-audit
 
 blinded-review-package-build: scrub-copy-suffix-artifacts paper-wiley-build paper-supplement-build
 	./scripts/build-blinded-review-package.sh
@@ -336,6 +370,9 @@ record-doi-archive:
 doi-deposit-readiness-audit: zenodo-deposit-preflight
 	python3 scripts/audit-doi-deposit-readiness.py
 
+mechanism-review-circulation-readiness: doi-deposit-readiness-audit
+	python3 scripts/audit-mechanism-review-circulation.py
+
 external-finalization-checklist:
 	@. ./scripts/load-env.sh; python3 scripts/write-external-finalization-checklist.py
 
@@ -347,13 +384,13 @@ wiley-submission-form-readiness-audit: submission-package-check
 reggov-guidelines-readiness-audit: wiley-submission-form-readiness-audit blinded-review-package-check
 	python3 scripts/audit-reggov-guidelines-readiness.py
 
-final-readthrough-evidence: final-human-readthrough-audit literature-positioning-audit reference-integrity-audit submission-readiness-audit reviewer-risk-register candidate-source-leakage-audit latex-log-audit paper-structure-audit archive-handoff-audit reggov-guidelines-readiness-audit
+final-readthrough-evidence: final-human-readthrough-audit literature-positioning-audit reference-integrity-audit submission-readiness-audit reviewer-risk-register candidate-source-leakage-audit first-wave-manual-adjudication-plan procurement-causal-upgrade-packet substitution-causal-upgrade-packet comment-causal-upgrade-packet venue-causal-upgrade-packet latex-log-audit paper-structure-audit archive-handoff-audit reggov-guidelines-readiness-audit
 	python3 scripts/write-final-readthrough-evidence.py
 
-doi-deposit-package: reggov-guidelines-readiness-audit archive-handoff-audit final-readthrough-evidence candidate-source-leakage-audit
+doi-deposit-package: reggov-guidelines-readiness-audit archive-handoff-audit final-readthrough-evidence candidate-source-leakage-audit first-wave-manual-adjudication-plan procurement-causal-upgrade-packet substitution-causal-upgrade-packet comment-causal-upgrade-packet venue-causal-upgrade-packet
 	python3 scripts/build-doi-deposit-package.py
 
-paper-artifacts: campaign mechanism-comparison sensitivity ablation interactions portfolio source-moments source-panel-inventory source-capability-audit dark-money-bridge-audit intermediary-bridge-audit revolving-door-bridge-audit procurement-denominator-audit procurement-modification-composition-audit procurement-benchmark-crosswalk validate validation-scope-coverage claim-boundary-audit claim-source-dependency-audit causal-calibration-targets first-wave-causal-protocols first-wave-source-product-templates first-wave-linkage-candidates first-wave-entity-resolution-seeds first-wave-source-products calibration-queue procurement-refresh-readiness first-wave-procurement-source-acquisition first-wave-source-readiness candidate-source-leakage-audit tables figures paper-build paper-wiley-build paper-supplement-build paper-word-count paper-layout-audit paper-structure-audit visual-review-checklist latex-log-audit claim-posture-audit calibration-readiness-audit policy-claim-language-audit literature-positioning-audit reference-integrity-audit final-human-readthrough-audit submission-readiness-audit reviewer-risk-register submission-package-build submission-package-check blinded-review-package-check archive-handoff-audit wiley-submission-form-readiness-audit reggov-guidelines-readiness-audit final-readthrough-evidence doi-deposit-package doi-deposit-readiness-audit
+paper-artifacts: campaign mechanism-comparison sensitivity ablation interactions portfolio source-moments source-panel-inventory source-capability-audit dark-money-bridge-audit intermediary-bridge-audit revolving-door-bridge-audit procurement-denominator-audit procurement-modification-composition-audit procurement-benchmark-crosswalk validate validation-scope-coverage claim-boundary-audit claim-source-dependency-audit causal-calibration-targets first-wave-causal-protocols first-wave-source-product-templates first-wave-linkage-candidates first-wave-cross-venue-adjudication first-wave-reviewed-entity-products first-wave-source-products calibration-queue procurement-refresh-readiness first-wave-procurement-source-acquisition first-wave-source-readiness candidate-source-leakage-audit first-wave-manual-adjudication-plan procurement-causal-upgrade-packet substitution-estimation-diagnostics substitution-causal-upgrade-packet comment-causal-upgrade-packet venue-causal-upgrade-packet tables figures paper-build paper-wiley-build paper-supplement-build paper-word-count paper-layout-audit paper-structure-audit visual-review-checklist latex-log-audit claim-posture-audit calibration-readiness-audit policy-claim-language-audit literature-positioning-audit reference-integrity-audit final-human-readthrough-audit submission-readiness-audit reviewer-risk-register submission-package-build submission-package-check blinded-review-package-check archive-handoff-audit wiley-submission-form-readiness-audit reggov-guidelines-readiness-audit final-readthrough-evidence doi-deposit-package doi-deposit-readiness-audit mechanism-review-circulation-readiness
 
 paper-artifacts-check: paper-artifacts scrub-copy-suffix-artifacts
 	./scripts/finalize-paper-artifacts.sh
@@ -365,7 +402,19 @@ clean: scrub-copy-suffix-artifacts
 	rm -f reports/validation-summary.csv reports/validation-summary.md reports/validation-scope-coverage.csv reports/validation-scope-coverage.md reports/substitution-audit.csv reports/substitution-audit.md
 	rm -f reports/source-moments.csv reports/source-moments.md reports/source-panel-inventory.csv reports/source-panel-inventory.md reports/source-capability-audit.csv reports/source-capability-audit.md reports/dark-money-bridge-audit.csv reports/dark-money-bridge-audit.md reports/intermediary-bridge-audit.csv reports/intermediary-bridge-audit.md reports/revolving-door-bridge-audit.csv reports/revolving-door-bridge-audit.md reports/procurement-denominator-audit.csv reports/procurement-denominator-audit.md reports/procurement-modification-composition-audit.csv reports/procurement-modification-composition-audit.md reports/procurement-benchmark-crosswalk.csv reports/procurement-benchmark-crosswalk.md reports/procurement-refresh-readiness.csv reports/procurement-refresh-readiness.md reports/claim-boundary-audit.csv reports/claim-boundary-audit.md reports/claim-source-dependency.csv reports/claim-source-dependency.md reports/causal-calibration-targets.csv reports/causal-calibration-targets.md reports/first-wave-causal-protocols.csv reports/first-wave-causal-protocols.md reports/first-wave-source-products.csv reports/first-wave-source-products.md reports/first-wave-linkage-candidates.csv reports/first-wave-linkage-candidate-records.csv reports/first-wave-linkage-candidates.md reports/first-wave-source-readiness.csv reports/first-wave-source-readiness.md reports/claim-posture-audit.csv reports/claim-posture-audit.md reports/paper-layout-audit.md reports/calibration-queue.csv reports/calibration-queue.md
 	rm -f reports/first-wave-procurement-source-acquisition.csv reports/first-wave-procurement-source-acquisition.md
+	rm -f reports/first-wave-cross-venue-adjudication.csv reports/first-wave-cross-venue-adjudication-records.csv reports/first-wave-cross-venue-adjudication.md
 	rm -f reports/candidate-source-leakage-audit.csv reports/candidate-source-leakage-audit.md
+	rm -f reports/first-wave-manual-adjudication-plan.csv reports/first-wave-manual-adjudication-plan.md
+	rm -f reports/procurement-causal-upgrade-packet.csv reports/procurement-causal-upgrade-packet.md
+	rm -f reports/substitution-causal-upgrade-packet.csv reports/substitution-causal-upgrade-packet.md
+	rm -f reports/substitution-historical-source-access.csv reports/substitution-historical-source-access.md
+	rm -f reports/substitution-historical-lda-panel.csv reports/substitution-historical-lda-panel.md
+	rm -f reports/substitution-state-lobbying-control-panel.csv reports/substitution-state-lobbying-control-panel.md
+	rm -f reports/substitution-estimation-diagnostics.csv reports/substitution-estimation-diagnostics.md
+	rm -f reports/substitution-estimation-event-study.csv reports/substitution-estimation-leave-one-actor.csv reports/substitution-estimation-specification-contrast.svg
+	rm -f data/calibration/first-wave/substitution-estimation-panel.csv
+	rm -f reports/comment-causal-upgrade-packet.csv reports/comment-causal-upgrade-packet.md
+	rm -f reports/venue-causal-upgrade-packet.csv reports/venue-causal-upgrade-packet.md
 	rm -f reports/calibration-readiness.csv reports/calibration-readiness.md
 	rm -f reports/policy-claim-language-audit.csv reports/policy-claim-language-audit.md
 	rm -f reports/literature-positioning-audit.csv reports/literature-positioning-audit.md
@@ -382,6 +431,7 @@ clean: scrub-copy-suffix-artifacts
 	rm -f reports/external-finalization-checklist.csv reports/external-finalization-checklist.md
 	rm -f reports/zenodo-deposit-preflight.csv reports/zenodo-deposit-preflight.md reports/zenodo-draft-deposit.csv reports/zenodo-draft-deposit.md
 	rm -f reports/doi-deposit-readiness.csv reports/doi-deposit-readiness.md
+	rm -f reports/mechanism-review-circulation-readiness.csv reports/mechanism-review-circulation-readiness.md
 	rm -f reports/wiley-submission-form-readiness.csv reports/wiley-submission-form-readiness.md
 	rm -f reports/reggov-guidelines-readiness.csv reports/reggov-guidelines-readiness.md
 	rm -f reports/latex-log-audit.csv reports/latex-log-audit.md

@@ -33,12 +33,12 @@ PDF and ZIP byte streams can differ across TeX and archive implementations. The 
 | paper/supplement.pdf | supplement.pdf | supporting-information-pdf | yes | release-asset-checksum-recorded-in-dist | see-dist-release-asset-checksums | `see-dist-release-asset-checksums` |
 | CITATION.cff | - | citation-metadata | source-archive | tracked-source-verified | 1286 | `335866698e6f8cefc3298619d30dd28e843d7ea3efb966db217c3ff4bdde60b9` |
 | .zenodo.json | - | doi-deposit-metadata | source-archive | tracked-source-verified | 1490 | `a38819c944511f279900e31169099d26a01e9a5e407fd0643d78867a288e002c` |
-| reports/submission-readiness.md | - | submission-readiness-audit | source-archive | tracked-source-verified | 5027 | `0b83dbcaaa8cc69fb77f45be31ed85927659f8c6f5af7efba322fcaa0a04dbfa` |
-| reports/reviewer-risk-register.csv | - | reviewer-risk-register | source-archive | tracked-source-verified | 7000 | `dd7de993e173da19ded2dfb1ded941f37d6da4ada90725e236aab1e98e64866e` |
-| reports/reviewer-risk-register.md | - | reviewer-risk-register | source-archive | tracked-source-verified | 8172 | `b1061a0939c9e8bf17a6e4be510b13e221ddd5e439ceeea2e0f032f95adb97f8` |
-| reports/final-human-readthrough.md | - | manual-signoff-record | source-archive | tracked-source-verified | 7245 | `eac77b6d6ae3c0ba2429b3378db3ab0687ef94fbe9aacd5fd4f219b76e1dbb8a` |
-| reports/final-human-readthrough-audit.csv | - | final-human-readthrough-audit | source-archive | tracked-source-verified | 6894 | `2a294e0439930f05bd8c4f27c05209dcb58ac15eb873ad4c8b76b64ea88ba7a6` |
-| reports/final-human-readthrough-audit.md | - | final-human-readthrough-audit | source-archive | tracked-source-verified | 7861 | `b7de36add24967bf1abc1e99e29fda8fd960099613dbffab00de57ebbc9abd6f` |
+| reports/submission-readiness.md | - | submission-readiness-audit | source-archive | tracked-source-verified | 5408 | `7b83ff9a606a188da15ebae79683be99fff05a36de60040ea67d5cf5d3011ca3` |
+| reports/reviewer-risk-register.csv | - | reviewer-risk-register | source-archive | tracked-source-verified | 7926 | `30b6785b46e59c691c75129f49c6a9c538382f7f3b2430a110eafbccc27152fd` |
+| reports/reviewer-risk-register.md | - | reviewer-risk-register | source-archive | tracked-source-verified | 8393 | `7e1b083fb272f79b92c12a3e8c76d935765677ccec26994dfc1488d19b64b3ec` |
+| reports/final-human-readthrough.md | - | manual-signoff-record | source-archive | tracked-source-verified | 8236 | `903a35cff10ff353f1170791a950a297be9d495687a401bc52ab87716b0a6d99` |
+| reports/final-human-readthrough-audit.csv | - | final-human-readthrough-audit | source-archive | tracked-source-verified | 7432 | `3fceb77176c9beda584cc9e3570dbd77082e7ede4d119b9d76be917b5ce7bd3f` |
+| reports/final-human-readthrough-audit.md | - | final-human-readthrough-audit | source-archive | tracked-source-verified | 8399 | `e5cef5b672ee335f7d318b9e2413c7d37b37860add9380595863cfbec7056153` |
 
 ## Archive Use
 

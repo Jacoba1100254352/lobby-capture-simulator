@@ -120,6 +120,22 @@ if grep -q 'email-date-token' "$tmpdir/sam-email-date.out"; then
   echo "SAM export link recorder leaked an email-date token in dry-run output." >&2
   exit 1
 fi
+mkdir -p "$tmpdir/causal-reports"
+cat > "$tmpdir/causal-reports/claim-source-dependency.csv" <<'CSV'
+claimKey,status
+calibrated-policy-simulation,not_cleared
+CSV
+python3 scripts/audit-causal-calibration-targets.py --reports "$tmpdir/causal-reports" >/dev/null
+test -s "$tmpdir/causal-reports/causal-calibration-targets.csv"
+test -s "$tmpdir/causal-reports/causal-calibration-targets.md"
+grep -q "allowedCurrentClaim" "$tmpdir/causal-reports/causal-calibration-targets.csv"
+grep -q "barredClaim" "$tmpdir/causal-reports/causal-calibration-targets.csv"
+grep -q "claimUpgradeTrigger" "$tmpdir/causal-reports/causal-calibration-targets.csv"
+grep -q "The current manuscript may use this target" "$tmpdir/causal-reports/causal-calibration-targets.csv"
+grep -q "Do not claim that current evidence estimates the" "$tmpdir/causal-reports/causal-calibration-targets.csv"
+grep -q "Claim Boundary Matrix" "$tmpdir/causal-reports/causal-calibration-targets.md"
+grep -q "Allowed current claim" "$tmpdir/causal-reports/causal-calibration-targets.md"
+grep -q "Claim still barred" "$tmpdir/causal-reports/causal-calibration-targets.md"
 cat > "$tmpdir/sam-multi-email.txt" <<'TXT'
 Date: Thu, 18 Jun 2026 01:05:45 -0400
 
@@ -382,6 +398,11 @@ python3 scripts/audit-source-capabilities.py --reports "$tmpdir/reports" --snaps
 test -s "$tmpdir/reports/source-capability-audit.csv"
 grep -q "snapshotQuality" "$tmpdir/reports/source-capability-audit.csv"
 grep -q "sam-contract-awards-action-history" "$tmpdir/reports/source-capability-audit.csv"
+grep -q "current access window" "$tmpdir/reports/source-capability-audit.csv"
+if grep -q "SAM.gov quota blocked until 2026-Jun-20" "$tmpdir/reports/source-capability-audit.csv"; then
+  echo "Source capability audit retained raw elapsed SAM quota wording." >&2
+  exit 1
+fi
 python3 scripts/audit-procurement-denominator.py --reports "$tmpdir/reports" --snapshot data/snapshots/2024-env >/dev/null
 test -s "$tmpdir/reports/procurement-denominator-audit.csv"
 test -s "$tmpdir/reports/procurement-denominator-audit.md"
@@ -389,6 +410,11 @@ grep -q "promotionReadiness" "$tmpdir/reports/procurement-denominator-audit.csv"
 grep -q "dateSpanDisplay" "$tmpdir/reports/procurement-denominator-audit.csv"
 grep -q "sam-contract-awards" "$tmpdir/reports/procurement-denominator-audit.csv"
 grep -q "promotion readiness" "$tmpdir/reports/procurement-denominator-audit.md"
+grep -q "quota response recorded reset time" "$tmpdir/reports/procurement-denominator-audit.csv"
+if grep -q "SAM.gov quota blocked until 2026-Jun-20" "$tmpdir/reports/procurement-denominator-audit.csv"; then
+  echo "Procurement denominator audit retained raw elapsed SAM quota wording." >&2
+  exit 1
+fi
 python3 scripts/classify-validation-misses.py --validation reports/validation-summary.csv --source-moments "$tmpdir/reports/source-moments.csv" --output "$tmpdir/reports" >/dev/null
 python3 scripts/write-procurement-refresh-readiness.py --reports "$tmpdir/reports" --snapshot data/snapshots/2024-env >/dev/null
 test -s "$tmpdir/reports/procurement-refresh-readiness.csv"
@@ -401,6 +427,21 @@ grep -q "SAM_CONTRACT_AWARDS_EXTRACT_MODE=1" "$tmpdir/reports/procurement-refres
 grep -q "SAM_CONTRACT_AWARDS_OFFSET_STARTS" "$tmpdir/reports/procurement-refresh-readiness.md"
 grep -q "timeSource=recorded_at_fallback" "$tmpdir/reports/procurement-refresh-readiness.md"
 grep -q "request a fresh export email" "$tmpdir/reports/procurement-refresh-readiness.md"
+grep -q "recorded SAM.gov reset time" "$tmpdir/reports/procurement-refresh-readiness.md"
+grep -q "quota response recorded reset time" "$tmpdir/reports/procurement-refresh-readiness.md"
+grep -q "has elapsed" "$tmpdir/reports/procurement-refresh-readiness.md"
+if grep -q "Wait until 2026-Jun-20 00:00:00+0000 UTC before rerunning SAM" "$tmpdir/reports/procurement-refresh-readiness.md"; then
+  echo "Procurement refresh readiness retained a stale June 20 SAM wait instruction." >&2
+  exit 1
+fi
+if grep -q "when it has elapsed" "$tmpdir/reports/procurement-refresh-readiness.md"; then
+  echo "Procurement refresh readiness retained an open-ended SAM reset wait instruction." >&2
+  exit 1
+fi
+if grep -q "SAM.gov quota blocked until 2026-Jun-20" "$tmpdir/reports/procurement-refresh-readiness.md"; then
+  echo "Procurement refresh readiness retained raw elapsed SAM quota wording." >&2
+  exit 1
+fi
 
 mkdir -p "$tmpdir/source-root/data/calibration/first-wave"
 python3 scripts/write-first-wave-source-product-templates.py --root "$tmpdir/source-root" >/dev/null
@@ -434,6 +475,33 @@ grep -q "schema/acquisition gate" "$tmpdir/reports/first-wave-source-products.md
 grep -q "docs/source-product-templates/first-wave/substitution-reform-shocks.csv" "$tmpdir/reports/first-wave-source-products.md"
 grep -q "SAM/FPDS action-history export or keyed pull" "$tmpdir/reports/first-wave-source-products.md"
 grep -q "canonical actor identifier table" "$tmpdir/reports/first-wave-source-products.md"
+
+mkdir -p "$tmpdir/manual-root/data/calibration/first-wave" "$tmpdir/manual-reports"
+cat > "$tmpdir/manual-reports/first-wave-source-products.csv" <<'CSV'
+targetKey,productKey,productLabel,priority,expectedPath,productStatus,observedRows,minimumRows,manualReviewChecklist,claimBoundary
+substitution-elasticity,actor-issue-time-spine,canonical actor-issue-time spine across at least three venues,P1,data/calibration/first-wave/actor-issue-time-spine.csv,candidate_unreviewed,2,100,Verify actors and issues before removing candidate markers.,Required before visible-channel drops can be compared with movement into alternate venues.
+CSV
+cat > "$tmpdir/manual-reports/first-wave-source-readiness.csv" <<'CSV'
+targetKey,sourceProductGate,blockingIssue
+substitution-elasticity,candidate_only_blocked,Candidate actor-issue-time files are not manually adjudicated.
+CSV
+cat > "$tmpdir/manual-root/data/calibration/first-wave/actor-issue-time-spine.csv" <<'CSV'
+canonicalActorId,issueCode,periodStart,periodEnd,venue,activityType,activityMeasure,activityAmount,sourceSystem,sourceRecordId,exposureGroup,reformEventId,candidateOnly,candidateStatus,linkageEvidenceClass,reviewPriority,reviewPriorityScore,reviewRiskFlags,notes
+cand-1,issue-1,2024-01-01,2024-06-30,venue-a,source,1,1,system-a,row-1,treated,shock-1,true,candidate_unreviewed_not_estimation_ready,shared-source-identifier-overlap,P1-manual-review,0.9,name-only-cross-venue,candidate-only row
+cand-2,issue-1,2024-07-01,2024-12-31,venue-b,source,1,1,system-b,row-2,comparison,shock-1,true,candidate_unreviewed_not_estimation_ready,cross-venue-name-overlap,P2-manual-review,0.7,issue-crosswalk-unreviewed,candidate-only row
+CSV
+python3 scripts/write-first-wave-manual-adjudication-plan.py --root "$tmpdir/manual-root" --reports "$tmpdir/manual-reports" >/dev/null
+test -s "$tmpdir/manual-reports/first-wave-manual-adjudication-plan.csv"
+test -s "$tmpdir/manual-reports/first-wave-manual-adjudication-plan.md"
+grep -q "actor-issue-time-spine,.*manual_review_required" "$tmpdir/manual-reports/first-wave-manual-adjudication-plan.csv"
+grep -q "rowShortfall" "$tmpdir/manual-reports/first-wave-manual-adjudication-plan.csv"
+grep -q "firstReviewBatchRows" "$tmpdir/manual-reports/first-wave-manual-adjudication-plan.csv"
+grep -q "row1: canonicalActorId=cand-1" "$tmpdir/manual-reports/first-wave-manual-adjudication-plan.csv"
+grep -q "P1-manual-review=1; P2-manual-review=1" "$tmpdir/manual-reports/first-wave-manual-adjudication-plan.csv"
+grep -q "Candidate-only products are manual-review queues, not evidence" "$tmpdir/manual-reports/first-wave-manual-adjudication-plan.md"
+grep -q "First Review Batch" "$tmpdir/manual-reports/first-wave-manual-adjudication-plan.md"
+grep -q "first-review batch lists candidate row identifiers" "$tmpdir/manual-reports/first-wave-manual-adjudication-plan.md"
+grep -q "make first-wave-source-products first-wave-source-readiness first-wave-manual-adjudication-plan candidate-source-leakage-audit paper-artifacts-check" "$tmpdir/manual-reports/first-wave-manual-adjudication-plan.md"
 
 cat > "$tmpdir/source-root/data/calibration/first-wave/substitution-reform-shocks.csv" <<'CSV'
 reformEventId,eventName,jurisdiction,policyDomain,reformType,eventDate,treatmentStartDate,affectedActorRule,affectedIssueRule,comparisonRule,sourceUrl,sourceExtractedAt
@@ -801,6 +869,9 @@ spec = importlib.util.spec_from_file_location(
 module = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(module)
 module.SAM_PREFLIGHT_CSV = preflight_csv
+old_finalization_date = os.environ.get("LOBBY_CAPTURE_EXTERNAL_FINALIZATION_DATE")
+old_sam_live_url = os.environ.get("SAM_CONTRACT_AWARDS_LIVE_URL")
+os.environ["LOBBY_CAPTURE_EXTERNAL_FINALIZATION_DATE"] = "2026-06-15"
 
 row = module.sam_preflight_row()
 assert row["status"] == "manual_required", row
@@ -826,6 +897,12 @@ assert row["status"] == "manual_required", row
 assert "status=quota_blocked" in row["evidence"], row
 assert "2026-Jun-16 00:00:00+0000 UTC" in row["evidence"], row
 assert "Wait until 2026-Jun-16 00:00:00+0000 UTC" in row["nextAction"], row
+os.environ["LOBBY_CAPTURE_EXTERNAL_FINALIZATION_DATE"] = "2026-06-27"
+row = module.sam_preflight_row()
+assert row["status"] == "manual_required", row
+assert "quotaResetState=elapsed" in row["evidence"], row
+assert "rerun make sam-contract-awards-preflight now" in row["nextAction"], row
+os.environ["LOBBY_CAPTURE_EXTERNAL_FINALIZATION_DATE"] = "2026-06-15"
 
 with preflight_csv.open("w", newline="", encoding="utf-8") as target:
     writer = csv.DictWriter(
@@ -862,13 +939,42 @@ with live_status_csv.open("w", newline="", encoding="utf-8") as target:
     writer.writerow({
         "source": "sam-contract-awards",
         "status": "quota_blocked",
-        "notes": "SAM.gov quota blocked until 2026-Jun-20 00:00:00+0000 UTC; mode=1; fallback=USAspending action rows",
+        "notes": "SAM.gov quota blocked until 2026-Jun-16 00:00:00+0000 UTC; mode=1; fallback=USAspending action rows",
     })
 row = module.sam_snapshot_refresh_row()
 assert row["status"] == "manual_required", row
 assert "status=quota_blocked" in row["evidence"], row
-assert "nextAccessTime=2026-Jun-20 00:00:00+0000 UTC" in row["evidence"], row
-assert "Wait until 2026-Jun-20 00:00:00+0000 UTC" in row["nextAction"], row
+assert "nextAccessTime=2026-Jun-16 00:00:00+0000 UTC" in row["evidence"], row
+assert "Wait until 2026-Jun-16 00:00:00+0000 UTC" in row["nextAction"], row
+os.environ["LOBBY_CAPTURE_EXTERNAL_FINALIZATION_DATE"] = "2026-06-27"
+row = module.sam_snapshot_refresh_row()
+assert row["status"] == "manual_required", row
+assert "quotaResetState=elapsed" in row["evidence"], row
+assert "rerun make sam-procurement-refresh now" in row["nextAction"], row
+
+export_audit_csv = preflight_csv.parent / "sam-contract-awards-export-audit.csv"
+module.SAM_EXPORT_AUDIT_CSV = export_audit_csv
+os.environ["SAM_CONTRACT_AWARDS_LIVE_URL"] = "https://api.sam.gov/contract-awards/v1/download?api_key=REPLACE_WITH_API_KEY&token=fixture"
+with export_audit_csv.open("w", newline="", encoding="utf-8") as target:
+    writer = csv.DictWriter(
+        target,
+        fieldnames=["item", "status", "value", "threshold", "notes", "nextAction"],
+        lineterminator="\n",
+    )
+    writer.writeheader()
+    writer.writerow({
+        "item": "promotion-readiness",
+        "status": "manual_required",
+        "value": "SAM.gov emailed export URL appears expired",
+        "threshold": "fresh SAM.gov download URL",
+        "notes": "No SAM/FPDS rows were promoted into the frozen snapshot.",
+        "nextAction": "Request a fresh SAM.gov export email, record it with make sam-contract-awards-record-export-link, then rerun the audit.",
+    })
+row = module.sam_snapshot_refresh_row()
+assert row["status"] == "manual_required", row
+assert "latestExportAudit=manual_required" in row["evidence"], row
+assert "exportIssue=SAM.gov emailed export URL appears expired" in row["evidence"], row
+assert "Request a fresh SAM.gov export email" in row["nextAction"], row
 
 with live_status_csv.open("w", newline="", encoding="utf-8") as target:
     writer = csv.DictWriter(
@@ -885,6 +991,14 @@ with live_status_csv.open("w", newline="", encoding="utf-8") as target:
 row = module.sam_snapshot_refresh_row()
 assert row["status"] == "ready", row
 assert "status=ok" in row["evidence"], row
+if old_finalization_date is None:
+    os.environ.pop("LOBBY_CAPTURE_EXTERNAL_FINALIZATION_DATE", None)
+else:
+    os.environ["LOBBY_CAPTURE_EXTERNAL_FINALIZATION_DATE"] = old_finalization_date
+if old_sam_live_url is None:
+    os.environ.pop("SAM_CONTRACT_AWARDS_LIVE_URL", None)
+else:
+    os.environ["SAM_CONTRACT_AWARDS_LIVE_URL"] = old_sam_live_url
 PY
 
 extract_dry_run="$(SAM_PROCUREMENT_REFRESH_MODE=extract ./scripts/refresh-sam-procurement-panel.sh --dry-run --no-artifacts)"
@@ -1488,6 +1602,9 @@ checked_date = rows["author-guidelines-checked-date"]
 overall = rows["overall-final-human-readthrough"]
 assert checked_date["status"] == "manual_required", checked_date
 assert "stale=yes" in checked_date["evidence"], checked_date
+assert "releaseFreshness=stale" in checked_date["evidence"], checked_date
+assert "sameDayFinalization=external_checklist" in checked_date["evidence"], checked_date
+assert "same-day final-submission freshness" in checked_date["nextAction"], checked_date
 assert overall["status"] == "manual_required", overall
 assert "blocked=0" in overall["evidence"], overall
 
@@ -1531,6 +1648,9 @@ with open(sys.argv[1], newline="", encoding="utf-8") as source:
 checked_date = rows["author-guidelines-checked-date"]
 assert checked_date["status"] == "ready", checked_date
 assert "stale=no" in checked_date["evidence"], checked_date
+assert "releaseFreshness=ready" in checked_date["evidence"], checked_date
+assert "sameDayFinalization=external_checklist" in checked_date["evidence"], checked_date
+assert "same-day final-submission freshness" in checked_date["nextAction"], checked_date
 
 root = Path(sys.argv[2])
 for module_name, module_path in [

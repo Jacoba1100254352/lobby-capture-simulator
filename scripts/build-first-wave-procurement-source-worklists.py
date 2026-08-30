@@ -1,11 +1,12 @@
 #!/usr/bin/env python3
-"""Build candidate-only procurement source-product worklists.
+"""Build procurement source-product worklists and reviewed overlay rows.
 
-These rows are not source evidence. They turn the remaining procurement
-calibration blockers into concrete review artifacts while keeping the
-first-wave source-product gate blocked until representative SAM/FPDS rows,
-GAO protest linkage, SAM exclusion linkage, and procurement-firewall controls
-are populated from reviewed source records.
+Most rows are not source evidence. They turn remaining procurement calibration
+blockers into concrete review artifacts while keeping the first-wave
+source-product gate blocked until representative SAM/FPDS rows, GAO protest
+linkage, SAM exclusion linkage, and offer/competition rows are populated from
+reviewed source records. Reviewed firewall-control rows may be carried here
+when their source, date, coverage rule, and claim boundary are explicit.
 """
 
 from __future__ import annotations
@@ -192,29 +193,39 @@ def main() -> int:
         ],
         [
             {
-                "firewallRuleId": "candidate_unreviewed_far_part_3_procurement_integrity",
-                "agency": "government-wide Federal Acquisition Regulation baseline",
-                "subtier": "candidate_unreviewed",
-                "awardType": "FAR-covered procurements",
-                "effectiveDate": "candidate_unreviewed",
+                "firewallRuleId": "epaar_part_1503_source_selection_controls",
+                "agency": "Environmental Protection Agency",
+                "subtier": "EPA acquisition regulations; source evaluation and selection",
+                "awardType": "EPAAR-covered EPA procurements",
+                "effectiveDate": "2016-05-18",
                 "coveredOfficials": (
-                    "contracting officers; source-selection officials; former officials; "
-                    "contractor employees performing acquisition functions"
+                    "EPA employees engaged in source evaluation and selection; Chief of the "
+                    "Contracting Office; support contractors used in proposal evaluation; "
+                    "current or former EPA employees involved in covered contracts"
                 ),
-                "controlType": "procurement-integrity and personal-conflict controls",
-                "sourceUrl": "https://www.acquisition.gov/far/part-3",
-                "expirationDate": "candidate_unreviewed",
+                "controlType": (
+                    "source-selection conflict screening; proposal information disclosure "
+                    "protection; current/former employee improper-influence controls"
+                ),
+                "sourceUrl": "https://www.ecfr.gov/current/title-48/chapter-15/subchapter-A/part-1503",
+                "expirationDate": "",
                 "coverageRule": (
-                    "candidate worklist row for FAR Part 3 procurement-integrity and conflict-control surfaces; "
-                    "agency/subtier implementation, dates, award classes, and compliance evidence require review"
+                    "EPAAR Part 1503 implements FAR Part 3 for EPA; employees with possible "
+                    "source-selection conflict or impartiality concerns must report to ethics "
+                    "and source-selection officials and cease work pending a determination; "
+                    "proposal information is protected under FAR 3.104-4 and agency procedures; "
+                    "EPA procedures identify conflicts and improper influence involving current "
+                    "or former EPA employees"
                 ),
                 "notes": (
-                    f"{BOUNDARY}; sourceExtractedAt={SOURCE_EXTRACTED_AT}; "
-                    "replace or supplement with dated agency acquisition-policy, firewall memorandum, "
-                    "procurement-integrity, or inspector-general control rows before promotion"
+                    "reviewed agency-control source row; eCFR source reports 81 FR 31178, "
+                    "May 18, 2016; sourceExtractedAt=2026-06-19; clears only the narrow "
+                    "procurement-firewall overlay schema for EPA control design; does not clear "
+                    "SAM/FPDS action-history, protest, exclusion, offer-count, or causal "
+                    "procurement-modification calibration gates"
                 ),
-                "candidateOnly": "true",
-                "candidateStatus": CANDIDATE_STATUS,
+                "candidateOnly": "false",
+                "candidateStatus": "reviewed_source_boundary_bounded",
             }
         ],
     )

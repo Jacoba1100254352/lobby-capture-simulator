@@ -4,6 +4,9 @@ This report operationalizes the first-wave rows from `reports/causal-calibration
 
 ## Summary
 
+- Generated at: `2026-06-19T00:00:00Z`
+- Release tag: `paper-publication-readiness-2026-06-19-r208`
+- Release date: `2026-06-19`
 - Protocols: `4`
 - Protocol-ready/source-pending rows: `4`
 - Policy-simulation status: `not_cleared`
@@ -31,7 +34,7 @@ This report operationalizes the first-wave rows from `reports/causal-calibration
 | Target | Threat model | Claim-upgrade boundary | Clearance criterion |
 | --- | --- | --- | --- |
 | substitution-elasticity | simultaneous political shocks, endogenous reform adoption, entity-resolution errors, and unobserved private contacts | Can support a source-anchored substitution diagnostic for the named reform family; cannot establish national hidden-channel magnitudes alone. | At least one external quasi-experimental or panel design that estimates cross-channel substitution direction for a named reform family |
-| procurement-modification-causal-capture | procurement coding inconsistency, unobserved contract complexity, reverse causality from troubled awards to lobbying, and missing protest/firewall data | Can strengthen procurement-domain capture-adjacent diagnostics; cannot justify broad calibrated capture effects without exposure timing and outcome linkage. | A reconciled SAM/FPDS action-history panel linked to exposure variables and at least one causal or matched comparison design |
+| procurement-modification-causal-capture | procurement coding inconsistency, unobserved contract complexity, reverse causality from troubled awards to lobbying, and missing protest, exclusion, offer-count, and broader firewall data | Can strengthen procurement-domain capture-adjacent diagnostics; cannot justify broad calibrated capture effects without exposure timing and outcome linkage. | A reconciled SAM/FPDS action-history panel linked to exposure variables and at least one causal or matched comparison design |
 | comment-authenticity-and-uptake-effect | missing comment bodies, bot or identity uncertainty, agency selection into authentication tools, and conflating volume with substantive influence | Can anchor rulemaking information-distortion mechanisms for observed dockets; cannot generalize to all agencies or hidden influence channels alone. | Docket-level panel with observed duplicate clusters and agency response/final-rule linkage |
 | venue-shifting-detection-effect | entity-resolution bias, common-name collisions, missing private channels, and inflated substitution when issue codes are too broad | Can support a detection and measurement contribution for cross-venue substitution; cannot by itself prove that substitution changed outcomes. | Entity-resolution spine linking at least three venues with audited false-positive/false-negative handling |
 
@@ -42,6 +45,6 @@ These rows identify the concrete scaffold already in the repository and the firs
 | Target | Committed scaffold | First promotion gate | Why it matters |
 | --- | --- | --- | --- |
 | substitution-elasticity | HLOGA reform-shock row, meeting/contact missing-channel note, and candidate actor-time plus comparison-group seeds. | Adjudicate aliases, issues, exposure groups, and pre/post windows; replace candidate rows with observed actor-issue activity across at least three venues. | Directly tests whether pressure moves from a restricted visible channel into alternate channels after a named reform shock. |
-| procurement-modification-causal-capture | USAspending action and bulk denominators, optional SAM importer, and acquisition plan for SAM/FPDS, protests, exclusions, and firewalls. | Acquire a promotable SAM/FPDS action-history crosswalk and add GAO protest, SAM exclusion, offer-count, and firewall overlays. | Turns procurement from denominator-mapped diagnostics into an outcome panel with timing, integrity controls, and exposure linkage. |
+| procurement-modification-causal-capture | USAspending action and bulk denominators, optional SAM importer, a bounded EPAAR procurement-firewall control row, and acquisition plan for SAM/FPDS, protests, exclusions, offer-count rows, and broader firewalls. | Acquire a promotable SAM/FPDS action-history crosswalk and add GAO protest, SAM exclusion, offer-count, and broader firewall overlays beyond the bounded EPAAR control row. | Turns procurement from denominator-mapped diagnostics into an outcome panel with timing, integrity controls, and exposure linkage. |
 | comment-authenticity-and-uptake-effect | Bounded Regulations.gov comment-body corpus, duplicate/template cluster assignments, and candidate response/final-rule linkage scaffold. | Manually link clustered comments to agency response sections and final-rule text, then review uptake codes and text-similarity fields. | Connects comment flooding and authenticity filters to agency uptake rather than only to docket volume or template saturation. |
 | venue-shifting-detection-effect | Candidate canonical-actor, alias-review, issue-crosswalk, false-match, and linked actor-issue-venue-time seed files. | Complete manual false-positive and false-negative audits, adjudicate issue comparability, and promote a reviewed linked panel. | Shows how much apparent substitution becomes visible only after actors and issues are resolved across public venues. |

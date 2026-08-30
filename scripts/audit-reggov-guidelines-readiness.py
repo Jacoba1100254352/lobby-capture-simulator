@@ -5,9 +5,21 @@ from __future__ import annotations
 
 import csv
 import re
+import sys
 import zipfile
 from datetime import date
 from pathlib import Path
+
+SCRIPT_DIR = Path(__file__).resolve().parent
+if str(SCRIPT_DIR) not in sys.path:
+    sys.path.insert(0, str(SCRIPT_DIR))
+
+from paper_release_metadata import (
+    RELEASE_METADATA_FIELDS,
+    metadata_summary_lines,
+    release_metadata,
+    with_release_metadata,
+)
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -50,10 +62,14 @@ DATE_RELEASED_PATTERN = re.compile(r"^date-released:\s*[\"']?([^\"'\n]+)[\"']?\s
 
 
 def main() -> int:
-    rows = guideline_rows()
+    metadata = release_metadata()
+    rows = with_release_metadata(guideline_rows(), metadata)
     REPORTS.mkdir(parents=True, exist_ok=True)
     write_csv(REPORTS / "reggov-guidelines-readiness.csv", rows)
-    (REPORTS / "reggov-guidelines-readiness.md").write_text(markdown(rows), encoding="utf-8")
+    (REPORTS / "reggov-guidelines-readiness.md").write_text(
+        markdown(rows, metadata),
+        encoding="utf-8",
+    )
     print("Wrote reports/reggov-guidelines-readiness.csv")
     print("Wrote reports/reggov-guidelines-readiness.md")
     return 0
@@ -450,6 +466,7 @@ def supporting_information_ready(names: set[str]) -> bool:
         "supporting-information/final-human-readthrough.md",
         "supporting-information/final-human-readthrough-audit.md",
         "supporting-information/final-readthrough-evidence.md",
+        "supporting-information/first-wave-manual-adjudication-plan.md",
     }
     return all((ROOT / path).exists() for path in ["docs/odd-model.md", "docs/scenario-catalog.md", "docs/validation.md"]) and required <= names
 
@@ -466,6 +483,7 @@ def supporting_information_evidence(names: set[str]) -> str:
         "supporting-information/final-human-readthrough.md",
         "supporting-information/final-human-readthrough-audit.md",
         "supporting-information/final-readthrough-evidence.md",
+        "supporting-information/first-wave-manual-adjudication-plan.md",
     ]
     report_data = sum(1 for name in names if name.startswith("supporting-information/report-data/"))
     return (
@@ -718,14 +736,14 @@ def write_csv(path: Path, rows: list[dict[str, str]]) -> None:
     with path.open("w", newline="", encoding="utf-8") as target:
         writer = csv.DictWriter(
             target,
-            fieldnames=["gate", "status", "evidence", "nextAction"],
+            fieldnames=[*RELEASE_METADATA_FIELDS, "gate", "status", "evidence", "nextAction"],
             lineterminator="\n",
         )
         writer.writeheader()
         writer.writerows(rows)
 
 
-def markdown(rows: list[dict[str, str]]) -> str:
+def markdown(rows: list[dict[str, str]], metadata: dict[str, str]) -> str:
     ready = sum(1 for item in rows if item["status"] == "ready")
     manual = sum(1 for item in rows if item["status"] == "manual_required")
     blocked = sum(1 for item in rows if item["status"] == "blocked")
@@ -742,6 +760,7 @@ def markdown(rows: list[dict[str, str]]) -> str:
         "",
         "## Summary",
         "",
+        *metadata_summary_lines(metadata),
         f"- Automated guideline status: `{status}`",
         f"- Ready gates: `{ready}`",
         f"- Manual-required gates: `{manual}`",

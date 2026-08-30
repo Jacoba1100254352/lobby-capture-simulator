@@ -12,6 +12,7 @@ from __future__ import annotations
 import argparse
 import csv
 import json
+import re
 from datetime import datetime
 from pathlib import Path
 
@@ -21,6 +22,7 @@ REPORTS = ROOT / "reports"
 SNAPSHOT = ROOT / "data" / "snapshots" / "2024-env"
 SOURCE_PANEL_INVENTORY = REPORTS / "source-panel-inventory.csv"
 LIVE_STATUS = SNAPSHOT / "live-run-status.csv"
+QUOTA_UNTIL_RE = re.compile(r"quota blocked until\s*([^;,\n]+UTC)", re.IGNORECASE)
 
 SAM_REPRESENTATIVE_THRESHOLDS = {
     "rows": 5000,
@@ -91,9 +93,10 @@ CAPABILITIES = [
             "causal-calibration claims"
         ),
         "nextAction": (
-            "After SAM quota resets, run make sam-exclusions-preflight, then populate reviewed "
-            "sam-exclusion-overlay rows with UEI, recipient, exclusion type, dates, agency, cause, "
-            "and source provenance before rerunning first-wave gates."
+            "Run make sam-exclusions-preflight on the current access window, or use the official "
+            "public extract path if the synchronous endpoint remains unavailable; then populate "
+            "reviewed sam-exclusion-overlay rows with UEI, recipient, exclusion type, dates, "
+            "agency, cause, and source provenance before rerunning first-wave gates."
         ),
     },
     {
@@ -310,7 +313,7 @@ def snapshot_plan(capability: str, live_status: dict[str, str], row_count: int) 
     note = live_status.get("notes", "").strip()
     if capability == "sam-contract-awards-action-history":
         if note:
-            return note
+            return report_status_note(note)
         if row_count > 0:
             return "SAM.gov Contract Awards rows are present, but the live status note is missing."
         return (
@@ -327,6 +330,14 @@ def snapshot_plan(capability: str, live_status: dict[str, str], row_count: int) 
     if row_count > 0:
         return "Active rows are present in the frozen snapshot."
     return "No active committed rows."
+
+
+def report_status_note(note: str) -> str:
+    return QUOTA_UNTIL_RE.sub(
+        lambda match: f"quota response recorded reset time {match.group(1).strip()}",
+        note,
+        count=1,
+    )
 
 
 def snapshot_row_count(path: Path, snapshot_format: str) -> int:

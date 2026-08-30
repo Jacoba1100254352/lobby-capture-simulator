@@ -75,14 +75,20 @@ cp "$ROOT_DIR/reports/procurement-modification-composition-audit.md" "$STAGING_D
 cp "$ROOT_DIR/reports/procurement-benchmark-crosswalk.md" "$STAGING_DIR/supporting-information/procurement-benchmark-crosswalk.md"
 cp "$ROOT_DIR/reports/procurement-refresh-readiness.md" "$STAGING_DIR/supporting-information/procurement-refresh-readiness.md"
 cp "$ROOT_DIR/reports/first-wave-procurement-source-acquisition.md" "$STAGING_DIR/supporting-information/first-wave-procurement-source-acquisition.md"
+cp "$ROOT_DIR/reports/procurement-causal-upgrade-packet.md" "$STAGING_DIR/supporting-information/procurement-causal-upgrade-packet.md"
+cp "$ROOT_DIR/reports/substitution-causal-upgrade-packet.md" "$STAGING_DIR/supporting-information/substitution-causal-upgrade-packet.md"
+cp "$ROOT_DIR/reports/comment-causal-upgrade-packet.md" "$STAGING_DIR/supporting-information/comment-causal-upgrade-packet.md"
+cp "$ROOT_DIR/reports/venue-causal-upgrade-packet.md" "$STAGING_DIR/supporting-information/venue-causal-upgrade-packet.md"
 cp "$ROOT_DIR/reports/claim-boundary-audit.md" "$STAGING_DIR/supporting-information/claim-boundary-audit.md"
 cp "$ROOT_DIR/reports/claim-source-dependency.md" "$STAGING_DIR/supporting-information/claim-source-dependency.md"
 cp "$ROOT_DIR/reports/causal-calibration-targets.md" "$STAGING_DIR/supporting-information/causal-calibration-targets.md"
 cp "$ROOT_DIR/reports/first-wave-causal-protocols.md" "$STAGING_DIR/supporting-information/first-wave-causal-protocols.md"
 cp "$ROOT_DIR/reports/first-wave-source-products.md" "$STAGING_DIR/supporting-information/first-wave-source-products.md"
 cp "$ROOT_DIR/reports/first-wave-linkage-candidates.md" "$STAGING_DIR/supporting-information/first-wave-linkage-candidates.md"
+cp "$ROOT_DIR/reports/first-wave-cross-venue-adjudication.md" "$STAGING_DIR/supporting-information/first-wave-cross-venue-adjudication.md"
 cp "$ROOT_DIR/reports/first-wave-source-readiness.md" "$STAGING_DIR/supporting-information/first-wave-source-readiness.md"
 cp "$ROOT_DIR/reports/candidate-source-leakage-audit.md" "$STAGING_DIR/supporting-information/candidate-source-leakage-audit.md"
+cp "$ROOT_DIR/reports/first-wave-manual-adjudication-plan.md" "$STAGING_DIR/supporting-information/first-wave-manual-adjudication-plan.md"
 cp "$ROOT_DIR/reports/claim-posture-audit.md" "$STAGING_DIR/supporting-information/claim-posture-audit.md"
 cp "$ROOT_DIR/reports/validation-summary.md" "$STAGING_DIR/supporting-information/validation-summary.md"
 cp "$ROOT_DIR/reports/validation-scope-coverage.md" "$STAGING_DIR/supporting-information/validation-scope-coverage.md"
@@ -108,6 +114,7 @@ mkdir -p "$STAGING_DIR/supporting-information/source-products/first-wave"
 for source_product in \
   actor-issue-time-spine.csv \
   substitution-comparison-groups.csv \
+  substitution-estimation-panel.csv \
   sam-fpds-action-history-crosswalk.csv \
   gao-protest-overlay.csv \
   sam-exclusion-overlay.csv \
@@ -128,7 +135,7 @@ do
   fi
 done
 mkdir -p "$STAGING_DIR/supporting-information/report-data"
-for report_artifact in "$ROOT_DIR"/reports/*.csv "$ROOT_DIR"/reports/*.md "$ROOT_DIR"/reports/*.manifest.json; do
+for report_artifact in "$ROOT_DIR"/reports/*.csv "$ROOT_DIR"/reports/*.md "$ROOT_DIR"/reports/*.manifest.json "$ROOT_DIR"/reports/*.svg; do
   if [ -e "$report_artifact" ]; then
     case "$(basename "$report_artifact")" in
       archive-handoff-manifest.*) continue ;;
@@ -136,6 +143,8 @@ for report_artifact in "$ROOT_DIR"/reports/*.csv "$ROOT_DIR"/reports/*.md "$ROOT
       zenodo-deposit-preflight.*) continue ;;
       wiley-submission-form-readiness.*) continue ;;
       reggov-guidelines-readiness.*) continue ;;
+      blinded-review-package-readiness.*) continue ;;
+      mechanism-review-circulation-readiness.*) continue ;;
       external-finalization-checklist.*) continue ;;
       final-readthrough-evidence.*) continue ;;
       github-ci-status-audit.*) continue ;;

@@ -96,6 +96,14 @@ SOURCE_SPECS = (
         id_columns=("ein",),
     ),
     SourceSpec(
+        "oira-meetings.csv",
+        "Reginfo.gov EO 12866 meetings",
+        "access_meetings",
+        ("requestorOrganization", "requestorClient"),
+        issue_column="ruleTitle",
+        id_columns=("meetingId", "rin"),
+    ),
+    SourceSpec(
         "public-financing.csv",
         "Public financing",
         "countervailing_finance",
@@ -183,7 +191,7 @@ def iter_candidate_records(snapshot: Path) -> list[dict[str, str]]:
                             "sourceFile": spec.filename,
                             "sourceColumn": column,
                             "sourceRecordId": source_record_id(row, spec, index),
-                            "issueDomain": row.get(spec.issue_column, ""),
+                            "issueDomain": issue_domain(row, spec),
                             "activityAmount": format_float(first_numeric(row, spec.amount_columns)),
                             "matchRule": "normalized-name-exact",
                             "candidateOnly": "true",
@@ -582,6 +590,28 @@ def clean_display_name(value: str) -> str:
 def source_record_id(row: dict[str, str], spec: SourceSpec, index: int) -> str:
     values = [row.get(column, "").strip() for column in spec.id_columns if row.get(column, "").strip()]
     return "|".join(values) if values else f"row-{index}"
+
+
+def issue_domain(row: dict[str, str], spec: SourceSpec) -> str:
+    value = row.get(spec.issue_column, "")
+    if spec.source_system == "Reginfo.gov EO 12866 meetings":
+        return broad_issue_domain(value)
+    return value
+
+
+def broad_issue_domain(value: str) -> str:
+    text = value.lower()
+    rules = {
+        "energy": ("energy", "oil", "gas", "electric", "climate", "environment", "environmental", "epa"),
+        "technology": ("technology", "data", "privacy", "internet", "software", "telecom", "cyber", "ai"),
+        "finance": ("finance", "bank", "securities", "capital", "insurance", "tax", "credit"),
+        "procurement": ("procurement", "contract", "acquisition", "federal services"),
+        "democracy": ("election", "campaign", "disclosure", "ethics", "voting", "democracy"),
+    }
+    for domain, keywords in rules.items():
+        if any(keyword in text for keyword in keywords):
+            return domain
+    return "democracy"
 
 
 def first_numeric(row: dict[str, str], columns: tuple[str, ...]) -> float:

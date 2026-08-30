@@ -5,10 +5,10 @@ This audit explains validation rows marked `not_applicable`. These rows are expe
 ## Summary
 
 - Validation rows: `358`
-- Fit rows: `337`
+- Fit rows: `336`
 - Not-applicable validations: `21`
-- Covered elsewhere: `21`
-- Partial elsewhere: `0`
+- Covered elsewhere: `16`
+- Partial elsewhere: `5`
 - Coverage gaps: `0`
 
 ## Scope Matrix
@@ -31,8 +31,8 @@ This audit explains validation rows marked `not_applicable`. These rows are expe
 | lobby-capture-mechanism-comparison.csv | parameter-map:shadow_lobbying_share | `hiddenInfluenceShare` | shadow-lobbying stress scenarios | proxy/implemented | covered_elsewhere | lobby-capture-campaign.csv | No publication-blocking action; this report lacks the scoped scenario family, while the same benchmark is covered elsewhere. |
 | lobby-capture-portfolio.csv | parameter-map:shadow_lobbying_share | `hiddenInfluenceShare` | shadow-lobbying stress scenarios | proxy/implemented | covered_elsewhere | lobby-capture-campaign.csv | No publication-blocking action; this report lacks the scoped scenario family, while the same benchmark is covered elsewhere. |
 | lobby-capture-sensitivity.csv | parameter-map:shadow_lobbying_share | `hiddenInfluenceShare` | shadow-lobbying stress scenarios | proxy/implemented | covered_elsewhere | lobby-capture-campaign.csv | No publication-blocking action; this report lacks the scoped scenario family, while the same benchmark is covered elsewhere. |
-| lobby-capture-ablation.csv | parameter-map:super_pac_large_donor_dependence | `largeDonorDependence` | campaign-finance and outside-spending scenarios | observed/implemented | covered_elsewhere | lobby-capture-campaign.csv | No publication-blocking action; this report lacks the scoped scenario family, while the same benchmark is covered elsewhere. |
-| lobby-capture-interactions.csv | parameter-map:super_pac_large_donor_dependence | `largeDonorDependence` | campaign-finance and outside-spending scenarios | observed/implemented | covered_elsewhere | lobby-capture-campaign.csv | No publication-blocking action; this report lacks the scoped scenario family, while the same benchmark is covered elsewhere. |
-| lobby-capture-mechanism-comparison.csv | parameter-map:super_pac_large_donor_dependence | `largeDonorDependence` | campaign-finance and outside-spending scenarios | observed/implemented | covered_elsewhere | lobby-capture-campaign.csv | No publication-blocking action; this report lacks the scoped scenario family, while the same benchmark is covered elsewhere. |
-| lobby-capture-portfolio.csv | parameter-map:super_pac_large_donor_dependence | `largeDonorDependence` | campaign-finance and outside-spending scenarios | observed/implemented | covered_elsewhere | lobby-capture-campaign.csv | No publication-blocking action; this report lacks the scoped scenario family, while the same benchmark is covered elsewhere. |
-| lobby-capture-sensitivity.csv | parameter-map:super_pac_large_donor_dependence | `largeDonorDependence` | campaign-finance and outside-spending scenarios | observed/implemented | covered_elsewhere | lobby-capture-campaign.csv | No publication-blocking action; this report lacks the scoped scenario family, while the same benchmark is covered elsewhere. |
+| lobby-capture-ablation.csv | parameter-map:super_pac_large_donor_dependence | `largeDonorDependence` | campaign-finance and outside-spending scenarios | observed/implemented | partial_elsewhere | lobby-capture-campaign.csv | Review benchmark scope before treating the partial coverage as calibration support. |
+| lobby-capture-interactions.csv | parameter-map:super_pac_large_donor_dependence | `largeDonorDependence` | campaign-finance and outside-spending scenarios | observed/implemented | partial_elsewhere | lobby-capture-campaign.csv | Review benchmark scope before treating the partial coverage as calibration support. |
+| lobby-capture-mechanism-comparison.csv | parameter-map:super_pac_large_donor_dependence | `largeDonorDependence` | campaign-finance and outside-spending scenarios | observed/implemented | partial_elsewhere | lobby-capture-campaign.csv | Review benchmark scope before treating the partial coverage as calibration support. |
+| lobby-capture-portfolio.csv | parameter-map:super_pac_large_donor_dependence | `largeDonorDependence` | campaign-finance and outside-spending scenarios | observed/implemented | partial_elsewhere | lobby-capture-campaign.csv | Review benchmark scope before treating the partial coverage as calibration support. |
+| lobby-capture-sensitivity.csv | parameter-map:super_pac_large_donor_dependence | `largeDonorDependence` | campaign-finance and outside-spending scenarios | observed/implemented | partial_elsewhere | lobby-capture-campaign.csv | Review benchmark scope before treating the partial coverage as calibration support. |

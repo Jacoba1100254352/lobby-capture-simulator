@@ -4,7 +4,19 @@
 from __future__ import annotations
 
 import csv
+import sys
 from pathlib import Path
+
+SCRIPT_DIR = Path(__file__).resolve().parent
+if str(SCRIPT_DIR) not in sys.path:
+    sys.path.insert(0, str(SCRIPT_DIR))
+
+from paper_release_metadata import (
+    RELEASE_METADATA_FIELDS,
+    metadata_summary_lines,
+    release_metadata,
+    with_release_metadata,
+)
 
 
 REPORTS = Path("reports")
@@ -39,10 +51,10 @@ PROTOCOLS = {
         "minimumSources": "SAM.gov Contract Awards or FPDS action history, USAspending transaction rows, GAO protest rows, SAM exclusions, agency firewall records, and LDA client/issue rows",
         "falsificationChecks": "pre-award placebo modifications, low-discretion award classes, agencies without plausible exposure, and non-policy issue placebo links",
         "sensitivityChecks": "row-weighted, distinct-award, and amount-weighted denominators; agency fixed effects; competition-field completeness thresholds",
-        "threatModel": "procurement coding inconsistency, unobserved contract complexity, reverse causality from troubled awards to lobbying, and missing protest/firewall data",
+        "threatModel": "procurement coding inconsistency, unobserved contract complexity, reverse causality from troubled awards to lobbying, and missing protest, exclusion, offer-count, and broader firewall data",
         "claimUpgradeBoundary": "Can strengthen procurement-domain capture-adjacent diagnostics; cannot justify broad calibrated capture effects without exposure timing and outcome linkage.",
-        "committedScaffold": "USAspending action and bulk denominators, optional SAM importer, and acquisition plan for SAM/FPDS, protests, exclusions, and firewalls.",
-        "firstPromotionGate": "Acquire a promotable SAM/FPDS action-history crosswalk and add GAO protest, SAM exclusion, offer-count, and firewall overlays.",
+        "committedScaffold": "USAspending action and bulk denominators, optional SAM importer, a bounded EPAAR procurement-firewall control row, and acquisition plan for SAM/FPDS, protests, exclusions, offer-count rows, and broader firewalls.",
+        "firstPromotionGate": "Acquire a promotable SAM/FPDS action-history crosswalk and add GAO protest, SAM exclusion, offer-count, and broader firewall overlays beyond the bounded EPAAR control row.",
         "whyItMatters": "Turns procurement from denominator-mapped diagnostics into an outcome panel with timing, integrity controls, and exposure linkage.",
     },
     "comment-authenticity-and-uptake-effect": {
@@ -95,7 +107,7 @@ PAPER_SUMMARIES = {
         "design": "Matched award/action panel with agency, award-type, size, timing, and competition controls.",
         "validity": "Low-discretion placebo awards, agency fixed effects, and row/award/amount denominators.",
         "scaffold": "USAspending denominators plus optional SAM importer.",
-        "promotion": "Promote SAM/FPDS crosswalk, protest, exclusion, offer-count, and firewall overlays.",
+        "promotion": "Promote SAM/FPDS crosswalk, protest, exclusion, offer-count, and broader firewall overlays beyond the bounded EPAAR control row.",
         "claim": "Procurement-domain capture-adjacent diagnostic.",
     },
     "comment-authenticity-and-uptake-effect": {
@@ -121,11 +133,12 @@ PAPER_SUMMARIES = {
 
 def main() -> int:
     target_rows = read_csv(CAUSAL_TARGETS)
-    protocols = protocol_rows(target_rows)
+    metadata = release_metadata()
+    protocols = with_release_metadata(protocol_rows(target_rows), metadata)
     REPORTS.mkdir(parents=True, exist_ok=True)
     PAPER_TABLES.mkdir(parents=True, exist_ok=True)
     write_csv(REPORTS / "first-wave-causal-protocols.csv", protocols)
-    write_markdown(REPORTS / "first-wave-causal-protocols.md", protocols)
+    write_markdown(REPORTS / "first-wave-causal-protocols.md", protocols, metadata)
     write_latex(PAPER_TABLES / "first_wave_causal_protocols.tex", protocols)
     print("Wrote reports/first-wave-causal-protocols.csv")
     print("Wrote reports/first-wave-causal-protocols.md")
@@ -164,6 +177,7 @@ def protocol_rows(target_rows: list[dict[str, str]]) -> list[dict[str, str]]:
 
 def write_csv(path: Path, rows: list[dict[str, str]]) -> None:
     fieldnames = [
+        *RELEASE_METADATA_FIELDS,
         "targetKey",
         "priority",
         "status",
@@ -190,7 +204,7 @@ def write_csv(path: Path, rows: list[dict[str, str]]) -> None:
         writer.writerows(rows)
 
 
-def write_markdown(path: Path, rows: list[dict[str, str]]) -> None:
+def write_markdown(path: Path, rows: list[dict[str, str]], metadata: dict[str, str]) -> None:
     lines = [
         "# First-Wave Causal Protocols",
         "",
@@ -198,6 +212,7 @@ def write_markdown(path: Path, rows: list[dict[str, str]]) -> None:
         "",
         "## Summary",
         "",
+        *metadata_summary_lines(metadata),
         f"- Protocols: `{len(rows)}`",
         f"- Protocol-ready/source-pending rows: `{sum(1 for row in rows if row['protocolStatus'] == 'protocol_ready_source_pending')}`",
         "- Policy-simulation status: `not_cleared`",

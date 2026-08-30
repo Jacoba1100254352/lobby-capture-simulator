@@ -5,7 +5,19 @@ from __future__ import annotations
 
 import argparse
 import csv
+import sys
 from pathlib import Path
+
+SCRIPT_DIR = Path(__file__).resolve().parent
+if str(SCRIPT_DIR) not in sys.path:
+    sys.path.insert(0, str(SCRIPT_DIR))
+
+from paper_release_metadata import (
+    RELEASE_METADATA_FIELDS,
+    metadata_summary_lines,
+    release_metadata,
+    with_release_metadata,
+)
 
 
 REPORTS = Path("reports")
@@ -17,6 +29,7 @@ SOURCE_MOMENTS = REPORTS / "source-moments.csv"
 PROCUREMENT_REFRESH = REPORTS / "procurement-refresh-readiness.csv"
 SOURCE_PRODUCTS = REPORTS / "first-wave-source-products.csv"
 LINKAGE_CANDIDATES = REPORTS / "first-wave-linkage-candidates.csv"
+CROSS_VENUE_ADJUDICATION = REPORTS / "first-wave-cross-venue-adjudication.csv"
 
 
 TARGET_ORDER = [
@@ -40,16 +53,18 @@ def main() -> int:
     procurement = keyed_rows(args.reports / PROCUREMENT_REFRESH.name, "item")
     products = product_rows(args.reports / SOURCE_PRODUCTS.name)
     linkage = linkage_candidate_summary(args.reports / LINKAGE_CANDIDATES.name)
+    adjudication = cross_venue_adjudication_summary(args.reports / CROSS_VENUE_ADJUDICATION.name)
 
-    rows = [
-        readiness_row(target, protocols, capabilities, panels, moments, procurement, products, linkage)
+    metadata = release_metadata()
+    rows = with_release_metadata([
+        readiness_row(target, protocols, capabilities, panels, moments, procurement, products, linkage, adjudication)
         for target in TARGET_ORDER
         if target in protocols
-    ]
+    ], metadata)
     args.reports.mkdir(parents=True, exist_ok=True)
     args.paper_tables.mkdir(parents=True, exist_ok=True)
     write_csv(args.reports / "first-wave-source-readiness.csv", rows)
-    write_markdown(args.reports / "first-wave-source-readiness.md", rows)
+    write_markdown(args.reports / "first-wave-source-readiness.md", rows, metadata)
     write_latex_table(args.paper_tables / "first_wave_source_readiness.tex", rows)
     print(f"Wrote {args.reports / 'first-wave-source-readiness.csv'}")
     print(f"Wrote {args.reports / 'first-wave-source-readiness.md'}")
@@ -62,6 +77,13 @@ def keyed_rows(path: Path, key: str) -> dict[str, dict[str, str]]:
         return {}
     with path.open(newline="", encoding="utf-8") as source:
         return {row.get(key, ""): row for row in csv.DictReader(source)}
+
+
+def read_csv(path: Path) -> list[dict[str, str]]:
+    if not path.exists():
+        return []
+    with path.open(newline="", encoding="utf-8") as source:
+        return list(csv.DictReader(source))
 
 
 def source_moments(path: Path) -> dict[str, dict[str, str]]:
@@ -101,6 +123,7 @@ def readiness_row(
     procurement: dict[str, dict[str, str]],
     products: dict[str, list[dict[str, str]]],
     linkage: dict[str, str],
+    adjudication: dict[str, str],
 ) -> dict[str, str]:
     builders = {
         "substitution-elasticity": substitution_row,
@@ -108,11 +131,16 @@ def readiness_row(
         "comment-authenticity-and-uptake-effect": comment_row,
         "venue-shifting-detection-effect": venue_row,
     }
-    row = builders[target](capabilities, panels, moments, procurement, linkage)
+    row = builders[target](capabilities, panels, moments, procurement, linkage, adjudication)
     protocol = protocols[target]
     target_products = products.get(target, [])
     product_gate = product_gate_summary(target_products)
     ready_labels = ready_product_labels(target_products)
+    row["sourceReadiness"] = product_aware_source_readiness(
+        target,
+        row["sourceReadiness"],
+        product_gate,
+    )
     if ready_labels:
         row["currentSourceProducts"] = append_text(
             row["currentSourceProducts"],
@@ -186,6 +214,7 @@ def product_gate_summary(rows: list[dict[str, str]]) -> dict[str, str]:
         "missingProducts": product_labels(missing),
         "candidateOnlyProducts": product_labels(candidate_unreviewed),
         "schemaIssueProducts": product_labels(schema_issues),
+        "schemaIssueDetails": product_issue_details(schema_issues),
         "blockingProducts": product_labels(missing + candidate_unreviewed + schema_issues),
     }
 
@@ -207,6 +236,32 @@ def ready_product_labels(rows: list[dict[str, str]]) -> list[str]:
     ]
 
 
+def product_issue_details(rows: list[dict[str, str]]) -> str:
+    details = []
+    for row in rows:
+        issue_text = row.get("semanticIssues") or row.get("validationNotes") or row.get("productStatus", "")
+        details.append(f"{row.get('productLabel', row.get('productKey', ''))}: {issue_text}")
+    return "; ".join(details)
+
+
+def product_aware_source_readiness(
+    target: str,
+    default: str,
+    product_gate: dict[str, str],
+) -> str:
+    if (
+        target == "substitution-elasticity"
+        and product_gate.get("sourceProductGate") == "schema_gate_ready"
+    ):
+        return "source_products_ready_substitution_design_only"
+    if (
+        target == "venue-shifting-detection-effect"
+        and product_gate.get("sourceProductGate") == "schema_gate_ready"
+    ):
+        return "source_products_ready_detection_design_only"
+    return default
+
+
 def append_text(base: str, addition: str) -> str:
     if not base:
         return addition
@@ -226,7 +281,9 @@ def product_aware_next_action(
         return (
             "Manually adjudicate the candidate actor-issue-time spine and comparison groups, "
             "verify aliases and issue comparability, and replace candidate exposure labels with reviewed "
-            "treated and comparison assignments before inspecting outcome movement."
+            "treated and comparison assignments before inspecting outcome movement. Use the reviewed "
+            "cross-venue adjudication ledger as the source-backed first slice, but do not estimate "
+            "substitution until the full source-product gates clear."
         )
     if target == "comment-authenticity-and-uptake-effect" and product_gate.get("sourceProductGate") == "candidate_only_blocked":
         return (
@@ -235,10 +292,60 @@ def product_aware_next_action(
             "and final-rule text, and estimate uptake only after reviewed uptake coding."
         )
     if target == "procurement-modification-causal-capture" and product_gate.get("sourceProductGate") == "candidate_only_blocked":
+        candidate_products = product_gate.get("candidateOnlyProducts", "")
+        if "procurement firewall or integrity-control overlay" in ready:
+            return (
+                "Retain the reviewed procurement-firewall control row, then replace the remaining candidate "
+                f"procurement source-surface worklists ({candidate_products}) with reviewed source rows before "
+                "estimating procurement-modification capture or integrity effects."
+            )
         return (
             "Replace the candidate procurement source-surface worklists with reviewed SAM/FPDS action-history rows, "
             "GAO protest links, SAM exclusion rows, dated procurement-firewall controls, and source-system "
             "offer/competition enrichment before estimating procurement-modification capture or integrity effects."
+        )
+    if target == "substitution-elasticity" and product_gate.get("sourceProductGate") == "schema_gate_blocked":
+        details = product_gate.get("schemaIssueDetails", "").lower()
+        if (
+            "no comparison" in details
+            and "no observed actor-issue-time rows before" not in details
+            and "no reviewed exposed" not in details
+            and "no exposed or treated" not in details
+        ):
+            return (
+                "Use the reviewed exact-ID actor slice as source-backed linkage input, "
+                "including historical LDA pre/post treated rows, then add reviewed comparison or control "
+                "actors/issues/jurisdictions with matching pre/post source windows before "
+                "inspecting outcome movement."
+            )
+        return (
+            "Use the reviewed exact-ID actor slice as source-backed linkage input, then expand it to enough "
+            "venues and periods, adjudicate issue mappings, assign treated and comparison exposure groups, "
+            "and replace excluded pre/post rows with observed source windows before inspecting outcome movement."
+        )
+    if target == "substitution-elasticity" and product_gate.get("sourceProductGate") == "schema_gate_ready":
+        return (
+            "Use the source-ready HLOGA treated/control panel as an estimation-design input, "
+            "then run the pre-specified effect model, falsification checks, and sensitivity "
+            "checks before strengthening any causal substitution or calibrated policy claim."
+        )
+    if target == "venue-shifting-detection-effect" and product_gate.get("sourceProductGate") == "schema_gate_blocked":
+        if "issue-code crosswalk across venues" not in product_gate.get("schemaIssueProducts", ""):
+            return (
+                "Build from the reviewed exact-ID canonical actor, issue crosswalk, alias, "
+                "false-match, and linked-panel slice, then add enough reviewed actors and "
+                "reach the linked-panel row threshold before treating venue movement as estimable."
+            )
+        return (
+            "Build from the reviewed exact-ID canonical actor, alias, false-match, and linked-panel slice, "
+            "then add enough reviewed actors, complete source-taxonomy issue mappings, and reach the linked-panel "
+            "row threshold before treating venue movement as estimable."
+        )
+    if target == "venue-shifting-detection-effect" and product_gate.get("sourceProductGate") == "schema_gate_ready":
+        return (
+            "Use the reviewed exact-ID linked panel as a source-ready detection-design input, "
+            "then add a dated detection shock, outcome movement definition, and falsification checks "
+            "before estimating venue-shifting effects."
         )
     if target == "substitution-elasticity" and "named reform-shock event file" in ready:
         return (
@@ -268,7 +375,9 @@ def product_aware_blocking_issue(
     if target == "substitution-elasticity" and product_gate.get("sourceProductGate") == "candidate_only_blocked":
         return (
             "Candidate actor-issue-time and comparison-group files are committed, but aliases, issue "
-            "comparability, exposure groups, and pre/post windows are not manually adjudicated."
+            "comparability, exposure groups, and pre/post windows are not manually adjudicated. "
+            "The reviewed cross-venue adjudication slice records source-backed identifier matches, "
+            "but it is below the linked-panel threshold and does not clear observed pre/post comparison requirements."
         )
     if target == "comment-authenticity-and-uptake-effect" and product_gate.get("sourceProductGate") == "candidate_only_blocked":
         return (
@@ -276,9 +385,60 @@ def product_aware_blocking_issue(
             "final-rule movement, and uptake coding are not manually adjudicated."
         )
     if target == "procurement-modification-causal-capture" and product_gate.get("sourceProductGate") == "candidate_only_blocked":
+        candidate_products = product_gate.get("candidateOnlyProducts", "")
+        if "procurement firewall or integrity-control overlay" in ready:
+            return (
+                "A bounded procurement-firewall control row is reviewed, but the remaining candidate procurement "
+                f"source-surface worklists ({candidate_products}) are not reviewed source rows and cannot support estimation."
+            )
         return (
             "Candidate procurement source-surface worklists are committed for SAM/FPDS, GAO protests, SAM exclusions, "
             "firewall controls, and offer/competition enrichment, but they are not reviewed source rows and cannot support estimation."
+        )
+    if target == "substitution-elasticity" and product_gate.get("sourceProductGate") == "schema_gate_blocked":
+        details = product_gate.get("schemaIssueDetails", "").lower()
+        if (
+            "no comparison" in details
+            and "no observed actor-issue-time rows before" not in details
+            and "no reviewed exposed" not in details
+            and "no exposed or treated" not in details
+        ):
+            return (
+                "The actor-issue-time and comparison-group products now contain reviewed exact-ID "
+                "source rows plus observed HLOGA pre/post visible-lobbying rows for treated LDA "
+                "clients, but they still lack reviewed comparison or control exposure assignments. "
+                "That remaining semantic gate blocks estimation."
+            )
+        return (
+            "The actor-issue-time and comparison-group products now contain reviewed exact-ID source rows, "
+            "but they still lack observed pre/post outcome periods and treated plus comparison exposure assignments. "
+            "Those schema and semantic gates block estimation."
+        )
+    if target == "substitution-elasticity" and product_gate.get("sourceProductGate") == "schema_gate_ready":
+        return (
+            "The required substitution source products now clear schema and semantic gates "
+            "with reviewed exact-ID source rows, observed HLOGA pre/post visible-lobbying "
+            "treated rows, and Colorado state-lobbying unaffected-jurisdiction control rows. "
+            "The policy claim remains bounded until an effect estimate, falsification checks, "
+            "and sensitivity checks are run and reviewed."
+        )
+    if target == "venue-shifting-detection-effect" and product_gate.get("sourceProductGate") == "schema_gate_blocked":
+        if "issue-code crosswalk across venues" not in product_gate.get("schemaIssueProducts", ""):
+            return (
+                "The entity-resolution products now include a reviewed exact-ID slice and a reviewed "
+                "issue-taxonomy crosswalk, but canonical actor coverage and linked actor-issue-venue-time "
+                "row counts remain below the promotion gate."
+            )
+        return (
+            "The entity-resolution products now include a reviewed exact-ID slice, but canonical actor coverage, "
+            "source-taxonomy issue mappings, and linked actor-issue-venue-time row counts remain below the "
+            "promotion gate."
+        )
+    if target == "venue-shifting-detection-effect" and product_gate.get("sourceProductGate") == "schema_gate_ready":
+        return (
+            "The reviewed exact-ID entity-resolution source products now clear schema and row-count gates, "
+            "but they remain a linkage and detection-design panel. Estimation still requires a dated "
+            "venue-shifting or detection shock, observed outcome movement, and falsification checks."
         )
     if target == "comment-authenticity-and-uptake-effect" and {
         "comment-body corpus",
@@ -342,29 +502,81 @@ def linkage_candidate_summary(path: Path) -> dict[str, str]:
     }
 
 
+def cross_venue_adjudication_summary(path: Path) -> dict[str, str]:
+    if not path.exists():
+        return {
+            "acceptedActors": "0",
+            "acceptedRecords": "0",
+            "acceptedVenues": "0",
+            "heldActors": "0",
+            "rejectedActors": "0",
+            "currentText": "reviewed cross-venue adjudication slice=missing",
+            "boundaryText": "first-wave cross-venue adjudication: missing",
+        }
+    rows = []
+    with path.open(newline="", encoding="utf-8") as source:
+        rows = list(csv.DictReader(source))
+    accepted = [row for row in rows if row.get("promotedToReviewedPanel") == "yes"]
+    held = [row for row in rows if int_or_zero(row.get("heldRecordCount", "")) > 0]
+    rejected = [row for row in rows if int_or_zero(row.get("rejectedRecordCount", "")) > 0]
+    accepted_records = sum(int_or_zero(row.get("reviewedRecordCount", "")) for row in accepted)
+    venues: set[str] = set()
+    source_systems: set[str] = set()
+    for row in accepted:
+        venues.update(split_semicolon(row.get("reviewedVenues", "")))
+        source_systems.update(split_semicolon(row.get("sourceSystems", "")))
+    current_text = (
+        "reviewed cross-venue adjudication slice="
+        f"acceptedActors={len(accepted)}; acceptedRecords={accepted_records}; "
+        f"acceptedVenues={len(venues)}; acceptedSourceSystems={len(source_systems)}; "
+        f"heldActors={len(held)}; rejectedActors={len(rejected)}"
+    )
+    boundary_text = (
+        "first-wave cross-venue adjudication: partial reviewed slice not estimation-ready "
+        f"({len(accepted)} accepted actors; {accepted_records} accepted records; "
+        f"{len(venues)} venues; substitution source-product readiness reported separately)"
+    )
+    return {
+        "acceptedActors": str(len(accepted)),
+        "acceptedRecords": str(accepted_records),
+        "acceptedVenues": str(len(venues)),
+        "heldActors": str(len(held)),
+        "rejectedActors": str(len(rejected)),
+        "currentText": current_text,
+        "boundaryText": boundary_text,
+    }
+
+
 def substitution_row(
     capabilities: dict[str, dict[str, str]],
     panels: dict[str, dict[str, str]],
     moments: dict[str, dict[str, str]],
     procurement: dict[str, dict[str, str]],
     linkage: dict[str, str],
+    adjudication: dict[str, str],
 ) -> dict[str, str]:
+    historical_lda = historical_lda_panel_text()
+    state_controls = state_lobbying_control_panel_text()
     return {
         "sourceReadiness": "partial_source_support_not_estimation_ready",
         "currentSourceProducts": "; ".join([
             metric_text(moments, "ldaRows", "LDA visible-lobbying rows"),
+            historical_lda,
+            state_controls,
             metric_text(moments, "outsideSpendingRows", "OpenFEC outside-spending rows"),
             metric_text(moments, "electoralCommunicationRows", "OpenFEC electoral-communication rows"),
             metric_text(moments, "regulatoryRows", "Regulations.gov/Federal Register rows"),
             metric_text(moments, "procurementActionRows", "USAspending action rows"),
             metric_text(moments, "intermediaryRows", "intermediary rows"),
             linkage["sourceText"],
-        ]),
+            adjudication["currentText"],
+        ]).replace("; ;", "; "),
         "boundedOrProxySupport": "; ".join([
             panel_text(panels, "Direct dark money"),
             panel_text(panels, "Intermediaries"),
             panel_text(panels, "Revolving door"),
             linkage["boundaryText"],
+            adjudication["boundaryText"],
         ]),
         "missingSourceProducts": "; ".join([
             "named reform-shock event file",
@@ -378,12 +590,43 @@ def substitution_row(
     }
 
 
+def historical_lda_panel_text() -> str:
+    path = REPORTS / "substitution-historical-lda-panel.csv"
+    if not path.exists():
+        return "historical LDA treated panel=not run"
+    rows = read_csv(path)
+    prepost_actors = sum(1 for row in rows if row.get("status") == "prepost_source_rows")
+    panel_rows = sum(int_or_zero(row.get("panelRows", "")) for row in rows)
+    pre_rows = sum(int_or_zero(row.get("preRows", "")) for row in rows)
+    post_rows = sum(int_or_zero(row.get("postRows", "")) for row in rows)
+    return (
+        "historical LDA treated panel="
+        f"prepostActors={prepost_actors}; rows={panel_rows}; preRows={pre_rows}; postRows={post_rows}"
+    )
+
+
+def state_lobbying_control_panel_text() -> str:
+    path = REPORTS / "substitution-state-lobbying-control-panel.csv"
+    if not path.exists():
+        return "state-lobbying control panel=not run"
+    rows = read_csv(path)
+    prepost_controls = sum(1 for row in rows if row.get("status") == "prepost_control_source_rows")
+    panel_rows = sum(int_or_zero(row.get("sourceRows", "")) for row in rows)
+    pre_rows = sum(int_or_zero(row.get("preRows", "")) for row in rows)
+    post_rows = sum(int_or_zero(row.get("postRows", "")) for row in rows)
+    return (
+        "Colorado state-lobbying control panel="
+        f"prepostControls={prepost_controls}; rows={panel_rows}; preRows={pre_rows}; postRows={post_rows}"
+    )
+
+
 def procurement_row(
     capabilities: dict[str, dict[str, str]],
     panels: dict[str, dict[str, str]],
     moments: dict[str, dict[str, str]],
     procurement: dict[str, dict[str, str]],
     linkage: dict[str, str],
+    adjudication: dict[str, str],
 ) -> dict[str, str]:
     sam_capability = capabilities.get("sam-contract-awards-action-history", {})
     representative_sam = procurement.get("representative-sam-fpds-action-history", {})
@@ -419,6 +662,7 @@ def comment_row(
     moments: dict[str, dict[str, str]],
     procurement: dict[str, dict[str, str]],
     linkage: dict[str, str],
+    adjudication: dict[str, str],
 ) -> dict[str, str]:
     return {
         "sourceReadiness": "partial_source_support_not_estimation_ready",
@@ -452,6 +696,7 @@ def venue_row(
     moments: dict[str, dict[str, str]],
     procurement: dict[str, dict[str, str]],
     linkage: dict[str, str],
+    adjudication: dict[str, str],
 ) -> dict[str, str]:
     return {
         "sourceReadiness": "partial_identifier_support_not_linkage_ready",
@@ -463,12 +708,14 @@ def venue_row(
             metric_text(moments, "intermediaryRows", "intermediary rows"),
             metric_text(moments, "revolvingDoorRows", "revolving-door proxy rows"),
             linkage["sourceText"],
+            adjudication["currentText"],
         ]),
         "boundedOrProxySupport": "; ".join([
             panel_text(panels, "Direct dark money"),
             panel_text(panels, "Intermediaries"),
             panel_text(panels, "Revolving door"),
             linkage["boundaryText"],
+            adjudication["boundaryText"],
         ]),
         "missingSourceProducts": "; ".join([
             "canonical actor identifier table",
@@ -477,7 +724,7 @@ def venue_row(
             "false-positive and false-negative review log",
             "linked actor-issue-venue-time output table",
         ]),
-        "blockingIssue": "Multiple public surfaces are present, but the committed snapshot lacks an audited entity-resolution spine.",
+        "blockingIssue": "Multiple public surfaces are present, and a reviewed cross-venue adjudication slice now records source-backed identifier matches, but the committed snapshot still lacks a fully audited entity-resolution spine.",
         "claimBoundary": "Can support a detection-measurement workplan; cannot prove venue shifting changed outcomes.",
         "nextAction": "Start from the candidate-only entity-resolution seed files, adjudicate aliases linking LDA clients, FEC spenders, docket submitters, vendors, intermediaries, and access proxies, then audit false matches before promoting the panel.",
     }
@@ -539,6 +786,7 @@ def format_number(value: str) -> str:
 
 def write_csv(path: Path, rows: list[dict[str, str]]) -> None:
     fieldnames = [
+        *RELEASE_METADATA_FIELDS,
         "targetKey",
         "protocolStatus",
         "sourceReadiness",
@@ -561,7 +809,7 @@ def write_csv(path: Path, rows: list[dict[str, str]]) -> None:
         writer.writerows(rows)
 
 
-def write_markdown(path: Path, rows: list[dict[str, str]]) -> None:
+def write_markdown(path: Path, rows: list[dict[str, str]], metadata: dict[str, str]) -> None:
     ready = [row for row in rows if row["sourceReadiness"] == "ready_to_estimate"]
     blocked = [row for row in rows if row["sourceReadiness"].startswith("blocked")]
     partial = [row for row in rows if row not in ready and row not in blocked]
@@ -572,6 +820,7 @@ def write_markdown(path: Path, rows: list[dict[str, str]]) -> None:
         "",
         "## Summary",
         "",
+        *metadata_summary_lines(metadata),
         f"- Protocols audited: `{len(rows)}`",
         f"- Ready to estimate: `{len(ready)}`",
         f"- Partial source support: `{len(partial)}`",

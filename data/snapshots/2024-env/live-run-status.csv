@@ -12,7 +12,6 @@ fec-C00075820,ok,normalized rows appended
 fec-schedule-e,ok,normalized independent-expenditure rows appended
 fec-electoral-communications,ok,normalized electioneering and communication-cost rows appended
 public-financing,ok,NYC CFB public-financing rows; Seattle Democracy Voucher rows
-dark-money,ok,normalized IRS EO BMF opaque-capacity proxy rows written; ProPublica Nonprofit Explorer Schedule I nonprofit-routing rows appended
 regulations-gov,ok,normalized rows appended
 federal-register,ok,normalized rows appended
 usaspending,ok,normalized EPA award rows written
@@ -21,4 +20,5 @@ usaspending-procurement-national-actions,ok,normalized national-volume USAspendi
 sam-contract-awards,quota_blocked,SAM.gov quota blocked until 2026-Jun-20 00:00:00+0000 UTC; mode=1; format=json; filterCount=12; pageSize=100; maxPages=1; offsetPageStarts=0+10+50; fallback=USAspending action rows
 usaspending-procurement-actions,ok,normalized USAspending procurement action rows written after SAM fallback
 revolving-door,ok,derived normalized covered-position rows from LDA source
-intermediary,ok,NYC CFB intermediary rows; IRS EO BMF nonprofit/association capacity rows; IRS POFD Form 8872 527 rows
+dark-money,ok,"normalized expanded IRS EO BMF opaque-capacity proxy rows written for states DC,NY,CA,TX,VA,MD,IL,MA,FL; preserved existing public ProPublica/IRS Schedule I routing rows"
+intermediary,ok,"normalized expanded IRS EO BMF nonprofit/association capacity rows written for states DC,NY,CA,TX,VA,MD,IL,MA,FL; preserved existing NYC CFB intermediary and IRS POFD 527 rows"

@@ -4,8 +4,8 @@ This audit maps each empirical source panel to the manuscript claim boundary it 
 
 ## Validation Status Summary
 
-- Fit: `337`
-- Partial: `0`
+- Fit: `336`
+- Partial: `1`
 - Miss: `0`
 - Source gap: `0`
 - Unknown: `0`

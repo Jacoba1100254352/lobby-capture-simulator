@@ -11,6 +11,7 @@ from __future__ import annotations
 
 import argparse
 import csv
+from datetime import date, datetime, timezone
 import os
 import re
 from pathlib import Path
@@ -148,11 +149,12 @@ def readiness_rows(reports: Path, snapshot: Path, env_example: Path) -> list[dic
         {
             "item": "sam-live-status",
             "status": sam_status.get("status") or sam_capability.get("snapshotStatus") or "missing",
-            "evidence": sam_status.get("notes") or sam_capability.get("snapshotPlan") or "No SAM Contract Awards row is recorded in live-run-status.csv.",
-            "nextAction": (
-                f"Wait until {quota_reset} before rerunning SAM."
-                if quota_reset else
-                "Use SAM_CONTRACT_AWARDS_LIVE_CSV/SAM_CONTRACT_AWARDS_LIVE_URL for a downloaded export, or run make sam-contract-awards-preflight immediately before a keyed API snapshot."
+            "evidence": report_status_note(
+                sam_status.get("notes") or sam_capability.get("snapshotPlan") or "No SAM Contract Awards row is recorded in live-run-status.csv."
+            ),
+            "nextAction": sam_live_next_action(
+                sam_status.get("status") or sam_capability.get("snapshotStatus") or "missing",
+                quota_reset,
             ),
         },
         {
@@ -318,6 +320,53 @@ def next_access_time(notes: str) -> str:
     return next(group.strip() for group in match.groups() if group)
 
 
+def report_status_note(note: str) -> str:
+    return QUOTA_UNTIL_RE.sub(
+        lambda match: f"quota response recorded reset time {match.group(1).strip()}",
+        note,
+        count=1,
+    )
+
+
+def sam_live_next_action(status: str, quota_reset: str) -> str:
+    if status == "quota_blocked" and quota_reset:
+        reset = sam_quota_reset_state(quota_reset)
+        if reset["state"] == "elapsed":
+            return (
+                f"The recorded SAM.gov reset time ({quota_reset}) has elapsed; rerun "
+                "make sam-contract-awards-preflight or make sam-procurement-refresh now, "
+                "or configure a fresh downloaded SAM export before trying to promote SAM/FPDS rows."
+            )
+        if reset["state"] == "same_day":
+            return (
+                f"Confirm the recorded SAM.gov reset time ({quota_reset}) has passed, then rerun "
+                "make sam-contract-awards-preflight or make sam-procurement-refresh, or configure "
+                "a fresh downloaded SAM export before trying to promote SAM/FPDS rows."
+            )
+        if reset["state"] == "future":
+            return (
+                f"Wait until the recorded SAM.gov reset time ({quota_reset}), or configure a fresh "
+                "downloaded SAM export before trying to promote SAM/FPDS rows."
+            )
+        return (
+            f"Respect the recorded SAM.gov reset time ({quota_reset}); rerun "
+            "make sam-contract-awards-preflight before any keyed refresh, or configure a fresh "
+            "downloaded SAM export before trying to promote SAM/FPDS rows."
+        )
+    if status == "quota_blocked":
+        return (
+            "Resolve the current SAM.gov quota response with a fresh preflight or use "
+            "SAM_CONTRACT_AWARDS_LIVE_CSV/SAM_CONTRACT_AWARDS_LIVE_URL for a downloaded export "
+            "before trying to promote SAM/FPDS rows."
+        )
+    if status == "ok":
+        return "Keep the promoted SAM/FPDS snapshot rows synchronized with paper-artifacts-check after any source refresh."
+    return (
+        "Use SAM_CONTRACT_AWARDS_LIVE_CSV/SAM_CONTRACT_AWARDS_LIVE_URL for a downloaded export, "
+        "or run make sam-contract-awards-preflight immediately before a keyed API snapshot."
+    )
+
+
 def int_value(value: object) -> int:
     try:
         return int(float(str(value or "0").replace(",", "")))
@@ -358,6 +407,65 @@ def representative_sam_evidence(row: dict[str, str], fallback_rows: int) -> str:
 
 def generated_at() -> str:
     return os.environ.get("LOBBY_CAPTURE_REPORT_TIMESTAMP", "tracked-artifact-build")
+
+
+def sam_quota_reset_state(next_access: str) -> dict[str, str]:
+    if not next_access.strip():
+        return {"state": "unknown", "parsed": ""}
+    parsed = parse_sam_quota_reset(next_access)
+    if parsed is None:
+        return {"state": "unparseable", "parsed": ""}
+    finalization_date = external_finalization_date()
+    if parsed.date() < finalization_date:
+        state = "elapsed"
+    elif parsed.date() == finalization_date:
+        state = "same_day"
+    else:
+        state = "future"
+    return {"state": state, "parsed": parsed.isoformat().replace("+00:00", "Z")}
+
+
+def parse_sam_quota_reset(value: str) -> datetime | None:
+    value = value.strip()
+    if not value:
+        return None
+    if value.endswith(" UTC"):
+        value = value[:-4].strip()
+    try:
+        parsed = datetime.strptime(value, "%Y-%b-%d %H:%M:%S%z")
+    except ValueError:
+        return parse_time(value)
+    return parsed.astimezone(timezone.utc)
+
+
+def parse_time(value: str) -> datetime | None:
+    value = value.strip()
+    if not value:
+        return None
+    normalized = value.replace("Z", "+00:00")
+    try:
+        parsed = datetime.fromisoformat(normalized)
+    except ValueError:
+        return None
+    if parsed.tzinfo is None:
+        parsed = parsed.replace(tzinfo=timezone.utc)
+    return parsed.astimezone(timezone.utc)
+
+
+def parse_date(value: str) -> date | None:
+    try:
+        return datetime.fromisoformat(value.strip()).date()
+    except ValueError:
+        return None
+
+
+def external_finalization_date() -> date:
+    configured = os.environ.get("LOBBY_CAPTURE_EXTERNAL_FINALIZATION_DATE", "").strip()
+    if configured:
+        parsed = parse_date(configured)
+        if parsed:
+            return parsed
+    return datetime.now(timezone.utc).date()
 
 
 def write_csv(path: Path, rows: list[dict[str, str]]) -> None:

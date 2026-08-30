@@ -38,6 +38,40 @@ EXPECTED_ITEMS = [
     "The final release ZIP, PDFs, supplement, reports, and metadata match the signed-off release tag.",
 ]
 
+REVIEW_ANCHORS = {
+    EXPECTED_ITEMS[0]: "manuscript abstract; Wiley abstract; reports/policy-claim-language-audit.md",
+    EXPECTED_ITEMS[1]: "paper/sections/reggov-body.tex introduction paragraphs; reports/submission-readiness.md Gate Summary",
+    EXPECTED_ITEMS[2]: "paper/sections/reggov-body.tex literature-positioning paragraphs; reports/literature-positioning-audit.md; paper/references.bib",
+    EXPECTED_ITEMS[3]: "docs/odd-model.md schedule/state sections; paper/tables/composite_weights.tex; paper/tables/switch_rule_snapshot.tex",
+    EXPECTED_ITEMS[4]: "paper/sections/reggov-body.tex results sections; reports/claim-posture-audit.md; reports/substitution-audit.md",
+    EXPECTED_ITEMS[5]: "paper/sections/reggov-body.tex empirical bridge/limitations paragraphs; reports/source-panel-inventory.md; reports/first-wave-manual-adjudication-plan.md; reports/procurement-causal-upgrade-packet.md; reports/substitution-causal-upgrade-packet.md; reports/comment-causal-upgrade-packet.md; reports/venue-causal-upgrade-packet.md",
+    EXPECTED_ITEMS[6]: "paper/regulation-governance-wiley.pdf; paper/supplement.pdf; reports/paper-layout-audit.md; reports/paper-structure-audit.md; reports/manual-visual-audit.md",
+    EXPECTED_ITEMS[7]: "paper/sections/reggov-body.tex limitations section; reports/causal-calibration-targets.md Claim Boundary Matrix; reports/reviewer-risk-register.md",
+    EXPECTED_ITEMS[8]: "paper/sections/submission-declarations.tex Data and Code Availability; CITATION.cff; .zenodo.json",
+    EXPECTED_ITEMS[9]: "reports/archive-handoff-manifest.md Deposit Asset Set; dist/release-asset-checksums.md; dist/doi-deposit-package-manifest.md",
+    EXPECTED_ITEMS[10]: ".zenodo.json; dist/zenodo-deposit-metadata.json; reports/zenodo-deposit-preflight.md",
+    EXPECTED_ITEMS[11]: "paper/references.bib; reports/reference-integrity-audit.md; final local/Wiley LaTeX logs summarized in reports/latex-log-audit.md",
+    EXPECTED_ITEMS[12]: "paper/sections/submission-declarations.tex AI Use Disclosure; reports/wiley-submission-form-readiness.md data-and-ai-statements row",
+    EXPECTED_ITEMS[13]: "dist/lobby-capture-wiley-submission.zip; dist/lobby-capture-wiley-blinded-review.zip; reports/archive-handoff-manifest.md; reports/doi-deposit-readiness.md",
+}
+
+SIGNOFF_PROMPTS = {
+    EXPECTED_ITEMS[0]: "Sign only if the abstract promises a mechanism-model contribution and does not imply calibrated real-world policy effects.",
+    EXPECTED_ITEMS[1]: "Sign only if assumptions, synthetic results, and bounded empirical bridge evidence are rhetorically distinct.",
+    EXPECTED_ITEMS[2]: "Sign only if the cited literature makes the Regulation & Governance contribution intelligible without overclaiming novelty.",
+    EXPECTED_ITEMS[3]: "Sign only if the main text, ODD supplement, equations, parameters, and generated diagnostic tables describe the same model.",
+    EXPECTED_ITEMS[4]: "Sign only if the results read as synthetic mechanism behavior and portfolio diagnostics rather than policy rankings.",
+    EXPECTED_ITEMS[5]: "Sign only if empirical bridge prose stays tied to source moments, gaps, candidate-review burdens, and validation diagnostics.",
+    EXPECTED_ITEMS[6]: "Sign only after visually checking the final PDFs for table/figure readability, ordering, captions, and non-duplicative presentation.",
+    EXPECTED_ITEMS[7]: "Sign only if limitations name open causal targets and source panels clearly while preserving the mechanism-review submission frame.",
+    EXPECTED_ITEMS[8]: "Sign only after DOI status is accurate: either a recorded DOI is present or the declaration explicitly avoids implying one.",
+    EXPECTED_ITEMS[9]: "Sign only after checksum files and DOI-deposit package members match the final release assets being archived.",
+    EXPECTED_ITEMS[10]: "Sign only after the Zenodo/OSF draft metadata has been inspected against the frozen release, or leave this external item open.",
+    EXPECTED_ITEMS[11]: "Sign only if references are complete for the target venue and contain no placeholder, speculative, or planned-validation entries.",
+    EXPECTED_ITEMS[12]: "Sign only if AI, funding, conflict, and data statements match the final journal form answers.",
+    EXPECTED_ITEMS[13]: "Sign only after rerunning the full artifact gate for the exact release and confirming package, PDF, supplement, and metadata alignment.",
+}
+
 ACCEPTABLE_POLICY_STATUSES = {"bounded_context", "required_boundary_present"}
 
 
@@ -188,12 +222,19 @@ def empirical_bridge_row() -> dict[str, str]:
     source_limited = [row for row in panels if is_source_limited_panel(row)]
     leakage_rows = read_csv(REPORTS / "candidate-source-leakage-audit.csv")
     leakage_failures = [row for row in leakage_rows if row.get("status") == "fail"]
+    adjudication_rows = read_csv(REPORTS / "first-wave-manual-adjudication-plan.csv")
+    adjudication_required = [
+        row
+        for row in adjudication_rows
+        if row.get("promotionState") == "manual_review_required"
+    ]
     status = (
         "automated_support_present"
         if claim.get("status") == "bounded"
         and source_limited
         and leakage_rows
         and not leakage_failures
+        and adjudication_required
         else "manual_review_required"
     )
     return evidence_row(
@@ -202,9 +243,10 @@ def empirical_bridge_row() -> dict[str, str]:
         (
             f"empiricalBridge={claim.get('status', 'missing')}; "
             f"sourceLimitedPanels={len(source_limited)}; "
-            f"candidateLeakageFailures={len(leakage_failures)}"
+            f"candidateLeakageFailures={len(leakage_failures)}; "
+            f"manualAdjudicationProducts={len(adjudication_required)}"
         ),
-        "reports/claim-posture-audit.md; reports/source-panel-inventory.md; reports/source-capability-audit.md; reports/candidate-source-leakage-audit.md",
+        "reports/claim-posture-audit.md; reports/source-panel-inventory.md; reports/source-capability-audit.md; reports/candidate-source-leakage-audit.md; reports/first-wave-manual-adjudication-plan.md; reports/procurement-causal-upgrade-packet.md; reports/substitution-causal-upgrade-packet.md; reports/comment-causal-upgrade-packet.md; reports/venue-causal-upgrade-packet.md",
         "Check that the manuscript describes the bridge as bounded source support rather than validation of hidden-channel magnitudes.",
     )
 
@@ -415,7 +457,9 @@ def overall_row(rows: list[dict[str, str]]) -> dict[str, str]:
         "status": status,
         "automatedEvidence": evidence,
         "evidenceFiles": "reports/final-readthrough-evidence.md; reports/final-human-readthrough.md",
+        "reviewAnchors": "reports/final-readthrough-evidence.md; reports/final-human-readthrough.md",
         "remainingHumanAction": "Use this packet to complete the human scholarly read-through; it does not replace signoff.",
+        "signoffPrompt": "Do not set reports/final-human-readthrough.md status to complete until every checklist item and external DOI/archive action has been reviewed.",
     }
 
 
@@ -432,7 +476,9 @@ def evidence_row(
         "status": status,
         "automatedEvidence": evidence,
         "evidenceFiles": evidence_files,
+        "reviewAnchors": REVIEW_ANCHORS.get(checklist_item, evidence_files),
         "remainingHumanAction": remaining_action,
+        "signoffPrompt": SIGNOFF_PROMPTS.get(checklist_item, remaining_action),
     }
 
 
@@ -483,7 +529,16 @@ def read_text(path: Path) -> str:
 
 
 def write_csv(path: Path, rows: list[dict[str, str]]) -> None:
-    fields = ["item", "checklistItem", "status", "automatedEvidence", "evidenceFiles", "remainingHumanAction"]
+    fields = [
+        "item",
+        "checklistItem",
+        "status",
+        "automatedEvidence",
+        "evidenceFiles",
+        "reviewAnchors",
+        "remainingHumanAction",
+        "signoffPrompt",
+    ]
     with path.open("w", newline="", encoding="utf-8") as target:
         writer = csv.DictWriter(target, fieldnames=fields, lineterminator="\n")
         writer.writeheader()
@@ -510,19 +565,20 @@ def markdown(rows: list[dict[str, str]]) -> str:
         "",
         "## Evidence Matrix",
         "",
-        "| Item | Status | Automated evidence | Evidence files | Remaining human action |",
-        "| --- | --- | --- | --- | --- |",
+        "| Item | Status | Automated evidence | Review anchors | Remaining human action | Signoff prompt |",
+        "| --- | --- | --- | --- | --- | --- |",
     ]
     for row in rows:
         if row["item"] == "overall-final-readthrough-evidence":
             continue
         lines.append(
-            "| {item} | {status} | {evidence} | {files} | {action} |".format(
+            "| {item} | {status} | {evidence} | {files} | {action} | {prompt} |".format(
                 item=cell(row["item"]),
                 status=cell(row["status"]),
                 evidence=cell(row["automatedEvidence"]),
-                files=cell(row["evidenceFiles"]),
+                files=cell(row["reviewAnchors"]),
                 action=cell(row["remainingHumanAction"]),
+                prompt=cell(row["signoffPrompt"]),
             )
         )
     lines.extend(
@@ -537,6 +593,10 @@ def markdown(rows: list[dict[str, str]]) -> str:
             (
                 "`manual_editorial_review_required`, `manual_review_required`, and "
                 "`external_manual_required` all require human action before final journal submission."
+            ),
+            (
+                "Do not set reports/final-human-readthrough.md status to complete until every "
+                "checklist item and external DOI/archive action has been reviewed."
             ),
         ]
     )

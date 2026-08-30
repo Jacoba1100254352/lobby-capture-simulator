@@ -10,6 +10,7 @@ mkdir -p data/raw "$raw_dir"
 status_file="$tmpdir/live-run-status.csv"
 printf "source,status,notes\n" > "$status_file"
 default_procurement_action_agencies="Environmental Protection Agency,Department of Energy,Department of the Interior,Department of Agriculture,Department of Transportation,Department of Defense,Department of Health and Human Services,Department of Veterans Affairs,Department of Homeland Security,National Aeronautics and Space Administration,General Services Administration,Department of Commerce"
+default_irs_bmf_states="DC,NY,CA,TX,VA,MD,IL,MA,FL"
 
 append_csv() {
   local source_file="$1"
@@ -209,7 +210,7 @@ if [ -n "${DARK_MONEY_LIVE_CSV:-}" ] || [ -n "${DARK_MONEY_LIVE_URL:-}" ]; then
   fi
 elif [ "${DARK_MONEY_SOURCE_NATIVE:-1}" = "1" ]; then
   if SOURCE_RAW_DIR="$raw_dir/irs-dark-money-capacity" \
-    IRS_DARK_MONEY_BMF_STATES="${IRS_DARK_MONEY_BMF_STATES:-${IRS_EO_BMF_STATES:-DC}}" \
+    IRS_DARK_MONEY_BMF_STATES="${IRS_DARK_MONEY_BMF_STATES:-${IRS_EO_BMF_STATES:-$default_irs_bmf_states}}" \
     IRS_DARK_MONEY_CAPACITY_MAX_ROWS="${IRS_DARK_MONEY_CAPACITY_MAX_ROWS:-800}" \
     IRS_DARK_MONEY_CAPACITY_OUTPUT_ROWS="${IRS_DARK_MONEY_CAPACITY_OUTPUT_ROWS:-250}" \
       python3 scripts/fetch-source-data.py irs-dark-money-capacity --output data/raw/dark-money.csv; then
@@ -456,7 +457,7 @@ else
       intermediary_notes="${intermediary_notes}NYC CFB intermediary rows; "
     fi
     if SOURCE_RAW_DIR="$raw_dir/irs-eo-bmf" \
-      IRS_EO_BMF_STATES="${IRS_EO_BMF_STATES:-DC}" \
+      IRS_EO_BMF_STATES="${IRS_EO_BMF_STATES:-$default_irs_bmf_states}" \
       IRS_EO_BMF_MAX_ROWS="${IRS_EO_BMF_MAX_ROWS:-800}" \
       IRS_EO_BMF_FILTERED_MAX_ROWS="${IRS_EO_BMF_FILTERED_MAX_ROWS:-500}" \
         python3 scripts/fetch-source-data.py irs-eo-bmf --output "$tmpdir/irs-eo-bmf.csv"; then

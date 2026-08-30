@@ -513,7 +513,7 @@ def table_next(row: dict[str, str]) -> str:
         "public-financing-counterweight": "Federal, state, and additional local rows.",
         "revolving-door-cooling-off": "OGE, FACA, witness, or personnel exports.",
         "hidden-channel-magnitude": "Broader routing and donor-identity coverage.",
-        "procurement-modification-capture": "SAM/FPDS coding and protest/firewall overlays.",
+        "procurement-modification-capture": "SAM or FPDS coding; protest, exclusion, offer, and broader firewall rows.",
         "calibrated-policy-simulation": "Independent causal calibration targets.",
     }.get(row["claimKey"], row["nextEvidence"])
 

@@ -4,6 +4,9 @@ This audit checks Wiley Research Exchange upload mechanics for the generated LaT
 
 ## Summary
 
+- Generated at: `2026-06-19T00:00:00Z`
+- Release tag: `paper-publication-readiness-2026-06-19-r208`
+- Release date: `2026-06-19`
 - Mechanical upload status: `ready`
 - Ready gates: `7`
 - Manual-required gates: `1`

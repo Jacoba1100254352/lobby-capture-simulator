@@ -13,6 +13,7 @@ from __future__ import annotations
 import argparse
 import csv
 import json
+import re
 from collections import defaultdict
 from pathlib import Path
 
@@ -20,6 +21,7 @@ from pathlib import Path
 REPORTS = Path("reports")
 SNAPSHOT = Path("data/snapshots/2024-env")
 LIVE_STATUS = SNAPSHOT / "live-run-status.csv"
+QUOTA_UNTIL_RE = re.compile(r"quota blocked until\s*([^;,\n]+UTC)", re.IGNORECASE)
 
 SOURCES = [
     {
@@ -142,7 +144,7 @@ def summary_composition_row(
         "exclusionRows": str(int(round(number(summary.get("exclusionShare")) * rows))),
         "protestRows": str(int(round(number(summary.get("protestShare")) * rows))),
         "claimBoundary": str(source.get("claimBoundary", "")),
-        "statusNote": status.get("notes", str(summary.get("normalizedOutputSha256", ""))),
+        "statusNote": report_status_note(status.get("notes", str(summary.get("normalizedOutputSha256", "")))),
     }
 
 
@@ -257,8 +259,16 @@ def composition_row(
         "exclusionRows": str(sum(1 for row in rows if flag(row.get("exclusionFlag")))),
         "protestRows": str(sum(1 for row in rows if flag(row.get("protestFiled")))),
         "claimBoundary": str(source.get("claimBoundary", "")),
-        "statusNote": status.get("notes", ""),
+        "statusNote": report_status_note(status.get("notes", "")),
     }
+
+
+def report_status_note(note: str) -> str:
+    return QUOTA_UNTIL_RE.sub(
+        lambda match: f"quota response recorded reset time {match.group(1).strip()}",
+        note,
+        count=1,
+    )
 
 
 def is_modified(row: dict[str, str]) -> bool:

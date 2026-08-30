@@ -28,7 +28,7 @@ The current command freezes whatever normalized files are present under `data/ra
 | lda | 121 | live | `data/snapshots/2024-env/normalized/lda-lobbying.csv` |
 | fec | 1268 | live | `data/snapshots/2024-env/normalized/fec-campaign-finance.csv` |
 | public-financing | 136 | live | `data/snapshots/2024-env/normalized/public-financing.csv` |
-| dark-money | 330 | live | `data/snapshots/2024-env/normalized/dark-money.csv` |
+| dark-money | 573 | live | `data/snapshots/2024-env/normalized/dark-money.csv` |
 | regulatory | 200 | live | `data/snapshots/2024-env/normalized/regulatory-dockets.csv` |
 | oira-meetings | 10 | copied | `data/snapshots/2024-env/normalized/oira-meetings.csv` |
 | usaspending | 200 | live | `data/snapshots/2024-env/normalized/usaspending-awards.csv` |
@@ -38,6 +38,6 @@ The current command freezes whatever normalized files are present under `data/ra
 | usaspending-procurement-bulk-summary | 6449101 | copied | `data/snapshots/2024-env/normalized/usaspending-procurement-bulk-summary.json` |
 | sam-contract-awards | 0 | unavailable | `data/snapshots/2024-env/normalized/sam-contract-awards.csv` |
 | revolving-door | 803 | live | `data/snapshots/2024-env/normalized/revolving-door.csv` |
-| intermediary | 1353 | live | `data/snapshots/2024-env/normalized/intermediaries.csv` |
+| intermediary | 3853 | live | `data/snapshots/2024-env/normalized/intermediaries.csv` |
 
 `live-run-status.csv` records which official live requests completed and which were blocked by public API limits or missing credentials.

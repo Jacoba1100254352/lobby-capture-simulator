@@ -12,6 +12,7 @@ from __future__ import annotations
 import argparse
 import csv
 import json
+import re
 from collections import defaultdict
 from datetime import datetime
 from pathlib import Path
@@ -21,6 +22,7 @@ REPORTS = Path("reports")
 SNAPSHOT = Path("data/snapshots/2024-env")
 NORMALIZED = SNAPSHOT / "normalized"
 LIVE_STATUS = SNAPSHOT / "live-run-status.csv"
+QUOTA_UNTIL_RE = re.compile(r"quota blocked until\s*([^;,\n]+UTC)", re.IGNORECASE)
 
 SAM_REPRESENTATIVE_THRESHOLDS = {
     "rows": 5000,
@@ -182,7 +184,7 @@ def audit_source(source: dict[str, object], statuses: dict[str, dict[str, str]])
         "topRecipientRowShare": format_float(top_share(recipient_count, 1)),
         "promotionReadiness": readiness,
         "claimBoundary": str(source["claimBoundary"]),
-        "statusNote": status.get("notes", ""),
+        "statusNote": report_status_note(status.get("notes", "")),
     }
 
 
@@ -231,8 +233,16 @@ def audit_summary_source(source: dict[str, object], statuses: dict[str, dict[str
         "topRecipientRowShare": format_float(number(summary.get("topRecipientRowShare"))),
         "promotionReadiness": readiness,
         "claimBoundary": str(source["claimBoundary"]),
-        "statusNote": status.get("notes", str(summary.get("normalizedOutputSha256", ""))),
+        "statusNote": report_status_note(status.get("notes", str(summary.get("normalizedOutputSha256", "")))),
     }
+
+
+def report_status_note(note: str) -> str:
+    return QUOTA_UNTIL_RE.sub(
+        lambda match: f"quota response recorded reset time {match.group(1).strip()}",
+        note,
+        count=1,
+    )
 
 
 def read_json(path: Path) -> dict[str, object]:

@@ -8,6 +8,7 @@ reviewer objections to the current evidence, claim boundary, and next action.
 from __future__ import annotations
 
 import csv
+import re
 from collections import Counter
 from pathlib import Path
 
@@ -16,8 +17,14 @@ ROOT = Path(__file__).resolve().parents[1]
 REPORTS = ROOT / "reports"
 CSV_OUT = REPORTS / "reviewer-risk-register.csv"
 MD_OUT = REPORTS / "reviewer-risk-register.md"
-FIXED_GENERATED_AT = "2026-05-05T00:00:00Z"
+CITATION_CFF = ROOT / "CITATION.cff"
+FALLBACK_GENERATED_AT = "2026-05-05T00:00:00Z"
+VERSION_PATTERN = re.compile(r"^version:\s*[\"']?([^\"'\n]+)[\"']?\s*$", re.MULTILINE)
+DATE_RELEASED_PATTERN = re.compile(r"^date-released:\s*[\"']?([^\"'\n]+)[\"']?\s*$", re.MULTILINE)
 FIELDNAMES = [
+    "generatedAt",
+    "releaseTag",
+    "releaseDate",
     "riskId",
     "reviewerConcern",
     "status",
@@ -47,10 +54,11 @@ def main() -> int:
         raise SystemExit(f"Missing input reports: {', '.join(missing)}")
 
     context = load_context()
-    rows = risk_rows(context)
+    metadata = release_metadata()
+    rows = with_release_metadata(risk_rows(context), metadata)
     REPORTS.mkdir(parents=True, exist_ok=True)
     write_csv(CSV_OUT, rows)
-    MD_OUT.write_text(markdown(rows, context), encoding="utf-8")
+    MD_OUT.write_text(markdown(rows, context, metadata), encoding="utf-8")
     print(f"Wrote {CSV_OUT.relative_to(ROOT)}")
     print(f"Wrote {MD_OUT.relative_to(ROOT)}")
     return 0
@@ -335,9 +343,14 @@ def write_csv(path: Path, rows: list[dict[str, str]]) -> None:
         writer.writerows(rows)
 
 
-def markdown(rows: list[dict[str, str]], context: dict[str, object]) -> str:
+def markdown(
+        rows: list[dict[str, str]],
+        context: dict[str, object],
+        metadata: tuple[str, str, str],
+) -> str:
     status_counts = Counter(row["status"] for row in rows)
     submission: dict[str, dict[str, str]] = context["submission"]  # type: ignore[assignment]
+    release_tag, release_date, generated_at = metadata
     lines = [
         "# Reviewer Risk Register",
         "",
@@ -346,7 +359,9 @@ def markdown(rows: list[dict[str, str]], context: dict[str, object]) -> str:
         "",
         "## Summary",
         "",
-        f"- Generated at: `{FIXED_GENERATED_AT}`",
+        f"- Generated at: `{generated_at}`",
+        f"- Release tag: `{release_tag}`",
+        f"- Release date: `{release_date}`",
         f"- Overall posture: `{rows[0]['status']}`",
         f"- Submission-readiness posture: `{submission.get('overall-submission-posture', {}).get('status', 'missing')}`",
         f"- Status counts: `{compact_counts(status_counts)}`",
@@ -388,6 +403,41 @@ def markdown(rows: list[dict[str, str]], context: dict[str, object]) -> str:
         ]
     )
     return "\n".join(lines)
+
+
+def with_release_metadata(
+        rows: list[dict[str, str]],
+        metadata: tuple[str, str, str],
+) -> list[dict[str, str]]:
+    release_tag, release_date, generated_at = metadata
+    return [
+        {
+            "generatedAt": generated_at,
+            "releaseTag": release_tag,
+            "releaseDate": release_date,
+            **row,
+        }
+        for row in rows
+    ]
+
+
+def release_metadata() -> tuple[str, str, str]:
+    if not CITATION_CFF.exists():
+        return "missing", "missing", FALLBACK_GENERATED_AT
+    text = CITATION_CFF.read_text(encoding="utf-8")
+    version = pattern_value(VERSION_PATTERN, text) or "missing"
+    release_date = pattern_value(DATE_RELEASED_PATTERN, text) or "missing"
+    generated_at = (
+        f"{release_date}T00:00:00Z"
+        if re.fullmatch(r"\d{4}-\d{2}-\d{2}", release_date)
+        else FALLBACK_GENERATED_AT
+    )
+    return version, release_date, generated_at
+
+
+def pattern_value(pattern: re.Pattern[str], text: str) -> str:
+    match = pattern.search(text)
+    return match.group(1).strip() if match else ""
 
 
 def escape_markdown_cell(value: str) -> str:

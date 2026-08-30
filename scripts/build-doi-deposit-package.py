@@ -204,6 +204,86 @@ PACKAGE_INPUTS = [
         "candidate-source-leakage-audit",
     ),
     PackageInput(
+        "reports/first-wave-manual-adjudication-plan.csv",
+        "readiness/first-wave-manual-adjudication-plan.csv",
+        "first-wave-manual-adjudication-plan",
+    ),
+    PackageInput(
+        "reports/first-wave-manual-adjudication-plan.md",
+        "readiness/first-wave-manual-adjudication-plan.md",
+        "first-wave-manual-adjudication-plan",
+    ),
+    PackageInput(
+        "reports/procurement-causal-upgrade-packet.csv",
+        "readiness/procurement-causal-upgrade-packet.csv",
+        "procurement-causal-upgrade-packet",
+    ),
+    PackageInput(
+        "reports/procurement-causal-upgrade-packet.md",
+        "readiness/procurement-causal-upgrade-packet.md",
+        "procurement-causal-upgrade-packet",
+    ),
+    PackageInput(
+        "reports/substitution-causal-upgrade-packet.csv",
+        "readiness/substitution-causal-upgrade-packet.csv",
+        "substitution-causal-upgrade-packet",
+    ),
+    PackageInput(
+        "reports/substitution-causal-upgrade-packet.md",
+        "readiness/substitution-causal-upgrade-packet.md",
+        "substitution-causal-upgrade-packet",
+    ),
+    PackageInput(
+        "data/calibration/first-wave/substitution-estimation-panel.csv",
+        "readiness/substitution-estimation-panel.csv",
+        "substitution-estimation-diagnostic",
+    ),
+    PackageInput(
+        "reports/substitution-estimation-diagnostics.csv",
+        "readiness/substitution-estimation-diagnostics.csv",
+        "substitution-estimation-diagnostic",
+    ),
+    PackageInput(
+        "reports/substitution-estimation-diagnostics.md",
+        "readiness/substitution-estimation-diagnostics.md",
+        "substitution-estimation-diagnostic",
+    ),
+    PackageInput(
+        "reports/substitution-estimation-event-study.csv",
+        "readiness/substitution-estimation-event-study.csv",
+        "substitution-estimation-diagnostic",
+    ),
+    PackageInput(
+        "reports/substitution-estimation-leave-one-actor.csv",
+        "readiness/substitution-estimation-leave-one-actor.csv",
+        "substitution-estimation-diagnostic",
+    ),
+    PackageInput(
+        "reports/substitution-estimation-specification-contrast.svg",
+        "readiness/substitution-estimation-specification-contrast.svg",
+        "substitution-estimation-diagnostic",
+    ),
+    PackageInput(
+        "reports/comment-causal-upgrade-packet.csv",
+        "readiness/comment-causal-upgrade-packet.csv",
+        "comment-causal-upgrade-packet",
+    ),
+    PackageInput(
+        "reports/comment-causal-upgrade-packet.md",
+        "readiness/comment-causal-upgrade-packet.md",
+        "comment-causal-upgrade-packet",
+    ),
+    PackageInput(
+        "reports/venue-causal-upgrade-packet.csv",
+        "readiness/venue-causal-upgrade-packet.csv",
+        "venue-causal-upgrade-packet",
+    ),
+    PackageInput(
+        "reports/venue-causal-upgrade-packet.md",
+        "readiness/venue-causal-upgrade-packet.md",
+        "venue-causal-upgrade-packet",
+    ),
+    PackageInput(
         "reports/final-readthrough-evidence.csv",
         "readiness/final-readthrough-evidence.csv",
         "final-readthrough-evidence",
@@ -379,7 +459,8 @@ def readme_text(release_tag: str) -> str:
         This ZIP is a convenience handoff for archive deposition. It includes
         the five primary release assets, release-machine checksums, citation and
         Zenodo metadata, submission and journal-readiness audits, the reviewer
-        risk register, and the final human read-through checklist. The DOI deposit readiness report remains
+        risk register, candidate-source boundary reports, and the final human
+        read-through checklist. The DOI deposit readiness report remains
         outside this ZIP because it verifies this package after construction.
 
         This package does not assert that a DOI has been minted. After a DOI is
@@ -409,6 +490,27 @@ def readme_text(release_tag: str) -> str:
           remaining final-submission gates.
         - readiness/reviewer-risk-register.md maps likely reviewer objections
           to current evidence, claim boundaries, and next actions.
+        - readiness/candidate-source-leakage-audit.md and
+          readiness/first-wave-manual-adjudication-plan.md keep candidate-only
+          source products separated from evidence and identify the manual
+          promotion queue.
+        - readiness/procurement-causal-upgrade-packet.md consolidates the
+          remaining procurement causal-upgrade source products, denominator
+          caveats, and promotion blockers without clearing causal procurement
+          capture claims.
+        - readiness/substitution-causal-upgrade-packet.md consolidates the
+          central substitution-elasticity design anchor, reviewed source-ready
+          design inputs, access-channel missingness, and promotion blockers.
+        - readiness/substitution-estimation-diagnostics.md and its supporting
+          panel, event-study, leave-one-actor, and figure artifacts record why
+          the first HLOGA estimator does not clear effect-model, falsification,
+          or causal substitution-elasticity claims.
+        - readiness/comment-causal-upgrade-packet.md consolidates comment
+          corpus, duplicate/template clusters, response/final-rule linkage
+          blockers without clearing causal comment-uptake claims.
+        - readiness/venue-causal-upgrade-packet.md consolidates candidate
+          actor identifiers, alias audits, issue crosswalks, false-match logs,
+          and linked-panel blockers without clearing causal venue-shifting claims.
         - reports/doi-deposit-readiness.md in the repository/release verifies
           this package after it is built.
         """

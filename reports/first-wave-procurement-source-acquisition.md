@@ -4,10 +4,13 @@ This report turns the open procurement-calibration risk into source-specific acq
 
 ## Summary
 
+- Generated at: `2026-06-19T00:00:00Z`
+- Release tag: `paper-publication-readiness-2026-06-19-r208`
+- Release date: `2026-06-19`
 - Acquisition products: `5`
 - Source-evidence status: `acquisition_plan_only`
-- Claim boundary: `procurement modification, protest, exclusion, competition, and firewall rows remain bounded diagnostics until linked source products pass the first-wave source-product and source-readiness gates`
-- Product statuses: `candidate_unreviewed=5`
+- Claim boundary: `the EPAAR firewall row is bounded control-design evidence; procurement modification, protest, exclusion, competition, and broader firewall rows remain bounded diagnostics until linked source products pass the first-wave source-product and source-readiness gates`
+- Product statuses: `candidate_unreviewed=4; schema_ready=1`
 - SAM export audit handling: `local_time_bound` - live SAM export-audit results are local, quota-dependent, and not embedded in the committed acquisition report unless INCLUDE_LOCAL_SAM_EXPORT_AUDIT=1 is set
 
 ## Promotion Rule
@@ -21,7 +24,7 @@ A row in this report is only an acquisition instruction. To promote a procuremen
 | sam-fpds-action-history-crosswalk | candidate_unreviewed | SAM.gov Contract Awards export or keyed Contract Awards API, reconciled against USAspending transaction rows (https://open.gsa.gov/api/contract-awards/) | PIID, UEI, awarding agency/subtier, recipient, action date, obligation, modification number/type, competition or extent-competed code, number of offers, USAspending record ID, SAM record ID, and crosswalk confidence | SAM.gov quota or extract-token availability can block acquisition; partial or diagnostic exports must not be promoted. SAM export audit handling: live SAM export-audit results are local, quota-dependent, and not embedded in the committed acquisition report unless INCLUDE_LOCAL_SAM_EXPORT_AUDIT=1 is set |
 | gao-protest-overlay | candidate_unreviewed | GAO Recent Bid Protest Decisions, GAO Search Decisions & Docket, and GAO Legal Products XML feed (https://www.gao.gov/legal/bid-protests/recent; https://www.gao.gov/rss/reportslegal.xml) | Protest ID or B-number, agency, filed date where available, decision date, outcome, issue codes, source URL, and manually reviewed PIID/UEI/vendor linkage when available | The GAO feed can discover recent bid-protest decisions and hints, but decision pages do not reliably expose PIID/UEI fields in a machine-readable way, so award/vendor linkage and outcome/issue coding remain manual review tasks. |
 | sam-exclusion-overlay | candidate_unreviewed | SAM.gov Exclusions API and SAM.gov Entity/Exclusions Extracts Download API (https://open.gsa.gov/api/exclusions-api/) | Exclusion ID, UEI, recipient/entity name, exclusion type, activation/start date, termination/end date, excluding agency, and source URL | Official API quota and extract access must be managed; the preflight records access state only, and broad extracts still require field normalization and source-date preservation. |
-| procurement-firewall-overlay | candidate_unreviewed | Agency procurement-integrity rules, firewall memoranda, acquisition-policy supplements, inspector-general reports, and official policy archives (https://www.acquisition.gov/far/) | Firewall rule ID, agency, subtier, award type, effective date, covered officials, control type, coverage rule, and source URL | No single public API provides agency firewall controls, so acquisition is a curated document-review task over official sources. |
+| procurement-firewall-overlay | schema_ready | Agency procurement-integrity rules, firewall memoranda, acquisition-policy supplements, inspector-general reports, and official policy archives (https://www.acquisition.gov/far/) | Firewall rule ID, agency, subtier, award type, effective date, covered officials, control type, coverage rule, and source URL | The bounded EPAAR row clears the narrow firewall-control schema; broader agency firewall coverage remains a curated document-review task over official sources. |
 | procurement-offer-competition-enrichment | candidate_unreviewed | SAM.gov Contract Awards and USAspending transaction/action records where offer-count and competition fields are exposed (https://open.gsa.gov/api/) | PIID, UEI, agency, action date, award type, extent-competed code, number of offers, source system, source-system record ID, source URL, and crosswalk confidence | No reviewed standalone offer/competition source product has been promoted yet; committed USAspending action rows remain denominator context until source-system competition fields clear the gate. |
 
 ## Acquisition Details
@@ -62,13 +65,13 @@ A row in this report is only an acquisition instruction. To promote a procuremen
 ### procurement-firewall-overlay
 
 - Expected path: `data/calibration/first-wave/procurement-firewall-overlay.csv`
-- Source-product status: `candidate_unreviewed`
+- Source-product status: `schema_ready`
 - Preferred official source: Agency procurement-integrity rules, firewall memoranda, acquisition-policy supplements, inspector-general reports, and official policy archives (https://www.acquisition.gov/far/)
 - Fallback: Agency acquisition-policy pages and inspector-general/audit reports with source URLs and effective dates
 - Required linkage: Firewall rule ID, agency, subtier, award type, effective date, covered officials, control type, coverage rule, and source URL
 - Acquisition step: Start with the agencies represented in the action-history crosswalk, then encode dated procurement-integrity controls and coverage rules for the relevant award classes.
 - Promotion gate: At least one dated control rule with agency and covered-official fields is required; generic policy descriptions without dates stay as notes.
-- Claim boundary: Firewall rows represent observed institutional controls; they do not establish compliance or enforcement without audit or outcome linkage.
+- Claim boundary: Firewall rows represent observed institutional controls; they do not establish compliance or enforcement without audit or outcome linkage. The committed EPAAR row is bounded EPA control-design evidence, not a broad procurement-firewall panel.
 
 ### procurement-offer-competition-enrichment
 

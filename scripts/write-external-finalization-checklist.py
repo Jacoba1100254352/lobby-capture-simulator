@@ -11,7 +11,7 @@ from __future__ import annotations
 
 import argparse
 import csv
-from datetime import datetime, timedelta, timezone
+from datetime import date, datetime, timedelta, timezone
 import json
 import os
 import re
@@ -368,16 +368,47 @@ def live_author_page_row() -> dict[str, str]:
     row_data = rows.get("live-reggov-author-page-refresh", {})
     status = row_data.get("status", "manual_required")
     normalized_status = status if status in {"ready", "blocked"} else "manual_required"
+    checked_date = field_value(read_text(FINAL_READTHROUGH), "author-guidelines-checked-date")
+    parsed_checked_date = parse_date(checked_date)
+    today = external_finalization_date()
+    same_day_refresh = bool(parsed_checked_date and parsed_checked_date == today)
+    future_refresh = bool(parsed_checked_date and parsed_checked_date > today)
+    evidence = row_data.get("evidence", "live author-page refresh=not recorded")
+    evidence = (
+        f"{evidence}; finalizationDate={today.isoformat()}; "
+        f"sameDayRefresh={'yes' if same_day_refresh else 'no'}"
+    )
+    if not parsed_checked_date:
+        evidence = f"{evidence}; parsedCheckedDate=missing-or-invalid"
+    elif future_refresh:
+        evidence = f"{evidence}; parsedCheckedDate={parsed_checked_date.isoformat()}; dateState=future"
+    elif not same_day_refresh:
+        evidence = f"{evidence}; parsedCheckedDate={parsed_checked_date.isoformat()}; dateState=stale-for-final-submission"
+
+    if normalized_status == "blocked" or future_refresh:
+        checklist_status = "blocked"
+    elif same_day_refresh:
+        checklist_status = normalized_status
+    else:
+        checklist_status = "manual_required"
+
     default_next_action = (
         "Recheck the live Regulation & Governance author instructions immediately before final submission."
-        if normalized_status == "ready"
+        if checklist_status == "ready"
         else "Open the live Regulation & Governance author instructions and record any superseding guidance before final submission."
     )
+    if checklist_status == "manual_required" and not same_day_refresh:
+        default_next_action = (
+            "Refresh the live Regulation & Governance author page on the final-submission day, record that date "
+            "in reports/final-human-readthrough.md, and rerun make external-finalization-checklist."
+        )
     return item(
         "live-reggov-author-page-refresh",
-        normalized_status,
-        row_data.get("evidence", "live author-page refresh=not recorded"),
-        row_data.get("nextAction", default_next_action) or default_next_action,
+        checklist_status,
+        evidence,
+        (row_data.get("nextAction", default_next_action) or default_next_action)
+        if checklist_status == normalized_status
+        else default_next_action,
         "journal",
     )
 
@@ -473,10 +504,22 @@ def sam_preflight_row() -> dict[str, str]:
         )
     elif status == "quota_blocked":
         checklist_status = "manual_required"
-        next_action = (
-            f"Wait until {next_access or 'the SAM.gov reset time'} or use a downloaded export "
-            "through SAM_CONTRACT_AWARDS_LIVE_CSV/URL before rerunning the preflight."
-        )
+        reset = sam_quota_reset_state(next_access)
+        if reset["state"] == "elapsed":
+            next_action = (
+                "The recorded SAM.gov quota reset has elapsed; rerun make sam-contract-awards-preflight now, "
+                "or use a downloaded export through SAM_CONTRACT_AWARDS_LIVE_CSV/URL before the next refresh."
+            )
+        elif reset["state"] == "same_day":
+            next_action = (
+                f"Confirm the {next_access or 'SAM.gov reset time'} reset has passed, then rerun "
+                "make sam-contract-awards-preflight or use a downloaded export through SAM_CONTRACT_AWARDS_LIVE_CSV/URL."
+            )
+        else:
+            next_action = (
+                f"Wait until {next_access or 'the SAM.gov reset time'} or use a downloaded export "
+                "through SAM_CONTRACT_AWARDS_LIVE_CSV/URL before rerunning the preflight."
+            )
     elif status == "missing":
         checklist_status = "manual_required"
         next_action = "Set SAM_API_KEY in .env before running make sam-contract-awards-preflight."
@@ -496,6 +539,9 @@ def sam_preflight_row() -> dict[str, str]:
         f"status={status or 'missing'}; rows={rows_returned or '0'}; "
         f"nextAccessTime={next_access or 'none'}"
     )
+    reset_evidence = sam_quota_reset_evidence(next_access)
+    if reset_evidence:
+        evidence = f"{evidence}; {reset_evidence}"
     if notes:
         evidence = f"{evidence}; notes={notes}"
     return item(
@@ -530,7 +576,19 @@ def sam_exclusions_preflight_row() -> dict[str, str]:
         )
     elif status == "quota_blocked":
         checklist_status = "manual_required"
-        next_action = f"Wait until {next_access or 'the SAM.gov reset time'}, then rerun make sam-exclusions-preflight before exclusion-overlay acquisition."
+        reset = sam_quota_reset_state(next_access)
+        if reset["state"] == "elapsed":
+            next_action = (
+                "The recorded SAM.gov quota reset has elapsed; rerun make sam-exclusions-preflight now "
+                "before exclusion-overlay acquisition."
+            )
+        elif reset["state"] == "same_day":
+            next_action = (
+                f"Confirm the {next_access or 'SAM.gov reset time'} reset has passed, then rerun "
+                "make sam-exclusions-preflight before exclusion-overlay acquisition."
+            )
+        else:
+            next_action = f"Wait until {next_access or 'the SAM.gov reset time'}, then rerun make sam-exclusions-preflight before exclusion-overlay acquisition."
     elif status == "missing":
         checklist_status = "manual_required"
         next_action = "Set SAM_API_KEY in .env before running make sam-exclusions-preflight."
@@ -546,6 +604,9 @@ def sam_exclusions_preflight_row() -> dict[str, str]:
         f"status={status or 'missing'}; records={records or '0'}; "
         f"nextAccessTime={next_access or 'none'}"
     )
+    reset_evidence = sam_quota_reset_evidence(next_access)
+    if reset_evidence:
+        evidence = f"{evidence}; {reset_evidence}"
     if notes:
         evidence = f"{evidence}; notes={notes}"
     return item(
@@ -579,15 +640,33 @@ def sam_snapshot_refresh_row() -> dict[str, str]:
     status = row.get("status", "").strip() or "missing"
     notes = row.get("notes", "").strip()
     next_access = sam_next_access_from_notes(notes)
+    export_blocker = {} if status == "ok" else current_sam_export_audit_blocker()
     if status == "ok":
         checklist_status = "ready"
         next_action = "Keep the promoted SAM/FPDS snapshot row with the artifact bundle and rerun paper-artifacts-check after any source change."
     elif status == "quota_blocked":
         checklist_status = "manual_required"
-        next_action = (
-            f"Wait until {next_access or 'the SAM.gov reset time'}, or use a fresh downloaded SAM export, "
-            "before trying to promote SAM/FPDS rows again."
-        )
+        reset = sam_quota_reset_state(next_access)
+        if export_blocker:
+            next_action = (
+                "The latest guarded SAM refresh stopped before snapshot promotion: "
+                f"{export_blocker['nextAction'] or 'resolve the current SAM export audit blocker before rerunning make sam-procurement-refresh.'}"
+            )
+        elif reset["state"] == "elapsed":
+            next_action = (
+                "The recorded SAM.gov quota reset has elapsed; rerun make sam-procurement-refresh now, "
+                "or configure a fresh downloaded SAM export, before trying to promote SAM/FPDS rows again."
+            )
+        elif reset["state"] == "same_day":
+            next_action = (
+                f"Confirm the {next_access or 'SAM.gov reset time'} reset has passed, then rerun "
+                "make sam-procurement-refresh or configure a fresh downloaded SAM export before promotion."
+            )
+        else:
+            next_action = (
+                f"Wait until {next_access or 'the SAM.gov reset time'}, or use a fresh downloaded SAM export, "
+                "before trying to promote SAM/FPDS rows again."
+            )
     elif status in {"unavailable", "missing"}:
         checklist_status = "manual_required"
         next_action = "Use the manual export path or a mode-matched keyed preflight before rerunning make sam-procurement-refresh."
@@ -600,6 +679,14 @@ def sam_snapshot_refresh_row() -> dict[str, str]:
     evidence = f"status={status}; notes={notes or 'missing'}"
     if next_access:
         evidence = f"{evidence}; nextAccessTime={next_access}"
+    reset_evidence = sam_quota_reset_evidence(next_access)
+    if reset_evidence:
+        evidence = f"{evidence}; {reset_evidence}"
+    if export_blocker:
+        evidence = (
+            f"{evidence}; latestExportAudit={export_blocker['status']}; "
+            f"exportIssue={export_blocker['value'] or 'missing'}"
+        )
     return item(
         "sam-snapshot-refresh-status",
         checklist_status,
@@ -745,6 +832,7 @@ def sam_export_audit_row() -> dict[str, str]:
     promotion_status = promotion.get("status", "")
     source_rows = audit_item_value(rows, "row-count") or "missing"
     promotion_value = promotion.get("value", "").strip()
+    promotion_next_action = promotion.get("nextAction", "").strip()
     hard_blockers = sam_export_hard_blockers(rows)
     shape_summary = sam_export_shape_summary(rows)
     promotion_summary = (
@@ -776,9 +864,30 @@ def sam_export_audit_row() -> dict[str, str]:
         "sam-export-audit",
         status,
         f"{promotion_summary}; sourceRows={source_rows}; auditRows={len(rows)}",
-        sam_export_next_action(status, hard_blockers, shape_summary),
+        (
+            promotion_next_action
+            if status == "manual_required" and promotion_next_action
+            else sam_export_next_action(status, hard_blockers, shape_summary)
+        ),
         "source-refresh",
     )
+
+
+def current_sam_export_audit_blocker() -> dict[str, str]:
+    if not (env("SAM_CONTRACT_AWARDS_LIVE_CSV") or env("SAM_CONTRACT_AWARDS_LIVE_URL")):
+        return {}
+    rows = read_csv(SAM_EXPORT_AUDIT_CSV)
+    if not rows:
+        return {}
+    row = next((candidate for candidate in rows if candidate.get("item") == "promotion-readiness"), rows[0])
+    status = row.get("status", "").strip()
+    if status in {"", "candidate"}:
+        return {}
+    return {
+        "status": status,
+        "value": row.get("value", "").strip(),
+        "nextAction": row.get("nextAction", "").strip(),
+    }
 
 
 def recorded_doi() -> str:
@@ -859,6 +968,44 @@ def sam_next_access_from_notes(notes: str) -> str:
     return match.group(1).strip() if match else ""
 
 
+def sam_quota_reset_state(next_access: str) -> dict[str, str]:
+    if not next_access.strip():
+        return {"state": "unknown", "parsed": ""}
+    parsed = parse_sam_quota_reset(next_access)
+    if parsed is None:
+        return {"state": "unparseable", "parsed": ""}
+    finalization_date = external_finalization_date()
+    if parsed.date() < finalization_date:
+        state = "elapsed"
+    elif parsed.date() == finalization_date:
+        state = "same_day"
+    else:
+        state = "future"
+    return {"state": state, "parsed": fmt_time(parsed)}
+
+
+def sam_quota_reset_evidence(next_access: str) -> str:
+    reset = sam_quota_reset_state(next_access)
+    if reset["state"] == "unknown":
+        return ""
+    if reset["parsed"]:
+        return f"quotaResetState={reset['state']}; parsedNextAccess={reset['parsed']}"
+    return f"quotaResetState={reset['state']}"
+
+
+def parse_sam_quota_reset(value: str) -> datetime | None:
+    value = value.strip()
+    if not value:
+        return None
+    if value.endswith(" UTC"):
+        value = value[:-4].strip()
+    try:
+        parsed = datetime.strptime(value, "%Y-%b-%d %H:%M:%S%z")
+    except ValueError:
+        return parse_time(value)
+    return parsed.astimezone(timezone.utc)
+
+
 def sam_export_url_freshness() -> dict[str, str]:
     generated_raw = env("SAM_CONTRACT_AWARDS_LIVE_URL_GENERATED_AT")
     expires_raw = env("SAM_CONTRACT_AWARDS_LIVE_URL_EXPIRES_AT")
@@ -924,6 +1071,22 @@ def parse_time(value: str) -> datetime | None:
     if parsed.tzinfo is None:
         parsed = parsed.replace(tzinfo=timezone.utc)
     return parsed.astimezone(timezone.utc)
+
+
+def parse_date(value: str) -> date | None:
+    try:
+        return datetime.fromisoformat(value.strip()).date()
+    except ValueError:
+        return None
+
+
+def external_finalization_date() -> date:
+    configured = os.environ.get("LOBBY_CAPTURE_EXTERNAL_FINALIZATION_DATE", "").strip()
+    if configured:
+        parsed = parse_date(configured)
+        if parsed:
+            return parsed
+    return datetime.now(timezone.utc).date()
 
 
 def fmt_time(value: datetime | None) -> str:

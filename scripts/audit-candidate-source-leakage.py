@@ -6,7 +6,10 @@ worklists so reviewers can inspect the intended acquisition and adjudication
 units. Those files are useful as a work plan, but they must not become evidence
 for causal estimation or calibrated policy claims until manual review replaces
 candidate markers with reviewed source rows. This audit fails if the candidate
-state leaks into ready-to-estimate or calibrated-claim gates.
+state leaks into ready-to-estimate or calibrated-claim gates. Reviewed bounded
+source products may coexist with remaining candidate worklists as long as the
+readiness audit keeps the broader target blocked until all required source
+products clear.
 """
 
 from __future__ import annotations
@@ -21,6 +24,8 @@ REPORTS = ROOT / "reports"
 FIRST_WAVE_DIR = ROOT / "data" / "calibration" / "first-wave"
 OUTPUT_CSV = REPORTS / "candidate-source-leakage-audit.csv"
 OUTPUT_MD = REPORTS / "candidate-source-leakage-audit.md"
+CROSS_VENUE_ADJUDICATION_CSV = REPORTS / "first-wave-cross-venue-adjudication.csv"
+CROSS_VENUE_ADJUDICATION_RECORDS_CSV = REPORTS / "first-wave-cross-venue-adjudication-records.csv"
 
 
 def main() -> int:
@@ -38,6 +43,7 @@ def audit_rows() -> list[dict[str, str]]:
         candidate_file_markers_row(),
         manual_adjudication_burden_row(),
         candidate_review_triage_row(),
+        cross_venue_adjudication_boundary_row(),
         source_product_status_row(),
         source_readiness_status_row(),
         calibrated_claim_boundary_row(),
@@ -79,7 +85,7 @@ def candidate_file_markers_row() -> dict[str, str]:
             f"candidateRows={total_candidate_rows}; markerRows={marker_rows}; "
             f"missingFiles={len(missing_files)}; unmarkedFiles={len(unmarked_files)}"
         ),
-        "candidateProducts=13; missingFiles=0; unmarkedFiles=0",
+        "candidateProducts>0; missingFiles=0; unmarkedFiles=0",
         (
             "Candidate-only source-product files retain candidateOnly=true, "
             "candidate_unreviewed, or equivalent manual-review markers."
@@ -204,6 +210,7 @@ def candidate_review_triage_row() -> dict[str, str]:
     evidence_counts: Counter[str] = Counter()
     risk_counts: Counter[str] = Counter()
     triage_rows = 0
+    candidate_products_without_priority = 0
     missing_priority_files: list[str] = []
     invalid_priorities: list[str] = []
 
@@ -216,6 +223,7 @@ def candidate_review_triage_row() -> dict[str, str]:
         if not rows:
             continue
         if "reviewPriority" not in rows[0]:
+            candidate_products_without_priority += 1
             if product_key in {
                 "canonical-actor-identifiers",
                 "alias-resolution-audit-sample",
@@ -241,14 +249,7 @@ def candidate_review_triage_row() -> dict[str, str]:
                 if flag and flag != "none":
                     risk_counts[flag] += 1
 
-    status = (
-        "pass"
-        if triage_rows > 0
-        and priority_counts.get("P1-manual-review", 0) > 0
-        and not missing_priority_files
-        and not invalid_priorities
-        else "fail"
-    )
+    status = "pass" if not missing_priority_files and not invalid_priorities else "fail"
     priority_summary = counter_summary(priority_counts)
     evidence_summary = counter_summary(evidence_counts)
     risk_summary = counter_summary(risk_counts, limit=6)
@@ -257,21 +258,100 @@ def candidate_review_triage_row() -> dict[str, str]:
         status,
         (
             f"triageRows={triage_rows}; priorities={priority_summary}; "
-            f"evidenceClasses={len(evidence_counts)}; riskFlags={len(risk_counts)}"
+            f"evidenceClasses={len(evidence_counts)}; riskFlags={len(risk_counts)}; "
+            f"candidateProductsWithoutPriority={candidate_products_without_priority}"
         ),
-        "triageRows>0; P1-manual-review>0; invalidPriorities=0",
+        "invalidPriorities=0; entity-resolution priority files have priority fields when candidate-active",
         (
-            "Entity-resolution and substitution candidate rows carry deterministic "
-            "review-priority and linkage-evidence fields while remaining candidate-only."
+            "Candidate rows with review-priority fields remain deterministic triage queues; "
+            "remaining procurement or comment source-surface worklists may instead carry "
+            "product-specific acquisition notes."
         ),
         (
-            "Use P1 rows as the first manual adjudication queue; do not treat "
-            "reviewPriorityScore as adjudicated match confidence."
+            "Use any P1 rows as the first manual adjudication queue; do not treat "
+            "reviewPriorityScore as adjudicated match confidence. For candidate products "
+            "without priority fields, use the product-level manual adjudication plan."
         ),
         details=(
             f"evidenceClasses: {evidence_summary} || riskFlags: {risk_summary} || "
             f"missingPriorityFiles: {'; '.join(missing_priority_files) or 'none'} || "
             f"invalidPriorities: {'; '.join(invalid_priorities[:10]) or 'none'}"
+        ),
+    )
+
+
+def cross_venue_adjudication_boundary_row() -> dict[str, str]:
+    rows = read_csv(CROSS_VENUE_ADJUDICATION_CSV)
+    record_rows = read_csv(CROSS_VENUE_ADJUDICATION_RECORDS_CSV)
+    readiness_rows = read_csv(REPORTS / "first-wave-source-readiness.csv")
+    causal_rows = read_csv(REPORTS / "causal-calibration-targets.csv")
+    accepted = [row for row in rows if row.get("promotedToReviewedPanel") == "yes"]
+    accepted_records = [row for row in record_rows if row.get("recordDecision") == "reviewed_accept"]
+    accepted_actor_count = len(accepted)
+    accepted_record_count = len(accepted_records)
+    venues = {row.get("venue", "") for row in accepted_records if row.get("venue", "")}
+    source_systems = {
+        row.get("sourceSystem", "")
+        for row in accepted_records
+        if row.get("sourceSystem", "")
+    }
+    held = [row for row in rows if int_or_zero(row.get("heldRecordCount", "")) > 0]
+    rejected = [row for row in rows if int_or_zero(row.get("rejectedRecordCount", "")) > 0]
+    ready_to_estimate = [
+        row.get("targetKey", "")
+        for row in readiness_rows
+        if "ready_to_estimate" in row.get("sourceReadiness", "")
+        or row.get("sourceProductGate", "") in {"ready", "estimation_ready"}
+    ]
+    policy_clearances = [
+        row.get("targetKey", "")
+        for row in causal_rows
+        if row.get("blocksPolicySimulation") == "yes"
+        and row.get("policyClaimStatus") != "not_cleared"
+    ]
+    boundary_failures = [
+        row.get("candidateActorId", "")
+        for row in rows
+        if row.get("promotedToReviewedPanel") == "yes"
+        and "does not clear" not in row.get("claimBoundary", "")
+    ]
+    status = (
+        "pass"
+        if rows
+        and record_rows
+        and accepted_actor_count > 0
+        and accepted_record_count > 0
+        and not ready_to_estimate
+        and not policy_clearances
+        and not boundary_failures
+        else "fail"
+    )
+    return audit_row(
+        "cross-venue-adjudication-boundary",
+        status,
+        (
+            f"acceptedActors={accepted_actor_count}; acceptedRecords={accepted_record_count}; "
+            f"acceptedVenues={len(venues)}; acceptedSourceSystems={len(source_systems)}; "
+            f"heldActors={len(held)}; rejectedActors={len(rejected)}; "
+            f"readyToEstimate={len(ready_to_estimate)}; policyClearances={len(policy_clearances)}"
+        ),
+        "acceptedActors>0; acceptedRecords>0; readyToEstimate=0; policyClearances=0",
+        (
+            "Reviewed cross-venue identifier evidence may coexist with candidate-only "
+            "source products only when the broader source-readiness and calibrated-policy "
+            "boundaries remain blocked."
+        ),
+        (
+            "Use the adjudication ledger as reviewed evidence for the first exact-ID slice, "
+            "but keep candidate source products blocked until the full promotion checklist, "
+            "source-readiness gate, leakage gate, and artifact gate pass."
+        ),
+        details=(
+            f"acceptedVenues: {'; '.join(sorted(venues)) or 'none'} || "
+            f"acceptedSourceSystems: {'; '.join(sorted(source_systems)) or 'none'} || "
+            f"readyToEstimateTargets: {'; '.join(ready_to_estimate) or 'none'} || "
+            f"policyClearances: {'; '.join(policy_clearances) or 'none'} || "
+            f"boundaryFailures: {'; '.join(boundary_failures) or 'none'}"
         ),
     )
 
@@ -306,7 +386,7 @@ def source_product_status_row() -> dict[str, str]:
         for row in product_rows
         if row.get("productStatus") not in allowed_statuses
     ]
-    status = "pass" if len(candidate_products) == 13 and not promoted_candidate_products and not invalid_statuses else "fail"
+    status = "pass" if candidate_products and not promoted_candidate_products and not invalid_statuses else "fail"
     return audit_row(
         "source-product-status",
         status,
@@ -315,7 +395,7 @@ def source_product_status_row() -> dict[str, str]:
             f"promotedCandidateProducts={len(promoted_candidate_products)}; "
             f"invalidStatuses={len(invalid_statuses)}"
         ),
-        "candidate_unreviewed=13; promotedCandidateProducts=0",
+        "candidate_unreviewed>0; promotedCandidateProducts=0",
         "The source-product audit keeps candidate-only worklists out of ready source-product status.",
         "Regenerate first-wave source products after manual review; do not edit report statuses by hand.",
         details="; ".join([*promoted_candidate_products, *invalid_statuses]),
@@ -336,13 +416,13 @@ def source_readiness_status_row() -> dict[str, str]:
     unblocked_candidate_gates = [
         row.get("targetKey", "")
         for row in readiness_rows
-        if row.get("candidateOnlySourceProducts", "").strip()
+        if has_candidate_only_source_products(row.get("candidateOnlySourceProducts", ""))
         and "candidate_only_blocked" not in row.get("sourceProductGate", "")
     ]
     blocking_misses = [
         row.get("targetKey", "")
         for row in readiness_rows
-        if row.get("candidateOnlySourceProducts", "").strip()
+        if has_candidate_only_source_products(row.get("candidateOnlySourceProducts", ""))
         and not row.get("blockingSourceProducts", "").strip()
     ]
     status = "pass" if readiness_rows and not ready_to_estimate and not unblocked_candidate_gates and not blocking_misses else "fail"
@@ -359,6 +439,11 @@ def source_readiness_status_row() -> dict[str, str]:
         "Complete the manual adjudication checklists before changing any target to ready_to_estimate.",
         details="; ".join([*ready_to_estimate, *unblocked_candidate_gates, *blocking_misses]),
     )
+
+
+def has_candidate_only_source_products(value: str) -> bool:
+    normalized = (value or "").strip().lower()
+    return bool(normalized) and normalized != "none"
 
 
 def calibrated_claim_boundary_row() -> dict[str, str]:
@@ -433,6 +518,8 @@ def candidate_markers(path: Path) -> tuple[bool, int, int]:
 def has_candidate_marker(path: Path) -> bool:
     if not path.exists():
         return False
+    if path.suffix.lower() == ".csv":
+        return any(row_is_marked_candidate(row) for row in read_csv(path))
     text = path.read_text(encoding="utf-8").lower()
     return any(
         marker in text
@@ -446,7 +533,6 @@ def row_is_marked_candidate(row: dict[str, str]) -> bool:
         row.get("candidateOnly", "").lower() == "true"
         or "candidate_unreviewed" in values
         or "candidate-only" in values
-        or "does not clear" in values
     )
 
 
@@ -571,6 +657,15 @@ def markdown(rows: list[dict[str, str]]) -> str:
             "",
         ])
         for detail in triage["details"].split(" || "):
+            lines.append(f"- {detail}")
+    adjudication = next((row for row in rows if row["item"] == "cross-venue-adjudication-boundary"), None)
+    if adjudication and adjudication.get("details"):
+        lines.extend([
+            "",
+            "## Cross-Venue Adjudication",
+            "",
+        ])
+        for detail in adjudication["details"].split(" || "):
             lines.append(f"- {detail}")
     if failures:
         lines.extend(["", "## Failure Details", ""])

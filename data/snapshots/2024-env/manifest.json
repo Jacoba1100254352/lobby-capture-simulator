@@ -1,8 +1,8 @@
 {
   "snapshot": "2024-env",
-  "generatedAt": "2026-06-19T17:39:06.558184+00:00",
-  "gitCommit": "6b579f3",
-  "gitTreeState": "clean",
+  "generatedAt": "2026-06-28T23:48:54.738638+00:00",
+  "gitCommit": "04c0491",
+  "gitTreeState": "dirty",
   "gitTreeStateScope": "working tree status excluding generated 2024-env snapshot, reports, paper tables, and paper figures",
   "scope": {
     "calendarWindow": "2024-01-01/2024-12-31",
@@ -48,10 +48,10 @@
       "description": "Explicit dark-money rows from a configured source export, ProPublica/IRS Form 990 Schedule I nonprofit-routing rows, or IRS EO BMF 501(c)(4)/(c)(6) opaque-capacity proxy rows; donor identities remain unobserved.",
       "requestTemplate": "DARK_MONEY_SOURCE_NATIVE=1 python3 scripts/fetch-source-data.py irs-dark-money-capacity --output data/raw/dark-money.csv followed by PROPUBLICA_NONPROFIT_ROUTING_SOURCE_NATIVE=1 python3 scripts/fetch-source-data.py propublica-nonprofit-routing --output /tmp/propublica-nonprofit-routing.csv and append, or DARK_MONEY_LIVE_CSV=/path/to/export.csv ./scripts/fetch-dark-money.sh --live",
       "normalizedFile": "data/snapshots/2024-env/normalized/dark-money.csv",
-      "rowCount": 330,
-      "sha256": "6260db28eb21c3e89e35317b71bd4815d506d44b712e69eaf9e5658a37aee53c",
+      "rowCount": 573,
+      "sha256": "4f6e5ac457ab63252dea057cb6fdf1bf54fc9ad5a8966930fcb96c0ecf3e8ed6",
       "status": "live",
-      "statusNotes": "dark-money: ok (normalized IRS EO BMF opaque-capacity proxy rows written; ProPublica Nonprofit Explorer Schedule I nonprofit-routing rows appended)"
+      "statusNotes": "dark-money: ok (normalized expanded IRS EO BMF opaque-capacity proxy rows written for states DC,NY,CA,TX,VA,MD,IL,MA,FL; preserved existing public ProPublica/IRS Schedule I routing rows)"
     },
     {
       "source": "regulatory",
@@ -148,14 +148,14 @@
       "description": "Normalized nonprofit, 527, think-tank, campaign-intermediary, and association panel from NYC CFB, IRS EO BMF, IRS POFD Form 8872, ProPublica, OpenSecrets, or curated source exports.",
       "requestTemplate": "INTERMEDIARY_SOURCE_NATIVE=1 with nyc-intermediaries, irs-eo-bmf, and irs-527 source-native fetchers, or INTERMEDIARY_LIVE_CSV=/path/to/export.csv ./scripts/fetch-intermediaries.sh --live",
       "normalizedFile": "data/snapshots/2024-env/normalized/intermediaries.csv",
-      "rowCount": 1353,
-      "sha256": "a2f2afd0ea7fc1717901c35d43266d2c2d0661b32bdbf4b463bffeaed0743a18",
+      "rowCount": 3853,
+      "sha256": "795e6d32e6de44dfb86d2fdb456e142b04223b97f69fc3908d1f43a13a7b991d",
       "status": "live",
-      "statusNotes": "intermediary: ok (NYC CFB intermediary rows; IRS EO BMF nonprofit/association capacity rows; IRS POFD Form 8872 527 rows)"
+      "statusNotes": "intermediary: ok (normalized expanded IRS EO BMF nonprofit/association capacity rows written for states DC,NY,CA,TX,VA,MD,IL,MA,FL; preserved existing NYC CFB intermediary and IRS POFD 527 rows)"
     }
   ],
   "liveRunStatus": {
     "file": "data/snapshots/2024-env/live-run-status.csv",
-    "sha256": "4233d3f45fdecb83e4906d9e46ab15f3d630330db6153cfd9318994ccf3e9570"
+    "sha256": "bd2b645d783a92be64f08658cfca8d7a4621ab007a0975d44832ccd81ea961de"
   }
 }
