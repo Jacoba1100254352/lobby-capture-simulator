@@ -212,8 +212,17 @@ LOCAL_OPERATIONAL_REPORT_PREFIXES = (
     "sam-exclusions-preflight.",
     "usaspending-transaction-download-strata.",
 )
+OPTIONAL_HISTORICAL_REPORT_NAMES = {
+    "substitution-historical-source-access.csv",
+    "substitution-historical-source-access.md",
+    "substitution-historical-lda-panel.csv",
+    "substitution-historical-lda-panel.md",
+    "substitution-state-lobbying-control-panel.csv",
+    "substitution-state-lobbying-control-panel.md",
+}
 SUBMISSION_REPORT_DATA_EXCLUSIONS = {
     "first-wave-linkage-candidate-records.csv",
+    *OPTIONAL_HISTORICAL_REPORT_NAMES,
 }
 TRACKED_SOURCE_CHECKSUM_STATUS = "tracked-source-verified"
 RELEASE_ASSET_CHECKSUM_STATUS = "release-asset-checksum-recorded-in-dist"
@@ -253,6 +262,9 @@ FORBIDDEN_ZIP_MEMBERS = {
     "supporting-information/report-data/final-readthrough-evidence.md",
     "supporting-information/report-data/mechanism-review-circulation-readiness.csv",
     "supporting-information/report-data/mechanism-review-circulation-readiness.md",
+} | {
+    f"supporting-information/report-data/{name}"
+    for name in OPTIONAL_HISTORICAL_REPORT_NAMES
 }
 TEX_BINARY_DIRS = [
     Path("/usr/local/texlive/2026basic/bin/universal-darwin"),
@@ -753,6 +765,7 @@ def report_bundle_inputs() -> list[Path]:
             *sorted((ROOT / "reports").glob("*.svg")),
         ]
         if path.name not in POST_SUBMISSION_REPORT_NAMES
+        and path.name not in OPTIONAL_HISTORICAL_REPORT_NAMES
         and not path.name.startswith(LOCAL_OPERATIONAL_REPORT_PREFIXES)
     ]
 
@@ -1066,10 +1079,6 @@ def substitution_causal_upgrade_packet_inputs() -> list[Path]:
         CANDIDATE_SOURCE_LEAKAGE_AUDIT_MD,
         CLAIM_SOURCE_DEPENDENCY_CSV,
         CLAIM_SOURCE_DEPENDENCY_MD,
-        ROOT / "reports" / "substitution-historical-lda-panel.csv",
-        ROOT / "reports" / "substitution-historical-lda-panel.md",
-        ROOT / "reports" / "substitution-state-lobbying-control-panel.csv",
-        ROOT / "reports" / "substitution-state-lobbying-control-panel.md",
         SUBSTITUTION_ESTIMATION_DIAGNOSTICS_CSV,
         SUBSTITUTION_ESTIMATION_DIAGNOSTICS_MD,
         SUBSTITUTION_ESTIMATION_EVENT_STUDY_CSV,

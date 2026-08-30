@@ -4,9 +4,11 @@
 from __future__ import annotations
 
 import importlib.util
+import os
 import sys
 import tempfile
 import unittest
+from unittest import mock
 from pathlib import Path
 
 
@@ -17,6 +19,17 @@ if SPEC is None or SPEC.loader is None:
 MODULE = importlib.util.module_from_spec(SPEC)
 sys.modules[SPEC.name] = MODULE
 SPEC.loader.exec_module(MODULE)
+
+PACKET_SCRIPT = Path(__file__).with_name("write-substitution-causal-upgrade-packet.py")
+PACKET_SPEC = importlib.util.spec_from_file_location(
+    "substitution_causal_upgrade_packet",
+    PACKET_SCRIPT,
+)
+if PACKET_SPEC is None or PACKET_SPEC.loader is None:
+    raise RuntimeError(f"Could not import {PACKET_SCRIPT}")
+PACKET_MODULE = importlib.util.module_from_spec(PACKET_SPEC)
+sys.modules[PACKET_SPEC.name] = PACKET_MODULE
+PACKET_SPEC.loader.exec_module(PACKET_MODULE)
 
 
 PERIODS = (
@@ -41,6 +54,41 @@ CONTROL_DATES = (
 
 
 class SubstitutionDiagnosticsTests(unittest.TestCase):
+    def test_optional_historical_diagnostics_do_not_change_reproducible_packet(self) -> None:
+        with tempfile.TemporaryDirectory() as temp_dir:
+            reports = Path(temp_dir) / "reports"
+            reports.mkdir()
+            (reports / "substitution-historical-source-access.csv").write_text(
+                "item,status,coverageRole,observedCount\n"
+                "accepted-actor-lda-api-probe,prepost_probe_observed,,\n"
+                "lda-api-period-count,observed,pre_hloga,12\n",
+                encoding="utf-8",
+            )
+            with (
+                mock.patch.object(PACKET_MODULE, "REPORTS", reports),
+                mock.patch.dict(
+                    os.environ,
+                    {PACKET_MODULE.OPTIONAL_HISTORICAL_DIAGNOSTICS_ENV: ""},
+                ),
+            ):
+                reproducible = PACKET_MODULE.historical_source_access_summary()
+            self.assertEqual(
+                "not run; optional live diagnostic target is "
+                "`make substitution-historical-source-access`.",
+                reproducible,
+            )
+
+            with (
+                mock.patch.object(PACKET_MODULE, "REPORTS", reports),
+                mock.patch.dict(
+                    os.environ,
+                    {PACKET_MODULE.OPTIONAL_HISTORICAL_DIAGNOSTICS_ENV: "1"},
+                ),
+            ):
+                optional = PACKET_MODULE.historical_source_access_summary()
+            self.assertIn("ran optional live diagnostic", optional)
+            self.assertIn("pre-HLOGA rows=12", optional)
+
     def test_preparation_and_requested_diagnostics(self) -> None:
         lda_rows = []
         for actor_index in range(2):

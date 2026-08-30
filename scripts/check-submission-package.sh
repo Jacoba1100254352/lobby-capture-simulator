@@ -61,6 +61,21 @@ required_file "USG.cls"
 required_file "lettersp.sty"
 required_file "wileyNJD-Chicago.bst"
 
+for optional_diagnostic in \
+  substitution-historical-source-access.csv \
+  substitution-historical-source-access.md \
+  substitution-historical-lda-panel.csv \
+  substitution-historical-lda-panel.md \
+  substitution-state-lobbying-control-panel.csv \
+  substitution-state-lobbying-control-panel.md
+do
+  optional_path="supporting-information/report-data/$optional_diagnostic"
+  if [ -e "$WORK_DIR/$optional_path" ]; then
+    printf 'Submission package contains local-only optional diagnostic: %s\n' "$optional_path" >&2
+    exit 7
+  fi
+done
+
 run_step() {
   label="$1"
   shift

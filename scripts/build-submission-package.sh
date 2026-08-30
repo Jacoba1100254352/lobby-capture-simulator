@@ -153,6 +153,9 @@ for report_artifact in "$ROOT_DIR"/reports/*.csv "$ROOT_DIR"/reports/*.md "$ROOT
       sam-contract-awards-export-audit.*) continue ;;
       sam-contract-awards-preflight.*) continue ;;
       sam-exclusions-preflight.*) continue ;;
+      substitution-historical-source-access.*) continue ;;
+      substitution-historical-lda-panel.*) continue ;;
+      substitution-state-lobbying-control-panel.*) continue ;;
       usaspending-transaction-download-strata.*) continue ;;
       first-wave-linkage-candidate-records.csv) continue ;;
     esac

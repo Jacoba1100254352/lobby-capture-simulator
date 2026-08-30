@@ -9,6 +9,7 @@ a publication-control artifact, not source evidence.
 from __future__ import annotations
 
 import csv
+import os
 import sys
 from collections import Counter
 from datetime import datetime
@@ -31,6 +32,9 @@ FIRST_WAVE_DIR = Path("data/calibration/first-wave")
 TARGET_KEY = "substitution-elasticity"
 OUTPUT_CSV = REPORTS / "substitution-causal-upgrade-packet.csv"
 OUTPUT_MD = REPORTS / "substitution-causal-upgrade-packet.md"
+OPTIONAL_HISTORICAL_DIAGNOSTICS_ENV = (
+    "LOBBY_CAPTURE_INCLUDE_OPTIONAL_HISTORICAL_DIAGNOSTICS"
+)
 
 PRODUCT_ORDER = [
     "substitution-reform-shocks",
@@ -476,6 +480,16 @@ def shock_window_summary() -> dict[str, str]:
 
 
 def historical_source_access_summary() -> str:
+    include_optional = os.environ.get(
+        OPTIONAL_HISTORICAL_DIAGNOSTICS_ENV,
+        "",
+    ).strip().lower() in {"1", "true", "yes"}
+    if not include_optional:
+        return (
+            "not run; optional live diagnostic target is "
+            "`make substitution-historical-source-access`."
+        )
+
     rows = read_csv(REPORTS / "substitution-historical-source-access.csv")
     panel_rows = read_csv(REPORTS / "substitution-historical-lda-panel.csv")
     control_rows = read_csv(REPORTS / "substitution-state-lobbying-control-panel.csv")

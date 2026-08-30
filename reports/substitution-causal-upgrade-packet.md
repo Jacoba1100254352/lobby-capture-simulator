@@ -48,7 +48,7 @@ This generated packet consolidates the open substitution-elasticity causal-calib
 - Actor-time pre/post coverage: preRows=458; postRows=2176
 - Assignment coverage: treatedOrExposedRows=41; comparisonOrControlRows=30; excludedRows=499
 - Estimation consequence: shock-window and assignment scaffolds are present; estimation still depends on the source-readiness, leakage, falsification, and artifact gates.
-- Historical source-access probe: ran optional live diagnostic; LDA API aggregate pre-HLOGA rows=7, post-HLOGA rows=93971, accepted actor probes post-only=7, pre/post=0, legacy Senate XML downloads blocked=12. This is acquisition evidence only, not a source-product promotion. Optional historical LDA panel: actors with pre/post rows=8, panel rows=602, preRows=96, postRows=370; treated visible-lobbying source rows only. Optional Colorado state-lobbying control panel: clients with pre/post rows=25, panel rows=1105, preRows=362, postRows=743; unaffected-jurisdiction source rows only.
+- Historical source-access probe: not run; optional live diagnostic target is `make substitution-historical-source-access`.
 
 ## Effect-Model Diagnostic Result
 
