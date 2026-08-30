@@ -7,7 +7,7 @@ cd "$ROOT"
 max_passes="${LOBBY_CAPTURE_FINALIZE_ARTIFACT_PASSES:-3}"
 
 run_source_control_reports() {
-  python3 scripts/write-first-wave-cross-venue-adjudication.py
+  python3 scripts/write-first-wave-cross-venue-adjudication.py --raw data/snapshots/2024-env/normalized
   python3 scripts/promote-first-wave-reviewed-entity-products.py
   python3 scripts/audit-first-wave-source-products.py
   python3 scripts/audit-first-wave-source-readiness.py
