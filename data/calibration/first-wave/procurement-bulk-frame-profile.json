@@ -1,0 +1,4170 @@
+{
+  "inclusiveDaysPerAgency": 366,
+  "manifestSha256": "a1f241028cdabcb56af6f0961437029adaab19d02b1e94d397a20b8de15e0918",
+  "profileFingerprint": "b5f542643814d1c60749b9e7cae5a907c80942c117fda18719dbf89bad6576bf",
+  "schema": "procurement-bulk-frame-profile-v1",
+  "sourceCreatedAt": "2026-06-13T08:06:00Z",
+  "sourceHeader": [
+    "award_id_piid",
+    "parent_award_id_piid",
+    "modification_number",
+    "federal_action_obligation",
+    "action_date",
+    "recipient_name",
+    "recipient_uei",
+    "awarding_agency_name",
+    "awarding_sub_agency_name",
+    "award_type",
+    "type_of_contract_pricing",
+    "extent_competed",
+    "number_of_offers_received"
+  ],
+  "strata": [
+    {
+      "manifestStratum": {
+        "agency": "Environmental Protection Agency",
+        "downloadFile": "data/raw/usaspending-transaction-downloads/environmental-protection-agency-2023-10-01-2023-12-31.zip",
+        "downloadLimit": "500000",
+        "endDate": "2023-12-31",
+        "expectedRows": "2613",
+        "normalizedRows": "2613",
+        "notes": "count fits public download limit",
+        "period": "Q1",
+        "rowCountDrift": "0",
+        "startDate": "2023-10-01",
+        "status": "ready",
+        "transactionCount": "2613",
+        "validatedRows": "2613",
+        "zipSha256": "8f08f1cd654eafa02e1299f1c50ab289c7efbbd9edf9a15c1433982d84a503ba"
+      },
+      "primeMembers": [
+        {
+          "name": "Contracts_PrimeTransactions_2026-06-13_H04M13S24_1.csv",
+          "rows": 2613
+        }
+      ],
+      "profile": {
+        "absoluteObligationDollars": "339177956.15",
+        "afterExclusionCompetitionRows": 703,
+        "awardTypeNetObligationDollars": {
+          "": "-1769838.61",
+          "BPA CALL": "72864729.93",
+          "DEFINITIVE CONTRACT": "15318015.44",
+          "DELIVERY ORDER": "192740749.29",
+          "PURCHASE ORDER": "8279853.66"
+        },
+        "awardTypeRows": {
+          "": 150,
+          "BPA CALL": 272,
+          "DEFINITIVE CONTRACT": 132,
+          "DELIVERY ORDER": 1827,
+          "PURCHASE ORDER": 232
+        },
+        "blankAwardTypeRows": 150,
+        "childDescriptionRows": 2463,
+        "competitionRows": {
+          "": 2,
+          "COMPETED UNDER SAP": 119,
+          "FULL AND OPEN COMPETITION": 1458,
+          "FULL AND OPEN COMPETITION AFTER EXCLUSION OF SOURCES": 703,
+          "NOT AVAILABLE FOR COMPETITION": 65,
+          "NOT COMPETED": 147,
+          "NOT COMPETED UNDER SAP": 119
+        },
+        "missingFields": {
+          "award_type": 150,
+          "extent_competed": 2,
+          "number_of_offers_received": 1135,
+          "parent_award_id_piid": 490
+        },
+        "missingModificationRows": 0,
+        "missingOffersRows": 1135,
+        "netObligationDollars": "287433509.71",
+        "obligationSignRows": {
+          "negative": 345,
+          "positive": 1183,
+          "zero": 1085
+        },
+        "otherAwardTypeRows": 0,
+        "outsideDateRows": 0,
+        "rows": 2613,
+        "wrongAgencyRows": 0,
+        "zeroOffersRows": 0
+      }
+    },
+    {
+      "manifestStratum": {
+        "agency": "Environmental Protection Agency",
+        "downloadFile": "data/raw/usaspending-transaction-downloads/environmental-protection-agency-2024-01-01-2024-03-31.zip",
+        "downloadLimit": "500000",
+        "endDate": "2024-03-31",
+        "expectedRows": "2999",
+        "normalizedRows": "2999",
+        "notes": "count fits public download limit",
+        "period": "Q2",
+        "rowCountDrift": "0",
+        "startDate": "2024-01-01",
+        "status": "ready",
+        "transactionCount": "2999",
+        "validatedRows": "2999",
+        "zipSha256": "e532501d106e236cdd6df1f7160c80e641b898c319b1acb29faf996b46eb71b3"
+      },
+      "primeMembers": [
+        {
+          "name": "Contracts_PrimeTransactions_2026-06-13_H04M15S30_1.csv",
+          "rows": 2999
+        }
+      ],
+      "profile": {
+        "absoluteObligationDollars": "456706213.44",
+        "afterExclusionCompetitionRows": 705,
+        "awardTypeNetObligationDollars": {
+          "": "3472090.22",
+          "BPA CALL": "55690521.51",
+          "DEFINITIVE CONTRACT": "20537859.29",
+          "DELIVERY ORDER": "300965463.85",
+          "PURCHASE ORDER": "10534856.27"
+        },
+        "awardTypeRows": {
+          "": 152,
+          "BPA CALL": 351,
+          "DEFINITIVE CONTRACT": 132,
+          "DELIVERY ORDER": 2065,
+          "PURCHASE ORDER": 299
+        },
+        "blankAwardTypeRows": 152,
+        "childDescriptionRows": 2847,
+        "competitionRows": {
+          "": 19,
+          "COMPETED UNDER SAP": 150,
+          "FULL AND OPEN COMPETITION": 1743,
+          "FULL AND OPEN COMPETITION AFTER EXCLUSION OF SOURCES": 705,
+          "NOT AVAILABLE FOR COMPETITION": 73,
+          "NOT COMPETED": 146,
+          "NOT COMPETED UNDER SAP": 163
+        },
+        "missingFields": {
+          "award_type": 152,
+          "extent_competed": 19,
+          "number_of_offers_received": 1355,
+          "parent_award_id_piid": 546
+        },
+        "missingModificationRows": 0,
+        "missingOffersRows": 1355,
+        "netObligationDollars": "391200791.14",
+        "obligationSignRows": {
+          "negative": 448,
+          "positive": 1596,
+          "zero": 955
+        },
+        "otherAwardTypeRows": 0,
+        "outsideDateRows": 0,
+        "rows": 2999,
+        "wrongAgencyRows": 0,
+        "zeroOffersRows": 0
+      }
+    },
+    {
+      "manifestStratum": {
+        "agency": "Environmental Protection Agency",
+        "downloadFile": "data/raw/usaspending-transaction-downloads/environmental-protection-agency-2024-04-01-2024-06-30.zip",
+        "downloadLimit": "500000",
+        "endDate": "2024-06-30",
+        "expectedRows": "3506",
+        "normalizedRows": "3506",
+        "notes": "count fits public download limit",
+        "period": "Q3",
+        "rowCountDrift": "0",
+        "startDate": "2024-04-01",
+        "status": "ready",
+        "transactionCount": "3506",
+        "validatedRows": "3506",
+        "zipSha256": "85eea67bcdb41734a4a0334e1d6cd6b8cdf7a030acb05a3b161d58e07778c565"
+      },
+      "primeMembers": [
+        {
+          "name": "Contracts_PrimeTransactions_2026-06-13_H04M15S50_1.csv",
+          "rows": 3506
+        }
+      ],
+      "profile": {
+        "absoluteObligationDollars": "646523441.75",
+        "afterExclusionCompetitionRows": 874,
+        "awardTypeNetObligationDollars": {
+          "": "2366144.01",
+          "BPA CALL": "73867201.90",
+          "DEFINITIVE CONTRACT": "36871430.70",
+          "DELIVERY ORDER": "383880570.66",
+          "PURCHASE ORDER": "11662661.52"
+        },
+        "awardTypeRows": {
+          "": 145,
+          "BPA CALL": 422,
+          "DEFINITIVE CONTRACT": 165,
+          "DELIVERY ORDER": 2400,
+          "PURCHASE ORDER": 374
+        },
+        "blankAwardTypeRows": 145,
+        "childDescriptionRows": 3361,
+        "competitionRows": {
+          "": 19,
+          "COMPETED UNDER SAP": 214,
+          "FULL AND OPEN COMPETITION": 1949,
+          "FULL AND OPEN COMPETITION AFTER EXCLUSION OF SOURCES": 874,
+          "NOT AVAILABLE FOR COMPETITION": 86,
+          "NOT COMPETED": 180,
+          "NOT COMPETED UNDER SAP": 184
+        },
+        "missingFields": {
+          "award_type": 145,
+          "extent_competed": 19,
+          "number_of_offers_received": 1505,
+          "parent_award_id_piid": 656
+        },
+        "missingModificationRows": 0,
+        "missingOffersRows": 1505,
+        "netObligationDollars": "508648008.79",
+        "obligationSignRows": {
+          "negative": 679,
+          "positive": 1712,
+          "zero": 1115
+        },
+        "otherAwardTypeRows": 0,
+        "outsideDateRows": 0,
+        "rows": 3506,
+        "wrongAgencyRows": 0,
+        "zeroOffersRows": 0
+      }
+    },
+    {
+      "manifestStratum": {
+        "agency": "Environmental Protection Agency",
+        "downloadFile": "data/raw/usaspending-transaction-downloads/environmental-protection-agency-2024-07-01-2024-09-30.zip",
+        "downloadLimit": "500000",
+        "endDate": "2024-09-30",
+        "expectedRows": "4263",
+        "normalizedRows": "4263",
+        "notes": "count fits public download limit",
+        "period": "Q4",
+        "rowCountDrift": "0",
+        "startDate": "2024-07-01",
+        "status": "ready",
+        "transactionCount": "4263",
+        "validatedRows": "4263",
+        "zipSha256": "c9ff111e0110112abf2163cc06653023101ff225b34127335d39879edb36fd5c"
+      },
+      "primeMembers": [
+        {
+          "name": "Contracts_PrimeTransactions_2026-06-13_H04M16S09_1.csv",
+          "rows": 4263
+        }
+      ],
+      "profile": {
+        "absoluteObligationDollars": "1133878983.84",
+        "afterExclusionCompetitionRows": 1068,
+        "awardTypeNetObligationDollars": {
+          "": "2032219.83",
+          "BPA CALL": "104869106.42",
+          "DEFINITIVE CONTRACT": "96620946.28",
+          "DELIVERY ORDER": "811769538.08",
+          "PURCHASE ORDER": "16392350.45"
+        },
+        "awardTypeRows": {
+          "": 221,
+          "BPA CALL": 692,
+          "DEFINITIVE CONTRACT": 168,
+          "DELIVERY ORDER": 2782,
+          "PURCHASE ORDER": 400
+        },
+        "blankAwardTypeRows": 221,
+        "childDescriptionRows": 4042,
+        "competitionRows": {
+          "": 27,
+          "COMPETED UNDER SAP": 196,
+          "FULL AND OPEN COMPETITION": 2498,
+          "FULL AND OPEN COMPETITION AFTER EXCLUSION OF SOURCES": 1068,
+          "NON-COMPETITIVE DELIVERY ORDER": 1,
+          "NOT AVAILABLE FOR COMPETITION": 115,
+          "NOT COMPETED": 185,
+          "NOT COMPETED UNDER SAP": 173
+        },
+        "missingFields": {
+          "award_type": 221,
+          "extent_competed": 27,
+          "number_of_offers_received": 1774,
+          "parent_award_id_piid": 723
+        },
+        "missingModificationRows": 0,
+        "missingOffersRows": 1774,
+        "netObligationDollars": "1031684161.06",
+        "obligationSignRows": {
+          "negative": 725,
+          "positive": 2265,
+          "zero": 1273
+        },
+        "otherAwardTypeRows": 0,
+        "outsideDateRows": 0,
+        "rows": 4263,
+        "wrongAgencyRows": 0,
+        "zeroOffersRows": 0
+      }
+    },
+    {
+      "manifestStratum": {
+        "agency": "Department of Energy",
+        "downloadFile": "data/raw/usaspending-transaction-downloads/department-of-energy-2023-10-01-2023-12-31.zip",
+        "downloadLimit": "500000",
+        "endDate": "2023-12-31",
+        "expectedRows": "2136",
+        "normalizedRows": "2136",
+        "notes": "count fits public download limit",
+        "period": "Q1",
+        "rowCountDrift": "0",
+        "startDate": "2023-10-01",
+        "status": "ready",
+        "transactionCount": "2136",
+        "validatedRows": "2136",
+        "zipSha256": "7c330586400e606f86961a1864bc3819ed8835a90c0d22a507aa2ccc7797d103"
+      },
+      "primeMembers": [
+        {
+          "name": "Contracts_PrimeTransactions_2026-06-13_H04M16S32_1.csv",
+          "rows": 2136
+        }
+      ],
+      "profile": {
+        "absoluteObligationDollars": "12321457403.73",
+        "afterExclusionCompetitionRows": 304,
+        "awardTypeNetObligationDollars": {
+          "": "411185238.42",
+          "BPA CALL": "148605195.21",
+          "DEFINITIVE CONTRACT": "10695783659.35",
+          "DELIVERY ORDER": "936108962.90",
+          "PURCHASE ORDER": "6915234.87"
+        },
+        "awardTypeRows": {
+          "": 131,
+          "BPA CALL": 526,
+          "DEFINITIVE CONTRACT": 480,
+          "DELIVERY ORDER": 798,
+          "PURCHASE ORDER": 201
+        },
+        "blankAwardTypeRows": 131,
+        "childDescriptionRows": 2005,
+        "competitionRows": {
+          "": 9,
+          "COMPETED UNDER SAP": 137,
+          "FULL AND OPEN COMPETITION": 1211,
+          "FULL AND OPEN COMPETITION AFTER EXCLUSION OF SOURCES": 304,
+          "NON-COMPETITIVE DELIVERY ORDER": 1,
+          "NOT AVAILABLE FOR COMPETITION": 247,
+          "NOT COMPETED": 130,
+          "NOT COMPETED UNDER SAP": 97
+        },
+        "missingFields": {
+          "award_type": 131,
+          "extent_competed": 9,
+          "number_of_offers_received": 752,
+          "parent_award_id_piid": 795
+        },
+        "missingModificationRows": 0,
+        "missingOffersRows": 752,
+        "netObligationDollars": "12198598290.75",
+        "obligationSignRows": {
+          "negative": 138,
+          "positive": 1130,
+          "zero": 868
+        },
+        "otherAwardTypeRows": 0,
+        "outsideDateRows": 0,
+        "rows": 2136,
+        "wrongAgencyRows": 0,
+        "zeroOffersRows": 23
+      }
+    },
+    {
+      "manifestStratum": {
+        "agency": "Department of Energy",
+        "downloadFile": "data/raw/usaspending-transaction-downloads/department-of-energy-2024-01-01-2024-03-31.zip",
+        "downloadLimit": "500000",
+        "endDate": "2024-03-31",
+        "expectedRows": "2768",
+        "normalizedRows": "2768",
+        "notes": "count fits public download limit",
+        "period": "Q2",
+        "rowCountDrift": "0",
+        "startDate": "2024-01-01",
+        "status": "ready",
+        "transactionCount": "2768",
+        "validatedRows": "2768",
+        "zipSha256": "36c1a1c364d4800b8eb87ff43208f4fa852d0bc167489abcacd6240afdfbf60d"
+      },
+      "primeMembers": [
+        {
+          "name": "Contracts_PrimeTransactions_2026-06-13_H04M16S46_1.csv",
+          "rows": 2768
+        }
+      ],
+      "profile": {
+        "absoluteObligationDollars": "9495607622.91",
+        "afterExclusionCompetitionRows": 451,
+        "awardTypeNetObligationDollars": {
+          "": "321184091.76",
+          "BPA CALL": "191358283.19",
+          "DEFINITIVE CONTRACT": "7934793738.87",
+          "DELIVERY ORDER": "786683458.80",
+          "PURCHASE ORDER": "11580031.63"
+        },
+        "awardTypeRows": {
+          "": 161,
+          "BPA CALL": 532,
+          "DEFINITIVE CONTRACT": 663,
+          "DELIVERY ORDER": 1124,
+          "PURCHASE ORDER": 288
+        },
+        "blankAwardTypeRows": 161,
+        "childDescriptionRows": 2607,
+        "competitionRows": {
+          "": 9,
+          "COMPETED UNDER SAP": 194,
+          "COMPETITIVE DELIVERY ORDER": 4,
+          "FULL AND OPEN COMPETITION": 1352,
+          "FULL AND OPEN COMPETITION AFTER EXCLUSION OF SOURCES": 451,
+          "NON-COMPETITIVE DELIVERY ORDER": 5,
+          "NOT AVAILABLE FOR COMPETITION": 344,
+          "NOT COMPETED": 224,
+          "NOT COMPETED UNDER SAP": 185
+        },
+        "missingFields": {
+          "award_type": 161,
+          "extent_competed": 9,
+          "number_of_offers_received": 861,
+          "parent_award_id_piid": 1098
+        },
+        "missingModificationRows": 0,
+        "missingOffersRows": 861,
+        "netObligationDollars": "9245599604.25",
+        "obligationSignRows": {
+          "negative": 189,
+          "positive": 1733,
+          "zero": 846
+        },
+        "otherAwardTypeRows": 0,
+        "outsideDateRows": 0,
+        "rows": 2768,
+        "wrongAgencyRows": 0,
+        "zeroOffersRows": 30
+      }
+    },
+    {
+      "manifestStratum": {
+        "agency": "Department of Energy",
+        "downloadFile": "data/raw/usaspending-transaction-downloads/department-of-energy-2024-04-01-2024-06-30.zip",
+        "downloadLimit": "500000",
+        "endDate": "2024-06-30",
+        "expectedRows": "3007",
+        "normalizedRows": "3007",
+        "notes": "count fits public download limit",
+        "period": "Q3",
+        "rowCountDrift": "0",
+        "startDate": "2024-04-01",
+        "status": "ready",
+        "transactionCount": "3007",
+        "validatedRows": "3007",
+        "zipSha256": "e13cf792ceb83e0890d1bb0bafa572349e9010d9c366bed274e0bf083681878c"
+      },
+      "primeMembers": [
+        {
+          "name": "Contracts_PrimeTransactions_2026-06-13_H04M17S29_1.csv",
+          "rows": 3007
+        }
+      ],
+      "profile": {
+        "absoluteObligationDollars": "18168244500.75",
+        "afterExclusionCompetitionRows": 469,
+        "awardTypeNetObligationDollars": {
+          "": "348077868.35",
+          "BPA CALL": "273586576.19",
+          "DEFINITIVE CONTRACT": "16019825036.82",
+          "DELIVERY ORDER": "1275010753.56",
+          "PURCHASE ORDER": "14200163.57"
+        },
+        "awardTypeRows": {
+          "": 172,
+          "BPA CALL": 700,
+          "DEFINITIVE CONTRACT": 674,
+          "DELIVERY ORDER": 1159,
+          "PURCHASE ORDER": 302
+        },
+        "blankAwardTypeRows": 172,
+        "childDescriptionRows": 2835,
+        "competitionRows": {
+          "": 14,
+          "COMPETED UNDER SAP": 178,
+          "COMPETITIVE DELIVERY ORDER": 3,
+          "FULL AND OPEN COMPETITION": 1525,
+          "FULL AND OPEN COMPETITION AFTER EXCLUSION OF SOURCES": 469,
+          "NON-COMPETITIVE DELIVERY ORDER": 3,
+          "NOT AVAILABLE FOR COMPETITION": 354,
+          "NOT COMPETED": 239,
+          "NOT COMPETED UNDER SAP": 222
+        },
+        "missingFields": {
+          "award_type": 172,
+          "extent_competed": 14,
+          "number_of_offers_received": 994,
+          "parent_award_id_piid": 1131
+        },
+        "missingModificationRows": 0,
+        "missingOffersRows": 994,
+        "netObligationDollars": "17930700398.49",
+        "obligationSignRows": {
+          "negative": 303,
+          "positive": 1806,
+          "zero": 898
+        },
+        "otherAwardTypeRows": 0,
+        "outsideDateRows": 0,
+        "rows": 3007,
+        "wrongAgencyRows": 0,
+        "zeroOffersRows": 28
+      }
+    },
+    {
+      "manifestStratum": {
+        "agency": "Department of Energy",
+        "downloadFile": "data/raw/usaspending-transaction-downloads/department-of-energy-2024-07-01-2024-09-30.zip",
+        "downloadLimit": "500000",
+        "endDate": "2024-09-30",
+        "expectedRows": "3814",
+        "normalizedRows": "3814",
+        "notes": "count fits public download limit",
+        "period": "Q4",
+        "rowCountDrift": "0",
+        "startDate": "2024-07-01",
+        "status": "ready",
+        "transactionCount": "3814",
+        "validatedRows": "3814",
+        "zipSha256": "029c84be7db893d81c66667b992be3cd4a492259f17f06c1f583980fe805a106"
+      },
+      "primeMembers": [
+        {
+          "name": "Contracts_PrimeTransactions_2026-06-13_H04M18S15_1.csv",
+          "rows": 3814
+        }
+      ],
+      "profile": {
+        "absoluteObligationDollars": "12505444987.74",
+        "afterExclusionCompetitionRows": 573,
+        "awardTypeNetObligationDollars": {
+          "": "546612996.59",
+          "BPA CALL": "354492898.27",
+          "DEFINITIVE CONTRACT": "6185084070.38",
+          "DELIVERY ORDER": "1171497821.89",
+          "PURCHASE ORDER": "38284269.41"
+        },
+        "awardTypeRows": {
+          "": 173,
+          "BPA CALL": 771,
+          "DEFINITIVE CONTRACT": 786,
+          "DELIVERY ORDER": 1606,
+          "PURCHASE ORDER": 478
+        },
+        "blankAwardTypeRows": 173,
+        "childDescriptionRows": 3641,
+        "competitionRows": {
+          "": 14,
+          "COMPETED UNDER SAP": 290,
+          "COMPETITIVE DELIVERY ORDER": 2,
+          "FULL AND OPEN COMPETITION": 1880,
+          "FULL AND OPEN COMPETITION AFTER EXCLUSION OF SOURCES": 573,
+          "NON-COMPETITIVE DELIVERY ORDER": 4,
+          "NOT AVAILABLE FOR COMPETITION": 444,
+          "NOT COMPETED": 341,
+          "NOT COMPETED UNDER SAP": 266
+        },
+        "missingFields": {
+          "award_type": 173,
+          "extent_competed": 14,
+          "number_of_offers_received": 1166,
+          "parent_award_id_piid": 1414
+        },
+        "missingModificationRows": 0,
+        "missingOffersRows": 1166,
+        "netObligationDollars": "8295972056.54",
+        "obligationSignRows": {
+          "negative": 377,
+          "positive": 2436,
+          "zero": 1001
+        },
+        "otherAwardTypeRows": 0,
+        "outsideDateRows": 0,
+        "rows": 3814,
+        "wrongAgencyRows": 0,
+        "zeroOffersRows": 33
+      }
+    },
+    {
+      "manifestStratum": {
+        "agency": "Department of the Interior",
+        "downloadFile": "data/raw/usaspending-transaction-downloads/department-of-the-interior-2023-10-01-2023-12-31.zip",
+        "downloadLimit": "500000",
+        "endDate": "2023-12-31",
+        "expectedRows": "7684",
+        "normalizedRows": "7684",
+        "notes": "count fits public download limit",
+        "period": "Q1",
+        "rowCountDrift": "0",
+        "startDate": "2023-10-01",
+        "status": "ready",
+        "transactionCount": "7684",
+        "validatedRows": "7684",
+        "zipSha256": "e8c6236b179ef10da5f67543a8bbf3a883159ddfe336686b061161e73d9499f1"
+      },
+      "primeMembers": [
+        {
+          "name": "Contracts_PrimeTransactions_2026-06-13_H04M18S41_1.csv",
+          "rows": 7684
+        }
+      ],
+      "profile": {
+        "absoluteObligationDollars": "1000793991.27",
+        "afterExclusionCompetitionRows": 1601,
+        "awardTypeNetObligationDollars": {
+          "": "1728944.63",
+          "BPA CALL": "27584375.11",
+          "DEFINITIVE CONTRACT": "152828722.38",
+          "DELIVERY ORDER": "615780560.66",
+          "PURCHASE ORDER": "51197991.83"
+        },
+        "awardTypeRows": {
+          "": 471,
+          "BPA CALL": 827,
+          "DEFINITIVE CONTRACT": 844,
+          "DELIVERY ORDER": 3161,
+          "PURCHASE ORDER": 2381
+        },
+        "blankAwardTypeRows": 471,
+        "childDescriptionRows": 7213,
+        "competitionRows": {
+          "": 89,
+          "COMPETED UNDER SAP": 2321,
+          "FULL AND OPEN COMPETITION": 2369,
+          "FULL AND OPEN COMPETITION AFTER EXCLUSION OF SOURCES": 1601,
+          "NOT AVAILABLE FOR COMPETITION": 401,
+          "NOT COMPETED": 389,
+          "NOT COMPETED UNDER SAP": 514
+        },
+        "missingFields": {
+          "award_type": 471,
+          "extent_competed": 89,
+          "number_of_offers_received": 1735,
+          "parent_award_id_piid": 3643
+        },
+        "missingModificationRows": 0,
+        "missingOffersRows": 1735,
+        "netObligationDollars": "849120594.61",
+        "obligationSignRows": {
+          "negative": 1740,
+          "positive": 3002,
+          "zero": 2942
+        },
+        "otherAwardTypeRows": 0,
+        "outsideDateRows": 0,
+        "rows": 7684,
+        "wrongAgencyRows": 0,
+        "zeroOffersRows": 0
+      }
+    },
+    {
+      "manifestStratum": {
+        "agency": "Department of the Interior",
+        "downloadFile": "data/raw/usaspending-transaction-downloads/department-of-the-interior-2024-01-01-2024-03-31.zip",
+        "downloadLimit": "500000",
+        "endDate": "2024-03-31",
+        "expectedRows": "11432",
+        "normalizedRows": "11432",
+        "notes": "count fits public download limit",
+        "period": "Q2",
+        "rowCountDrift": "0",
+        "startDate": "2024-01-01",
+        "status": "ready",
+        "transactionCount": "11432",
+        "validatedRows": "11432",
+        "zipSha256": "3123b708bcfce5892d389f2ee3da1054b683c4700ec2eb8054ab7bbf944bee21"
+      },
+      "primeMembers": [
+        {
+          "name": "Contracts_PrimeTransactions_2026-06-13_H04M19S42_1.csv",
+          "rows": 11432
+        }
+      ],
+      "profile": {
+        "absoluteObligationDollars": "1748036241.96",
+        "afterExclusionCompetitionRows": 2386,
+        "awardTypeNetObligationDollars": {
+          "": "1765881.12",
+          "BPA CALL": "85111828.51",
+          "DEFINITIVE CONTRACT": "695250347.87",
+          "DELIVERY ORDER": "581822718.78",
+          "PURCHASE ORDER": "101201463.04"
+        },
+        "awardTypeRows": {
+          "": 889,
+          "BPA CALL": 1170,
+          "DEFINITIVE CONTRACT": 1045,
+          "DELIVERY ORDER": 4547,
+          "PURCHASE ORDER": 3781
+        },
+        "blankAwardTypeRows": 889,
+        "childDescriptionRows": 10543,
+        "competitionRows": {
+          "": 167,
+          "COMPETED UNDER SAP": 3460,
+          "COMPETITIVE DELIVERY ORDER": 2,
+          "FULL AND OPEN COMPETITION": 3403,
+          "FULL AND OPEN COMPETITION AFTER EXCLUSION OF SOURCES": 2386,
+          "NON-COMPETITIVE DELIVERY ORDER": 1,
+          "NOT AVAILABLE FOR COMPETITION": 453,
+          "NOT COMPETED": 706,
+          "NOT COMPETED UNDER SAP": 854
+        },
+        "missingFields": {
+          "award_type": 889,
+          "extent_competed": 167,
+          "number_of_offers_received": 2333,
+          "parent_award_id_piid": 5649
+        },
+        "missingModificationRows": 0,
+        "missingOffersRows": 2333,
+        "netObligationDollars": "1465152239.32",
+        "obligationSignRows": {
+          "negative": 2202,
+          "positive": 5580,
+          "zero": 3650
+        },
+        "otherAwardTypeRows": 0,
+        "outsideDateRows": 0,
+        "rows": 11432,
+        "wrongAgencyRows": 0,
+        "zeroOffersRows": 0
+      }
+    },
+    {
+      "manifestStratum": {
+        "agency": "Department of the Interior",
+        "downloadFile": "data/raw/usaspending-transaction-downloads/department-of-the-interior-2024-04-01-2024-06-30.zip",
+        "downloadLimit": "500000",
+        "endDate": "2024-06-30",
+        "expectedRows": "12058",
+        "normalizedRows": "12058",
+        "notes": "count fits public download limit",
+        "period": "Q3",
+        "rowCountDrift": "0",
+        "startDate": "2024-04-01",
+        "status": "ready",
+        "transactionCount": "12058",
+        "validatedRows": "12058",
+        "zipSha256": "65b7c7538bf0d3d0272831fc814285e8f72a9bace54b15271674ff4a8ebe22ef"
+      },
+      "primeMembers": [
+        {
+          "name": "Contracts_PrimeTransactions_2026-06-13_H04M20S30_1.csv",
+          "rows": 12058
+        }
+      ],
+      "profile": {
+        "absoluteObligationDollars": "2023720219.93",
+        "afterExclusionCompetitionRows": 2369,
+        "awardTypeNetObligationDollars": {
+          "": "1133224.35",
+          "BPA CALL": "133751608.98",
+          "DEFINITIVE CONTRACT": "485602711.94",
+          "DELIVERY ORDER": "1012893299.41",
+          "PURCHASE ORDER": "147945435.09"
+        },
+        "awardTypeRows": {
+          "": 705,
+          "BPA CALL": 1240,
+          "DEFINITIVE CONTRACT": 1123,
+          "DELIVERY ORDER": 4645,
+          "PURCHASE ORDER": 4345
+        },
+        "blankAwardTypeRows": 705,
+        "childDescriptionRows": 11353,
+        "competitionRows": {
+          "": 169,
+          "COMPETED UNDER SAP": 4042,
+          "COMPETITIVE DELIVERY ORDER": 1,
+          "FULL AND OPEN COMPETITION": 3396,
+          "FULL AND OPEN COMPETITION AFTER EXCLUSION OF SOURCES": 2369,
+          "NOT AVAILABLE FOR COMPETITION": 477,
+          "NOT COMPETED": 699,
+          "NOT COMPETED UNDER SAP": 905
+        },
+        "missingFields": {
+          "award_type": 705,
+          "extent_competed": 169,
+          "number_of_offers_received": 2126,
+          "parent_award_id_piid": 6102
+        },
+        "missingModificationRows": 0,
+        "missingOffersRows": 2126,
+        "netObligationDollars": "1781326279.77",
+        "obligationSignRows": {
+          "negative": 2098,
+          "positive": 6640,
+          "zero": 3320
+        },
+        "otherAwardTypeRows": 0,
+        "outsideDateRows": 0,
+        "rows": 12058,
+        "wrongAgencyRows": 0,
+        "zeroOffersRows": 0
+      }
+    },
+    {
+      "manifestStratum": {
+        "agency": "Department of the Interior",
+        "downloadFile": "data/raw/usaspending-transaction-downloads/department-of-the-interior-2024-07-01-2024-09-30.zip",
+        "downloadLimit": "500000",
+        "endDate": "2024-09-30",
+        "expectedRows": "17628",
+        "normalizedRows": "17628",
+        "notes": "count fits public download limit",
+        "period": "Q4",
+        "rowCountDrift": "0",
+        "startDate": "2024-07-01",
+        "status": "ready",
+        "transactionCount": "17628",
+        "validatedRows": "17628",
+        "zipSha256": "d9baac0a48e2d6f0dabaf2813b7865e8fe6ec0c6c58dab28feadb5ebbc792c54"
+      },
+      "primeMembers": [
+        {
+          "name": "Contracts_PrimeTransactions_2026-06-13_H04M21S31_1.csv",
+          "rows": 17628
+        }
+      ],
+      "profile": {
+        "absoluteObligationDollars": "4499361715.43",
+        "afterExclusionCompetitionRows": 3674,
+        "awardTypeNetObligationDollars": {
+          "": "302867.09",
+          "BPA CALL": "203662406.61",
+          "DEFINITIVE CONTRACT": "1448147977.79",
+          "DELIVERY ORDER": "2092026285.89",
+          "PURCHASE ORDER": "286420375.59"
+        },
+        "awardTypeRows": {
+          "": 708,
+          "BPA CALL": 1650,
+          "DEFINITIVE CONTRACT": 1626,
+          "DELIVERY ORDER": 7191,
+          "PURCHASE ORDER": 6453
+        },
+        "blankAwardTypeRows": 708,
+        "childDescriptionRows": 16920,
+        "competitionRows": {
+          "": 145,
+          "COMPETED UNDER SAP": 5951,
+          "COMPETITIVE DELIVERY ORDER": 1,
+          "FOLLOW ON TO COMPETED ACTION": 22,
+          "FULL AND OPEN COMPETITION": 5004,
+          "FULL AND OPEN COMPETITION AFTER EXCLUSION OF SOURCES": 3674,
+          "NOT AVAILABLE FOR COMPETITION": 661,
+          "NOT COMPETED": 939,
+          "NOT COMPETED UNDER SAP": 1231
+        },
+        "missingFields": {
+          "award_type": 708,
+          "extent_competed": 145,
+          "number_of_offers_received": 3058,
+          "parent_award_id_piid": 8693
+        },
+        "missingModificationRows": 0,
+        "missingOffersRows": 3058,
+        "netObligationDollars": "4030559912.97",
+        "obligationSignRows": {
+          "negative": 2408,
+          "positive": 11566,
+          "zero": 3654
+        },
+        "otherAwardTypeRows": 0,
+        "outsideDateRows": 0,
+        "rows": 17628,
+        "wrongAgencyRows": 0,
+        "zeroOffersRows": 0
+      }
+    },
+    {
+      "manifestStratum": {
+        "agency": "Department of Agriculture",
+        "downloadFile": "data/raw/usaspending-transaction-downloads/department-of-agriculture-2023-10-01-2023-12-31.zip",
+        "downloadLimit": "500000",
+        "endDate": "2023-12-31",
+        "expectedRows": "9852",
+        "normalizedRows": "9852",
+        "notes": "count fits public download limit",
+        "period": "Q1",
+        "rowCountDrift": "0",
+        "startDate": "2023-10-01",
+        "status": "ready",
+        "transactionCount": "9852",
+        "validatedRows": "9852",
+        "zipSha256": "db2852735b1c1786f2c7c1ad54a8a44957ed2994c32ebb4740af6a0759ab24aa"
+      },
+      "primeMembers": [
+        {
+          "name": "Contracts_PrimeTransactions_2026-06-13_H04M22S57_1.csv",
+          "rows": 9852
+        }
+      ],
+      "profile": {
+        "absoluteObligationDollars": "1487463354.06",
+        "afterExclusionCompetitionRows": 2527,
+        "awardTypeNetObligationDollars": {
+          "": "2635313.91",
+          "BPA CALL": "63173061.07",
+          "DEFINITIVE CONTRACT": "563216067.39",
+          "DELIVERY ORDER": "681479199.52",
+          "PURCHASE ORDER": "24150645.47"
+        },
+        "awardTypeRows": {
+          "": 845,
+          "BPA CALL": 947,
+          "DEFINITIVE CONTRACT": 2133,
+          "DELIVERY ORDER": 4333,
+          "PURCHASE ORDER": 1594
+        },
+        "blankAwardTypeRows": 845,
+        "childDescriptionRows": 9007,
+        "competitionRows": {
+          "": 262,
+          "COMPETED UNDER SAP": 2984,
+          "COMPETITIVE DELIVERY ORDER": 1,
+          "FULL AND OPEN COMPETITION": 2788,
+          "FULL AND OPEN COMPETITION AFTER EXCLUSION OF SOURCES": 2527,
+          "NOT AVAILABLE FOR COMPETITION": 252,
+          "NOT COMPETED": 440,
+          "NOT COMPETED UNDER SAP": 598
+        },
+        "missingFields": {
+          "award_type": 845,
+          "extent_competed": 262,
+          "number_of_offers_received": 2028,
+          "parent_award_id_piid": 4539
+        },
+        "missingModificationRows": 0,
+        "missingOffersRows": 2028,
+        "netObligationDollars": "1334654287.36",
+        "obligationSignRows": {
+          "negative": 1807,
+          "positive": 4193,
+          "zero": 3852
+        },
+        "otherAwardTypeRows": 0,
+        "outsideDateRows": 0,
+        "rows": 9852,
+        "wrongAgencyRows": 0,
+        "zeroOffersRows": 0
+      }
+    },
+    {
+      "manifestStratum": {
+        "agency": "Department of Agriculture",
+        "downloadFile": "data/raw/usaspending-transaction-downloads/department-of-agriculture-2024-01-01-2024-03-31.zip",
+        "downloadLimit": "500000",
+        "endDate": "2024-03-31",
+        "expectedRows": "11572",
+        "normalizedRows": "11572",
+        "notes": "count fits public download limit",
+        "period": "Q2",
+        "rowCountDrift": "0",
+        "startDate": "2024-01-01",
+        "status": "ready",
+        "transactionCount": "11572",
+        "validatedRows": "11572",
+        "zipSha256": "2044eedd1d2d025b5f2a208f217c33eaf811c0bcb2689f9be66ff3778c0ac50f"
+      },
+      "primeMembers": [
+        {
+          "name": "Contracts_PrimeTransactions_2026-06-13_H04M54S25_1.csv",
+          "rows": 11572
+        }
+      ],
+      "profile": {
+        "absoluteObligationDollars": "2150314928.31",
+        "afterExclusionCompetitionRows": 2863,
+        "awardTypeNetObligationDollars": {
+          "": "9421819.44",
+          "BPA CALL": "157316152.58",
+          "DEFINITIVE CONTRACT": "968219790.45",
+          "DELIVERY ORDER": "690372789.93",
+          "PURCHASE ORDER": "35018737.37"
+        },
+        "awardTypeRows": {
+          "": 1106,
+          "BPA CALL": 1290,
+          "DEFINITIVE CONTRACT": 2461,
+          "DELIVERY ORDER": 4497,
+          "PURCHASE ORDER": 2218
+        },
+        "blankAwardTypeRows": 1106,
+        "childDescriptionRows": 10466,
+        "competitionRows": {
+          "": 405,
+          "COMPETED UNDER SAP": 3408,
+          "FULL AND OPEN COMPETITION": 3382,
+          "FULL AND OPEN COMPETITION AFTER EXCLUSION OF SOURCES": 2863,
+          "NOT AVAILABLE FOR COMPETITION": 321,
+          "NOT COMPETED": 531,
+          "NOT COMPETED UNDER SAP": 662
+        },
+        "missingFields": {
+          "award_type": 1106,
+          "extent_competed": 405,
+          "number_of_offers_received": 2668,
+          "parent_award_id_piid": 5738
+        },
+        "missingModificationRows": 0,
+        "missingOffersRows": 2668,
+        "netObligationDollars": "1860349289.77",
+        "obligationSignRows": {
+          "negative": 1929,
+          "positive": 5646,
+          "zero": 3997
+        },
+        "otherAwardTypeRows": 0,
+        "outsideDateRows": 0,
+        "rows": 11572,
+        "wrongAgencyRows": 0,
+        "zeroOffersRows": 0
+      }
+    },
+    {
+      "manifestStratum": {
+        "agency": "Department of Agriculture",
+        "downloadFile": "data/raw/usaspending-transaction-downloads/department-of-agriculture-2024-04-01-2024-06-30.zip",
+        "downloadLimit": "500000",
+        "endDate": "2024-06-30",
+        "expectedRows": "19749",
+        "normalizedRows": "19749",
+        "notes": "count fits public download limit",
+        "period": "Q3",
+        "rowCountDrift": "0",
+        "startDate": "2024-04-01",
+        "status": "ready",
+        "transactionCount": "19749",
+        "validatedRows": "19749",
+        "zipSha256": "b576d7a76702054c5a02abe0bdfd4f5701622c81191c9a00f265c2895742874a"
+      },
+      "primeMembers": [
+        {
+          "name": "Contracts_PrimeTransactions_2026-06-13_H04M24S46_1.csv",
+          "rows": 19749
+        }
+      ],
+      "profile": {
+        "absoluteObligationDollars": "3370852947.04",
+        "afterExclusionCompetitionRows": 3484,
+        "awardTypeNetObligationDollars": {
+          "": "4142843.89",
+          "BPA CALL": "196371757.09",
+          "DEFINITIVE CONTRACT": "830061996.35",
+          "DELIVERY ORDER": "1895234261.50",
+          "PURCHASE ORDER": "91921085.91"
+        },
+        "awardTypeRows": {
+          "": 6665,
+          "BPA CALL": 1360,
+          "DEFINITIVE CONTRACT": 2483,
+          "DELIVERY ORDER": 6492,
+          "PURCHASE ORDER": 2749
+        },
+        "blankAwardTypeRows": 6665,
+        "childDescriptionRows": 13084,
+        "competitionRows": {
+          "": 403,
+          "COMPETED UNDER SAP": 9972,
+          "COMPETITIVE DELIVERY ORDER": 1,
+          "FULL AND OPEN COMPETITION": 3977,
+          "FULL AND OPEN COMPETITION AFTER EXCLUSION OF SOURCES": 3484,
+          "NOT AVAILABLE FOR COMPETITION": 324,
+          "NOT COMPETED": 585,
+          "NOT COMPETED UNDER SAP": 1003
+        },
+        "missingFields": {
+          "award_type": 6665,
+          "extent_competed": 403,
+          "number_of_offers_received": 2854,
+          "parent_award_id_piid": 11853,
+          "type_of_contract_pricing": 3
+        },
+        "missingModificationRows": 0,
+        "missingOffersRows": 2854,
+        "netObligationDollars": "3017731944.74",
+        "obligationSignRows": {
+          "negative": 1850,
+          "positive": 8416,
+          "zero": 9483
+        },
+        "otherAwardTypeRows": 0,
+        "outsideDateRows": 0,
+        "rows": 19749,
+        "wrongAgencyRows": 0,
+        "zeroOffersRows": 4
+      }
+    },
+    {
+      "manifestStratum": {
+        "agency": "Department of Agriculture",
+        "downloadFile": "data/raw/usaspending-transaction-downloads/department-of-agriculture-2024-07-01-2024-09-30.zip",
+        "downloadLimit": "500000",
+        "endDate": "2024-09-30",
+        "expectedRows": "34678",
+        "normalizedRows": "34657",
+        "notes": "count fits public download limit; download row-count drift accepted: expected 34678, found 34657",
+        "period": "Q4",
+        "rowCountDrift": "-21",
+        "startDate": "2024-07-01",
+        "status": "ready",
+        "transactionCount": "34678",
+        "validatedRows": "34657",
+        "zipSha256": "1ba49bb27b50101c7333e13573aba42ecfccc082fbb6247bf13373cd2f408367"
+      },
+      "primeMembers": [
+        {
+          "name": "Contracts_PrimeTransactions_2026-06-13_H04M55S00_1.csv",
+          "rows": 34657
+        }
+      ],
+      "profile": {
+        "absoluteObligationDollars": "5684567499.05",
+        "afterExclusionCompetitionRows": 5982,
+        "awardTypeNetObligationDollars": {
+          "": "2577885.90",
+          "BPA CALL": "471298676.28",
+          "DEFINITIVE CONTRACT": "1816584612.85",
+          "DELIVERY ORDER": "2728766445.34",
+          "PURCHASE ORDER": "383687556.48"
+        },
+        "awardTypeRows": {
+          "": 1113,
+          "BPA CALL": 1749,
+          "DEFINITIVE CONTRACT": 3784,
+          "DELIVERY ORDER": 21354,
+          "PURCHASE ORDER": 6657
+        },
+        "blankAwardTypeRows": 1113,
+        "childDescriptionRows": 33544,
+        "competitionRows": {
+          "": 163,
+          "COMPETED UNDER SAP": 17428,
+          "COMPETITIVE DELIVERY ORDER": 1,
+          "FULL AND OPEN COMPETITION": 5961,
+          "FULL AND OPEN COMPETITION AFTER EXCLUSION OF SOURCES": 5982,
+          "NOT AVAILABLE FOR COMPETITION": 411,
+          "NOT COMPETED": 845,
+          "NOT COMPETED UNDER SAP": 3866
+        },
+        "missingFields": {
+          "award_type": 1113,
+          "extent_competed": 163,
+          "number_of_offers_received": 3807,
+          "parent_award_id_piid": 11462
+        },
+        "missingModificationRows": 0,
+        "missingOffersRows": 3807,
+        "netObligationDollars": "5402915176.85",
+        "obligationSignRows": {
+          "negative": 1867,
+          "positive": 27884,
+          "zero": 4906
+        },
+        "otherAwardTypeRows": 0,
+        "outsideDateRows": 0,
+        "rows": 34657,
+        "wrongAgencyRows": 0,
+        "zeroOffersRows": 0
+      }
+    },
+    {
+      "manifestStratum": {
+        "agency": "Department of Transportation",
+        "downloadFile": "data/raw/usaspending-transaction-downloads/department-of-transportation-2023-10-01-2023-12-31.zip",
+        "downloadLimit": "500000",
+        "endDate": "2023-12-31",
+        "expectedRows": "6002",
+        "normalizedRows": "6002",
+        "notes": "count fits public download limit",
+        "period": "Q1",
+        "rowCountDrift": "0",
+        "startDate": "2023-10-01",
+        "status": "ready",
+        "transactionCount": "6002",
+        "validatedRows": "6002",
+        "zipSha256": "dff6782e7e6e200457f3e08199faeeb0522e0ef8ca098cd0b108525e5197514f"
+      },
+      "primeMembers": [
+        {
+          "name": "Contracts_PrimeTransactions_2026-06-13_H04M26S14_1.csv",
+          "rows": 6002
+        }
+      ],
+      "profile": {
+        "absoluteObligationDollars": "1434101179.73",
+        "afterExclusionCompetitionRows": 1170,
+        "awardTypeNetObligationDollars": {
+          "": "122032890.54",
+          "BPA CALL": "74630434.00",
+          "DEFINITIVE CONTRACT": "363913864.69",
+          "DELIVERY ORDER": "717704496.77",
+          "PURCHASE ORDER": "19428062.77"
+        },
+        "awardTypeRows": {
+          "": 489,
+          "BPA CALL": 410,
+          "DEFINITIVE CONTRACT": 1031,
+          "DELIVERY ORDER": 3346,
+          "PURCHASE ORDER": 726
+        },
+        "blankAwardTypeRows": 489,
+        "childDescriptionRows": 5513,
+        "competitionRows": {
+          "": 88,
+          "COMPETED UNDER SAP": 831,
+          "FULL AND OPEN COMPETITION": 2738,
+          "FULL AND OPEN COMPETITION AFTER EXCLUSION OF SOURCES": 1170,
+          "NOT AVAILABLE FOR COMPETITION": 236,
+          "NOT COMPETED": 581,
+          "NOT COMPETED UNDER SAP": 358
+        },
+        "missingFields": {
+          "award_type": 489,
+          "extent_competed": 88,
+          "number_of_offers_received": 2448,
+          "parent_award_id_piid": 2230
+        },
+        "missingModificationRows": 0,
+        "missingOffersRows": 2448,
+        "netObligationDollars": "1297709748.77",
+        "obligationSignRows": {
+          "negative": 765,
+          "positive": 3305,
+          "zero": 1932
+        },
+        "otherAwardTypeRows": 0,
+        "outsideDateRows": 0,
+        "rows": 6002,
+        "wrongAgencyRows": 0,
+        "zeroOffersRows": 1
+      }
+    },
+    {
+      "manifestStratum": {
+        "agency": "Department of Transportation",
+        "downloadFile": "data/raw/usaspending-transaction-downloads/department-of-transportation-2024-01-01-2024-03-31.zip",
+        "downloadLimit": "500000",
+        "endDate": "2024-03-31",
+        "expectedRows": "8077",
+        "normalizedRows": "8077",
+        "notes": "count fits public download limit",
+        "period": "Q2",
+        "rowCountDrift": "0",
+        "startDate": "2024-01-01",
+        "status": "ready",
+        "transactionCount": "8077",
+        "validatedRows": "8077",
+        "zipSha256": "399eafa438b7f477aac190c411076a175ecd2a6ccfe6d5ad17cde813b11e182f"
+      },
+      "primeMembers": [
+        {
+          "name": "Contracts_PrimeTransactions_2026-06-13_H04M26S36_1.csv",
+          "rows": 8077
+        }
+      ],
+      "profile": {
+        "absoluteObligationDollars": "2229768821.46",
+        "afterExclusionCompetitionRows": 1435,
+        "awardTypeNetObligationDollars": {
+          "": "175871928.10",
+          "BPA CALL": "168455975.64",
+          "DEFINITIVE CONTRACT": "575743521.21",
+          "DELIVERY ORDER": "1064196203.87",
+          "PURCHASE ORDER": "32873100.02"
+        },
+        "awardTypeRows": {
+          "": 532,
+          "BPA CALL": 669,
+          "DEFINITIVE CONTRACT": 1329,
+          "DELIVERY ORDER": 4620,
+          "PURCHASE ORDER": 927
+        },
+        "blankAwardTypeRows": 532,
+        "childDescriptionRows": 7545,
+        "competitionRows": {
+          "": 27,
+          "COMPETED UNDER SAP": 1046,
+          "COMPETITIVE DELIVERY ORDER": 3,
+          "FULL AND OPEN COMPETITION": 4017,
+          "FULL AND OPEN COMPETITION AFTER EXCLUSION OF SOURCES": 1435,
+          "NOT AVAILABLE FOR COMPETITION": 320,
+          "NOT COMPETED": 739,
+          "NOT COMPETED UNDER SAP": 490
+        },
+        "missingFields": {
+          "award_type": 532,
+          "extent_competed": 27,
+          "number_of_offers_received": 3157,
+          "parent_award_id_piid": 2741
+        },
+        "missingModificationRows": 0,
+        "missingOffersRows": 3157,
+        "netObligationDollars": "2017140728.84",
+        "obligationSignRows": {
+          "negative": 1238,
+          "positive": 4748,
+          "zero": 2091
+        },
+        "otherAwardTypeRows": 0,
+        "outsideDateRows": 0,
+        "rows": 8077,
+        "wrongAgencyRows": 0,
+        "zeroOffersRows": 0
+      }
+    },
+    {
+      "manifestStratum": {
+        "agency": "Department of Transportation",
+        "downloadFile": "data/raw/usaspending-transaction-downloads/department-of-transportation-2024-04-01-2024-06-30.zip",
+        "downloadLimit": "500000",
+        "endDate": "2024-06-30",
+        "expectedRows": "8285",
+        "normalizedRows": "8285",
+        "notes": "count fits public download limit",
+        "period": "Q3",
+        "rowCountDrift": "0",
+        "startDate": "2024-04-01",
+        "status": "ready",
+        "transactionCount": "8285",
+        "validatedRows": "8285",
+        "zipSha256": "d47d533a69331f17d11d48021f2bd04a866164e1da2aa80c311431fa968d6b32"
+      },
+      "primeMembers": [
+        {
+          "name": "Contracts_PrimeTransactions_2026-06-13_H04M51S30_1.csv",
+          "rows": 8285
+        }
+      ],
+      "profile": {
+        "absoluteObligationDollars": "3365626221.68",
+        "afterExclusionCompetitionRows": 1546,
+        "awardTypeNetObligationDollars": {
+          "": "265990784.44",
+          "BPA CALL": "266449704.97",
+          "DEFINITIVE CONTRACT": "770505448.52",
+          "DELIVERY ORDER": "1807383575.66",
+          "PURCHASE ORDER": "39558198.35"
+        },
+        "awardTypeRows": {
+          "": 602,
+          "BPA CALL": 707,
+          "DEFINITIVE CONTRACT": 1228,
+          "DELIVERY ORDER": 4852,
+          "PURCHASE ORDER": 896
+        },
+        "blankAwardTypeRows": 602,
+        "childDescriptionRows": 7683,
+        "competitionRows": {
+          "": 34,
+          "COMPETED UNDER SAP": 1094,
+          "COMPETITIVE DELIVERY ORDER": 3,
+          "FULL AND OPEN COMPETITION": 4004,
+          "FULL AND OPEN COMPETITION AFTER EXCLUSION OF SOURCES": 1546,
+          "NOT AVAILABLE FOR COMPETITION": 255,
+          "NOT COMPETED": 827,
+          "NOT COMPETED UNDER SAP": 522
+        },
+        "missingFields": {
+          "award_type": 602,
+          "extent_competed": 34,
+          "number_of_offers_received": 3348,
+          "parent_award_id_piid": 2704
+        },
+        "missingModificationRows": 0,
+        "missingOffersRows": 3348,
+        "netObligationDollars": "3149887711.94",
+        "obligationSignRows": {
+          "negative": 1186,
+          "positive": 5127,
+          "zero": 1972
+        },
+        "otherAwardTypeRows": 0,
+        "outsideDateRows": 0,
+        "rows": 8285,
+        "wrongAgencyRows": 0,
+        "zeroOffersRows": 0
+      }
+    },
+    {
+      "manifestStratum": {
+        "agency": "Department of Transportation",
+        "downloadFile": "data/raw/usaspending-transaction-downloads/department-of-transportation-2024-07-01-2024-09-30.zip",
+        "downloadLimit": "500000",
+        "endDate": "2024-09-30",
+        "expectedRows": "11323",
+        "normalizedRows": "11323",
+        "notes": "count fits public download limit",
+        "period": "Q4",
+        "rowCountDrift": "0",
+        "startDate": "2024-07-01",
+        "status": "ready",
+        "transactionCount": "11323",
+        "validatedRows": "11323",
+        "zipSha256": "9301c62877e7d97607f6f0385648ed194ede64c848be6d46ee96dc88b1b9a68f"
+      },
+      "primeMembers": [
+        {
+          "name": "Contracts_PrimeTransactions_2026-06-13_H04M28S16_1.csv",
+          "rows": 11323
+        }
+      ],
+      "profile": {
+        "absoluteObligationDollars": "3292343960.83",
+        "afterExclusionCompetitionRows": 1850,
+        "awardTypeNetObligationDollars": {
+          "": "155430046.13",
+          "BPA CALL": "333724498.33",
+          "DEFINITIVE CONTRACT": "547983905.13",
+          "DELIVERY ORDER": "1699311947.96",
+          "PURCHASE ORDER": "83074545.32"
+        },
+        "awardTypeRows": {
+          "": 1390,
+          "BPA CALL": 926,
+          "DEFINITIVE CONTRACT": 1572,
+          "DELIVERY ORDER": 6149,
+          "PURCHASE ORDER": 1286
+        },
+        "blankAwardTypeRows": 1390,
+        "childDescriptionRows": 9933,
+        "competitionRows": {
+          "": 722,
+          "COMPETED UNDER SAP": 1311,
+          "COMPETITIVE DELIVERY ORDER": 1,
+          "FULL AND OPEN COMPETITION": 5080,
+          "FULL AND OPEN COMPETITION AFTER EXCLUSION OF SOURCES": 1850,
+          "NON-COMPETITIVE DELIVERY ORDER": 1,
+          "NOT AVAILABLE FOR COMPETITION": 374,
+          "NOT COMPETED": 1319,
+          "NOT COMPETED UNDER SAP": 665
+        },
+        "missingFields": {
+          "award_type": 1390,
+          "extent_competed": 722,
+          "number_of_offers_received": 4830,
+          "parent_award_id_piid": 4199
+        },
+        "missingModificationRows": 0,
+        "missingOffersRows": 4830,
+        "netObligationDollars": "2819524942.87",
+        "obligationSignRows": {
+          "negative": 1572,
+          "positive": 6508,
+          "zero": 3243
+        },
+        "otherAwardTypeRows": 0,
+        "outsideDateRows": 0,
+        "rows": 11323,
+        "wrongAgencyRows": 0,
+        "zeroOffersRows": 2
+      }
+    },
+    {
+      "manifestStratum": {
+        "agency": "Department of Defense",
+        "downloadFile": "data/raw/usaspending-transaction-downloads/department-of-defense-2023-10-01-2023-10-31.zip",
+        "downloadLimit": "500000",
+        "endDate": "2023-10-31",
+        "expectedRows": "351531",
+        "normalizedRows": "351531",
+        "notes": "count fits public download limit",
+        "period": "Q1-2023-10",
+        "rowCountDrift": "0",
+        "startDate": "2023-10-01",
+        "status": "ready",
+        "transactionCount": "351531",
+        "validatedRows": "351531",
+        "zipSha256": "5dbdc70d91335ed5f56076b4b1a41a2afb43130d9b6ebce8df3f89114b7056c5"
+      },
+      "primeMembers": [
+        {
+          "name": "Contracts_PrimeTransactions_2026-06-13_H04M54S15_1.csv",
+          "rows": 351531
+        }
+      ],
+      "profile": {
+        "absoluteObligationDollars": "24938282551.10",
+        "afterExclusionCompetitionRows": 47630,
+        "awardTypeNetObligationDollars": {
+          "": "0.00",
+          "BPA CALL": "824430906.12",
+          "DEFINITIVE CONTRACT": "8178377466.08",
+          "DELIVERY ORDER": "13200793306.30",
+          "PURCHASE ORDER": "627040260.14"
+        },
+        "awardTypeRows": {
+          "": 3866,
+          "BPA CALL": 6038,
+          "DEFINITIVE CONTRACT": 5068,
+          "DELIVERY ORDER": 302269,
+          "PURCHASE ORDER": 34290
+        },
+        "blankAwardTypeRows": 3866,
+        "childDescriptionRows": 347665,
+        "competitionRows": {
+          "": 637,
+          "COMPETED UNDER SAP": 47252,
+          "FOLLOW ON TO COMPETED ACTION": 1,
+          "FULL AND OPEN COMPETITION": 231038,
+          "FULL AND OPEN COMPETITION AFTER EXCLUSION OF SOURCES": 47630,
+          "NOT AVAILABLE FOR COMPETITION": 3588,
+          "NOT COMPETED": 14912,
+          "NOT COMPETED UNDER SAP": 6473
+        },
+        "missingFields": {
+          "award_type": 3866,
+          "extent_competed": 637,
+          "number_of_offers_received": 286074,
+          "parent_award_id_piid": 43206
+        },
+        "missingModificationRows": 0,
+        "missingOffersRows": 286074,
+        "netObligationDollars": "22830641938.64",
+        "obligationSignRows": {
+          "negative": 8374,
+          "positive": 322672,
+          "zero": 20485
+        },
+        "otherAwardTypeRows": 0,
+        "outsideDateRows": 0,
+        "rows": 351531,
+        "wrongAgencyRows": 0,
+        "zeroOffersRows": 1
+      }
+    },
+    {
+      "manifestStratum": {
+        "agency": "Department of Defense",
+        "downloadFile": "data/raw/usaspending-transaction-downloads/department-of-defense-2023-11-01-2023-11-30.zip",
+        "downloadLimit": "500000",
+        "endDate": "2023-11-30",
+        "expectedRows": "349343",
+        "normalizedRows": "349343",
+        "notes": "count fits public download limit",
+        "period": "Q1-2023-11",
+        "rowCountDrift": "0",
+        "startDate": "2023-11-01",
+        "status": "ready",
+        "transactionCount": "349343",
+        "validatedRows": "349343",
+        "zipSha256": "a27d726cf8b7339ef8fa79c7efc24e7fbc3ec0e91eea5f53f427d370126c7a1f"
+      },
+      "primeMembers": [
+        {
+          "name": "Contracts_PrimeTransactions_2026-06-13_H05M04S39_1.csv",
+          "rows": 349343
+        }
+      ],
+      "profile": {
+        "absoluteObligationDollars": "32025355220.30",
+        "afterExclusionCompetitionRows": 42807,
+        "awardTypeNetObligationDollars": {
+          "": "0.00",
+          "BPA CALL": "293745754.40",
+          "DEFINITIVE CONTRACT": "14861193946.29",
+          "DELIVERY ORDER": "13946565214.17",
+          "PURCHASE ORDER": "688141643.84"
+        },
+        "awardTypeRows": {
+          "": 6060,
+          "BPA CALL": 4547,
+          "DEFINITIVE CONTRACT": 5940,
+          "DELIVERY ORDER": 297856,
+          "PURCHASE ORDER": 34940
+        },
+        "blankAwardTypeRows": 6060,
+        "childDescriptionRows": 343283,
+        "competitionRows": {
+          "": 296,
+          "COMPETED UNDER SAP": 45220,
+          "FOLLOW ON TO COMPETED ACTION": 1,
+          "FULL AND OPEN COMPETITION": 233334,
+          "FULL AND OPEN COMPETITION AFTER EXCLUSION OF SOURCES": 42807,
+          "NOT AVAILABLE FOR COMPETITION": 3726,
+          "NOT COMPETED": 16894,
+          "NOT COMPETED UNDER SAP": 7065
+        },
+        "missingFields": {
+          "award_type": 6060,
+          "extent_competed": 296,
+          "number_of_offers_received": 280965,
+          "parent_award_id_piid": 46890
+        },
+        "missingModificationRows": 0,
+        "missingOffersRows": 280965,
+        "netObligationDollars": "29789646558.70",
+        "obligationSignRows": {
+          "negative": 8514,
+          "positive": 319324,
+          "zero": 21505
+        },
+        "otherAwardTypeRows": 0,
+        "outsideDateRows": 0,
+        "rows": 349343,
+        "wrongAgencyRows": 0,
+        "zeroOffersRows": 1
+      }
+    },
+    {
+      "manifestStratum": {
+        "agency": "Department of Defense",
+        "downloadFile": "data/raw/usaspending-transaction-downloads/department-of-defense-2023-12-01-2023-12-31.zip",
+        "downloadLimit": "500000",
+        "endDate": "2023-12-31",
+        "expectedRows": "321418",
+        "normalizedRows": "321418",
+        "notes": "count fits public download limit",
+        "period": "Q1-2023-12",
+        "rowCountDrift": "0",
+        "startDate": "2023-12-01",
+        "status": "ready",
+        "transactionCount": "321418",
+        "validatedRows": "321418",
+        "zipSha256": "f520b67ded798b15a7ccc55a671c338791b870c5e791b9d769359c4558c5cc04"
+      },
+      "primeMembers": [
+        {
+          "name": "Contracts_PrimeTransactions_2026-06-13_H05M15S01_1.csv",
+          "rows": 321418
+        }
+      ],
+      "profile": {
+        "absoluteObligationDollars": "42725649330.08",
+        "afterExclusionCompetitionRows": 34688,
+        "awardTypeNetObligationDollars": {
+          "": "0.00",
+          "BPA CALL": "223859335.81",
+          "DEFINITIVE CONTRACT": "18443861531.62",
+          "DELIVERY ORDER": "21159992210.25",
+          "PURCHASE ORDER": "732515928.60"
+        },
+        "awardTypeRows": {
+          "": 5514,
+          "BPA CALL": 3848,
+          "DEFINITIVE CONTRACT": 5680,
+          "DELIVERY ORDER": 269016,
+          "PURCHASE ORDER": 37360
+        },
+        "blankAwardTypeRows": 5514,
+        "childDescriptionRows": 315904,
+        "competitionRows": {
+          "": 301,
+          "COMPETED UNDER SAP": 45278,
+          "FOLLOW ON TO COMPETED ACTION": 2,
+          "FULL AND OPEN COMPETITION": 212410,
+          "FULL AND OPEN COMPETITION AFTER EXCLUSION OF SOURCES": 34688,
+          "NOT AVAILABLE FOR COMPETITION": 3588,
+          "NOT COMPETED": 18517,
+          "NOT COMPETED UNDER SAP": 6634
+        },
+        "missingFields": {
+          "award_type": 5514,
+          "extent_competed": 301,
+          "number_of_offers_received": 252118,
+          "parent_award_id_piid": 48529
+        },
+        "missingModificationRows": 0,
+        "missingOffersRows": 252118,
+        "netObligationDollars": "40560229006.28",
+        "obligationSignRows": {
+          "negative": 7422,
+          "positive": 293547,
+          "zero": 20449
+        },
+        "otherAwardTypeRows": 0,
+        "outsideDateRows": 0,
+        "rows": 321418,
+        "wrongAgencyRows": 0,
+        "zeroOffersRows": 3
+      }
+    },
+    {
+      "manifestStratum": {
+        "agency": "Department of Defense",
+        "downloadFile": "data/raw/usaspending-transaction-downloads/department-of-defense-2024-01-01-2024-01-31.zip",
+        "downloadLimit": "500000",
+        "endDate": "2024-01-31",
+        "expectedRows": "385186",
+        "normalizedRows": "385186",
+        "notes": "count fits public download limit",
+        "period": "Q2-2024-01",
+        "rowCountDrift": "0",
+        "startDate": "2024-01-01",
+        "status": "ready",
+        "transactionCount": "385186",
+        "validatedRows": "385186",
+        "zipSha256": "4f4034d92854526d7818ed585be0927fd83dfdaa14801ce917d24b82ad7cb958"
+      },
+      "primeMembers": [
+        {
+          "name": "Contracts_PrimeTransactions_2026-06-13_H07M09S09_1.csv",
+          "rows": 385186
+        }
+      ],
+      "profile": {
+        "absoluteObligationDollars": "24972200117.77",
+        "afterExclusionCompetitionRows": 46238,
+        "awardTypeNetObligationDollars": {
+          "": "0.00",
+          "BPA CALL": "374820326.30",
+          "DEFINITIVE CONTRACT": "8056107506.90",
+          "DELIVERY ORDER": "13741820534.21",
+          "PURCHASE ORDER": "613939557.16"
+        },
+        "awardTypeRows": {
+          "": 6821,
+          "BPA CALL": 4171,
+          "DEFINITIVE CONTRACT": 6250,
+          "DELIVERY ORDER": 327107,
+          "PURCHASE ORDER": 40837
+        },
+        "blankAwardTypeRows": 6821,
+        "childDescriptionRows": 378365,
+        "competitionRows": {
+          "": 436,
+          "COMPETED UNDER SAP": 50854,
+          "FOLLOW ON TO COMPETED ACTION": 1,
+          "FULL AND OPEN COMPETITION": 254765,
+          "FULL AND OPEN COMPETITION AFTER EXCLUSION OF SOURCES": 46238,
+          "NOT AVAILABLE FOR COMPETITION": 4203,
+          "NOT COMPETED": 20731,
+          "NOT COMPETED UNDER SAP": 7958
+        },
+        "missingFields": {
+          "award_type": 6821,
+          "extent_competed": 436,
+          "number_of_offers_received": 307701,
+          "parent_award_id_piid": 53882
+        },
+        "missingModificationRows": 0,
+        "missingOffersRows": 307701,
+        "netObligationDollars": "22786687924.57",
+        "obligationSignRows": {
+          "negative": 9530,
+          "positive": 339198,
+          "zero": 36458
+        },
+        "otherAwardTypeRows": 0,
+        "outsideDateRows": 0,
+        "rows": 385186,
+        "wrongAgencyRows": 0,
+        "zeroOffersRows": 6
+      }
+    },
+    {
+      "manifestStratum": {
+        "agency": "Department of Defense",
+        "downloadFile": "data/raw/usaspending-transaction-downloads/department-of-defense-2024-02-01-2024-02-29.zip",
+        "downloadLimit": "500000",
+        "endDate": "2024-02-29",
+        "expectedRows": "382443",
+        "normalizedRows": "382443",
+        "notes": "count fits public download limit",
+        "period": "Q2-2024-02",
+        "rowCountDrift": "0",
+        "startDate": "2024-02-01",
+        "status": "ready",
+        "transactionCount": "382443",
+        "validatedRows": "382443",
+        "zipSha256": "81aac7f609d65673a9bb8cb678e90927b256746c8e11ca36b65997d69d5fb8e1"
+      },
+      "primeMembers": [
+        {
+          "name": "Contracts_PrimeTransactions_2026-06-13_H05M53S07_1.csv",
+          "rows": 382443
+        }
+      ],
+      "profile": {
+        "absoluteObligationDollars": "29934035848.79",
+        "afterExclusionCompetitionRows": 44484,
+        "awardTypeNetObligationDollars": {
+          "": "0.00",
+          "BPA CALL": "293332206.97",
+          "DEFINITIVE CONTRACT": "10654279644.17",
+          "DELIVERY ORDER": "15208700786.84",
+          "PURCHASE ORDER": "860025013.77"
+        },
+        "awardTypeRows": {
+          "": 6106,
+          "BPA CALL": 3607,
+          "DEFINITIVE CONTRACT": 6309,
+          "DELIVERY ORDER": 328553,
+          "PURCHASE ORDER": 37868
+        },
+        "blankAwardTypeRows": 6106,
+        "childDescriptionRows": 376337,
+        "competitionRows": {
+          "": 378,
+          "COMPETED UNDER SAP": 48934,
+          "FOLLOW ON TO COMPETED ACTION": 1,
+          "FULL AND OPEN COMPETITION": 256498,
+          "FULL AND OPEN COMPETITION AFTER EXCLUSION OF SOURCES": 44484,
+          "NOT AVAILABLE FOR COMPETITION": 4355,
+          "NOT COMPETED": 21110,
+          "NOT COMPETED UNDER SAP": 6683
+        },
+        "missingFields": {
+          "award_type": 6106,
+          "extent_competed": 378,
+          "number_of_offers_received": 309160,
+          "parent_award_id_piid": 50237
+        },
+        "missingModificationRows": 0,
+        "missingOffersRows": 309160,
+        "netObligationDollars": "27016337651.75",
+        "obligationSignRows": {
+          "negative": 9839,
+          "positive": 347490,
+          "zero": 25114
+        },
+        "otherAwardTypeRows": 0,
+        "outsideDateRows": 0,
+        "rows": 382443,
+        "wrongAgencyRows": 0,
+        "zeroOffersRows": 4
+      }
+    },
+    {
+      "manifestStratum": {
+        "agency": "Department of Defense",
+        "downloadFile": "data/raw/usaspending-transaction-downloads/department-of-defense-2024-03-01-2024-03-31.zip",
+        "downloadLimit": "500000",
+        "endDate": "2024-03-31",
+        "expectedRows": "367930",
+        "normalizedRows": "367930",
+        "notes": "count fits public download limit",
+        "period": "Q2-2024-03",
+        "rowCountDrift": "0",
+        "startDate": "2024-03-01",
+        "status": "ready",
+        "transactionCount": "367930",
+        "validatedRows": "367930",
+        "zipSha256": "5553e86e409863264860b9ee18300187467f382e2fa97f5ccda19ff67284d95a"
+      },
+      "primeMembers": [
+        {
+          "name": "Contracts_PrimeTransactions_2026-06-13_H06M06S05_1.csv",
+          "rows": 367930
+        }
+      ],
+      "profile": {
+        "absoluteObligationDollars": "36869016178.45",
+        "afterExclusionCompetitionRows": 39943,
+        "awardTypeNetObligationDollars": {
+          "": "0.00",
+          "BPA CALL": "493139230.46",
+          "DEFINITIVE CONTRACT": "12975197855.20",
+          "DELIVERY ORDER": "19093522112.82",
+          "PURCHASE ORDER": "861477149.81"
+        },
+        "awardTypeRows": {
+          "": 8710,
+          "BPA CALL": 5129,
+          "DEFINITIVE CONTRACT": 7095,
+          "DELIVERY ORDER": 308194,
+          "PURCHASE ORDER": 38802
+        },
+        "blankAwardTypeRows": 8710,
+        "childDescriptionRows": 359220,
+        "competitionRows": {
+          "": 498,
+          "COMPETED UNDER SAP": 51580,
+          "FOLLOW ON TO COMPETED ACTION": 6,
+          "FULL AND OPEN COMPETITION": 243260,
+          "FULL AND OPEN COMPETITION AFTER EXCLUSION OF SOURCES": 39943,
+          "NOT AVAILABLE FOR COMPETITION": 4872,
+          "NOT COMPETED": 20798,
+          "NOT COMPETED UNDER SAP": 6973
+        },
+        "missingFields": {
+          "award_type": 8710,
+          "extent_competed": 498,
+          "number_of_offers_received": 289740,
+          "parent_award_id_piid": 54554
+        },
+        "missingModificationRows": 0,
+        "missingOffersRows": 289740,
+        "netObligationDollars": "33423336348.29",
+        "obligationSignRows": {
+          "negative": 10899,
+          "positive": 330146,
+          "zero": 26885
+        },
+        "otherAwardTypeRows": 0,
+        "outsideDateRows": 0,
+        "rows": 367930,
+        "wrongAgencyRows": 0,
+        "zeroOffersRows": 3
+      }
+    },
+    {
+      "manifestStratum": {
+        "agency": "Department of Defense",
+        "downloadFile": "data/raw/usaspending-transaction-downloads/department-of-defense-2024-04-01-2024-04-30.zip",
+        "downloadLimit": "500000",
+        "endDate": "2024-04-30",
+        "expectedRows": "383843",
+        "normalizedRows": "383843",
+        "notes": "count fits public download limit",
+        "period": "Q3-2024-04",
+        "rowCountDrift": "0",
+        "startDate": "2024-04-01",
+        "status": "ready",
+        "transactionCount": "383843",
+        "validatedRows": "383843",
+        "zipSha256": "01444db0795d9002e465d5b67bc4e2bc76098dc51af65d9b1eabc4d3620901f1"
+      },
+      "primeMembers": [
+        {
+          "name": "Contracts_PrimeTransactions_2026-06-13_H06M16S00_1.csv",
+          "rows": 383843
+        }
+      ],
+      "profile": {
+        "absoluteObligationDollars": "35876925570.34",
+        "afterExclusionCompetitionRows": 43091,
+        "awardTypeNetObligationDollars": {
+          "": "0.00",
+          "BPA CALL": "261149079.69",
+          "DEFINITIVE CONTRACT": "14129961102.20",
+          "DELIVERY ORDER": "17228787103.07",
+          "PURCHASE ORDER": "869692268.52"
+        },
+        "awardTypeRows": {
+          "": 7189,
+          "BPA CALL": 4005,
+          "DEFINITIVE CONTRACT": 6901,
+          "DELIVERY ORDER": 326629,
+          "PURCHASE ORDER": 39119
+        },
+        "blankAwardTypeRows": 7189,
+        "childDescriptionRows": 376654,
+        "competitionRows": {
+          "": 681,
+          "COMPETED UNDER SAP": 48777,
+          "FOLLOW ON TO COMPETED ACTION": 5,
+          "FULL AND OPEN COMPETITION": 257824,
+          "FULL AND OPEN COMPETITION AFTER EXCLUSION OF SOURCES": 43091,
+          "NOT AVAILABLE FOR COMPETITION": 4676,
+          "NOT COMPETED": 21535,
+          "NOT COMPETED UNDER SAP": 7254
+        },
+        "missingFields": {
+          "award_type": 7189,
+          "extent_competed": 681,
+          "number_of_offers_received": 306812,
+          "parent_award_id_piid": 53166
+        },
+        "missingModificationRows": 0,
+        "missingOffersRows": 306812,
+        "netObligationDollars": "32489589553.48",
+        "obligationSignRows": {
+          "negative": 10127,
+          "positive": 348246,
+          "zero": 25470
+        },
+        "otherAwardTypeRows": 0,
+        "outsideDateRows": 0,
+        "rows": 383843,
+        "wrongAgencyRows": 0,
+        "zeroOffersRows": 2
+      }
+    },
+    {
+      "manifestStratum": {
+        "agency": "Department of Defense",
+        "downloadFile": "data/raw/usaspending-transaction-downloads/department-of-defense-2024-05-01-2024-05-31.zip",
+        "downloadLimit": "500000",
+        "endDate": "2024-05-31",
+        "expectedRows": "387460",
+        "normalizedRows": "387459",
+        "notes": "count fits public download limit; download row-count drift accepted: expected 387460, found 387459",
+        "period": "Q3-2024-05",
+        "rowCountDrift": "-1",
+        "startDate": "2024-05-01",
+        "status": "ready",
+        "transactionCount": "387460",
+        "validatedRows": "387459",
+        "zipSha256": "5969762c0c2d36de360c9744b5f3b348a87026c9fb09acf1af30dac06e386bd9"
+      },
+      "primeMembers": [
+        {
+          "name": "Contracts_PrimeTransactions_2026-06-13_H06M24S52_1.csv",
+          "rows": 387459
+        }
+      ],
+      "profile": {
+        "absoluteObligationDollars": "45583328374.24",
+        "afterExclusionCompetitionRows": 39415,
+        "awardTypeNetObligationDollars": {
+          "": "0.00",
+          "BPA CALL": "750811343.52",
+          "DEFINITIVE CONTRACT": "19405825780.47",
+          "DELIVERY ORDER": "21128481335.56",
+          "PURCHASE ORDER": "945250335.31"
+        },
+        "awardTypeRows": {
+          "": 15723,
+          "BPA CALL": 4128,
+          "DEFINITIVE CONTRACT": 7040,
+          "DELIVERY ORDER": 320223,
+          "PURCHASE ORDER": 40345
+        },
+        "blankAwardTypeRows": 15723,
+        "childDescriptionRows": 371736,
+        "competitionRows": {
+          "": 454,
+          "COMPETED UNDER SAP": 56014,
+          "FOLLOW ON TO COMPETED ACTION": 1,
+          "FULL AND OPEN COMPETITION": 256670,
+          "FULL AND OPEN COMPETITION AFTER EXCLUSION OF SOURCES": 39415,
+          "NOT AVAILABLE FOR COMPETITION": 4968,
+          "NOT COMPETED": 22309,
+          "NOT COMPETED UNDER SAP": 7628
+        },
+        "missingFields": {
+          "award_type": 15723,
+          "extent_competed": 454,
+          "number_of_offers_received": 298034,
+          "parent_award_id_piid": 63055
+        },
+        "missingModificationRows": 0,
+        "missingOffersRows": 298034,
+        "netObligationDollars": "42230368794.86",
+        "obligationSignRows": {
+          "negative": 9977,
+          "positive": 344806,
+          "zero": 32676
+        },
+        "otherAwardTypeRows": 0,
+        "outsideDateRows": 0,
+        "rows": 387459,
+        "wrongAgencyRows": 0,
+        "zeroOffersRows": 3
+      }
+    },
+    {
+      "manifestStratum": {
+        "agency": "Department of Defense",
+        "downloadFile": "data/raw/usaspending-transaction-downloads/department-of-defense-2024-06-01-2024-06-30.zip",
+        "downloadLimit": "500000",
+        "endDate": "2024-06-30",
+        "expectedRows": "300467",
+        "normalizedRows": "300467",
+        "notes": "count fits public download limit",
+        "period": "Q3-2024-06",
+        "rowCountDrift": "0",
+        "startDate": "2024-06-01",
+        "status": "ready",
+        "transactionCount": "300467",
+        "validatedRows": "300467",
+        "zipSha256": "4c5bc6d37d5e73ebcf1d756a9ad031e4f70936b264d2d9f302facf2fc95cb34f"
+      },
+      "primeMembers": [
+        {
+          "name": "Contracts_PrimeTransactions_2026-06-13_H06M34S41_1.csv",
+          "rows": 300467
+        }
+      ],
+      "profile": {
+        "absoluteObligationDollars": "40886681224.78",
+        "afterExclusionCompetitionRows": 26827,
+        "awardTypeNetObligationDollars": {
+          "": "0.00",
+          "BPA CALL": "366049648.93",
+          "DEFINITIVE CONTRACT": "14643268294.70",
+          "DELIVERY ORDER": "21406641749.65",
+          "PURCHASE ORDER": "901306065.60"
+        },
+        "awardTypeRows": {
+          "": 4156,
+          "BPA CALL": 4278,
+          "DEFINITIVE CONTRACT": 6226,
+          "DELIVERY ORDER": 250282,
+          "PURCHASE ORDER": 35525
+        },
+        "blankAwardTypeRows": 4156,
+        "childDescriptionRows": 296311,
+        "competitionRows": {
+          "": 439,
+          "COMPETED UNDER SAP": 42208,
+          "FOLLOW ON TO COMPETED ACTION": 3,
+          "FULL AND OPEN COMPETITION": 202121,
+          "FULL AND OPEN COMPETITION AFTER EXCLUSION OF SOURCES": 26827,
+          "NOT AVAILABLE FOR COMPETITION": 4195,
+          "NOT COMPETED": 18589,
+          "NOT COMPETED UNDER SAP": 6085
+        },
+        "missingFields": {
+          "award_type": 4156,
+          "extent_competed": 439,
+          "number_of_offers_received": 231902,
+          "parent_award_id_piid": 45844
+        },
+        "missingModificationRows": 0,
+        "missingOffersRows": 231902,
+        "netObligationDollars": "37317265758.88",
+        "obligationSignRows": {
+          "negative": 8945,
+          "positive": 272097,
+          "zero": 19425
+        },
+        "otherAwardTypeRows": 0,
+        "outsideDateRows": 0,
+        "rows": 300467,
+        "wrongAgencyRows": 0,
+        "zeroOffersRows": 1
+      }
+    },
+    {
+      "manifestStratum": {
+        "agency": "Department of Defense",
+        "downloadFile": "data/raw/usaspending-transaction-downloads/department-of-defense-2024-07-01-2024-07-31.zip",
+        "downloadLimit": "500000",
+        "endDate": "2024-07-31",
+        "expectedRows": "338956",
+        "normalizedRows": "338956",
+        "notes": "count fits public download limit",
+        "period": "Q4-2024-07",
+        "rowCountDrift": "0",
+        "startDate": "2024-07-01",
+        "status": "ready",
+        "transactionCount": "338956",
+        "validatedRows": "338956",
+        "zipSha256": "079b923be5271eef37a87fa0264fd055aabdde501262b8fba76aff56439bfcb2"
+      },
+      "primeMembers": [
+        {
+          "name": "Contracts_PrimeTransactions_2026-06-13_H06M41S20_1.csv",
+          "rows": 338956
+        }
+      ],
+      "profile": {
+        "absoluteObligationDollars": "45394519766.89",
+        "afterExclusionCompetitionRows": 28914,
+        "awardTypeNetObligationDollars": {
+          "": "0.00",
+          "BPA CALL": "395883233.60",
+          "DEFINITIVE CONTRACT": "16004770187.68",
+          "DELIVERY ORDER": "24939584571.29",
+          "PURCHASE ORDER": "955814958.20"
+        },
+        "awardTypeRows": {
+          "": 4495,
+          "BPA CALL": 4111,
+          "DEFINITIVE CONTRACT": 7282,
+          "DELIVERY ORDER": 282904,
+          "PURCHASE ORDER": 40164
+        },
+        "blankAwardTypeRows": 4495,
+        "childDescriptionRows": 334461,
+        "competitionRows": {
+          "": 520,
+          "COMPETED UNDER SAP": 45811,
+          "FOLLOW ON TO COMPETED ACTION": 1,
+          "FULL AND OPEN COMPETITION": 228265,
+          "FULL AND OPEN COMPETITION AFTER EXCLUSION OF SOURCES": 28914,
+          "NOT AVAILABLE FOR COMPETITION": 5326,
+          "NOT COMPETED": 22751,
+          "NOT COMPETED UNDER SAP": 7368
+        },
+        "missingFields": {
+          "award_type": 4495,
+          "extent_competed": 520,
+          "number_of_offers_received": 259001,
+          "parent_award_id_piid": 51876
+        },
+        "missingModificationRows": 0,
+        "missingOffersRows": 259001,
+        "netObligationDollars": "42296052950.77",
+        "obligationSignRows": {
+          "negative": 11555,
+          "positive": 306649,
+          "zero": 20752
+        },
+        "otherAwardTypeRows": 0,
+        "outsideDateRows": 0,
+        "rows": 338956,
+        "wrongAgencyRows": 0,
+        "zeroOffersRows": 0
+      }
+    },
+    {
+      "manifestStratum": {
+        "agency": "Department of Defense",
+        "downloadFile": "data/raw/usaspending-transaction-downloads/department-of-defense-2024-08-01-2024-08-31.zip",
+        "downloadLimit": "500000",
+        "endDate": "2024-08-31",
+        "expectedRows": "410477",
+        "normalizedRows": "410477",
+        "notes": "count fits public download limit",
+        "period": "Q4-2024-08",
+        "rowCountDrift": "0",
+        "startDate": "2024-08-01",
+        "status": "ready",
+        "transactionCount": "410477",
+        "validatedRows": "410477",
+        "zipSha256": "3001a0d11a929f78dfaa6d56482083985258dd3796e08741f7f6a6128f2cf3f9"
+      },
+      "primeMembers": [
+        {
+          "name": "Contracts_PrimeTransactions_2026-06-13_H06M57S35_1.csv",
+          "rows": 410477
+        }
+      ],
+      "profile": {
+        "absoluteObligationDollars": "41277202643.65",
+        "afterExclusionCompetitionRows": 47964,
+        "awardTypeNetObligationDollars": {
+          "": "0.00",
+          "BPA CALL": "511246710.36",
+          "DEFINITIVE CONTRACT": "12541768441.60",
+          "DELIVERY ORDER": "22643021320.63",
+          "PURCHASE ORDER": "1304873365.72"
+        },
+        "awardTypeRows": {
+          "": 4481,
+          "BPA CALL": 6643,
+          "DEFINITIVE CONTRACT": 7751,
+          "DELIVERY ORDER": 348327,
+          "PURCHASE ORDER": 43275
+        },
+        "blankAwardTypeRows": 4481,
+        "childDescriptionRows": 405996,
+        "competitionRows": {
+          "": 427,
+          "COMPETED UNDER SAP": 50881,
+          "FULL AND OPEN COMPETITION": 274497,
+          "FULL AND OPEN COMPETITION AFTER EXCLUSION OF SOURCES": 47964,
+          "NOT AVAILABLE FOR COMPETITION": 5239,
+          "NOT COMPETED": 23900,
+          "NOT COMPETED UNDER SAP": 7569
+        },
+        "missingFields": {
+          "award_type": 4481,
+          "extent_competed": 427,
+          "number_of_offers_received": 320918,
+          "parent_award_id_piid": 55449
+        },
+        "missingModificationRows": 0,
+        "missingOffersRows": 320918,
+        "netObligationDollars": "37000909838.31",
+        "obligationSignRows": {
+          "negative": 11345,
+          "positive": 376171,
+          "zero": 22961
+        },
+        "otherAwardTypeRows": 0,
+        "outsideDateRows": 0,
+        "rows": 410477,
+        "wrongAgencyRows": 0,
+        "zeroOffersRows": 1
+      }
+    },
+    {
+      "manifestStratum": {
+        "agency": "Department of Defense",
+        "downloadFile": "data/raw/usaspending-transaction-downloads/department-of-defense-2024-09-01-2024-09-30.zip",
+        "downloadLimit": "500000",
+        "endDate": "2024-09-30",
+        "expectedRows": "441247",
+        "normalizedRows": "441247",
+        "notes": "count fits public download limit",
+        "period": "Q4-2024-09",
+        "rowCountDrift": "0",
+        "startDate": "2024-09-01",
+        "status": "ready",
+        "transactionCount": "441247",
+        "validatedRows": "441247",
+        "zipSha256": "b640e1260bf18b9f97df77e007a1199ca4071cad23b51497901bea8122c73ee2"
+      },
+      "primeMembers": [
+        {
+          "name": "Contracts_PrimeTransactions_2026-06-13_H07M19S54_1.csv",
+          "rows": 441247
+        }
+      ],
+      "profile": {
+        "absoluteObligationDollars": "84470093772.15",
+        "afterExclusionCompetitionRows": 70681,
+        "awardTypeNetObligationDollars": {
+          "": "0.00",
+          "BPA CALL": "868115958.70",
+          "DEFINITIVE CONTRACT": "30118268548.88",
+          "DELIVERY ORDER": "45413375801.28",
+          "PURCHASE ORDER": "1762830871.03"
+        },
+        "awardTypeRows": {
+          "": 5867,
+          "BPA CALL": 5797,
+          "DEFINITIVE CONTRACT": 11333,
+          "DELIVERY ORDER": 374144,
+          "PURCHASE ORDER": 44106
+        },
+        "blankAwardTypeRows": 5867,
+        "childDescriptionRows": 435380,
+        "competitionRows": {
+          "": 555,
+          "COMPETED UNDER SAP": 53305,
+          "FOLLOW ON TO COMPETED ACTION": 3,
+          "FULL AND OPEN COMPETITION": 274775,
+          "FULL AND OPEN COMPETITION AFTER EXCLUSION OF SOURCES": 70681,
+          "NOT AVAILABLE FOR COMPETITION": 6826,
+          "NOT COMPETED": 26846,
+          "NOT COMPETED UNDER SAP": 8256
+        },
+        "missingFields": {
+          "award_type": 5867,
+          "extent_competed": 555,
+          "number_of_offers_received": 337534,
+          "parent_award_id_piid": 61262,
+          "type_of_contract_pricing": 1
+        },
+        "missingModificationRows": 0,
+        "missingOffersRows": 337534,
+        "netObligationDollars": "78162591179.89",
+        "obligationSignRows": {
+          "negative": 12369,
+          "positive": 403249,
+          "zero": 25629
+        },
+        "otherAwardTypeRows": 0,
+        "outsideDateRows": 0,
+        "rows": 441247,
+        "wrongAgencyRows": 0,
+        "zeroOffersRows": 1
+      }
+    },
+    {
+      "manifestStratum": {
+        "agency": "Department of Health and Human Services",
+        "downloadFile": "data/raw/usaspending-transaction-downloads/department-of-health-and-human-services-2023-10-01-2023-12-31.zip",
+        "downloadLimit": "500000",
+        "endDate": "2023-12-31",
+        "expectedRows": "11039",
+        "normalizedRows": "11039",
+        "notes": "count fits public download limit",
+        "period": "Q1",
+        "rowCountDrift": "0",
+        "startDate": "2023-10-01",
+        "status": "ready",
+        "transactionCount": "11039",
+        "validatedRows": "11039",
+        "zipSha256": "c265ef9e3629239d3ada1962a9fdd8e62f87ab1c7af28b568f9a48390d8a22bd"
+      },
+      "primeMembers": [
+        {
+          "name": "Contracts_PrimeTransactions_2026-06-13_H07M26S00_1.csv",
+          "rows": 11039
+        }
+      ],
+      "profile": {
+        "absoluteObligationDollars": "5619744568.76",
+        "afterExclusionCompetitionRows": 894,
+        "awardTypeNetObligationDollars": {
+          "": "1700629940.89",
+          "BPA CALL": "308611900.68",
+          "DEFINITIVE CONTRACT": "743773884.93",
+          "DELIVERY ORDER": "2155021622.61",
+          "PURCHASE ORDER": "88429200.79"
+        },
+        "awardTypeRows": {
+          "": 796,
+          "BPA CALL": 1649,
+          "DEFINITIVE CONTRACT": 1044,
+          "DELIVERY ORDER": 4715,
+          "PURCHASE ORDER": 2835
+        },
+        "blankAwardTypeRows": 796,
+        "childDescriptionRows": 10243,
+        "competitionRows": {
+          "": 163,
+          "COMPETED UNDER SAP": 2400,
+          "COMPETITIVE DELIVERY ORDER": 5,
+          "FULL AND OPEN COMPETITION": 5033,
+          "FULL AND OPEN COMPETITION AFTER EXCLUSION OF SOURCES": 894,
+          "NON-COMPETITIVE DELIVERY ORDER": 1,
+          "NOT AVAILABLE FOR COMPETITION": 584,
+          "NOT COMPETED": 859,
+          "NOT COMPETED UNDER SAP": 1100
+        },
+        "missingFields": {
+          "award_type": 796,
+          "extent_competed": 163,
+          "number_of_offers_received": 2373,
+          "parent_award_id_piid": 4519,
+          "type_of_contract_pricing": 1
+        },
+        "missingModificationRows": 0,
+        "missingOffersRows": 2373,
+        "netObligationDollars": "4996466549.90",
+        "obligationSignRows": {
+          "negative": 2102,
+          "positive": 5292,
+          "zero": 3645
+        },
+        "otherAwardTypeRows": 0,
+        "outsideDateRows": 0,
+        "rows": 11039,
+        "wrongAgencyRows": 0,
+        "zeroOffersRows": 11
+      }
+    },
+    {
+      "manifestStratum": {
+        "agency": "Department of Health and Human Services",
+        "downloadFile": "data/raw/usaspending-transaction-downloads/department-of-health-and-human-services-2024-01-01-2024-03-31.zip",
+        "downloadLimit": "500000",
+        "endDate": "2024-03-31",
+        "expectedRows": "15063",
+        "normalizedRows": "15063",
+        "notes": "count fits public download limit",
+        "period": "Q2",
+        "rowCountDrift": "0",
+        "startDate": "2024-01-01",
+        "status": "ready",
+        "transactionCount": "15063",
+        "validatedRows": "15063",
+        "zipSha256": "41b7f86312544872b34acc0909e9d489da86491d358362fe3fbc6430e7f164fd"
+      },
+      "primeMembers": [
+        {
+          "name": "Contracts_PrimeTransactions_2026-06-13_H07M26S34_1.csv",
+          "rows": 15063
+        }
+      ],
+      "profile": {
+        "absoluteObligationDollars": "10031785785.79",
+        "afterExclusionCompetitionRows": 1360,
+        "awardTypeNetObligationDollars": {
+          "": "2327900470.40",
+          "BPA CALL": "421865230.93",
+          "DEFINITIVE CONTRACT": "1581717768.42",
+          "DELIVERY ORDER": "4311495177.56",
+          "PURCHASE ORDER": "124690846.20"
+        },
+        "awardTypeRows": {
+          "": 945,
+          "BPA CALL": 2209,
+          "DEFINITIVE CONTRACT": 1619,
+          "DELIVERY ORDER": 6321,
+          "PURCHASE ORDER": 3969
+        },
+        "blankAwardTypeRows": 945,
+        "childDescriptionRows": 14118,
+        "competitionRows": {
+          "": 137,
+          "COMPETED UNDER SAP": 3238,
+          "COMPETITIVE DELIVERY ORDER": 8,
+          "FULL AND OPEN COMPETITION": 6695,
+          "FULL AND OPEN COMPETITION AFTER EXCLUSION OF SOURCES": 1360,
+          "NON-COMPETITIVE DELIVERY ORDER": 1,
+          "NOT AVAILABLE FOR COMPETITION": 892,
+          "NOT COMPETED": 1149,
+          "NOT COMPETED UNDER SAP": 1583
+        },
+        "missingFields": {
+          "award_type": 945,
+          "extent_competed": 137,
+          "number_of_offers_received": 2912,
+          "parent_award_id_piid": 6385,
+          "recipient_name": 1
+        },
+        "missingModificationRows": 0,
+        "missingOffersRows": 2912,
+        "netObligationDollars": "8767669493.51",
+        "obligationSignRows": {
+          "negative": 3225,
+          "positive": 7839,
+          "zero": 3999
+        },
+        "otherAwardTypeRows": 0,
+        "outsideDateRows": 0,
+        "rows": 15063,
+        "wrongAgencyRows": 0,
+        "zeroOffersRows": 7
+      }
+    },
+    {
+      "manifestStratum": {
+        "agency": "Department of Health and Human Services",
+        "downloadFile": "data/raw/usaspending-transaction-downloads/department-of-health-and-human-services-2024-04-01-2024-06-30.zip",
+        "downloadLimit": "500000",
+        "endDate": "2024-06-30",
+        "expectedRows": "17381",
+        "normalizedRows": "17381",
+        "notes": "count fits public download limit",
+        "period": "Q3",
+        "rowCountDrift": "0",
+        "startDate": "2024-04-01",
+        "status": "ready",
+        "transactionCount": "17381",
+        "validatedRows": "17381",
+        "zipSha256": "4e4734f7536a8f5215354f4fb1d93e2812a69407e9f90acbecf26482112e7373"
+      },
+      "primeMembers": [
+        {
+          "name": "Contracts_PrimeTransactions_2026-06-13_H07M27S14_1.csv",
+          "rows": 17381
+        }
+      ],
+      "profile": {
+        "absoluteObligationDollars": "9564710773.61",
+        "afterExclusionCompetitionRows": 2095,
+        "awardTypeNetObligationDollars": {
+          "": "1189953722.37",
+          "BPA CALL": "638137736.04",
+          "DEFINITIVE CONTRACT": "1773117798.41",
+          "DELIVERY ORDER": "4622993348.05",
+          "PURCHASE ORDER": "193653084.54"
+        },
+        "awardTypeRows": {
+          "": 1616,
+          "BPA CALL": 2459,
+          "DEFINITIVE CONTRACT": 1780,
+          "DELIVERY ORDER": 7073,
+          "PURCHASE ORDER": 4453
+        },
+        "blankAwardTypeRows": 1616,
+        "childDescriptionRows": 15765,
+        "competitionRows": {
+          "": 147,
+          "COMPETED UNDER SAP": 3667,
+          "COMPETITIVE DELIVERY ORDER": 1,
+          "FULL AND OPEN COMPETITION": 7443,
+          "FULL AND OPEN COMPETITION AFTER EXCLUSION OF SOURCES": 2095,
+          "NOT AVAILABLE FOR COMPETITION": 1040,
+          "NOT COMPETED": 1223,
+          "NOT COMPETED UNDER SAP": 1765
+        },
+        "missingFields": {
+          "award_type": 1616,
+          "extent_competed": 147,
+          "number_of_offers_received": 3284,
+          "parent_award_id_piid": 7707,
+          "type_of_contract_pricing": 1
+        },
+        "missingModificationRows": 0,
+        "missingOffersRows": 3284,
+        "netObligationDollars": "8417855689.41",
+        "obligationSignRows": {
+          "negative": 3562,
+          "positive": 9168,
+          "zero": 4651
+        },
+        "otherAwardTypeRows": 0,
+        "outsideDateRows": 0,
+        "rows": 17381,
+        "wrongAgencyRows": 0,
+        "zeroOffersRows": 2
+      }
+    },
+    {
+      "manifestStratum": {
+        "agency": "Department of Health and Human Services",
+        "downloadFile": "data/raw/usaspending-transaction-downloads/department-of-health-and-human-services-2024-07-01-2024-09-30.zip",
+        "downloadLimit": "500000",
+        "endDate": "2024-09-30",
+        "expectedRows": "23312",
+        "normalizedRows": "23312",
+        "notes": "count fits public download limit",
+        "period": "Q4",
+        "rowCountDrift": "0",
+        "startDate": "2024-07-01",
+        "status": "ready",
+        "transactionCount": "23312",
+        "validatedRows": "23312",
+        "zipSha256": "c12d811688563fd686e59d6423e92b163e9c2365ec6de2d4c1192297f3c4a429"
+      },
+      "primeMembers": [
+        {
+          "name": "Contracts_PrimeTransactions_2026-06-13_H07M27S55_1.csv",
+          "rows": 23312
+        }
+      ],
+      "profile": {
+        "absoluteObligationDollars": "20066498246.80",
+        "afterExclusionCompetitionRows": 2395,
+        "awardTypeNetObligationDollars": {
+          "": "1673781236.33",
+          "BPA CALL": "1115246202.58",
+          "DEFINITIVE CONTRACT": "3265772313.08",
+          "DELIVERY ORDER": "8124071071.37",
+          "PURCHASE ORDER": "399811376.04"
+        },
+        "awardTypeRows": {
+          "": 1788,
+          "BPA CALL": 2561,
+          "DEFINITIVE CONTRACT": 2625,
+          "DELIVERY ORDER": 10085,
+          "PURCHASE ORDER": 6253
+        },
+        "blankAwardTypeRows": 1788,
+        "childDescriptionRows": 21524,
+        "competitionRows": {
+          "": 221,
+          "COMPETED UNDER SAP": 4518,
+          "COMPETITIVE DELIVERY ORDER": 5,
+          "FULL AND OPEN COMPETITION": 10633,
+          "FULL AND OPEN COMPETITION AFTER EXCLUSION OF SOURCES": 2395,
+          "NON-COMPETITIVE DELIVERY ORDER": 4,
+          "NOT AVAILABLE FOR COMPETITION": 1372,
+          "NOT COMPETED": 1835,
+          "NOT COMPETED UNDER SAP": 2329
+        },
+        "missingFields": {
+          "award_type": 1788,
+          "extent_competed": 221,
+          "number_of_offers_received": 4518,
+          "parent_award_id_piid": 10417,
+          "type_of_contract_pricing": 1
+        },
+        "missingModificationRows": 0,
+        "missingOffersRows": 4518,
+        "netObligationDollars": "14578682199.40",
+        "obligationSignRows": {
+          "negative": 3733,
+          "positive": 14736,
+          "zero": 4843
+        },
+        "otherAwardTypeRows": 0,
+        "outsideDateRows": 0,
+        "rows": 23312,
+        "wrongAgencyRows": 0,
+        "zeroOffersRows": 3
+      }
+    },
+    {
+      "manifestStratum": {
+        "agency": "Department of Veterans Affairs",
+        "downloadFile": "data/raw/usaspending-transaction-downloads/department-of-veterans-affairs-2023-10-01-2023-12-31.zip",
+        "downloadLimit": "500000",
+        "endDate": "2023-12-31",
+        "expectedRows": "30135",
+        "normalizedRows": "30135",
+        "notes": "count fits public download limit",
+        "period": "Q1",
+        "rowCountDrift": "0",
+        "startDate": "2023-10-01",
+        "status": "ready",
+        "transactionCount": "30135",
+        "validatedRows": "30135",
+        "zipSha256": "431dff7c010921b93fa58363ef9b410a90b665a00a7d091945e0e41d426bf63c"
+      },
+      "primeMembers": [
+        {
+          "name": "Contracts_PrimeTransactions_2026-06-13_H07M28S43_1.csv",
+          "rows": 30135
+        }
+      ],
+      "profile": {
+        "absoluteObligationDollars": "14366912556.20",
+        "afterExclusionCompetitionRows": 3664,
+        "awardTypeNetObligationDollars": {
+          "": "5183296.99",
+          "BPA CALL": "469854313.38",
+          "DEFINITIVE CONTRACT": "809593880.87",
+          "DELIVERY ORDER": "11636972541.38",
+          "PURCHASE ORDER": "470605153.46"
+        },
+        "awardTypeRows": {
+          "": 3604,
+          "BPA CALL": 2332,
+          "DEFINITIVE CONTRACT": 2753,
+          "DELIVERY ORDER": 11861,
+          "PURCHASE ORDER": 9585
+        },
+        "blankAwardTypeRows": 3604,
+        "childDescriptionRows": 26531,
+        "competitionRows": {
+          "": 250,
+          "COMPETED UNDER SAP": 6884,
+          "FULL AND OPEN COMPETITION": 9834,
+          "FULL AND OPEN COMPETITION AFTER EXCLUSION OF SOURCES": 3664,
+          "NOT AVAILABLE FOR COMPETITION": 613,
+          "NOT COMPETED": 4755,
+          "NOT COMPETED UNDER SAP": 4135
+        },
+        "missingFields": {
+          "award_type": 3604,
+          "extent_competed": 250,
+          "number_of_offers_received": 5986,
+          "parent_award_id_piid": 15676
+        },
+        "missingModificationRows": 0,
+        "missingOffersRows": 5986,
+        "netObligationDollars": "13392209186.08",
+        "obligationSignRows": {
+          "negative": 4400,
+          "positive": 19655,
+          "zero": 6080
+        },
+        "otherAwardTypeRows": 0,
+        "outsideDateRows": 0,
+        "rows": 30135,
+        "wrongAgencyRows": 0,
+        "zeroOffersRows": 0
+      }
+    },
+    {
+      "manifestStratum": {
+        "agency": "Department of Veterans Affairs",
+        "downloadFile": "data/raw/usaspending-transaction-downloads/department-of-veterans-affairs-2024-01-01-2024-03-31.zip",
+        "downloadLimit": "500000",
+        "endDate": "2024-03-31",
+        "expectedRows": "30058",
+        "normalizedRows": "30058",
+        "notes": "count fits public download limit",
+        "period": "Q2",
+        "rowCountDrift": "0",
+        "startDate": "2024-01-01",
+        "status": "ready",
+        "transactionCount": "30058",
+        "validatedRows": "30058",
+        "zipSha256": "8976d3ace023ce7566845ee502e22611ee66a04a1339fbf0f73f3c736929c2f8"
+      },
+      "primeMembers": [
+        {
+          "name": "Contracts_PrimeTransactions_2026-06-13_H07M29S32_1.csv",
+          "rows": 30058
+        }
+      ],
+      "profile": {
+        "absoluteObligationDollars": "10002564674.96",
+        "afterExclusionCompetitionRows": 4091,
+        "awardTypeNetObligationDollars": {
+          "": "6060633.63",
+          "BPA CALL": "262586903.78",
+          "DEFINITIVE CONTRACT": "612739662.40",
+          "DELIVERY ORDER": "7750731428.26",
+          "PURCHASE ORDER": "457209298.49"
+        },
+        "awardTypeRows": {
+          "": 3634,
+          "BPA CALL": 1998,
+          "DEFINITIVE CONTRACT": 2708,
+          "DELIVERY ORDER": 11840,
+          "PURCHASE ORDER": 9878
+        },
+        "blankAwardTypeRows": 3634,
+        "childDescriptionRows": 26424,
+        "competitionRows": {
+          "": 242,
+          "COMPETED UNDER SAP": 6708,
+          "FULL AND OPEN COMPETITION": 9543,
+          "FULL AND OPEN COMPETITION AFTER EXCLUSION OF SOURCES": 4091,
+          "NOT AVAILABLE FOR COMPETITION": 719,
+          "NOT COMPETED": 4710,
+          "NOT COMPETED UNDER SAP": 4045
+        },
+        "missingFields": {
+          "award_type": 3634,
+          "extent_competed": 242,
+          "number_of_offers_received": 5553,
+          "parent_award_id_piid": 16012
+        },
+        "missingModificationRows": 0,
+        "missingOffersRows": 5553,
+        "netObligationDollars": "9089327926.56",
+        "obligationSignRows": {
+          "negative": 5253,
+          "positive": 18683,
+          "zero": 6122
+        },
+        "otherAwardTypeRows": 0,
+        "outsideDateRows": 0,
+        "rows": 30058,
+        "wrongAgencyRows": 0,
+        "zeroOffersRows": 0
+      }
+    },
+    {
+      "manifestStratum": {
+        "agency": "Department of Veterans Affairs",
+        "downloadFile": "data/raw/usaspending-transaction-downloads/department-of-veterans-affairs-2024-04-01-2024-06-30.zip",
+        "downloadLimit": "500000",
+        "endDate": "2024-06-30",
+        "expectedRows": "30080",
+        "normalizedRows": "30080",
+        "notes": "count fits public download limit",
+        "period": "Q3",
+        "rowCountDrift": "0",
+        "startDate": "2024-04-01",
+        "status": "ready",
+        "transactionCount": "30080",
+        "validatedRows": "30080",
+        "zipSha256": "9e114859a0dd24de1118cd87070d4811f4ac7522f2ad164fed531aac3b5fcaae"
+      },
+      "primeMembers": [
+        {
+          "name": "Contracts_PrimeTransactions_2026-06-13_H07M30S14_1.csv",
+          "rows": 30080
+        }
+      ],
+      "profile": {
+        "absoluteObligationDollars": "22799043196.37",
+        "afterExclusionCompetitionRows": 4232,
+        "awardTypeNetObligationDollars": {
+          "": "5203459.15",
+          "BPA CALL": "146031088.37",
+          "DEFINITIVE CONTRACT": "804535162.98",
+          "DELIVERY ORDER": "20139947279.65",
+          "PURCHASE ORDER": "396736172.82"
+        },
+        "awardTypeRows": {
+          "": 3249,
+          "BPA CALL": 1859,
+          "DEFINITIVE CONTRACT": 2727,
+          "DELIVERY ORDER": 11925,
+          "PURCHASE ORDER": 10320
+        },
+        "blankAwardTypeRows": 3249,
+        "childDescriptionRows": 26831,
+        "competitionRows": {
+          "": 239,
+          "COMPETED UNDER SAP": 6729,
+          "FULL AND OPEN COMPETITION": 9022,
+          "FULL AND OPEN COMPETITION AFTER EXCLUSION OF SOURCES": 4232,
+          "NOT AVAILABLE FOR COMPETITION": 841,
+          "NOT COMPETED": 4705,
+          "NOT COMPETED UNDER SAP": 4312
+        },
+        "missingFields": {
+          "award_type": 3249,
+          "extent_competed": 239,
+          "number_of_offers_received": 5310,
+          "parent_award_id_piid": 16099
+        },
+        "missingModificationRows": 0,
+        "missingOffersRows": 5310,
+        "netObligationDollars": "21492453162.97",
+        "obligationSignRows": {
+          "negative": 5229,
+          "positive": 19328,
+          "zero": 5523
+        },
+        "otherAwardTypeRows": 0,
+        "outsideDateRows": 0,
+        "rows": 30080,
+        "wrongAgencyRows": 0,
+        "zeroOffersRows": 1
+      }
+    },
+    {
+      "manifestStratum": {
+        "agency": "Department of Veterans Affairs",
+        "downloadFile": "data/raw/usaspending-transaction-downloads/department-of-veterans-affairs-2024-07-01-2024-09-30.zip",
+        "downloadLimit": "500000",
+        "endDate": "2024-09-30",
+        "expectedRows": "35930",
+        "normalizedRows": "35930",
+        "notes": "count fits public download limit",
+        "period": "Q4",
+        "rowCountDrift": "0",
+        "startDate": "2024-07-01",
+        "status": "ready",
+        "transactionCount": "35930",
+        "validatedRows": "35930",
+        "zipSha256": "1f2305035c55cbd709c727accfc3ba212883f64b6b033aad0be6fa29d3bbf3a0"
+      },
+      "primeMembers": [
+        {
+          "name": "Contracts_PrimeTransactions_2026-06-13_H07M30S59_1.csv",
+          "rows": 35930
+        }
+      ],
+      "profile": {
+        "absoluteObligationDollars": "24974849967.20",
+        "afterExclusionCompetitionRows": 5661,
+        "awardTypeNetObligationDollars": {
+          "": "10336494.54",
+          "BPA CALL": "334709654.92",
+          "DEFINITIVE CONTRACT": "1991851305.58",
+          "DELIVERY ORDER": "20005021695.80",
+          "PURCHASE ORDER": "587699193.92"
+        },
+        "awardTypeRows": {
+          "": 3830,
+          "BPA CALL": 2209,
+          "DEFINITIVE CONTRACT": 3487,
+          "DELIVERY ORDER": 14088,
+          "PURCHASE ORDER": 12316
+        },
+        "blankAwardTypeRows": 3830,
+        "childDescriptionRows": 32100,
+        "competitionRows": {
+          "": 317,
+          "COMPETED UNDER SAP": 8370,
+          "FULL AND OPEN COMPETITION": 9972,
+          "FULL AND OPEN COMPETITION AFTER EXCLUSION OF SOURCES": 5661,
+          "NOT AVAILABLE FOR COMPETITION": 1106,
+          "NOT COMPETED": 5618,
+          "NOT COMPETED UNDER SAP": 4886
+        },
+        "missingFields": {
+          "award_type": 3830,
+          "extent_competed": 317,
+          "number_of_offers_received": 6025,
+          "parent_award_id_piid": 19311
+        },
+        "missingModificationRows": 0,
+        "missingOffersRows": 6025,
+        "netObligationDollars": "22929618344.76",
+        "obligationSignRows": {
+          "negative": 5210,
+          "positive": 23651,
+          "zero": 7069
+        },
+        "otherAwardTypeRows": 0,
+        "outsideDateRows": 0,
+        "rows": 35930,
+        "wrongAgencyRows": 0,
+        "zeroOffersRows": 0
+      }
+    },
+    {
+      "manifestStratum": {
+        "agency": "Department of Homeland Security",
+        "downloadFile": "data/raw/usaspending-transaction-downloads/department-of-homeland-security-2023-10-01-2023-12-31.zip",
+        "downloadLimit": "500000",
+        "endDate": "2023-12-31",
+        "expectedRows": "10267",
+        "normalizedRows": "10267",
+        "notes": "count fits public download limit",
+        "period": "Q1",
+        "rowCountDrift": "0",
+        "startDate": "2023-10-01",
+        "status": "ready",
+        "transactionCount": "10267",
+        "validatedRows": "10267",
+        "zipSha256": "1a5d80e39bae1926a0682e8fad565c6a984095fd8f48a30ba2287aed4d2d31c4"
+      },
+      "primeMembers": [
+        {
+          "name": "Contracts_PrimeTransactions_2026-06-13_H07M31S45_1.csv",
+          "rows": 10267
+        }
+      ],
+      "profile": {
+        "absoluteObligationDollars": "3424960322.92",
+        "afterExclusionCompetitionRows": 1659,
+        "awardTypeNetObligationDollars": {
+          "": "7507887.92",
+          "BPA CALL": "727330780.67",
+          "DEFINITIVE CONTRACT": "339616898.25",
+          "DELIVERY ORDER": "1848833248.02",
+          "PURCHASE ORDER": "60770970.36"
+        },
+        "awardTypeRows": {
+          "": 609,
+          "BPA CALL": 1260,
+          "DEFINITIVE CONTRACT": 709,
+          "DELIVERY ORDER": 4442,
+          "PURCHASE ORDER": 3247
+        },
+        "blankAwardTypeRows": 609,
+        "childDescriptionRows": 9658,
+        "competitionRows": {
+          "": 98,
+          "COMPETED UNDER SAP": 2893,
+          "COMPETITIVE DELIVERY ORDER": 6,
+          "FOLLOW ON TO COMPETED ACTION": 3,
+          "FULL AND OPEN COMPETITION": 2942,
+          "FULL AND OPEN COMPETITION AFTER EXCLUSION OF SOURCES": 1659,
+          "NOT AVAILABLE FOR COMPETITION": 394,
+          "NOT COMPETED": 1150,
+          "NOT COMPETED UNDER SAP": 1122
+        },
+        "missingFields": {
+          "award_type": 609,
+          "extent_competed": 98,
+          "number_of_offers_received": 2616,
+          "parent_award_id_piid": 4462
+        },
+        "missingModificationRows": 0,
+        "missingOffersRows": 2616,
+        "netObligationDollars": "2984059785.22",
+        "obligationSignRows": {
+          "negative": 1201,
+          "positive": 4818,
+          "zero": 4248
+        },
+        "otherAwardTypeRows": 0,
+        "outsideDateRows": 0,
+        "rows": 10267,
+        "wrongAgencyRows": 0,
+        "zeroOffersRows": 0
+      }
+    },
+    {
+      "manifestStratum": {
+        "agency": "Department of Homeland Security",
+        "downloadFile": "data/raw/usaspending-transaction-downloads/department-of-homeland-security-2024-01-01-2024-03-31.zip",
+        "downloadLimit": "500000",
+        "endDate": "2024-03-31",
+        "expectedRows": "15582",
+        "normalizedRows": "15582",
+        "notes": "count fits public download limit",
+        "period": "Q2",
+        "rowCountDrift": "0",
+        "startDate": "2024-01-01",
+        "status": "ready",
+        "transactionCount": "15582",
+        "validatedRows": "15582",
+        "zipSha256": "c231a57f8b637d5f58e67fe5c060796c05f38cacae478b8f268754bcfa3bfb9f"
+      },
+      "primeMembers": [
+        {
+          "name": "Contracts_PrimeTransactions_2026-06-13_H07M32S13_1.csv",
+          "rows": 15582
+        }
+      ],
+      "profile": {
+        "absoluteObligationDollars": "5024183185.95",
+        "afterExclusionCompetitionRows": 2550,
+        "awardTypeNetObligationDollars": {
+          "": "31305757.74",
+          "BPA CALL": "947553294.56",
+          "DEFINITIVE CONTRACT": "512013908.50",
+          "DELIVERY ORDER": "2681113552.60",
+          "PURCHASE ORDER": "105035006.01"
+        },
+        "awardTypeRows": {
+          "": 783,
+          "BPA CALL": 3060,
+          "DEFINITIVE CONTRACT": 1104,
+          "DELIVERY ORDER": 6375,
+          "PURCHASE ORDER": 4260
+        },
+        "blankAwardTypeRows": 783,
+        "childDescriptionRows": 14799,
+        "competitionRows": {
+          "": 99,
+          "COMPETED UNDER SAP": 4568,
+          "COMPETITIVE DELIVERY ORDER": 8,
+          "FOLLOW ON TO COMPETED ACTION": 2,
+          "FULL AND OPEN COMPETITION": 4884,
+          "FULL AND OPEN COMPETITION AFTER EXCLUSION OF SOURCES": 2550,
+          "NOT AVAILABLE FOR COMPETITION": 658,
+          "NOT COMPETED": 1463,
+          "NOT COMPETED UNDER SAP": 1350
+        },
+        "missingFields": {
+          "award_type": 783,
+          "extent_competed": 99,
+          "number_of_offers_received": 4200,
+          "parent_award_id_piid": 5993,
+          "type_of_contract_pricing": 19
+        },
+        "missingModificationRows": 0,
+        "missingOffersRows": 4200,
+        "netObligationDollars": "4277021519.41",
+        "obligationSignRows": {
+          "negative": 1853,
+          "positive": 8202,
+          "zero": 5527
+        },
+        "otherAwardTypeRows": 0,
+        "outsideDateRows": 0,
+        "rows": 15582,
+        "wrongAgencyRows": 0,
+        "zeroOffersRows": 119
+      }
+    },
+    {
+      "manifestStratum": {
+        "agency": "Department of Homeland Security",
+        "downloadFile": "data/raw/usaspending-transaction-downloads/department-of-homeland-security-2024-04-01-2024-06-30.zip",
+        "downloadLimit": "500000",
+        "endDate": "2024-06-30",
+        "expectedRows": "14908",
+        "normalizedRows": "14908",
+        "notes": "count fits public download limit",
+        "period": "Q3",
+        "rowCountDrift": "0",
+        "startDate": "2024-04-01",
+        "status": "ready",
+        "transactionCount": "14908",
+        "validatedRows": "14908",
+        "zipSha256": "09ece7d8697c66ca6a949ea365a793521a883ecdda9d607e8d12f5e715768beb"
+      },
+      "primeMembers": [
+        {
+          "name": "Contracts_PrimeTransactions_2026-06-13_H07M32S47_1.csv",
+          "rows": 14908
+        }
+      ],
+      "profile": {
+        "absoluteObligationDollars": "7091617236.20",
+        "afterExclusionCompetitionRows": 2674,
+        "awardTypeNetObligationDollars": {
+          "": "23137282.92",
+          "BPA CALL": "1152715096.36",
+          "DEFINITIVE CONTRACT": "1048924426.79",
+          "DELIVERY ORDER": "3910451380.45",
+          "PURCHASE ORDER": "136598444.64"
+        },
+        "awardTypeRows": {
+          "": 872,
+          "BPA CALL": 2148,
+          "DEFINITIVE CONTRACT": 1229,
+          "DELIVERY ORDER": 6672,
+          "PURCHASE ORDER": 3987
+        },
+        "blankAwardTypeRows": 872,
+        "childDescriptionRows": 14036,
+        "competitionRows": {
+          "": 99,
+          "COMPETED UNDER SAP": 3542,
+          "COMPETITIVE DELIVERY ORDER": 6,
+          "FOLLOW ON TO COMPETED ACTION": 4,
+          "FULL AND OPEN COMPETITION": 4929,
+          "FULL AND OPEN COMPETITION AFTER EXCLUSION OF SOURCES": 2674,
+          "NON-COMPETITIVE DELIVERY ORDER": 2,
+          "NOT AVAILABLE FOR COMPETITION": 741,
+          "NOT COMPETED": 1595,
+          "NOT COMPETED UNDER SAP": 1316
+        },
+        "missingFields": {
+          "award_type": 872,
+          "extent_competed": 99,
+          "number_of_offers_received": 4286,
+          "parent_award_id_piid": 5923,
+          "type_of_contract_pricing": 9
+        },
+        "missingModificationRows": 0,
+        "missingOffersRows": 4286,
+        "netObligationDollars": "6271826631.16",
+        "obligationSignRows": {
+          "negative": 1761,
+          "positive": 8657,
+          "zero": 4490
+        },
+        "otherAwardTypeRows": 0,
+        "outsideDateRows": 0,
+        "rows": 14908,
+        "wrongAgencyRows": 0,
+        "zeroOffersRows": 51
+      }
+    },
+    {
+      "manifestStratum": {
+        "agency": "Department of Homeland Security",
+        "downloadFile": "data/raw/usaspending-transaction-downloads/department-of-homeland-security-2024-07-01-2024-09-30.zip",
+        "downloadLimit": "500000",
+        "endDate": "2024-09-30",
+        "expectedRows": "20048",
+        "normalizedRows": "20048",
+        "notes": "count fits public download limit",
+        "period": "Q4",
+        "rowCountDrift": "0",
+        "startDate": "2024-07-01",
+        "status": "ready",
+        "transactionCount": "20048",
+        "validatedRows": "20048",
+        "zipSha256": "ffa7764426d49247d0aaba4f1eaf026129f6a57edab0e293c6abb8b6b7fbcbc3"
+      },
+      "primeMembers": [
+        {
+          "name": "Contracts_PrimeTransactions_2026-06-13_H07M33S24_1.csv",
+          "rows": 20048
+        }
+      ],
+      "profile": {
+        "absoluteObligationDollars": "12328774062.53",
+        "afterExclusionCompetitionRows": 4007,
+        "awardTypeNetObligationDollars": {
+          "": "8673801.67",
+          "BPA CALL": "1848758532.28",
+          "DEFINITIVE CONTRACT": "1530728730.15",
+          "DELIVERY ORDER": "6412003688.36",
+          "PURCHASE ORDER": "312254260.57"
+        },
+        "awardTypeRows": {
+          "": 1029,
+          "BPA CALL": 2612,
+          "DEFINITIVE CONTRACT": 1610,
+          "DELIVERY ORDER": 9422,
+          "PURCHASE ORDER": 5375
+        },
+        "blankAwardTypeRows": 1029,
+        "childDescriptionRows": 19019,
+        "competitionRows": {
+          "": 114,
+          "COMPETED UNDER SAP": 4539,
+          "COMPETITIVE DELIVERY ORDER": 5,
+          "FOLLOW ON TO COMPETED ACTION": 2,
+          "FULL AND OPEN COMPETITION": 6614,
+          "FULL AND OPEN COMPETITION AFTER EXCLUSION OF SOURCES": 4007,
+          "NOT AVAILABLE FOR COMPETITION": 940,
+          "NOT COMPETED": 2010,
+          "NOT COMPETED UNDER SAP": 1817
+        },
+        "missingFields": {
+          "award_type": 1029,
+          "extent_competed": 114,
+          "number_of_offers_received": 5733,
+          "parent_award_id_piid": 7850,
+          "type_of_contract_pricing": 6
+        },
+        "missingModificationRows": 0,
+        "missingOffersRows": 5733,
+        "netObligationDollars": "10112419013.03",
+        "obligationSignRows": {
+          "negative": 2057,
+          "positive": 13458,
+          "zero": 4533
+        },
+        "otherAwardTypeRows": 0,
+        "outsideDateRows": 0,
+        "rows": 20048,
+        "wrongAgencyRows": 0,
+        "zeroOffersRows": 7
+      }
+    },
+    {
+      "manifestStratum": {
+        "agency": "National Aeronautics and Space Administration",
+        "downloadFile": "data/raw/usaspending-transaction-downloads/national-aeronautics-and-space-administration-2023-10-01-2023-12-31.zip",
+        "downloadLimit": "500000",
+        "endDate": "2023-12-31",
+        "expectedRows": "4425",
+        "normalizedRows": "4425",
+        "notes": "count fits public download limit",
+        "period": "Q1",
+        "rowCountDrift": "0",
+        "startDate": "2023-10-01",
+        "status": "ready",
+        "transactionCount": "4425",
+        "validatedRows": "4425",
+        "zipSha256": "f85ddef0a71bbee341ea52c5fa643afc9defa953ce6f551e304662c1e41a3db3"
+      },
+      "primeMembers": [
+        {
+          "name": "Contracts_PrimeTransactions_2026-06-13_H07M34S07_1.csv",
+          "rows": 4425
+        }
+      ],
+      "profile": {
+        "absoluteObligationDollars": "3898157693.96",
+        "afterExclusionCompetitionRows": 1438,
+        "awardTypeNetObligationDollars": {
+          "": "1001691041.06",
+          "BPA CALL": "32315747.40",
+          "DEFINITIVE CONTRACT": "1520637703.65",
+          "DELIVERY ORDER": "1177332032.50",
+          "PURCHASE ORDER": "14989664.91"
+        },
+        "awardTypeRows": {
+          "": 730,
+          "BPA CALL": 292,
+          "DEFINITIVE CONTRACT": 947,
+          "DELIVERY ORDER": 1881,
+          "PURCHASE ORDER": 575
+        },
+        "blankAwardTypeRows": 730,
+        "childDescriptionRows": 3695,
+        "competitionRows": {
+          "": 35,
+          "COMPETED UNDER SAP": 278,
+          "FULL AND OPEN COMPETITION": 1403,
+          "FULL AND OPEN COMPETITION AFTER EXCLUSION OF SOURCES": 1438,
+          "NOT AVAILABLE FOR COMPETITION": 108,
+          "NOT COMPETED": 783,
+          "NOT COMPETED UNDER SAP": 380
+        },
+        "missingFields": {
+          "award_type": 730,
+          "extent_competed": 35,
+          "number_of_offers_received": 1365,
+          "parent_award_id_piid": 2242
+        },
+        "missingModificationRows": 0,
+        "missingOffersRows": 1365,
+        "netObligationDollars": "3746966189.52",
+        "obligationSignRows": {
+          "negative": 258,
+          "positive": 2670,
+          "zero": 1497
+        },
+        "otherAwardTypeRows": 0,
+        "outsideDateRows": 0,
+        "rows": 4425,
+        "wrongAgencyRows": 0,
+        "zeroOffersRows": 1
+      }
+    },
+    {
+      "manifestStratum": {
+        "agency": "National Aeronautics and Space Administration",
+        "downloadFile": "data/raw/usaspending-transaction-downloads/national-aeronautics-and-space-administration-2024-01-01-2024-03-31.zip",
+        "downloadLimit": "500000",
+        "endDate": "2024-03-31",
+        "expectedRows": "5095",
+        "normalizedRows": "5095",
+        "notes": "count fits public download limit",
+        "period": "Q2",
+        "rowCountDrift": "0",
+        "startDate": "2024-01-01",
+        "status": "ready",
+        "transactionCount": "5095",
+        "validatedRows": "5095",
+        "zipSha256": "467ed5a209326b9da6aee543ad81af4fb7c8c35d462656dc46736e0885597feb"
+      },
+      "primeMembers": [
+        {
+          "name": "Contracts_PrimeTransactions_2026-06-13_H07M34S21_1.csv",
+          "rows": 5095
+        }
+      ],
+      "profile": {
+        "absoluteObligationDollars": "4080299930.94",
+        "afterExclusionCompetitionRows": 1677,
+        "awardTypeNetObligationDollars": {
+          "": "1112579136.70",
+          "BPA CALL": "42993525.19",
+          "DEFINITIVE CONTRACT": "1541345946.04",
+          "DELIVERY ORDER": "1181058300.73",
+          "PURCHASE ORDER": "30545345.60"
+        },
+        "awardTypeRows": {
+          "": 813,
+          "BPA CALL": 353,
+          "DEFINITIVE CONTRACT": 1008,
+          "DELIVERY ORDER": 2217,
+          "PURCHASE ORDER": 704
+        },
+        "blankAwardTypeRows": 813,
+        "childDescriptionRows": 4282,
+        "competitionRows": {
+          "": 18,
+          "COMPETED UNDER SAP": 301,
+          "FULL AND OPEN COMPETITION": 1594,
+          "FULL AND OPEN COMPETITION AFTER EXCLUSION OF SOURCES": 1677,
+          "NOT AVAILABLE FOR COMPETITION": 132,
+          "NOT COMPETED": 838,
+          "NOT COMPETED UNDER SAP": 535
+        },
+        "missingFields": {
+          "award_type": 813,
+          "extent_competed": 18,
+          "number_of_offers_received": 1491,
+          "parent_award_id_piid": 2489
+        },
+        "missingModificationRows": 0,
+        "missingOffersRows": 1491,
+        "netObligationDollars": "3908522254.26",
+        "obligationSignRows": {
+          "negative": 277,
+          "positive": 3192,
+          "zero": 1626
+        },
+        "otherAwardTypeRows": 0,
+        "outsideDateRows": 0,
+        "rows": 5095,
+        "wrongAgencyRows": 0,
+        "zeroOffersRows": 0
+      }
+    },
+    {
+      "manifestStratum": {
+        "agency": "National Aeronautics and Space Administration",
+        "downloadFile": "data/raw/usaspending-transaction-downloads/national-aeronautics-and-space-administration-2024-04-01-2024-06-30.zip",
+        "downloadLimit": "500000",
+        "endDate": "2024-06-30",
+        "expectedRows": "5642",
+        "normalizedRows": "5642",
+        "notes": "count fits public download limit",
+        "period": "Q3",
+        "rowCountDrift": "0",
+        "startDate": "2024-04-01",
+        "status": "ready",
+        "transactionCount": "5642",
+        "validatedRows": "5642",
+        "zipSha256": "6c488c6d043a17e9e5bb65e937fce7c89283f039416c5266c4a589849067b68e"
+      },
+      "primeMembers": [
+        {
+          "name": "Contracts_PrimeTransactions_2026-06-13_H07M34S35_1.csv",
+          "rows": 5642
+        }
+      ],
+      "profile": {
+        "absoluteObligationDollars": "5456554600.45",
+        "afterExclusionCompetitionRows": 1739,
+        "awardTypeNetObligationDollars": {
+          "": "1197389316.28",
+          "BPA CALL": "65503061.81",
+          "DEFINITIVE CONTRACT": "2409727633.24",
+          "DELIVERY ORDER": "1565153754.86",
+          "PURCHASE ORDER": "43189898.02"
+        },
+        "awardTypeRows": {
+          "": 805,
+          "BPA CALL": 395,
+          "DEFINITIVE CONTRACT": 1075,
+          "DELIVERY ORDER": 2464,
+          "PURCHASE ORDER": 903
+        },
+        "blankAwardTypeRows": 805,
+        "childDescriptionRows": 4837,
+        "competitionRows": {
+          "": 26,
+          "COMPETED UNDER SAP": 356,
+          "FULL AND OPEN COMPETITION": 1739,
+          "FULL AND OPEN COMPETITION AFTER EXCLUSION OF SOURCES": 1739,
+          "NOT AVAILABLE FOR COMPETITION": 117,
+          "NOT COMPETED": 967,
+          "NOT COMPETED UNDER SAP": 698
+        },
+        "missingFields": {
+          "award_type": 805,
+          "extent_competed": 26,
+          "number_of_offers_received": 1688,
+          "parent_award_id_piid": 2770
+        },
+        "missingModificationRows": 0,
+        "missingOffersRows": 1688,
+        "netObligationDollars": "5280963664.21",
+        "obligationSignRows": {
+          "negative": 459,
+          "positive": 3471,
+          "zero": 1712
+        },
+        "otherAwardTypeRows": 0,
+        "outsideDateRows": 0,
+        "rows": 5642,
+        "wrongAgencyRows": 0,
+        "zeroOffersRows": 2
+      }
+    },
+    {
+      "manifestStratum": {
+        "agency": "National Aeronautics and Space Administration",
+        "downloadFile": "data/raw/usaspending-transaction-downloads/national-aeronautics-and-space-administration-2024-07-01-2024-09-30.zip",
+        "downloadLimit": "500000",
+        "endDate": "2024-09-30",
+        "expectedRows": "7994",
+        "normalizedRows": "7994",
+        "notes": "count fits public download limit",
+        "period": "Q4",
+        "rowCountDrift": "0",
+        "startDate": "2024-07-01",
+        "status": "ready",
+        "transactionCount": "7994",
+        "validatedRows": "7994",
+        "zipSha256": "423a3e6f74453f7bd846d95369b889847f8f8fe1773ae8deb724c32005d7f8cd"
+      },
+      "primeMembers": [
+        {
+          "name": "Contracts_PrimeTransactions_2026-06-13_H07M34S52_1.csv",
+          "rows": 7994
+        }
+      ],
+      "profile": {
+        "absoluteObligationDollars": "7636912015.26",
+        "afterExclusionCompetitionRows": 2685,
+        "awardTypeNetObligationDollars": {
+          "": "1727020714.69",
+          "BPA CALL": "83699618.36",
+          "DEFINITIVE CONTRACT": "3205145853.23",
+          "DELIVERY ORDER": "1999695107.10",
+          "PURCHASE ORDER": "102861414.78"
+        },
+        "awardTypeRows": {
+          "": 1049,
+          "BPA CALL": 503,
+          "DEFINITIVE CONTRACT": 1493,
+          "DELIVERY ORDER": 3331,
+          "PURCHASE ORDER": 1618
+        },
+        "blankAwardTypeRows": 1049,
+        "childDescriptionRows": 6945,
+        "competitionRows": {
+          "": 21,
+          "COMPETED UNDER SAP": 517,
+          "FULL AND OPEN COMPETITION": 2439,
+          "FULL AND OPEN COMPETITION AFTER EXCLUSION OF SOURCES": 2685,
+          "NOT AVAILABLE FOR COMPETITION": 153,
+          "NOT COMPETED": 1201,
+          "NOT COMPETED UNDER SAP": 978
+        },
+        "missingFields": {
+          "award_type": 1049,
+          "extent_competed": 21,
+          "number_of_offers_received": 2166,
+          "parent_award_id_piid": 4138
+        },
+        "missingModificationRows": 0,
+        "missingOffersRows": 2166,
+        "netObligationDollars": "7118422708.16",
+        "obligationSignRows": {
+          "negative": 773,
+          "positive": 5157,
+          "zero": 2064
+        },
+        "otherAwardTypeRows": 0,
+        "outsideDateRows": 0,
+        "rows": 7994,
+        "wrongAgencyRows": 0,
+        "zeroOffersRows": 0
+      }
+    },
+    {
+      "manifestStratum": {
+        "agency": "General Services Administration",
+        "downloadFile": "data/raw/usaspending-transaction-downloads/general-services-administration-2023-10-01-2023-12-31.zip",
+        "downloadLimit": "500000",
+        "endDate": "2023-12-31",
+        "expectedRows": "320898",
+        "normalizedRows": "320898",
+        "notes": "count fits public download limit",
+        "period": "Q1",
+        "rowCountDrift": "0",
+        "startDate": "2023-10-01",
+        "status": "ready",
+        "transactionCount": "320898",
+        "validatedRows": "320898",
+        "zipSha256": "58ac18b08b0d3f2f7984b964e25d704ed117fa0b400b733d8359f82cd51c68f9"
+      },
+      "primeMembers": [
+        {
+          "name": "Contracts_PrimeTransactions_2026-06-13_H07M37S07_1.csv",
+          "rows": 320898
+        }
+      ],
+      "profile": {
+        "absoluteObligationDollars": "4592237093.90",
+        "afterExclusionCompetitionRows": 17730,
+        "awardTypeNetObligationDollars": {
+          "": "100155380.44",
+          "BPA CALL": "437443467.67",
+          "DEFINITIVE CONTRACT": "442089720.56",
+          "DELIVERY ORDER": "3222135681.10",
+          "PURCHASE ORDER": "29039768.03"
+        },
+        "awardTypeRows": {
+          "": 28336,
+          "BPA CALL": 150614,
+          "DEFINITIVE CONTRACT": 1118,
+          "DELIVERY ORDER": 112236,
+          "PURCHASE ORDER": 28594
+        },
+        "blankAwardTypeRows": 28336,
+        "childDescriptionRows": 292562,
+        "competitionRows": {
+          "": 115,
+          "COMPETED UNDER SAP": 24779,
+          "FULL AND OPEN COMPETITION": 192966,
+          "FULL AND OPEN COMPETITION AFTER EXCLUSION OF SOURCES": 17730,
+          "NOT AVAILABLE FOR COMPETITION": 72932,
+          "NOT COMPETED": 182,
+          "NOT COMPETED UNDER SAP": 12194
+        },
+        "missingFields": {
+          "award_type": 28336,
+          "extent_competed": 115,
+          "number_of_offers_received": 181380,
+          "parent_award_id_piid": 57694,
+          "type_of_contract_pricing": 15
+        },
+        "missingModificationRows": 0,
+        "missingOffersRows": 181380,
+        "netObligationDollars": "4230864017.80",
+        "obligationSignRows": {
+          "negative": 8193,
+          "positive": 268876,
+          "zero": 43829
+        },
+        "otherAwardTypeRows": 0,
+        "outsideDateRows": 0,
+        "rows": 320898,
+        "wrongAgencyRows": 0,
+        "zeroOffersRows": 0
+      }
+    },
+    {
+      "manifestStratum": {
+        "agency": "General Services Administration",
+        "downloadFile": "data/raw/usaspending-transaction-downloads/general-services-administration-2024-01-01-2024-03-31.zip",
+        "downloadLimit": "500000",
+        "endDate": "2024-03-31",
+        "expectedRows": "382574",
+        "normalizedRows": "382574",
+        "notes": "count fits public download limit",
+        "period": "Q2",
+        "rowCountDrift": "0",
+        "startDate": "2024-01-01",
+        "status": "ready",
+        "transactionCount": "382574",
+        "validatedRows": "382574",
+        "zipSha256": "9ebd316cfe45161fe7f73c6efe2ae94cb5ea65fd573fb6f59f636e3ef8c513f9"
+      },
+      "primeMembers": [
+        {
+          "name": "Contracts_PrimeTransactions_2026-06-13_H07M44S53_1.csv",
+          "rows": 382574
+        }
+      ],
+      "profile": {
+        "absoluteObligationDollars": "5829862366.98",
+        "afterExclusionCompetitionRows": 17043,
+        "awardTypeNetObligationDollars": {
+          "": "140827670.28",
+          "BPA CALL": "712811221.91",
+          "DEFINITIVE CONTRACT": "702115741.79",
+          "DELIVERY ORDER": "3847798858.92",
+          "PURCHASE ORDER": "37376555.98"
+        },
+        "awardTypeRows": {
+          "": 23472,
+          "BPA CALL": 205881,
+          "DEFINITIVE CONTRACT": 1280,
+          "DELIVERY ORDER": 116323,
+          "PURCHASE ORDER": 35618
+        },
+        "blankAwardTypeRows": 23472,
+        "childDescriptionRows": 359102,
+        "competitionRows": {
+          "": 169,
+          "COMPETED UNDER SAP": 32499,
+          "FULL AND OPEN COMPETITION": 235723,
+          "FULL AND OPEN COMPETITION AFTER EXCLUSION OF SOURCES": 17043,
+          "NOT AVAILABLE FOR COMPETITION": 83570,
+          "NOT COMPETED": 260,
+          "NOT COMPETED UNDER SAP": 13310
+        },
+        "missingFields": {
+          "award_type": 23472,
+          "extent_competed": 169,
+          "number_of_offers_received": 229965,
+          "parent_award_id_piid": 59881,
+          "type_of_contract_pricing": 4
+        },
+        "missingModificationRows": 0,
+        "missingOffersRows": 229965,
+        "netObligationDollars": "5440930048.88",
+        "obligationSignRows": {
+          "negative": 9666,
+          "positive": 327449,
+          "zero": 45459
+        },
+        "otherAwardTypeRows": 0,
+        "outsideDateRows": 0,
+        "rows": 382574,
+        "wrongAgencyRows": 0,
+        "zeroOffersRows": 0
+      }
+    },
+    {
+      "manifestStratum": {
+        "agency": "General Services Administration",
+        "downloadFile": "data/raw/usaspending-transaction-downloads/general-services-administration-2024-04-01-2024-06-30.zip",
+        "downloadLimit": "500000",
+        "endDate": "2024-06-30",
+        "expectedRows": "396495",
+        "normalizedRows": "396495",
+        "notes": "count fits public download limit",
+        "period": "Q3",
+        "rowCountDrift": "0",
+        "startDate": "2024-04-01",
+        "status": "ready",
+        "transactionCount": "396495",
+        "validatedRows": "396495",
+        "zipSha256": "b6adfb6f3c4d5eea39ace67182ef73b5a5b3fc17e505b4381db17f5f41b5cad7"
+      },
+      "primeMembers": [
+        {
+          "name": "Contracts_PrimeTransactions_2026-06-13_H07M52S09_1.csv",
+          "rows": 396495
+        }
+      ],
+      "profile": {
+        "absoluteObligationDollars": "7052960422.08",
+        "afterExclusionCompetitionRows": 16432,
+        "awardTypeNetObligationDollars": {
+          "": "112217780.70",
+          "BPA CALL": "793416872.48",
+          "DEFINITIVE CONTRACT": "547120265.93",
+          "DELIVERY ORDER": "4661719092.57",
+          "PURCHASE ORDER": "50758408.54"
+        },
+        "awardTypeRows": {
+          "": 38047,
+          "BPA CALL": 195565,
+          "DEFINITIVE CONTRACT": 1346,
+          "DELIVERY ORDER": 118922,
+          "PURCHASE ORDER": 42615
+        },
+        "blankAwardTypeRows": 38047,
+        "childDescriptionRows": 358448,
+        "competitionRows": {
+          "": 141,
+          "COMPETED UNDER SAP": 30459,
+          "FULL AND OPEN COMPETITION": 239052,
+          "FULL AND OPEN COMPETITION AFTER EXCLUSION OF SOURCES": 16432,
+          "NOT AVAILABLE FOR COMPETITION": 86659,
+          "NOT COMPETED": 290,
+          "NOT COMPETED UNDER SAP": 23462
+        },
+        "missingFields": {
+          "award_type": 38047,
+          "extent_competed": 141,
+          "number_of_offers_received": 232522,
+          "parent_award_id_piid": 81666,
+          "type_of_contract_pricing": 1
+        },
+        "missingModificationRows": 0,
+        "missingOffersRows": 232522,
+        "netObligationDollars": "6165232420.22",
+        "obligationSignRows": {
+          "negative": 8350,
+          "positive": 347625,
+          "zero": 40520
+        },
+        "otherAwardTypeRows": 0,
+        "outsideDateRows": 0,
+        "rows": 396495,
+        "wrongAgencyRows": 0,
+        "zeroOffersRows": 0
+      }
+    },
+    {
+      "manifestStratum": {
+        "agency": "General Services Administration",
+        "downloadFile": "data/raw/usaspending-transaction-downloads/general-services-administration-2024-07-01-2024-09-30.zip",
+        "downloadLimit": "500000",
+        "endDate": "2024-09-30",
+        "expectedRows": "451857",
+        "normalizedRows": "451857",
+        "notes": "count fits public download limit",
+        "period": "Q4",
+        "rowCountDrift": "0",
+        "startDate": "2024-07-01",
+        "status": "ready",
+        "transactionCount": "451857",
+        "validatedRows": "451857",
+        "zipSha256": "c32d85fc4777e0921ffefb417b3121cecb3350450156f5142abdb2b8bdd27e85"
+      },
+      "primeMembers": [
+        {
+          "name": "Contracts_PrimeTransactions_2026-06-13_H08M00S16_1.csv",
+          "rows": 451857
+        }
+      ],
+      "profile": {
+        "absoluteObligationDollars": "12117318653.36",
+        "afterExclusionCompetitionRows": 19672,
+        "awardTypeNetObligationDollars": {
+          "": "113691444.61",
+          "BPA CALL": "1032821639.42",
+          "DEFINITIVE CONTRACT": "2081002809.52",
+          "DELIVERY ORDER": "7621330156.12",
+          "PURCHASE ORDER": "277385838.35"
+        },
+        "awardTypeRows": {
+          "": 31108,
+          "BPA CALL": 211301,
+          "DEFINITIVE CONTRACT": 1771,
+          "DELIVERY ORDER": 155223,
+          "PURCHASE ORDER": 52454
+        },
+        "blankAwardTypeRows": 31108,
+        "childDescriptionRows": 420749,
+        "competitionRows": {
+          "": 87,
+          "COMPETED UNDER SAP": 35595,
+          "FULL AND OPEN COMPETITION": 252942,
+          "FULL AND OPEN COMPETITION AFTER EXCLUSION OF SOURCES": 19672,
+          "NOT AVAILABLE FOR COMPETITION": 114243,
+          "NOT COMPETED": 429,
+          "NOT COMPETED UNDER SAP": 28889
+        },
+        "missingFields": {
+          "award_type": 31108,
+          "extent_competed": 87,
+          "number_of_offers_received": 274527,
+          "parent_award_id_piid": 84968,
+          "type_of_contract_pricing": 7
+        },
+        "missingModificationRows": 0,
+        "missingOffersRows": 274527,
+        "netObligationDollars": "11126231888.02",
+        "obligationSignRows": {
+          "negative": 11948,
+          "positive": 406800,
+          "zero": 33109
+        },
+        "otherAwardTypeRows": 0,
+        "outsideDateRows": 0,
+        "rows": 451857,
+        "wrongAgencyRows": 0,
+        "zeroOffersRows": 0
+      }
+    },
+    {
+      "manifestStratum": {
+        "agency": "Department of Commerce",
+        "downloadFile": "data/raw/usaspending-transaction-downloads/department-of-commerce-2023-10-01-2023-12-31.zip",
+        "downloadLimit": "500000",
+        "endDate": "2023-12-31",
+        "expectedRows": "1899",
+        "normalizedRows": "1899",
+        "notes": "count fits public download limit",
+        "period": "Q1",
+        "rowCountDrift": "0",
+        "startDate": "2023-10-01",
+        "status": "ready",
+        "transactionCount": "1899",
+        "validatedRows": "1899",
+        "zipSha256": "dcdf8c0d9b0fe4c9fe55b62058af9b5734a3b9eba8297f1c46184869782ed03a"
+      },
+      "primeMembers": [
+        {
+          "name": "Contracts_PrimeTransactions_2026-06-13_H08M05S10_1.csv",
+          "rows": 1899
+        }
+      ],
+      "profile": {
+        "absoluteObligationDollars": "515799073.78",
+        "afterExclusionCompetitionRows": 297,
+        "awardTypeNetObligationDollars": {
+          "": "149999.00",
+          "BPA CALL": "55666009.86",
+          "DEFINITIVE CONTRACT": "152982310.07",
+          "DELIVERY ORDER": "201703919.04",
+          "PURCHASE ORDER": "27143673.49"
+        },
+        "awardTypeRows": {
+          "": 118,
+          "BPA CALL": 519,
+          "DEFINITIVE CONTRACT": 138,
+          "DELIVERY ORDER": 655,
+          "PURCHASE ORDER": 469
+        },
+        "blankAwardTypeRows": 118,
+        "childDescriptionRows": 1781,
+        "competitionRows": {
+          "": 45,
+          "COMPETED UNDER SAP": 414,
+          "COMPETITIVE DELIVERY ORDER": 1,
+          "FULL AND OPEN COMPETITION": 747,
+          "FULL AND OPEN COMPETITION AFTER EXCLUSION OF SOURCES": 297,
+          "NOT AVAILABLE FOR COMPETITION": 93,
+          "NOT COMPETED": 88,
+          "NOT COMPETED UNDER SAP": 214
+        },
+        "missingFields": {
+          "award_type": 118,
+          "extent_competed": 45,
+          "number_of_offers_received": 545,
+          "parent_award_id_piid": 679
+        },
+        "missingModificationRows": 0,
+        "missingOffersRows": 545,
+        "netObligationDollars": "437645911.46",
+        "obligationSignRows": {
+          "negative": 326,
+          "positive": 880,
+          "zero": 693
+        },
+        "otherAwardTypeRows": 0,
+        "outsideDateRows": 0,
+        "rows": 1899,
+        "wrongAgencyRows": 0,
+        "zeroOffersRows": 0
+      }
+    },
+    {
+      "manifestStratum": {
+        "agency": "Department of Commerce",
+        "downloadFile": "data/raw/usaspending-transaction-downloads/department-of-commerce-2024-01-01-2024-03-31.zip",
+        "downloadLimit": "500000",
+        "endDate": "2024-03-31",
+        "expectedRows": "3787",
+        "normalizedRows": "3787",
+        "notes": "count fits public download limit",
+        "period": "Q2",
+        "rowCountDrift": "0",
+        "startDate": "2024-01-01",
+        "status": "ready",
+        "transactionCount": "3787",
+        "validatedRows": "3787",
+        "zipSha256": "9035b2b651de94f040b159fb87a98b9d2f6cbdf530f8d1b53e3710ea9002e730"
+      },
+      "primeMembers": [
+        {
+          "name": "Contracts_PrimeTransactions_2026-06-13_H08M05S19_1.csv",
+          "rows": 3787
+        }
+      ],
+      "profile": {
+        "absoluteObligationDollars": "1094074714.32",
+        "afterExclusionCompetitionRows": 674,
+        "awardTypeNetObligationDollars": {
+          "": "9000.00",
+          "BPA CALL": "184246403.95",
+          "DEFINITIVE CONTRACT": "212334238.88",
+          "DELIVERY ORDER": "544483642.90",
+          "PURCHASE ORDER": "43277735.83"
+        },
+        "awardTypeRows": {
+          "": 237,
+          "BPA CALL": 922,
+          "DEFINITIVE CONTRACT": 286,
+          "DELIVERY ORDER": 1392,
+          "PURCHASE ORDER": 950
+        },
+        "blankAwardTypeRows": 237,
+        "childDescriptionRows": 3550,
+        "competitionRows": {
+          "": 16,
+          "COMPETED UNDER SAP": 803,
+          "FULL AND OPEN COMPETITION": 1458,
+          "FULL AND OPEN COMPETITION AFTER EXCLUSION OF SOURCES": 674,
+          "NOT AVAILABLE FOR COMPETITION": 167,
+          "NOT COMPETED": 176,
+          "NOT COMPETED UNDER SAP": 493
+        },
+        "missingFields": {
+          "award_type": 237,
+          "extent_competed": 16,
+          "number_of_offers_received": 1035,
+          "parent_award_id_piid": 1415
+        },
+        "missingModificationRows": 0,
+        "missingOffersRows": 1035,
+        "netObligationDollars": "984351021.56",
+        "obligationSignRows": {
+          "negative": 579,
+          "positive": 2233,
+          "zero": 975
+        },
+        "otherAwardTypeRows": 0,
+        "outsideDateRows": 0,
+        "rows": 3787,
+        "wrongAgencyRows": 0,
+        "zeroOffersRows": 0
+      }
+    },
+    {
+      "manifestStratum": {
+        "agency": "Department of Commerce",
+        "downloadFile": "data/raw/usaspending-transaction-downloads/department-of-commerce-2024-04-01-2024-06-30.zip",
+        "downloadLimit": "500000",
+        "endDate": "2024-06-30",
+        "expectedRows": "4290",
+        "normalizedRows": "4290",
+        "notes": "count fits public download limit",
+        "period": "Q3",
+        "rowCountDrift": "0",
+        "startDate": "2024-04-01",
+        "status": "ready",
+        "transactionCount": "4290",
+        "validatedRows": "4290",
+        "zipSha256": "3c33c6fb7071d21f13f91cb4220c19453c40a229f5d931b7bad58759c10b7df3"
+      },
+      "primeMembers": [
+        {
+          "name": "Contracts_PrimeTransactions_2026-06-13_H08M05S32_1.csv",
+          "rows": 4290
+        }
+      ],
+      "profile": {
+        "absoluteObligationDollars": "1410530979.44",
+        "afterExclusionCompetitionRows": 701,
+        "awardTypeNetObligationDollars": {
+          "": "-13495.99",
+          "BPA CALL": "351957987.55",
+          "DEFINITIVE CONTRACT": "284455536.89",
+          "DELIVERY ORDER": "598572742.22",
+          "PURCHASE ORDER": "67566546.53"
+        },
+        "awardTypeRows": {
+          "": 166,
+          "BPA CALL": 1133,
+          "DEFINITIVE CONTRACT": 304,
+          "DELIVERY ORDER": 1545,
+          "PURCHASE ORDER": 1142
+        },
+        "blankAwardTypeRows": 166,
+        "childDescriptionRows": 4124,
+        "competitionRows": {
+          "": 30,
+          "COMPETED UNDER SAP": 985,
+          "FULL AND OPEN COMPETITION": 1615,
+          "FULL AND OPEN COMPETITION AFTER EXCLUSION OF SOURCES": 701,
+          "NOT AVAILABLE FOR COMPETITION": 157,
+          "NOT COMPETED": 196,
+          "NOT COMPETED UNDER SAP": 606
+        },
+        "missingFields": {
+          "award_type": 166,
+          "extent_competed": 30,
+          "number_of_offers_received": 1099,
+          "parent_award_id_piid": 1549
+        },
+        "missingModificationRows": 0,
+        "missingOffersRows": 1099,
+        "netObligationDollars": "1302539317.20",
+        "obligationSignRows": {
+          "negative": 522,
+          "positive": 3015,
+          "zero": 753
+        },
+        "otherAwardTypeRows": 0,
+        "outsideDateRows": 0,
+        "rows": 4290,
+        "wrongAgencyRows": 0,
+        "zeroOffersRows": 0
+      }
+    },
+    {
+      "manifestStratum": {
+        "agency": "Department of Commerce",
+        "downloadFile": "data/raw/usaspending-transaction-downloads/department-of-commerce-2024-07-01-2024-09-30.zip",
+        "downloadLimit": "500000",
+        "endDate": "2024-09-30",
+        "expectedRows": "6617",
+        "normalizedRows": "6617",
+        "notes": "count fits public download limit",
+        "period": "Q4",
+        "rowCountDrift": "0",
+        "startDate": "2024-07-01",
+        "status": "ready",
+        "transactionCount": "6617",
+        "validatedRows": "6617",
+        "zipSha256": "fb1a97cde2d45a1bf70716625ff1e1fdb21014c3a1e5c084843a42202fd92754"
+      },
+      "primeMembers": [
+        {
+          "name": "Contracts_PrimeTransactions_2026-06-13_H08M05S45_1.csv",
+          "rows": 6617
+        }
+      ],
+      "profile": {
+        "absoluteObligationDollars": "2885212621.02",
+        "afterExclusionCompetitionRows": 1051,
+        "awardTypeNetObligationDollars": {
+          "": "188503.99",
+          "BPA CALL": "377006494.16",
+          "DEFINITIVE CONTRACT": "827640449.24",
+          "DELIVERY ORDER": "1081544928.69",
+          "PURCHASE ORDER": "179213083.52"
+        },
+        "awardTypeRows": {
+          "": 256,
+          "BPA CALL": 1418,
+          "DEFINITIVE CONTRACT": 554,
+          "DELIVERY ORDER": 2356,
+          "PURCHASE ORDER": 2033
+        },
+        "blankAwardTypeRows": 256,
+        "childDescriptionRows": 6361,
+        "competitionRows": {
+          "": 26,
+          "COMPETED UNDER SAP": 1835,
+          "FULL AND OPEN COMPETITION": 2046,
+          "FULL AND OPEN COMPETITION AFTER EXCLUSION OF SOURCES": 1051,
+          "NOT AVAILABLE FOR COMPETITION": 306,
+          "NOT COMPETED": 265,
+          "NOT COMPETED UNDER SAP": 1088
+        },
+        "missingFields": {
+          "award_type": 256,
+          "extent_competed": 26,
+          "number_of_offers_received": 1326,
+          "parent_award_id_piid": 2760
+        },
+        "missingModificationRows": 0,
+        "missingOffersRows": 1326,
+        "netObligationDollars": "2465593459.60",
+        "obligationSignRows": {
+          "negative": 549,
+          "positive": 5060,
+          "zero": 1008
+        },
+        "otherAwardTypeRows": 0,
+        "outsideDateRows": 0,
+        "rows": 6617,
+        "wrongAgencyRows": 0,
+        "zeroOffersRows": 0
+      }
+    }
+  ],
+  "total": {
+    "absoluteObligationDollars": "774172847532.38",
+    "afterExclusionCompetitionRows": 665137,
+    "awardTypeNetObligationDollars": {
+      "": "14871775716.42",
+      "BPA CALL": "21656731510.96",
+      "DEFINITIVE CONTRACT": "259176757978.89",
+      "DELIVERY ORDER": "391858099401.25",
+      "PURCHASE ORDER": "16774074977.74"
+    },
+    "awardTypeRows": {
+      "": 243700,
+      "BPA CALL": 868765,
+      "DEFINITIVE CONTRACT": 141449,
+      "DELIVERY ORDER": 4447816,
+      "PURCHASE ORDER": 747371
+    },
+    "blankAwardTypeRows": 243700,
+    "childDescriptionRows": 6205401,
+    "competitionRows": {
+      "": 11264,
+      "COMPETED UNDER SAP": 828317,
+      "COMPETITIVE DELIVERY ORDER": 68,
+      "FOLLOW ON TO COMPETED ACTION": 58,
+      "FULL AND OPEN COMPETITION": 4006460,
+      "FULL AND OPEN COMPETITION AFTER EXCLUSION OF SOURCES": 665137,
+      "NON-COMPETITIVE DELIVERY ORDER": 24,
+      "NOT AVAILABLE FOR COMPETITION": 430312,
+      "NOT COMPETED": 295831,
+      "NOT COMPETED UNDER SAP": 211630
+    },
+    "missingFields": {
+      "award_type": 243700,
+      "extent_competed": 11264,
+      "number_of_offers_received": 4505798,
+      "parent_award_id_piid": 1126961,
+      "recipient_name": 1,
+      "type_of_contract_pricing": 68
+    },
+    "missingModificationRows": 0,
+    "missingOffersRows": 4505798,
+    "netObligationDollars": "704337439585.26",
+    "obligationSignRows": {
+      "negative": 224248,
+      "positive": 5639986,
+      "zero": 584867
+    },
+    "otherAwardTypeRows": 0,
+    "outsideDateRows": 0,
+    "rows": 6449101,
+    "wrongAgencyRows": 0,
+    "zeroOffersRows": 351
+  }
+}

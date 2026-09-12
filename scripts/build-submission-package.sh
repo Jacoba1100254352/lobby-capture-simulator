@@ -133,6 +133,8 @@ for source_product in \
   comment-position-source.json \
   gao-award-linkage-pilot.csv \
   gao-award-linkage-source.json \
+  procurement-bulk-frame-profile.json \
+  procurement-bulk-type-review.json \
   sam-fpds-action-history-crosswalk.csv \
   gao-protest-overlay.csv \
   sam-exclusion-overlay.csv \

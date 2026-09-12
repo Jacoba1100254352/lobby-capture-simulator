@@ -103,6 +103,7 @@ EMPIRICAL_EXPANSION_PRODUCTS = [
         "comment-uptake-issue-pilot.csv",
         "comment-position-pilot.csv", "comment-position-source.json",
         "gao-award-linkage-pilot.csv", "gao-award-linkage-source.json",
+        "procurement-bulk-frame-profile.json", "procurement-bulk-type-review.json",
     )
 ]
 EMPIRICAL_EXPANSION_NOTES = [
@@ -692,6 +693,8 @@ def submission_inputs() -> list[Path]:
         *EMPIRICAL_EXPANSION_NOTES,
         ROOT / "reports/empirical-expansion-audit.md",
         ROOT / "reports/empirical-expansion-audit.csv",
+        ROOT / "reports/procurement-bulk-frame-audit.md",
+        ROOT / "reports/procurement-bulk-frame-audit.csv",
         WILEY_PDF,
         SUPPLEMENT_PDF,
         PAPER / "regulation-governance-wiley.tex",
@@ -6030,6 +6033,8 @@ def package_byte_checks() -> list[tuple[Path, str]]:
         *[(path, f"supporting-information/{path.name}") for path in EMPIRICAL_EXPANSION_NOTES],
         (ROOT / "reports/empirical-expansion-audit.md", "supporting-information/report-data/empirical-expansion-audit.md"),
         (ROOT / "reports/empirical-expansion-audit.csv", "supporting-information/report-data/empirical-expansion-audit.csv"),
+        (ROOT / "reports/procurement-bulk-frame-audit.md", "supporting-information/report-data/procurement-bulk-frame-audit.md"),
+        (ROOT / "reports/procurement-bulk-frame-audit.csv", "supporting-information/report-data/procurement-bulk-frame-audit.csv"),
         (PAPER / "regulation-governance-wiley.tex", f"{LOCAL_BASENAME}.tex"),
         (WILEY_PDF, f"{LOCAL_BASENAME}.pdf"),
         (PAPER / "supplement.tex", "supplement.tex"),

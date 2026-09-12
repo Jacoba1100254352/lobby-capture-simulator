@@ -53,6 +53,7 @@ PACKAGE_INPUTS = [
             "comment-uptake-issue-pilot.csv",
             "comment-position-pilot.csv", "comment-position-source.json",
             "gao-award-linkage-pilot.csv", "gao-award-linkage-source.json",
+            "procurement-bulk-frame-profile.json", "procurement-bulk-type-review.json",
         )
     ],
     *[
@@ -61,6 +62,8 @@ PACKAGE_INPUTS = [
     ],
     PackageInput("reports/empirical-expansion-audit.md", "readiness/empirical-expansion-audit.md", "empirical-design-expansion"),
     PackageInput("reports/empirical-expansion-audit.csv", "readiness/empirical-expansion-audit.csv", "empirical-design-expansion"),
+    PackageInput("reports/procurement-bulk-frame-audit.md", "readiness/procurement-bulk-frame-audit.md", "empirical-design-expansion"),
+    PackageInput("reports/procurement-bulk-frame-audit.csv", "readiness/procurement-bulk-frame-audit.csv", "empirical-design-expansion"),
     PackageInput(
         "dist/lobby-capture-wiley-blinded-review.zip",
         "primary-assets/lobby-capture-wiley-blinded-review.zip",

@@ -98,6 +98,14 @@ linkedAwards=4; consolidatedDecisions=1; frozenPanelCandidateRows=0; archivedBul
 
 Remaining: Obtain independent review, filed dates and a representative award/protest frame. Four awards in one selected consolidated decision are not four independent events; current award totals and latest offer fields are not original-action values.
 
+## procurement-archived-bulk-frame
+
+Status: `mixed_frame_missing_offers_not_sam_exclusions`
+
+archivedRows=6449101; manifestStrata=56; inclusiveDaysPerAgency=366; childDescriptionRows=6205401; blankAwardTypeRows=243700; missingOffersRows=4505798; explicitZeroOffersRows=351; afterExclusionCompetitionRows=665137; outsideDateRows=0; wrongAgencyRows=0; reviewedBlankTypeExample=IDV_B_B
+
+Remaining: Saved-profile checks are not an independent re-scan of the ignored ZIPs. Reconcile native A/B/C/D actions separately from IDVs, retain unknown award types and missing offers, and obtain historical SAM status plus full action keys. Competition after exclusion of sources is not vendor debarment. Count/export drift remains unattributed.
+
 ## overall
 
 Status: `not_identified`

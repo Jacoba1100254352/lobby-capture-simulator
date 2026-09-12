@@ -46,6 +46,8 @@ DEFAULT_AGENCIES = (
     "General Services Administration",
     "Department of Commerce",
 )
+# This legacy bulk frame includes parent vehicles as well as A/B/C/D actions.
+# It must not be silently reused as a child-action-only SAM comparison frame.
 CONTRACT_AWARD_TYPES = (
     "A", "B", "C", "D",
     "IDV_A", "IDV_B", "IDV_B_A", "IDV_B_B", "IDV_B_C", "IDV_C", "IDV_D", "IDV_E",
@@ -437,6 +439,8 @@ def write_normalized_zip_rows(zip_path: Path, writer: csv.DictWriter, summary: "
 def normalized_row(raw: dict[str, str]) -> dict[str, object]:
     modification_number = first(raw, "modification_number")
     competition_type = first(raw, "extent_competed")
+    # Legacy model schema defaults; source-preserving reconciliation must retain
+    # blanks separately. These defaults are not observations of zero or absence.
     number_of_offers = first(raw, "number_of_offers_received") or "0"
     amount = money_millions(first(raw, "federal_action_obligation"))
     return {
@@ -457,6 +461,7 @@ def normalized_row(raw: dict[str, str]) -> dict[str, object]:
         "priceOnlyAward": str(price_only_procurement_flag(number_of_offers, competition_type)).lower(),
         "exPostModification": str(modification_sequence(modification_number) > 0).lower(),
         "protestFiled": "false",
+        # Competition procedure, NOT historical SAM vendor exclusion status.
         "exclusionFlag": str("exclusion" in competition_type.lower()).lower(),
         "firewallCovered": "false",
     }

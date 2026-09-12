@@ -36,6 +36,11 @@ archive summaries supply exposure-research leads, but original forms are
 login-gated and no travel baseline has been promoted. A separate four-award GAO pilot
 links one FY2024 consolidated decision to live and archived bulk action records,
 without promoting the selected cases into a representative protest denominator.
+The full archived bulk frame audit now verifies all 56 selected ZIPs and their
+6,449,101 rows, while exposing blank award types, extensive missing offer counts,
+and a competition-procedure flag that cannot substitute for historical SAM
+vendor exclusions. A reviewed EPA blank-type row has an official IDV identity;
+unresolved types must remain separate from the intended A/B/C/D comparison.
 The Java mechanism model and its
 policy parameters have not been recalibrated from these provisional products.
 

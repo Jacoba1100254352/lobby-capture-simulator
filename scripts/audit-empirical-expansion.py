@@ -392,6 +392,16 @@ def audit():
     add("gao-time-aligned-award-pilot", "source_linked_not_estimation_ready",
         f"linkedAwards={linked}; consolidatedDecisions={families}; frozenPanelCandidateRows={matches}; archivedBulkMatches={len(sources['bulkExtract']['records'])}; observedOriginalActions={linked}; sourceVintage={sources['retrievedDate']}",
         "Obtain independent review, filed dates and a representative award/protest frame. Four awards in one selected consolidated decision are not four independent events; current award totals and latest offer fields are not original-action values.")
+    spec = importlib.util.spec_from_file_location("bulk_frame", ROOT / "scripts/audit-procurement-bulk-frame.py")
+    bulk_frame = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(bulk_frame)
+    bulk_profile = json.loads(bulk_frame.PROFILE.read_text(encoding="utf-8"))
+    bulk = bulk_frame.validate_profile(bulk_profile, bulk_summary, bulk_frame.sha256(bulk_frame.MANIFEST))
+    type_review = json.loads(bulk_frame.TYPE_REVIEW.read_text(encoding="utf-8"))
+    reviewed_type = bulk_frame.validate_type_review(type_review, bulk_profile)
+    add("procurement-archived-bulk-frame", "mixed_frame_missing_offers_not_sam_exclusions",
+        f"archivedRows={bulk['rows']}; manifestStrata={len(bulk_profile['strata'])}; inclusiveDaysPerAgency={bulk_profile['inclusiveDaysPerAgency']}; childDescriptionRows={bulk['childDescriptionRows']}; blankAwardTypeRows={bulk['blankAwardTypeRows']}; missingOffersRows={bulk['missingOffersRows']}; explicitZeroOffersRows={bulk['zeroOffersRows']}; afterExclusionCompetitionRows={bulk['afterExclusionCompetitionRows']}; outsideDateRows={bulk['outsideDateRows']}; wrongAgencyRows={bulk['wrongAgencyRows']}; reviewedBlankTypeExample={reviewed_type}",
+        "Saved-profile checks are not an independent re-scan of the ignored ZIPs. Reconcile native A/B/C/D actions separately from IDVs, retain unknown award types and missing offers, and obtain historical SAM status plus full action keys. Competition after exclusion of sources is not vendor debarment. Count/export drift remains unattributed.")
     add("overall", "not_identified",
         "New source history, PAC outcomes and issue-level comment coding exist; no provision-exposure control design, representative SAM export or historical exclusion overlay has cleared.",
         "Continue all three tracks. These findings are an interim source/design audit, not completion of the active empirical goal.")

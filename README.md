@@ -173,6 +173,17 @@ The September 2026 empirical expansion is documented in [the substitution redesi
 
 A separate public-letter position pilot records two positions agreeing with both EPA's proposal and final action. Its candidate docket-copy match and agency-response link remain unverified; policy agreement is not coded as uptake. The same audit checks metadata fingerprints, distinct submission identities, source-page provenance and the no-promotion boundary. Historical travel archive summaries now provide concrete 2004 exposure leads, but their original forms require login and no verified travel baseline has been acquired.
 
+The archived procurement frame audit scans only the 56 manifest-selected bulk ZIPs.
+All 6,449,101 rows match their saved archive counts and agency/date partitions,
+but 243,700 have blank award types and 4,505,798 lack offers. One blank-type EPA
+record is linked to an official IDV identity; the remaining blanks are not
+automatically classified. Competition after exclusion of sources is not SAM
+vendor exclusion status. See `reports/procurement-bulk-frame-audit.md` and the
+reconciliation note. `make procurement-bulk-frame-audit` reproduces the report
+from the committed profile; `python3 scripts/audit-procurement-bulk-frame.py --scan`
+requires the ignored original ZIPs and repeats the raw-file checks. Neither mode
+promotes a representative SAM export or causal calibration.
+
 The venue causal-upgrade packet is the matching control artifact for the P2 venue-shifting detection target. It consolidates candidate actor identifiers, alias audits, issue crosswalks, false-match logs, linked actor-issue-venue-time rows, and the no-linkage-clearance boundary. It is not source evidence and does not clear causal venue-shifting or calibrated policy-simulation claims; after editing venue linkage products, rerun `make first-wave-source-products`, `make first-wave-source-readiness`, `make first-wave-manual-adjudication-plan`, `make venue-causal-upgrade-packet`, and `make paper-artifacts-check`.
 
 For the GAO protest overlay, `make gao-protest-feed-preflight` uses the no-key GAO Legal Products XML feed to write ignored operational reports under `reports/gao-protest-feed-preflight.*`. The parser also attempts best-effort outcome enrichment from the official recent bid-protest decisions page when that page is reachable from the runtime, and supports `--recent-page-input` for saved HTML review fixtures when the live page is blocked. Those rows are a discovery worklist only: they remain candidate-only until a human review links protest IDs to agency, vendor, PIID/UEI, outcome, issue, and source-page fields in `data/calibration/first-wave/gao-protest-overlay.csv`, followed by the first-wave source-product and paper artifact gates.

@@ -22,9 +22,13 @@ compile:
 	@mkdir -p out/classes
 	$(JAVAC) -d out/classes $(MAIN_SOURCES)
 
-.PHONY: empirical-expansion-audit
+.PHONY: empirical-expansion-audit procurement-bulk-frame-audit
+procurement-bulk-frame-audit:
+	python3 scripts/audit-procurement-bulk-frame.py
+
 empirical-expansion-audit:
 	python3 scripts/prepare-substitution-fec-periods.py
+	python3 scripts/audit-procurement-bulk-frame.py
 	python3 scripts/audit-empirical-expansion.py
 
 script-checks:
@@ -43,6 +47,7 @@ test: script-checks compile
 	python3 scripts/test-comment-source-products.py
 	python3 scripts/test-substitution-source-expansion.py
 	python3 scripts/test-procurement-linkage-pilot.py
+	python3 scripts/test-procurement-bulk-frame.py
 	./scripts/test-normalizers.sh
 
 run: compile

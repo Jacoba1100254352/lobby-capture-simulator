@@ -1,0 +1,47 @@
+{
+  "schema": "procurement-bulk-type-review-v1",
+  "retrievedDate": "2026-09-12",
+  "reviewScope": "One blank-type archived row linked to current official award identity and type; not a classification of all blank rows or a contemporaneous 2024 type audit.",
+  "independentReview": "pending",
+  "archive": {
+    "downloadFile": "data/raw/usaspending-transaction-downloads/environmental-protection-agency-2023-10-01-2023-12-31.zip",
+    "zipSha256": "8f08f1cd654eafa02e1299f1c50ab289c7efbbd9edf9a15c1433982d84a503ba",
+    "member": "Contracts_PrimeTransactions_2026-06-13_H04M13S24_1.csv",
+    "dataRowNumber": 1,
+    "row": {
+      "award_id_piid": "68HE0120D0001",
+      "parent_award_id_piid": "",
+      "modification_number": "P00013",
+      "federal_action_obligation": "0.00",
+      "action_date": "2023-10-16",
+      "recipient_name": "WESTON SOLUTIONS INC",
+      "recipient_uei": "Z4XGALW7L9K6",
+      "awarding_agency_name": "Environmental Protection Agency",
+      "awarding_sub_agency_name": "Environmental Protection Agency",
+      "award_type": "",
+      "type_of_contract_pricing": "TIME AND MATERIALS",
+      "extent_competed": "FULL AND OPEN COMPETITION",
+      "number_of_offers_received": "1"
+    }
+  },
+  "awardDetail": {
+    "url": "https://api.usaspending.gov/api/v2/awards/CONT_IDV_68HE0120D0001_6800/",
+    "responseSha256": "bbadbc22539a9e02095851c2cd8640162cb6fa10f59f1fe9f28cc441221b8f2e",
+    "projection": {
+      "id": 351021243,
+      "generated_unique_award_id": "CONT_IDV_68HE0120D0001_6800",
+      "piid": "68HE0120D0001",
+      "category": "idv",
+      "type": "IDV_B_B",
+      "type_description": "INDEFINITE DELIVERY / INDEFINITE QUANTITY",
+      "recipient_name": "WESTON SOLUTIONS INC",
+      "recipient_uei": "Z4XGALW7L9K6",
+      "awarding_agency_name": "Environmental Protection Agency",
+      "awarding_subtier_code": "6800"
+    }
+  },
+  "definitionSources": [
+    "https://api.usaspending.gov/api/v2/references/award_types/",
+    "https://www.fpds.gov/help/Extent_Competed.htm"
+  ]
+}
