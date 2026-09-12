@@ -66,6 +66,14 @@ observations=2; individualCommentLinks=0; changes={'removed_ground': 1, 'retaine
 
 Remaining: Retrieve full response document, link actual comments and complete independent coding review; do not compute an uptake rate from this purposive pilot.
 
+## comment-public-copy-positions
+
+Status: `policy_alignment_not_uptake`
+
+positionRows=2; publicLetters=1; candidateDocketSubmissions=1; alignedWithProposal=2; alignedWithFinalAction=2; changedActionsAtCodedScope=0; verifiedDocketVersionMatches=0; observedUptakeLinks=0
+
+Remaining: Two positions belong to one purposefully selected public letter, not two independent comments. Verify the docket attachment version, trace agency responses and obtain independent review before coding uptake. Agreement with an unchanged proposed action does not identify comment influence or prove no effect.
+
 ## gao-partial-adjudication
 
 Status: `not_award_linked`

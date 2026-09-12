@@ -260,7 +260,7 @@ comparison design are selected. Next acquisition should prioritize pre-reform
 exposure records and matched actors' alternate-channel outcomes; adding filing
 rows alone cannot resolve these identification failures.
 
-### House travel exposure: earlier timing and an unavailable baseline
+### House travel exposure: earlier timing and an unverified baseline
 
 The [January 4, 2007 Congressional Record, page H7](https://www.govinfo.gov/content/pkg/CREC-2007-01-04/pdf/CREC-2007-01-04-pt1-PgH6-9.pdf)
 sets out a March 1, 2007 effective date for the House travel restrictions and
@@ -284,6 +284,35 @@ controls. Before pursuing this contrast, establish historical travel coverage,
 sponsor identities and pre-reform trip reliance, then assess overlap within a
 defensible organization/issue frame. The present PAC series cannot supply that
 missing exposure measure.
+
+### Located pre-reform travel records, originals login-gated
+
+A September 12 public-source follow-up located a concrete pre-2007 archive.
+[LegiStorm's collection description](https://www.legistorm.com/trip/about.html)
+states that its travel records begin in 2000 and derive from filed disclosures.
+Its [FAQ](https://www.legistorm.com/trip/faq.html) describes a privately financed
+travel collection, not all congressional travel. Neither statement independently
+establishes complete sponsor-year coverage or validates a zero-exposure control.
+
+The public [March 2004 AdvaMed trip group](https://www.legistorm.com/trip/group/2528.html)
+lists fourteen travelers to Scottsdale, including House and Senate personnel.
+Individual start/end dates differ. These are clustered trips for one sponsored
+event, not fourteen independent reform exposures. Two public details were checked:
+
+| Archive trip | Chamber indicated by approver | Listed dates | Original disclosure access |
+| --- | --- | --- | --- |
+| [17561, Alan Eisenberg](https://www.legistorm.com/trip/17561.html) | House, Jim Greenwood | March 4-7, 2004 | [Original-form link](https://www.legistorm.com/pdf/trip_17561.pdf) returned login page |
+| [12536, Aaron Cohen](https://www.legistorm.com/trip/12536.html) | Senate, John Ensign | March 4-7, 2004 | [Original-form link](https://www.legistorm.com/pdf/trip_12536.pdf) returned login page |
+
+No account was created, no terms accepted, and no original travel forms were
+read. These remain archive-summary leads, not a promoted exposure panel. The
+earlier baseline gap means no verified baseline has been acquired in this
+workspace, not that historical records do not exist. Obtain authorized original
+forms, resolve historical sponsor identity, document coverage across 2003-2006,
+and recruit comparable sponsors using pre-reform characteristics. Keep chamber
+timing and shared event identities explicit. Do not infer that the House reform
+also supplies an untreated Senate control or assign treatment from one located
+trip. User provision of the two original disclosures has been requested.
 
 ## Reproduce acquisition and preparation
 

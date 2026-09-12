@@ -29,7 +29,11 @@ restores fifteen LDA filings, bringing the source panel to 427 filings. Separate
 filing-grain income/expense metadata and original-form reviews expose accounting
 method differences and possible double counting; they do not establish comparable
 organizational spending totals. Issue-level comment coding is separate from the
-unreviewed individual-comment linkage product. A separate four-award GAO pilot
+unreviewed individual-comment linkage product. A separate public-letter pilot
+codes two policy positions already present in both the proposed and final action;
+the docket-copy match and agency uptake remain unverified. Located 2004 travel
+archive summaries supply exposure-research leads, but original forms are
+login-gated and no travel baseline has been promoted. A separate four-award GAO pilot
 links one FY2024 consolidated decision to live and archived bulk action records,
 without promoting the selected cases into a representative protest denominator.
 The Java mechanism model and its

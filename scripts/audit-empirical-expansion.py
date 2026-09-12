@@ -2,6 +2,7 @@
 """Profile new empirical evidence without promoting it into causal calibration."""
 
 import csv
+import hashlib
 import importlib.util
 import json
 import re
@@ -121,6 +122,98 @@ def report_period_diagnostics(rows):
             # Periods crossing a half-year cannot be allocated using their totals.
             straddles += (start.year, start.month > 6) != (end.year, end.month > 6)
     return overlaps, gaps, straddles
+
+
+def comment_position_diagnostics(rows, sources):
+    """Keep public-copy agreement separate from verified submission uptake."""
+    if sources.get("schema") != "comment-position-source-v1" or not rows:
+        raise ValueError("Missing comment-position source product")
+    records = sources["records"]
+    by_id = {record["commentId"]: record for record in records}
+    if not records or len(by_id) != len(records):
+        raise ValueError("Missing or duplicate comment metadata")
+    for record in records:
+        fingerprint = hashlib.sha256(json.dumps(
+            {key: value for key, value in record.items() if key != "sourceFingerprint"},
+            sort_keys=True, separators=(",", ":")).encode()).hexdigest()
+        if (fingerprint != record["sourceFingerprint"]
+                or not re.fullmatch(r"[a-f0-9]{64}", record["responseSha256"])):
+            raise ValueError("Comment metadata fingerprint mismatch")
+        attrs = record["attributes"]
+        if (not record["commentId"].startswith(attrs["docketId"] + "-")
+                or record["requestUrl"] != "https://api.regulations.gov/v4/comments/"
+                + record["commentId"] + "?include=attachments"):
+            raise ValueError("Comment metadata identity mismatch")
+        for field in ("receiveDate", "postedDate"):
+            if attrs[field] is not None:
+                date.fromisoformat(attrs[field][:10])
+        attachments = record["attachments"]
+        if len({item["id"] for item in attachments}) != len(attachments):
+            raise ValueError("Duplicate comment attachment metadata")
+        for item in attachments:
+            for fmt in item["fileFormats"]:
+                if not fmt["fileUrl"].startswith(
+                        "https://downloads.regulations.gov/" + record["commentId"] + "/"):
+                    raise ValueError("Attachment belongs to another comment")
+    copy = sources["publicCopy"]
+    if (copy["candidateCommentId"] not in by_id
+            or copy["jointSubmissionCommentId"] not in by_id
+            or copy["candidateCommentId"] == copy["jointSubmissionCommentId"]
+            or copy["jointSubmissionContentsRead"] is not False
+            or copy["docketVersionMatch"] != "not_established"
+            or copy["independentReviewStatus"] != "pending"
+            or not re.fullmatch(r"[a-f0-9]{64}", copy["htmlSha256"])
+            or not copy["url"].startswith("https://protectnps.org/")):
+        raise ValueError("Unsupported public-copy source or docket match")
+    rules = sources["ruleSources"]
+    review_source_fingerprint = hashlib.sha256(json.dumps(
+        {key: sources[key] for key in ("publicCopy", "ruleSources")},
+        sort_keys=True, separators=(",", ":")).encode()).hexdigest()
+    if not rules["proposed"]["date"] < copy["letterDate"] < rules["final"]["date"]:
+        raise ValueError("Comment-position chronology is invalid")
+    for source in rules.values():
+        if (not re.fullmatch(r"[a-f0-9]{64}", source["pdfSha256"])
+                or not source["sourcePage"].isdigit()
+                or not isinstance(source["pdfPage"], int) or source["pdfPage"] < 1
+                or not source["section"] or not source["reviewScope"]
+                or not source["url"].startswith("https://www.govinfo.gov/content/pkg/")):
+            raise ValueError("Missing rule-page provenance")
+        date.fromisoformat(source["date"])
+        date.fromisoformat(source["visualReviewDate"])
+    seen = set()
+    seen_issues = set()
+    for row in rows:
+        issue_key = (row["copySourceId"], row["positionCode"])
+        if not row["positionId"] or row["positionId"] in seen or issue_key in seen_issues:
+            raise ValueError("Missing or duplicate public-copy position")
+        seen.add(row["positionId"])
+        seen_issues.add(issue_key)
+        candidate = by_id.get(row["candidateCommentId"])
+        if (candidate is None or row["candidateCommentId"] != copy["candidateCommentId"]
+                or row["metadataFingerprint"] != candidate["sourceFingerprint"]
+                or row["reviewSourceFingerprint"] != review_source_fingerprint
+                or row["docketId"] != candidate["attributes"]["docketId"]
+                or row["copySourceId"] != copy["sourceId"]):
+            raise ValueError("Public-copy candidate identity mismatch")
+        if (row["unit"] != "public_copy_issue"
+                or any(row[field] != "not_established" for field in (
+                    "docketVersionMatch", "agencyResponseLink", "uptake", "regulatoryTextChange"))
+                or row["independentReviewStatus"] != "pending"
+                or row["reviewer"] != copy["reviewer"] or row["reviewDate"] != copy["reviewDate"]
+                or not row["copyReviewLocation"] or not row["claimBoundary"]):
+            raise ValueError("Public-copy position must not be promoted to uptake")
+        date.fromisoformat(row["reviewDate"])
+        for field in ("positionCode", "proposedActionCode", "finalActionCode"):
+            if row[field] not in {"partial_disapproval", "approve_monitoring"}:
+                raise ValueError("Unsupported public-copy position code")
+    return {
+        "positionRows": len(rows), "publicLetters": len({r["copySourceId"] for r in rows}),
+        "candidateDocketSubmissions": len({r["candidateCommentId"] for r in rows}),
+        "alignedWithProposal": sum(r["positionCode"] == r["proposedActionCode"] for r in rows),
+        "alignedWithFinalAction": sum(r["positionCode"] == r["finalActionCode"] for r in rows),
+        "changedActionsAtCodedScope": sum(r["proposedActionCode"] != r["finalActionCode"] for r in rows),
+        "verifiedDocketVersionMatches": 0, "observedUptakeLinks": 0,
+    }
 
 
 def protest_linkage_diagnostics(rows, sources, frozen):
@@ -272,6 +365,11 @@ def audit():
     add("comment-uptake-pilot", "issue_level_only",
         f"observations={len(pilot)}; individualCommentLinks={sum(bool(r['commentId']) for r in pilot)}; changes=" + str(dict(Counter(r['disapprovalGroundChange'] for r in pilot))),
         "Retrieve full response document, link actual comments and complete independent coding review; do not compute an uptake rate from this purposive pilot.")
+    position_sources = json.loads((DATA / "comment-position-source.json").read_text(encoding="utf-8"))
+    positions = comment_position_diagnostics(read("comment-position-pilot.csv"), position_sources)
+    add("comment-public-copy-positions", "policy_alignment_not_uptake",
+        "; ".join(f"{key}={value}" for key, value in positions.items()),
+        "Two positions belong to one purposefully selected public letter, not two independent comments. Verify the docket attachment version, trace agency responses and obtain independent review before coding uptake. Agreement with an unchanged proposed action does not identify comment influence or prove no effect.")
     protests = read("gao-protest-overlay.csv")
     reviewed = [r for r in protests if "Partial source-page review" in r["notes"]]
     add("gao-partial-adjudication", "not_award_linked",

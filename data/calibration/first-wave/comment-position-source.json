@@ -1,0 +1,306 @@
+{
+  "schema": "comment-position-source-v1",
+  "retrievedAt": "2026-09-12T21:02:00+00:00",
+  "selection": "Two results from a docket-scoped Coalition keyword search; not a sampling frame.",
+  "searchUrl": "https://api.regulations.gov/v4/comments?filter%5BdocketId%5D=EPA-R08-OAR-2024-0389&filter%5BsearchTerm%5D=Coalition&page%5Bsize%5D=100&page%5Bnumber%5D=1",
+  "searchObservedTotal": 2,
+  "searchObservedHasNextPage": false,
+  "publicCopy": {
+    "sourceId": "coalition-public-letter-2024-09-18",
+    "url": "https://protectnps.org/2024/09/18/coalition-comments-on-epas-proposed-response-to-utahs-regional-haze-state-implementation-plan/",
+    "htmlSha256": "2c77d423e4c048883d23d6c140be421fd09e99e4e21239f00b487b4fba464e66",
+    "letterDate": "2024-09-18",
+    "candidateCommentId": "EPA-R08-OAR-2024-0389-5115",
+    "candidateBasis": "Publisher identity, docket, letter date and standalone submission title agree; docket attachment contents have not been compared.",
+    "docketVersionMatch": "not_established",
+    "docketAttachmentAccess": "HTTP_403",
+    "jointSubmissionCommentId": "EPA-R08-OAR-2024-0389-5144",
+    "jointSubmissionContentsRead": false,
+    "reviewer": "codex-source-review",
+    "reviewDate": "2026-09-12",
+    "reviewScope": "Public HTML letter body; no docket attachment or response-to-comments text read.",
+    "independentReviewStatus": "pending"
+  },
+  "ruleSources": {
+    "proposed": {
+      "documentId": "2024-18462",
+      "date": "2024-08-19",
+      "url": "https://www.govinfo.gov/content/pkg/FR-2024-08-19/pdf/2024-18462.pdf",
+      "pdfSha256": "991375941e755d5e5dd08b59b3d2becbb25293e526342b10a05f8c92e36b56fa",
+      "sourcePage": "67254",
+      "pdfPage": 47,
+      "section": "VI. Proposed Action",
+      "reviewScope": "Action-level partial disapproval and monitoring approval, not a full rationale or codified-text comparison.",
+      "visualReviewDate": "2026-09-12"
+    },
+    "final": {
+      "documentId": "2024-27941",
+      "date": "2024-12-02",
+      "url": "https://www.govinfo.gov/content/pkg/FR-2024-12-02/pdf/2024-27941.pdf",
+      "pdfSha256": "5374a0fd1f9b0c7a8be2f8580287d49a308445486729c562aad5df43e7b0b4e0",
+      "sourcePage": "95120",
+      "pdfPage": 4,
+      "section": "III. Final Action, continued",
+      "reviewScope": "Action-level partial disapproval and monitoring approval, not a full rationale or codified-text comparison.",
+      "visualReviewDate": "2026-09-12"
+    }
+  },
+  "records": [
+    {
+      "commentId": "EPA-R08-OAR-2024-0389-5115",
+      "requestUrl": "https://api.regulations.gov/v4/comments/EPA-R08-OAR-2024-0389-5115?include=attachments",
+      "responseSha256": "ce43c54b42f1b6a0b87f6d17310cb58fbc65aaa1eaf5c2c55bee29a692a3d03f",
+      "attributes": {
+        "docketId": "EPA-R08-OAR-2024-0389",
+        "title": "Comment submitted by Coalition to Protect America's National Parks",
+        "commentOnDocumentId": "EPA-R08-OAR-2024-0389-0001",
+        "receiveDate": "2024-09-18T04:00:00Z",
+        "postedDate": "2024-10-09T04:00:00Z",
+        "modifyDate": "2024-10-11T01:11:47Z",
+        "withdrawn": false,
+        "comment": "Please see attached comments from The Coalition to Protect America&#39;s National Parks"
+      },
+      "attachments": [
+        {
+          "id": "0900006486740c55",
+          "title": "Comments from Coalition to Protect America's National Parks on Utah's Regional Haze SIP",
+          "fileFormats": [
+            {
+              "fileUrl": "https://downloads.regulations.gov/EPA-R08-OAR-2024-0389-5115/attachment_1.pdf",
+              "format": "pdf",
+              "size": 245737
+            }
+          ]
+        }
+      ],
+      "sourceFingerprint": "c9a933d8b4b6e15fc3128e59fdfe35fcdc7d7bb7c32f8fdd243e99431d2f55f4"
+    },
+    {
+      "commentId": "EPA-R08-OAR-2024-0389-5144",
+      "requestUrl": "https://api.regulations.gov/v4/comments/EPA-R08-OAR-2024-0389-5144?include=attachments",
+      "responseSha256": "c26304eabf751c4434d27cf3f4ccc1bae8d15d2f03f2e365f01d5deadbb7757a",
+      "attributes": {
+        "docketId": "EPA-R08-OAR-2024-0389",
+        "title": "Comment submitted by Sierra Club, NPCA, Coalition to Protect America's Parks, UPHE, SUWA, HEAL Utah",
+        "commentOnDocumentId": "EPA-R08-OAR-2024-0389-0001",
+        "receiveDate": "2024-09-18T04:00:00Z",
+        "postedDate": "2024-10-09T04:00:00Z",
+        "modifyDate": "2024-10-11T01:11:59Z",
+        "withdrawn": false,
+        "comment": "See attached file(s)"
+      },
+      "attachments": [
+        {
+          "id": "09000064867479fc",
+          "title": "Vol. 1_Conservation Orgs. Comments on Utah Proposed Disapproval_09.18.2024",
+          "fileFormats": [
+            {
+              "fileUrl": "https://downloads.regulations.gov/EPA-R08-OAR-2024-0389-5144/attachment_1.pdf",
+              "format": "pdf",
+              "size": 1218962
+            }
+          ]
+        },
+        {
+          "id": "09000064867479fe",
+          "title": "Vol. 2_Conservation Orgs. Comments on Utah Proposed Disapproval_09.18.2024",
+          "fileFormats": [
+            {
+              "fileUrl": "https://downloads.regulations.gov/EPA-R08-OAR-2024-0389-5144/attachment_2.pdf",
+              "format": "pdf",
+              "size": 6991367
+            }
+          ]
+        },
+        {
+          "id": "09000064867479ff",
+          "title": "Vol. 3_Conservation Orgs. Comments on Utah Proposed Disapproval_09.18.2024",
+          "fileFormats": [
+            {
+              "fileUrl": "https://downloads.regulations.gov/EPA-R08-OAR-2024-0389-5144/attachment_3.pdf",
+              "format": "pdf",
+              "size": 10285017
+            }
+          ]
+        },
+        {
+          "id": "0900006486747a00",
+          "title": "Vol. 4_Conservation Orgs. Comments on Utah Proposed Disapproval_09.18.2024",
+          "fileFormats": [
+            {
+              "fileUrl": "https://downloads.regulations.gov/EPA-R08-OAR-2024-0389-5144/attachment_4.pdf",
+              "format": "pdf",
+              "size": 8812208
+            }
+          ]
+        },
+        {
+          "id": "0900006486747a01",
+          "title": "Vol. 5_Conservation Orgs. Comments on Utah Proposed Disapproval_09.18.2024",
+          "fileFormats": [
+            {
+              "fileUrl": "https://downloads.regulations.gov/EPA-R08-OAR-2024-0389-5144/attachment_5.pdf",
+              "format": "pdf",
+              "size": 9420584
+            }
+          ]
+        },
+        {
+          "id": "0900006486747a02",
+          "title": "Vol. 6_Conservation Orgs. Comments on Utah Proposed Disapproval_09.18.2024",
+          "fileFormats": [
+            {
+              "fileUrl": "https://downloads.regulations.gov/EPA-R08-OAR-2024-0389-5144/attachment_6.pdf",
+              "format": "pdf",
+              "size": 2585095
+            }
+          ]
+        },
+        {
+          "id": "0900006486747a03",
+          "title": "Vol. 7_Conservation Orgs. Comments on Utah Proposed Disapproval_09.18.2024",
+          "fileFormats": [
+            {
+              "fileUrl": "https://downloads.regulations.gov/EPA-R08-OAR-2024-0389-5144/attachment_7.pdf",
+              "format": "pdf",
+              "size": 8620040
+            }
+          ]
+        },
+        {
+          "id": "0900006486747a04",
+          "title": "Vol. 8_Conservation Orgs. Comments on Utah Proposed Disapproval_09.18.2024",
+          "fileFormats": [
+            {
+              "fileUrl": "https://downloads.regulations.gov/EPA-R08-OAR-2024-0389-5144/attachment_8.pdf",
+              "format": "pdf",
+              "size": 7981994
+            }
+          ]
+        },
+        {
+          "id": "0900006486747a05",
+          "title": "Vol. 9_Conservation Orgs. Comments on Utah Proposed Disapproval_09.18.2024",
+          "fileFormats": [
+            {
+              "fileUrl": "https://downloads.regulations.gov/EPA-R08-OAR-2024-0389-5144/attachment_9.pdf",
+              "format": "pdf",
+              "size": 10161777
+            }
+          ]
+        },
+        {
+          "id": "0900006486747a06",
+          "title": "Vol. 10_Conservation Orgs. Comments on Utah Proposed Disapproval_09.18.2024",
+          "fileFormats": [
+            {
+              "fileUrl": "https://downloads.regulations.gov/EPA-R08-OAR-2024-0389-5144/attachment_10.pdf",
+              "format": "pdf",
+              "size": 6521278
+            }
+          ]
+        },
+        {
+          "id": "0900006486747a07",
+          "title": "Vol. 11_Conservation Orgs. Comments on Utah Proposed Disapproval_09.18.2024",
+          "fileFormats": [
+            {
+              "fileUrl": "https://downloads.regulations.gov/EPA-R08-OAR-2024-0389-5144/attachment_11.pdf",
+              "format": "pdf",
+              "size": 3837149
+            }
+          ]
+        },
+        {
+          "id": "0900006486747a08",
+          "title": "Ex. 4_Utah_Comments_Data_RegionalHaze",
+          "fileFormats": [
+            {
+              "fileUrl": "https://downloads.regulations.gov/EPA-R08-OAR-2024-0389-5144/attachment_12.xlsx",
+              "format": "xlsx",
+              "size": 34206
+            }
+          ]
+        },
+        {
+          "id": "0900006486747a09",
+          "title": "2024 Stamper Report_Ex 28_Revisions to UDAQ SNCR Cost Calculations under Emission Caps_Hunter and Huntington",
+          "fileFormats": [
+            {
+              "fileUrl": "https://downloads.regulations.gov/EPA-R08-OAR-2024-0389-5144/attachment_13.xlsx",
+              "format": "xlsx",
+              "size": 17132
+            }
+          ]
+        },
+        {
+          "id": "0900006486747a0a",
+          "title": "2024 Stamper Report_Ex. 2_Rev to NOx Emissions Evaluation from EPA 2020 SIP Approval Spreadsheet",
+          "fileFormats": [
+            {
+              "fileUrl": "https://downloads.regulations.gov/EPA-R08-OAR-2024-0389-5144/attachment_14.xlsx",
+              "format": "xlsx",
+              "size": 87143
+            }
+          ]
+        },
+        {
+          "id": "0900006486747a0b",
+          "title": "2024 Stamper Report_Ex. 6_Shipments to Hunter with Calculations of Uncontrolled SO2 in Coals Used",
+          "fileFormats": [
+            {
+              "fileUrl": "https://downloads.regulations.gov/EPA-R08-OAR-2024-0389-5144/attachment_15.xlsx",
+              "format": "xlsx",
+              "size": 26379
+            }
+          ]
+        },
+        {
+          "id": "0900006486747a0c",
+          "title": "2024 Stamper Report_Ex. 7_Shipments to Huntington",
+          "fileFormats": [
+            {
+              "fileUrl": "https://downloads.regulations.gov/EPA-R08-OAR-2024-0389-5144/attachment_16.xlsx",
+              "format": "xlsx",
+              "size": 21410
+            }
+          ]
+        },
+        {
+          "id": "0900006486747a0d",
+          "title": "2024 Stamper Report_Ex. 8_Hunter and Huntington 2015 to 2019_30 BOD SO2 Rates",
+          "fileFormats": [
+            {
+              "fileUrl": "https://downloads.regulations.gov/EPA-R08-OAR-2024-0389-5144/attachment_17.xlsx",
+              "format": "xlsx",
+              "size": 4957972
+            }
+          ]
+        },
+        {
+          "id": "0900006486747a0e",
+          "title": "2024 Stamper Report_Ex. 11_Sunnyside DSI Retrofit-Cost-Analyzer",
+          "fileFormats": [
+            {
+              "fileUrl": "https://downloads.regulations.gov/EPA-R08-OAR-2024-0389-5144/attachment_18.xlsx",
+              "format": "xlsx",
+              "size": 40306
+            }
+          ]
+        },
+        {
+          "id": "0900006486747a0f",
+          "title": "2024 Stamper Report_Ex. 27_Revisions to UDAQ SCR Cost Calculations Under Emission Caps_Hunter and Huntington",
+          "fileFormats": [
+            {
+              "fileUrl": "https://downloads.regulations.gov/EPA-R08-OAR-2024-0389-5144/attachment_19.xlsx",
+              "format": "xlsx",
+              "size": 19998
+            }
+          ]
+        }
+      ],
+      "sourceFingerprint": "db9442ee7c6230b9fdda909aa9ba85daa93ac70ecb251c594bf297de68091fc3"
+    }
+  ]
+}
