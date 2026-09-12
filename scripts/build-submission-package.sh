@@ -119,6 +119,9 @@ for source_product in \
   substitution-comparison-groups.csv \
   substitution-estimation-panel.csv \
   substitution-expanded-lda-panel.csv \
+  substitution-lda-alias-reviews.csv \
+  substitution-lda-filing-metadata.csv \
+  substitution-lda-filing-reviews.csv \
   substitution-fec-report-panel.csv \
   substitution-fec-affiliation-history.csv \
   substitution-fec-acquisition-cohort.csv \

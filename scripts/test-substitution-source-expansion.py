@@ -2,6 +2,8 @@
 """Keep new source acquisitions distinct from identified substitution estimates."""
 
 import importlib.util
+import json
+import tempfile
 from argparse import Namespace
 from pathlib import Path
 import unittest
@@ -18,9 +20,141 @@ def load(name, filename):
 FEC = load("fec_expansion", "fetch-substitution-fec-reports.py")
 LDA = load("lda_expansion", "build-substitution-historical-lda-panel.py")
 PERIODS = load("fec_periods", "prepare-substitution-fec-periods.py")
+AUDIT = load("source_measurement_audit", "audit-empirical-expansion.py")
 
 
 class SourceExpansionTests(unittest.TestCase):
+    @staticmethod
+    def lda_record(**overrides):
+        return {"filing_uuid": "fixture-filing", "filing_year": 2003, "filing_type": "MM",
+            "filing_period": "mid_year", "client": {"id": 12, "client_id": 3, "name": "ACTOR"},
+            "registrant": {"id": 4, "name": "ACTOR"}, "income": None,
+            "expenses": "12.34", "expenses_method": None, **overrides}
+
+    def test_lda_measurement_preserves_null_zero_kind_and_precision(self):
+        actor = {"primaryName": "ACTOR", "canonicalActorId": "actor"}
+        for income, expenses, kind, amount in [
+            (None, "12.34", "expenses", "0.00001234"),
+            (0, None, "income", "0.00000000"),
+            (None, None, "neither", ""),
+            ("0.00", "12.34", "both", ""),
+        ]:
+            row = LDA.filing_metadata(actor, self.lda_record(income=income, expenses=expenses), "2026-09-12")
+            self.assertEqual(row["amountKind"], kind)
+            self.assertEqual(row["expensesMethod"], "")
+            self.assertEqual(LDA.measurement_amount(row), amount)
+        for bad in ("NaN", "Infinity", "oops", -1):
+            with self.assertRaises(ValueError):
+                LDA.filing_metadata(actor, self.lda_record(expenses=bad), "2026-09-12")
+
+    def test_lda_review_fingerprint_tracks_source_not_retrieval_date(self):
+        actor = {"primaryName": "ACTOR", "canonicalActorId": "actor"}
+        row = LDA.filing_metadata(actor, self.lda_record(), "2026-09-12")
+        self.assertEqual(LDA.metadata_fingerprint({**row, "retrievedDate": "2026-09-13"}), row["sourceFingerprint"])
+        for field in ("expensesDollars", "expensesMethod", "registrantApiId", "clientApiId"):
+            self.assertNotEqual(LDA.metadata_fingerprint({**row, field: "changed"}), row["sourceFingerprint"])
+
+    def test_lda_alias_requires_exact_name_and_both_registration_ids(self):
+        actor = {"primaryName": "ACTOR", "canonicalActorId": "actor"}
+        alias = {"canonicalActorId": "actor", "aliasName": "OLD NAME", "clientApiId": "12",
+            "registrantApiId": "4", "aliasReviewId": "review", "startYear": "2003", "endYear": "2003"}
+        valid = self.lda_record(client={"id": 12, "client_id": 3, "name": "OLD NAME"})
+        candidates = [valid,
+            self.lda_record(filing_uuid="other-client", client={"id": 99, "name": "OLD NAME"}),
+            self.lda_record(filing_uuid="other-firm", client=valid["client"], registrant={"id": 99, "name": "FIRM"}),
+            self.lda_record(filing_uuid="partial-name", client={"id": 12, "name": "OLD NAME AFFILIATE"})]
+        responses = [({"results": [], "count": 0, "next": None}, ""),
+            ({"results": candidates, "count": 4, "next": None}, "")]
+        metadata = []
+        with patch.object(LDA, "fetch_json", side_effect=responses):
+            rows, _ = LDA.fetch_actor_rows(actor, ["2003"], page_size=100, max_pages=3,
+                timeout=1, review_date="2026-09-12", generated_at="2026-09-12",
+                aliases=[alias], metadata_rows=metadata)
+        self.assertEqual(len(rows), 1)
+        self.assertEqual(rows[0]["filingUuid"], "fixture-filing")
+        self.assertIn("reviewed-exact-alias", rows[0]["evidenceRule"])
+        self.assertEqual(metadata[0]["aliasReviewId"], "review")
+
+    def test_lda_off_year_and_conflicting_uuid_fail(self):
+        actor = {"primaryName": "ACTOR", "canonicalActorId": "actor"}
+        for records in ([self.lda_record(filing_year=2004)],
+                [self.lda_record(), self.lda_record(expenses="99")]):
+            with patch.object(LDA, "fetch_json", return_value=({"results": records, "count": len(records), "next": None}, "")):
+                with self.assertRaises(ValueError):
+                    LDA.fetch_actor_rows(actor, ["2003"], page_size=100, max_pages=3,
+                        timeout=1, review_date="2026-09-12", generated_at="2026-09-12")
+
+    def test_lda_cache_reuses_only_same_day_and_intact_public_responses(self):
+        payload = {"count": 0, "results": [], "next": None}
+        with tempfile.TemporaryDirectory() as directory:
+            cache = Path(directory)
+            with patch.object(LDA, "fetch_json", return_value=(payload, "")) as fetch:
+                for _ in range(2):
+                    self.assertEqual(LDA.cached_fetch_json("https://lda.gov/api/v1/filings/", 1, cache, "2026-09-12"), (payload, ""))
+                self.assertEqual(fetch.call_count, 1)
+                LDA.cached_fetch_json("https://lda.gov/api/v1/filings/", 1, cache, "2026-09-13")
+                self.assertEqual(fetch.call_count, 2)
+            path = next(cache.glob("2026-09-12-*.json"))
+            content = json.loads(path.read_text())
+            content["response"]["count"] = 9
+            path.write_text(json.dumps(content))
+            with self.assertRaisesRegex(ValueError, "provenance"):
+                LDA.cached_fetch_json("https://lda.gov/api/v1/filings/", 1, cache, "2026-09-12")
+
+    def test_lda_does_not_retry_auth_or_quota_failures(self):
+        for status in (401, 403, 429):
+            error = LDA.urllib.error.HTTPError("https://lda.gov/api/v1/filings/", status, "fixture", {}, None)
+            with patch.object(LDA.urllib.request, "urlopen", side_effect=error) as request, patch.object(LDA.time, "sleep") as sleep:
+                payload, message = LDA.fetch_json("https://lda.gov/api/v1/filings/", 1)
+                self.assertIsNone(payload)
+                self.assertIn(str(status), message)
+                self.assertEqual(request.call_count, 1)
+                sleep.assert_not_called()
+
+    def measurement_case(self):
+        actor = {"primaryName": "ACTOR", "canonicalActorId": "actor"}
+        record = self.lda_record(expenses="20000.00", filing_document_url="https://lda.gov/filings/public/filing/fixture/print/")
+        source = LDA.filing_metadata(actor, record, "2026-09-12")
+        rows = LDA.panel_rows_for_record(actor, record, "2026-09-12")
+        LDA.mark_design_candidates(rows)
+        rows[0]["activityAmount"] = LDA.measurement_amount(source)
+        review = {
+            "reviewId": "fixture-review", "filingUuid": source["filingUuid"], "sourceFingerprint": source["sourceFingerprint"],
+            "pdfSha256": "0" * 64, "pagesReviewed": "1", "formRegistrantName": "ACTOR", "formClientSelf": "true",
+            "formYear": "2003", "formPeriod": "mid_year", "formExpensesDollars": "20000.00", "formExpensesMethod": "A",
+            "formAmountDisclosure": "at_least_threshold_rounded", "sourceUrl": source["filingDocumentUrl"],
+            "reviewer": "fixture", "reviewDate": "2026-09-12", "reviewScope": "page_1_identity_amount_method_only",
+            "independentReviewStatus": "pending",
+        }
+        return rows, source, review
+
+    def test_lda_measurement_audit_keeps_method_review_separate(self):
+        rows, source, review = self.measurement_case()
+        result = AUDIT.lda_measurement_diagnostics(rows, [source], [review], [])
+        self.assertEqual(result["reviewedExpenseMethods"], {"A": 1})
+        self.assertEqual(result["expenseMethodMissing"], 1)
+        self.assertEqual(source["expensesMethod"], "")
+        self.assertEqual(result["incomeExpenseOverlapActorPeriods"], 0)
+
+    def test_lda_audit_rejects_missing_duplicate_or_changed_sources(self):
+        rows, source, review = self.measurement_case()
+        for metadata in ([], [source, source], [{**source, "expensesDollars": "99"}]):
+            with self.assertRaises(ValueError):
+                AUDIT.lda_measurement_diagnostics(rows, metadata, [review], [])
+        for field, value in (("activityAmount", "20000.00"), ("exposureGroup", "treated"), ("clientName", "OTHER")):
+            with self.assertRaises(ValueError):
+                AUDIT.lda_measurement_diagnostics([{**rows[0], field: value}], [source], [review], [])
+
+    def test_lda_audit_rejects_stale_or_overstated_form_reviews(self):
+        rows, source, review = self.measurement_case()
+        for field, value in (("sourceFingerprint", "0" * 64), ("formExpensesDollars", "99"),
+                ("formExpensesMethod", "unknown"), ("formClientSelf", "false"),
+                ("reviewScope", "whole_report"), ("independentReviewStatus", "approved"), ("reviewer", "")):
+            with self.assertRaises(ValueError):
+                AUDIT.lda_measurement_diagnostics(rows, [source], [{**review, field: value}], [])
+        with self.assertRaises(ValueError):
+            AUDIT.lda_measurement_diagnostics(rows, [source], [review, review], [])
+
     @staticmethod
     def period_row(start="2006-01-01", end="2006-06-30", **overrides):
         return {"canonicalActorId": "a", "committeeId": "C00007450", "mostRecent": "true",
@@ -227,14 +361,21 @@ class SourceExpansionTests(unittest.TestCase):
     def test_api_counts_sum_years_once_not_pages(self):
         actor = {"primaryName": "ACTOR", "canonicalActorId": "actor"}
         responses = [
-            ({"count": 2, "results": [], "next": "https://lda.gov/api/v1/filings/?page=2"}, ""),
-            ({"count": 2, "results": [], "next": None}, ""),
-            ({"count": 3, "results": [], "next": None}, ""),
+            ({"count": 2, "results": [{"filing_uuid": "a"}], "next": "https://lda.gov/api/v1/filings/?page=2"}, ""),
+            ({"count": 2, "results": [{"filing_uuid": "b"}], "next": None}, ""),
+            ({"count": 3, "results": [{"filing_uuid": key} for key in ("c", "d", "e")], "next": None}, ""),
         ]
         with patch.object(LDA, "fetch_json", side_effect=responses):
             _, summary = LDA.fetch_actor_rows(actor, ["2004", "2005"], page_size=1,
                 max_pages=3, timeout=1, review_date="2026-09-12", generated_at="2026-09-12")
         self.assertEqual(summary["apiResultCount"], "5")
+
+    def test_lda_incomplete_or_malformed_page_cannot_be_a_zero_match(self):
+        actor = {"primaryName": "ACTOR", "canonicalActorId": "actor"}
+        for payload in ({"count": 1, "results": [], "next": None}, {"detail": "unexpected error"}):
+            with patch.object(LDA, "fetch_json", return_value=(payload, "")), self.assertRaises(ValueError):
+                LDA.fetch_actor_rows(actor, ["2003"], page_size=100, max_pages=3,
+                    timeout=1, review_date="2026-09-12", generated_at="2026-09-12")
 
     def test_lda_refuses_partial_acquisition(self):
         actor = {"primaryName": "ACTOR", "canonicalActorId": "actor"}

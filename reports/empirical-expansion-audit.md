@@ -6,7 +6,7 @@ Current committed source products; no causal-calibration promotion.
 
 Status: `source_only`
 
-issueRows=1060; filingUUIDs=412; actors=6; years=2003,2004,2005,2006,2007,2008; observedPrePeriodsByActor=cand-372cc95f9387:9;cand-5d1da86118e5:9;cand-9948f2974958:6;cand-b905d6833296:9;cand-d5522e62fad7:9;cand-f7178708cc78:9
+issueRows=1119; filingUUIDs=427; actors=6; years=2003,2004,2005,2006,2007,2008; observedPrePeriodsByActor=cand-372cc95f9387:9;cand-5d1da86118e5:9;cand-9948f2974958:9;cand-b905d6833296:9;cand-d5522e62fad7:9;cand-f7178708cc78:9
 
 Remaining: Validate amendments and exact actor identities; pre-period counts are native reporting periods, not independent quarters or proof of completeness.
 
@@ -17,6 +17,14 @@ Status: `review_required`
 postingBeforeCoveredPeriod=3; filingUUIDs=9bd361f7-98e7-46a9-90cd-267ace5ca84c;a93a23e5-9da2-4c18-8625-b41fc0987d06;bcb55688-3d56-4c98-a546-0730eb923bfa
 
 Remaining: Review original filings and resolve API/scanned-form disagreements. One 2004 scan is reviewed in the redesign note; its amount is below-threshold, not an observed zero. Do not order amendments or treatment timing solely by dtPosted.
+
+## lda-measurement-comparability
+
+Status: `source_measures_not_comparable_totals`
+
+filings=427; amountKinds={'income': 267, 'neither': 71, 'expenses': 89}; expenseMethodMissing=63; sourceZeroFilings=25; incomeExpenseOverlapActorPeriods=74; aliasFilings=15; reviewedForms=2; reviewedExpenseMethods={'C': 1, 'A': 1}
+
+Remaining: Do not add organizational expenses to retained-firm income. Missing API accounting methods need original-form review; the reviewed Method A and Method C reports use different outcome definitions. Reviewed aliases restore only a specified registration, not exhaustive organization coverage. Null amounts remain blank and source zeros remain unadjudicated. No actor spending total or matched control is validated by these checks.
 
 ## alternate-channel-reports
 

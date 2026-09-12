@@ -4,11 +4,13 @@ Updated 2026-09-12. Status: expanded sources, identification unresolved.
 
 ## New evidence and its limits
 
-`substitution-expanded-lda-panel.csv` contains 1,060 issue rows, 412 filing UUIDs
-and six exact-name-linked actors over 2003-2008. The acquisition queried eight
-canonical actors; two had no exact-name rows. Five observed actors have nine
-distinct pre-event reporting periods after excluding registration forms; one has
-six. These are chiefly semiannual periods, not independent quarters. A split of
+`substitution-expanded-lda-panel.csv` contains 1,119 issue rows, 427 filing UUIDs
+and six candidate actors over 2003-2008. The acquisition queried eight
+canonical actors; two had no exact-name rows. A reviewed, registration-specific
+AdvaMed name variant restores fifteen filings omitted by the earlier exact-name
+query, retaining all 412 previously acquired filings. All six observed actors now
+have nine distinct pre-enactment reporting periods after excluding registration
+forms. These are chiefly semiannual periods, not independent quarters. A split of
 a semiannual amount cannot add pre-trend information. The original 2007-2008
 diagnostic remains separate so its published failure analysis is reproducible.
 
@@ -24,15 +26,73 @@ termination date. Posting timestamps alone are not a validated amendment-orderin
 rule. Registration forms, amendment families, unknown/below-threshold amounts,
 and possible in-house/retained-firm overlap must be reviewed before aggregation.
 The expanded rows carry `unassigned_design_candidate`, not treatment labels.
+The legacy 2007-2008 diagnostic inputs are unchanged.
 
 Two additional 2003 filing UUIDs, `9bd361f7-98e7-46a9-90cd-267ace5ca84c` and
 `bcb55688-3d56-4c98-a546-0730eb923bfa`, also have posting dates before their
 covered periods; their original scans remain unreviewed. Filing-level amounts
 are repeated on issue rows, not allocated across issues. Any monetary total
 must first collapse to verified unique filings and resolve amendments; summing
-issue rows would multiply the same amount. The source collector now fails
-closed on request errors or pagination truncation. The entire 2003-2008
-acquisition was rerun successfully under that rule.
+issue rows would multiply the same amount. The source collector fails closed
+on request errors, malformed responses, incomplete result counts, duplicate query
+UUIDs and pagination truncation. The entire 2003-2008 acquisition was rerun
+successfully under those rules. A same-UTC-day public-response cache supports
+resumption without refetching successful pages; cache URL, date and content
+hashes are checked. Authentication and quota errors are not automatically retried.
+
+### Restored registration and incompatible spending measures
+
+`substitution-lda-alias-reviews.csv` admits only client API ID 123312 and
+registrant API ID 17831 under `ADVANCED MEDICAL TECHNOLOGY ASSN` in the declared
+2003-2008 window. Page 1 of the 2003H1 original report identifies the abbreviated
+association name, checks Self, and shows Senate registration 17831-12. The
+allowlist restores that registration's fifteen reports, including a 2008Q2
+amendment. It does not authorize every `ADVAMED` name match or establish an
+exhaustive organizational filing history. Original-form review and API identity
+matching do not independently validate the cross-source actor spine.
+
+`substitution-lda-filing-metadata.csv` now preserves one row per filing, including
+the separate income and expense amounts in source dollars, API accounting method,
+client and registrant IDs, dates, source URLs and a projected-source fingerprint.
+There are 267 income reports, 89 expense reports and 71 filings with neither
+amount supplied. The successor issue panel leaves these missing amounts blank
+instead of converting them to zero; 122 issue rows are affected. Twenty-five
+filings contain a source-reported zero, which remains unadjudicated rather than
+being declared exact zero spending. Dollar-to-million conversion retains eight
+decimal places, without claiming greater precision than the reported source.
+
+Sixty-three of the 89 expense filings have no accounting method in the API.
+The separate `substitution-lda-filing-reviews.csv` records two page-1 visual
+reviews, preserving the original method without overwriting raw API nulls:
+
+| Filing | Original-form expense amount | Method | Reviewed scope |
+| --- | ---: | --- | --- |
+| [AdvaMed, 2003H1](https://lda.gov/filings/public/filing/af25ead8-a340-4e1f-826d-ba8ec844f91a/print/) | $2,440,000 | C | Page 1 of 7, identity/amount/method only |
+| [AAJ/Association of Trial Lawyers of America, 2003H1](https://lda.gov/filings/public/filing/20c683b7-f75f-46ab-ab43-609699b7c337/print/) | $2,260,000 | A | Page 1 of 28, identity/amount/method only |
+
+Both original amounts agree with the API; both API methods are missing. The
+ledger retains PDF hashes, reviewed pages, source fingerprints and reviewer/date.
+Neither review establishes amendment-family completeness, and neither method is
+carried forward or backward to another filing. Independent review remains pending.
+
+Page 3 of the official [legacy semiannual LD-2 instructions](https://www.senate.gov/reference/resources/pdf/LD2_Instructions.pdf)
+was visually reviewed on 2026-09-12. Its Line 13 includes payments to outside
+lobbying firms in organizational expenses. The acquired records have 74
+actor-period cells containing both income and expense filings, so adding the
+two reporting sides is not a valid organizational spending measure. This is an
+overlap warning, not a calculation of the exact double-counted amount. The same
+instructions distinguish Method A's LDA definitions from Method C's tax-code
+definitions; Method C retains grassroots and state lobbying expenses. Thus the
+reviewed AdvaMed and AAJ amounts are not interchangeable federal-only outcomes
+merely because both were reported through LDA. The legacy instructions' thresholds
+and rounding rules describe these historical forms, not today's requirements.
+Instruction PDF SHA-256: `534da9b30b4952a7716ee4dbfeae5d0de09b512ff150e4fc61de450cf8bac72b`.
+
+Before estimation, define one spending concept, resolve version families and
+unknown methods, and use comparable baseline reporting-method strata. Flag
+method changes as measurement breaks rather than selecting controls by their
+post-reform reporting behavior. No actor spending totals or valid controls have
+been established by this measurement audit.
 
 `substitution-fec-report-panel.csv` contains 229 public reports for four PAC
 candidates linked to existing observed LDA actors. The acquisition frame is
@@ -147,8 +207,8 @@ these amount, missingness and date issues.
    aggregating complete 2008 quarterly/monthly reports upward. Seek at least four
    years of genuinely observed pre-period history and multiple pre-event placebo
    windows. The new 2003-2007H1 acquisition meets an eight-half-year source-depth
-   target for five LDA actors and three PAC series, but not the sixth
-   observed LDA actor. This does not establish comparable controls, complete
+   target for all six observed LDA actors and three PAC series after the scoped
+   AdvaMed alias restoration. This does not establish comparable controls, complete
    historical identity coverage, or a causal design. Treat the reform-straddling
    half-year separately.
 4. **Observe both channels for each actor.** Verify historical PAC/organization
@@ -234,6 +294,9 @@ These networked acquisition commands use local keys without saving them:
 python3 scripts/build-substitution-historical-lda-panel.py \
   --years 2003 2004 2005 2006 2007 2008 --max-actors 8 --design-candidate \
   --review-date 2026-09-12 \
+  --alias-reviews data/calibration/first-wave/substitution-lda-alias-reviews.csv \
+  --metadata-output data/calibration/first-wave/substitution-lda-filing-metadata.csv \
+  --response-cache out/substitution-lda-response-cache \
   --output data/calibration/first-wave/substitution-expanded-lda-panel.csv
 python3 scripts/fetch-substitution-fec-reports.py
 ```
@@ -251,7 +314,7 @@ The acquisition is bounded to an existing canonical-actor list and four PACs;
 it is not a representative population sample or a finished control cohort.
 
 `notebooks/empirical-expansion-review.ipynb` is an offline companion to the
-source audit. Its structure was validated with `nbformat`, and both code cells
+source audit. Its structure was validated with `nbformat`, and its code cells
 passed top-to-bottom execution in a fresh Jupyter kernel using an isolated,
 temporary dependency environment. Executed outputs are saved in the notebook.
 The analysis uses only the Python standard library and the checked-in scripts;

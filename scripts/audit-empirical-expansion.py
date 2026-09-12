@@ -22,6 +22,87 @@ def read(name):
         return list(csv.DictReader(source))
 
 
+def lda_measurement_diagnostics(issue_rows, metadata, reviews, aliases):
+    """Audit source measures at filing grain without constructing actor totals."""
+    spec = importlib.util.spec_from_file_location("lda_measurement_source", ROOT / "scripts/build-substitution-historical-lda-panel.py")
+    lda_source = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(lda_source)
+    by_uuid = {r["filingUuid"]: r for r in metadata}
+    if (not metadata or len(by_uuid) != len(metadata)
+            or set(by_uuid) != {r["filingUuid"] for r in issue_rows}):
+        raise ValueError("Missing, duplicate or off-panel LDA filing metadata")
+    lda_source.validate_alias_reviews(aliases, metadata)
+    alias_by_id = {r["aliasReviewId"]: r for r in aliases}
+    if len(alias_by_id) != len(aliases):
+        raise ValueError("Duplicate LDA alias review")
+    overlap = defaultdict(set)
+    for row in metadata:
+        if row["sourceFingerprint"] != lda_source.metadata_fingerprint(row):
+            raise ValueError("LDA projected-source fingerprint mismatch")
+        income, expenses = (lda_source.dollar_value(row[f]) for f in ("incomeDollars", "expensesDollars"))
+        kind = "both" if income and expenses else "income" if income else "expenses" if expenses else "neither"
+        same_name = str(bool(row["clientName"]) and lda_source.normalize_name(row["clientName"]) == lda_source.normalize_name(row["registrantName"])).lower()
+        if row["amountKind"] != kind or row["sameClientRegistrantName"] != same_name:
+            raise ValueError("LDA measurement classification mismatch")
+        if row["aliasReviewId"]:
+            alias = alias_by_id.get(row["aliasReviewId"])
+            if (alias is None or row["canonicalActorId"] != alias["canonicalActorId"]
+                    or lda_source.normalize_name(row["clientName"]) != lda_source.normalize_name(alias["aliasName"])
+                    or row["clientApiId"] != alias["clientApiId"]
+                    or row["registrantApiId"] != alias["registrantApiId"]
+                    or not alias["startYear"] <= row["filingYear"] <= alias["endYear"]):
+                raise ValueError("LDA alias outside reviewed registration scope")
+        elif lda_source.normalize_name(row["clientName"]) != lda_source.normalize_name(row["primaryName"]):
+            raise ValueError("Unreviewed LDA actor alias")
+        if row["filingType"] not in {"RR", "RA"}:
+            overlap[(row["canonicalActorId"], row["periodStart"], row["periodEnd"])].add(kind)
+    same_fields = ("canonicalActorId", "primaryName", "filingYear", "filingPeriod", "filingType",
+        "periodStart", "periodEnd", "clientName", "registrantName", "dtPosted", "filingDocumentUrl")
+    for row in issue_rows:
+        source = by_uuid[row["filingUuid"]]
+        if (any(row[field] != source[field] for field in same_fields)
+                or row["activityAmount"] != lda_source.measurement_amount(source)
+                or row["exposureGroup"] != "unassigned_design_candidate"):
+            raise ValueError("LDA issue row differs from source measurement or claim boundary")
+    seen = set()
+    required = ("reviewId", "filingUuid", "sourceFingerprint", "pdfSha256", "pagesReviewed",
+        "formRegistrantName", "formClientSelf", "formYear", "formPeriod", "formExpensesDollars",
+        "formExpensesMethod", "formAmountDisclosure", "sourceUrl", "reviewer", "reviewDate",
+        "reviewScope", "independentReviewStatus")
+    methods = Counter()
+    for review in reviews:
+        if any(not review.get(field) for field in required) or review["filingUuid"] in seen:
+            raise ValueError("Missing or duplicate LDA original-form review")
+        source = by_uuid.get(review["filingUuid"])
+        if (source is None or review["sourceFingerprint"] != source["sourceFingerprint"]
+                or not re.fullmatch(r"[a-f0-9]{64}", review["pdfSha256"])
+                or review["sourceUrl"] != source["filingDocumentUrl"]
+                or review["formYear"] != source["filingYear"] or review["formPeriod"] != source["filingPeriod"]
+                or source["amountKind"] != "expenses"
+                or Decimal(lda_source.dollar_value(review["formExpensesDollars"])) != Decimal(source["expensesDollars"])
+                or review["formExpensesMethod"] not in {"A", "B", "C"}
+                or review["formClientSelf"] != "true"
+                or review["formAmountDisclosure"] != "at_least_threshold_rounded"
+                or review["reviewScope"] != "page_1_identity_amount_method_only"
+                or review["independentReviewStatus"] != "pending"):
+            raise ValueError("Stale or unsupported LDA original-form measurement review")
+        date.fromisoformat(review["reviewDate"])
+        methods[review["formExpensesMethod"]] += 1
+        seen.add(review["filingUuid"])
+    for alias in aliases:
+        evidence = [r for r in reviews if r["sourceUrl"] == alias["sourceUrl"] and r["pdfSha256"] == alias["pdfSha256"]]
+        if not evidence or any(by_uuid[r["filingUuid"]]["aliasReviewId"] != alias["aliasReviewId"] for r in evidence):
+            raise ValueError("LDA alias lacks its source-bound original-form review")
+    return {
+        "filings": len(metadata), "amountKinds": dict(Counter(r["amountKind"] for r in metadata)),
+        "expenseMethodMissing": sum(r["amountKind"] == "expenses" and not r["expensesMethod"] for r in metadata),
+        "sourceZeroFilings": sum(any(r[f] and Decimal(r[f]) == 0 for f in ("incomeDollars", "expensesDollars")) for r in metadata),
+        "incomeExpenseOverlapActorPeriods": sum({"income", "expenses"} <= kinds for kinds in overlap.values()),
+        "aliasFilings": sum(bool(r["aliasReviewId"]) for r in metadata),
+        "reviewedForms": len(reviews), "reviewedExpenseMethods": dict(methods),
+    }
+
+
 def report_period_diagnostics(rows):
     groups = defaultdict(list)
     for row in rows:
@@ -138,6 +219,11 @@ def audit():
     add("lda-posting-date-anomaly", "review_required" if anomalies else "none_observed",
         f"postingBeforeCoveredPeriod={len(anomalies)}; filingUUIDs={';'.join(anomalies)}",
         "Review original filings and resolve API/scanned-form disagreements. One 2004 scan is reviewed in the redesign note; its amount is below-threshold, not an observed zero. Do not order amendments or treatment timing solely by dtPosted.")
+    measurement = lda_measurement_diagnostics(lda, read("substitution-lda-filing-metadata.csv"),
+        read("substitution-lda-filing-reviews.csv"), read("substitution-lda-alias-reviews.csv"))
+    add("lda-measurement-comparability", "source_measures_not_comparable_totals",
+        "; ".join(f"{key}={value}" for key, value in measurement.items()),
+        "Do not add organizational expenses to retained-firm income. Missing API accounting methods need original-form review; the reviewed Method A and Method C reports use different outcome definitions. Reviewed aliases restore only a specified registration, not exhaustive organization coverage. Null amounts remain blank and source zeros remain unadjudicated. No actor spending total or matched control is validated by these checks.")
     fec = read("substitution-fec-report-panel.csv")
     histories = read("substitution-fec-affiliation-history.csv")
     cohort = read("substitution-fec-acquisition-cohort.csv")

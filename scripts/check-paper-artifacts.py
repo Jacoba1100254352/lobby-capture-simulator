@@ -95,6 +95,8 @@ SUBSTITUTION_ESTIMATION_PANEL = FIRST_WAVE_SOURCE_PRODUCT_DIR / "substitution-es
 EMPIRICAL_EXPANSION_PRODUCTS = [
     FIRST_WAVE_SOURCE_PRODUCT_DIR / name for name in (
         "substitution-expanded-lda-panel.csv", "substitution-fec-report-panel.csv",
+        "substitution-lda-alias-reviews.csv", "substitution-lda-filing-metadata.csv",
+        "substitution-lda-filing-reviews.csv",
         "substitution-fec-affiliation-history.csv", "substitution-fec-halfyear-panel.csv",
         "substitution-fec-acquisition-cohort.csv", "substitution-fec-halfyear-coverage.csv",
         "substitution-fec-version-adjudications.csv",
