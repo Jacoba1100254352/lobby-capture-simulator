@@ -1,0 +1,255 @@
+{
+  "schema": "comment-response-document-source-v1",
+  "reviewDate": "2026-09-12",
+  "reviewer": "codex-source-review",
+  "docketId": "EPA-HQ-OAR-2022-0985",
+  "studyScope": "Historical 2023 proposal and 2024 Phase 3 final action; no assertion about currently operative regulations.",
+  "selection": "Two purposively selected requests with explicit named responses in section 2.5 of EPA's response document. Selected after reading responses; not a random sample, complete section census or docket denominator.",
+  "unit": "comment_request",
+  "independentReviewStatus": "pending",
+  "sourceAuthentication": "Public API metadata projections and page-scoped visual review of downloaded official PDFs. Offline fingerprints check saved consistency, not independent authentication of the original source bytes or correctness of the coding.",
+  "responseDocument": {
+    "documentId": "EPA-420-R-24-007",
+    "title": "Greenhouse Gas Emissions Standards for Heavy-Duty Vehicles: Phase 3, Response to Comments",
+    "date": "2024-03",
+    "datePrecision": "month",
+    "url": "https://www.epa.gov/system/files/documents/2024-03/420r24007.pdf",
+    "landingUrl": "https://www.epa.gov/regulations-emissions-vehicles-and-engines/final-rule-greenhouse-gas-emissions-standards-heavy-duty",
+    "pdfSha256": "4ce468a6ea85ede970b8189dab82b0ab5112692abcc1f684a585f563b6b4ab8e",
+    "pdfPageCount": 2114,
+    "reviewedPages": [
+      {
+        "pdfPage": 19,
+        "printedPage": "1"
+      },
+      {
+        "pdfPage": 20,
+        "printedPage": "2"
+      },
+      {
+        "pdfPage": 457,
+        "printedPage": "439"
+      },
+      {
+        "pdfPage": 458,
+        "printedPage": "440"
+      },
+      {
+        "pdfPage": 461,
+        "printedPage": "443"
+      },
+      {
+        "pdfPage": 462,
+        "printedPage": "444"
+      }
+    ],
+    "section": "2.5 Calculating the standards",
+    "reviewScope": "Introduction/methodology and specified request/response pages only; not a manual review of all 2114 pages.",
+    "excerptScope": "EPA describes selected technical comments as reproduced verbatim in excerpts. Responses can address multiple commenters and are not limited to immediately preceding excerpts. Repeated excerpts are not independent submissions.",
+    "chronologyCaveat": "Printed page 2 refers to comments after July 18, 2024 despite the March 2024 document date. Retained as an apparent source inconsistency, not silently corrected or used as an eligibility cutoff.",
+    "priorityCaveat": "The introduction identifies the final-rule preamble as definitive if inconsistent with the response document. The docket also contains a separately finalized locomotive-preemption rule."
+  },
+  "ruleSources": {
+    "proposed": {
+      "documentId": "2023-07955",
+      "date": "2023-04-27",
+      "url": "https://www.govinfo.gov/content/pkg/FR-2023-04-27/pdf/2023-07955.pdf",
+      "pdfSha256": "30f6f81aadc5313a4762e4234f93a4d937f83c5db75ec2607eb68ce028affc1a",
+      "reviewedPages": [
+        {
+          "pdfPage": 211,
+          "printedPage": "26136"
+        }
+      ],
+      "reviewScope": "Amendatory instruction 91; 40 CFR 1037.705(b) equation and Std definition only."
+    },
+    "final": {
+      "documentId": "2024-06809",
+      "date": "2024-04-22",
+      "url": "https://www.govinfo.gov/content/pkg/FR-2024-04-22/pdf/2024-06809.pdf",
+      "pdfSha256": "9d1b9a74a8528e36b7783ddfacf9b3089f484225431b1496324b5d5d2963eb94",
+      "reviewedPages": [
+        {
+          "pdfPage": 350,
+          "printedPage": "29789"
+        }
+      ],
+      "reviewScope": "Amendatory instruction 103; 40 CFR 1037.705(b) equation and Std definition only."
+    },
+    "correction": {
+      "documentId": "2024-13196",
+      "date": "2024-06-17",
+      "url": "https://www.govinfo.gov/content/pkg/FR-2024-06-17/pdf/2024-13196.pdf",
+      "pdfSha256": "b10d915703e2d600dda445f365e7a393342a0700f09aa6c31785ceea651a0e56",
+      "reviewedPages": [
+        {
+          "pdfPage": 1,
+          "printedPage": "51234"
+        },
+        {
+          "pdfPage": 2,
+          "printedPage": "51235"
+        }
+      ],
+      "reviewScope": "EPA summary and publication-error explanations only. The preceding VA text on PDF page 1 is not this rule."
+    }
+  },
+  "regulatoryComparison": {
+    "provision": "40 CFR 1037.705(b), Std definition",
+    "proposedCode": "generic_standard_plus_zero_co2_vocational_common_reference",
+    "finalCode": "generic_regulatory_subcategory_standard",
+    "textDifferenceObserved": true,
+    "tractorEligibility": "agency_clarifies_continuation",
+    "causalAttribution": "not_established",
+    "collectiveResponsePages": [
+      {
+        "pdfPage": 461,
+        "printedPage": "443"
+      },
+      {
+        "pdfPage": 462,
+        "printedPage": "444"
+      }
+    ],
+    "interpretation": "The final definition omits the proposed additional MY2027+ zero-CO2 vocational common-reference sentence. EPA explains a collective change to its standard-setting approach and separately clarifies continued tractor credit eligibility. Neither the text difference nor the collective response identifies a single comment's causal effect.",
+    "correctionBoundary": "The June 2024 correction addresses errors in preparing the final rule for publication, including a tractor/vocational table substitution. It is a separate event from Allison's allegation about the proposed NPRM calculation."
+  },
+  "records": [
+    {
+      "attachments": [
+        {
+          "attributes": {
+            "agencyNote": null,
+            "authors": null,
+            "docAbstract": "Cummins Inc. comments to Docket EPA-HQ-OAR-2022-0985",
+            "docOrder": 1,
+            "fileFormats": [
+              {
+                "fileUrl": "https://downloads.regulations.gov/EPA-HQ-OAR-2022-0985-1598/attachment_1.pdf",
+                "format": "pdf",
+                "size": 535477
+              }
+            ],
+            "modifyDate": "2023-06-24T02:58:04Z",
+            "publication": null,
+            "restrictReason": null,
+            "restrictReasonType": null,
+            "title": "Comment"
+          },
+          "id": "0900006485b49d89",
+          "type": "attachments"
+        }
+      ],
+      "attributes": {
+        "agencyId": "EPA",
+        "docketId": "EPA-HQ-OAR-2022-0985",
+        "postedDate": "2023-06-22T04:00:00Z",
+        "receiveDate": "2023-06-16T04:00:00Z",
+        "title": "Comment submitted by Cummins Inc.",
+        "withdrawn": false
+      },
+      "commentId": "EPA-HQ-OAR-2022-0985-1598",
+      "metadataUrl": "https://api.regulations.gov/v4/comments/EPA-HQ-OAR-2022-0985-1598?include=attachments",
+      "responseSha256": "d30227f2d0a19a30aa235a8aa130e24471af08523d5f8403885702bbdac6bd28",
+      "sourceFingerprint": "18a0863ca639586ebb67dc80fea313393669cf56383457ce2a67ef4b761be0fe"
+    },
+    {
+      "attachments": [
+        {
+          "attributes": {
+            "agencyNote": null,
+            "authors": null,
+            "docAbstract": null,
+            "docOrder": 1,
+            "fileFormats": [
+              {
+                "fileUrl": "https://downloads.regulations.gov/EPA-HQ-OAR-2022-0985-1657/attachment_1.pdf",
+                "format": "pdf",
+                "size": 162341
+              }
+            ],
+            "modifyDate": "2023-06-29T21:04:27Z",
+            "publication": null,
+            "restrictReason": null,
+            "restrictReasonType": null,
+            "title": "Cover Letter"
+          },
+          "id": "0900006485bd1286",
+          "type": "attachments"
+        },
+        {
+          "attributes": {
+            "agencyNote": null,
+            "authors": null,
+            "docAbstract": null,
+            "docOrder": 2,
+            "fileFormats": [
+              {
+                "fileUrl": "https://downloads.regulations.gov/EPA-HQ-OAR-2022-0985-1657/attachment_2.pdf",
+                "format": "pdf",
+                "size": 407032
+              }
+            ],
+            "modifyDate": "2023-06-29T21:04:27Z",
+            "publication": null,
+            "restrictReason": null,
+            "restrictReasonType": null,
+            "title": "Comment"
+          },
+          "id": "0900006485bd1287",
+          "type": "attachments"
+        }
+      ],
+      "attributes": {
+        "agencyId": "EPA",
+        "docketId": "EPA-HQ-OAR-2022-0985",
+        "postedDate": "2023-06-29T04:00:00Z",
+        "receiveDate": "2023-06-16T04:00:00Z",
+        "title": "Comment submitted by Allison Transmission, Inc.",
+        "withdrawn": false
+      },
+      "commentId": "EPA-HQ-OAR-2022-0985-1657",
+      "metadataUrl": "https://api.regulations.gov/v4/comments/EPA-HQ-OAR-2022-0985-1657?include=attachments",
+      "responseSha256": "e7436e05baeafe5f6467fa0b23ddb4da42bcaf0bbae07768071a9e3505331ae4",
+      "sourceFingerprint": "6abe67a152b50052b851808e44f77216fbc43e46b4745e17c1745bbf9859f299"
+    }
+  ],
+  "reviews": [
+    {
+      "observationId": "phase3-cummins-tractor-credit",
+      "commentId": "EPA-HQ-OAR-2022-0985-1598",
+      "attachmentOrder": 1,
+      "attachmentId": "0900006485b49d89",
+      "requestCode": "tractor_credit_scope",
+      "requestPdfPage": 458,
+      "requestPrintedPage": "440",
+      "originalCitedPages": "9-10",
+      "requestSummary": "Clarify that the credit equation applies to tractors as well as vocational vehicles despite the proposed zero-tailpipe-CO2 provision's reference to vocational standards.",
+      "responsePdfPage": 462,
+      "responsePrintedPage": "444",
+      "responseAnchor": "In response to Cummins, we clarify that manufacturers can continue",
+      "responseSummary": "EPA explicitly clarifies that manufacturers can continue using the equation for tractor CO2 credits; the proposed vocational common-reference update was not intended to exclude tractors.",
+      "disposition": "clarified_existing_scope",
+      "originalAttachmentAccess": "HTTP_403",
+      "claimBoundary": "Documented clarification, not newly granted tractor eligibility or an identified causal rule change attributable to Cummins."
+    },
+    {
+      "observationId": "phase3-allison-lhd-error",
+      "commentId": "EPA-HQ-OAR-2022-0985-1657",
+      "attachmentOrder": 2,
+      "attachmentId": "0900006485bd1287",
+      "requestCode": "lhd_calculation_error",
+      "requestPdfPage": 457,
+      "requestPrintedPage": "439",
+      "originalCitedPages": "2",
+      "requestSummary": "Correct allegedly erroneous calculations in five of six proposed LHD vocational standards. EPA's excerpt cites original page 2 and refers to an unread appendix on pages 4-5.",
+      "responsePdfPage": 462,
+      "responsePrintedPage": "444",
+      "responseAnchor": "we disagree that there was an error in the NPRM",
+      "responseSummary": "EPA explicitly disagrees with the alleged NPRM error and says Allison misunderstood its method. It separately changed the broader method after considering collective concerns.",
+      "disposition": "disagreed_with_error_claim",
+      "originalAttachmentAccess": "HTTP_403",
+      "claimBoundary": "Rejection of the specific error claim, not a conclusion that Allison had no influence. Neither the collective method change nor the later publication correction proves acceptance of this claim."
+    }
+  ]
+}

@@ -134,6 +134,14 @@ document. PDF pages 7-8 were visually checked; the 15-page file's SHA-256 is
 `f6333c8636adfdc82e7750920baace39db3234b5bbc0aac68347305d66e453ad`.
 It does not supply a new response-to-comment link.
 
+## Separate response-document pilot
+
+The [heavy-duty Phase 3 pilot](comment-response-document-pilot.md) adds two
+request-level links from agency-reproduced excerpts to explicitly named responses
+in a different docket. It records a Cummins clarification and disagreement with
+an Allison error claim. It does not fill the Utah pilot's missing attachment or
+response links, enter this corpus, or establish a causal uptake effect.
+
 ## Corpus repair
 
 The 2026-09-12 source audit found over-escaped whitespace expressions in the

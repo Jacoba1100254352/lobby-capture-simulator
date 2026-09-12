@@ -52,13 +52,14 @@ PACKAGE_INPUTS = [
             "substitution-fec-version-adjudications.csv",
             "comment-uptake-issue-pilot.csv",
             "comment-position-pilot.csv", "comment-position-source.json",
+            "comment-response-document-pilot.csv", "comment-response-document-source.json",
             "gao-award-linkage-pilot.csv", "gao-award-linkage-source.json",
             "procurement-bulk-frame-profile.json", "procurement-bulk-type-review.json",
         )
     ],
     *[
         PackageInput(f"docs/{name}", f"readiness/{name}", "empirical-design-expansion")
-        for name in ("substitution-study-redesign.md", "comment-uptake-pilot.md", "procurement-source-reconciliation.md")
+        for name in ("substitution-study-redesign.md", "comment-uptake-pilot.md", "comment-response-document-pilot.md", "procurement-source-reconciliation.md")
     ],
     PackageInput("reports/empirical-expansion-audit.md", "readiness/empirical-expansion-audit.md", "empirical-design-expansion"),
     PackageInput("reports/empirical-expansion-audit.csv", "readiness/empirical-expansion-audit.csv", "empirical-design-expansion"),

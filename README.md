@@ -173,6 +173,14 @@ The September 2026 empirical expansion is documented in [the substitution redesi
 
 A separate public-letter position pilot records two positions agreeing with both EPA's proposal and final action. Its candidate docket-copy match and agency-response link remain unverified; policy agreement is not coded as uptake. The same audit checks metadata fingerprints, distinct submission identities, source-page provenance and the no-promotion boundary. Historical travel archive summaries now provide concrete 2004 exposure leads, but their original forms require login and no verified travel baseline has been acquired.
 
+A separate [heavy-duty Phase 3 response pilot](docs/comment-response-document-pilot.md)
+links two agency-reproduced request excerpts to explicitly named responses:
+a Cummins clarification and disagreement with an Allison calculation-error claim.
+It records original comment/attachment metadata and reviewed response/proposed/final
+page references, while leaving unread original attachments and independent review
+explicitly unresolved. It is separate from the Utah corpus; neither these selected
+responses nor a collective rule-method change identifies a causal comment effect.
+
 The archived procurement frame audit scans only the 56 manifest-selected bulk ZIPs.
 All 6,449,101 rows match their saved archive counts and agency/date partitions,
 but 243,700 have blank award types and 4,505,798 lack offers. One blank-type EPA

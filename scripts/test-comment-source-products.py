@@ -22,6 +22,142 @@ AUDIT = importlib.util.module_from_spec(AUDIT_SPEC)
 AUDIT_SPEC.loader.exec_module(AUDIT)
 
 
+class CommentResponseTests(unittest.TestCase):
+    def setUp(self):
+        self.rows = AUDIT.read("comment-response-document-pilot.csv")
+        self.sources = json.loads((AUDIT.DATA / "comment-response-document-source.json").read_text())
+
+    def refresh_fingerprints(self, rows, sources):
+        for record in sources["records"]:
+            record["sourceFingerprint"] = AUDIT.source_fingerprint(
+                {k: v for k, v in record.items() if k != "sourceFingerprint"})
+        by_id = {r["commentId"]: r for r in sources["records"]}
+        for row in rows:
+            row["reviewSourceFingerprint"] = AUDIT.source_fingerprint(sources)
+            row["metadataFingerprint"] = by_id[row["commentId"]]["sourceFingerprint"]
+
+    def test_two_named_responses_are_not_a_rate_or_causal_effect(self):
+        result = AUDIT.comment_response_diagnostics(self.rows, self.sources)
+        self.assertEqual(result["requestRows"], 2)
+        self.assertEqual(result["submissions"], 2)
+        self.assertEqual(result["dockets"], 1)
+        self.assertEqual(result["explicitNamedResponses"], 2)
+        self.assertEqual(result["dispositions"], {"clarified_existing_scope": 1, "disagreed_with_error_claim": 1})
+        for key in ("originalAttachmentsRead", "rateEligibleRequests", "independentlyReviewedRequests"):
+            self.assertEqual(result[key], 0)
+        self.assertEqual(result["causalEffect"], "not_identified")
+
+    def test_receipt_posting_and_original_attachment_orders_are_distinct(self):
+        self.assertEqual([r["attributes"]["receiveDate"][:10] for r in self.sources["records"]], ["2023-06-16"] * 2)
+        self.assertEqual([r["attributes"]["postedDate"][:10] for r in self.sources["records"]], ["2023-06-22", "2023-06-29"])
+        self.assertEqual([r["attachmentOrder"] for r in self.rows], ["1", "2"])
+        self.assertEqual(len(self.sources["records"][1]["attachments"]), 2)
+
+    def test_empty_or_duplicate_observations_and_metadata_fail(self):
+        for kind in ("empty", "row", "metadata", "renamed_request"):
+            rows, sources = deepcopy(self.rows), deepcopy(self.sources)
+            if kind == "empty":
+                rows = []
+            elif kind == "metadata":
+                sources["records"].append(deepcopy(sources["records"][0]))
+            else:
+                rows.append(deepcopy(rows[0]))
+                if kind == "renamed_request":
+                    rows[-1]["observationId"] = "same-request-new-name"
+                    sources["reviews"].append(deepcopy(sources["reviews"][0]))
+                    sources["reviews"][-1]["observationId"] = rows[-1]["observationId"]
+            self.refresh_fingerprints(rows, sources)
+            with self.subTest(kind=kind), self.assertRaises(ValueError):
+                AUDIT.comment_response_diagnostics(rows, sources)
+
+    def test_changed_metadata_invalidates_review(self):
+        for key in ("receiveDate", "postedDate", "title"):
+            sources = deepcopy(self.sources)
+            sources["records"][0]["attributes"][key] = "changed"
+            with self.subTest(key=key), self.assertRaisesRegex(ValueError, "fingerprint"):
+                AUDIT.comment_response_diagnostics(self.rows, sources)
+
+    def test_changed_pdf_hash_page_or_anchor_invalidates_review(self):
+        for kind in ("rtc_hash", "page", "final_hash", "anchor", "selection"):
+            sources = deepcopy(self.sources)
+            if kind == "rtc_hash":
+                sources["responseDocument"]["pdfSha256"] = "0" * 64
+            elif kind == "page":
+                sources["responseDocument"]["reviewedPages"][0]["printedPage"] = "3"
+            elif kind == "final_hash":
+                sources["ruleSources"]["final"]["pdfSha256"] = "1" * 64
+            elif kind == "anchor":
+                sources["reviews"][0]["responseAnchor"] = "different response"
+            else:
+                sources["selection"] = "different source population"
+            with self.subTest(kind=kind), self.assertRaisesRegex(ValueError, "fingerprint"):
+                AUDIT.comment_response_diagnostics(self.rows, sources)
+
+    def test_cross_comment_join_fails_even_with_other_metadata_fingerprint(self):
+        rows = deepcopy(self.rows)
+        rows[0]["commentId"] = rows[1]["commentId"]
+        rows[0]["metadataFingerprint"] = rows[1]["metadataFingerprint"]
+        with self.assertRaisesRegex(ValueError, "identity"):
+            AUDIT.comment_response_diagnostics(rows, self.sources)
+
+    def test_allison_cover_letter_cannot_replace_cited_comment(self):
+        rows, sources = deepcopy(self.rows), deepcopy(self.sources)
+        rows[1]["attachmentOrder"] = "1"
+        sources["reviews"][1]["attachmentOrder"] = 1
+        self.refresh_fingerprints(rows, sources)
+        with self.assertRaisesRegex(ValueError, "attachment identity/order"):
+            AUDIT.comment_response_diagnostics(rows, sources)
+
+    def test_attachment_url_order_and_comment_must_agree(self):
+        rows, sources = deepcopy(self.rows), deepcopy(self.sources)
+        sources["records"][1]["attachments"][1]["attributes"]["fileFormats"][0]["fileUrl"] = (
+            "https://downloads.regulations.gov/EPA-HQ-OAR-2022-0985-1598/attachment_1.pdf")
+        self.refresh_fingerprints(rows, sources)
+        with self.assertRaisesRegex(ValueError, "URL/order/comment"):
+            AUDIT.comment_response_diagnostics(rows, sources)
+
+    def test_missing_dates_are_not_zeros_and_bad_chronology_fails(self):
+        for value in (None, "", "2022-01-01T04:00:00Z", "2024-05-01T04:00:00Z"):
+            rows, sources = deepcopy(self.rows), deepcopy(self.sources)
+            sources["records"][0]["attributes"]["receiveDate"] = value
+            self.refresh_fingerprints(rows, sources)
+            with self.subTest(value=value), self.assertRaises(ValueError):
+                AUDIT.comment_response_diagnostics(rows, sources)
+
+    def test_rejects_unreviewed_pages_and_wrong_printed_page(self):
+        for key, value in (("requestPdfPage", 0), ("requestPdfPage", 459), ("responsePrintedPage", "443")):
+            rows, sources = deepcopy(self.rows), deepcopy(self.sources)
+            sources["reviews"][0][key] = value
+            rows[0][key] = str(value)
+            self.refresh_fingerprints(rows, sources)
+            with self.subTest(key=key, value=value), self.assertRaisesRegex(ValueError, "page"):
+                AUDIT.comment_response_diagnostics(rows, sources)
+
+    def test_response_cannot_be_promoted_to_causal_uptake_or_independent_review(self):
+        for key in ("unit", "requestRepresentation", "responseLink", "originalAttachmentRead",
+                    "docketVersionMatch", "uptakeRateEligible", "causalEffect",
+                    "regulatoryTextChangeAttribution", "independentReviewStatus"):
+            rows = deepcopy(self.rows)
+            rows[0][key] = "true"
+            with self.subTest(key=key), self.assertRaises(ValueError):
+                AUDIT.comment_response_diagnostics(rows, self.sources)
+
+    def test_error_claim_rejection_cannot_be_recoded_as_acceptance(self):
+        rows, sources = deepcopy(self.rows), deepcopy(self.sources)
+        rows[1]["disposition"] = "clarified_existing_scope"
+        sources["reviews"][1]["disposition"] = "clarified_existing_scope"
+        self.refresh_fingerprints(rows, sources)
+        with self.assertRaisesRegex(ValueError, "coding"):
+            AUDIT.comment_response_diagnostics(rows, sources)
+
+    def test_collective_text_change_does_not_clear_single_comment_causality(self):
+        rows, sources = deepcopy(self.rows), deepcopy(self.sources)
+        sources["regulatoryComparison"]["causalAttribution"] = "cummins"
+        self.refresh_fingerprints(rows, sources)
+        with self.assertRaisesRegex(ValueError, "attribution"):
+            AUDIT.comment_response_diagnostics(rows, sources)
+
+
 class CommentPositionTests(unittest.TestCase):
     def setUp(self):
         self.rows = AUDIT.read("comment-position-pilot.csv")

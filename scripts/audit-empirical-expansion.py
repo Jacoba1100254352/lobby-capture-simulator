@@ -216,6 +216,150 @@ def comment_position_diagnostics(rows, sources):
     }
 
 
+def source_fingerprint(value):
+    return hashlib.sha256(json.dumps(value, sort_keys=True, separators=(",", ":")).encode()).hexdigest()
+
+
+def comment_response_diagnostics(rows, sources):
+    """Audit saved documentary links, not original attachment bytes or causality."""
+    if (sources.get("schema") != "comment-response-document-source-v1" or not rows
+            or sources.get("unit") != "comment_request"
+            or sources.get("independentReviewStatus") != "pending"):
+        raise ValueError("Missing or unsupported comment-response pilot")
+    review_date = date.fromisoformat(sources["reviewDate"])
+    if any(not sources.get(key) for key in ("reviewer", "selection", "studyScope", "sourceAuthentication")):
+        raise ValueError("Missing comment-response scope")
+    rtc = sources["responseDocument"]
+    if (rtc["datePrecision"] != "month" or not re.fullmatch(r"\d{4}-\d{2}", rtc["date"])
+            or not isinstance(rtc["pdfPageCount"], int) or rtc["pdfPageCount"] < 1
+            or not rtc["url"].startswith("https://www.epa.gov/system/files/documents/")
+            or any(not rtc.get(key) for key in ("section", "excerptScope", "chronologyCaveat", "priorityCaveat"))):
+        raise ValueError("Invalid response-document provenance")
+    rtc_month_start = date.fromisoformat(rtc["date"] + "-01")
+    rules = sources["ruleSources"]
+    if set(rules) != {"proposed", "final", "correction"}:
+        raise ValueError("Missing historical rule sources")
+    rule_dates = {key: date.fromisoformat(value["date"]) for key, value in rules.items()}
+    if not rule_dates["proposed"] < rtc_month_start < rule_dates["final"] < rule_dates["correction"] <= review_date:
+        raise ValueError("Invalid historical rule chronology")
+    for document in [rtc, *rules.values()]:
+        if (not re.fullmatch(r"[a-f0-9]{64}", document["pdfSha256"])
+                or not document["documentId"] or not document["reviewScope"]):
+            raise ValueError("Missing reviewed PDF provenance")
+        pages = document["reviewedPages"]
+        if not pages or len({p["pdfPage"] for p in pages}) != len(pages):
+            raise ValueError("Missing or duplicate reviewed PDF pages")
+        for page in pages:
+            if (type(page["pdfPage"]) is not int or page["pdfPage"] < 1
+                    or not str(page["printedPage"]).isdigit() or int(page["printedPage"]) < 1
+                    or (document is rtc and page["pdfPage"] > rtc["pdfPageCount"])):
+                raise ValueError("Invalid reviewed PDF page")
+        if document is not rtc and document["url"] != (
+                "https://www.govinfo.gov/content/pkg/FR-" + document["date"]
+                + "/pdf/" + document["documentId"] + ".pdf"):
+            raise ValueError("Rule URL/date/identity mismatch")
+    page_map = {p["pdfPage"]: p["printedPage"] for p in rtc["reviewedPages"]}
+    comparison = sources["regulatoryComparison"]
+    if (comparison["textDifferenceObserved"] is not True
+            or comparison["tractorEligibility"] != "agency_clarifies_continuation"
+            or comparison["causalAttribution"] != "not_established"
+            or not comparison["interpretation"] or not comparison["correctionBoundary"]
+            or any(page_map.get(p["pdfPage"]) != p["printedPage"] for p in comparison["collectiveResponsePages"])):
+        raise ValueError("Unsupported regulatory text attribution")
+    records = sources["records"]
+    by_id = {record["commentId"]: record for record in records}
+    if not records or len(by_id) != len(records):
+        raise ValueError("Missing or duplicate response-pilot metadata")
+    for record in records:
+        if (record["sourceFingerprint"] != source_fingerprint(
+                {k: v for k, v in record.items() if k != "sourceFingerprint"})
+                or not re.fullmatch(r"[a-f0-9]{64}", record["responseSha256"])):
+            raise ValueError("Response-pilot metadata fingerprint mismatch")
+        attrs = record["attributes"]
+        if (attrs["docketId"] != sources["docketId"] or attrs["agencyId"] != "EPA"
+                or attrs["withdrawn"] is not False or not attrs["title"]
+                or not record["commentId"].startswith(sources["docketId"] + "-")
+                or record["metadataUrl"] != "https://api.regulations.gov/v4/comments/"
+                + record["commentId"] + "?include=attachments"):
+            raise ValueError("Response-pilot comment identity mismatch")
+        for key in ("receiveDate", "postedDate"):
+            if not isinstance(attrs.get(key), str) or not attrs[key]:
+                raise ValueError("Missing comment receipt/posting date")
+        received, posted = (date.fromisoformat(attrs[k][:10]) for k in ("receiveDate", "postedDate"))
+        if not rule_dates["proposed"] <= received <= posted < rtc_month_start:
+            raise ValueError("Invalid comment receipt/posting chronology")
+        attachments = record["attachments"]
+        if (not attachments or len({a["id"] for a in attachments}) != len(attachments)
+                or len({a["attributes"]["docOrder"] for a in attachments}) != len(attachments)):
+            raise ValueError("Missing or duplicate comment attachments")
+        for attachment in attachments:
+            attr = attachment["attributes"]
+            order = attr["docOrder"]
+            if type(order) is not int or order < 1 or not attr["fileFormats"]:
+                raise ValueError("Invalid attachment order or formats")
+            for fmt in attr["fileFormats"]:
+                if (fmt["format"] != "pdf" or type(fmt["size"]) is not int or fmt["size"] <= 0
+                        or fmt["fileUrl"] != "https://downloads.regulations.gov/"
+                        + record["commentId"] + f"/attachment_{order}.pdf"):
+                    raise ValueError("Attachment URL/order/comment mismatch")
+    reviews = {r["observationId"]: r for r in sources["reviews"]}
+    if (len(reviews) != len(sources["reviews"]) or len(rows) != len(reviews)
+            or {r["observationId"] for r in rows} != set(reviews)):
+        raise ValueError("Missing, duplicate or off-cohort response observations")
+    expected_dispositions = {
+        "tractor_credit_scope": "clarified_existing_scope",
+        "lhd_calculation_error": "disagreed_with_error_claim",
+    }
+    fixed = {
+        "unit": "comment_request", "requestRepresentation": "agency_reproduced_excerpt",
+        "responseLink": "explicit_named_response", "originalAttachmentRead": "false",
+        "docketVersionMatch": "not_established", "uptakeRateEligible": "false",
+        "causalEffect": "not_identified", "regulatoryTextChangeAttribution": "not_established",
+        "independentReviewStatus": "pending",
+    }
+    same_fields = ("commentId", "attachmentOrder", "attachmentId", "requestCode", "requestPdfPage",
+                   "requestPrintedPage", "originalCitedPages", "responsePdfPage", "responsePrintedPage", "disposition")
+    seen_requests = set()
+    for row in rows:
+        review = reviews[row["observationId"]]
+        record = by_id.get(row["commentId"])
+        if (record is None or row["metadataFingerprint"] != record["sourceFingerprint"]
+                or row["reviewSourceFingerprint"] != source_fingerprint(sources)
+                or row["docketId"] != sources["docketId"]
+                or any(row[field] != str(review[field]) for field in same_fields)):
+            raise ValueError("Stale response review fingerprint or identity")
+        request_key = (row["commentId"], row["requestCode"])
+        if request_key in seen_requests:
+            raise ValueError("Duplicate comment request")
+        seen_requests.add(request_key)
+        if (any(row.get(field) != value for field, value in fixed.items())
+                or row["reviewer"] != sources["reviewer"] or row["reviewDate"] != sources["reviewDate"]
+                or review["originalAttachmentAccess"] != "HTTP_403"
+                or review["disposition"] != expected_dispositions.get(review["requestCode"])
+                or any(not review.get(key) for key in ("requestSummary", "responseSummary", "responseAnchor", "claimBoundary"))):
+            raise ValueError("Unsupported response-pilot claim or coding")
+        for prefix in ("request", "response"):
+            if page_map.get(review[prefix + "PdfPage"]) != review[prefix + "PrintedPage"]:
+                raise ValueError("Response review cites an unreviewed or mismatched page")
+        if not re.fullmatch(r"[1-9]\d*(?:-[1-9]\d*)?", review["originalCitedPages"]):
+            raise ValueError("Missing original page citation in agency excerpt")
+        matches = [a for a in record["attachments"] if a["id"] == review["attachmentId"]
+                   and a["attributes"]["docOrder"] == review["attachmentOrder"]]
+        if len(matches) != 1:
+            raise ValueError("Response review attachment identity/order mismatch")
+    if set(by_id) != {r["commentId"] for r in rows}:
+        raise ValueError("Off-cohort comment metadata")
+    return {
+        "requestRows": len(rows), "submissions": len(by_id), "dockets": len({r["docketId"] for r in rows}),
+        "explicitNamedResponses": sum(r["responseLink"] == "explicit_named_response" for r in rows),
+        "dispositions": dict(Counter(r["disposition"] for r in rows)),
+        "originalAttachmentsRead": sum(r["originalAttachmentRead"] == "true" for r in rows),
+        "rateEligibleRequests": sum(r["uptakeRateEligible"] == "true" for r in rows),
+        "independentlyReviewedRequests": sum(r["independentReviewStatus"] == "complete" for r in rows),
+        "causalEffect": "not_identified",
+    }
+
+
 def protest_linkage_diagnostics(rows, sources, frozen):
     """Verify a selected decision-to-award bridge, never a protest-rate frame."""
     review = sources["gaoReview"]
@@ -370,6 +514,11 @@ def audit():
     add("comment-public-copy-positions", "policy_alignment_not_uptake",
         "; ".join(f"{key}={value}" for key, value in positions.items()),
         "Two positions belong to one purposefully selected public letter, not two independent comments. Verify the docket attachment version, trace agency responses and obtain independent review before coding uptake. Agreement with an unchanged proposed action does not identify comment influence or prove no effect.")
+    response_sources = json.loads((DATA / "comment-response-document-source.json").read_text(encoding="utf-8"))
+    responses = comment_response_diagnostics(read("comment-response-document-pilot.csv"), response_sources)
+    add("comment-agency-reproduced-requests", "documented_responses_not_causal_uptake",
+        "; ".join(f"{key}={value}" for key, value in responses.items()),
+        "Separate purposive Phase 3 pilot, not the Utah corpus. EPA reproduces request excerpts and explicitly names the two commenters in responses; original submitted attachments and their version match remain unread/unverified. Complete independent review and define a sampling frame before estimating response rates. A collective method change and a later publication correction do not identify an individual comment's effect.")
     protests = read("gao-protest-overlay.csv")
     reviewed = [r for r in protests if "Partial source-page review" in r["notes"]]
     add("gao-partial-adjudication", "not_award_linked",

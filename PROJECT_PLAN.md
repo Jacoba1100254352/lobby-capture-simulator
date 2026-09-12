@@ -41,6 +41,13 @@ The full archived bulk frame audit now verifies all 56 selected ZIPs and their
 and a competition-procedure flag that cannot substitute for historical SAM
 vendor exclusions. A reviewed EPA blank-type row has an official IDV identity;
 unresolved types must remain separate from the intended A/B/C/D comparison.
+The separate heavy-duty Phase 3 comment-response pilot now links two
+agency-reproduced request excerpts to named responses, separating a clarification
+from disagreement with an alleged calculation error. It preserves submission and
+attachment-order metadata plus reviewed response/rule pages; original attachments
+and independent coding review remain unresolved. Its purposive observations do
+not enter the Utah corpus or identify individual influence from a collective
+method change. See `docs/comment-response-document-pilot.md`.
 The Java mechanism model and its
 policy parameters have not been recalibrated from these provisional products.
 

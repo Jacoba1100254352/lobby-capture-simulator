@@ -74,6 +74,14 @@ positionRows=2; publicLetters=1; candidateDocketSubmissions=1; alignedWithPropos
 
 Remaining: Two positions belong to one purposefully selected public letter, not two independent comments. Verify the docket attachment version, trace agency responses and obtain independent review before coding uptake. Agreement with an unchanged proposed action does not identify comment influence or prove no effect.
 
+## comment-agency-reproduced-requests
+
+Status: `documented_responses_not_causal_uptake`
+
+requestRows=2; submissions=2; dockets=1; explicitNamedResponses=2; dispositions={'clarified_existing_scope': 1, 'disagreed_with_error_claim': 1}; originalAttachmentsRead=0; rateEligibleRequests=0; independentlyReviewedRequests=0; causalEffect=not_identified
+
+Remaining: Separate purposive Phase 3 pilot, not the Utah corpus. EPA reproduces request excerpts and explicitly names the two commenters in responses; original submitted attachments and their version match remain unread/unverified. Complete independent review and define a sampling frame before estimating response rates. A collective method change and a later publication correction do not identify an individual comment's effect.
+
 ## gao-partial-adjudication
 
 Status: `not_award_linked`
