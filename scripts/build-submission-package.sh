@@ -135,6 +135,7 @@ for source_product in \
   comment-response-document-source.json \
   comment-section-inventory.csv \
   comment-section-inventory-source.json \
+  comment-request-followups.json \
   gao-award-linkage-pilot.csv \
   gao-award-linkage-source.json \
   gao-docket-timing-pilot.csv \

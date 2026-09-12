@@ -208,3 +208,58 @@ fallback. A docket-rate study additionally requires an independently defined
 comment population, duplicate/grouped-response rules and treatment of missing
 access. This inventory advances comment coding independently of the SAM and
 substitution tracks; it does not complete those tracks or recalibrate the model.
+
+## Cross-section follow-up: DTNA averaging-set flexibility
+
+The separate `comment-request-followups.json` preserves a targeted later review
+of `s25-dtna-averaging`. Its fingerprint binds it to the unchanged eleven-request
+inventory. The original section-2.5 finding remains correct within that section;
+the follow-up adds evidence from section **10.3.2**, not a twelfth request or a
+new sample. Selection followed the known unresolved request, using `1037.740`
+and averaging-set-limit terms in the full response-document text.
+
+EPA reproduces DTNA's detailed request at PDF 1425-1426, printed 1407-1408,
+citing the same submission/attachment, **EPA-HQ-OAR-2022-0985-1555-A1**, original
+pages 74-75 and 171. The earlier section cites original pages 167-168. Both
+excerpts ask to exempt ZEV-generated credits from averaging-set restrictions.
+This is a source-cited identity/action match, not an independently read or
+version-matched original. Repeated wording is not another submission.
+
+The complete summary (PDF 1430-1432, printed 1412-1414) names DTNA's request.
+The complete response (PDF 1432-1434, printed 1414-1416) is collective. It
+describes an interim transfer flexibility while retaining weight-based averaging
+sets and declining vehicle-to-engine credit transfers. The documented disposition
+is **partial alignment with interim flexibility**, not full acceptance or an
+individually attributable change.
+
+| Facet of this one request | Reviewed evidence and interpretation |
+| --- | --- |
+| Vehicle-category transfers | The shared response allows interim vehicle-to-vehicle transfers. The published clause permits part-1037 credits to be used through MY2032 in the named vehicle averaging sets. This is a bounded permission, not deletion of all averaging-set rules. |
+| Program-life duration | DTNA requested availability throughout Phase 3's life. The response and published use limit are interim, through MY2032. The clause also covers specified pre-2027 advanced-technology credits; a use cutoff is not the same as a generation-date window. |
+| Traded credits | The published text allows trading redesignated credits, subject to ordinary trading and retained credit restrictions. |
+| No discount | No separate, comprehensive no-discount disposition is verified. No volume cap is not the same as no discount. Adjacent 10-percent discounts apply to credit-balance corrections, not a general transfer charge. |
+
+The [published April 2024 text](https://www.govinfo.gov/content/pkg/FR-2024-04-22/pdf/2024-06809.pdf)
+was visually reviewed at PDF 337, printed 29776, for 40 CFR 1037.150(z), and
+PDF 351, printed 29790, for 1037.720(a), instruction 108/1037.740, and adjacent
+credit-correction context. Other cross-references, all part-86/1036 provisions,
+and subsequent amendments were not exhaustively reviewed. The retained credit
+restrictions prevent a blanket no-discount or unrestricted-transfer claim.
+
+Crucially, the [April 2023 proposal](https://www.govinfo.gov/content/pkg/FR-2023-04-27/pdf/2023-07955.pdf),
+PDF 88, printed 26013, already invited comment on an interim cross-set option
+for MY2027-2032 with possible caps. That preamble page was visually reviewed.
+It records an option under consideration, not an already adopted rule. Selecting
+a related option after comments does not demonstrate that DTNA originated it or
+caused EPA to select it. The response also discusses other supporters and
+opponents, so there is no isolated commenter counterfactual.
+
+Assessment: **share with caveats** for the cross-section documentary link.
+The follow-up source records ten newly reviewed PDF pages across three documents,
+four facets of one existing request, exact page mappings and hashes, the baseline
+fingerprint, and pending independent review. It does not census the whole
+eleven-page section 10.3.2. Offline tests and the notebook check the old/new scope
+separation, identity, pages, retained restrictions, interim timing, and no-causal
+boundary; they do not independently validate the reading. Original-file access,
+independent coding review and a valid docket population remain unresolved. The
+other two section-2.5 disposition gaps are not resolved by this follow-up.

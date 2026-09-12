@@ -22,6 +22,104 @@ AUDIT = importlib.util.module_from_spec(AUDIT_SPEC)
 AUDIT_SPEC.loader.exec_module(AUDIT)
 
 
+class CommentFollowupTests(unittest.TestCase):
+    def setUp(self):
+        self.sources = json.loads((AUDIT.DATA / "comment-request-followups.json").read_text())
+        self.baseline = json.loads((AUDIT.DATA / "comment-section-inventory-source.json").read_text())
+        self.pilot = json.loads((AUDIT.DATA / "comment-response-document-source.json").read_text())
+
+    def check(self, sources, refresh=True):
+        if refresh:
+            sources["reviewFingerprint"] = AUDIT.source_fingerprint(
+                {k: v for k, v in sources.items() if k != "reviewFingerprint"})
+        return AUDIT.comment_followup_diagnostics(sources, self.baseline, self.pilot)
+
+    def test_followup_is_one_existing_request_not_four_new_observations(self):
+        result = self.check(self.sources, refresh=False)
+        self.assertEqual(result["followupReviews"], 1)
+        self.assertEqual(result["baselineRequests"], 11)
+        self.assertEqual(result["newIndependentRequests"], 0)
+        self.assertEqual(result["crossSectionResponseLinks"], 1)
+        self.assertEqual(result["requestFacets"], 4)
+        self.assertEqual(result["disposition"], "partial_alignment_with_interim_flexibility")
+        self.assertEqual(result["historicalFinalUseThroughModelYear"], 2032)
+        self.assertTrue(result["proposalAlreadySolicitedOption"])
+        self.assertEqual(result["causalEffect"], "not_identified")
+
+    def test_baseline_change_or_followup_wording_requires_new_review(self):
+        baseline = deepcopy(self.baseline)
+        baseline["requests"][6]["disposition"] = "accepted"
+        with self.assertRaisesRegex(ValueError, "fingerprint"):
+            AUDIT.comment_followup_diagnostics(self.sources, baseline, self.pilot)
+        sources = deepcopy(self.sources)
+        sources["reviews"][0]["matchRationale"] = "different interpretation"
+        with self.assertRaisesRegex(ValueError, "fingerprint"):
+            self.check(sources, refresh=False)
+
+    def test_missing_or_duplicate_followup_fails(self):
+        for rows in ([], self.sources["reviews"] * 2):
+            sources = deepcopy(self.sources)
+            sources["reviews"] = rows
+            with self.subTest(count=len(rows)), self.assertRaisesRegex(ValueError, "frame"):
+                self.check(sources)
+
+    def test_cross_comment_attachment_and_request_swap_fail(self):
+        for key, value in (("baselineRequestId", "s25-cummins-tractors"),
+                           ("citedCommentId", "EPA-HQ-OAR-2022-0985-1598"),
+                           ("attachmentOrder", 2), ("originalCitedPages", "167-168")):
+            sources = deepcopy(self.sources)
+            sources["reviews"][0][key] = value
+            with self.subTest(key=key), self.assertRaisesRegex(ValueError, "identity"):
+                self.check(sources)
+
+    def test_rule_identity_and_visual_page_scope_are_bound(self):
+        for kind in ("hash", "printed", "page", "facet"):
+            sources = deepcopy(self.sources)
+            if kind == "hash":
+                sources["documents"]["final"]["pdfSha256"] = "0" * 64
+            elif kind == "printed":
+                sources["documents"]["final"]["reviewedPages"][0]["printedPage"] = 29775
+            elif kind == "page":
+                sources["reviews"][0]["responsePdfPages"] = [1432, 1433]
+            else:
+                sources["reviews"][0]["facets"][0]["evidencePdfPages"] = [338]
+            with self.subTest(kind=kind), self.assertRaises(ValueError):
+                self.check(sources)
+
+    def test_cap_is_not_discount_and_interim_is_not_permanent(self):
+        for facet in ("no_credit_discount", "program_life_duration"):
+            sources = deepcopy(self.sources)
+            next(f for f in sources["reviews"][0]["facets"] if f["facet"] == facet)["assessment"] = "fully_accepted"
+            with self.subTest(facet=facet), self.assertRaisesRegex(ValueError, "facet"):
+                self.check(sources)
+        for key, value in (("historicalFinalUseThroughModelYear", 2035),
+                           ("specifiedPre2027AdvancedTechnologyCreditsIncluded", False),
+                           ("proposalWasAdoptedRule", True), ("proposalAlreadySolicitedOption", False)):
+            sources = deepcopy(self.sources)
+            sources["reviews"][0][key] = value
+            with self.subTest(key=key), self.assertRaisesRegex(ValueError, "coding"):
+                self.check(sources)
+
+    def test_shared_response_cannot_be_promoted_to_individual_effect(self):
+        for key, value in (("responseLink", "explicit_named_response"),
+                           ("disposition", "fully_accepted"), ("addsIndependentRequest", True),
+                           ("unchangedBaseline", False), ("originalAttachmentRead", True),
+                           ("docketRateEligible", True), ("causalEffect", "identified"),
+                           ("independentReviewStatus", "complete")):
+            sources = deepcopy(self.sources)
+            sources["reviews"][0][key] = value
+            with self.subTest(key=key), self.assertRaisesRegex(ValueError, "coding"):
+                self.check(sources)
+
+    def test_facet_rows_must_not_be_dropped_or_counted_twice(self):
+        for count in (3, 5):
+            sources = deepcopy(self.sources)
+            facets = sources["reviews"][0]["facets"]
+            sources["reviews"][0]["facets"] = (facets[:3] if count == 3 else facets + facets[:1])
+            with self.subTest(count=count), self.assertRaisesRegex(ValueError, "facet"):
+                self.check(sources)
+
+
 class CommentSectionTests(unittest.TestCase):
     def setUp(self):
         self.sources = json.loads((AUDIT.DATA / "comment-section-inventory-source.json").read_text())

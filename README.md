@@ -187,6 +187,12 @@ responses and a conditional fallback. This retrospective agency-excerpt frame
 is not a docket denominator. Appendix A's 1,011 non-reproduced comments are not
 1,011 observed nonresponses; its 2,533 theme incidences use a different unit.
 The source-bound inventory and offline notebook still require independent review.
+A separate cross-section follow-up traces DTNA's averaging-set request to the
+named summary and collective response in section 10.3.2. The published April 2024
+clause supports partial alignment with an interim flexibility through MY2032,
+not program-life acceptance. EPA had already invited comment on that option.
+The original eleven-request inventory remains unchanged; the follow-up is not
+an additional request, a causal effect or a current regulatory-status claim.
 
 The archived procurement frame audit scans only the 56 manifest-selected bulk ZIPs.
 All 6,449,101 rows match their saved archive counts and agency/date partitions,

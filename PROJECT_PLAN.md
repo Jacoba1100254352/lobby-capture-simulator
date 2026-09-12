@@ -64,6 +64,13 @@ Appendix A's non-reproduced comments and theme incidences are different units,
 not an unanswered-comment control group. This is neither a docket-rate denominator
 nor independent coding clearance; original submissions and causal identification
 remain unresolved.
+A separate follow-up now links the existing DTNA averaging-set request to section
+10.3.2's named summary and collective response, with the original section-2.5
+coding preserved. Reviewed proposal/final pages show an option already under
+consideration and a time-limited final provision, not full program-life acceptance
+or a comment-caused change. Four facets are part of one existing request, not
+four new observations. Original-file verification and independent review remain
+pending.
 The Java mechanism model and its
 policy parameters have not been recalibrated from these provisional products.
 

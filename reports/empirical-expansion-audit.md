@@ -90,6 +90,14 @@ organizationBlocks=7; requestRows=11; coveredSectionPdfPages=6; priorPilotOverla
 
 Remaining: Retrospective six-page Phase 3 inventory: independently review request segmentation, repeated/grouped responses, opposing positions and conditional fallback. Two requests overlap the prior pilot and must not be counted again. No request-specific disposition within this section is not docket-wide nonresponse. Appendix A's 1,011 non-reproduced comments and 2,533 theme incidences are different units, not a control or nonresponse denominator. Original submissions and a docket sampling frame remain unresolved; no causal effect is identified.
 
+## comment-cross-section-followup
+
+Status: `documented_partial_alignment_not_individual_effect`
+
+followupReviews=1; baselineRequests=11; newIndependentRequests=0; crossSectionResponseLinks=1; requestFacets=4; disposition=partial_alignment_with_interim_flexibility; proposalAlreadySolicitedOption=True; historicalFinalUseThroughModelYear=2032; docketRateEligibleRequests=0; independentlyReviewedFollowups=0; causalEffect=not_identified
+
+Remaining: One targeted DTNA follow-up, not an additional request or expanded sample: section 10.3.2 supplies a named-summary/collective-response link, and the April 2024 clause confirms limited credit use through MY2032. The proposal already solicited the option. Preserve the original section-2.5 coding, distinguish caps from discounts, and independently review original-file identity and facet coding. No full acceptance, docket rate, individual effect or current regulatory-status claim is cleared.
+
 ## gao-partial-adjudication
 
 Status: `not_award_linked`

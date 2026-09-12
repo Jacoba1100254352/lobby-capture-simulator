@@ -1,0 +1,108 @@
+{
+  "schema": "comment-request-followups-v1",
+  "reviewDate": "2026-09-12",
+  "reviewer": "codex-source-review",
+  "independentReviewStatus": "pending",
+  "baselineSourceFile": "comment-section-inventory-source.json",
+  "baselineSourceFingerprint": "eda650c80e7259cf7ba6b0bc1d3a54696d4fbf3a9635549f368df043fe775ab7",
+  "selection": "Targeted follow-up of the DTNA averaging-set request left without a request-specific disposition inside section 2.5. Search terms were 1037.740 and averaging-set limitations/limits in the full official response-document text. Matches led to section 10.3.2. This is not a new comment sample or a census of section 10.3.2.",
+  "studyScope": "Historical April 2023 proposal, March 2024 agency response and April 2024 published final text only. No claim about currently operative law or a complete subsequent amendment history.",
+  "sourceAuthentication": "Visual review of specified official PDF pages and checks of their hashes against the existing pilot. Offline projections and fingerprints bind the saved coding to that review; they do not independently authenticate source bytes or manual interpretation.",
+  "documents": {
+    "response": {
+      "documentId": "EPA-420-R-24-007",
+      "url": "https://www.epa.gov/system/files/documents/2024-03/420r24007.pdf",
+      "pdfSha256": "4ce468a6ea85ede970b8189dab82b0ab5112692abcc1f684a585f563b6b4ab8e",
+      "section": "10.3.2 Averaging Set",
+      "reviewedPages": [{"pdfPage": 1425, "printedPage": 1407}, {"pdfPage": 1426, "printedPage": 1408}, {"pdfPage": 1430, "printedPage": 1412}, {"pdfPage": 1431, "printedPage": 1413}, {"pdfPage": 1432, "printedPage": 1414}, {"pdfPage": 1433, "printedPage": 1415}, {"pdfPage": 1434, "printedPage": 1416}],
+      "reviewScope": "DTNA's reproduced block, the complete section summary and response, with neighboring text visible on the same pages. Other organizations' original blocks in this eleven-page section were not all read or inventoried. Section 11 follows the response and is not coded."
+    },
+    "proposed": {
+      "documentId": "2023-07955",
+      "date": "2023-04-27",
+      "url": "https://www.govinfo.gov/content/pkg/FR-2023-04-27/pdf/2023-07955.pdf",
+      "pdfSha256": "30f6f81aadc5313a4762e4234f93a4d937f83c5db75ec2607eb68ce028affc1a",
+      "reviewedPages": [{"pdfPage": 88, "printedPage": 26013}],
+      "reviewScope": "Preamble section III.A.3, Other Potential HD CO2 Emission Credit Flexibilities. The invitation to comment on a potential interim option is not an adopted baseline provision."
+    },
+    "final": {
+      "documentId": "2024-06809",
+      "date": "2024-04-22",
+      "url": "https://www.govinfo.gov/content/pkg/FR-2024-04-22/pdf/2024-06809.pdf",
+      "pdfSha256": "9d1b9a74a8528e36b7783ddfacf9b3089f484225431b1496324b5d5d2963eb94",
+      "reviewedPages": [{"pdfPage": 337, "printedPage": 29776}, {"pdfPage": 351, "printedPage": 29790}],
+      "reviewScope": "Published 40 CFR 1037.150(z), 1037.720(a), and amendatory instruction 108 for 1037.740, with adjacent credit-correction clauses distinguished from transfer rules. Not an exhaustive review of all cross-referenced credit provisions or of parts 86/1036."
+    }
+  },
+  "reviews": [
+    {
+      "followupId": "s25-dtna-averaging-s1032",
+      "baselineRequestId": "s25-dtna-averaging",
+      "citedCommentId": "EPA-HQ-OAR-2022-0985-1555",
+      "attachmentOrder": 1,
+      "requestCode": "remove_zev_averaging_set_limits",
+      "baselineSection": "2.5 Calculating the standards",
+      "baselineDisposition": "no_request_specific_disposition",
+      "followupSection": "10.3.2 Averaging Set",
+      "requestPdfPages": [1425, 1426],
+      "originalCitedPages": "74-75;171",
+      "summaryPdfPages": [1430, 1431, 1432],
+      "responsePdfPages": [1432, 1433, 1434],
+      "requestMatch": "same_cited_submission_attachment_and_requested_action",
+      "matchRationale": "Both reproduced blocks cite DTNA's EPA-HQ-OAR-2022-0985-1555-A1 and ask to exempt ZEV ABT credits from 1037.740 averaging-set limits. The section 2.5 excerpt cites pages 167-168; section 10.3.2 reproduces the detailed request on pages 74-75 and a repeated answer on page 171. These are agency-selected representations of one matched request, not independently read originals or new observations.",
+      "responseLink": "named_summary_collective_response",
+      "responseGroupId": "phase3-s1032-interim-transfer",
+      "disposition": "partial_alignment_with_interim_flexibility",
+      "responseSummary": "The summary names DTNA and its requests for all-category ZEV transfers, no discount and program-life availability. The collective response retains weight-based averaging sets but adopts an interim vehicle-to-vehicle transfer flexibility for model years 2027-2032 without a volume cap. It does not finalize vehicle-credit transfers into engine averaging sets. These are shared decisions, not a separately named disposition addressed only to DTNA.",
+      "proposalAlreadySolicitedOption": true,
+      "proposalWasAdoptedRule": false,
+      "proposalContext": "The April 2023 preamble already invited comment on a potential interim cross-set transfer provision beginning in MY2027 and ending after MY2032, with possible caps and other restrictions. The option predates the submission; final use of a related mechanism is not evidence DTNA originated or caused it.",
+      "facets": [
+        {
+          "facet": "vehicle_transfer_permission",
+          "requested": "Allow all ZEV credits to move among available vehicle categories.",
+          "observed": "The response describes interim cross-set vehicle-credit transfers. Published 1037.150(z)(1) allows credits generated under part 1037 to be used through MY2032 for the averaging sets in 1037.740(a); the latter retains Light, Medium and Heavy HDV sets.",
+          "assessment": "aligned_with_limited_vehicle_transfer",
+          "evidenceDocument": "final",
+          "evidencePdfPages": [337, 351]
+        },
+        {
+          "facet": "program_life_duration",
+          "requested": "Apply the flexibility throughout the Phase 3 program's life.",
+          "observed": "The collective response calls the allowance interim during MY2027-2032. The published clause permits use through MY2032, not a permanent exemption. It also covers specified pre-2027 advanced-technology credits, so generation eligibility must not be reduced to 2027-2032 alone.",
+          "assessment": "narrower_time_limit",
+          "evidenceDocument": "final",
+          "evidencePdfPages": [337]
+        },
+        {
+          "facet": "traded_credit_eligibility",
+          "requested": "Apply the flexibility to credits traded between manufacturers.",
+          "observed": "Published 1037.150(z)(3)-(4) permits trading redesignated credits subject to ordinary trading and other retained credit provisions; 1037.720(a) defines trading between manufacturers.",
+          "assessment": "aligned_subject_to_retained_restrictions",
+          "evidenceDocument": "final",
+          "evidencePdfPages": [337, 351]
+        },
+        {
+          "facet": "no_credit_discount",
+          "requested": "Allow the transfer without discounting credits.",
+          "observed": "The reviewed response says no volume cap for the interim vehicle transfers, which is not the same as a no-discount finding. The inspected transfer clause specifies no new transfer discount but retains other credit provisions; not all cross-references were audited. Adjacent 10-percent discounts concern correcting erroneous credit balances, not a general transfer discount.",
+          "assessment": "no_separate_discount_disposition_verified",
+          "evidenceDocument": "final",
+          "evidencePdfPages": [337, 351]
+        }
+      ],
+      "historicalFinalUseThroughModelYear": 2032,
+      "specifiedPre2027AdvancedTechnologyCreditsIncluded": true,
+      "unchangedBaseline": true,
+      "addsIndependentRequest": false,
+      "originalAttachmentRead": false,
+      "docketVersionMatch": "not_established",
+      "docketRateEligible": false,
+      "causalEffect": "not_identified",
+      "regulatoryTextChangeAttribution": "not_established",
+      "independentReviewStatus": "pending",
+      "remainingRequirements": "Independently review the cross-section identity match, shared response and facet coding; obtain the version-matched original submission. A full cross-program implementation or no-discount claim additionally requires the other referenced provisions and any relevant later corrections. This targeted follow-up does not resolve the other two section-2.5 disposition gaps, establish a docket denominator or identify individual causal influence."
+    }
+  ],
+  "reviewFingerprint": "512820f6740458fdf1739cab5ad8b76eaa7c6339721bb016735b9552b7f350e6"
+}

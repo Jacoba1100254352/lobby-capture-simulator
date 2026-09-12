@@ -534,6 +534,97 @@ def comment_section_diagnostics(rows, sources, pilot_sources):
     }
 
 
+def comment_followup_diagnostics(sources, baseline, pilot_sources):
+    """Keep a later cross-section review separate from its original sample."""
+    if (sources.get("schema") != "comment-request-followups-v1"
+            or sources.get("baselineSourceFile") != "comment-section-inventory-source.json"
+            or sources.get("baselineSourceFingerprint") != source_fingerprint(baseline)
+            or sources.get("reviewFingerprint") != source_fingerprint(
+                {k: v for k, v in sources.items() if k != "reviewFingerprint"})
+            or sources.get("independentReviewStatus") != "pending"
+            or any(not sources.get(k) for k in ("reviewer", "selection", "studyScope", "sourceAuthentication"))):
+        raise ValueError("Stale follow-up fingerprint, baseline or review boundary")
+    date.fromisoformat(sources["reviewDate"])
+    documents = sources["documents"]
+    expected_pages = {"response": [1425, 1426, 1430, 1431, 1432, 1433, 1434],
+                      "proposed": [88], "final": [337, 351]}
+    offsets = {"response": 18, "proposed": -25925, "final": -29439}
+    if set(documents) != set(expected_pages):
+        raise ValueError("Missing follow-up source documents")
+    for key, document in documents.items():
+        previous = (pilot_sources["responseDocument"] if key == "response"
+                    else pilot_sources["ruleSources"][key])
+        if (any(document[k] != previous[k] for k in ("documentId", "url", "pdfSha256"))
+                or document["reviewedPages"] != [
+                    {"pdfPage": p, "printedPage": p - offsets[key]} for p in expected_pages[key]]
+                or not document["reviewScope"]
+                or (key != "response" and document["date"] != previous["date"])):
+            raise ValueError("Follow-up source identity or page mapping mismatch")
+    reviews = sources["reviews"]
+    if len(reviews) != 1 or reviews[0]["followupId"] != "s25-dtna-averaging-s1032":
+        raise ValueError("Missing, duplicate or undeclared follow-up frame")
+    review = reviews[0]
+    base_by_id = {r["requestId"]: r for r in baseline["requests"]}
+    base_request = base_by_id.get(review["baselineRequestId"])
+    if base_request is None:
+        raise ValueError("Follow-up request missing from baseline")
+    block = next(b for b in baseline["organizationBlocks"] if b["blockId"] == base_request["blockId"])
+    if (review["baselineRequestId"] != "s25-dtna-averaging"
+            or review["citedCommentId"] != block["citedCommentId"]
+            or review["attachmentOrder"] != block["attachmentOrder"]
+            or review["requestCode"] != base_request["requestCode"]
+            or review["baselineDisposition"] != base_request["disposition"]
+            or review["baselineDisposition"] != "no_request_specific_disposition"
+            or review["baselineSection"] != baseline["responseDocument"]["section"]
+            or review["followupSection"] != documents["response"]["section"]
+            or review["followupSection"] != "10.3.2 Averaging Set"
+            or review["requestPdfPages"] != [1425, 1426]
+            or review["summaryPdfPages"] != [1430, 1431, 1432]
+            or review["responsePdfPages"] != [1432, 1433, 1434]
+            or review["originalCitedPages"] != "74-75;171"):
+        raise ValueError("Cross-section request identity, baseline or page mismatch")
+    fixed = {
+        "requestMatch": "same_cited_submission_attachment_and_requested_action",
+        "responseLink": "named_summary_collective_response",
+        "responseGroupId": "phase3-s1032-interim-transfer",
+        "disposition": "partial_alignment_with_interim_flexibility",
+        "proposalAlreadySolicitedOption": True, "proposalWasAdoptedRule": False,
+        "historicalFinalUseThroughModelYear": 2032,
+        "specifiedPre2027AdvancedTechnologyCreditsIncluded": True,
+        "unchangedBaseline": True, "addsIndependentRequest": False,
+        "originalAttachmentRead": False, "docketVersionMatch": "not_established",
+        "docketRateEligible": False, "causalEffect": "not_identified",
+        "regulatoryTextChangeAttribution": "not_established", "independentReviewStatus": "pending",
+    }
+    if (any(review.get(k) != v for k, v in fixed.items())
+            or any(not review.get(k) for k in ("matchRationale", "responseSummary", "proposalContext", "remainingRequirements"))):
+        raise ValueError("Unsupported follow-up scope, attribution or temporal coding")
+    facets = review["facets"]
+    expected_facets = {
+        "vehicle_transfer_permission": "aligned_with_limited_vehicle_transfer",
+        "program_life_duration": "narrower_time_limit",
+        "traded_credit_eligibility": "aligned_subject_to_retained_restrictions",
+        "no_credit_discount": "no_separate_discount_disposition_verified",
+    }
+    if len(facets) != len(expected_facets) or {f["facet"]: f["assessment"] for f in facets} != expected_facets:
+        raise ValueError("Unsupported or duplicated follow-up facet assessment")
+    for facet in facets:
+        if (not facet["requested"] or not facet["observed"] or facet["evidenceDocument"] != "final"
+                or not facet["evidencePdfPages"]
+                or facet["evidencePdfPages"] != sorted(set(facet["evidencePdfPages"]))
+                or not set(facet["evidencePdfPages"]) <= set(expected_pages["final"])):
+            raise ValueError("Follow-up facet lacks reviewed clause evidence")
+    return {
+        "followupReviews": len(reviews), "baselineRequests": len(base_by_id),
+        "newIndependentRequests": 0, "crossSectionResponseLinks": 1,
+        "requestFacets": len(facets), "disposition": review["disposition"],
+        "proposalAlreadySolicitedOption": review["proposalAlreadySolicitedOption"],
+        "historicalFinalUseThroughModelYear": review["historicalFinalUseThroughModelYear"],
+        "docketRateEligibleRequests": 0, "independentlyReviewedFollowups": 0,
+        "causalEffect": "not_identified",
+    }
+
+
 def protest_linkage_diagnostics(rows, sources, frozen):
     """Verify a selected decision-to-award bridge, never a protest-rate frame."""
     review = sources["gaoReview"]
@@ -833,6 +924,11 @@ def audit():
     add("comment-section-request-inventory", "complete_section_excerpts_not_docket_population",
         "; ".join(f"{key}={value}" for key, value in section.items()),
         "Retrospective six-page Phase 3 inventory: independently review request segmentation, repeated/grouped responses, opposing positions and conditional fallback. Two requests overlap the prior pilot and must not be counted again. No request-specific disposition within this section is not docket-wide nonresponse. Appendix A's 1,011 non-reproduced comments and 2,533 theme incidences are different units, not a control or nonresponse denominator. Original submissions and a docket sampling frame remain unresolved; no causal effect is identified.")
+    followup_sources = json.loads((DATA / "comment-request-followups.json").read_text(encoding="utf-8"))
+    followup = comment_followup_diagnostics(followup_sources, section_sources, response_sources)
+    add("comment-cross-section-followup", "documented_partial_alignment_not_individual_effect",
+        "; ".join(f"{key}={value}" for key, value in followup.items()),
+        "One targeted DTNA follow-up, not an additional request or expanded sample: section 10.3.2 supplies a named-summary/collective-response link, and the April 2024 clause confirms limited credit use through MY2032. The proposal already solicited the option. Preserve the original section-2.5 coding, distinguish caps from discounts, and independently review original-file identity and facet coding. No full acceptance, docket rate, individual effect or current regulatory-status claim is cleared.")
     protests = read("gao-protest-overlay.csv")
     reviewed = [r for r in protests if "Partial source-page review" in r["notes"]]
     add("gao-partial-adjudication", "not_award_linked",
