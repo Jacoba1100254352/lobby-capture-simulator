@@ -34,6 +34,12 @@ final rule; they must not be described as independently read response sections.
 The actual comment IDs, response arguments, and any proposed-to-final codified
 text movement remain to be adjudicated from those primary materials.
 
+A September 12 follow-up verified the public document-details page in the
+browser, including the November 23, 2024 received date and December 2 posting
+date. The download actions did not yield a verifiable local PDF, and opening
+the linked PDF for reading returned a browser client-blocking error. No response
+sections were read through that route, and no pilot coding was promoted.
+
 The final rule states that comments closed on 2024-09-18. The sampled corpus
 contains later *posting* dates. Posting is not submission/receipt: do not mark
 those comments late without receipt-date evidence.

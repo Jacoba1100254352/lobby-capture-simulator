@@ -25,7 +25,10 @@ outcomes remain design inputs. The four-PAC acquisition frame retains all 48
 expected committee-half-years, including twelve unresolved periods; 36 are
 usable, one through a source-bound supplemental-filing adjudication. Availability
 does not assign treatment/control status. Issue-level comment coding is separate from the
-unreviewed individual-comment linkage product. The Java mechanism model and its
+unreviewed individual-comment linkage product. A separate four-award GAO pilot
+links one FY2024 consolidated decision to live and archived bulk action records,
+without promoting the selected cases into a representative protest denominator.
+The Java mechanism model and its
 policy parameters have not been recalibrated from these provisional products.
 
 ## 1. Proposed Repo Architecture

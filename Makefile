@@ -42,6 +42,7 @@ test: script-checks compile
 	python3 scripts/test-substitution-estimation-diagnostics.py
 	python3 scripts/test-comment-source-products.py
 	python3 scripts/test-substitution-source-expansion.py
+	python3 scripts/test-procurement-linkage-pilot.py
 	./scripts/test-normalizers.sh
 
 run: compile

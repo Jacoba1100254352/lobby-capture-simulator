@@ -126,6 +126,8 @@ for source_product in \
   substitution-fec-version-adjudications.csv \
   substitution-fec-halfyear-panel.csv \
   comment-uptake-issue-pilot.csv \
+  gao-award-linkage-pilot.csv \
+  gao-award-linkage-source.json \
   sam-fpds-action-history-crosswalk.csv \
   gao-protest-overlay.csv \
   sam-exclusion-overlay.csv \

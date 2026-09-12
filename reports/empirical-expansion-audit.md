@@ -66,6 +66,22 @@ rows=17; partiallyReviewed=1; verifiedDecisionDates=1
 
 Remaining: Link decision-body dates and awarded PIID/UEI; a solicitation number is not a verified award key. No-match is not no-protest.
 
+## procurement-frozen-frame
+
+Status: `selected_sample_partial_identifiers`
+
+rows=28103; agencies=12; actionDateRange=2023-10-01..2024-09-30; repeatedPartialKeys=134; rowsOnRepeatedPartialKeys=361; exactDuplicateRows=0
+
+Remaining: Use the fiscal-year 2024 twelve-agency population, not a calendar-year EPA-only frame. Ranked page slices are not a probability sample. Preserve parent/subtier/source transaction identifiers and unrounded dollar obligations in the reconciliation source; repeated partial keys are not proven duplicate actions.
+
+## gao-time-aligned-award-pilot
+
+Status: `source_linked_not_estimation_ready`
+
+linkedAwards=4; consolidatedDecisions=1; frozenPanelCandidateRows=0; archivedBulkMatches=4; observedOriginalActions=4; sourceVintage=2026-09-12
+
+Remaining: Obtain independent review, filed dates and a representative award/protest frame. Four awards in one selected consolidated decision are not four independent events; current award totals and latest offer fields are not original-action values.
+
 ## overall
 
 Status: `not_identified`

@@ -99,6 +99,7 @@ EMPIRICAL_EXPANSION_PRODUCTS = [
         "substitution-fec-acquisition-cohort.csv", "substitution-fec-halfyear-coverage.csv",
         "substitution-fec-version-adjudications.csv",
         "comment-uptake-issue-pilot.csv",
+        "gao-award-linkage-pilot.csv", "gao-award-linkage-source.json",
     )
 ]
 EMPIRICAL_EXPANSION_NOTES = [

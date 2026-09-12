@@ -3,8 +3,11 @@
 
 import csv
 import importlib.util
+import json
+import re
 from collections import Counter, defaultdict
 from datetime import date, timedelta
+from decimal import Decimal
 from pathlib import Path
 
 
@@ -37,6 +40,79 @@ def report_period_diagnostics(rows):
             # Periods crossing a half-year cannot be allocated using their totals.
             straddles += (start.year, start.month > 6) != (end.year, end.month > 6)
     return overlaps, gaps, straddles
+
+
+def protest_linkage_diagnostics(rows, sources, frozen):
+    """Verify a selected decision-to-award bridge, never a protest-rate frame."""
+    review = sources["gaoReview"]
+    expected = set(review["piids"])
+    if not rows or len(rows) != len(expected) or {r["piid"] for r in rows} != expected:
+        raise ValueError("Missing, duplicate or off-cohort protest award links")
+    searches = [sources["awardSearch"], sources["transactionSearch"]]
+    for search in searches:
+        if search["response"]["page_metadata"]["hasNext"]:
+            raise ValueError("Incomplete selected-award source pagination")
+        records = search["response"]["results"]
+        if len(records) != len(expected) or {r["Award ID"] for r in records} != expected:
+            raise ValueError("Selected source does not contain one record per pilot award")
+    awards = {r["Award ID"]: r for r in searches[0]["response"]["results"]}
+    actions = {r["Award ID"]: r for r in searches[1]["response"]["results"]}
+    details = {r["response"]["piid"]: r["response"] for r in sources["awardDetails"]}
+    if len(sources["awardDetails"]) != len(expected) or set(details) != expected:
+        raise ValueError("Missing or duplicate selected-award detail records")
+    bulk_records = sources["bulkExtract"]["records"]
+    if len(bulk_records) != len(expected) or {r["piid"] for r in bulk_records} != expected:
+        raise ValueError("Missing or duplicate archived bulk extract records")
+    bulk = {r["piid"]: r for r in bulk_records}
+    def normalize_name(value):
+        return re.sub(r"[^A-Z0-9]", "", value.upper())
+    candidate_matches = 0
+    for row in rows:
+        piid = row["piid"]
+        award, action, detail = awards[piid], actions[piid], details[piid]
+        if (row["decisionFamilyId"] != review["decisionFamilyId"]
+                or row["decisionDate"] != review["decisionDate"]
+                or row["filedDate"] or review["filedDate"] is not None
+                or row["sourceRetrievedDate"] != sources["retrievedDate"]
+                or row["linkageStatus"] != "source_linked_not_estimation_ready"
+                or row["independentReviewStatus"] != review["independentReviewStatus"]):
+            raise ValueError("Protest provenance or claim boundary mismatch")
+        for record in (award, action):
+            if (row["uei"] != record["Recipient UEI"]
+                    or row["agency"] != record["Awarding Agency"]
+                    or row["awardeeName"] != record["Recipient Name"]
+                    or row["usaspendingAwardKey"] != record["generated_internal_id"]):
+                raise ValueError("Protest award identity mismatch")
+        if (row["agency"] != review["agency"]
+                or normalize_name(row["awardeeName"]) != normalize_name(review["awardeeName"])
+                or row["uei"] != detail["recipient"]["recipient_uei"]
+                or row["parentPiid"] != detail["parent_award"]["piid"]
+                or row["awardingSubtierCode"] != detail["awarding_agency"]["subtier_agency"]["code"]
+                or row["usaspendingAwardKey"] != detail["generated_unique_award_id"]):
+            raise ValueError("Decision or parent-award identity mismatch")
+        if (row["originalActionDate"] != action["Action Date"]
+                or row["originalActionDate"] != detail["date_signed"]
+                or not "2023-10-01" <= row["originalActionDate"] <= "2024-09-30"
+                or row["modificationNumber"] != action["Mod"] or action["Mod"] != "0"
+                or row["performanceStartDate"] != detail["period_of_performance"]["start_date"]):
+            raise ValueError("Original-action timing or modification mismatch")
+        for field, value in (
+                ("actionObligationDollars", action["Transaction Amount"]),
+                ("currentAwardTotalObligationDollars", detail["total_obligation"])):
+            amount = Decimal(row[field])
+            if not amount.is_finite() or amount != Decimal(str(value)):
+                raise ValueError("Action versus current-award amount mismatch")
+        archived = bulk[piid]
+        if (archived["agency"] != row["agency"] or archived["uei"] != row["uei"]
+                or archived["actionDate"] != row["originalActionDate"]
+                or archived["modificationNumber"] != row["modificationNumber"]
+                or Decimal(archived["amount"]) * 1_000_000 != Decimal(row["actionObligationDollars"])):
+            raise ValueError("Archived bulk versus live original-action mismatch")
+        matches = sum(r["agency"] == row["agency"] and r["piid"] == piid for r in frozen)
+        if int(row["frozenCandidateMatches"]) != matches:
+            raise ValueError("Stale frozen-panel candidate match count")
+        candidate_matches += matches
+    return len(rows), len({r["decisionFamilyId"] for r in rows}), candidate_matches
 
 
 def audit():
@@ -115,6 +191,23 @@ def audit():
     add("gao-partial-adjudication", "not_award_linked",
         f"rows={len(protests)}; partiallyReviewed={len(reviewed)}; verifiedDecisionDates={sum(r['decisionDate'] != 'candidate_unreviewed' for r in protests)}",
         "Link decision-body dates and awarded PIID/UEI; a solicitation number is not a verified award key. No-match is not no-protest.")
+    links = read("gao-award-linkage-pilot.csv")
+    sources = json.loads((DATA / "gao-award-linkage-source.json").read_text(encoding="utf-8"))
+    bulk_summary = json.loads((ROOT / "data/snapshots/2024-env/normalized/usaspending-procurement-bulk-summary.json").read_text(encoding="utf-8"))
+    if (sources["bulkExtract"]["sourceSha256"] != bulk_summary["normalizedOutputSha256"]
+            or sources["bulkExtract"]["sourceCreatedAt"] != bulk_summary["createdAt"]
+            or sources["bulkExtract"]["sourceRowCount"] != bulk_summary["downloadedNormalizedRows"]):
+        raise ValueError("Bulk pilot provenance differs from frozen bulk manifest")
+    with (ROOT / "data/snapshots/2024-env/normalized/usaspending-procurement-actions.csv").open(newline="", encoding="utf-8") as source:
+        frozen = list(csv.DictReader(source))
+    linked, families, matches = protest_linkage_diagnostics(links, sources, frozen)
+    partial_keys = Counter((r["agency"], r["piid"], r["modificationNumber"]) for r in frozen)
+    add("procurement-frozen-frame", "selected_sample_partial_identifiers",
+        f"rows={len(frozen)}; agencies={len({r['agency'] for r in frozen})}; actionDateRange={min(r['actionDate'] for r in frozen)}..{max(r['actionDate'] for r in frozen)}; repeatedPartialKeys={sum(n > 1 for n in partial_keys.values())}; rowsOnRepeatedPartialKeys={sum(n for n in partial_keys.values() if n > 1)}; exactDuplicateRows={len(frozen) - len({tuple(r.values()) for r in frozen})}",
+        "Use the fiscal-year 2024 twelve-agency population, not a calendar-year EPA-only frame. Ranked page slices are not a probability sample. Preserve parent/subtier/source transaction identifiers and unrounded dollar obligations in the reconciliation source; repeated partial keys are not proven duplicate actions.")
+    add("gao-time-aligned-award-pilot", "source_linked_not_estimation_ready",
+        f"linkedAwards={linked}; consolidatedDecisions={families}; frozenPanelCandidateRows={matches}; archivedBulkMatches={len(sources['bulkExtract']['records'])}; observedOriginalActions={linked}; sourceVintage={sources['retrievedDate']}",
+        "Obtain independent review, filed dates and a representative award/protest frame. Four awards in one selected consolidated decision are not four independent events; current award totals and latest offer fields are not original-action values.")
     add("overall", "not_identified",
         "New source history, PAC outcomes and issue-level comment coding exist; no provision-exposure control design, representative SAM export or historical exclusion overlay has cleared.",
         "Continue all three tracks. These findings are an interim source/design audit, not completion of the active empirical goal.")

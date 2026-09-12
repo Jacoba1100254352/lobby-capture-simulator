@@ -1,0 +1,570 @@
+{
+  "schemaVersion": 1,
+  "retrievedDate": "2026-09-12",
+  "scope": "Purposive four-award linkage pilot for one consolidated GAO decision, not a population sample or historical data vintage.",
+  "gaoReview": {
+    "decisionFamilyId": "B-422689-consolidated",
+    "decisionDate": "2024-09-16",
+    "piids": [
+      "36C10X24N0089",
+      "36C10X24N0108",
+      "36C10X24N0088",
+      "36C10X24N0074"
+    ],
+    "agency": "Department of Veterans Affairs",
+    "awardeeName": "Medline Industries, LP",
+    "overallOutcome": "denied",
+    "issueDisposition": "Evaluation and responsibility challenges denied; supplemental organizational-conflict allegations dismissed. Allegations are not findings of misconduct.",
+    "sourceUrl": "https://www.gao.gov/products/b-422689,b-422689.2,b-422689.3,b-422689.4,b-422690,b-422690.2,b-422690.3,b-422690.4,b-422692,b-422692.2,b-422693,b-422693.2,b-422693.3",
+    "sourceLocation": "Decision heading; DECISION opening paragraphs; DIGEST; footnotes 1-5.",
+    "reviewer": "codex-source-review",
+    "independentReviewStatus": "pending",
+    "filedDate": null
+  },
+  "awardSearch": {
+    "url": "https://api.usaspending.gov/api/v2/search/spending_by_award/",
+    "method": "POST",
+    "request": {
+      "filters": {
+        "keywords": [
+          "36C10X24N0089",
+          "36C10X24N0108",
+          "36C10X24N0088",
+          "36C10X24N0074"
+        ],
+        "award_type_codes": [
+          "A",
+          "B",
+          "C",
+          "D"
+        ]
+      },
+      "fields": [
+        "Award ID",
+        "Recipient Name",
+        "Recipient UEI",
+        "Awarding Agency",
+        "Awarding Sub Agency",
+        "Award Amount",
+        "Start Date",
+        "End Date",
+        "generated_internal_id"
+      ],
+      "page": 1,
+      "limit": 10
+    },
+    "rawResponseSha256": "e954776ff3035fc8d05b43ce79f6a120b3cdafba3aca85e1280fb0911169b800",
+    "response": {
+      "spending_level": "awards",
+      "limit": 10,
+      "results": [
+        {
+          "internal_id": 279981505,
+          "Award ID": "36C10X24N0108",
+          "Recipient Name": "MEDLINE INDUSTRIES, LP",
+          "Recipient UEI": "DMPAKJ9N9K66",
+          "Awarding Agency": "Department of Veterans Affairs",
+          "Awarding Sub Agency": "Department of Veterans Affairs",
+          "Award Amount": 0,
+          "Start Date": "2024-06-01",
+          "End Date": "2027-05-31",
+          "generated_internal_id": "CONT_AWD_36C10X24N0108_3600_36C10X23D0032_3600",
+          "awarding_agency_id": 561,
+          "agency_slug": "department-of-veterans-affairs"
+        },
+        {
+          "internal_id": 279981494,
+          "Award ID": "36C10X24N0089",
+          "Recipient Name": "MEDLINE INDUSTRIES, LP",
+          "Recipient UEI": "DMPAKJ9N9K66",
+          "Awarding Agency": "Department of Veterans Affairs",
+          "Awarding Sub Agency": "Department of Veterans Affairs",
+          "Award Amount": 0,
+          "Start Date": "2024-06-01",
+          "End Date": "2027-05-31",
+          "generated_internal_id": "CONT_AWD_36C10X24N0089_3600_36C10X23D0032_3600",
+          "awarding_agency_id": 561,
+          "agency_slug": "department-of-veterans-affairs"
+        },
+        {
+          "internal_id": 279981493,
+          "Award ID": "36C10X24N0088",
+          "Recipient Name": "MEDLINE INDUSTRIES, LP",
+          "Recipient UEI": "DMPAKJ9N9K66",
+          "Awarding Agency": "Department of Veterans Affairs",
+          "Awarding Sub Agency": "Department of Veterans Affairs",
+          "Award Amount": 0,
+          "Start Date": "2024-06-01",
+          "End Date": "2027-05-31",
+          "generated_internal_id": "CONT_AWD_36C10X24N0088_3600_36C10X23D0032_3600",
+          "awarding_agency_id": 561,
+          "agency_slug": "department-of-veterans-affairs"
+        },
+        {
+          "internal_id": 279981487,
+          "Award ID": "36C10X24N0074",
+          "Recipient Name": "MEDLINE INDUSTRIES, LP",
+          "Recipient UEI": "DMPAKJ9N9K66",
+          "Awarding Agency": "Department of Veterans Affairs",
+          "Awarding Sub Agency": "Department of Veterans Affairs",
+          "Award Amount": 0,
+          "Start Date": "2024-06-01",
+          "End Date": "2027-05-31",
+          "generated_internal_id": "CONT_AWD_36C10X24N0074_3600_36C10X23D0032_3600",
+          "awarding_agency_id": 561,
+          "agency_slug": "department-of-veterans-affairs"
+        }
+      ],
+      "page_metadata": {
+        "page": 1,
+        "hasNext": false,
+        "last_record_unique_id": null,
+        "last_record_sort_value": "None"
+      },
+      "messages": [
+        "For searches, time period start and end dates are currently limited to an earliest date of 2007-10-01.  For data going back to 2000-10-01, use either the Custom Award Download feature on the website or one of our download or bulk_download API endpoints as listed on https://api.usaspending.gov/docs/endpoints. "
+      ]
+    }
+  },
+  "transactionSearch": {
+    "url": "https://api.usaspending.gov/api/v2/search/spending_by_transaction/",
+    "method": "POST",
+    "request": {
+      "filters": {
+        "keywords": [
+          "36C10X24N0089",
+          "36C10X24N0108",
+          "36C10X24N0088",
+          "36C10X24N0074"
+        ],
+        "award_type_codes": [
+          "A",
+          "B",
+          "C",
+          "D"
+        ],
+        "time_period": [
+          {
+            "start_date": "2023-10-01",
+            "end_date": "2024-09-30"
+          }
+        ]
+      },
+      "fields": [
+        "Award ID",
+        "Action Date",
+        "Action Type",
+        "Mod",
+        "Transaction Amount",
+        "Recipient Name",
+        "Recipient UEI",
+        "Awarding Agency",
+        "Awarding Sub Agency",
+        "Award Type",
+        "generated_internal_id"
+      ],
+      "page": 1,
+      "limit": 100,
+      "sort": "Action Date",
+      "order": "asc"
+    },
+    "rawResponseSha256": "1b6497fe2867612bd912e7ae0a1b7c89d91b538a6bd3939624ee2e097fcc0682",
+    "response": {
+      "limit": 100,
+      "results": [
+        {
+          "Award ID": "36C10X24N0074",
+          "Action Date": "2024-05-31",
+          "Action Type": null,
+          "Mod": "0",
+          "Transaction Amount": 10000,
+          "Recipient Name": "MEDLINE INDUSTRIES, LP",
+          "Recipient UEI": "DMPAKJ9N9K66",
+          "Awarding Agency": "Department of Veterans Affairs",
+          "Awarding Sub Agency": "Department of Veterans Affairs",
+          "Award Type": "DELIVERY ORDER",
+          "generated_internal_id": "CONT_AWD_36C10X24N0074_3600_36C10X23D0032_3600",
+          "internal_id": 279981487
+        },
+        {
+          "Award ID": "36C10X24N0089",
+          "Action Date": "2024-05-31",
+          "Action Type": null,
+          "Mod": "0",
+          "Transaction Amount": 10000,
+          "Recipient Name": "MEDLINE INDUSTRIES, LP",
+          "Recipient UEI": "DMPAKJ9N9K66",
+          "Awarding Agency": "Department of Veterans Affairs",
+          "Awarding Sub Agency": "Department of Veterans Affairs",
+          "Award Type": "DELIVERY ORDER",
+          "generated_internal_id": "CONT_AWD_36C10X24N0089_3600_36C10X23D0032_3600",
+          "internal_id": 279981494
+        },
+        {
+          "Award ID": "36C10X24N0088",
+          "Action Date": "2024-05-31",
+          "Action Type": null,
+          "Mod": "0",
+          "Transaction Amount": 10000,
+          "Recipient Name": "MEDLINE INDUSTRIES, LP",
+          "Recipient UEI": "DMPAKJ9N9K66",
+          "Awarding Agency": "Department of Veterans Affairs",
+          "Awarding Sub Agency": "Department of Veterans Affairs",
+          "Award Type": "DELIVERY ORDER",
+          "generated_internal_id": "CONT_AWD_36C10X24N0088_3600_36C10X23D0032_3600",
+          "internal_id": 279981493
+        },
+        {
+          "Award ID": "36C10X24N0108",
+          "Action Date": "2024-05-31",
+          "Action Type": null,
+          "Mod": "0",
+          "Transaction Amount": 10000,
+          "Recipient Name": "MEDLINE INDUSTRIES, LP",
+          "Recipient UEI": "DMPAKJ9N9K66",
+          "Awarding Agency": "Department of Veterans Affairs",
+          "Awarding Sub Agency": "Department of Veterans Affairs",
+          "Award Type": "DELIVERY ORDER",
+          "generated_internal_id": "CONT_AWD_36C10X24N0108_3600_36C10X23D0032_3600",
+          "internal_id": 279981505
+        }
+      ],
+      "page_metadata": {
+        "page": 1,
+        "next": null,
+        "previous": null,
+        "hasNext": false,
+        "hasPrevious": false
+      },
+      "messages": [
+        "For searches, time period start and end dates are currently limited to an earliest date of 2007-10-01.  For data going back to 2000-10-01, use either the Custom Award Download feature on the website or one of our download or bulk_download API endpoints as listed on https://api.usaspending.gov/docs/endpoints. ",
+        "The following filters from the request were not used: {'keyword_search'}. See https://api.usaspending.gov/docs/endpoints for a list of appropriate filters"
+      ]
+    }
+  },
+  "bulkExtract": {
+    "normalizedSource": "data/raw/usaspending-procurement-bulk-transactions.csv",
+    "summarySource": "data/snapshots/2024-env/normalized/usaspending-procurement-bulk-summary.json",
+    "sourceCreatedAt": "2026-06-13T08:06:00Z",
+    "sourceSha256": "78322c3babe1a2b69ed2cc88a1c306f3344e97de96e2d8a81f8c4f4277dcee5b",
+    "sourceHashVerifiedDate": "2026-09-12",
+    "sourceRowCount": 6449101,
+    "selection": "Exact piid membership in gaoReview.piids; all matching normalized rows retained.",
+    "records": [
+      {
+        "awardId": "36C10X24N0074",
+        "recipient": "MEDLINE INDUSTRIES, LP",
+        "agency": "Department of Veterans Affairs",
+        "subAgency": "Department of Veterans Affairs",
+        "awardType": "DELIVERY ORDER",
+        "amount": "0.01000000",
+        "issueDomain": "procurement",
+        "awardCount": "1",
+        "uei": "DMPAKJ9N9K66",
+        "piid": "36C10X24N0074",
+        "modificationNumber": "0",
+        "actionDate": "2024-05-31",
+        "competitionType": "FULL AND OPEN COMPETITION",
+        "numberOfOffers": "4",
+        "priceOnlyAward": "false",
+        "exPostModification": "false",
+        "protestFiled": "false",
+        "exclusionFlag": "false",
+        "firewallCovered": "false"
+      },
+      {
+        "awardId": "36C10X24N0088",
+        "recipient": "MEDLINE INDUSTRIES, LP",
+        "agency": "Department of Veterans Affairs",
+        "subAgency": "Department of Veterans Affairs",
+        "awardType": "DELIVERY ORDER",
+        "amount": "0.01000000",
+        "issueDomain": "procurement",
+        "awardCount": "1",
+        "uei": "DMPAKJ9N9K66",
+        "piid": "36C10X24N0088",
+        "modificationNumber": "0",
+        "actionDate": "2024-05-31",
+        "competitionType": "FULL AND OPEN COMPETITION",
+        "numberOfOffers": "2",
+        "priceOnlyAward": "false",
+        "exPostModification": "false",
+        "protestFiled": "false",
+        "exclusionFlag": "false",
+        "firewallCovered": "false"
+      },
+      {
+        "awardId": "36C10X24N0089",
+        "recipient": "MEDLINE INDUSTRIES, LP",
+        "agency": "Department of Veterans Affairs",
+        "subAgency": "Department of Veterans Affairs",
+        "awardType": "DELIVERY ORDER",
+        "amount": "0.01000000",
+        "issueDomain": "procurement",
+        "awardCount": "1",
+        "uei": "DMPAKJ9N9K66",
+        "piid": "36C10X24N0089",
+        "modificationNumber": "0",
+        "actionDate": "2024-05-31",
+        "competitionType": "FULL AND OPEN COMPETITION",
+        "numberOfOffers": "4",
+        "priceOnlyAward": "false",
+        "exPostModification": "false",
+        "protestFiled": "false",
+        "exclusionFlag": "false",
+        "firewallCovered": "false"
+      },
+      {
+        "awardId": "36C10X24N0108",
+        "recipient": "MEDLINE INDUSTRIES, LP",
+        "agency": "Department of Veterans Affairs",
+        "subAgency": "Department of Veterans Affairs",
+        "awardType": "DELIVERY ORDER",
+        "amount": "0.01000000",
+        "issueDomain": "procurement",
+        "awardCount": "1",
+        "uei": "DMPAKJ9N9K66",
+        "piid": "36C10X24N0108",
+        "modificationNumber": "0",
+        "actionDate": "2024-05-31",
+        "competitionType": "FULL AND OPEN COMPETITION",
+        "numberOfOffers": "4",
+        "priceOnlyAward": "false",
+        "exPostModification": "false",
+        "protestFiled": "false",
+        "exclusionFlag": "false",
+        "firewallCovered": "false"
+      }
+    ]
+  },
+  "awardDetails": [
+    {
+      "url": "https://api.usaspending.gov/api/v2/awards/CONT_AWD_36C10X24N0089_3600_36C10X23D0032_3600/",
+      "method": "GET",
+      "rawResponseSha256": "2732b90c0acbec5aef243af93e6f9cad9eef60baf7fc331a50c826fa7923366a",
+      "projectionOnly": true,
+      "response": {
+        "id": 279981494,
+        "generated_unique_award_id": "CONT_AWD_36C10X24N0089_3600_36C10X23D0032_3600",
+        "piid": "36C10X24N0089",
+        "date_signed": "2024-05-31",
+        "total_obligation": 0,
+        "period_of_performance": {
+          "start_date": "2024-06-01",
+          "end_date": "2027-05-31",
+          "last_modified_date": "2026-04-28",
+          "potential_end_date": "2030-05-31 00:00:00"
+        },
+        "parent_award": {
+          "agency_id": 561,
+          "agency_name": "Department of Veterans Affairs",
+          "agency_slug": "department-of-veterans-affairs",
+          "sub_agency_id": "3600",
+          "sub_agency_name": "Department of Veterans Affairs",
+          "award_id": 350965640,
+          "generated_unique_award_id": "CONT_IDV_36C10X23D0032_3600",
+          "idv_type_description": "IDC",
+          "multiple_or_single_aw_desc": "MULTIPLE AWARD",
+          "piid": "36C10X23D0032",
+          "type_of_idc_description": "INDEFINITE DELIVERY / INDEFINITE QUANTITY"
+        },
+        "recipient": {
+          "recipient_name": "MEDLINE INDUSTRIES, LP",
+          "recipient_uei": "DMPAKJ9N9K66"
+        },
+        "awarding_agency": {
+          "id": 561,
+          "has_agency_page": true,
+          "toptier_agency": {
+            "name": "Department of Veterans Affairs",
+            "code": "036",
+            "abbreviation": "VA",
+            "slug": "department-of-veterans-affairs"
+          },
+          "subtier_agency": {
+            "name": "Department of Veterans Affairs",
+            "code": "3600",
+            "abbreviation": "VA"
+          },
+          "office_agency_name": "SAC FREDERICK (36C10X)"
+        },
+        "latest_transaction_contract_data": {
+          "number_of_offers_received": "4",
+          "extent_competed": "A",
+          "extent_competed_description": "FULL AND OPEN COMPETITION"
+        }
+      }
+    },
+    {
+      "url": "https://api.usaspending.gov/api/v2/awards/CONT_AWD_36C10X24N0108_3600_36C10X23D0032_3600/",
+      "method": "GET",
+      "rawResponseSha256": "26db0b63a2e79ac9c813cb2023dad525aa2504b3941ad6a566f353105b6d18c8",
+      "projectionOnly": true,
+      "response": {
+        "id": 279981505,
+        "generated_unique_award_id": "CONT_AWD_36C10X24N0108_3600_36C10X23D0032_3600",
+        "piid": "36C10X24N0108",
+        "date_signed": "2024-05-31",
+        "total_obligation": 0,
+        "period_of_performance": {
+          "start_date": "2024-06-01",
+          "end_date": "2027-05-31",
+          "last_modified_date": "2026-04-02",
+          "potential_end_date": "2029-05-31 00:00:00"
+        },
+        "parent_award": {
+          "agency_id": 561,
+          "agency_name": "Department of Veterans Affairs",
+          "agency_slug": "department-of-veterans-affairs",
+          "sub_agency_id": "3600",
+          "sub_agency_name": "Department of Veterans Affairs",
+          "award_id": 350965640,
+          "generated_unique_award_id": "CONT_IDV_36C10X23D0032_3600",
+          "idv_type_description": "IDC",
+          "multiple_or_single_aw_desc": "MULTIPLE AWARD",
+          "piid": "36C10X23D0032",
+          "type_of_idc_description": "INDEFINITE DELIVERY / INDEFINITE QUANTITY"
+        },
+        "recipient": {
+          "recipient_name": "MEDLINE INDUSTRIES, LP",
+          "recipient_uei": "DMPAKJ9N9K66"
+        },
+        "awarding_agency": {
+          "id": 561,
+          "has_agency_page": true,
+          "toptier_agency": {
+            "name": "Department of Veterans Affairs",
+            "code": "036",
+            "abbreviation": "VA",
+            "slug": "department-of-veterans-affairs"
+          },
+          "subtier_agency": {
+            "name": "Department of Veterans Affairs",
+            "code": "3600",
+            "abbreviation": "VA"
+          },
+          "office_agency_name": "SAC FREDERICK (36C10X)"
+        },
+        "latest_transaction_contract_data": {
+          "number_of_offers_received": "4",
+          "extent_competed": "A",
+          "extent_competed_description": "FULL AND OPEN COMPETITION"
+        }
+      }
+    },
+    {
+      "url": "https://api.usaspending.gov/api/v2/awards/CONT_AWD_36C10X24N0088_3600_36C10X23D0032_3600/",
+      "method": "GET",
+      "rawResponseSha256": "28d72342efe98d9d5f9108e81fd3c12ea6f3b96584b808d76494fc67a32c2fc9",
+      "projectionOnly": true,
+      "response": {
+        "id": 279981493,
+        "generated_unique_award_id": "CONT_AWD_36C10X24N0088_3600_36C10X23D0032_3600",
+        "piid": "36C10X24N0088",
+        "date_signed": "2024-05-31",
+        "total_obligation": 0,
+        "period_of_performance": {
+          "start_date": "2024-06-01",
+          "end_date": "2027-05-31",
+          "last_modified_date": "2026-04-02",
+          "potential_end_date": "2029-05-31 00:00:00"
+        },
+        "parent_award": {
+          "agency_id": 561,
+          "agency_name": "Department of Veterans Affairs",
+          "agency_slug": "department-of-veterans-affairs",
+          "sub_agency_id": "3600",
+          "sub_agency_name": "Department of Veterans Affairs",
+          "award_id": 350965640,
+          "generated_unique_award_id": "CONT_IDV_36C10X23D0032_3600",
+          "idv_type_description": "IDC",
+          "multiple_or_single_aw_desc": "MULTIPLE AWARD",
+          "piid": "36C10X23D0032",
+          "type_of_idc_description": "INDEFINITE DELIVERY / INDEFINITE QUANTITY"
+        },
+        "recipient": {
+          "recipient_name": "MEDLINE INDUSTRIES, LP",
+          "recipient_uei": "DMPAKJ9N9K66"
+        },
+        "awarding_agency": {
+          "id": 561,
+          "has_agency_page": true,
+          "toptier_agency": {
+            "name": "Department of Veterans Affairs",
+            "code": "036",
+            "abbreviation": "VA",
+            "slug": "department-of-veterans-affairs"
+          },
+          "subtier_agency": {
+            "name": "Department of Veterans Affairs",
+            "code": "3600",
+            "abbreviation": "VA"
+          },
+          "office_agency_name": "SAC FREDERICK (36C10X)"
+        },
+        "latest_transaction_contract_data": {
+          "number_of_offers_received": "2",
+          "extent_competed": "A",
+          "extent_competed_description": "FULL AND OPEN COMPETITION"
+        }
+      }
+    },
+    {
+      "url": "https://api.usaspending.gov/api/v2/awards/CONT_AWD_36C10X24N0074_3600_36C10X23D0032_3600/",
+      "method": "GET",
+      "rawResponseSha256": "3591fa347b6bf3d4efc8064adab3025a9d4a7205c2b0b21c323f61111040c415",
+      "projectionOnly": true,
+      "response": {
+        "id": 279981487,
+        "generated_unique_award_id": "CONT_AWD_36C10X24N0074_3600_36C10X23D0032_3600",
+        "piid": "36C10X24N0074",
+        "date_signed": "2024-05-31",
+        "total_obligation": 0,
+        "period_of_performance": {
+          "start_date": "2024-06-01",
+          "end_date": "2027-05-31",
+          "last_modified_date": "2026-04-02",
+          "potential_end_date": "2029-05-31 00:00:00"
+        },
+        "parent_award": {
+          "agency_id": 561,
+          "agency_name": "Department of Veterans Affairs",
+          "agency_slug": "department-of-veterans-affairs",
+          "sub_agency_id": "3600",
+          "sub_agency_name": "Department of Veterans Affairs",
+          "award_id": 350965640,
+          "generated_unique_award_id": "CONT_IDV_36C10X23D0032_3600",
+          "idv_type_description": "IDC",
+          "multiple_or_single_aw_desc": "MULTIPLE AWARD",
+          "piid": "36C10X23D0032",
+          "type_of_idc_description": "INDEFINITE DELIVERY / INDEFINITE QUANTITY"
+        },
+        "recipient": {
+          "recipient_name": "MEDLINE INDUSTRIES, LP",
+          "recipient_uei": "DMPAKJ9N9K66"
+        },
+        "awarding_agency": {
+          "id": 561,
+          "has_agency_page": true,
+          "toptier_agency": {
+            "name": "Department of Veterans Affairs",
+            "code": "036",
+            "abbreviation": "VA",
+            "slug": "department-of-veterans-affairs"
+          },
+          "subtier_agency": {
+            "name": "Department of Veterans Affairs",
+            "code": "3600",
+            "abbreviation": "VA"
+          },
+          "office_agency_name": "SAC FREDERICK (36C10X)"
+        },
+        "latest_transaction_contract_data": {
+          "number_of_offers_received": "4",
+          "extent_competed": "A",
+          "extent_competed_description": "FULL AND OPEN COMPETITION"
+        }
+      }
+    }
+  ]
+}
