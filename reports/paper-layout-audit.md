@@ -2,7 +2,7 @@
 
 This audit checks generated PDFs for sparse float pages, large whitespace gaps, and figure or table pages without enough surrounding readable text. It is a regression guard, not a substitute for final visual inspection.
 
-- Pages checked: `58`
+- Pages checked: `59`
 - Failures: `0`
 
 | PDF | Page | Blocks | Chars | Coverage | Largest gap | Float label | Status | Note |
@@ -59,9 +59,10 @@ This audit checks generated PDFs for sparse float pages, large whitespace gaps, 
 | paper/supplement.pdf | 6 | 69 | 3356 | 0.891 | 0.035 | no | pass | layout density acceptable |
 | paper/supplement.pdf | 7 | 62 | 4076 | 0.886 | 0.040 | no | pass | layout density acceptable |
 | paper/supplement.pdf | 8 | 88 | 4603 | 0.887 | 0.041 | no | pass | layout density acceptable |
-| paper/supplement.pdf | 9 | 55 | 4526 | 0.887 | 0.039 | no | pass | layout density acceptable |
-| paper/supplement.pdf | 10 | 134 | 4215 | 0.887 | 0.039 | yes | pass | layout density acceptable |
-| paper/supplement.pdf | 11 | 118 | 3985 | 0.879 | 0.048 | yes | pass | layout density acceptable |
-| paper/supplement.pdf | 12 | 89 | 2964 | 0.887 | 0.039 | yes | pass | layout density acceptable |
-| paper/supplement.pdf | 13 | 72 | 3499 | 0.887 | 0.039 | yes | pass | references/declarations page |
-| paper/supplement.pdf | 14 | 57 | 2920 | 0.887 | 0.068 | no | pass | references/declarations page |
+| paper/supplement.pdf | 9 | 53 | 4599 | 0.887 | 0.039 | no | pass | layout density acceptable |
+| paper/supplement.pdf | 10 | 130 | 4035 | 0.887 | 0.039 | yes | pass | layout density acceptable |
+| paper/supplement.pdf | 11 | 120 | 3980 | 0.879 | 0.048 | yes | pass | layout density acceptable |
+| paper/supplement.pdf | 12 | 86 | 3079 | 0.887 | 0.039 | yes | pass | layout density acceptable |
+| paper/supplement.pdf | 13 | 63 | 3637 | 0.887 | 0.044 | no | pass | layout density acceptable |
+| paper/supplement.pdf | 14 | 69 | 2811 | 0.887 | 0.086 | yes | pass | references/declarations page |
+| paper/supplement.pdf | 15 | 15 | 953 | 0.891 | 0.678 | no | pass | references/declarations page |

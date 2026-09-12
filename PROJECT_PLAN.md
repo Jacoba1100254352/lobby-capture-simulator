@@ -36,6 +36,12 @@ archive summaries supply exposure-research leads, but original forms are
 login-gated and no travel baseline has been promoted. A separate four-award GAO pilot
 links one FY2024 consolidated decision to live and archived bulk action records,
 without promoting the selected cases into a representative protest denominator.
+The companion docket ledger now reviews all thirteen listed case entries and
+preserves filing dates separately from decision, posted and due dates. Multiple
+solicitation fields and a cross-service-area supplemental entry prevent a simple
+one-to-one join; two current award-description candidates do not clear original-action
+mapping. A decision-reported SAM check supplies no independently verified historical
+interval. Original-action mappings and independent coding review remain unresolved.
 The full archived bulk frame audit now verifies all 56 selected ZIPs and their
 6,449,101 rows, while exposing blank award types, extensive missing offer counts,
 and a competition-procedure flag that cannot substitute for historical SAM

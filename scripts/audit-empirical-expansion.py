@@ -7,7 +7,7 @@ import importlib.util
 import json
 import re
 from collections import Counter, defaultdict
-from datetime import date, timedelta
+from datetime import date, datetime, timedelta
 from decimal import Decimal
 from pathlib import Path
 
@@ -433,6 +433,141 @@ def protest_linkage_diagnostics(rows, sources, frozen):
     return len(rows), len({r["decisionFamilyId"] for r in rows}), candidate_matches
 
 
+def docket_timing_rows(sources):
+    """Normalize reviewed public fields without inventing a docket-to-PIID join."""
+    review = sources["decisionReview"]
+    reverse_aliases = {v: k for k, v in review["baseCaseDocketAliases"].items()}
+    review_fingerprint = source_fingerprint({k: v for k, v in sources.items() if k != "records"})
+    rows = []
+    for record in sources["records"]:
+        fields = record["fields"]
+        case = reverse_aliases.get(fields["fileNumber"], fields["fileNumber"])
+        areas = [r["serviceArea"] for r in review["serviceAreaFootnotes"] if case in r["caseNumbers"]]
+        rows.append({
+            "decisionFamilyId": review["decisionFamilyId"], "decisionCaseId": case,
+            "docketFileNumber": fields["fileNumber"], "protesterNative": fields["protester"],
+            "solicitationNumbersNative": fields["solicitationNumber"],
+            "decisionServiceAreas": ";".join(areas),
+            **{key: datetime.strptime(fields[key], "%b %d, %Y").date().isoformat()
+               for key in ("filedDate", "decisionDate", "postedDate", "dueDate")},
+            "docketOutcome": fields["outcome"], "piid": "",
+            "awardTimingStatus": "docket_dates_only_award_mapping_unresolved",
+            "sourceUrl": record["sourceUrl"], "sourceReviewDate": sources["reviewedDate"],
+            "sourceFingerprint": source_fingerprint(record), "reviewFingerprint": review_fingerprint,
+            "independentReviewStatus": sources["independentReviewStatus"],
+        })
+    return rows
+
+
+def docket_timing_diagnostics(rows, sources, award_sources, bulk_manifest):
+    """Validate the complete listed-case frame, not a population of protests."""
+    if (sources.get("schema") != "gao-docket-timing-source-v1"
+            or sources.get("captureMethod") != "public_browser_field_transcription"
+            or sources.get("rawPageArchiveAvailable") is not False
+            or sources.get("independentReviewStatus") != "pending"
+            or not sources.get("reviewer") or not sources.get("captureScope")):
+        raise ValueError("Docket source provenance or claim boundary mismatch")
+    reviewed = date.fromisoformat(sources["reviewedDate"])
+    review = sources["decisionReview"]
+    award_review = award_sources["gaoReview"]
+    if (any(review[key] != award_review[key] for key in ("decisionFamilyId", "sourceUrl", "decisionDate", "overallOutcome"))
+            or review["supplementalOciDisposition"] != "dismissed"
+            or review["originalActionDocketPairingStatus"] != "unresolved"):
+        raise ValueError("Docket decision identity or claim boundary mismatch")
+    sam = review["reportedSamCheck"]
+    if (sam["underlyingRecordsRead"] is not False or sam["checkDate"] is not None
+            or sam["historicalIntervalEligible"] is not False):
+        raise ValueError("Decision-reported SAM check is not a historical interval")
+    cases = review["caseNumbers"]
+    if not cases or len(cases) != len(set(cases)) or any(not re.fullmatch(r"B-\d{6}(?:\.[2-9]\d*)?", c) for c in cases):
+        raise ValueError("Missing, duplicate or invalid decision case frame")
+    if review["sourceUrl"] != "https://www.gao.gov/products/" + ",".join(c.lower() for c in cases):
+        raise ValueError("Decision case frame differs from linked decision")
+    aliases = review["baseCaseDocketAliases"]
+    if aliases != {c: c + ".1" for c in cases if "." not in c}:
+        raise ValueError("Invalid source-specific base docket aliases")
+    expected_ids = {aliases.get(c, c) for c in cases}
+    records = sources["records"]
+    if len(records) != len(cases) or {r["fields"]["fileNumber"] for r in records} != expected_ids:
+        raise ValueError("Missing, duplicate or off-frame public docket records")
+    area_rows = review["serviceAreaFootnotes"]
+    if (len({r["serviceArea"] for r in area_rows}) != len(area_rows)
+            or {r["footnote"] for r in area_rows} != {2, 3, 4, 5}
+            or any(not r["caseNumbers"] or len(set(r["caseNumbers"])) != len(r["caseNumbers"])
+                   or not set(r["caseNumbers"]) <= set(cases) for r in area_rows)
+            or set().union(*(set(r["caseNumbers"]) for r in area_rows)) != set(cases)):
+        raise ValueError("Incomplete or invalid decision service-area footnotes")
+    for record in records:
+        fields = record["fields"]
+        if (record["sourceUrl"] != "https://www.gao.gov/docket/" + fields["fileNumber"].lower()
+                or fields["decisionUrl"] != review["sourceUrl"] or fields["caseType"] != "Bid Protest"
+                or fields["outcome"].lower() != review["overallOutcome"]
+                or not fields["protester"] or not re.fullmatch(r"36C10X24R\d{4}(?:;36C10X24R\d{4})*", fields["solicitationNumber"])
+                or fields["agency"] != "Department of Veterans Affairs : Department of Veterans Affairs"):
+            raise ValueError("Docket identity, decision link or source field mismatch")
+    expected_rows = docket_timing_rows(sources)
+    if (len(rows) != len(cases) or len({r["docketFileNumber"] for r in rows}) != len(rows)
+            or {r["docketFileNumber"] for r in rows} != expected_ids):
+        raise ValueError("Missing, duplicate or off-frame normalized docket rows")
+    by_id = {r["docketFileNumber"]: r for r in expected_rows}
+    for row in rows:
+        if row != by_id[row["docketFileNumber"]]:
+            raise ValueError("Docket source fingerprint, normalized field or claim boundary mismatch")
+        filed, decision, posted, due = (date.fromisoformat(row[k]) for k in ("filedDate", "decisionDate", "postedDate", "dueDate"))
+        if (not filed <= decision <= posted <= reviewed or filed > due
+                or row["decisionDate"] != review["decisionDate"]):
+            raise ValueError("Docket chronology mismatch")
+    details = sources["awardDescriptionChecks"]
+    awards = {r["response"]["piid"]: r["response"] for r in award_sources["awardDetails"]}
+    if len(details) != len(awards) or {r["fields"]["piid"] for r in details} != set(awards):
+        raise ValueError("Missing or duplicate award-description checks")
+    for record in details:
+        fields = record["fields"]
+        award = awards[fields["piid"]]
+        candidate = record["explicitServiceAreaCandidate"]
+        if (fields["generated_unique_award_id"] != award["generated_unique_award_id"]
+                or fields["date_signed"] != award["date_signed"]
+                or fields["last_modified_date"] != award["period_of_performance"]["last_modified_date"]
+                or record["sourceUrl"] != "https://api.usaspending.gov/api/v2/awards/" + fields["generated_unique_award_id"] + "/"
+                or record["retrievedDate"] != sources["reviewedDate"]
+                or not re.fullmatch(r"[a-f0-9]{64}", record["rawResponseSha256"])
+                or record["projectionOnly"] is not True
+                or record["originalActionMappingVerified"] is not False
+                or fields["solicitation_identifier"] is not None
+                or candidate is not None and (candidate not in {r["serviceArea"] for r in area_rows} or candidate not in fields["description"])):
+            raise ValueError("Unverified current-description award mapping or provenance")
+    archive = sources["archiveFieldCheck"]
+    strata = [r for r in bulk_manifest["strata"] if r["downloadFile"] == archive["sourcePath"]]
+    if (len(strata) != 1 or strata[0]["zipSha256"] != archive["zipSha256"]
+            or not archive["member"].startswith("Contracts_PrimeTransactions_")
+            or len(archive["columns"]) != len(set(archive["columns"]))
+            or {"solicitation_identifier", "transaction_description", "prime_award_base_transaction_description"} & set(archive["columns"])):
+        raise ValueError("Archived field-check provenance or absent-column mismatch")
+    extracted = archive["selectedOriginalActions"]
+    if len(extracted) != len(awards) or {r["fields"]["award_id_piid"] for r in extracted} != set(awards):
+        raise ValueError("Missing or duplicate archived original-action excerpts")
+    for record in extracted:
+        fields = record["fields"]
+        award = awards[fields["award_id_piid"]]
+        bulk = next(r for r in award_sources["bulkExtract"]["records"] if r["piid"] == fields["award_id_piid"])
+        if (set(fields) != set(archive["columns"]) or record["csvRowIncludingHeader"] < 2
+                or fields["parent_award_id_piid"] != award["parent_award"]["piid"]
+                or fields["action_date"] != bulk["actionDate"]
+                or fields["modification_number"] != bulk["modificationNumber"]
+                or fields["recipient_uei"] != bulk["uei"]
+                or fields["awarding_agency_name"] != bulk["agency"]
+                or Decimal(fields["federal_action_obligation"]) != Decimal(bulk["amount"]) * 1_000_000):
+            raise ValueError("Archived original-action identity or field mismatch")
+    return {
+        "expectedEntries": len(cases), "reviewedEntries": len(rows), "decisionFamilies": 1,
+        "filingDates": dict(sorted(Counter(r["filedDate"] for r in rows).items())),
+        "multiSolicitationEntries": sum(";" in r["solicitationNumbersNative"] for r in rows),
+        "multiServiceAreaEntries": sum(";" in r["decisionServiceAreas"] for r in rows),
+        "currentDescriptionCandidates": sum(r["explicitServiceAreaCandidate"] is not None for r in details),
+        "awardSpecificDatesPromoted": 0, "historicalExclusionIntervalsPromoted": 0,
+    }
+
+
 def audit():
     findings = []
     def add(item, status, evidence, requirement):
@@ -540,7 +675,12 @@ def audit():
         "Use the fiscal-year 2024 twelve-agency population, not a calendar-year EPA-only frame. Ranked page slices are not a probability sample. Preserve parent/subtier/source transaction identifiers and unrounded dollar obligations in the reconciliation source; repeated partial keys are not proven duplicate actions.")
     add("gao-time-aligned-award-pilot", "source_linked_not_estimation_ready",
         f"linkedAwards={linked}; consolidatedDecisions={families}; frozenPanelCandidateRows={matches}; archivedBulkMatches={len(sources['bulkExtract']['records'])}; observedOriginalActions={linked}; sourceVintage={sources['retrievedDate']}",
-        "Obtain independent review, filed dates and a representative award/protest frame. Four awards in one selected consolidated decision are not four independent events; current award totals and latest offer fields are not original-action values.")
+        "Obtain independent review, award-specific docket mappings and a representative award/protest frame. The separate ledger supplies dates for all 13 listed docket entries, not one verified filing date per award. Four awards in one selected consolidated decision are not four independent events; current award totals and latest offer fields are not original-action values.")
+    docket_sources = json.loads((DATA / "gao-docket-timing-source.json").read_text(encoding="utf-8"))
+    docket = docket_timing_diagnostics(read("gao-docket-timing-pilot.csv"), docket_sources, sources, bulk_summary)
+    add("gao-docket-timing-pilot", "docket_timing_verified_award_mapping_unresolved",
+        "; ".join(f"{key}={value}" for key, value in docket.items()),
+        "Review original-action solicitation/service-area links and obtain independent coding review. Three docket entries list multiple solicitations and one spans four decision service areas. Current descriptions supply two candidates only; the archived export lacks description/solicitation columns. A GAO-reported SAM check has no verified date or underlying interval. No protest rate, award-specific timing or historical exclusion coverage is promoted.")
     spec = importlib.util.spec_from_file_location("bulk_frame", ROOT / "scripts/audit-procurement-bulk-frame.py")
     bulk_frame = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(bulk_frame)

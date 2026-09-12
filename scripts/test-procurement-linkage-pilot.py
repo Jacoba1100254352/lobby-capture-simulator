@@ -76,5 +76,141 @@ class LinkageTests(unittest.TestCase):
             self.check()
 
 
+class DocketTimingTests(unittest.TestCase):
+    def setUp(self):
+        self.rows = audit.read("gao-docket-timing-pilot.csv")
+        self.source = json.loads((audit.DATA / "gao-docket-timing-source.json").read_text())
+        self.awards = json.loads((audit.DATA / "gao-award-linkage-source.json").read_text())
+        self.manifest = json.loads((ROOT / "data/snapshots/2024-env/normalized/usaspending-procurement-bulk-summary.json").read_text())
+
+    def check(self):
+        return audit.docket_timing_diagnostics(self.rows, self.source, self.awards, self.manifest)
+
+    def test_complete_case_frame_and_date_counts_reproduce_without_mutation(self):
+        before = copy.deepcopy((self.rows, self.source, self.awards, self.manifest))
+        result = self.check()
+        self.assertEqual(result["expectedEntries"], 13)
+        self.assertEqual(result["reviewedEntries"], 13)
+        self.assertEqual(result["decisionFamilies"], 1)
+        self.assertEqual(result["filingDates"], {"2024-06-24": 6, "2024-06-26": 4, "2024-08-02": 3})
+        self.assertEqual(result["multiSolicitationEntries"], 3)
+        self.assertEqual(result["multiServiceAreaEntries"], 1)
+        self.assertEqual(result["currentDescriptionCandidates"], 2)
+        self.assertEqual(result["awardSpecificDatesPromoted"], 0)
+        self.assertEqual(result["historicalExclusionIntervalsPromoted"], 0)
+        self.assertEqual((self.rows, self.source, self.awards, self.manifest), before)
+        self.rows.reverse()
+        self.assertEqual(self.check(), result)
+
+    def test_duplicate_missing_or_extra_normalized_rows_rejected(self):
+        for changed in (self.rows[:-1], self.rows + [self.rows[0]], [self.rows[0]] * 13):
+            with self.subTest(count=len(changed)), self.assertRaisesRegex(ValueError, "off-frame"):
+                audit.docket_timing_diagnostics(changed, self.source, self.awards, self.manifest)
+
+    def test_missing_source_cannot_shrink_denominator(self):
+        self.source["records"].pop()
+        self.rows.pop()
+        with self.assertRaisesRegex(ValueError, "off-frame public"):
+            self.check()
+
+    def test_decision_heading_and_base_aliases_are_bound_to_source(self):
+        self.source["decisionReview"]["caseNumbers"].pop()
+        with self.assertRaisesRegex(ValueError, "case frame differs"):
+            self.check()
+        self.setUp()
+        self.source["decisionReview"]["baseCaseDocketAliases"]["B-422689"] = "B-422689.2"
+        with self.assertRaisesRegex(ValueError, "base docket aliases"):
+            self.check()
+
+    def test_source_native_names_and_many_to_many_scope_are_preserved(self):
+        by_id = {r["docketFileNumber"]: r for r in self.rows}
+        self.assertEqual(by_id["B-422690.1"]["protesterNative"], "Cardinal Health 200, Inc.")
+        self.assertEqual(by_id["B-422690.2"]["solicitationNumbersNative"], "36C10X24R0007;36C10X24R0017")
+        self.assertEqual(by_id["B-422693.3"]["decisionServiceAreas"], "VISN 8;VISN 19;VISN 22;OGA")
+        by_id["B-422690.1"]["protesterNative"] = "Cardinal Health 200, LLC"
+        with self.assertRaisesRegex(ValueError, "normalized field"):
+            self.check()
+
+    def test_changed_field_or_review_invalidates_fingerprints(self):
+        for field in ("filedDate", "decisionDate", "postedDate", "dueDate", "sourceFingerprint", "reviewFingerprint"):
+            with self.subTest(field=field):
+                original = self.rows[0][field]
+                self.rows[0][field] = "2024-01-01"
+                with self.assertRaisesRegex(ValueError, "fingerprint"):
+                    self.check()
+                self.rows[0][field] = original
+        self.source["captureScope"] += " Changed review."
+        with self.assertRaisesRegex(ValueError, "fingerprint"):
+            self.check()
+
+    def test_invalid_source_chronology_rejected_even_after_regeneration(self):
+        for field, value in (("filedDate", "Oct 1, 2024"), ("postedDate", "Sep 15, 2024"), ("dueDate", "Jun 1, 2024")):
+            with self.subTest(field=field):
+                self.setUp()
+                self.source["records"][0]["fields"][field] = value
+                self.rows = audit.docket_timing_rows(self.source)
+                with self.assertRaisesRegex(ValueError, "chronology"):
+                    self.check()
+
+    def test_wrong_decision_link_rejected(self):
+        self.source["records"][0]["fields"]["decisionUrl"] = "https://www.gao.gov/products/b-000001"
+        self.rows = audit.docket_timing_rows(self.source)
+        with self.assertRaisesRegex(ValueError, "decision link"):
+            self.check()
+
+    def test_unresolved_award_date_cannot_be_promoted(self):
+        for field, value in (("piid", "36C10X24N0089"), ("awardTimingStatus", "estimation_ready"), ("independentReviewStatus", "complete")):
+            with self.subTest(field=field):
+                original = self.rows[0][field]
+                self.rows[0][field] = value
+                with self.assertRaisesRegex(ValueError, "claim boundary"):
+                    self.check()
+                self.rows[0][field] = original
+        self.assertTrue(all(not r["filedDate"] for r in audit.read("gao-award-linkage-pilot.csv")))
+        self.assertIsNone(self.awards["gaoReview"]["filedDate"])
+
+    def test_overall_denial_cannot_erase_dismissed_issues(self):
+        self.source["decisionReview"]["supplementalOciDisposition"] = "denied"
+        with self.assertRaisesRegex(ValueError, "claim boundary"):
+            self.check()
+
+    def test_reported_sam_check_cannot_become_historical_interval(self):
+        for field, value in (("underlyingRecordsRead", True), ("checkDate", "2024-05-31"), ("historicalIntervalEligible", True)):
+            with self.subTest(field=field):
+                self.setUp()
+                self.source["decisionReview"]["reportedSamCheck"][field] = value
+                self.rows = audit.docket_timing_rows(self.source)
+                with self.assertRaisesRegex(ValueError, "historical interval"):
+                    self.check()
+
+    def test_current_description_cannot_be_promoted_or_mapped_by_elimination(self):
+        self.source["awardDescriptionChecks"][0]["originalActionMappingVerified"] = True
+        self.rows = audit.docket_timing_rows(self.source)
+        with self.assertRaisesRegex(ValueError, "current-description"):
+            self.check()
+        self.setUp()
+        self.source["awardDescriptionChecks"][2]["explicitServiceAreaCandidate"] = "VISN 8"
+        self.rows = audit.docket_timing_rows(self.source)
+        with self.assertRaisesRegex(ValueError, "current-description"):
+            self.check()
+
+    def test_absent_archive_column_cannot_be_changed_to_empty_cell(self):
+        self.source["archiveFieldCheck"]["columns"].append("solicitation_identifier")
+        self.rows = audit.docket_timing_rows(self.source)
+        with self.assertRaisesRegex(ValueError, "absent-column"):
+            self.check()
+
+    def test_archive_provenance_and_original_action_identity_rejected_on_drift(self):
+        self.source["archiveFieldCheck"]["zipSha256"] = "0" * 64
+        self.rows = audit.docket_timing_rows(self.source)
+        with self.assertRaisesRegex(ValueError, "Archived field-check provenance"):
+            self.check()
+        self.setUp()
+        self.source["archiveFieldCheck"]["selectedOriginalActions"][0]["fields"]["parent_award_id_piid"] = "WRONG"
+        self.rows = audit.docket_timing_rows(self.source)
+        with self.assertRaisesRegex(ValueError, "original-action identity"):
+            self.check()
+
+
 if __name__ == "__main__":
     unittest.main()

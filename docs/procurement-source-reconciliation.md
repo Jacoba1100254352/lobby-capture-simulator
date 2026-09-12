@@ -56,7 +56,9 @@ to official USAspending award and transaction records. The decision heading,
 opening paragraphs, digest and footnotes 1-5 identify the date, VA, awardee
 Medline Industries, LP, and challenged delivery-order IDs. Overall disposition
 is denied, with supplemental organizational-conflict allegations dismissed;
-the allegations are not findings of misconduct. Filed dates remain unknown.
+the allegations are not findings of misconduct. The separate docket ledger below
+now supplies filing dates at listed-case grain; award-specific dates remain
+unassigned.
 
 | Award PIID | Original action date | Action obligation, dollars | Frozen small-panel candidates | Archived bulk matches |
 | --- | --- | ---: | ---: | ---: |
@@ -100,6 +102,92 @@ representative protest denominator, historical exclusion intervals, or causal
 calibration. The offline audit checks the saved source bridge and bulk-manifest
 identity. It does not independently authenticate the GAO coding or reconstruct
 the entire ignored bulk file from its four-row extract.
+
+### Filing-date coverage and unresolved award mappings
+
+Reviewed September 12, 2026. `gao-docket-timing-pilot.csv` retains all **13 case
+numbers listed in the decision**, including the initial and related entries.
+Each public docket was read in the ordinary browser and links to that same
+September 16, 2024 decision. The base numbers in the decision appear with `.1`
+in the public docket; four explicit, source-specific aliases preserve both forms.
+This is complete coverage of the decision's listed cases, not a census of all
+protests about these awards or a representative procurement population.
+
+| Public filing date | Listed docket entries | Source location |
+| --- | ---: | --- |
+| June 24, 2024 | 6 | Each docket's Filed Date field |
+| June 26, 2024 | 4 | Each docket's Filed Date field |
+| August 2, 2024 | 3 | Each docket's Filed Date field |
+
+All 13 pages display September 16, 2024 for both Decision Date and Posted on.
+The displayed due dates are October 2, October 4, and November 12 respectively.
+Those deadlines are not actual decision dates, filing dates, or evidence of a
+continued proceeding after the September decision. A displayed posting date is
+not independent proof of when a redacted decision first became publicly available.
+[GAO's FAQ](https://www.gao.gov/legal/bid-protests/faqs) distinguishes decision
+dates from public release and explains that routine dismissals are generally
+not published. The selected decision's overall denial also does not overwrite
+its dismissed supplemental organizational-conflict grounds.
+
+The source JSON preserves each docket URL and its displayed protester,
+solicitation, agency, date and outcome fields. In particular, Cardinal appears
+as `Cardinal Health 200, Inc.` on its docket pages but `Cardinal Health 200, LLC`
+in the decision. That source-native difference is retained, not silently resolved
+as a verified legal-entity alias. Surrounding whitespace alone is normalized.
+
+Three Concordance dockets list two solicitations:
+[B-422690.2](https://www.gao.gov/docket/b-422690.2),
+[B-422692.1](https://www.gao.gov/docket/b-422692.1), and
+[B-422693.1](https://www.gao.gov/docket/b-422693.1) each include `36C10X24R0007`
+alongside a different solicitation. The decision's footnotes associate those
+cases with VISN 22, OGA, and VISN 19 respectively, while footnote 6 explicitly
+associates `36C10X24R0007` with VISN 8. Conversely,
+[B-422693.3](https://www.gao.gov/docket/b-422693.3) displays only
+`36C10X24R0014`, but footnotes 2-5 include it in all four service areas.
+Consolidation may explain broader docket metadata, but that explanation has not
+been verified. Both representations remain visible. Neither source justifies
+matching docket cases to delivery orders by list order or treating 13 entries
+as 13 independent award events.
+
+Four current USAspending award-detail responses were rechecked. Their latest
+contract-data `solicitation_identifier` fields are null. Current descriptions
+explicitly name VISN 19 for `36C10X24N0074` and VISN 22 for `36C10X24N0108`;
+these are two service-area candidates, not original-action mapping clearance.
+The other descriptions are not assigned by elimination. Those descriptions
+reflect a September 2026 source vintage with 2026 last-modified dates.
+
+The manifest-selected VA April-June 2024 ZIP was reopened, and its SHA-256 again
+matched `9e114859a0dd24de1118cd87070d4811f4ac7522f2ad164fed531aac3b5fcaae`.
+Original actions appear at CSV rows 17136, 17138, 17139 and 17142, including the
+header, in `Contracts_PrimeTransactions_2026-06-13_H07M30S14_1.csv`.
+The export's 13-column schema contains neither description nor solicitation
+columns. These are absent columns, not observed null cells. The saved excerpts
+retain source parent IDs, action dates, modifications, UEIs and dollar amounts.
+They confirm the original actions but cannot adjudicate the service-area mapping.
+
+The decision's Affirmative Responsibility Determination section also recounts
+the contracting officer's SAM review as finding no active or inactive exclusions
+for Medline, citing the VISN 8 decision document at pages 47-48. The underlying
+SAM and agency records have not been independently read, and the check date is
+not specified in the reviewed paragraph. This is a decision-reported check,
+not a reconstructed historical exclusion interval or proof of no misconduct.
+It does not populate `sam-exclusion-overlay.csv`.
+
+**Validation assessment: share with caveats for documentary timing only.**
+`gao-docket-timing-source.json` records the review frame, field projections,
+decision footnotes, current award-response hashes and archive excerpts. Direct
+docket downloading returned HTTP 403; the browser could display every page but
+could not export them. No original HTML archive is claimed. Projected-source
+fingerprints bind the reviewed fields and coding context, not original web bytes.
+The offline audit and `notebooks/empirical-expansion-review.ipynb` check completeness,
+aliases, date conversion and chronology, many-to-many scope, source identity and
+unsupported promotion. They do not independently authenticate the transcription.
+
+The remaining high-impact requirements are original-action solicitation/service-area
+evidence and independent source/coding review. Until then, all four award-pilot
+`filedDate` cells and all docket-ledger `piid` cells stay blank. Even a later
+verified mapping would require an explicit initial-versus-supplemental timing
+definition and a representative denominator before protest-rate estimation.
 
 ## Prespecified SAM reconciliation population
 

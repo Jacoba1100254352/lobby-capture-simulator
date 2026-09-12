@@ -104,7 +104,15 @@ Status: `source_linked_not_estimation_ready`
 
 linkedAwards=4; consolidatedDecisions=1; frozenPanelCandidateRows=0; archivedBulkMatches=4; observedOriginalActions=4; sourceVintage=2026-09-12
 
-Remaining: Obtain independent review, filed dates and a representative award/protest frame. Four awards in one selected consolidated decision are not four independent events; current award totals and latest offer fields are not original-action values.
+Remaining: Obtain independent review, award-specific docket mappings and a representative award/protest frame. The separate ledger supplies dates for all 13 listed docket entries, not one verified filing date per award. Four awards in one selected consolidated decision are not four independent events; current award totals and latest offer fields are not original-action values.
+
+## gao-docket-timing-pilot
+
+Status: `docket_timing_verified_award_mapping_unresolved`
+
+expectedEntries=13; reviewedEntries=13; decisionFamilies=1; filingDates={'2024-06-24': 6, '2024-06-26': 4, '2024-08-02': 3}; multiSolicitationEntries=3; multiServiceAreaEntries=1; currentDescriptionCandidates=2; awardSpecificDatesPromoted=0; historicalExclusionIntervalsPromoted=0
+
+Remaining: Review original-action solicitation/service-area links and obtain independent coding review. Three docket entries list multiple solicitations and one spans four decision service areas. Current descriptions supply two candidates only; the archived export lacks description/solicitation columns. A GAO-reported SAM check has no verified date or underlying interval. No protest rate, award-specific timing or historical exclusion coverage is promoted.
 
 ## procurement-archived-bulk-frame
 

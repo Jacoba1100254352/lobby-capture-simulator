@@ -1,0 +1,467 @@
+{
+  "schema": "gao-docket-timing-source-v1",
+  "reviewedDate": "2026-09-12",
+  "reviewer": "codex-source-review",
+  "independentReviewStatus": "pending",
+  "captureMethod": "public_browser_field_transcription",
+  "rawPageArchiveAvailable": false,
+  "captureScope": "Public displayed docket fields and linked public redacted decision. Surrounding whitespace collapsed; native names and semicolon-separated solicitation strings retained. No protected pleadings or original agency reports read. Fingerprints bind reviewed projections, not original HTML bytes.",
+  "accessNotes": "A direct docket download returned HTTP 403 and some web-reader opens failed. All 13 listed docket entries were readable in the ordinary public browser without login. Browser page export was unsupported; no full-page archive was saved.",
+  "decisionReview": {
+    "decisionFamilyId": "B-422689-consolidated",
+    "sourceUrl": "https://www.gao.gov/products/b-422689,b-422689.2,b-422689.3,b-422689.4,b-422690,b-422690.2,b-422690.3,b-422690.4,b-422692,b-422692.2,b-422693,b-422693.2,b-422693.3",
+    "decisionDate": "2024-09-16",
+    "sourceLocation": "File heading; DECISION opening paragraphs; DIGEST 2-4; BACKGROUND service areas; footnotes 1-6; Affirmative Responsibility Determination.",
+    "caseNumbers": [
+      "B-422689",
+      "B-422689.2",
+      "B-422689.3",
+      "B-422689.4",
+      "B-422690",
+      "B-422690.2",
+      "B-422690.3",
+      "B-422690.4",
+      "B-422692",
+      "B-422692.2",
+      "B-422693",
+      "B-422693.2",
+      "B-422693.3"
+    ],
+    "baseCaseDocketAliases": {
+      "B-422689": "B-422689.1",
+      "B-422690": "B-422690.1",
+      "B-422692": "B-422692.1",
+      "B-422693": "B-422693.1"
+    },
+    "aliasBasis": "Each public base docket displays the .1 suffix and links to this decision, whose File heading uses the unsuffixed base number.",
+    "serviceAreaFootnotes": [
+      {
+        "serviceArea": "VISN 8",
+        "footnote": 2,
+        "caseNumbers": [
+          "B-422689",
+          "B-422689.2",
+          "B-422689.3",
+          "B-422689.4",
+          "B-422693.3"
+        ]
+      },
+      {
+        "serviceArea": "VISN 19",
+        "footnote": 3,
+        "caseNumbers": [
+          "B-422693",
+          "B-422693.2",
+          "B-422693.3"
+        ]
+      },
+      {
+        "serviceArea": "VISN 22",
+        "footnote": 4,
+        "caseNumbers": [
+          "B-422690",
+          "B-422690.2",
+          "B-422690.3",
+          "B-422690.4",
+          "B-422693.3"
+        ]
+      },
+      {
+        "serviceArea": "OGA",
+        "footnote": 5,
+        "caseNumbers": [
+          "B-422692",
+          "B-422692.2",
+          "B-422693.3"
+        ]
+      }
+    ],
+    "explicitSolicitationServiceArea": {
+      "solicitationNumber": "36C10X24R0007",
+      "serviceArea": "VISN 8",
+      "footnote": 6
+    },
+    "overallOutcome": "denied",
+    "supplementalOciDisposition": "dismissed",
+    "originalActionDocketPairingStatus": "unresolved",
+    "reportedSamCheck": {
+      "sourceLocation": "Affirmative Responsibility Determination, paragraph beginning Instead, the record shows; citing AR Tab 10.V8, VISN 8 BVDD at 47-48.",
+      "reportedFinding": "GAO recounts the contracting officer's SAM review as finding no active or inactive exclusions for Medline.",
+      "underlyingRecordsRead": false,
+      "checkDate": null,
+      "historicalIntervalEligible": false,
+      "limitation": "A decision-reported check is not an independently inspected SAM record, dated exclusion interval, or proof of no misconduct."
+    }
+  },
+  "records": [
+    {
+      "sourceUrl": "https://www.gao.gov/docket/b-422689.1",
+      "fields": {
+        "fileNumber": "B-422689.1",
+        "protester": "Owens & Minor Distribution, Inc.",
+        "solicitationNumber": "36C10X24R0007",
+        "agency": "Department of Veterans Affairs : Department of Veterans Affairs",
+        "outcome": "Denied",
+        "decisionDate": "Sep 16, 2024",
+        "filedDate": "Jun 24, 2024",
+        "dueDate": "Oct 2, 2024",
+        "postedDate": "Sep 16, 2024",
+        "caseType": "Bid Protest",
+        "decisionUrl": "https://www.gao.gov/products/b-422689,b-422689.2,b-422689.3,b-422689.4,b-422690,b-422690.2,b-422690.3,b-422690.4,b-422692,b-422692.2,b-422693,b-422693.2,b-422693.3"
+      }
+    },
+    {
+      "sourceUrl": "https://www.gao.gov/docket/b-422689.2",
+      "fields": {
+        "fileNumber": "B-422689.2",
+        "protester": "Concordance Healthcare Solutions, LLC",
+        "solicitationNumber": "36C10X24R0007",
+        "agency": "Department of Veterans Affairs : Department of Veterans Affairs",
+        "outcome": "Denied",
+        "decisionDate": "Sep 16, 2024",
+        "filedDate": "Jun 24, 2024",
+        "dueDate": "Oct 2, 2024",
+        "postedDate": "Sep 16, 2024",
+        "caseType": "Bid Protest",
+        "decisionUrl": "https://www.gao.gov/products/b-422689,b-422689.2,b-422689.3,b-422689.4,b-422690,b-422690.2,b-422690.3,b-422690.4,b-422692,b-422692.2,b-422693,b-422693.2,b-422693.3"
+      }
+    },
+    {
+      "sourceUrl": "https://www.gao.gov/docket/b-422689.3",
+      "fields": {
+        "fileNumber": "B-422689.3",
+        "protester": "Concordance Healthcare Solutions, LLC",
+        "solicitationNumber": "36C10X24R0007",
+        "agency": "Department of Veterans Affairs : Department of Veterans Affairs",
+        "outcome": "Denied",
+        "decisionDate": "Sep 16, 2024",
+        "filedDate": "Jun 26, 2024",
+        "dueDate": "Oct 4, 2024",
+        "postedDate": "Sep 16, 2024",
+        "caseType": "Bid Protest",
+        "decisionUrl": "https://www.gao.gov/products/b-422689,b-422689.2,b-422689.3,b-422689.4,b-422690,b-422690.2,b-422690.3,b-422690.4,b-422692,b-422692.2,b-422693,b-422693.2,b-422693.3"
+      }
+    },
+    {
+      "sourceUrl": "https://www.gao.gov/docket/b-422689.4",
+      "fields": {
+        "fileNumber": "B-422689.4",
+        "protester": "Owens & Minor Distribution, Inc.",
+        "solicitationNumber": "36C10X24R0007",
+        "agency": "Department of Veterans Affairs : Department of Veterans Affairs",
+        "outcome": "Denied",
+        "decisionDate": "Sep 16, 2024",
+        "filedDate": "Aug 2, 2024",
+        "dueDate": "Nov 12, 2024",
+        "postedDate": "Sep 16, 2024",
+        "caseType": "Bid Protest",
+        "decisionUrl": "https://www.gao.gov/products/b-422689,b-422689.2,b-422689.3,b-422689.4,b-422690,b-422690.2,b-422690.3,b-422690.4,b-422692,b-422692.2,b-422693,b-422693.2,b-422693.3"
+      }
+    },
+    {
+      "sourceUrl": "https://www.gao.gov/docket/b-422690.1",
+      "fields": {
+        "fileNumber": "B-422690.1",
+        "protester": "Cardinal Health 200, Inc.",
+        "solicitationNumber": "36C10X24R0017",
+        "agency": "Department of Veterans Affairs : Department of Veterans Affairs",
+        "outcome": "Denied",
+        "decisionDate": "Sep 16, 2024",
+        "filedDate": "Jun 24, 2024",
+        "dueDate": "Oct 2, 2024",
+        "postedDate": "Sep 16, 2024",
+        "caseType": "Bid Protest",
+        "decisionUrl": "https://www.gao.gov/products/b-422689,b-422689.2,b-422689.3,b-422689.4,b-422690,b-422690.2,b-422690.3,b-422690.4,b-422692,b-422692.2,b-422693,b-422693.2,b-422693.3"
+      }
+    },
+    {
+      "sourceUrl": "https://www.gao.gov/docket/b-422690.2",
+      "fields": {
+        "fileNumber": "B-422690.2",
+        "protester": "Concordance Healthcare Solutions, LLC",
+        "solicitationNumber": "36C10X24R0007;36C10X24R0017",
+        "agency": "Department of Veterans Affairs : Department of Veterans Affairs",
+        "outcome": "Denied",
+        "decisionDate": "Sep 16, 2024",
+        "filedDate": "Jun 24, 2024",
+        "dueDate": "Oct 2, 2024",
+        "postedDate": "Sep 16, 2024",
+        "caseType": "Bid Protest",
+        "decisionUrl": "https://www.gao.gov/products/b-422689,b-422689.2,b-422689.3,b-422689.4,b-422690,b-422690.2,b-422690.3,b-422690.4,b-422692,b-422692.2,b-422693,b-422693.2,b-422693.3"
+      }
+    },
+    {
+      "sourceUrl": "https://www.gao.gov/docket/b-422690.3",
+      "fields": {
+        "fileNumber": "B-422690.3",
+        "protester": "Concordance Healthcare Solutions, LLC",
+        "solicitationNumber": "36C10X24R0017",
+        "agency": "Department of Veterans Affairs : Department of Veterans Affairs",
+        "outcome": "Denied",
+        "decisionDate": "Sep 16, 2024",
+        "filedDate": "Jun 26, 2024",
+        "dueDate": "Oct 4, 2024",
+        "postedDate": "Sep 16, 2024",
+        "caseType": "Bid Protest",
+        "decisionUrl": "https://www.gao.gov/products/b-422689,b-422689.2,b-422689.3,b-422689.4,b-422690,b-422690.2,b-422690.3,b-422690.4,b-422692,b-422692.2,b-422693,b-422693.2,b-422693.3"
+      }
+    },
+    {
+      "sourceUrl": "https://www.gao.gov/docket/b-422690.4",
+      "fields": {
+        "fileNumber": "B-422690.4",
+        "protester": "Cardinal Health 200, Inc.",
+        "solicitationNumber": "36C10X24R0017",
+        "agency": "Department of Veterans Affairs : Department of Veterans Affairs",
+        "outcome": "Denied",
+        "decisionDate": "Sep 16, 2024",
+        "filedDate": "Aug 2, 2024",
+        "dueDate": "Nov 12, 2024",
+        "postedDate": "Sep 16, 2024",
+        "caseType": "Bid Protest",
+        "decisionUrl": "https://www.gao.gov/products/b-422689,b-422689.2,b-422689.3,b-422689.4,b-422690,b-422690.2,b-422690.3,b-422690.4,b-422692,b-422692.2,b-422693,b-422693.2,b-422693.3"
+      }
+    },
+    {
+      "sourceUrl": "https://www.gao.gov/docket/b-422692.1",
+      "fields": {
+        "fileNumber": "B-422692.1",
+        "protester": "Concordance Healthcare Solutions, LLC",
+        "solicitationNumber": "36C10X24R0007;36C10X24R0020",
+        "agency": "Department of Veterans Affairs : Department of Veterans Affairs",
+        "outcome": "Denied",
+        "decisionDate": "Sep 16, 2024",
+        "filedDate": "Jun 24, 2024",
+        "dueDate": "Oct 2, 2024",
+        "postedDate": "Sep 16, 2024",
+        "caseType": "Bid Protest",
+        "decisionUrl": "https://www.gao.gov/products/b-422689,b-422689.2,b-422689.3,b-422689.4,b-422690,b-422690.2,b-422690.3,b-422690.4,b-422692,b-422692.2,b-422693,b-422693.2,b-422693.3"
+      }
+    },
+    {
+      "sourceUrl": "https://www.gao.gov/docket/b-422692.2",
+      "fields": {
+        "fileNumber": "B-422692.2",
+        "protester": "Concordance Healthcare Solutions, LLC",
+        "solicitationNumber": "36C10X24R0020",
+        "agency": "Department of Veterans Affairs : Department of Veterans Affairs",
+        "outcome": "Denied",
+        "decisionDate": "Sep 16, 2024",
+        "filedDate": "Jun 26, 2024",
+        "dueDate": "Oct 4, 2024",
+        "postedDate": "Sep 16, 2024",
+        "caseType": "Bid Protest",
+        "decisionUrl": "https://www.gao.gov/products/b-422689,b-422689.2,b-422689.3,b-422689.4,b-422690,b-422690.2,b-422690.3,b-422690.4,b-422692,b-422692.2,b-422693,b-422693.2,b-422693.3"
+      }
+    },
+    {
+      "sourceUrl": "https://www.gao.gov/docket/b-422693.1",
+      "fields": {
+        "fileNumber": "B-422693.1",
+        "protester": "Concordance Healthcare Solutions, LLC",
+        "solicitationNumber": "36C10X24R0007;36C10X24R0014",
+        "agency": "Department of Veterans Affairs : Department of Veterans Affairs",
+        "outcome": "Denied",
+        "decisionDate": "Sep 16, 2024",
+        "filedDate": "Jun 24, 2024",
+        "dueDate": "Oct 2, 2024",
+        "postedDate": "Sep 16, 2024",
+        "caseType": "Bid Protest",
+        "decisionUrl": "https://www.gao.gov/products/b-422689,b-422689.2,b-422689.3,b-422689.4,b-422690,b-422690.2,b-422690.3,b-422690.4,b-422692,b-422692.2,b-422693,b-422693.2,b-422693.3"
+      }
+    },
+    {
+      "sourceUrl": "https://www.gao.gov/docket/b-422693.2",
+      "fields": {
+        "fileNumber": "B-422693.2",
+        "protester": "Concordance Healthcare Solutions, LLC",
+        "solicitationNumber": "36C10X24R0014",
+        "agency": "Department of Veterans Affairs : Department of Veterans Affairs",
+        "outcome": "Denied",
+        "decisionDate": "Sep 16, 2024",
+        "filedDate": "Jun 26, 2024",
+        "dueDate": "Oct 4, 2024",
+        "postedDate": "Sep 16, 2024",
+        "caseType": "Bid Protest",
+        "decisionUrl": "https://www.gao.gov/products/b-422689,b-422689.2,b-422689.3,b-422689.4,b-422690,b-422690.2,b-422690.3,b-422690.4,b-422692,b-422692.2,b-422693,b-422693.2,b-422693.3"
+      }
+    },
+    {
+      "sourceUrl": "https://www.gao.gov/docket/b-422693.3",
+      "fields": {
+        "fileNumber": "B-422693.3",
+        "protester": "Concordance Healthcare Solutions, LLC",
+        "solicitationNumber": "36C10X24R0014",
+        "agency": "Department of Veterans Affairs : Department of Veterans Affairs",
+        "outcome": "Denied",
+        "decisionDate": "Sep 16, 2024",
+        "filedDate": "Aug 2, 2024",
+        "dueDate": "Nov 12, 2024",
+        "postedDate": "Sep 16, 2024",
+        "caseType": "Bid Protest",
+        "decisionUrl": "https://www.gao.gov/products/b-422689,b-422689.2,b-422689.3,b-422689.4,b-422690,b-422690.2,b-422690.3,b-422690.4,b-422692,b-422692.2,b-422693,b-422693.2,b-422693.3"
+      }
+    }
+  ],
+  "archiveFieldCheck": {
+    "columns": [
+      "award_id_piid",
+      "parent_award_id_piid",
+      "modification_number",
+      "federal_action_obligation",
+      "action_date",
+      "recipient_name",
+      "recipient_uei",
+      "awarding_agency_name",
+      "awarding_sub_agency_name",
+      "award_type",
+      "type_of_contract_pricing",
+      "extent_competed",
+      "number_of_offers_received"
+    ],
+    "member": "Contracts_PrimeTransactions_2026-06-13_H07M30S14_1.csv",
+    "scope": "Reopened this one manifest-selected archive and selected four original actions. Description and solicitation columns are absent, not observed empty source cells.",
+    "selectedOriginalActions": [
+      {
+        "csvRowIncludingHeader": 17136,
+        "fields": {
+          "action_date": "2024-05-31",
+          "award_id_piid": "36C10X24N0074",
+          "award_type": "DELIVERY ORDER",
+          "awarding_agency_name": "Department of Veterans Affairs",
+          "awarding_sub_agency_name": "Department of Veterans Affairs",
+          "extent_competed": "FULL AND OPEN COMPETITION",
+          "federal_action_obligation": "10000.00",
+          "modification_number": "0",
+          "number_of_offers_received": "4",
+          "parent_award_id_piid": "36C10X23D0032",
+          "recipient_name": "MEDLINE INDUSTRIES, LP",
+          "recipient_uei": "DMPAKJ9N9K66",
+          "type_of_contract_pricing": "FIRM FIXED PRICE"
+        }
+      },
+      {
+        "csvRowIncludingHeader": 17138,
+        "fields": {
+          "action_date": "2024-05-31",
+          "award_id_piid": "36C10X24N0088",
+          "award_type": "DELIVERY ORDER",
+          "awarding_agency_name": "Department of Veterans Affairs",
+          "awarding_sub_agency_name": "Department of Veterans Affairs",
+          "extent_competed": "FULL AND OPEN COMPETITION",
+          "federal_action_obligation": "10000.00",
+          "modification_number": "0",
+          "number_of_offers_received": "2",
+          "parent_award_id_piid": "36C10X23D0032",
+          "recipient_name": "MEDLINE INDUSTRIES, LP",
+          "recipient_uei": "DMPAKJ9N9K66",
+          "type_of_contract_pricing": "FIRM FIXED PRICE"
+        }
+      },
+      {
+        "csvRowIncludingHeader": 17139,
+        "fields": {
+          "action_date": "2024-05-31",
+          "award_id_piid": "36C10X24N0089",
+          "award_type": "DELIVERY ORDER",
+          "awarding_agency_name": "Department of Veterans Affairs",
+          "awarding_sub_agency_name": "Department of Veterans Affairs",
+          "extent_competed": "FULL AND OPEN COMPETITION",
+          "federal_action_obligation": "10000.00",
+          "modification_number": "0",
+          "number_of_offers_received": "4",
+          "parent_award_id_piid": "36C10X23D0032",
+          "recipient_name": "MEDLINE INDUSTRIES, LP",
+          "recipient_uei": "DMPAKJ9N9K66",
+          "type_of_contract_pricing": "FIRM FIXED PRICE"
+        }
+      },
+      {
+        "csvRowIncludingHeader": 17142,
+        "fields": {
+          "action_date": "2024-05-31",
+          "award_id_piid": "36C10X24N0108",
+          "award_type": "DELIVERY ORDER",
+          "awarding_agency_name": "Department of Veterans Affairs",
+          "awarding_sub_agency_name": "Department of Veterans Affairs",
+          "extent_competed": "FULL AND OPEN COMPETITION",
+          "federal_action_obligation": "10000.00",
+          "modification_number": "0",
+          "number_of_offers_received": "4",
+          "parent_award_id_piid": "36C10X23D0032",
+          "recipient_name": "MEDLINE INDUSTRIES, LP",
+          "recipient_uei": "DMPAKJ9N9K66",
+          "type_of_contract_pricing": "FIRM FIXED PRICE"
+        }
+      }
+    ],
+    "sourcePath": "data/raw/usaspending-transaction-downloads/department-of-veterans-affairs-2024-04-01-2024-06-30.zip",
+    "zipSha256": "9e114859a0dd24de1118cd87070d4811f4ac7522f2ad164fed531aac3b5fcaae"
+  },
+  "awardDescriptionChecks": [
+    {
+      "explicitServiceAreaCandidate": "VISN 19",
+      "fields": {
+        "date_signed": "2024-05-31",
+        "description": "VISN 19 MEDICAL/SURGICAL PRIME VENDOR GENERATION-Z VERSION 1 (MSPV GEN-Z V1) DELIVERY ORDER AWARD TO PROVIDE DISTRIBUTION AND SUPPLY MANAGEMENT FOR VA MEDICAL CENTERS.",
+        "generated_unique_award_id": "CONT_AWD_36C10X24N0074_3600_36C10X23D0032_3600",
+        "last_modified_date": "2026-04-02",
+        "piid": "36C10X24N0074",
+        "solicitation_identifier": null
+      },
+      "originalActionMappingVerified": false,
+      "projectionOnly": true,
+      "rawResponseSha256": "3591fa347b6bf3d4efc8064adab3025a9d4a7205c2b0b21c323f61111040c415",
+      "retrievedDate": "2026-09-12",
+      "sourceUrl": "https://api.usaspending.gov/api/v2/awards/CONT_AWD_36C10X24N0074_3600_36C10X23D0032_3600/"
+    },
+    {
+      "explicitServiceAreaCandidate": null,
+      "fields": {
+        "date_signed": "2024-05-31",
+        "description": "MEDICAL/SURGICAL PRIME VENDOR GENERATION-Z VERSION 1 (MSPV GEN-Z V1) IDIQ AWARD TO PROVIDE DISTRIBUTION AND SUPPLY MANAGEMENT FOR VA MEDICAL CENTERS AND OTHER GOVERNMENT AGENCIES.",
+        "generated_unique_award_id": "CONT_AWD_36C10X24N0088_3600_36C10X23D0032_3600",
+        "last_modified_date": "2026-04-02",
+        "piid": "36C10X24N0088",
+        "solicitation_identifier": null
+      },
+      "originalActionMappingVerified": false,
+      "projectionOnly": true,
+      "rawResponseSha256": "28d72342efe98d9d5f9108e81fd3c12ea6f3b96584b808d76494fc67a32c2fc9",
+      "retrievedDate": "2026-09-12",
+      "sourceUrl": "https://api.usaspending.gov/api/v2/awards/CONT_AWD_36C10X24N0088_3600_36C10X23D0032_3600/"
+    },
+    {
+      "explicitServiceAreaCandidate": null,
+      "fields": {
+        "date_signed": "2024-05-31",
+        "description": "MEDICAL/SURGICAL PRIME VENDOR GENERATION-Z VERSION 1 (MSPV GEN-Z V1) IDIQ AWARD TO PROVIDE DISTRIBUTION AND SUPPLY MANAGEMENT FOR VA MEDICAL CENTERS.",
+        "generated_unique_award_id": "CONT_AWD_36C10X24N0089_3600_36C10X23D0032_3600",
+        "last_modified_date": "2026-04-28",
+        "piid": "36C10X24N0089",
+        "solicitation_identifier": null
+      },
+      "originalActionMappingVerified": false,
+      "projectionOnly": true,
+      "rawResponseSha256": "2732b90c0acbec5aef243af93e6f9cad9eef60baf7fc331a50c826fa7923366a",
+      "retrievedDate": "2026-09-12",
+      "sourceUrl": "https://api.usaspending.gov/api/v2/awards/CONT_AWD_36C10X24N0089_3600_36C10X23D0032_3600/"
+    },
+    {
+      "explicitServiceAreaCandidate": "VISN 22",
+      "fields": {
+        "date_signed": "2024-05-31",
+        "description": "MEDICAL/SURGICAL PRIME VENDOR GENERATION-Z VERSION 1 (MSPV GEN-Z V1) IDIQ AWARD TO PROVIDE DISTRIBUTION AND SUPPLY MANAGEMENT FOR VA MEDICAL CENTERS FOR VISN 22.",
+        "generated_unique_award_id": "CONT_AWD_36C10X24N0108_3600_36C10X23D0032_3600",
+        "last_modified_date": "2026-04-02",
+        "piid": "36C10X24N0108",
+        "solicitation_identifier": null
+      },
+      "originalActionMappingVerified": false,
+      "projectionOnly": true,
+      "rawResponseSha256": "26db0b63a2e79ac9c813cb2023dad525aa2504b3941ad6a566f353105b6d18c8",
+      "retrievedDate": "2026-09-12",
+      "sourceUrl": "https://api.usaspending.gov/api/v2/awards/CONT_AWD_36C10X24N0108_3600_36C10X23D0032_3600/"
+    }
+  ]
+}

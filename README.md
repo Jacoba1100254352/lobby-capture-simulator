@@ -202,6 +202,16 @@ For the GAO protest overlay, `make gao-protest-feed-preflight` uses the no-key G
 
 `make tables` regenerates LaTeX table files under `paper/tables/` from the committed report CSV snapshots. `make figures` regenerates paper interaction figures under `paper/figures/`. `make paper` runs both generators before building the local PDF. Table selection lives in `paper/tables.yml`, so paper row/column/caption edits do not require changing the generator.
 
+The separate [GAO docket timing review](docs/procurement-source-reconciliation.md#filing-date-coverage-and-unresolved-award-mappings)
+covers all thirteen entries listed in the selected FY2024 consolidated decision.
+It preserves six June 24, four June 26 and three August 2 filing dates, alongside
+source-native solicitation fields and the decision's service-area footnotes.
+This improves documentary timing without assigning an unsupported filing date to
+each award, converting current descriptions into original-action facts, or treating
+a decision-reported SAM check as historical exclusion coverage. Its source products
+accompany the empirical audit and submission packages; the reproducible checks
+are in the repository's `notebooks/empirical-expansion-review.ipynb`.
+
 ## Paper and Submission Target
 
 The primary paper target is now **Regulation & Governance**. The default build, `make paper`, produces a compile-stable local manuscript from `paper/strategic-channel-substitution-regulatory-capture.tex`. `make paper-word-count` estimates the manuscript against the reported 8,000-10,000-word preferred Regulation & Governance range, including generated references when `paper/strategic-channel-substitution-regulatory-capture.bbl` exists.

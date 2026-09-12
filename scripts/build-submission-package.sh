@@ -135,6 +135,8 @@ for source_product in \
   comment-response-document-source.json \
   gao-award-linkage-pilot.csv \
   gao-award-linkage-source.json \
+  gao-docket-timing-pilot.csv \
+  gao-docket-timing-source.json \
   procurement-bulk-frame-profile.json \
   procurement-bulk-type-review.json \
   sam-fpds-action-history-crosswalk.csv \
