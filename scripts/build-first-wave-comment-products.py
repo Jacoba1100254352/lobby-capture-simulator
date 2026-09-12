@@ -73,6 +73,10 @@ def main() -> int:
     parser.add_argument("--workers", type=int, default=int_env("REGULATIONS_COMMENT_DETAIL_WORKERS", 4))
     parser.add_argument("--base", default=os.environ.get("REGULATIONS_API_BASE", "https://api.regulations.gov/v4"))
     parser.add_argument("--output-dir", type=Path, default=OUTPUT_DIR)
+    parser.add_argument(
+        "--comment-ids-from", type=Path,
+        help="Refresh exactly the IDs in an existing corpus CSV, preserving the sampled cohort.",
+    )
     args = parser.parse_args()
 
     api_key = os.environ.get("REGULATIONS_API_KEY", "").strip()
@@ -85,8 +89,11 @@ def main() -> int:
     if args.workers < 1:
         raise SystemExit("--workers must be positive.")
 
-    comment_ids = search_comment_ids(args.base.rstrip("/"), api_key, args.docket_id, args.agency, args.max_comments, args.page_size)
-    if len(comment_ids) < args.max_comments:
+    if args.comment_ids_from:
+        comment_ids = existing_comment_ids(args.comment_ids_from, args.docket_id)
+    else:
+        comment_ids = search_comment_ids(args.base.rstrip("/"), api_key, args.docket_id, args.agency, args.max_comments, args.page_size)
+    if not args.comment_ids_from and len(comment_ids) < args.max_comments:
         raise SystemExit(
             f"Only found {len(comment_ids)} comments for {args.docket_id}; "
             f"{args.max_comments} required for the first-wave source-product gate."
@@ -94,6 +101,8 @@ def main() -> int:
 
     details = fetch_comment_details(args.base.rstrip("/"), api_key, comment_ids, args.workers)
     corpus_rows = [comment_corpus_row(args.base.rstrip("/"), detail) for detail in details]
+    if any(row["docketId"] != args.docket_id for row in corpus_rows):
+        raise SystemExit("Comment detail docket mismatch; no source products written.")
     cluster_rows = comment_cluster_rows(corpus_rows, details)
     linkage_rows = agency_response_final_rule_linkage_rows(corpus_rows, cluster_rows)
 
@@ -154,6 +163,17 @@ def main() -> int:
     print(f"Wrote {args.output_dir / 'comment-template-clusters.csv'}")
     print(f"Wrote {args.output_dir / 'agency-response-final-rule-linkage.csv'}")
     return 0
+
+
+def existing_comment_ids(path: Path, docket_id: str) -> list[str]:
+    with path.open(newline="", encoding="utf-8") as source:
+        rows = list(csv.DictReader(source))
+    ids = [row.get("commentId", "").strip() for row in rows]
+    if not rows or any(not value for value in ids) or len(ids) != len(set(ids)):
+        raise ValueError("Existing corpus must contain nonempty, unique comment IDs.")
+    if any(row.get("docketId") != docket_id for row in rows):
+        raise ValueError("Existing corpus contains a different docket; no refresh performed.")
+    return ids
 
 
 def search_comment_ids(base: str, api_key: str, docket_id: str, agency: str, limit: int, page_size: int) -> list[str]:
@@ -341,10 +361,10 @@ def agency_response_final_rule_linkage_rows(
 
 def public_comment_text(value: str) -> str:
     text = html.unescape(value)
-    text = re.sub(r"(?i)<br\\s*/?>", "\n", text)
+    text = re.sub(r"(?i)<br\s*/?>", "\n", text)
     text = re.sub(r"<[^>]+>", " ", text)
-    text = re.sub(r"[ \\t\\r\\f\\v]+", " ", text)
-    text = re.sub(r" *\\n+ *", "\n", text)
+    text = re.sub(r"[ \t\r\f\v]+", " ", text)
+    text = re.sub(r" *\n+ *", "\n", text)
     return text.strip()
 
 

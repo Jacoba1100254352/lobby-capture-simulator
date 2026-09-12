@@ -35,6 +35,7 @@ test: script-checks compile
 		$(JAVA) -cp out/classes:out/test-classes $$test_class || exit $$?; \
 	done
 	python3 scripts/test-substitution-estimation-diagnostics.py
+	python3 scripts/test-comment-source-products.py
 	./scripts/test-normalizers.sh
 
 run: compile
