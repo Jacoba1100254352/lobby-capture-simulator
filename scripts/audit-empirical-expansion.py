@@ -2,6 +2,7 @@
 """Profile new empirical evidence without promoting it into causal calibration."""
 
 import csv
+import importlib.util
 from collections import Counter, defaultdict
 from datetime import date, timedelta
 from pathlib import Path
@@ -63,17 +64,37 @@ def audit():
         "Review original filings and resolve API/scanned-form disagreements. One 2004 scan is reviewed in the redesign note; its amount is below-threshold, not an observed zero. Do not order amendments or treatment timing solely by dtPosted.")
     fec = read("substitution-fec-report-panel.csv")
     histories = read("substitution-fec-affiliation-history.csv")
-    if len({r['sourceRecordId'] for r in fec}) != len(fec):
+    cohort = read("substitution-fec-acquisition-cohort.csv")
+    if any(r["exposureGroup"] != "unassigned_design_candidate" for r in cohort):
+        raise ValueError("FEC acquisition candidates must not assign treatment/control exposure")
+    if not {r["canonicalActorId"] for r in cohort} <= {r["canonicalActorId"] for r in lda}:
+        raise ValueError("FEC candidate actor absent from expanded LDA source")
+    expected_histories = {(r["canonicalActorId"], r["committeeId"], str(year + year % 2)) for r in cohort for year in range(int(r["startYear"]), int(r["endYear"]) + 1)}
+    if len(histories) != len(expected_histories) or {(r["canonicalActorId"], r["committeeId"], r["cycle"]) for r in histories} != expected_histories:
+        raise ValueError("Missing, duplicate or off-cohort FEC historical affiliations")
+    if len({(r['committeeId'], r['sourceRecordId']) for r in fec}) != len(fec):
         raise ValueError("Duplicate FEC filing keys")
     overlap, gaps, straddles = report_period_diagnostics(fec)
     missing = sum(r[field] == "" for r in fec for field in ("candidateContributionsDollars", "independentExpendituresDollars", "totalDisbursementsDollars"))
     add("alternate-channel-reports", "bounded_affiliation_candidate",
-        f"reportRows={len(fec)}; committees={len(set(r['committeeId'] for r in fec))}; affiliationCycles={','.join(r['cycle'] for r in histories)}; overlappingPeriods={overlap}; gapsBetweenReports={gaps}; halfYearStraddlingReports={straddles}; missingOutcomeCells={missing}",
-        "Review historical sponsor links and report amendments; obtain transaction dates for straddling periods; one PAC cannot supply treatment-control identification.")
+        f"reportRows={len(fec)}; committees={len(set(r['committeeId'] for r in fec))}; affiliationRows={len(histories)}; affiliationCycles={','.join(sorted({r['cycle'] for r in histories}))}; overlappingPeriods={overlap}; gapsBetweenReports={gaps}; halfYearStraddlingReports={straddles}; missingOutcomeCells={missing}",
+        "Review historical sponsor links, form-specific measure definitions and report amendments. API amount formatting does not restore cents missing from source extraction. PAC availability does not establish comparable controls.")
     halfyears = read("substitution-fec-halfyear-panel.csv")
+    coverage = read("substitution-fec-halfyear-coverage.csv")
+    spec = importlib.util.spec_from_file_location("fec_coverage_audit", ROOT / "scripts/prepare-substitution-fec-periods.py")
+    periods_module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(periods_module)
+    adjudications = read("substitution-fec-version-adjudications.csv")
+    expected_halfyears, expected_coverage = periods_module.prepare_with_coverage(fec, cohort, adjudications)
+    if halfyears != expected_halfyears or coverage != expected_coverage:
+        raise ValueError("FEC prepared series or coverage ledger differs from raw-source reproduction")
+    unresolved = [r for r in coverage if r["status"] != "observed_complete"]
+    add("alternate-channel-coverage", "partial_outcome_coverage" if unresolved else "complete_source_periods_not_design",
+        f"expectedCommitteeHalfYears={len(coverage)}; complete={len(halfyears)}; unresolvedOrMissing={len(unresolved)}; completeByCommittee=" + ";".join(f"{r['committeeId']}:{sum(h['committeeId'] == r['committeeId'] for h in halfyears)}" for r in cohort),
+        "Keep all declared acquisition-frame periods visible; resolve Benefits Council versions, amounts and missing fields. AAJ 2008H2 uses a source-bound supplemental-loan-paperwork adjudication; independent review remains pending. Missing periods are not zero spending.")
     add("alternate-channel-halfyears", "observed_outcome_not_effect",
-        f"completeHalfYears={len(halfyears)}; includedReportVersions={sum(int(r['reportCount']) for r in halfyears)}; eventClasses={dict(Counter(r['eventClass'] for r in halfyears))}",
-        "Source-marked latest, non-amended reports only; compare with native LDA periods after actor linkage and exposure validation, without interpreting the excluded event half-year.")
+        f"completeHalfYears={len(halfyears)}; includedReportVersions={sum(int(r['reportCount']) for r in halfyears)}; sourceReviewedHalfYears={sum(bool(r['adjudicationIds']) for r in halfyears)}; eventClasses={dict(Counter(r['eventClass'] for r in halfyears))}",
+        "Latest non-amended reports or explicit source-bound version adjudications, with no unresolved alternative version. Compare with native LDA periods after actor linkage and exposure validation; period completeness is not exhaustive source-image or causal validation.")
     corpus = read("comment-body-corpus.csv")
     if len({r['commentId'] for r in corpus}) != len(corpus):
         raise ValueError("Duplicate comment IDs")

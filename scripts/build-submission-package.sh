@@ -121,6 +121,9 @@ for source_product in \
   substitution-expanded-lda-panel.csv \
   substitution-fec-report-panel.csv \
   substitution-fec-affiliation-history.csv \
+  substitution-fec-acquisition-cohort.csv \
+  substitution-fec-halfyear-coverage.csv \
+  substitution-fec-version-adjudications.csv \
   substitution-fec-halfyear-panel.csv \
   comment-uptake-issue-pilot.csv \
   sam-fpds-action-history-crosswalk.csv \

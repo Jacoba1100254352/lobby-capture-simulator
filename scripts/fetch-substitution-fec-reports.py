@@ -20,8 +20,6 @@ from urllib.request import Request, urlopen
 
 ROOT = Path(__file__).resolve().parents[1]
 FIRST_WAVE = ROOT / "data/calibration/first-wave"
-DEFAULT_COMMITTEE = "C00007450"
-DEFAULT_ACTOR = "cand-d5522e62fad7"
 OUTCOMES = {
     "candidateContributionsDollars": "fed_candidate_committee_contributions_period",
     "independentExpendituresDollars": "independent_expenditures_period",
@@ -112,38 +110,69 @@ def write_rows(path, rows, fields):
         writer.writerows(rows)
 
 
+def acquisition_members(args):
+    if args.committee_id or args.canonical_actor_id:
+        if not (args.committee_id and args.canonical_actor_id):
+            raise ValueError("Single-committee acquisition requires both committee and canonical actor IDs")
+        return [(args.canonical_actor_id, args.committee_id, args.years or list(range(2003, 2009)))]
+    with args.cohort.open(newline="", encoding="utf-8") as source:
+        cohort = list(csv.DictReader(source))
+    if not cohort or len({r["committeeId"] for r in cohort}) != len(cohort):
+        raise ValueError("Empty or duplicate FEC acquisition cohort")
+    members = []
+    for row in cohort:
+        years = args.years or list(range(int(row["startYear"]), int(row["endYear"]) + 1))
+        if not years or not row["canonicalActorId"] or row["exposureGroup"] != "unassigned_design_candidate":
+            raise ValueError("Invalid or treatment-assigned acquisition cohort")
+        members.append((row["canonicalActorId"], row["committeeId"], years))
+    return members
+
+
+def acquire(members, key, retrieved_at):
+    """Fetch the entire declared cohort before either output is written."""
+    histories, reports = [], []
+    for actor, committee, years in members:
+        for cycle in sorted({year + year % 2 for year in years}):
+            resource = f"committee/{committee}/history/{cycle}/"
+            history = fetch_all(resource, {}, key)
+            if len(history) != 1:
+                raise ValueError("Missing or ambiguous FEC historical affiliation")
+            for record in history:
+                if record["committee_id"] != committee or record["cycle"] != cycle:
+                    raise ValueError("FEC history identity mismatch")
+                histories.append(dict(zip(HISTORY_FIELDS, [
+                    actor, record["committee_id"], str(cycle), record["name"],
+                    record.get("affiliated_committee_name") or "", record.get("organization_type_full") or "",
+                    f"https://www.fec.gov/data/committee/{committee}/?cycle={cycle}",
+                    retrieved_at, "historical_affiliation_candidate", BOUNDARY,
+                ])))
+        for year in years:
+            for record in fetch_all(f"committee/{committee}/reports/", {"year": year}, key):
+                if record["committee_id"] != committee or record["report_year"] != year:
+                    raise ValueError("FEC report identity/year mismatch")
+                reports.append(normalize(record, actor, retrieved_at))
+    if not reports or len({(r["committeeId"], r["sourceRecordId"]) for r in reports}) != len(reports):
+        raise ValueError("Empty or duplicated FEC report snapshot")
+    reports.sort(key=lambda r: (r["canonicalActorId"], r["committeeId"], r["periodStart"], r["periodEnd"], r["sourceRecordId"]))
+    histories.sort(key=lambda r: (r["canonicalActorId"], r["committeeId"], r["cycle"]))
+    return reports, histories
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--committee-id", default=DEFAULT_COMMITTEE)
-    parser.add_argument("--canonical-actor-id", default=DEFAULT_ACTOR)
-    parser.add_argument("--years", nargs="+", type=int, default=[2003, 2004, 2005, 2006, 2007, 2008])
+    parser.add_argument("--committee-id")
+    parser.add_argument("--canonical-actor-id")
+    parser.add_argument("--cohort", type=Path, default=FIRST_WAVE / "substitution-fec-acquisition-cohort.csv")
+    parser.add_argument("--years", nargs="+", type=int)
     parser.add_argument("--output", type=Path, default=FIRST_WAVE / "substitution-fec-report-panel.csv")
     parser.add_argument("--history-output", type=Path, default=FIRST_WAVE / "substitution-fec-affiliation-history.csv")
     args = parser.parse_args()
+    members = acquisition_members(args)
     key = os.environ.get("FEC_API_KEY", "")
     if not key:
         raise SystemExit("FEC_API_KEY is required; no request made")
     retrieved_at = datetime.now(timezone.utc).isoformat(timespec="seconds")
-    histories, reports = [], []
-    for cycle in sorted({year + year % 2 for year in args.years}):
-        resource = f"committee/{args.committee_id}/history/{cycle}/"
-        for record in fetch_all(resource, {}, key):
-            if record["committee_id"] != args.committee_id or record["cycle"] != cycle:
-                raise ValueError("FEC history identity mismatch")
-            histories.append(dict(zip(HISTORY_FIELDS, [
-                args.canonical_actor_id, record["committee_id"], str(cycle), record["name"],
-                record.get("affiliated_committee_name") or "", record.get("organization_type_full") or "",
-                f"https://www.fec.gov/data/committee/{args.committee_id}/?cycle={cycle}",
-                retrieved_at, "historical_affiliation_candidate", BOUNDARY,
-            ])))
-    for year in args.years:
-        for record in fetch_all(f"committee/{args.committee_id}/reports/", {"year": year}, key):
-            if record["committee_id"] != args.committee_id or record["report_year"] != year:
-                raise ValueError("FEC report identity/year mismatch")
-            reports.append(normalize(record, args.canonical_actor_id, retrieved_at))
-    if not reports or len({r["sourceRecordId"] for r in reports}) != len(reports):
-        raise ValueError("Empty or duplicated FEC report snapshot")
-    reports.sort(key=lambda r: (r["periodStart"], r["periodEnd"], r["fileNumber"]))
+    reports, histories = acquire(members, key, retrieved_at)
     write_rows(args.output, reports, FIELDS)
     write_rows(args.history_output, histories, HISTORY_FIELDS)
     print(f"Wrote {len(reports)} report-period rows and {len(histories)} historical affiliations.")

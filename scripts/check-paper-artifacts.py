@@ -96,6 +96,8 @@ EMPIRICAL_EXPANSION_PRODUCTS = [
     FIRST_WAVE_SOURCE_PRODUCT_DIR / name for name in (
         "substitution-expanded-lda-panel.csv", "substitution-fec-report-panel.csv",
         "substitution-fec-affiliation-history.csv", "substitution-fec-halfyear-panel.csv",
+        "substitution-fec-acquisition-cohort.csv", "substitution-fec-halfyear-coverage.csv",
+        "substitution-fec-version-adjudications.csv",
         "comment-uptake-issue-pilot.csv",
     )
 ]

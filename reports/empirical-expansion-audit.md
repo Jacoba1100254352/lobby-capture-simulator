@@ -22,17 +22,25 @@ Remaining: Review original filings and resolve API/scanned-form disagreements. O
 
 Status: `bounded_affiliation_candidate`
 
-reportRows=78; committees=1; affiliationCycles=2004,2006,2008; overlappingPeriods=6; gapsBetweenReports=0; halfYearStraddlingReports=0; missingOutcomeCells=3
+reportRows=229; committees=4; affiliationRows=12; affiliationCycles=2004,2006,2008; overlappingPeriods=56; gapsBetweenReports=1; halfYearStraddlingReports=0; missingOutcomeCells=56
 
-Remaining: Review historical sponsor links and report amendments; obtain transaction dates for straddling periods; one PAC cannot supply treatment-control identification.
+Remaining: Review historical sponsor links, form-specific measure definitions and report amendments. API amount formatting does not restore cents missing from source extraction. PAC availability does not establish comparable controls.
+
+## alternate-channel-coverage
+
+Status: `partial_outcome_coverage`
+
+expectedCommitteeHalfYears=48; complete=36; unresolvedOrMissing=12; completeByCommittee=C00153171:0;C00340356:12;C00007450:12;C00024521:12
+
+Remaining: Keep all declared acquisition-frame periods visible; resolve Benefits Council versions, amounts and missing fields. AAJ 2008H2 uses a source-bound supplemental-loan-paperwork adjudication; independent review remains pending. Missing periods are not zero spending.
 
 ## alternate-channel-halfyears
 
 Status: `observed_outcome_not_effect`
 
-completeHalfYears=12; includedReportVersions=72; eventClasses={'pre': 9, 'straddles_event_excluded': 1, 'post': 2}
+completeHalfYears=36; includedReportVersions=152; sourceReviewedHalfYears=1; eventClasses={'pre': 27, 'straddles_event_excluded': 3, 'post': 6}
 
-Remaining: Source-marked latest, non-amended reports only; compare with native LDA periods after actor linkage and exposure validation, without interpreting the excluded event half-year.
+Remaining: Latest non-amended reports or explicit source-bound version adjudications, with no unresolved alternative version. Compare with native LDA periods after actor linkage and exposure validation; period completeness is not exhaustive source-image or causal validation.
 
 ## comment-corpus
 
