@@ -319,6 +319,8 @@ def write_markdown(
             "",
             "The current response/final-rule linkage is not a causal uptake panel. It has candidate response sections, final-rule identifiers, uptake codes, and text-similarity fields that must be adjudicated against source text before any estimate of agency-response uptake, final-rule movement, or review burden can be reported.",
             "",
+            "A separate source-reviewed docket-issue pilot is recorded in `data/calibration/first-wave/comment-uptake-issue-pilot.csv` and `docs/comment-uptake-pilot.md`. It distinguishes a removed disapproval ground from a retained ground in the published Utah final rule. It has no individual-comment links, does not claim that the full referenced response sections were read, and still needs independent review. It does not promote the candidate linkage worklist or clear a causal target.",
+            "",
             "## Regeneration Rule",
             "",
             "After any source-product edit, rerun `make first-wave-source-products first-wave-source-readiness first-wave-manual-adjudication-plan comment-causal-upgrade-packet candidate-source-leakage-audit paper-artifacts-check`. A comment corpus refresh, duplicate/template cluster refresh, or candidate response/final-rule refresh is not enough unless the source-product, readiness, manual-adjudication, leakage, and artifact gates all pass.",

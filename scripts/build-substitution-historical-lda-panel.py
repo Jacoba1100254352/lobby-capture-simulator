@@ -130,6 +130,7 @@ def main() -> int:
     parser.add_argument("--max-pages-per-actor-year", type=int, default=3)
     parser.add_argument("--timeout", type=float, default=30.0)
     parser.add_argument("--years", nargs="+", default=list(DEFAULT_YEARS))
+    parser.add_argument("--design-candidate", action="store_true", help="Leave reform exposure unassigned for a successor study.")
     parser.add_argument(
         "--review-date",
         default=os.environ.get("SUBSTITUTION_HISTORICAL_LDA_REVIEW_DATE", DEFAULT_REVIEW_DATE),
@@ -157,6 +158,9 @@ def main() -> int:
         panel_rows.extend(rows)
         report_rows.append(summary)
 
+    if args.design_candidate:
+        mark_design_candidates(panel_rows)
+
     panel_rows.sort(key=lambda row: (
         row["canonicalActorId"],
         row["periodStart"],
@@ -172,6 +176,17 @@ def main() -> int:
     print(f"Wrote {reports / REPORT_CSV.name}")
     print(f"Wrote {reports / REPORT_MD.name}")
     return 0
+
+
+def mark_design_candidates(rows: list[dict[str, str]]) -> None:
+    for row in rows:
+        row["exposureGroup"] = "unassigned_design_candidate"
+        row["notes"] = (
+            "official LDA API filing row matched by exact normalized client name; "
+            "successor-design acquisition only; treatment/control exposure unassigned; "
+            "filing versions, source timestamps, reporting cadence, and cross-source "
+            "actor links require review before estimation"
+        )
 
 
 def resolve(path: Path) -> Path:
@@ -230,12 +245,13 @@ def fetch_actor_rows(
             "filing_year": year,
             "page_size": str(page_size),
         })
-        for _ in range(max_pages):
+        for page_index in range(max_pages):
             payload, error = fetch_json(url, timeout)
             if payload is None:
                 errors.append(error)
                 break
-            api_result_count += int(payload.get("count", 0)) if not matched_filings else 0
+            if page_index == 0:
+                api_result_count += int(payload.get("count", 0))
             for record in payload.get("results", []):
                 client = record.get("client") if isinstance(record.get("client"), dict) else {}
                 client_name = str(client.get("name", ""))
@@ -250,14 +266,20 @@ def fetch_actor_rows(
             if not next_url:
                 break
             url = str(next_url)
+        else:
+            errors.append("pagination limit reached")
+
+    if errors:
+        raise RuntimeError(
+            "Incomplete LDA acquisition for " + actor_name
+            + "; refusing partial source rows after request failure or pagination limit"
+        )
 
     panel_rows: list[dict[str, str]] = []
     for record in matched_filings.values():
         panel_rows.extend(panel_rows_for_record(actor, record, review_date))
     pre_rows, post_rows, straddle_rows = coverage_counts(panel_rows)
     status = "prepost_source_rows" if pre_rows and post_rows else "post_only_source_rows" if post_rows else "pre_only_source_rows" if pre_rows else "no_exact_client_rows"
-    if errors and not panel_rows:
-        status = "api_error"
     client_ids = sorted({
         str((record.get("client") or {}).get("client_id", ""))
         for record in matched_filings.values()
@@ -427,7 +449,7 @@ def write_markdown(
         "",
         f"Generated: `{generated_at}`",
         "",
-        "This optional live-acquisition artifact uses the official LDA API to locate exact normalized client-name matches for reviewed canonical actors around the HLOGA treatment date. It supplies treated visible-lobbying source rows only; it does not supply comparison/control actors and does not clear causal substitution claims.",
+        "This optional live-acquisition artifact uses the official LDA API to locate exact normalized client-name matches for reviewed canonical actors around the HLOGA treatment date. It supplies visible-lobbying source rows only; it does not establish treatment/control exposure or clear causal substitution claims.",
         "",
         "## Summary",
         "",

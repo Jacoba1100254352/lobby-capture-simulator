@@ -18,6 +18,13 @@ The repository now contains a runnable Java mechanism model with a Makefile work
 
 The publication-readiness path is treated as part of the project, not a side artifact. `make paper-artifacts-check` regenerates reports, paper tables, figures, PDFs, layout audits, manual visual-review checklists, and the Wiley submission ZIP, then verifies that the ZIP compiles from an extracted directory. Release-oriented builds pin a GitHub release tag in both the manuscript declarations and the artifact checker so the paper, code, and published review bundle stay synchronized.
 
+The September 2026 empirical work is tracked by `docs/substitution-study-redesign.md`,
+`docs/comment-uptake-pilot.md`, `docs/procurement-source-reconciliation.md`, and
+`reports/empirical-expansion-audit.md`. Expanded source history and observed PAC
+outcomes remain design inputs; issue-level comment coding is separate from the
+unreviewed individual-comment linkage product. The Java mechanism model and its
+policy parameters have not been recalibrated from these provisional products.
+
 ## 1. Proposed Repo Architecture
 
 Use Java with a small Makefile first, matching the base simulator's low-friction workflow. Add Gradle or Maven only when external data ingestion requires stable third-party CSV/JSON dependencies.

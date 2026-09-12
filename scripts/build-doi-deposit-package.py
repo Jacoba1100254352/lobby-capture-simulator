@@ -41,6 +41,20 @@ class PackageInput:
 
 
 PACKAGE_INPUTS = [
+    *[
+        PackageInput(f"data/calibration/first-wave/{name}", f"readiness/{name}", "empirical-design-expansion")
+        for name in (
+            "substitution-expanded-lda-panel.csv", "substitution-fec-report-panel.csv",
+            "substitution-fec-affiliation-history.csv", "substitution-fec-halfyear-panel.csv",
+            "comment-uptake-issue-pilot.csv",
+        )
+    ],
+    *[
+        PackageInput(f"docs/{name}", f"readiness/{name}", "empirical-design-expansion")
+        for name in ("substitution-study-redesign.md", "comment-uptake-pilot.md", "procurement-source-reconciliation.md")
+    ],
+    PackageInput("reports/empirical-expansion-audit.md", "readiness/empirical-expansion-audit.md", "empirical-design-expansion"),
+    PackageInput("reports/empirical-expansion-audit.csv", "readiness/empirical-expansion-audit.csv", "empirical-design-expansion"),
     PackageInput(
         "dist/lobby-capture-wiley-blinded-review.zip",
         "primary-assets/lobby-capture-wiley-blinded-review.zip",

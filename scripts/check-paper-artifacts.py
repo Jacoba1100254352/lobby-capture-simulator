@@ -92,6 +92,18 @@ FIRST_WAVE_SOURCE_TEMPLATE_MANIFEST_MD = FIRST_WAVE_SOURCE_TEMPLATE_DIR / "manif
 FIRST_WAVE_SOURCE_TEMPLATE_README = FIRST_WAVE_SOURCE_TEMPLATE_DIR / "README.md"
 FIRST_WAVE_SOURCE_PRODUCT_DIR = ROOT / "data" / "calibration" / "first-wave"
 SUBSTITUTION_ESTIMATION_PANEL = FIRST_WAVE_SOURCE_PRODUCT_DIR / "substitution-estimation-panel.csv"
+EMPIRICAL_EXPANSION_PRODUCTS = [
+    FIRST_WAVE_SOURCE_PRODUCT_DIR / name for name in (
+        "substitution-expanded-lda-panel.csv", "substitution-fec-report-panel.csv",
+        "substitution-fec-affiliation-history.csv", "substitution-fec-halfyear-panel.csv",
+        "comment-uptake-issue-pilot.csv",
+    )
+]
+EMPIRICAL_EXPANSION_NOTES = [
+    ROOT / "docs" / name for name in (
+        "substitution-study-redesign.md", "comment-uptake-pilot.md", "procurement-source-reconciliation.md",
+    )
+]
 FIRST_WAVE_REVIEWED_ENTITY_PRODUCTS = {
     "actor-issue-time-spine": FIRST_WAVE_SOURCE_PRODUCT_DIR / "actor-issue-time-spine.csv",
     "substitution-comparison-groups": FIRST_WAVE_SOURCE_PRODUCT_DIR / "substitution-comparison-groups.csv",
@@ -670,6 +682,10 @@ def supplement_pdf_inputs() -> list[Path]:
 
 def submission_inputs() -> list[Path]:
     return [
+        *EMPIRICAL_EXPANSION_PRODUCTS,
+        *EMPIRICAL_EXPANSION_NOTES,
+        ROOT / "reports/empirical-expansion-audit.md",
+        ROOT / "reports/empirical-expansion-audit.csv",
         WILEY_PDF,
         SUPPLEMENT_PDF,
         PAPER / "regulation-governance-wiley.tex",
@@ -6004,6 +6020,10 @@ def check_submission_package_manifest(
 
 def package_byte_checks() -> list[tuple[Path, str]]:
     checks: list[tuple[Path, str]] = [
+        *[(path, f"supporting-information/source-products/first-wave/{path.name}") for path in EMPIRICAL_EXPANSION_PRODUCTS],
+        *[(path, f"supporting-information/{path.name}") for path in EMPIRICAL_EXPANSION_NOTES],
+        (ROOT / "reports/empirical-expansion-audit.md", "supporting-information/report-data/empirical-expansion-audit.md"),
+        (ROOT / "reports/empirical-expansion-audit.csv", "supporting-information/report-data/empirical-expansion-audit.csv"),
         (PAPER / "regulation-governance-wiley.tex", f"{LOCAL_BASENAME}.tex"),
         (WILEY_PDF, f"{LOCAL_BASENAME}.pdf"),
         (PAPER / "supplement.tex", "supplement.tex"),

@@ -22,6 +22,11 @@ compile:
 	@mkdir -p out/classes
 	$(JAVAC) -d out/classes $(MAIN_SOURCES)
 
+.PHONY: empirical-expansion-audit
+empirical-expansion-audit:
+	python3 scripts/prepare-substitution-fec-periods.py
+	python3 scripts/audit-empirical-expansion.py
+
 script-checks:
 	python3 -m py_compile scripts/*.py
 	@for script in scripts/*.sh; do \
@@ -36,6 +41,7 @@ test: script-checks compile
 	done
 	python3 scripts/test-substitution-estimation-diagnostics.py
 	python3 scripts/test-comment-source-products.py
+	python3 scripts/test-substitution-source-expansion.py
 	./scripts/test-normalizers.sh
 
 run: compile
@@ -393,7 +399,7 @@ doi-deposit-package: reggov-guidelines-readiness-audit archive-handoff-audit fin
 
 paper-artifacts: campaign mechanism-comparison sensitivity ablation interactions portfolio source-moments source-panel-inventory source-capability-audit dark-money-bridge-audit intermediary-bridge-audit revolving-door-bridge-audit procurement-denominator-audit procurement-modification-composition-audit procurement-benchmark-crosswalk validate validation-scope-coverage claim-boundary-audit claim-source-dependency-audit causal-calibration-targets first-wave-causal-protocols first-wave-source-product-templates first-wave-linkage-candidates first-wave-cross-venue-adjudication first-wave-reviewed-entity-products first-wave-source-products calibration-queue procurement-refresh-readiness first-wave-procurement-source-acquisition first-wave-source-readiness candidate-source-leakage-audit first-wave-manual-adjudication-plan procurement-causal-upgrade-packet substitution-estimation-diagnostics substitution-causal-upgrade-packet comment-causal-upgrade-packet venue-causal-upgrade-packet tables figures paper-build paper-wiley-build paper-supplement-build paper-word-count paper-layout-audit paper-structure-audit visual-review-checklist latex-log-audit claim-posture-audit calibration-readiness-audit policy-claim-language-audit literature-positioning-audit reference-integrity-audit final-human-readthrough-audit submission-readiness-audit reviewer-risk-register submission-package-build submission-package-check blinded-review-package-check archive-handoff-audit wiley-submission-form-readiness-audit reggov-guidelines-readiness-audit final-readthrough-evidence doi-deposit-package doi-deposit-readiness-audit mechanism-review-circulation-readiness
 
-paper-artifacts-check: paper-artifacts scrub-copy-suffix-artifacts
+paper-artifacts-check: empirical-expansion-audit paper-artifacts scrub-copy-suffix-artifacts
 	./scripts/finalize-paper-artifacts.sh
 	python3 scripts/check-paper-artifacts.py
 

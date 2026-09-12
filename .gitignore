@@ -32,6 +32,8 @@ scripts/__pycache__/
 *.pyc
 reports/*.csv
 reports/*.md
+!reports/empirical-expansion-audit.csv
+!reports/empirical-expansion-audit.md
 !reports/lobby-capture-campaign.csv
 !reports/lobby-capture-campaign.md
 !reports/lobby-capture-sensitivity.csv

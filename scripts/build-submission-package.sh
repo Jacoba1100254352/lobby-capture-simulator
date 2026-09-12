@@ -1,7 +1,7 @@
 #!/usr/bin/env sh
 set -eu
 
-ROOT_DIR="$(CDPATH= cd -- "$(dirname -- "$0")/.." && pwd)"
+ROOT_DIR="$(CDPATH='' cd -- "$(dirname -- "$0")/.." && pwd)"
 PAPER_DIR="$ROOT_DIR/paper"
 DIST_DIR="$ROOT_DIR/dist"
 STAGING_DIR="$DIST_DIR/lobby-capture-wiley-submission"
@@ -64,6 +64,9 @@ cp "$ROOT_DIR/docs/odd-model.md" "$STAGING_DIR/supporting-information/ODD-model.
 cp "$ROOT_DIR/docs/scenario-catalog.md" "$STAGING_DIR/supporting-information/scenario-catalog.md"
 cp "$ROOT_DIR/docs/validation.md" "$STAGING_DIR/supporting-information/validation-plan.md"
 cp "$ROOT_DIR/docs/source-data-roadmap.md" "$STAGING_DIR/supporting-information/source-data-roadmap.md"
+for note in substitution-study-redesign.md comment-uptake-pilot.md procurement-source-reconciliation.md; do
+  cp "$ROOT_DIR/docs/$note" "$STAGING_DIR/supporting-information/$note"
+done
 cp "$ROOT_DIR/reports/source-moments.md" "$STAGING_DIR/supporting-information/source-moments.md"
 cp "$ROOT_DIR/reports/source-panel-inventory.md" "$STAGING_DIR/supporting-information/source-panel-inventory.md"
 cp "$ROOT_DIR/reports/source-capability-audit.md" "$STAGING_DIR/supporting-information/source-capability-audit.md"
@@ -115,6 +118,11 @@ for source_product in \
   actor-issue-time-spine.csv \
   substitution-comparison-groups.csv \
   substitution-estimation-panel.csv \
+  substitution-expanded-lda-panel.csv \
+  substitution-fec-report-panel.csv \
+  substitution-fec-affiliation-history.csv \
+  substitution-fec-halfyear-panel.csv \
+  comment-uptake-issue-pilot.csv \
   sam-fpds-action-history-crosswalk.csv \
   gao-protest-overlay.csv \
   sam-exclusion-overlay.csv \
