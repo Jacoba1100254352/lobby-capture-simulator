@@ -368,7 +368,7 @@ def parse_feed(xml_text: str, source_label: str, max_items: int) -> tuple[list[d
         combined = " ".join([title, description])
         b_numbers = b_numbers_from([guid, link, title, description])
         likely = bool(PROTEST_RE.search(combined))
-        decision_at = iso_datetime(pub_date)
+        published_at = iso_datetime(pub_date)
         agency = agency_hint(combined)
         awardee = awardee_hint(description)
         outcome = outcome_hint(combined)
@@ -379,8 +379,10 @@ def parse_feed(xml_text: str, source_label: str, max_items: int) -> tuple[list[d
                 "sourceUrl": link,
                 "title": title,
                 "guid": guid,
-                "publishedAt": decision_at,
-                "decisionDate": decision_at[:10] if decision_at else "",
+                "publishedAt": published_at,
+                # RSS publication can follow the decision by days or weeks.
+                # Only the actual decision/docket can supply its decision date.
+                "decisionDate": "",
                 "likelyBidProtest": "true" if likely else "false",
                 "agencyHint": agency,
                 "protesterNameHint": title if likely else "",

@@ -1162,7 +1162,8 @@ assert first["piid"] == "candidate_unreviewed", first
 assert first["uei"] == "candidate_unreviewed", first
 assert first["agency"] == "Department of the Air Force", first
 assert first["filedDate"] == "candidate_unreviewed", first
-assert first["decisionDate"] == "2026-06-17", first
+assert first["decisionDate"] == "candidate_unreviewed", first
+assert "feedPublishedAt=2026-06-17" in first["notes"], first
 assert first["outcome"] == "denied", first
 assert first["candidateOnly"] == "true", first
 assert first["candidateStatus"] == "candidate_unreviewed_not_estimation_ready", first
