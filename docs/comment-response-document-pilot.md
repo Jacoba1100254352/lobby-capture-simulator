@@ -73,8 +73,10 @@ two request-level codings. Its companion `comment-response-document-source.json`
 preserves public metadata projections and raw-response hashes, four PDF hashes,
 reviewed PDF/printed pages, request/response paraphrases, short anchors and scope.
 No full corporate letter, private key, restricted cache or local path is packaged.
-Only the six listed pages of the 2,114-page response document were visually
-reviewed, along with the specified proposed/final/correction pages.
+For this original two-request pilot, only the six pages listed in its source
+JSON were visually reviewed, along with the specified proposed/final/correction
+pages. The separate inventory below extends the reviewed section coverage
+without rewriting the pilot's original selection or provenance.
 
 The introduction (PDF 19-20, printed 1-2) explains that technical comments are
 reproduced as excerpts, may recur by topic, and need not be the only comments
@@ -109,3 +111,100 @@ procedure independently of observed favorable outcomes. Neither two selected
 responses nor a broader response-document census supplies a causal comparison
 by itself. Until those requirements are met, the defensible result is two
 documented responses with different dispositions, not a measured lobbying effect.
+
+## Complete section inventory, with a restricted denominator
+
+The separate `comment-section-inventory.csv` and
+`comment-section-inventory-source.json` now record a visual review of **all six
+pages of section 2.5**, PDF 457-462, printed 439-444. The section begins partway
+down PDF 457; the preceding section's material is excluded. Its response ends
+on PDF 462. Text extraction identifies section 2.6 on the next page, outside
+this coding scope. The downloaded PDF hash agrees with the earlier pilot.
+
+This is a retrospective inventory of **seven agency-selected organization
+blocks and eleven segmented requests**. The section was chosen after reading
+its responses. It is not a prospective or representative sample, a census of
+the seven original submissions, or a docket-wide response denominator. The
+original two requests are included, with explicit overlap IDs, not added as
+two extra observations. Original attachments remain unread and version matches
+unestablished. New submission identities/orders come from EPA's excerpt
+citations, not independently acquired metadata for every organization.
+
+### Segmentation and response coding
+
+One row represents one separable requested action or explanation within an
+organization's reproduced section block. Repeated wording and cross-references
+to the same request are collapsed. EPA's quoted requests for comment are not
+the organization's requests. DTNA's response to EPA request 54 points elsewhere
+without adding a substantive request in the excerpt; response 55 refers back
+to response 53. Neither adds another row. Its engineering-judgment request on
+original page 76 and again on pages 167-168 is counted once.
+
+China's method/source question is separate from its international-comparability
+question. Volvo's joint request is split into standard-setting and vehicle
+categorization actions. PACCAR's MY2030 fallback stays a separate **conditional**
+request linked to its main categorization request. These segmentation decisions
+are explicit and remain subject to independent review.
+
+| Organization | Requests | Section-level finding |
+| --- | ---: | --- |
+| Allison | 1 | EPA explicitly disputes the alleged calculation error. |
+| CARB | 1 | The Multi-Purpose-only request conflicts with the described resolution, but EPA does not explicitly name CARB in its summary or response. |
+| China WTO/TBT center | 2 | EPA gives a named qualitative explanation of international comparability limits; the separate request to reconstruct the proposed table's method/sources has no request-specific disposition here. |
+| Cummins | 1 | EPA explicitly clarifies continued tractor-credit eligibility. |
+| DTNA | 2 | Subcategory discretion aligns with the collective response; its averaging-set exemption has no separate disposition here. |
+| PACCAR | 2 | Intended-use categorization aligns with the collective response; the MY2030 fallback is not separately adopted after EPA says it did not finalize the triggering proposal. |
+| Volvo | 2 | Standard-setting and categorization concerns align with the collective revision, not two independently attributable policy changes. |
+
+There are three explicitly named request responses, four links through a named
+summary and collective response, one comparison with the section resolution
+without a named link, and three requests lacking a separate disposition here.
+The last category includes PACCAR's conditional fallback. For these unresolved
+requests, response-page fields describe the searched response region, not an
+observed answer. Absence of a separate disposition **in this section** is not
+proof of nonresponse across the docket. A future search of other response
+sections must record its expanded scope. Likewise, consistency with a shared
+revision does not establish full acceptance, an independently verified enacted
+text change for each request, or individual influence.
+
+### Appendix A is not a nonresponse control group
+
+Visual review of Appendix A's introduction, Tables A-1/A-2 and general response
+(PDF 2050-2051, printed 2032-2033) confirms EPA's description of 1,011 general or
+insufficiently specific comments not reproduced verbatim. EPA says responses
+elsewhere address their general topics. Table A-3's individual list and these
+original submissions were not reviewed. **Not reproduced does not mean
+unanswered.**
+
+Table A-1's counts sum to 1,011 comments. Weighting those counts by the number
+of topics gives 2,533 theme incidences, matching Table A-2's eight theme counts.
+Table A-2 percentages use the theme-incidence total, not 1,011 unique comments.
+The preceding prose reports environmental justice as 28.0%, while the table
+shows 28.1%; both source statements remain documented rather than silently
+harmonized. Neither appendix total is a valid control/nonresponse denominator
+for the selected section, and no response rate is computed.
+
+### Validation and remaining work
+
+Assessment: **share with caveats** as a source-bound documentary inventory,
+not as an uptake estimate. All six section pages and both appendix pages were
+visually checked. The offline audit verifies the fixed organization/request
+frame, attachment citations, reviewed-page mappings, old-pilot overlap,
+conditional-parent link, shared-response grouping, appendix arithmetic and
+CSV/source fingerprints. The companion notebook reproduces these checks and
+the request-level results. Its code can also regenerate the CSV using
+`audit.comment_section_rows(section_sources)`; the audit rejects a stale
+projection. Tests exercise missing and repeated requests, wrong identities,
+unreviewed pages, altered coding, lost overlap, invented response matches and
+unsupported promotion.
+
+These are consistency checks, not independent coding review or fresh source
+authentication. High-impact unresolved risks are agency/outcome-conditioned
+selection, unavailable originals, unreviewed request segmentation and links,
+and the absence of a credible causal contrast. The next review must check the
+eleven-request segmentation and all seven blocks, especially the opposing CARB
+position, repeated DTNA request, joint Volvo request and conditional PACCAR
+fallback. A docket-rate study additionally requires an independently defined
+comment population, duplicate/grouped-response rules and treatment of missing
+access. This inventory advances comment coding independently of the SAM and
+substitution tracks; it does not complete those tracks or recalibrate the model.

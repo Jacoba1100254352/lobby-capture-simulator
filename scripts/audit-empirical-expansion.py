@@ -360,6 +360,180 @@ def comment_response_diagnostics(rows, sources):
     }
 
 
+def comment_section_rows(sources):
+    """Project the reviewed section inventory, not a full-comment population."""
+    blocks = {b["blockId"]: b for b in sources["organizationBlocks"]}
+    document = sources["responseDocument"]
+    offset = document["firstPdfPage"] - document["firstPrintedPage"]
+    fingerprint = source_fingerprint(sources)
+    rows = []
+    for request in sources["requests"]:
+        block = blocks[request["blockId"]]
+        rows.append({
+            "requestId": request["requestId"], "organizationBlockId": block["blockId"],
+            "organization": block["organization"], "citedCommentId": block["citedCommentId"],
+            "citedAttachmentOrder": str(block["attachmentOrder"]),
+            **{key: request[key] for key in ("requestCode", "requestSummary", "originalCitedPages",
+                "responseLink", "responseGroupId", "disposition", "codingRationale",
+                "conditionalOnRequestId", "priorPilotObservationId")},
+            "requestPdfPages": ";".join(map(str, request["requestPdfPages"])),
+            "requestPrintedPages": ";".join(str(p - offset) for p in request["requestPdfPages"]),
+            "responseReviewedPdfPages": ";".join(map(str, request["responsePdfPages"])),
+            "unit": sources["unit"], "originalAttachmentRead": "false",
+            "docketVersionMatch": "not_established", "docketRateEligible": "false",
+            "causalEffect": "not_identified", "regulatoryTextChangeAttribution": "not_established",
+            "sourceUrl": document["url"], "sourcePdfSha256": document["pdfSha256"],
+            "reviewSourceFingerprint": fingerprint,
+            **{key: sources[key] for key in ("reviewer", "reviewDate", "independentReviewStatus")},
+        })
+    return rows
+
+
+def comment_section_diagnostics(rows, sources, pilot_sources):
+    """Check retrospective excerpt coverage and coding boundaries, not causality."""
+    if (sources.get("schema") != "comment-section-inventory-source-v1"
+            or sources.get("unit") != "distinct_request_within_agency_selected_section"
+            or sources.get("independentReviewStatus") != "pending"
+            or sources.get("docketId") != pilot_sources["docketId"]
+            or any(not sources.get(k) for k in ("reviewer", "selection", "studyScope",
+                "sourceAuthentication", "remainingReview"))):
+        raise ValueError("Missing section inventory provenance or claim boundary")
+    date.fromisoformat(sources["reviewDate"])
+    document = sources["responseDocument"]
+    if (any(document[k] != pilot_sources["responseDocument"][k]
+            for k in ("documentId", "url", "pdfSha256", "pdfPageCount", "section"))
+            or document["reviewedSectionPdfPages"] != list(range(457, 463))
+            or [document[k] for k in ("firstPdfPage", "lastPdfPage", "firstPrintedPage", "lastPrintedPage")]
+                != [457, 462, 439, 444]
+            or document["responsePdfPages"] != [461, 462]
+            or document["fullDocumentReviewed"] is not False
+            or not document["boundaryReview"] or not document["responseScope"]):
+        raise ValueError("Incomplete section pages or mismatched response-document source")
+    codebook = sources["codebook"]
+    fixed = {"originalAttachmentRead": False, "docketVersionMatch": "not_established",
+        "docketRateEligible": False, "causalEffect": "not_identified",
+        "regulatoryTextChangeAttribution": "not_established"}
+    if (any(codebook.get(k) != v for k, v in fixed.items())
+            or any(not codebook.get(k) for k in ("version", "segmentation", "deduplication", "exclusions"))):
+        raise ValueError("Unsupported section inventory claim or missing codebook")
+    blocks = sources["organizationBlocks"]
+    # Source-specific fixed frame, independently reviewable in the six PDF pages.
+    block_frame = [("allison", "1657", 2), ("carb", "1591", 1), ("china", "1658", 2),
+                   ("cummins", "1598", 1), ("dtna", "1555", 1), ("paccar", "1607", 1),
+                   ("volvo", "1606", 1)]
+    if [(b["blockId"], b["citedCommentId"], b["attachmentOrder"]) for b in blocks] != [
+            (key, sources["docketId"] + "-" + suffix, order) for key, suffix, order in block_frame]:
+        raise ValueError("Missing, duplicate or mismatched organization-block frame")
+    by_block = {b["blockId"]: b for b in blocks}
+    for block in blocks:
+        if (not block["organization"] or not block["pdfPages"]
+                or block["pdfPages"] != sorted(set(block["pdfPages"]))
+                or not set(block["pdfPages"]) <= set(document["reviewedSectionPdfPages"])
+                or block["namedInSectionSummary"] is not (block["blockId"] != "carb")):
+            raise ValueError("Invalid organization-block pages or summary coverage")
+    requests = sources["requests"]
+    by_id = {r["requestId"]: r for r in requests}
+    request_frame = {
+        "allison": {"lhd_calculation_error"},
+        "carb": {"require_ci_multipurpose_for_engineless_vehicles"},
+        "china": {"explain_table_ii19_method_and_sources", "explain_international_comparability"},
+        "cummins": {"tractor_credit_scope"},
+        "dtna": {"allow_engineering_judgment_subcategory", "remove_zev_averaging_set_limits"},
+        "paccar": {"retain_intended_use_subcategory", "conditional_delay_to_my2030"},
+        "volvo": {"reevaluate_vocational_standard_setting", "reevaluate_zev_categorization"},
+    }
+    if (not requests or len(by_id) != len(requests)
+            or {r["blockId"] for r in requests} != set(by_block)
+            or {(r["blockId"], r["requestCode"]) for r in requests}
+                != {(block, code) for block, codes in request_frame.items() for code in codes}
+            or len({(r["blockId"], r["requestCode"]) for r in requests}) != len(requests)):
+        raise ValueError("Missing or duplicate section requests")
+    link_dispositions = {
+        "explicit_named_response": {"disagreed_with_error_claim", "clarified_existing_scope", "explained_comparability_limit"},
+        "named_summary_collective_response": {"consistent_with_collective_revision"},
+        "section_resolution_only": {"inconsistent_with_described_resolution"},
+        "no_request_specific_disposition": {"no_request_specific_disposition", "conditional_fallback_not_separately_resolved"},
+    }
+    pilot_reviews = {r["observationId"]: r for r in pilot_sources["reviews"]}
+    prior_ids = []
+    for request in requests:
+        block = by_block[request["blockId"]]
+        if (any(not request.get(k) for k in ("requestId", "requestCode", "requestSummary", "codingRationale"))
+                or not request["requestPdfPages"]
+                or request["requestPdfPages"] != sorted(set(request["requestPdfPages"]))
+                or not set(request["requestPdfPages"]) <= set(block["pdfPages"])
+                or not request["responsePdfPages"]
+                or request["responsePdfPages"] != sorted(set(request["responsePdfPages"]))
+                or not set(request["responsePdfPages"]) <= set(document["responsePdfPages"])
+                or not re.fullmatch(r"[1-9]\d*(?:-[1-9]\d*)?(?:;[1-9]\d*(?:-[1-9]\d*)?)*", request["originalCitedPages"])):
+            raise ValueError("Missing request coding or invalid reviewed page citation")
+        link, disposition = request["responseLink"], request["disposition"]
+        if (link not in codebook["responseLinkCodes"] or disposition not in codebook["dispositionCodes"]
+                or disposition not in link_dispositions.get(link, set())
+                or (link == "named_summary_collective_response" and not block["namedInSectionSummary"])):
+            raise ValueError("Unsupported section response-link coding")
+        if link == "explicit_named_response":
+            expected = {"allison": "disagreed_with_error_claim", "cummins": "clarified_existing_scope",
+                        "china": "explained_comparability_limit"}
+            if (disposition != expected.get(block["blockId"])
+                    or request["responseGroupId"] != "s25-" + block["blockId"]):
+                raise ValueError("Section coding does not support an explicit named response")
+        elif disposition == "no_request_specific_disposition":
+            if request["responseGroupId"]:
+                raise ValueError("Unresolved request cannot invent a matched response group")
+        elif request["responseGroupId"] != "s25-collective-vocational":
+            raise ValueError("Shared section response cannot become independent outcomes")
+        parent_id = request["conditionalOnRequestId"]
+        if parent_id:
+            parent = by_id.get(parent_id)
+            if (parent is None or parent_id == request["requestId"] or parent["conditionalOnRequestId"]
+                    or parent["blockId"] != request["blockId"]
+                    or disposition != "conditional_fallback_not_separately_resolved"):
+                raise ValueError("Invalid conditional fallback parent or disposition")
+        elif disposition == "conditional_fallback_not_separately_resolved":
+            raise ValueError("Conditional fallback lacks its parent request")
+        prior_id = request["priorPilotObservationId"]
+        if prior_id:
+            prior = pilot_reviews.get(prior_id)
+            if (prior is None or block["citedCommentId"] != prior["commentId"]
+                    or block["attachmentOrder"] != prior["attachmentOrder"]
+                    or any(request[k] != prior[k] for k in ("requestCode", "originalCitedPages", "disposition"))
+                    or prior["requestPdfPage"] not in request["requestPdfPages"]
+                    or prior["responsePdfPage"] not in request["responsePdfPages"]):
+                raise ValueError("Section request does not match prior pilot identity/coding")
+            prior_ids.append(prior_id)
+    if len(prior_ids) != len(pilot_reviews) or set(prior_ids) != set(pilot_reviews):
+        raise ValueError("Prior pilot overlap must be retained exactly once")
+    appendix = sources["appendixSelectionContext"]
+    distribution = appendix["issueCountDistribution"]
+    if (appendix["reviewedPages"] != [{"pdfPage": 2050, "printedPage": 2032}, {"pdfPage": 2051, "printedPage": 2033}]
+            or appendix["individualListReviewed"] is not False
+            or appendix["nonresponseDenominatorEligible"] is not False
+            or not appendix["scope"] or not appendix["interpretation"] or not appendix["sourcePercentageCaveat"]
+            or [r["issues"] for r in distribution] != [0, 1, 2, 3, 4]
+            or any(type(r["comments"]) is not int or r["comments"] < 0 for r in distribution)
+            or len(appendix["themeCounts"]) != 8
+            or any(type(n) is not int or n < 0 for n in appendix["themeCounts"].values())
+            or sum(r["comments"] for r in distribution) != appendix["agencyReportedCommentsNotReproduced"]
+            or sum(r["issues"] * r["comments"] for r in distribution) != appendix["reportedThemeIncidences"]
+            or sum(appendix["themeCounts"].values()) != appendix["reportedThemeIncidences"]):
+        raise ValueError("Appendix selection counts or nonresponse boundary mismatch")
+    if rows != comment_section_rows(sources):
+        raise ValueError("Section CSV projection or review fingerprint mismatch")
+    return {
+        "organizationBlocks": len(blocks), "requestRows": len(rows),
+        "coveredSectionPdfPages": len(document["reviewedSectionPdfPages"]),
+        "priorPilotOverlap": len(prior_ids),
+        "responseLinks": dict(Counter(r["responseLink"] for r in requests)),
+        "dispositions": dict(Counter(r["disposition"] for r in requests)),
+        "conditionalFallbacks": sum(bool(r["conditionalOnRequestId"]) for r in requests),
+        "appendixCommentsNotReproduced": appendix["agencyReportedCommentsNotReproduced"],
+        "appendixThemeIncidences": appendix["reportedThemeIncidences"],
+        "docketRateEligibleRequests": 0, "independentlyReviewedRequests": 0,
+        "causalEffect": "not_identified",
+    }
+
+
 def protest_linkage_diagnostics(rows, sources, frozen):
     """Verify a selected decision-to-award bridge, never a protest-rate frame."""
     review = sources["gaoReview"]
@@ -654,6 +828,11 @@ def audit():
     add("comment-agency-reproduced-requests", "documented_responses_not_causal_uptake",
         "; ".join(f"{key}={value}" for key, value in responses.items()),
         "Separate purposive Phase 3 pilot, not the Utah corpus. EPA reproduces request excerpts and explicitly names the two commenters in responses; original submitted attachments and their version match remain unread/unverified. Complete independent review and define a sampling frame before estimating response rates. A collective method change and a later publication correction do not identify an individual comment's effect.")
+    section_sources = json.loads((DATA / "comment-section-inventory-source.json").read_text(encoding="utf-8"))
+    section = comment_section_diagnostics(read("comment-section-inventory.csv"), section_sources, response_sources)
+    add("comment-section-request-inventory", "complete_section_excerpts_not_docket_population",
+        "; ".join(f"{key}={value}" for key, value in section.items()),
+        "Retrospective six-page Phase 3 inventory: independently review request segmentation, repeated/grouped responses, opposing positions and conditional fallback. Two requests overlap the prior pilot and must not be counted again. No request-specific disposition within this section is not docket-wide nonresponse. Appendix A's 1,011 non-reproduced comments and 2,533 theme incidences are different units, not a control or nonresponse denominator. Original submissions and a docket sampling frame remain unresolved; no causal effect is identified.")
     protests = read("gao-protest-overlay.csv")
     reviewed = [r for r in protests if "Partial source-page review" in r["notes"]]
     add("gao-partial-adjudication", "not_award_linked",

@@ -54,6 +54,16 @@ attachment-order metadata plus reviewed response/rule pages; original attachment
 and independent coding review remain unresolved. Its purposive observations do
 not enter the Utah corpus or identify individual influence from a collective
 method change. See `docs/comment-response-document-pilot.md`.
+The companion retrospective section inventory now covers all six section pages:
+seven agency-selected organization blocks and eleven segmented requests, including
+the original two. It distinguishes three explicitly named responses, four links
+through the named summary and collective response, one section-resolution-only
+comparison and three requests without a separate disposition in this section.
+Repeated wording, opposing positions and a conditional fallback remain explicit.
+Appendix A's non-reproduced comments and theme incidences are different units,
+not an unanswered-comment control group. This is neither a docket-rate denominator
+nor independent coding clearance; original submissions and causal identification
+remain unresolved.
 The Java mechanism model and its
 policy parameters have not been recalibrated from these provisional products.
 

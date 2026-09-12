@@ -22,6 +22,137 @@ AUDIT = importlib.util.module_from_spec(AUDIT_SPEC)
 AUDIT_SPEC.loader.exec_module(AUDIT)
 
 
+class CommentSectionTests(unittest.TestCase):
+    def setUp(self):
+        self.sources = json.loads((AUDIT.DATA / "comment-section-inventory-source.json").read_text())
+        self.pilot = json.loads((AUDIT.DATA / "comment-response-document-source.json").read_text())
+        self.rows = AUDIT.read("comment-section-inventory.csv")
+
+    def check(self, sources):
+        return AUDIT.comment_section_diagnostics(AUDIT.comment_section_rows(sources), sources, self.pilot)
+
+    def test_complete_section_is_not_a_docket_denominator(self):
+        result = AUDIT.comment_section_diagnostics(self.rows, self.sources, self.pilot)
+        self.assertEqual(result["organizationBlocks"], 7)
+        self.assertEqual(result["requestRows"], 11)
+        self.assertEqual(result["coveredSectionPdfPages"], 6)
+        self.assertEqual(result["priorPilotOverlap"], 2)
+        self.assertEqual(result["responseLinks"], {
+            "explicit_named_response": 3, "section_resolution_only": 1,
+            "no_request_specific_disposition": 3, "named_summary_collective_response": 4})
+        self.assertEqual(result["conditionalFallbacks"], 1)
+        self.assertEqual(result["docketRateEligibleRequests"], 0)
+        self.assertEqual(result["independentlyReviewedRequests"], 0)
+        self.assertEqual(result["causalEffect"], "not_identified")
+
+    def test_missing_or_replaced_request_fails_even_with_new_projection(self):
+        for kind in ("missing", "duplicate", "invented", "repeat_renamed"):
+            sources = deepcopy(self.sources)
+            if kind == "missing":
+                sources["requests"].pop(2)
+            elif kind == "invented":
+                sources["requests"][2]["requestCode"] = "invented"
+            else:
+                sources["requests"].append(deepcopy(sources["requests"][2]))
+                if kind == "repeat_renamed":
+                    sources["requests"][-1]["requestId"] = "same-request-another-name"
+            with self.subTest(kind=kind), self.assertRaisesRegex(ValueError, "requests"):
+                self.check(sources)
+
+    def test_organization_attachment_and_summary_frame_are_preserved(self):
+        for kind in ("attachment", "identity", "omitted_summary"):
+            sources = deepcopy(self.sources)
+            if kind == "attachment":
+                sources["organizationBlocks"][0]["attachmentOrder"] = 1
+            elif kind == "identity":
+                sources["organizationBlocks"][1]["citedCommentId"] = sources["organizationBlocks"][0]["citedCommentId"]
+            else:
+                sources["organizationBlocks"][1]["namedInSectionSummary"] = True
+            with self.subTest(kind=kind), self.assertRaises(ValueError):
+                self.check(sources)
+
+    def test_pages_and_pdf_identity_cannot_silently_change(self):
+        for kind in ("hash", "section_gap", "printed", "request", "response"):
+            sources = deepcopy(self.sources)
+            if kind == "hash":
+                sources["responseDocument"]["pdfSha256"] = "0" * 64
+            elif kind == "section_gap":
+                sources["responseDocument"]["reviewedSectionPdfPages"].remove(459)
+            elif kind == "printed":
+                sources["responseDocument"]["firstPrintedPage"] = 438
+            elif kind == "request":
+                sources["requests"][0]["requestPdfPages"] = [459]
+            else:
+                sources["requests"][0]["responsePdfPages"] = [463]
+            with self.subTest(kind=kind), self.assertRaises(ValueError):
+                self.check(sources)
+
+    def test_changed_wording_invalidates_saved_review(self):
+        for section, key in (("requests", "codingRationale"), ("organizationBlocks", "organization")):
+            sources = deepcopy(self.sources)
+            sources[section][0][key] = "different source interpretation"
+            with self.subTest(section=section), self.assertRaisesRegex(ValueError, "fingerprint"):
+                AUDIT.comment_section_diagnostics(self.rows, sources, self.pilot)
+
+    def test_old_pilot_overlap_cannot_be_lost_or_reassigned(self):
+        for kind in ("missing", "swapped"):
+            sources = deepcopy(self.sources)
+            sources["requests"][0]["priorPilotObservationId"] = (
+                "" if kind == "missing" else "phase3-cummins-tractor-credit")
+            with self.subTest(kind=kind), self.assertRaises(ValueError):
+                self.check(sources)
+
+    def test_collective_response_does_not_create_independent_outcomes(self):
+        sources = deepcopy(self.sources)
+        sources["requests"][5]["responseGroupId"] = "independent-dtna-success"
+        with self.assertRaisesRegex(ValueError, "independent outcomes"):
+            self.check(sources)
+        sources = deepcopy(self.sources)
+        sources["requests"][1]["responseLink"] = "explicit_named_response"
+        sources["requests"][1]["disposition"] = "clarified_existing_scope"
+        with self.assertRaisesRegex(ValueError, "named response"):
+            self.check(sources)
+
+    def test_fallback_requires_same_organization_parent_and_remains_conditional(self):
+        for parent in ("", "s25-paccar-delay", "s25-dtna-subcategory", "not-in-frame"):
+            sources = deepcopy(self.sources)
+            sources["requests"][8]["conditionalOnRequestId"] = parent
+            with self.subTest(parent=parent), self.assertRaisesRegex(ValueError, "[Cc]onditional"):
+                self.check(sources)
+
+    def test_unresolved_request_cannot_invent_a_response_match(self):
+        sources = deepcopy(self.sources)
+        sources["requests"][6]["responseGroupId"] = "s25-collective-vocational"
+        with self.assertRaisesRegex(ValueError, "Unresolved"):
+            self.check(sources)
+
+    def test_appendix_comment_count_and_theme_incidences_reconcile(self):
+        appendix = self.sources["appendixSelectionContext"]
+        self.assertEqual(sum(r["comments"] for r in appendix["issueCountDistribution"]), 1011)
+        self.assertEqual(sum(r["issues"] * r["comments"] for r in appendix["issueCountDistribution"]), 2533)
+        self.assertEqual(sum(appendix["themeCounts"].values()), 2533)
+        self.assertFalse(appendix["nonresponseDenominatorEligible"])
+        for field, value in (("agencyReportedCommentsNotReproduced", 2533),
+                             ("reportedThemeIncidences", 1011),
+                             ("nonresponseDenominatorEligible", True), ("individualListReviewed", True)):
+            sources = deepcopy(self.sources)
+            sources["appendixSelectionContext"][field] = value
+            with self.subTest(field=field), self.assertRaisesRegex(ValueError, "Appendix"):
+                self.check(sources)
+
+    def test_docket_rates_causal_claims_and_independent_review_stay_uncleared(self):
+        for key in ("originalAttachmentRead", "docketVersionMatch", "docketRateEligible",
+                    "causalEffect", "regulatoryTextChangeAttribution"):
+            sources = deepcopy(self.sources)
+            sources["codebook"][key] = "promoted"
+            with self.subTest(key=key), self.assertRaises(ValueError):
+                self.check(sources)
+        sources = deepcopy(self.sources)
+        sources["independentReviewStatus"] = "complete"
+        with self.assertRaises(ValueError):
+            self.check(sources)
+
+
 class CommentResponseTests(unittest.TestCase):
     def setUp(self):
         self.rows = AUDIT.read("comment-response-document-pilot.csv")

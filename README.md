@@ -180,6 +180,13 @@ It records original comment/attachment metadata and reviewed response/proposed/f
 page references, while leaving unread original attachments and independent review
 explicitly unresolved. It is separate from the Utah corpus; neither these selected
 responses nor a collective rule-method change identifies a causal comment effect.
+The companion full-section inventory reviews all six section pages and records
+seven organization blocks and eleven distinct requests, including the same two
+pilot requests. It preserves opposing positions, repeated requests, collective
+responses and a conditional fallback. This retrospective agency-excerpt frame
+is not a docket denominator. Appendix A's 1,011 non-reproduced comments are not
+1,011 observed nonresponses; its 2,533 theme incidences use a different unit.
+The source-bound inventory and offline notebook still require independent review.
 
 The archived procurement frame audit scans only the 56 manifest-selected bulk ZIPs.
 All 6,449,101 rows match their saved archive counts and agency/date partitions,

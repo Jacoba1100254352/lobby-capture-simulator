@@ -53,6 +53,7 @@ PACKAGE_INPUTS = [
             "comment-uptake-issue-pilot.csv",
             "comment-position-pilot.csv", "comment-position-source.json",
             "comment-response-document-pilot.csv", "comment-response-document-source.json",
+            "comment-section-inventory.csv", "comment-section-inventory-source.json",
             "gao-award-linkage-pilot.csv", "gao-award-linkage-source.json",
             "gao-docket-timing-pilot.csv", "gao-docket-timing-source.json",
             "procurement-bulk-frame-profile.json", "procurement-bulk-type-review.json",

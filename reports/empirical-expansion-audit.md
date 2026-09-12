@@ -82,6 +82,14 @@ requestRows=2; submissions=2; dockets=1; explicitNamedResponses=2; dispositions=
 
 Remaining: Separate purposive Phase 3 pilot, not the Utah corpus. EPA reproduces request excerpts and explicitly names the two commenters in responses; original submitted attachments and their version match remain unread/unverified. Complete independent review and define a sampling frame before estimating response rates. A collective method change and a later publication correction do not identify an individual comment's effect.
 
+## comment-section-request-inventory
+
+Status: `complete_section_excerpts_not_docket_population`
+
+organizationBlocks=7; requestRows=11; coveredSectionPdfPages=6; priorPilotOverlap=2; responseLinks={'explicit_named_response': 3, 'section_resolution_only': 1, 'no_request_specific_disposition': 3, 'named_summary_collective_response': 4}; dispositions={'disagreed_with_error_claim': 1, 'inconsistent_with_described_resolution': 1, 'no_request_specific_disposition': 2, 'explained_comparability_limit': 1, 'clarified_existing_scope': 1, 'consistent_with_collective_revision': 4, 'conditional_fallback_not_separately_resolved': 1}; conditionalFallbacks=1; appendixCommentsNotReproduced=1011; appendixThemeIncidences=2533; docketRateEligibleRequests=0; independentlyReviewedRequests=0; causalEffect=not_identified
+
+Remaining: Retrospective six-page Phase 3 inventory: independently review request segmentation, repeated/grouped responses, opposing positions and conditional fallback. Two requests overlap the prior pilot and must not be counted again. No request-specific disposition within this section is not docket-wide nonresponse. Appendix A's 1,011 non-reproduced comments and 2,533 theme incidences are different units, not a control or nonresponse denominator. Original submissions and a docket sampling frame remain unresolved; no causal effect is identified.
+
 ## gao-partial-adjudication
 
 Status: `not_award_linked`
