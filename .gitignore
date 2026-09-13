@@ -36,6 +36,8 @@ reports/*.md
 !reports/empirical-expansion-audit.md
 !reports/comment-publisher-case-review.csv
 !reports/comment-publisher-case-review.md
+!reports/substitution-comparison-availability.csv
+!reports/substitution-comparison-review.md
 !reports/lobby-capture-campaign.csv
 !reports/lobby-capture-campaign.md
 !reports/lobby-capture-sensitivity.csv

@@ -230,6 +230,16 @@ of scrutiny/adaptation and election-cycle composition before selecting a baselin
 Currency-related zeros, imprecise dates and member/staff coverage need source-level
 adjudication. The underlying travel rows were not recovered; the existing LDA/PAC
 panel and treatment/control assignments remain unchanged.
+The substitution comparison audit now closes the inference decision for the
+current evidence freeze with a documented negative result. A 72-row availability
+table retains the six observed LDA candidates, 36 PAC/source overlaps, twelve
+unresolved PAC periods and 24 periods outside the PAC cohort. An exact legacy
+design check finds treatment-post and federal-source-post terms identical across
+231 included rows. Additional assumptions or comparison evidence are required
+to separate those coefficients; this is not evidence of an actual source shock
+or a null reform effect. A successor estimate requires pre-reform exposure,
+credible controls, comparable measures and historical linkage. Procurement and
+comment requirements remain separate parts of the unfinished empirical goal.
 The Java mechanism model and its
 policy parameters have not been recalibrated from these provisional products.
 

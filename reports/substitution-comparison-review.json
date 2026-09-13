@@ -1,0 +1,41 @@
+{
+  "schema": "substitution-comparison-review-v1",
+  "sourceAvailability": {
+    "observedLdaActors": 6,
+    "actorHalfYears": 72,
+    "ldaPeriodFootprintsPresent": 72,
+    "pacCohortActors": 4,
+    "expectedPacHalfYears": 48,
+    "observedPacHalfYears": 36,
+    "unresolvedPacHalfYears": 12,
+    "outsidePacCohortHalfYears": 24,
+    "pairedSourceHalfYears": 36,
+    "causalEffect": "not_identified"
+  },
+  "legacySourceAlias": {
+    "primaryObservations": 231,
+    "actors": 33,
+    "preObservations": 66,
+    "postObservations": 165,
+    "columns": [
+      "intercept",
+      "treated",
+      "post",
+      "treated_post",
+      "federal_source_post"
+    ],
+    "exactRank": 4,
+    "columnCount": 5,
+    "interactionColumnsIdentical": true,
+    "maxPredictionChangeForOppositeUnitCoefficientShifts": 0,
+    "causalEffect": "not_identified"
+  },
+  "parsedInputFingerprints": {
+    "substitution-lda-filing-metadata.csv": "56fc2a67124f71e17bc5995b9c85db0f5a180ddea87868dd7cdf88fc16530d8d",
+    "substitution-fec-acquisition-cohort.csv": "886db0b84228bd46d587ba3c52da22df1b91d00ffa0fa63862164b66a8215c47",
+    "substitution-fec-halfyear-coverage.csv": "024de78960b256f5438e53545461145a00d9fc0b338ede75d54fa2c82ff77fa5",
+    "substitution-fec-halfyear-panel.csv": "43cf9d7084c11baf1eb567bb40d3d049646b5c2652ad96633bdb633a5657b1ad",
+    "substitution-estimation-panel.csv": "cd49e400303dc0afde287572288b3177a43169cb4c46b7043574160e01b66291"
+  },
+  "boundary": "Negative identification result for the current source products, not an observed null effect or a representative sample."
+}

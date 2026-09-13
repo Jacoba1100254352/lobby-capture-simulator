@@ -1183,6 +1183,16 @@ def audit():
     add("alternate-channel-halfyears", "observed_outcome_not_effect",
         f"completeHalfYears={len(halfyears)}; includedReportVersions={sum(int(r['reportCount']) for r in halfyears)}; sourceReviewedHalfYears={sum(bool(r['adjudicationIds']) for r in halfyears)}; eventClasses={dict(Counter(r['eventClass'] for r in halfyears))}",
         "Latest non-amended reports or explicit source-bound version adjudications, with no unresolved alternative version. Compare with native LDA periods after actor linkage and exposure validation; period completeness is not exhaustive source-image or causal validation.")
+    spec = importlib.util.spec_from_file_location("substitution_comparison", ROOT / "scripts/audit-substitution-comparison.py")
+    comparison_module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(comparison_module)
+    availability, source_alias = comparison_module.write_review(
+        ROOT, read("substitution-lda-filing-metadata.csv"), cohort, coverage, halfyears,
+        read("substitution-estimation-panel.csv"))
+    add("substitution-comparison-conclusion", "negative_identification_result_current_freeze",
+        "; ".join(f"{key}={value}" for key, value in availability.items())
+        + f"; legacyPrimaryObservations={source_alias['primaryObservations']}; legacyDiagnosticRank={source_alias['exactRank']}/{source_alias['columnCount']}; interactionColumnsIdentical={source_alias['interactionColumnsIdentical']}",
+        "Same-candidate source presence does not establish comparable LDA totals, continuous PAC affiliation or exposed/control groups. Unresolved and unacquired PAC periods remain visible with blank amounts. The legacy treatment-post term equals a federal-source-post term; the augmented model cannot separate them without additional restrictions or comparison evidence. This documents why no successor causal model is fitted to the current freeze, not an observed null effect. Reopen estimation on dated pre-reform exposure and a credible comparison, then resolve measurement and linkage. The full empirical goal remains open.")
     corpus = read("comment-body-corpus.csv")
     if len({r['commentId'] for r in corpus}) != len(corpus):
         raise ValueError("Duplicate comment IDs")

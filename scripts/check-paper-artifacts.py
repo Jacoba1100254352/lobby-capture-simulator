@@ -713,6 +713,9 @@ def submission_inputs() -> list[Path]:
         ROOT / "reports/empirical-expansion-audit.csv",
         ROOT / "reports/comment-publisher-case-review.md",
         ROOT / "reports/comment-publisher-case-review.csv",
+        ROOT / "reports/substitution-comparison-availability.csv",
+        ROOT / "reports/substitution-comparison-review.md",
+        ROOT / "reports/substitution-comparison-review.json",
         ROOT / "reports/procurement-bulk-frame-audit.md",
         ROOT / "reports/procurement-bulk-frame-audit.csv",
         WILEY_PDF,
@@ -6055,6 +6058,8 @@ def package_byte_checks() -> list[tuple[Path, str]]:
         (ROOT / "reports/empirical-expansion-audit.csv", "supporting-information/report-data/empirical-expansion-audit.csv"),
         (ROOT / "reports/comment-publisher-case-review.md", "supporting-information/report-data/comment-publisher-case-review.md"),
         (ROOT / "reports/comment-publisher-case-review.csv", "supporting-information/report-data/comment-publisher-case-review.csv"),
+        *[(ROOT / "reports" / name, f"supporting-information/report-data/{name}") for name in
+          ("substitution-comparison-availability.csv", "substitution-comparison-review.md", "substitution-comparison-review.json")],
         (ROOT / "reports/procurement-bulk-frame-audit.md", "supporting-information/report-data/procurement-bulk-frame-audit.md"),
         (ROOT / "reports/procurement-bulk-frame-audit.csv", "supporting-information/report-data/procurement-bulk-frame-audit.csv"),
         (PAPER / "regulation-governance-wiley.tex", f"{LOCAL_BASENAME}.tex"),

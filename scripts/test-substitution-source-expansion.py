@@ -26,6 +26,102 @@ FAMILIES = load("lda_families", "review-substitution-lda-families.py")
 PAPER = load("fec_paper", "review-substitution-fec-paper.py")
 COALITION = load("coalition_review", "review-substitution-coalition-disclosure.py")
 ORGANIZATIONS = load("fec_organizations", "review-substitution-fec-affiliations.py")
+COMPARISON = load("substitution_comparison", "audit-substitution-comparison.py")
+
+
+class ComparisonAvailabilityTests(unittest.TestCase):
+    def setUp(self):
+        self.metadata = AUDIT.read("substitution-lda-filing-metadata.csv")
+        self.cohort = AUDIT.read("substitution-fec-acquisition-cohort.csv")
+        self.coverage = AUDIT.read("substitution-fec-halfyear-coverage.csv")
+        self.outcomes = AUDIT.read("substitution-fec-halfyear-panel.csv")
+
+    def run_join(self):
+        return COMPARISON.source_availability(self.metadata, self.cohort, self.coverage, self.outcomes)
+
+    def test_join_keeps_unresolved_and_unacquired_distinct_from_observed_zero(self):
+        before = deepcopy((self.metadata, self.cohort, self.coverage, self.outcomes))
+        rows = self.run_join()
+        self.assertEqual(len(rows), 72)
+        self.assertEqual(sum(r["pairedSourcePresence"] == "true" for r in rows), 36)
+        self.assertEqual(sum(r["pacStatus"] == "outside_pac_acquisition_cohort" for r in rows), 24)
+        self.assertEqual(sum(r["pacStatus"] == "unresolved" for r in rows), 12)
+        for r in rows:
+            if r["pacStatus"] != "observed_complete":
+                self.assertEqual(r["candidateContributionsDollars"], "")
+        self.assertTrue(any(r["independentExpendituresDollars"] == "0.00" for r in rows))
+        self.assertEqual(before, (self.metadata, self.cohort, self.coverage, self.outcomes))
+
+    def test_missing_coverage_period_and_duplicate_outcome_are_rejected(self):
+        removed = self.coverage.pop()
+        with self.assertRaisesRegex(ValueError, "every declared period"):
+            self.run_join()
+        self.coverage.append(removed)
+        self.outcomes.append(deepcopy(self.outcomes[0]))
+        with self.assertRaisesRegex(ValueError, "Duplicate PAC outcome"):
+            self.run_join()
+
+    def test_unresolved_period_cannot_acquire_a_zero_outcome(self):
+        missing = next(r for r in self.coverage if r["status"] == "unresolved")
+        row = {**self.outcomes[0], **{k: missing[k] for k in
+               ("canonicalActorId", "committeeId", "halfYear", "periodStart", "periodEnd")}}
+        row["candidateContributionsDollars"] = "0.00"
+        self.outcomes.append(row)
+        with self.assertRaisesRegex(ValueError, "unresolved is not zero"):
+            self.run_join()
+
+    def test_one_quarter_does_not_supply_a_full_halfyear_footprint(self):
+        actor = self.metadata[0]["canonicalActorId"]
+        self.metadata = [r for r in self.metadata if not
+                         (r["canonicalActorId"] == actor and r["periodStart"] == "2008-04-01")]
+        row = next(r for r in self.run_join() if r["canonicalActorId"] == actor and r["halfYear"] == "2008H1")
+        self.assertEqual((row["ldaNativePeriodsPresent"], row["ldaNativePeriodsExpected"]), (1, 2))
+        self.assertEqual(row["ldaNativePeriodFootprint"], "partial_or_missing")
+
+    def test_native_period_is_not_split_across_halfyears(self):
+        row = next(r for r in self.metadata if r["filingType"] not in {"RR", "RA"})
+        row["periodEnd"] = row["periodStart"][:4] + "-12-31"
+        with self.assertRaisesRegex(ValueError, "crosses"):
+            self.run_join()
+
+    def test_join_cannot_invent_exposure_or_accept_inconsistent_pac_dates(self):
+        self.cohort[0]["exposureGroup"] = "treated"
+        with self.assertRaisesRegex(ValueError, "exposure assigned"):
+            self.run_join()
+        self.cohort[0]["exposureGroup"] = "unassigned_design_candidate"
+        self.outcomes[0]["periodEnd"] = "2003-06-29"
+        with self.assertRaisesRegex(ValueError, "dates disagree"):
+            self.run_join()
+
+    def test_legacy_source_alias_is_computed_and_changes_with_within_source_comparison(self):
+        rows = []
+        for actor, treated, source in (("a", "1", "Official LDA API"),
+                                       ("b", "0", "Colorado Secretary of State lobbyist income data")):
+            for q, phase in (("2007Q1", "clean_pre"), ("2008Q1", "post")):
+                rows.append({"canonicalActorId": actor, "quarter": q, "treated": treated,
+                             "sourceSystem": source, "includedInPrimary": "yes", "prePostClass": phase})
+        result = COMPARISON.legacy_source_alias(rows)
+        self.assertEqual((result["exactRank"], result["columnCount"]), (4, 5))
+        self.assertTrue(result["interactionColumnsIdentical"])
+        self.assertEqual(result["maxPredictionChangeForOppositeUnitCoefficientShifts"], 0)
+        rows.append({**rows[-1], "canonicalActorId": "c", "sourceSystem": "Official LDA API"})
+        result = COMPARISON.legacy_source_alias(rows)
+        self.assertFalse(result["interactionColumnsIdentical"])
+        self.assertEqual(result["exactRank"], 5)
+        self.assertEqual(result["causalEffect"], "not_identified")
+
+    def test_legacy_duplicate_actor_quarter_cannot_inflate_rank_evidence(self):
+        rows = AUDIT.read("substitution-estimation-panel.csv")
+        with self.assertRaisesRegex(ValueError, "Duplicate legacy"):
+            COMPARISON.legacy_source_alias(rows + rows[:1])
+
+    def test_changed_legacy_design_requires_reassessment_before_reporting(self):
+        rows = AUDIT.read("substitution-estimation-panel.csv")
+        next(r for r in rows if r["treated"] == "0" and r["prePostClass"] == "post")["sourceSystem"] = "Official LDA API"
+        with tempfile.TemporaryDirectory() as directory:
+            with self.assertRaisesRegex(ValueError, "reassess the source-alias"):
+                COMPARISON.write_review(Path(directory), self.metadata, self.cohort, self.coverage, self.outcomes, rows)
+            self.assertFalse((Path(directory) / "reports").exists())
 
 
 class OrganizationLinkTests(unittest.TestCase):

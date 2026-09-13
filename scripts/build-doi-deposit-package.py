@@ -83,6 +83,8 @@ PACKAGE_INPUTS = [
     PackageInput("reports/empirical-expansion-audit.csv", "readiness/empirical-expansion-audit.csv", "empirical-design-expansion"),
     PackageInput("reports/comment-publisher-case-review.md", "readiness/comment-publisher-case-review.md", "empirical-design-expansion"),
     PackageInput("reports/comment-publisher-case-review.csv", "readiness/comment-publisher-case-review.csv", "empirical-design-expansion"),
+    *[PackageInput(f"reports/{name}", f"readiness/{name}", "empirical-design-expansion")
+      for name in ("substitution-comparison-availability.csv", "substitution-comparison-review.md", "substitution-comparison-review.json")],
     PackageInput("reports/procurement-bulk-frame-audit.md", "readiness/procurement-bulk-frame-audit.md", "empirical-design-expansion"),
     PackageInput("reports/procurement-bulk-frame-audit.csv", "readiness/procurement-bulk-frame-audit.csv", "empirical-design-expansion"),
     PackageInput(

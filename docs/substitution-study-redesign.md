@@ -2,6 +2,33 @@
 
 Updated 2026-09-13 UTC. Status: expanded sources, identification unresolved.
 
+## Inference decision for the current evidence freeze
+
+The [comparison review](../reports/substitution-comparison-review.md) now records
+a reproducible negative identification result. Its 72-row availability table
+retains all twelve half-years for each of the six candidates with returned LDA
+source rows. Thirty-six periods also have a usable PAC outcome; twelve expected
+Benefits Council PAC periods remain unresolved and another 24 actor-half-years
+are outside the four-PAC acquisition cohort. Unknown or unacquired amounts stay
+blank. This observed-source frame is not the full eight-query acquisition frame.
+Native-period presence does not validate complete filings or actor spending.
+
+An exact diagnostic on the legacy panel's 231 included actor-quarters finds
+that treatment-by-post and federal-source-by-post are identical. A five-column
+basis including both has rank four. Opposite coefficient shifts leave predictions
+unchanged, so an augmented model allowing an unrestricted source-specific post
+change cannot distinguish it from treatment. This does not establish an actual
+source shock, reject every cross-source design, or turn a confidence interval
+containing zero into an identification failure.
+
+The decision is to withhold a successor causal estimate for this freeze. Reopen
+estimation when dated pre-reform exposure and a credible comparison become
+available, then clear source versions, accounting comparability, historical
+actor/PAC links and common outcome coverage. The report preserves separate
+quarterly-reporting, gift/travel and coalition-disclosure failure conditions.
+This is a finding about what the current evidence cannot identify, not a finding
+that reform had no effect. It leaves the full empirical goal open.
+
 ## New evidence and its limits
 
 `substitution-expanded-lda-panel.csv` contains 1,119 issue rows, 427 filing UUIDs

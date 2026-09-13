@@ -82,6 +82,14 @@ completeHalfYears=36; includedReportVersions=152; sourceReviewedHalfYears=1; eve
 
 Remaining: Latest non-amended reports or explicit source-bound version adjudications, with no unresolved alternative version. Compare with native LDA periods after actor linkage and exposure validation; period completeness is not exhaustive source-image or causal validation.
 
+## substitution-comparison-conclusion
+
+Status: `negative_identification_result_current_freeze`
+
+observedLdaActors=6; actorHalfYears=72; ldaPeriodFootprintsPresent=72; pacCohortActors=4; expectedPacHalfYears=48; observedPacHalfYears=36; unresolvedPacHalfYears=12; outsidePacCohortHalfYears=24; pairedSourceHalfYears=36; causalEffect=not_identified; legacyPrimaryObservations=231; legacyDiagnosticRank=4/5; interactionColumnsIdentical=True
+
+Remaining: Same-candidate source presence does not establish comparable LDA totals, continuous PAC affiliation or exposed/control groups. Unresolved and unacquired PAC periods remain visible with blank amounts. The legacy treatment-post term equals a federal-source-post term; the augmented model cannot separate them without additional restrictions or comparison evidence. This documents why no successor causal model is fitted to the current freeze, not an observed null effect. Reopen estimation on dated pre-reform exposure and a credible comparison, then resolve measurement and linkage. The full empirical goal remains open.
+
 ## comment-corpus
 
 Status: `source_refreshed`

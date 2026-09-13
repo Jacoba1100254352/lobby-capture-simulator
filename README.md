@@ -370,6 +370,17 @@ source pages, bounded dispositions and unresolved facets. Independent review,
 docket-byte identity, representative rates and causal effects remain uncleared;
 procurement, substitution and simulator parameters are unchanged.
 
+The [substitution comparison review](reports/substitution-comparison-review.md)
+documents a negative identification result for the current evidence freeze.
+Its 72-row source-availability table retains 36 LDA/PAC overlaps, twelve
+unresolved PAC periods and 24 periods outside the PAC cohort. In the legacy
+231-observation comparison, treatment-by-post and federal-source-by-post are
+identical; an augmented model cannot distinguish those coefficients without
+additional restrictions or evidence. No source shock or zero reform effect is
+inferred. The notebook and `make empirical-expansion-audit` reproduce the join
+and exact rank check. Exposure, comparable controls and source measurement
+remain prerequisites for fitting a successor model; the full goal remains open.
+
 The archived procurement frame audit scans only the 56 manifest-selected bulk ZIPs.
 All 6,449,101 rows match their saved archive counts and agency/date partitions,
 but 243,700 have blank award types and 4,505,798 lack offers. One blank-type EPA

@@ -179,7 +179,7 @@ do
   fi
 done
 mkdir -p "$STAGING_DIR/supporting-information/report-data"
-for report_artifact in "$ROOT_DIR"/reports/*.csv "$ROOT_DIR"/reports/*.md "$ROOT_DIR"/reports/*.manifest.json "$ROOT_DIR"/reports/*.svg; do
+for report_artifact in "$ROOT_DIR"/reports/*.csv "$ROOT_DIR"/reports/*.md "$ROOT_DIR"/reports/*.manifest.json "$ROOT_DIR"/reports/*.svg "$ROOT_DIR"/reports/substitution-comparison-review.json; do
   if [ -e "$report_artifact" ]; then
     case "$(basename "$report_artifact")" in
       archive-handoff-manifest.*) continue ;;
