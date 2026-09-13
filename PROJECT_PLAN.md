@@ -189,6 +189,16 @@ or realized supply. The separate ledger, notebook and regressions retain exact
 source scopes, date/reference variants and no-promotion boundaries. Full cost
 inputs, original docket bytes, independent review and causal attribution remain
 unresolved; simulator parameters and earlier follow-ups are unchanged.
+A targeted four-entry study/lightweighting follow-up raises current combined
+coverage to 28, leaving 20 awaiting adjudication. EPA engages with the requested
+ATRI study but distinguishes its full-fleet scenario. Other MOVES and
+ACT Research-to-TEMPO model revisions do not verify the requested bus-report
+acquisition. A named response refers an existing lightweighting approval route;
+all six later-phase wheel inputs and 22 nonwheel rows remain as proposed.
+The ledger preserves the distinction between retention and a new default-input
+refresh, including units, phase labels, merged cells and the axle override.
+No supplier consultation, awarded credits, individual influence, representative
+rate, independent-review clearance or simulator recalibration is promoted.
 A separate NAM 2008Q1 coalition-disclosure probe reviews header/line-25 text
 and checkbox attributes in two electronic filing versions outside the frozen
 cohort. Both API affiliate lists are empty, but the original HTML forms disclose

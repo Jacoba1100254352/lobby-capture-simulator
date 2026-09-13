@@ -407,7 +407,8 @@ replacement-cost heading is 3.4.7.6 on printed page 547. Both variants are
 preserved rather than silently repaired. No current production or legal-status
 claim is drawn from historical forecasts.
 
-The combined ledgers now cover **24 distinct entries, with 24 unadjudicated**.
+At the supply-chain checkpoint, the combined ledgers covered **24 distinct
+entries, with 24 then unadjudicated**.
 Two appearances of r10 remain one request. The two analytical comparisons do
 not add independent policy events. Thirteen new regression tests protect the
 source bindings, partial/complete scopes, method and cost distinctions, and
@@ -415,6 +416,98 @@ claim limits; the notebook independently recomputes coverage from request IDs.
 These consistency checks do not replace independent adjudication. Exact docket
 bytes, independent review and a defensible sampling frame remain unresolved.
 No docket response rate, causal effect or simulator recalibration is cleared.
+
+## Study inputs and lightweighting follow-up, September 13
+
+**Assessment: share with caveats for bounded documentary measurement, not
+causal calibration or representative rates.** The separate
+`comment-publisher-inputs-review.json` reviews r15, r17, r24 and r25 from the
+unchanged 48-entry frame. Selection is targeted and outcome-exposed, not the
+complete model-input topic or an independent sample. Original publisher pages
+9, 10 and 13 supply the requests; page 28 reproduces the ATRI full-fleet map as
+supporting context, not an additional request. All four pages were visually
+reviewed. The publisher and three official document byte hashes were verified;
+the official docket attachment's byte-version match remains unverified.
+
+### Source-linked findings
+
+The [EPA response](https://www.epa.gov/system/files/documents/2024-03/420r24007.pdf)
+reproduces the requests with comment 1570, attachment 1 and matching original
+page citations. PDF page numbers below are one-based; their printed response
+page numbers are 18 lower.
+
+| Existing entry | Original / reproduced request PDF pages | Bounded finding |
+| --- | --- | --- |
+| r15: include ATRI infrastructure study | 9, with supporting map on 28 / 1045 | Response A on PDF 1176-1177 discusses the requested December 2022 study and cites it in footnote 578. It distinguishes full-fleet electrification from the modeled rule pathway. Study engagement is verified, not adoption of the full-fleet numbers as rule impacts or complete RIA incorporation. |
+| r17: acquire ACT bus forecasts | 10 / 875 | No separate acquisition decision was located in the reviewed charging and sales-distribution responses. Other model revisions do not verify purchase, use or rejection of the requested Class 5-7 bus-market forecasts. |
+| r24: refresh lightweighting inputs | 13 / 1283 | The named response on PDF 1298 refers MEMA to an existing approval route under section 1037.520(e)(5), pointing to section 1037.610. This is not verification of updated default inputs or supplier consultation. |
+| r25: retain lightweighting credit | 13 / 1283 | The named summary and collective response recognize the pathway; the historical proposal-to-final comparison retains the published input values. This is consistency with retention, not a newly granted benefit or proof of awarded credits. |
+
+Review includes the complete general responses in section 3.1 (PDF 538-539),
+section 6.1 (907-913), and section 9.2 (1297-1299), plus the named lightweighting
+summary on 1296. For grid demand, only the complete Response A on 1176-1177 is
+adjudicated, ending before Response B. The adoption-source check reads only the
+opening response paragraph on PDF 735, not its entire response section.
+These explicit bounds do not establish docket-wide absence of a response.
+
+### ACT product identity and model revisions
+
+Section 3.1 says EPA moved from MOVES 3.Ra MY2019 sales weighted by 2019
+production reports to MOVES 4.0 MY2021, removing chassis-certified Class 2b-3
+vehicles from this rule's modeled sales. EPA reports the combined Class 2b-5
+share changing from 55% to 33% and Class 8 from 28% to 42%. These are
+agency-reported model shares, not independently reproduced observations.
+The summary names AVE and MFN, not MEMA. Separately, PDF 735 says adoption-bin
+inputs changed from ACT Research to NREL TEMPO while retaining the payback
+period method. A bus-market forecast, an adoption relationship and a revised
+fleet composition are different objects. Neither revision establishes the
+requested bus-report acquisition or an individual MEMA effect. MEMA's claimed
+bus-volume discrepancies are unverified commenter assertions; no ACT report
+was purchased or acquired for this review.
+
+### Published lightweighting tables
+
+Visual comparison of [proposal PDF 205, printed 26130](https://www.govinfo.gov/content/pkg/FR-2023-04-27/pdf/2023-07955.pdf)
+and [final PDF 342-343, printed 29781-29782](https://www.govinfo.gov/content/pkg/FR-2024-04-22/pdf/2024-06809.pdf)
+covers Tables 6 and 8 to section 1037.520, including the continued table and
+footnotes. All six later-phase wheel values remain 84, 147, 147, 8, 25 and
+25 pounds per wheel in displayed row order. All 22 nonwheel component/material
+rows also retain their numeric values. The ledger records both versions by
+row and preserves the first twelve rows' merged Light/Medium cells, plus the
+footnote directing Medium HDV with 6x4 or 6x2 axles to the Heavy HDV values.
+
+The headings change from Phase 2 and Phase 3 to Phase 2 and later; this is
+not byte-identical text. Both publications repeat a 210-pound example using
+21-pound aluminum-wheel terms, while the relevant later-phase steer/dual-wide
+aluminum input is 25. We compare the specified later-phase table column and
+do not silently repair or use that unqualified example to infer new inputs.
+The comparison does not audit the 2016 baseline, execute GEM input files,
+verify actual credits, or determine current law. The approval route's
+preexistence is described by EPA, not independently established from a 2016
+regulatory comparison. r24 and r25 share this one comparison.
+
+### Coverage, risks and reproducibility
+
+Current combined coverage is **28 distinct reviewed entries and 20 awaiting
+adjudication**. A reviewed entry may still have an unresolved outcome. There
+remains one letter, zero independently cleared entries, and no docket-rate
+or causal-calibration eligibility. The three evidence comparisons are not
+three independent policy events.
+
+The ledger records three high-risk distinctions: full-fleet versus rule-impact
+estimates, requested ACT product versus other model changes, and an existing
+approval route versus an input refresh. A medium-risk table caution preserves
+phase labels, the example, merged cells and the axle override. The remedy is
+explicit scope and coding, not imputed outcomes. Independent review should
+check these distinctions and the request segmentation; original-file version
+verification and a defensible sampling frame remain separate requirements.
+
+The publisher validator, twelve new regression tests and the companion
+`notebooks/empirical-expansion-review.ipynb` protect source bindings, coverage,
+numeric retention and claim boundaries. The notebook recomputes unique request
+coverage and table equality. These are consistency checks, not independent
+authentication of the source readings. Procurement and substitution work
+remain open; older thematic ledgers and simulator parameters are unchanged.
 
 ## Original two-request agency-excerpt pilot
 

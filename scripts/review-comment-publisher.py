@@ -686,7 +686,466 @@ def validate_supply(inventory, ledger):
             "supplyAnalysisComparisons": len(comparisons), "supplySourceCautions": len(caution_spec)}
 
 
-def validate_all(inventory, warranty, technology, infrastructure=None, timing=None, supply=None):
+
+
+INPUTS_PAGES = {
+    "response": [
+        {"pdfPage": 538, "printedPage": 520},
+        {"pdfPage": 539, "printedPage": 521},
+        {"pdfPage": 735, "printedPage": 717},
+        {"pdfPage": 875, "printedPage": 857},
+        {"pdfPage": 907, "printedPage": 889},
+        {"pdfPage": 908, "printedPage": 890},
+        {"pdfPage": 909, "printedPage": 891},
+        {"pdfPage": 910, "printedPage": 892},
+        {"pdfPage": 911, "printedPage": 893},
+        {"pdfPage": 912, "printedPage": 894},
+        {"pdfPage": 913, "printedPage": 895},
+        {"pdfPage": 1045, "printedPage": 1027},
+        {"pdfPage": 1176, "printedPage": 1158},
+        {"pdfPage": 1177, "printedPage": 1159},
+        {"pdfPage": 1283, "printedPage": 1265},
+        {"pdfPage": 1296, "printedPage": 1278},
+        {"pdfPage": 1297, "printedPage": 1279},
+        {"pdfPage": 1298, "printedPage": 1280},
+        {"pdfPage": 1299, "printedPage": 1281},
+    ],
+    "proposal": [{"pdfPage": 205, "printedPage": 26130}],
+    "final": [{"pdfPage": 342, "printedPage": 29781}, {"pdfPage": 343, "printedPage": 29782}],
+}
+INPUTS_SCOPES = {
+    "grid-demand-response-a": {"pdfPages": [1176, 1177], "completeGeneralResponse": True},
+    "charging-infrastructure": {"pdfPages": [907, 908, 909, 910, 911, 912, 913], "completeGeneralResponse": True},
+    "sales-distribution": {"pdfPages": [538, 539], "completeGeneralResponse": True},
+    "adoption-source-distinction": {"pdfPages": [735], "completeGeneralResponse": False},
+    "other-technologies": {"pdfPages": [1297, 1298, 1299], "completeGeneralResponse": True},
+}
+INPUTS_REVIEW_SPEC = [
+    {
+        "requestId": "mema-1570-r15",
+        "citedCommentId": "EPA-HQ-OAR-2022-0985-1570",
+        "citedAttachmentOrder": 1,
+        "originalPdfPages": [9, 28],
+        "matchedOriginalPdfPages": [9],
+        "excerptPdfPages": [1045],
+        "summaryPdfPages": [],
+        "responseScopeIds": ["grid-demand-response-a"],
+        "excerptContentMatch": "selected_request_wording_and_original_page_citations_agree",
+        "responseLink": "reproduced_request_thematic_response",
+        "disposition": "requested_study_considered_full_fleet_scope_distinguished",
+        "analysisComparisonIds": ["atri-study-consideration"],
+        "independentReviewStatus": "pending",
+        "individualCausalEffect": "not_identified",
+    },
+    {
+        "requestId": "mema-1570-r17",
+        "citedCommentId": "EPA-HQ-OAR-2022-0985-1570",
+        "citedAttachmentOrder": 1,
+        "originalPdfPages": [10],
+        "matchedOriginalPdfPages": [10],
+        "excerptPdfPages": [875],
+        "summaryPdfPages": [],
+        "responseScopeIds": ["charging-infrastructure", "sales-distribution", "adoption-source-distinction"],
+        "excerptContentMatch": "selected_request_wording_and_original_page_citations_agree",
+        "responseLink": "reproduced_request_no_separate_disposition_in_reviewed_responses",
+        "disposition": "act_bus_report_acquisition_not_verified",
+        "analysisComparisonIds": ["bus-forecast-vs-other-model-updates"],
+        "independentReviewStatus": "pending",
+        "individualCausalEffect": "not_identified",
+    },
+    {
+        "requestId": "mema-1570-r24",
+        "citedCommentId": "EPA-HQ-OAR-2022-0985-1570",
+        "citedAttachmentOrder": 1,
+        "originalPdfPages": [13],
+        "matchedOriginalPdfPages": [13],
+        "excerptPdfPages": [1283],
+        "summaryPdfPages": [1296],
+        "responseScopeIds": ["other-technologies"],
+        "excerptContentMatch": "selected_request_wording_and_original_page_citations_agree",
+        "responseLink": "explicit_named_response",
+        "disposition": "existing_off_cycle_pathway_not_default_input_refresh",
+        "analysisComparisonIds": ["lightweighting-tables-and-approval-route"],
+        "independentReviewStatus": "pending",
+        "individualCausalEffect": "not_identified",
+    },
+    {
+        "requestId": "mema-1570-r25",
+        "citedCommentId": "EPA-HQ-OAR-2022-0985-1570",
+        "citedAttachmentOrder": 1,
+        "originalPdfPages": [13],
+        "matchedOriginalPdfPages": [13],
+        "excerptPdfPages": [1283],
+        "summaryPdfPages": [1296],
+        "responseScopeIds": ["other-technologies"],
+        "excerptContentMatch": "selected_request_wording_and_original_page_citations_agree",
+        "responseLink": "named_summary_collective_response",
+        "disposition": "published_weight_input_values_retained_from_proposal",
+        "analysisComparisonIds": ["lightweighting-tables-and-approval-route"],
+        "independentReviewStatus": "pending",
+        "individualCausalEffect": "not_identified",
+    },
+]
+INPUTS_COMPARISON_SPEC = [
+    {
+        "comparisonId": "atri-study-consideration",
+        "requestIds": ["mema-1570-r15"],
+        "evidencePages": {"publisher": [9, 28], "response": [1045, 1176, 1177]},
+        "assessment": "study_considered_not_full_fleet_estimates_adopted",
+        "facts": {
+            "requestedStudyCitedInAgencyResponse": True,
+            "fullFleetScenarioDistinguished": True,
+            "ruleImpactEstimateReplacedByAtriFullFleetNumbers": False,
+            "fullRiaIncorporationVerified": False,
+            "underlyingAtriStudyIndependentlyReviewed": False,
+        },
+        "distinctPolicyChanges": "not_counted",
+        "individualAttribution": "not_identified",
+    },
+    {
+        "comparisonId": "bus-forecast-vs-other-model-updates",
+        "requestIds": ["mema-1570-r17"],
+        "evidencePages": {"publisher": [10], "response": [538, 539, 735, 875, 907, 908, 909, 910, 911, 912, 913]},
+        "assessment": "related_updates_do_not_verify_requested_report_acquisition",
+        "facts": {
+            "requestedProduct": "ACT Research Class 5-7 bus-market segmentation forecast",
+            "actBusReportAcquisitionVerified": False,
+            "actBusReportAcquisitionRejected": False,
+            "salesDistributionSummaryNames": ["AVE", "MFN"],
+            "salesDistributionSummaryNamesMema": False,
+            "proposalSalesSource": "MOVES 3.Ra MY2019 weighted by 2019 production reports",
+            "finalSalesSource": "MOVES 4.0 MY2021",
+            "chassisCertifiedClass2b3Removed": True,
+            "agencyReportedClass2b5SharePercent": {"proposal": 55, "final": 33},
+            "agencyReportedClass8SharePercent": {"proposal": 28, "final": 42},
+            "adoptionBinSourceChangedFromActResearchToNrelTempo": True,
+            "busForecastAndAdoptionModelSameProduct": False,
+            "underlyingModelReplicated": False,
+        },
+        "distinctPolicyChanges": "not_counted",
+        "individualAttribution": "not_identified",
+    },
+    {
+        "comparisonId": "lightweighting-tables-and-approval-route",
+        "requestIds": ["mema-1570-r24", "mema-1570-r25"],
+        "evidencePages": {
+            "publisher": [13],
+            "response": [1283, 1296, 1297, 1298, 1299],
+            "proposal": [205],
+            "final": [342, 343],
+        },
+        "assessment": "published_input_values_retained_existing_route_referred",
+        "facts": {
+            "namedResponseRefersExistingApprovalRoute": True,
+            "agencyCitedProvision": "40 CFR 1037.520(e)(5)",
+            "agencyReferredOffCycleProvision": "40 CFR 1037.610",
+            "wheelLaterPhaseValuesChanged": 0,
+            "nonwheelNumericRowsChanged": 0,
+            "supplierConsultationVerified": False,
+            "defaultInputRefreshVerified": False,
+            "creditsAwardedVerified": False,
+            "gemInputFilesExecuted": False,
+            "historical2016TextCompared": False,
+            "currentLegalStatusAssessed": False,
+        },
+        "distinctPolicyChanges": "not_counted",
+        "individualAttribution": "not_identified",
+    },
+]
+INPUTS_TABLES = {
+    "comparisonId": "lightweighting-tables-and-approval-route",
+    "wheel": {
+        "tableNumber": 6,
+        "units": "pounds_per_wheel",
+        "proposalPhaseLabel": "Phase 2 and Phase 3",
+        "finalPhaseLabel": "Phase 2 and later",
+        "rows": [
+            {"tireType": "wide_base_single", "material": "steel", "proposal": 84, "final": 84},
+            {"tireType": "wide_base_single", "material": "aluminum", "proposal": 147, "final": 147},
+            {
+                "tireType": "wide_base_single",
+                "material": "lightweight_aluminum_alloy",
+                "proposal": 147,
+                "final": 147,
+            },
+            {"tireType": "steer_or_dual_wide", "material": "high_strength_steel", "proposal": 8, "final": 8},
+            {"tireType": "steer_or_dual_wide", "material": "aluminum", "proposal": 25, "final": 25},
+            {
+                "tireType": "steer_or_dual_wide",
+                "material": "lightweight_aluminum_alloy",
+                "proposal": 25,
+                "final": 25,
+            },
+        ],
+        "footnote": "The wide-base input includes reduced tire weight relative to dual-wide tires.",
+    },
+    "nonwheel": {
+        "tableNumber": 8,
+        "units": "pounds_per_vehicle_unless_otherwise_noted",
+        "proposalPhaseLabel": "Phase 2 and Phase 3",
+        "finalPhaseLabel": "Phase 2 and later",
+        "rows": [
+            {
+                "component": "axle_hubs_non_drive",
+                "material": "aluminum",
+                "columnGroups": ["light_and_medium", "heavy"],
+                "proposal": [40, 40],
+                "final": [40, 40],
+            },
+            {
+                "component": "axle_hubs_non_drive",
+                "material": "high_strength_steel",
+                "columnGroups": ["light_and_medium", "heavy"],
+                "proposal": [5, 5],
+                "final": [5, 5],
+            },
+            {
+                "component": "axle_non_drive",
+                "material": "aluminum",
+                "columnGroups": ["light_and_medium", "heavy"],
+                "proposal": [60, 60],
+                "final": [60, 60],
+            },
+            {
+                "component": "axle_non_drive",
+                "material": "high_strength_steel",
+                "columnGroups": ["light_and_medium", "heavy"],
+                "proposal": [15, 15],
+                "final": [15, 15],
+            },
+            {
+                "component": "brake_drums_non_drive",
+                "material": "aluminum",
+                "columnGroups": ["light_and_medium", "heavy"],
+                "proposal": [60, 60],
+                "final": [60, 60],
+            },
+            {
+                "component": "brake_drums_non_drive",
+                "material": "high_strength_steel",
+                "columnGroups": ["light_and_medium", "heavy"],
+                "proposal": [42, 42],
+                "final": [42, 42],
+            },
+            {
+                "component": "axle_hubs_drive",
+                "material": "aluminum",
+                "columnGroups": ["light_and_medium", "heavy"],
+                "proposal": [40, 80],
+                "final": [40, 80],
+            },
+            {
+                "component": "axle_hubs_drive",
+                "material": "high_strength_steel",
+                "columnGroups": ["light_and_medium", "heavy"],
+                "proposal": [10, 20],
+                "final": [10, 20],
+            },
+            {
+                "component": "brake_drums_drive",
+                "material": "aluminum",
+                "columnGroups": ["light_and_medium", "heavy"],
+                "proposal": [70, 140],
+                "final": [70, 140],
+            },
+            {
+                "component": "brake_drums_drive",
+                "material": "high_strength_steel",
+                "columnGroups": ["light_and_medium", "heavy"],
+                "proposal": [37, 74],
+                "final": [37, 74],
+            },
+            {
+                "component": "suspension_brackets_hangers",
+                "material": "aluminum",
+                "columnGroups": ["light_and_medium", "heavy"],
+                "proposal": [67, 100],
+                "final": [67, 100],
+            },
+            {
+                "component": "suspension_brackets_hangers",
+                "material": "high_strength_steel",
+                "columnGroups": ["light_and_medium", "heavy"],
+                "proposal": [20, 30],
+                "final": [20, 30],
+            },
+            {
+                "component": "crossmember_cab",
+                "material": "aluminum",
+                "columnGroups": ["light", "medium", "heavy"],
+                "proposal": [10, 15, 15],
+                "final": [10, 15, 15],
+            },
+            {
+                "component": "crossmember_cab",
+                "material": "high_strength_steel",
+                "columnGroups": ["light", "medium", "heavy"],
+                "proposal": [2, 5, 5],
+                "final": [2, 5, 5],
+            },
+            {
+                "component": "crossmember_non_suspension",
+                "material": "aluminum",
+                "columnGroups": ["light", "medium", "heavy"],
+                "proposal": [15, 15, 15],
+                "final": [15, 15, 15],
+            },
+            {
+                "component": "crossmember_non_suspension",
+                "material": "high_strength_steel",
+                "columnGroups": ["light", "medium", "heavy"],
+                "proposal": [5, 5, 5],
+                "final": [5, 5, 5],
+            },
+            {
+                "component": "crossmember_suspension",
+                "material": "aluminum",
+                "columnGroups": ["light", "medium", "heavy"],
+                "proposal": [15, 25, 25],
+                "final": [15, 25, 25],
+            },
+            {
+                "component": "crossmember_suspension",
+                "material": "high_strength_steel",
+                "columnGroups": ["light", "medium", "heavy"],
+                "proposal": [6, 6, 6],
+                "final": [6, 6, 6],
+            },
+            {
+                "component": "driveshaft",
+                "material": "aluminum",
+                "columnGroups": ["light", "medium", "heavy"],
+                "proposal": [12, 40, 50],
+                "final": [12, 40, 50],
+            },
+            {
+                "component": "driveshaft",
+                "material": "high_strength_steel",
+                "columnGroups": ["light", "medium", "heavy"],
+                "proposal": [5, 10, 12],
+                "final": [5, 10, 12],
+            },
+            {
+                "component": "frame_rails",
+                "material": "aluminum",
+                "columnGroups": ["light", "medium", "heavy"],
+                "proposal": [120, 300, 440],
+                "final": [120, 300, 440],
+            },
+            {
+                "component": "frame_rails",
+                "material": "high_strength_steel",
+                "columnGroups": ["light", "medium", "heavy"],
+                "proposal": [40, 40, 87],
+                "final": [40, 40, 87],
+            },
+        ],
+        "mergedCellMeaning": "The first twelve rows span the Light and Medium HDV columns; their shared value is not a missing or zero Medium cell.",
+        "mediumAxleOverride": "For Medium HDV with 6x4 or 6x2 axle configurations, use Heavy HDV values.",
+    },
+    "scope": "All six later-phase wheel rows and all 22 nonwheel component/material rows visually compared, including both table footnotes. Phase 1 wheel values are not the Phase 3 comparison. Identical published values do not independently verify GEM implementation or the 2016 baseline.",
+}
+INPUTS_CAUTION_SPEC = [
+    {
+        "cautionId": "full-fleet-is-not-rule-impact",
+        "requestIds": ["mema-1570-r15"],
+        "evidencePages": {"publisher": [9, 28], "response": [1176, 1177]},
+        "severity": "high",
+        "status": "study_engagement_and_numeric_adoption_separated",
+    },
+    {
+        "cautionId": "act-products-and-commenter-attribution",
+        "requestIds": ["mema-1570-r17"],
+        "evidencePages": {"publisher": [10], "response": [538, 539, 735, 875]},
+        "severity": "high",
+        "status": "requested_product_and_other_model_updates_separated",
+    },
+    {
+        "cautionId": "approval-route-is-not-input-refresh",
+        "requestIds": ["mema-1570-r24", "mema-1570-r25"],
+        "evidencePages": {"publisher": [13], "response": [1296, 1298, 1299], "proposal": [205], "final": [342, 343]},
+        "severity": "high",
+        "status": "existing_route_retention_and_new_change_separated",
+    },
+    {
+        "cautionId": "table-phase-and-merged-cell-scope",
+        "requestIds": ["mema-1570-r24", "mema-1570-r25"],
+        "evidencePages": {"proposal": [205], "final": [342, 343]},
+        "severity": "medium",
+        "status": "phase_labels_merged_cells_and_footnotes_preserved",
+    },
+]
+
+
+def validate_inputs(inventory, ledger):
+    """Check the frozen documentary reading, not independently authenticate it."""
+    check_review(ledger, "comment-publisher-inputs-review-v1")
+    require(ledger["inventoryFile"] == "comment-publisher-inventory.json"
+            and ledger["inventoryFrameSha256"] == inventory["requestFrameSha256"]
+            and ledger["publisherSha256"] == inventory["publisher"]["sha256"] == PUBLISHER_SHA,
+            "Inputs review has stale inventory/source binding")
+    ids = [r["requestId"] for r in INPUTS_REVIEW_SPEC]
+    selection = ledger["selection"]
+    require(selection["requestIds"] == ids
+            and selection["mode"] == "targeted_study_and_lightweighting_followup"
+            and selection["priorOutcomeExposure"] is True and selection["blinded"] is False
+            and selection["scope"], "Inputs selection/frame disclosure mismatch")
+    visual = ledger["publisherReview"]
+    require(visual["pdfPages"] == [9, 10, 13, 28]
+            and visual["method"] == "rendered_pages_with_text_navigation" and visual["scope"],
+            "Inputs original visual scope mismatch")
+    require(set(ledger["documents"]) == set(INPUTS_PAGES), "Missing inputs source document")
+    for name, pages in INPUTS_PAGES.items():
+        doc = ledger["documents"][name]
+        require(doc["sha256"] == SOURCE_DOCS[name][0] and doc["url"] == SOURCE_URLS[name]
+                and doc["reviewedPages"] == pages and doc["scope"],
+                "Inputs source identity/page mapping mismatch")
+    require(set(ledger["responseScopes"]) == set(INPUTS_SCOPES), "Inputs response scope missing")
+    for name, expected in INPUTS_SCOPES.items():
+        scope = ledger["responseScopes"][name]
+        require(scope["pdfPages"] == expected["pdfPages"]
+                and scope["completeGeneralResponse"] is expected["completeGeneralResponse"]
+                and scope["locator"], "Inputs response scope mismatch")
+    reviews = ledger["reviews"]
+    require([r["requestId"] for r in reviews] == ids, "Inputs review frame mismatch")
+    inventory_rows = {r["requestId"]: r for r in inventory["requests"]}
+    for row, expected in zip(reviews, INPUTS_REVIEW_SPEC):
+        require(row["originalPdfPages"] == inventory_rows[row["requestId"]]["pdfPages"]
+                and all(row.get(k) == v for k, v in expected.items()) and row["basis"],
+                "Unsupported inputs coding/linkage/promotion")
+    comparisons = ledger["analysisComparisons"]
+    require(len(comparisons) == len(INPUTS_COMPARISON_SPEC),
+            "Inputs comparisons must not multiply requests or policy events")
+    for comparison, expected in zip(comparisons, INPUTS_COMPARISON_SPEC):
+        require(fingerprint({k: comparison.get(k) for k in expected}) == fingerprint(expected)
+                and comparison["basis"], "Unsupported inputs analysis comparison")
+    require(ledger["publishedTables"] == INPUTS_TABLES,
+            "Inputs table values, phase, units or merged-cell scope changed")
+    for table_name in ("wheel", "nonwheel"):
+        table = ledger["publishedTables"][table_name]
+        require(all(row["proposal"] == row["final"] for row in table["rows"]),
+                "Inputs table comparison does not reproduce retention")
+    cautions = ledger["sourceCautions"]
+    require(len(cautions) == len(INPUTS_CAUTION_SPEC), "Missing inputs source caution")
+    for caution, expected in zip(cautions, INPUTS_CAUTION_SPEC):
+        require(all(caution.get(k) == v for k, v in expected.items())
+                and caution["finding"] and caution["handling"], "Inputs source caution changed")
+    boundary = ledger["boundary"]
+    expected_boundary = {
+        "officialAttachmentByteMatch": "not_verified", "independentReviewStatus": "pending",
+        "docketRateEligible": False, "overallLetterResponseCodingComplete": False,
+        "currentLegalStatusAssessed": False, "causalEffect": "not_identified",
+        "simulatorRecalibrated": False, "remainingEntriesStatus": "not_yet_adjudicated_not_nonresponse",
+    }
+    require(fingerprint({k: boundary.get(k) for k in expected_boundary}) == fingerprint(expected_boundary)
+            and boundary["comparisonBoundary"] and boundary["unreviewedAnalysis"],
+            "Unsupported inputs claim boundary")
+    return {"inputsEntriesReviewed": len(reviews),
+            "inputsResponseLinks": dict(Counter(r["responseLink"] for r in reviews)),
+            "inputsAnalysisComparisons": len(comparisons), "inputsSourceCautions": len(cautions)}
+
+
+def validate_all(inventory, warranty, technology, infrastructure=None, timing=None, supply=None, inputs=None):
     """Aggregate supplied follow-ups; omitted ledgers retain historical review scopes."""
     result = validate(inventory, warranty)
     result.update(validate_technology(inventory, technology))
@@ -700,6 +1159,9 @@ def validate_all(inventory, warranty, technology, infrastructure=None, timing=No
     if supply is not None:
         result.update(validate_supply(inventory, supply))
         ledgers.append(supply)
+    if inputs is not None:
+        result.update(validate_inputs(inventory, inputs))
+        ledgers.append(inputs)
     ids = [r["requestId"] for ledger in ledgers for r in ledger["reviews"]]
     require(len(ids) == len(set(ids)), "Overlapping publisher follow-ups inflate review coverage")
     result["boundedResponseReviews"] = len(ids)
@@ -719,7 +1181,8 @@ def main():
     infrastructure = json.loads((DATA / "comment-publisher-infrastructure-review.json").read_text())
     timing = json.loads((DATA / "comment-publisher-timing-review.json").read_text())
     supply = json.loads((DATA / "comment-publisher-supply-review.json").read_text())
-    result = validate_all(inventory, followup, technology, infrastructure, timing, supply)
+    inputs = json.loads((DATA / "comment-publisher-inputs-review.json").read_text())
+    result = validate_all(inventory, followup, technology, infrastructure, timing, supply, inputs)
     checked = []
     for name, digest in {"publisher_pdf": PUBLISHER_SHA,
             "metadata_json": inventory["docketMetadata"]["rawSha256"],

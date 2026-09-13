@@ -1131,5 +1131,144 @@ class PublisherSupplyTests(unittest.TestCase):
             boundary[key] = original
 
 
+class PublisherInputsTests(unittest.TestCase):
+    def setUp(self):
+        names = ("inventory", "warranty-review", "technology-review", "infrastructure-review",
+                 "timing-review", "supply-review", "inputs-review")
+        self.ledgers = [json.loads((AUDIT.DATA / f"comment-publisher-{name}.json").read_text()) for name in names]
+        self.inputs = self.ledgers[-1]
+
+    def check(self, refresh=True):
+        if refresh:
+            self.inputs["reviewFingerprint"] = PUBLISHER.fingerprint({
+                k: v for k, v in self.inputs.items() if k != "reviewFingerprint"})
+        return PUBLISHER.validate_all(*self.ledgers)
+
+    def test_four_new_reviews_preserve_old_ledgers_and_coverage(self):
+        before = deepcopy(self.ledgers)
+        result = self.check(False)
+        self.assertEqual(self.ledgers, before)
+        for key, value in {"publisherLetters": 1, "inventoryEntries": 48, "boundedResponseReviews": 28,
+                           "otherEntriesAwaitingAdjudication": 20, "inputsEntriesReviewed": 4,
+                           "inputsAnalysisComparisons": 3, "inputsSourceCautions": 4,
+                           "verifiedDocketByteMatches": 0, "independentlyReviewedEntries": 0,
+                           "docketRateEligibleEntries": 0}.items():
+            self.assertEqual(result[key], value)
+        old = PUBLISHER.validate_all(*self.ledgers[:-1])
+        self.assertEqual((old["boundedResponseReviews"], old["otherEntriesAwaitingAdjudication"]), (24, 24))
+
+    def test_stale_fingerprint_and_frame_fail(self):
+        self.inputs["inventoryFrameSha256"] = "0" * 64
+        with self.assertRaisesRegex(ValueError, "fingerprint"):
+            self.check(False)
+        with self.assertRaisesRegex(ValueError, "binding"):
+            self.check()
+
+    def test_missing_duplicate_and_off_frame_requests_fail(self):
+        original = deepcopy(self.inputs["reviews"])
+        off_frame = deepcopy(original)
+        off_frame[0]["requestId"] = "mema-1570-r14"
+        for rows in (original[:3], original * 2, [original[0]] * 4, off_frame):
+            self.inputs["reviews"] = rows
+            with self.subTest(rows=len(rows)), self.assertRaisesRegex(ValueError, "frame"):
+                self.check()
+
+    def test_targeted_selection_cannot_be_blinded_or_complete_topic(self):
+        selection = self.inputs["selection"]
+        for key, value in (("blinded", True), ("mode", "complete_model_inputs_topic")):
+            old = selection[key]
+            selection[key] = value
+            with self.subTest(key=key), self.assertRaisesRegex(ValueError, "selection"):
+                self.check()
+            selection[key] = old
+
+    def test_source_identity_and_page_mappings_are_required(self):
+        for name, doc in self.inputs["documents"].items():
+            for field, value in (("sha256", "0" * 64), ("reviewedPages", [])):
+                old = doc[field]
+                doc[field] = value
+                with self.subTest(name=name, field=field), self.assertRaisesRegex(ValueError, "source identity"):
+                    self.check()
+                doc[field] = old
+
+    def test_complete_and_partial_response_scopes_cannot_be_swapped(self):
+        for name, scope in self.inputs["responseScopes"].items():
+            old = scope["completeGeneralResponse"]
+            scope["completeGeneralResponse"] = not old
+            with self.subTest(name=name), self.assertRaisesRegex(ValueError, "response scope"):
+                self.check()
+            scope["completeGeneralResponse"] = old
+        self.inputs["responseScopes"]["charging-infrastructure"]["pdfPages"] = [907]
+        with self.assertRaisesRegex(ValueError, "response scope"):
+            self.check()
+
+    def test_bounded_dispositions_cannot_become_acceptance_rejection_or_effect(self):
+        for row in self.inputs["reviews"]:
+            for key, value in (("disposition", "accepted"), ("disposition", "no_response"),
+                               ("individualCausalEffect", "identified"), ("independentReviewStatus", "cleared")):
+                old = row[key]
+                row[key] = value
+                with self.subTest(request=row["requestId"], key=key), self.assertRaisesRegex(ValueError, "coding"):
+                    self.check()
+                row[key] = old
+
+    def test_study_product_attribution_and_input_refresh_distinctions_are_required(self):
+        for comparison, expected in zip(self.inputs["analysisComparisons"], PUBLISHER.INPUTS_COMPARISON_SPEC):
+            for key, value in expected["facts"].items():
+                comparison["facts"][key] = not value if isinstance(value, bool) else "unsupported"
+                with self.subTest(key=key), self.assertRaisesRegex(ValueError, "analysis comparison"):
+                    self.check()
+                comparison["facts"][key] = value
+
+    def test_all_published_numeric_rows_reproduce_retention(self):
+        tables = self.inputs["publishedTables"]
+        self.assertEqual(len(tables["wheel"]["rows"]), 6)
+        self.assertEqual(len(tables["nonwheel"]["rows"]), 22)
+        for name in ("wheel", "nonwheel"):
+            for row in tables[name]["rows"]:
+                self.assertEqual(row["proposal"], row["final"])
+                old = row["final"]
+                row["final"] = 0
+                with self.subTest(table=name), self.assertRaisesRegex(ValueError, "table values"):
+                    self.check()
+                row["final"] = old
+
+    def test_table_units_phases_merged_cells_and_axle_override_preserved(self):
+        tables = self.inputs["publishedTables"]
+        for table, key, value in (("wheel", "units", "emissions_credits"),
+                                   ("wheel", "finalPhaseLabel", "Phase 1"),
+                                   ("nonwheel", "mediumAxleOverride", "none")):
+            old = tables[table][key]
+            tables[table][key] = value
+            with self.subTest(key=key), self.assertRaisesRegex(ValueError, "table values"):
+                self.check()
+            tables[table][key] = old
+        tables["nonwheel"]["rows"][0]["columnGroups"] = ["light", "heavy"]
+        with self.assertRaisesRegex(ValueError, "merged-cell"):
+            self.check()
+
+    def test_shared_comparison_and_cautions_cannot_be_dropped_or_multiplied(self):
+        comparisons = self.inputs["analysisComparisons"][:]
+        self.inputs["analysisComparisons"] *= 2
+        with self.assertRaisesRegex(ValueError, "multiply"):
+            self.check()
+        self.inputs["analysisComparisons"] = comparisons
+        self.inputs["sourceCautions"].pop()
+        with self.assertRaisesRegex(ValueError, "source caution"):
+            self.check()
+
+    def test_claim_boundaries_cannot_be_promoted(self):
+        boundary = self.inputs["boundary"]
+        for key, value in (("docketRateEligible", True), ("simulatorRecalibrated", True),
+                           ("overallLetterResponseCodingComplete", True), ("currentLegalStatusAssessed", True),
+                           ("causalEffect", "identified"), ("independentReviewStatus", "cleared"),
+                           ("officialAttachmentByteMatch", "verified")):
+            old = boundary[key]
+            boundary[key] = value
+            with self.subTest(key=key), self.assertRaisesRegex(ValueError, "claim boundary"):
+                self.check()
+            boundary[key] = old
+
+
 if __name__ == "__main__":
     unittest.main()

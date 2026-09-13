@@ -329,8 +329,8 @@ cost-model addition is not verified. These are historical response/preamble
 comparisons, not individual influence, current-law findings or independent
 review clearance. See the [timing review](docs/comment-response-document-pilot.md#timing-and-transition-cost-follow-up-september-13).
 
-A separate two-entry supply-chain follow-up brings combined coverage to 24
-distinct entries, leaving 24 unadjudicated. Recycling/disposal cost additions
+The two-entry supply-chain checkpoint covered 24 distinct entries in total,
+with 24 then unadjudicated. Recycling/disposal cost additions
 remain unverified in the reviewed passages; the final RIA's documented
 battery-replacement addition is a different cost component. EPA adds BMI weighted
 lithium scenarios, while ANL supplies assumptions and lists uncertainty
@@ -338,6 +338,16 @@ sensitivities as future work. This partly aligns with the requested methods,
 not full acceptance, statistical confidence levels or observed production.
 Source date/reference differences and pending independent review remain explicit.
 See the [supply-chain review](docs/comment-response-document-pilot.md#supply-chain-methods-and-end-of-life-costs-september-13).
+
+A four-entry study/lightweighting follow-up raises current coverage to 28,
+with 20 still awaiting adjudication. EPA discusses the requested ATRI study but
+distinguishes its full-fleet estimates from rule impacts. MOVES fleet revisions
+and a separate ACT Research-to-TEMPO adoption update do not establish acquisition
+of the requested ACT bus forecasts. The named lightweighting response refers
+an existing approval route; all six later-phase wheel values and 22 nonwheel
+rows remain as proposed. Retention is not a default-input refresh or awarded
+credits. Source scopes, table units, merged cells and pending independent review
+remain explicit. See the [study/input review](docs/comment-response-document-pilot.md#study-inputs-and-lightweighting-follow-up-september-13).
 
 The archived procurement frame audit scans only the 56 manifest-selected bulk ZIPs.
 All 6,449,101 rows match their saved archive counts and agency/date partitions,

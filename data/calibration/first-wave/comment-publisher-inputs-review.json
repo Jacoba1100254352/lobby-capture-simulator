@@ -1,0 +1,975 @@
+{
+  "schema": "comment-publisher-inputs-review-v1",
+  "reviewDate": "2026-09-13",
+  "reviewer": "Codex source review; independent adjudication pending",
+  "inventoryFile": "comment-publisher-inventory.json",
+  "inventoryFrameSha256": "717738adcf4cba674307d1721c1d8a60429c21f804232c1a57bdc7f28a2f4f39",
+  "publisherSha256": "e6f6c3c34594d69654b4375e29896175b3057f4c6a0c987e141ac229f10d0159",
+  "selection": {
+    "requestIds": [
+      "mema-1570-r15",
+      "mema-1570-r17",
+      "mema-1570-r24",
+      "mema-1570-r25"
+    ],
+    "mode": "targeted_study_and_lightweighting_followup",
+    "priorOutcomeExposure": true,
+    "blinded": false,
+    "scope": "Four existing entries, not the entire model_inputs or technology topic. Source-led selection after earlier response reviews, not random or blinded sampling. One letter; no new independent comments."
+  },
+  "publisherReview": {
+    "pdfPages": [
+      9,
+      10,
+      13,
+      28
+    ],
+    "method": "rendered_pages_with_text_navigation",
+    "scope": "Request wording on pages 9, 10 and 13; page 28's supporting ATRI map is context for r15, not a separate request. Highlighted retention and input-refresh actions remain separate entries sharing one table comparison."
+  },
+  "documents": {
+    "response": {
+      "url": "https://www.epa.gov/system/files/documents/2024-03/420r24007.pdf",
+      "sha256": "4ce468a6ea85ede970b8189dab82b0ab5112692abcc1f684a585f563b6b4ab8e",
+      "reviewedPages": [
+        {
+          "pdfPage": 538,
+          "printedPage": 520
+        },
+        {
+          "pdfPage": 539,
+          "printedPage": 521
+        },
+        {
+          "pdfPage": 735,
+          "printedPage": 717
+        },
+        {
+          "pdfPage": 875,
+          "printedPage": 857
+        },
+        {
+          "pdfPage": 907,
+          "printedPage": 889
+        },
+        {
+          "pdfPage": 908,
+          "printedPage": 890
+        },
+        {
+          "pdfPage": 909,
+          "printedPage": 891
+        },
+        {
+          "pdfPage": 910,
+          "printedPage": 892
+        },
+        {
+          "pdfPage": 911,
+          "printedPage": 893
+        },
+        {
+          "pdfPage": 912,
+          "printedPage": 894
+        },
+        {
+          "pdfPage": 913,
+          "printedPage": 895
+        },
+        {
+          "pdfPage": 1045,
+          "printedPage": 1027
+        },
+        {
+          "pdfPage": 1176,
+          "printedPage": 1158
+        },
+        {
+          "pdfPage": 1177,
+          "printedPage": 1159
+        },
+        {
+          "pdfPage": 1283,
+          "printedPage": 1265
+        },
+        {
+          "pdfPage": 1296,
+          "printedPage": 1278
+        },
+        {
+          "pdfPage": 1297,
+          "printedPage": 1279
+        },
+        {
+          "pdfPage": 1298,
+          "printedPage": 1280
+        },
+        {
+          "pdfPage": 1299,
+          "printedPage": 1281
+        }
+      ],
+      "scope": "Rendered original-request excerpts and relevant summary; complete responses in sections 3.1, 6.1 and 9.2; complete grid-demand Response A only; opening adoption-source response paragraph on PDF 735, not its entire section."
+    },
+    "proposal": {
+      "url": "https://www.govinfo.gov/content/pkg/FR-2023-04-27/pdf/2023-07955.pdf",
+      "sha256": "30f6f81aadc5313a4762e4234f93a4d937f83c5db75ec2607eb68ce028affc1a",
+      "reviewedPages": [
+        {
+          "pdfPage": 205,
+          "printedPage": 26130
+        }
+      ],
+      "scope": "Historical proposed Tables 6 and 8 to section 1037.520, adjacent wheel example and table footnotes; not a full GEM or regulatory-impact model audit."
+    },
+    "final": {
+      "url": "https://www.govinfo.gov/content/pkg/FR-2024-04-22/pdf/2024-06809.pdf",
+      "sha256": "9d1b9a74a8528e36b7783ddfacf9b3089f484225431b1496324b5d5d2963eb94",
+      "reviewedPages": [
+        {
+          "pdfPage": 342,
+          "printedPage": 29781
+        },
+        {
+          "pdfPage": 343,
+          "printedPage": 29782
+        }
+      ],
+      "scope": "Historical April 2024 publication, Table 6 and Table 8 including the page continuation, adjacent wheel example and footnotes; not current law or actual credit awards."
+    }
+  },
+  "responseScopes": {
+    "grid-demand-response-a": {
+      "pdfPages": [
+        1176,
+        1177
+      ],
+      "locator": "Response A, Overall Demand and Reliability, from Response heading through the paragraph before Response B; footnote 578 identifies the ATRI study.",
+      "completeGeneralResponse": true
+    },
+    "charging-infrastructure": {
+      "pdfPages": [
+        907,
+        908,
+        909,
+        910,
+        911,
+        912,
+        913
+      ],
+      "locator": "Section 6.1 Response heading near the end of PDF 907 through the paragraph before section 6.2 on PDF 913.",
+      "completeGeneralResponse": true
+    },
+    "sales-distribution": {
+      "pdfPages": [
+        538,
+        539
+      ],
+      "locator": "Section 3.1 Summary and Response, from heading on PDF 538 through the paragraph before section 3.2 on PDF 539.",
+      "completeGeneralResponse": true
+    },
+    "adoption-source-distinction": {
+      "pdfPages": [
+        735
+      ],
+      "locator": "Opening Response paragraph only: ACT Research adoption-bin relationship replaced by NREL TEMPO inputs. The remaining response is not adjudicated for this request.",
+      "completeGeneralResponse": false
+    },
+    "other-technologies": {
+      "pdfPages": [
+        1297,
+        1298,
+        1299
+      ],
+      "locator": "Section 9.2 Response heading on PDF 1297 through the final alternative-procedure paragraph before section 9.3 on PDF 1299.",
+      "completeGeneralResponse": true
+    }
+  },
+  "reviews": [
+    {
+      "requestId": "mema-1570-r15",
+      "citedCommentId": "EPA-HQ-OAR-2022-0985-1570",
+      "citedAttachmentOrder": 1,
+      "originalPdfPages": [
+        9,
+        28
+      ],
+      "matchedOriginalPdfPages": [
+        9
+      ],
+      "excerptPdfPages": [
+        1045
+      ],
+      "summaryPdfPages": [],
+      "responseScopeIds": [
+        "grid-demand-response-a"
+      ],
+      "excerptContentMatch": "selected_request_wording_and_original_page_citations_agree",
+      "responseLink": "reproduced_request_thematic_response",
+      "disposition": "requested_study_considered_full_fleet_scope_distinguished",
+      "basis": "The original request seeks consideration of the December 2022 ATRI infrastructure study. Its reproduced appendix map is explicitly full-fleet. Response A discusses ATA/ATRI estimates and cites that study at footnote 578, but distinguishes complete electrification from EPA's modeled rule pathway. This verifies engagement with the requested study, not adoption of its numbers as the rule's impact.",
+      "analysisComparisonIds": [
+        "atri-study-consideration"
+      ],
+      "independentReviewStatus": "pending",
+      "individualCausalEffect": "not_identified"
+    },
+    {
+      "requestId": "mema-1570-r17",
+      "citedCommentId": "EPA-HQ-OAR-2022-0985-1570",
+      "citedAttachmentOrder": 1,
+      "originalPdfPages": [
+        10
+      ],
+      "matchedOriginalPdfPages": [
+        10
+      ],
+      "excerptPdfPages": [
+        875
+      ],
+      "summaryPdfPages": [],
+      "responseScopeIds": [
+        "charging-infrastructure",
+        "sales-distribution",
+        "adoption-source-distinction"
+      ],
+      "excerptContentMatch": "selected_request_wording_and_original_page_citations_agree",
+      "responseLink": "reproduced_request_no_separate_disposition_in_reviewed_responses",
+      "disposition": "act_bus_report_acquisition_not_verified",
+      "basis": "No separate disposition of the bus-report acquisition request was located in the reviewed section-6.1 response or section-3.1 sales-distribution response. Section 3.1 describes revised fleet composition in a summary naming AVE and MFN, not MEMA. The opening response paragraph on PDF 735 separately changes adoption-bin inputs from ACT Research to NREL TEMPO. Neither update establishes acquisition, use or rejection of the requested bus-market forecasts. Source-reported shares are not independently reproduced calculations.",
+      "analysisComparisonIds": [
+        "bus-forecast-vs-other-model-updates"
+      ],
+      "independentReviewStatus": "pending",
+      "individualCausalEffect": "not_identified"
+    },
+    {
+      "requestId": "mema-1570-r24",
+      "citedCommentId": "EPA-HQ-OAR-2022-0985-1570",
+      "citedAttachmentOrder": 1,
+      "originalPdfPages": [
+        13
+      ],
+      "matchedOriginalPdfPages": [
+        13
+      ],
+      "excerptPdfPages": [
+        1283
+      ],
+      "summaryPdfPages": [
+        1296
+      ],
+      "responseScopeIds": [
+        "other-technologies"
+      ],
+      "excerptContentMatch": "selected_request_wording_and_original_page_citations_agree",
+      "responseLink": "explicit_named_response",
+      "disposition": "existing_off_cycle_pathway_not_default_input_refresh",
+      "basis": "The named response directs MEMA to an existing approval route for weight reductions not covered by the standard inputs. The proposal and April 2024 final publication retain all six later-phase wheel values and all 22 nonwheel component/material rows in Tables 6 and 8. Table headings change from Phase 2 and Phase 3 to Phase 2 and later, so this is not a byte-identical text finding. Retention is consistent with r25 but supplies neither a new grant of credits nor the requested r24 default refresh or supplier consultation.",
+      "analysisComparisonIds": [
+        "lightweighting-tables-and-approval-route"
+      ],
+      "independentReviewStatus": "pending",
+      "individualCausalEffect": "not_identified"
+    },
+    {
+      "requestId": "mema-1570-r25",
+      "citedCommentId": "EPA-HQ-OAR-2022-0985-1570",
+      "citedAttachmentOrder": 1,
+      "originalPdfPages": [
+        13
+      ],
+      "matchedOriginalPdfPages": [
+        13
+      ],
+      "excerptPdfPages": [
+        1283
+      ],
+      "summaryPdfPages": [
+        1296
+      ],
+      "responseScopeIds": [
+        "other-technologies"
+      ],
+      "excerptContentMatch": "selected_request_wording_and_original_page_citations_agree",
+      "responseLink": "named_summary_collective_response",
+      "disposition": "published_weight_input_values_retained_from_proposal",
+      "basis": "The named response directs MEMA to an existing approval route for weight reductions not covered by the standard inputs. The proposal and April 2024 final publication retain all six later-phase wheel values and all 22 nonwheel component/material rows in Tables 6 and 8. Table headings change from Phase 2 and Phase 3 to Phase 2 and later, so this is not a byte-identical text finding. Retention is consistent with r25 but supplies neither a new grant of credits nor the requested r24 default refresh or supplier consultation.",
+      "analysisComparisonIds": [
+        "lightweighting-tables-and-approval-route"
+      ],
+      "independentReviewStatus": "pending",
+      "individualCausalEffect": "not_identified"
+    }
+  ],
+  "analysisComparisons": [
+    {
+      "comparisonId": "atri-study-consideration",
+      "requestIds": [
+        "mema-1570-r15"
+      ],
+      "evidencePages": {
+        "publisher": [
+          9,
+          28
+        ],
+        "response": [
+          1045,
+          1176,
+          1177
+        ]
+      },
+      "assessment": "study_considered_not_full_fleet_estimates_adopted",
+      "facts": {
+        "requestedStudyCitedInAgencyResponse": true,
+        "fullFleetScenarioDistinguished": true,
+        "ruleImpactEstimateReplacedByAtriFullFleetNumbers": false,
+        "fullRiaIncorporationVerified": false,
+        "underlyingAtriStudyIndependentlyReviewed": false
+      },
+      "basis": "The original request seeks consideration of the December 2022 ATRI infrastructure study. Its reproduced appendix map is explicitly full-fleet. Response A discusses ATA/ATRI estimates and cites that study at footnote 578, but distinguishes complete electrification from EPA's modeled rule pathway. This verifies engagement with the requested study, not adoption of its numbers as the rule's impact.",
+      "distinctPolicyChanges": "not_counted",
+      "individualAttribution": "not_identified"
+    },
+    {
+      "comparisonId": "bus-forecast-vs-other-model-updates",
+      "requestIds": [
+        "mema-1570-r17"
+      ],
+      "evidencePages": {
+        "publisher": [
+          10
+        ],
+        "response": [
+          538,
+          539,
+          735,
+          875,
+          907,
+          908,
+          909,
+          910,
+          911,
+          912,
+          913
+        ]
+      },
+      "assessment": "related_updates_do_not_verify_requested_report_acquisition",
+      "facts": {
+        "requestedProduct": "ACT Research Class 5-7 bus-market segmentation forecast",
+        "actBusReportAcquisitionVerified": false,
+        "actBusReportAcquisitionRejected": false,
+        "salesDistributionSummaryNames": [
+          "AVE",
+          "MFN"
+        ],
+        "salesDistributionSummaryNamesMema": false,
+        "proposalSalesSource": "MOVES 3.Ra MY2019 weighted by 2019 production reports",
+        "finalSalesSource": "MOVES 4.0 MY2021",
+        "chassisCertifiedClass2b3Removed": true,
+        "agencyReportedClass2b5SharePercent": {
+          "proposal": 55,
+          "final": 33
+        },
+        "agencyReportedClass8SharePercent": {
+          "proposal": 28,
+          "final": 42
+        },
+        "adoptionBinSourceChangedFromActResearchToNrelTempo": true,
+        "busForecastAndAdoptionModelSameProduct": false,
+        "underlyingModelReplicated": false
+      },
+      "basis": "No separate disposition of the bus-report acquisition request was located in the reviewed section-6.1 response or section-3.1 sales-distribution response. Section 3.1 describes revised fleet composition in a summary naming AVE and MFN, not MEMA. The opening response paragraph on PDF 735 separately changes adoption-bin inputs from ACT Research to NREL TEMPO. Neither update establishes acquisition, use or rejection of the requested bus-market forecasts. Source-reported shares are not independently reproduced calculations.",
+      "distinctPolicyChanges": "not_counted",
+      "individualAttribution": "not_identified"
+    },
+    {
+      "comparisonId": "lightweighting-tables-and-approval-route",
+      "requestIds": [
+        "mema-1570-r24",
+        "mema-1570-r25"
+      ],
+      "evidencePages": {
+        "publisher": [
+          13
+        ],
+        "response": [
+          1283,
+          1296,
+          1297,
+          1298,
+          1299
+        ],
+        "proposal": [
+          205
+        ],
+        "final": [
+          342,
+          343
+        ]
+      },
+      "assessment": "published_input_values_retained_existing_route_referred",
+      "facts": {
+        "namedResponseRefersExistingApprovalRoute": true,
+        "agencyCitedProvision": "40 CFR 1037.520(e)(5)",
+        "agencyReferredOffCycleProvision": "40 CFR 1037.610",
+        "wheelLaterPhaseValuesChanged": 0,
+        "nonwheelNumericRowsChanged": 0,
+        "supplierConsultationVerified": false,
+        "defaultInputRefreshVerified": false,
+        "creditsAwardedVerified": false,
+        "gemInputFilesExecuted": false,
+        "historical2016TextCompared": false,
+        "currentLegalStatusAssessed": false
+      },
+      "basis": "The named response directs MEMA to an existing approval route for weight reductions not covered by the standard inputs. The proposal and April 2024 final publication retain all six later-phase wheel values and all 22 nonwheel component/material rows in Tables 6 and 8. Table headings change from Phase 2 and Phase 3 to Phase 2 and later, so this is not a byte-identical text finding. Retention is consistent with r25 but supplies neither a new grant of credits nor the requested r24 default refresh or supplier consultation.",
+      "distinctPolicyChanges": "not_counted",
+      "individualAttribution": "not_identified"
+    }
+  ],
+  "publishedTables": {
+    "comparisonId": "lightweighting-tables-and-approval-route",
+    "wheel": {
+      "tableNumber": 6,
+      "units": "pounds_per_wheel",
+      "proposalPhaseLabel": "Phase 2 and Phase 3",
+      "finalPhaseLabel": "Phase 2 and later",
+      "rows": [
+        {
+          "tireType": "wide_base_single",
+          "material": "steel",
+          "proposal": 84,
+          "final": 84
+        },
+        {
+          "tireType": "wide_base_single",
+          "material": "aluminum",
+          "proposal": 147,
+          "final": 147
+        },
+        {
+          "tireType": "wide_base_single",
+          "material": "lightweight_aluminum_alloy",
+          "proposal": 147,
+          "final": 147
+        },
+        {
+          "tireType": "steer_or_dual_wide",
+          "material": "high_strength_steel",
+          "proposal": 8,
+          "final": 8
+        },
+        {
+          "tireType": "steer_or_dual_wide",
+          "material": "aluminum",
+          "proposal": 25,
+          "final": 25
+        },
+        {
+          "tireType": "steer_or_dual_wide",
+          "material": "lightweight_aluminum_alloy",
+          "proposal": 25,
+          "final": 25
+        }
+      ],
+      "footnote": "The wide-base input includes reduced tire weight relative to dual-wide tires."
+    },
+    "nonwheel": {
+      "tableNumber": 8,
+      "units": "pounds_per_vehicle_unless_otherwise_noted",
+      "proposalPhaseLabel": "Phase 2 and Phase 3",
+      "finalPhaseLabel": "Phase 2 and later",
+      "rows": [
+        {
+          "component": "axle_hubs_non_drive",
+          "material": "aluminum",
+          "columnGroups": [
+            "light_and_medium",
+            "heavy"
+          ],
+          "proposal": [
+            40,
+            40
+          ],
+          "final": [
+            40,
+            40
+          ]
+        },
+        {
+          "component": "axle_hubs_non_drive",
+          "material": "high_strength_steel",
+          "columnGroups": [
+            "light_and_medium",
+            "heavy"
+          ],
+          "proposal": [
+            5,
+            5
+          ],
+          "final": [
+            5,
+            5
+          ]
+        },
+        {
+          "component": "axle_non_drive",
+          "material": "aluminum",
+          "columnGroups": [
+            "light_and_medium",
+            "heavy"
+          ],
+          "proposal": [
+            60,
+            60
+          ],
+          "final": [
+            60,
+            60
+          ]
+        },
+        {
+          "component": "axle_non_drive",
+          "material": "high_strength_steel",
+          "columnGroups": [
+            "light_and_medium",
+            "heavy"
+          ],
+          "proposal": [
+            15,
+            15
+          ],
+          "final": [
+            15,
+            15
+          ]
+        },
+        {
+          "component": "brake_drums_non_drive",
+          "material": "aluminum",
+          "columnGroups": [
+            "light_and_medium",
+            "heavy"
+          ],
+          "proposal": [
+            60,
+            60
+          ],
+          "final": [
+            60,
+            60
+          ]
+        },
+        {
+          "component": "brake_drums_non_drive",
+          "material": "high_strength_steel",
+          "columnGroups": [
+            "light_and_medium",
+            "heavy"
+          ],
+          "proposal": [
+            42,
+            42
+          ],
+          "final": [
+            42,
+            42
+          ]
+        },
+        {
+          "component": "axle_hubs_drive",
+          "material": "aluminum",
+          "columnGroups": [
+            "light_and_medium",
+            "heavy"
+          ],
+          "proposal": [
+            40,
+            80
+          ],
+          "final": [
+            40,
+            80
+          ]
+        },
+        {
+          "component": "axle_hubs_drive",
+          "material": "high_strength_steel",
+          "columnGroups": [
+            "light_and_medium",
+            "heavy"
+          ],
+          "proposal": [
+            10,
+            20
+          ],
+          "final": [
+            10,
+            20
+          ]
+        },
+        {
+          "component": "brake_drums_drive",
+          "material": "aluminum",
+          "columnGroups": [
+            "light_and_medium",
+            "heavy"
+          ],
+          "proposal": [
+            70,
+            140
+          ],
+          "final": [
+            70,
+            140
+          ]
+        },
+        {
+          "component": "brake_drums_drive",
+          "material": "high_strength_steel",
+          "columnGroups": [
+            "light_and_medium",
+            "heavy"
+          ],
+          "proposal": [
+            37,
+            74
+          ],
+          "final": [
+            37,
+            74
+          ]
+        },
+        {
+          "component": "suspension_brackets_hangers",
+          "material": "aluminum",
+          "columnGroups": [
+            "light_and_medium",
+            "heavy"
+          ],
+          "proposal": [
+            67,
+            100
+          ],
+          "final": [
+            67,
+            100
+          ]
+        },
+        {
+          "component": "suspension_brackets_hangers",
+          "material": "high_strength_steel",
+          "columnGroups": [
+            "light_and_medium",
+            "heavy"
+          ],
+          "proposal": [
+            20,
+            30
+          ],
+          "final": [
+            20,
+            30
+          ]
+        },
+        {
+          "component": "crossmember_cab",
+          "material": "aluminum",
+          "columnGroups": [
+            "light",
+            "medium",
+            "heavy"
+          ],
+          "proposal": [
+            10,
+            15,
+            15
+          ],
+          "final": [
+            10,
+            15,
+            15
+          ]
+        },
+        {
+          "component": "crossmember_cab",
+          "material": "high_strength_steel",
+          "columnGroups": [
+            "light",
+            "medium",
+            "heavy"
+          ],
+          "proposal": [
+            2,
+            5,
+            5
+          ],
+          "final": [
+            2,
+            5,
+            5
+          ]
+        },
+        {
+          "component": "crossmember_non_suspension",
+          "material": "aluminum",
+          "columnGroups": [
+            "light",
+            "medium",
+            "heavy"
+          ],
+          "proposal": [
+            15,
+            15,
+            15
+          ],
+          "final": [
+            15,
+            15,
+            15
+          ]
+        },
+        {
+          "component": "crossmember_non_suspension",
+          "material": "high_strength_steel",
+          "columnGroups": [
+            "light",
+            "medium",
+            "heavy"
+          ],
+          "proposal": [
+            5,
+            5,
+            5
+          ],
+          "final": [
+            5,
+            5,
+            5
+          ]
+        },
+        {
+          "component": "crossmember_suspension",
+          "material": "aluminum",
+          "columnGroups": [
+            "light",
+            "medium",
+            "heavy"
+          ],
+          "proposal": [
+            15,
+            25,
+            25
+          ],
+          "final": [
+            15,
+            25,
+            25
+          ]
+        },
+        {
+          "component": "crossmember_suspension",
+          "material": "high_strength_steel",
+          "columnGroups": [
+            "light",
+            "medium",
+            "heavy"
+          ],
+          "proposal": [
+            6,
+            6,
+            6
+          ],
+          "final": [
+            6,
+            6,
+            6
+          ]
+        },
+        {
+          "component": "driveshaft",
+          "material": "aluminum",
+          "columnGroups": [
+            "light",
+            "medium",
+            "heavy"
+          ],
+          "proposal": [
+            12,
+            40,
+            50
+          ],
+          "final": [
+            12,
+            40,
+            50
+          ]
+        },
+        {
+          "component": "driveshaft",
+          "material": "high_strength_steel",
+          "columnGroups": [
+            "light",
+            "medium",
+            "heavy"
+          ],
+          "proposal": [
+            5,
+            10,
+            12
+          ],
+          "final": [
+            5,
+            10,
+            12
+          ]
+        },
+        {
+          "component": "frame_rails",
+          "material": "aluminum",
+          "columnGroups": [
+            "light",
+            "medium",
+            "heavy"
+          ],
+          "proposal": [
+            120,
+            300,
+            440
+          ],
+          "final": [
+            120,
+            300,
+            440
+          ]
+        },
+        {
+          "component": "frame_rails",
+          "material": "high_strength_steel",
+          "columnGroups": [
+            "light",
+            "medium",
+            "heavy"
+          ],
+          "proposal": [
+            40,
+            40,
+            87
+          ],
+          "final": [
+            40,
+            40,
+            87
+          ]
+        }
+      ],
+      "mergedCellMeaning": "The first twelve rows span the Light and Medium HDV columns; their shared value is not a missing or zero Medium cell.",
+      "mediumAxleOverride": "For Medium HDV with 6x4 or 6x2 axle configurations, use Heavy HDV values."
+    },
+    "scope": "All six later-phase wheel rows and all 22 nonwheel component/material rows visually compared, including both table footnotes. Phase 1 wheel values are not the Phase 3 comparison. Identical published values do not independently verify GEM implementation or the 2016 baseline."
+  },
+  "sourceCautions": [
+    {
+      "cautionId": "full-fleet-is-not-rule-impact",
+      "requestIds": [
+        "mema-1570-r15"
+      ],
+      "evidencePages": {
+        "publisher": [
+          9,
+          28
+        ],
+        "response": [
+          1176,
+          1177
+        ]
+      },
+      "severity": "high",
+      "status": "study_engagement_and_numeric_adoption_separated",
+      "finding": "The requested ATRI study is discussed and cited, but its full-fleet scenario is distinguished from the rule's modeled pathway.",
+      "handling": "Code study consideration without assigning full numerical incorporation, an individually caused response, or independently verified ATRI projections."
+    },
+    {
+      "cautionId": "act-products-and-commenter-attribution",
+      "requestIds": [
+        "mema-1570-r17"
+      ],
+      "evidencePages": {
+        "publisher": [
+          10
+        ],
+        "response": [
+          538,
+          539,
+          735,
+          875
+        ]
+      },
+      "severity": "high",
+      "status": "requested_product_and_other_model_updates_separated",
+      "finding": "MEMA requests bus-market forecasts. ACT Research adoption-bin inputs and EPA's MOVES fleet-composition revision are different evidence; the sales summary names AVE and MFN.",
+      "handling": "Do not infer purchase, use or rejection of the bus report from either update. Keep MEMA's claimed bus-volume discrepancies as unverified commenter assertions."
+    },
+    {
+      "cautionId": "approval-route-is-not-input-refresh",
+      "requestIds": [
+        "mema-1570-r24",
+        "mema-1570-r25"
+      ],
+      "evidencePages": {
+        "publisher": [
+          13
+        ],
+        "response": [
+          1296,
+          1298,
+          1299
+        ],
+        "proposal": [
+          205
+        ],
+        "final": [
+          342,
+          343
+        ]
+      },
+      "severity": "high",
+      "status": "existing_route_retention_and_new_change_separated",
+      "finding": "The named response refers an existing case-specific approval route while the published tabular values remain as proposed.",
+      "handling": "Keep r24 and r25 distinct but share one comparison. Do not promote a general default refresh, supplier consultation, awarded credits or independent policy events."
+    },
+    {
+      "cautionId": "table-phase-and-merged-cell-scope",
+      "requestIds": [
+        "mema-1570-r24",
+        "mema-1570-r25"
+      ],
+      "evidencePages": {
+        "proposal": [
+          205
+        ],
+        "final": [
+          342,
+          343
+        ]
+      },
+      "severity": "medium",
+      "status": "phase_labels_merged_cells_and_footnotes_preserved",
+      "finding": "The final headings use Phase 2 and later. The repeated 210-pound wheel example uses 21-pound aluminum terms, whereas the later-phase aluminum steer/dual-wide table input is 25. Nonwheel rows contain merged Light/Medium cells and an axle-configuration override.",
+      "handling": "Compare the specified later-phase table columns, not the unqualified example. Preserve merged groups and the Medium 6x4/6x2 override; do not silently repair the source text or convert these inputs into awarded emission credits."
+    }
+  ],
+  "boundary": {
+    "officialAttachmentByteMatch": "not_verified",
+    "independentReviewStatus": "pending",
+    "docketRateEligible": false,
+    "overallLetterResponseCodingComplete": false,
+    "currentLegalStatusAssessed": false,
+    "causalEffect": "not_identified",
+    "simulatorRecalibrated": false,
+    "remainingEntriesStatus": "not_yet_adjudicated_not_nonresponse",
+    "comparisonBoundary": "Three evidence comparisons across four existing requests, not independent policy events or causal estimates. Review completion means a bounded adjudication including nonverification, not full resolution.",
+    "unreviewedAnalysis": "No ACT report purchased or acquired; no independent ATRI model review; no RIA/GEM input-file execution for this follow-up; no supplier-contact records or individual credit awards; no historical 2016 or current-law audit."
+  },
+  "reviewFingerprint": "eaba2dfedbdbccc367b5dc670b090cde7a2a04b0e8647ee7bd2c9f61a599c826"
+}
