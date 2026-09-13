@@ -32,6 +32,65 @@ that endpoint alone cannot reconstruct all exclusions that were active during a
 historical award window. Historical extracts or independently sourced intervals
 are necessary; missing termination dates require explicit right-censoring.
 
+## SAM import semantics regression review
+
+Reviewed September 13, 2026. **Assessment: corrected import semantics, not new
+empirical observations.** The prospective SAM normalizer contradicted the
+definitions above: it omitted the current nested signed-date field, accepted
+approval/modified dates as substitutes, fell back to total/ceiling amounts and
+parent offer counts, and inferred vendor exclusion from competition wording.
+These paths are now corrected in `scripts/fetch-source-data.py` and the export
+screen. No SAM records are present in the frozen snapshot, and its existing
+USAspending observations and the four-award pilot remain unchanged.
+
+The current [GSA API documentation](https://open.gsa.gov/api/contract-awards/)
+and its [OpenAPI schema](https://open.gsa.gov/api/contract-awards/v1/openapi.yaml)
+were acquired. Their respective SHA-256 values are
+`46cb995d2d026bef0d5a1e85ff2ec2220c3775b9d3701fded4895f5244ac7fb2`
+and `87ab11d503a19a622dfbb1a1ea8fa840f19440a83b0b2d89cf6132ddb3cfb8fc`.
+These are current interface definitions, not a recovered historical dictionary
+or proof that any particular 2024 order contains these values.
+
+| Normalized concept | Current documented input | Preserved distinction |
+| --- | --- | --- |
+| Action date | `awardDetails.dates.dateSigned` | Approval, performance-start and last-modified dates do not fill a missing signed/action date. Explicit legacy signed/action aliases remain supported. |
+| Action obligation | `awardDetails.dollars.actionObligation` | `totalContractDollars.totalActionObligation` and ceilings are not action amounts. Blank, malformed and nonfinite amounts remain missing; zero and negative obligations remain valid. |
+| Reported order offers | `awardDetails.competitionInformation.numberOfOffersReceived` | The reported count is not replaced by `idvNumberOfOffersReceived`. Its source may itself be inherited, so the native `numberOfOffersSource.code/name` is retained. |
+| Action identity | `contractId.subtier`, `piid`, `modificationNumber`, `transactionNumber`, `referencedIDVSubtier`, `referencedIDVPiid` | Retain parent and transaction identifiers; sharing a partial model key does not prove duplication. |
+
+The normalized SAM CSV retains the original model column names and adds thirteen
+provenance/identity columns. `actionObligationDollars` preserves the selected raw
+dollar string, and its decimal million conversion retains cents in the CSV.
+The three `*SourcePath` columns identify paths in the parsed record; for CSV
+inputs these may be parser aliases, not original header spellings. The
+`parsedRecordSha256` hashes the whole parsed record including CSV aliases. It
+is a deduplication aid, **not a raw-file hash, authenticity proof, or unique
+underlying-action identifier**. Only identical parsed records collapse; records
+with differing source metadata remain separate for later review.
+
+`numberOfOffersSourceCode`, `numberOfOffersSourceName` and
+`idvNumberOfOffersReceived` remain separate from `numberOfOffers`. A missing
+modification number is not assigned original-action code zero. Parent competition
+does not fill missing order competition. The existing
+`exclusionFlag=false` model placeholder is paired with
+`exclusionEvidenceStatus=not_observed_in_contract_awards`; neither denotes
+verified historical non-exclusion. Protest/firewall defaults and the
+`priceOnlyAward` heuristic likewise remain model inputs, not adjudicated outcomes.
+
+The export audit uses the same admissible action-date/amount paths, requires
+finite action obligations for all rows, and counts explicit zero offers as
+observed. Missing or invalid fields cannot be rescued by a later contract total.
+Its breadth thresholds are still only an operational screen: a passing candidate
+does not establish a census, valid sampling weights, complete identifiers,
+historical exclusions, or causal identification.
+
+`scripts/test-sam-reconciliation.py` and the empirical notebook use explicitly
+synthetic examples to check precedence, forbidden fallbacks, missing/zero values,
+cent precision, provenance and partial-key collisions. They cannot authenticate
+actual SAM rows. Source access is a separate gate: the current browser check
+reached a signed-out contract-data page, so an authorized sign-in or fresh export
+remains necessary. No account terms were accepted and no frozen panel was refreshed.
+
 ## Protest adjudication advanced
 
 [TechGlobal, Inc., B-424287/B-424287.2](https://www.gao.gov/products/b-424287,b-424287.2)

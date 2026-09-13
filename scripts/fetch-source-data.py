@@ -5,6 +5,7 @@ from __future__ import annotations
 
 import argparse
 import csv
+from decimal import Decimal, InvalidOperation
 import gzip
 import hashlib
 import html
@@ -1030,7 +1031,7 @@ def fetch_sam_contract_awards(output: Path) -> int:
                 break
     write_rows(
         output,
-        USASPENDING_FIELDS,
+        SAM_CONTRACT_AWARDS_FIELDS,
         rows,
         "SAM.gov Contract Awards",
     )
@@ -1049,7 +1050,7 @@ def fetch_sam_contract_awards_export(input_path: Path | None, output: Path, url:
     rows = dedupe_usaspending_action_rows(normalize_sam_contract_award_records(records))
     write_rows(
         output,
-        USASPENDING_FIELDS,
+        SAM_CONTRACT_AWARDS_FIELDS,
         rows,
         "SAM.gov Contract Awards export",
     )
@@ -1075,7 +1076,7 @@ def fetch_sam_contract_awards_extract(output: Path, base: str, api_key: str) -> 
             rows.append(row)
     write_rows(
         output,
-        USASPENDING_FIELDS,
+        SAM_CONTRACT_AWARDS_FIELDS,
         rows,
         "SAM.gov Contract Awards extract",
     )
@@ -1341,13 +1342,10 @@ def sam_contract_awards_csv_record_aliases(row: dict[str, object]) -> dict[str, 
         "actionObligation": (
             "actionobligation",
             "federalactionobligation",
-            "totalactionobligation",
             "dollarsobligated",
-            "currenttotalvalueofaward",
-            "baseandalloptionsvalue",
         ),
         "awardeeUEI": ("uniqueentityid", "awardeeuei", "recipientuei", "uei"),
-        "dateSigned": ("datesigned", "actiondate", "awarddate", "approveddate", "lastmodifieddate"),
+        "dateSigned": ("datesigned", "actiondate"),
         "extentCompetedName": (
             "extentcompeted",
             "extentcompetedname",
@@ -1357,10 +1355,12 @@ def sam_contract_awards_csv_record_aliases(row: dict[str, object]) -> dict[str, 
         ),
         "numberOfOffersReceived": (
             "numberofoffersreceived",
-            "idvnumberofoffersreceived",
             "numberofoffers",
             "offersreceived",
         ),
+        "idvNumberOfOffersReceived": ("idvnumberofoffersreceived",),
+        "numberOfOffersSourceCode": ("numberofofferssourcecode",),
+        "numberOfOffersSourceName": ("numberofofferssourcename",),
         "typeOfContractPricingName": (
             "typeofcontractpricing",
             "typeofcontractpricingname",
@@ -1527,11 +1527,47 @@ def sam_contract_awards_total_records(payload: dict[str, object] | list[object])
     return int_or_zero(first_text(payload, "totalRecords", "total_records", "page_metadata.total", default="0"))
 
 
+SAM_ACTION_FIELD_PATHS = {
+    "actionDate": (
+        "awardDetails.dates.dateSigned", "coreData.dateSigned", "dateSigned",
+        "Date Signed", "actionDate", "Action Date",
+    ),
+    "actionObligationDollars": (
+        "awardDetails.dollars.actionObligation", "awardDetails.dollars.dollarsObligated",
+        "actionObligation", "Action Obligation", "Federal Action Obligation", "dollarsObligated",
+        "Dollars Obligated",
+    ),
+    "numberOfOffers": (
+        "awardDetails.competitionInformation.numberOfOffersReceived",
+        "coreData.competitionInformation.numberOfOffersReceived", "numberOfOffersReceived",
+        "Number Of Offers Received", "Number of Offers Received", "numberOfOffers",
+    ),
+}
+
+
+def sam_action_field(record: dict[str, object], field: str) -> tuple[str, str]:
+    """Value and path in the parsed record; CSV aliases are not native JSON paths."""
+    for path in SAM_ACTION_FIELD_PATHS[field]:
+        value = first_text(record, path)
+        if value.strip():
+            return value, path
+    return "", ""
+
+
+def sam_action_amount_millions(value: str) -> str:
+    """Preserve source-dollar precision; missing/invalid amounts are not zeros."""
+    try:
+        amount = Decimal(value.replace("$", "").replace(",", "").strip())
+    except InvalidOperation:
+        return ""
+    return format(amount / Decimal(1000000), "f") if amount.is_finite() else ""
+
+
 def normalize_sam_contract_award_records(records: list[dict[str, object]]) -> list[dict[str, object]]:
     rows: list[dict[str, object]] = []
     for record in records:
         piid = first_text(record, "contractId.piid", "piid", "PIID", "awardDetails.contractId.piid", "contractAwardId", "Contract Award ID", "Contract ID", default="UNKNOWN")
-        modification_number = first_text(record, "contractId.modificationNumber", "modificationNumber", "modification_number", "Modification Number", "Modification No", "Mod Number", "Mod", "mod", default="0")
+        modification_number = first_text(record, "contractId.modificationNumber", "modificationNumber", "modification_number", "Modification Number", "Modification No", "Mod Number", "Mod", "mod", default="")
         transaction_number = first_text(record, "contractId.transactionNumber", "transactionNumber", "Transaction Number", default="")
         award_id = first_text(record, "awardId", "Award ID", "generated_internal_id", "contractAwardUniqueId", "Contract Award Unique ID", default=piid)
         if award_id == "UNKNOWN" and transaction_number:
@@ -1547,19 +1583,9 @@ def normalize_sam_contract_award_records(records: list[dict[str, object]]) -> li
             "Type of Contract Pricing",
             default="",
         )
-        number_of_offers = first_text(
-            record,
-            "awardDetails.competitionInformation.numberOfOffersReceived",
-            "awardDetails.competitionInformation.idvNumberOfOffersReceived",
-            "coreData.competitionInformation.numberOfOffersReceived",
-            "coreData.competitionInformation.idvNumberOfOffersReceived",
-            "numberOfOffersReceived",
-            "Number Of Offers Received",
-            "Number of Offers Received",
-            "numberOfOffers",
-            default="0",
-        )
-        competition_lower = competition_type.lower()
+        number_of_offers, offers_path = sam_action_field(record, "numberOfOffers")
+        action_date, date_path = sam_action_field(record, "actionDate")
+        action_dollars, dollars_path = sam_action_field(record, "actionObligationDollars")
         rows.append(
             {
                 "awardId": award_id,
@@ -1608,23 +1634,7 @@ def normalize_sam_contract_award_records(records: list[dict[str, object]]) -> li
                     default="Unknown agency",
                 ),
                 "awardType": first_text(record, "coreData.awardOrIDVType.name", "awardOrIDVTypeName", "Award or IDV Type", "Award Type", "Contract Award Type", "awardType", default="contract"),
-                "amount": money_millions(first_text(
-                    record,
-                    "awardDetails.dollars.actionObligation",
-                    "awardDetails.dollars.dollarsObligated",
-                    "awardDetails.dollars.baseAndAllOptionsValue",
-                    "awardDetails.dollars.currentTotalValueOfAward",
-                    "awardDetails.totalContractDollars.totalActionObligation",
-                    "dollarsObligated",
-                    "actionObligation",
-                    "Action Obligation",
-                    "Federal Action Obligation",
-                    "Total Action Obligation",
-                    "Dollars Obligated",
-                    "Current Total Value of Award",
-                    "totalDollarsObligated",
-                    default="0",
-                )),
+                "amount": sam_action_amount_millions(action_dollars),
                 "issueDomain": os.environ.get("SAM_CONTRACT_AWARDS_ISSUE_DOMAIN", os.environ.get("USASPENDING_ISSUE_DOMAIN", "procurement")),
                 "awardCount": 1,
                 "uei": first_text(
@@ -1641,26 +1651,35 @@ def normalize_sam_contract_award_records(records: list[dict[str, object]]) -> li
                 ),
                 "piid": piid,
                 "modificationNumber": modification_number,
-                "actionDate": first_text(
-                    record,
-                    "awardDetails.transactionData.approvedDate",
-                    "coreData.dateSigned",
-                    "dateSigned",
-                    "Date Signed",
-                    "Award Date",
-                    "Last Modified Date",
-                    "approvedDate",
-                    "Approved Date",
-                    "actionDate",
-                    default="",
-                ),
+                "actionDate": action_date,
                 "competitionType": competition_type,
                 "numberOfOffers": number_of_offers,
                 "priceOnlyAward": str(price_only_procurement_flag(number_of_offers, pricing_type, competition_type)).lower(),
-                "exPostModification": str(modification_sequence(modification_number) > 0).lower(),
+                "exPostModification": str(modification_sequence(modification_number) > 0).lower() if modification_number else "",
                 "protestFiled": "false",
-                "exclusionFlag": str("exclusion" in competition_lower).lower(),
+                # Model placeholder, not observed historical exclusion absence.
+                "exclusionFlag": "false",
                 "firewallCovered": str(os.environ.get("SAM_CONTRACT_AWARDS_FIREWALL_COVERED", os.environ.get("USASPENDING_FIREWALL_COVERED", "false")).lower() == "true").lower(),
+                "transactionNumber": transaction_number,
+                "awardingSubtierCode": first_text(record, "contractId.subtier.code", "awardingSubtierCode"),
+                "referencedIdvPiid": first_text(record, "contractId.referencedIDVPiid", "referencedIdvPiid"),
+                "referencedIdvSubtierCode": first_text(record, "contractId.referencedIDVSubtier.code", "referencedIdvSubtierCode"),
+                "actionObligationDollars": action_dollars,
+                "actionDateSourcePath": date_path,
+                "actionObligationSourcePath": dollars_path,
+                "offersSourcePath": offers_path,
+                "numberOfOffersSourceCode": first_text(record,
+                    "awardDetails.competitionInformation.numberOfOffersSource.code",
+                    "coreData.competitionInformation.numberOfOffersSource.code", "numberOfOffersSourceCode"),
+                "numberOfOffersSourceName": first_text(record,
+                    "awardDetails.competitionInformation.numberOfOffersSource.name",
+                    "coreData.competitionInformation.numberOfOffersSource.name", "numberOfOffersSourceName"),
+                "idvNumberOfOffersReceived": first_text(record,
+                    "awardDetails.competitionInformation.idvNumberOfOffersReceived",
+                    "coreData.competitionInformation.idvNumberOfOffersReceived", "idvNumberOfOffersReceived"),
+                "exclusionEvidenceStatus": "not_observed_in_contract_awards",
+                "parsedRecordSha256": hashlib.sha256(json.dumps(record, sort_keys=True,
+                    separators=(",", ":"), ensure_ascii=False).encode("utf-8")).hexdigest(),
             }
         )
     return rows
@@ -1671,8 +1690,6 @@ def sam_contract_awards_competition_type(record: dict[str, object]) -> str:
         record,
         "awardDetails.competitionInformation.extentCompeted.name",
         "coreData.competitionInformation.extentCompeted.name",
-        "awardDetails.competitionInformation.extentCompetedForReferencedIdv.name",
-        "coreData.competitionInformation.extentCompetedForReferencedIdv.name",
         "extentCompetedName",
         "Extent Competed",
         "Extent Competed Name",
@@ -1816,6 +1833,9 @@ def usaspending_action_transaction_sort_specs() -> list[tuple[str, str]]:
 
 
 def usaspending_action_row_key(row: dict[str, object]) -> tuple[object, ...]:
+    # A partial model key cannot establish duplicate SAM source actions.
+    if row.get("parsedRecordSha256"):
+        return ("sam-parsed-record", row["parsedRecordSha256"])
     return (
         row.get("awardId", ""),
         row.get("agency", ""),
@@ -1846,6 +1866,13 @@ USASPENDING_FIELDS = [
     "protestFiled",
     "exclusionFlag",
     "firewallCovered",
+]
+
+SAM_CONTRACT_AWARDS_FIELDS = USASPENDING_FIELDS + [
+    "transactionNumber", "awardingSubtierCode", "referencedIdvPiid", "referencedIdvSubtierCode",
+    "actionObligationDollars", "actionDateSourcePath", "actionObligationSourcePath", "offersSourcePath",
+    "numberOfOffersSourceCode", "numberOfOffersSourceName", "idvNumberOfOffersReceived",
+    "exclusionEvidenceStatus", "parsedRecordSha256",
 ]
 
 

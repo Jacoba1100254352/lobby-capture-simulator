@@ -12,6 +12,7 @@ from __future__ import annotations
 
 import argparse
 import csv
+from decimal import Decimal, InvalidOperation
 from datetime import datetime, timedelta, timezone
 import importlib.util
 import os
@@ -306,7 +307,8 @@ def export_metrics(rows: list[dict[str, object]]) -> dict[str, object]:
         "distinctAwardCount": len(awards),
         "knownPiidShare": share_with_value(rows, "piid"),
         "knownUeiShare": share_with_value(rows, "uei"),
-        "actionDateShare": share_with_value(rows, "actionDate"),
+        "actionDateShare": safe_divide(len(dates), len(rows)),
+        "actionObligationShare": safe_divide(sum(valid_amount(row.get("amount")) for row in rows), len(rows)),
         "knownCompetitionShare": known_competition_share(rows),
         "knownOfferShare": known_offer_share(rows),
         "modifiedActionShare": safe_divide(len(modified_rows), len(rows)),
@@ -329,6 +331,7 @@ def checklist_rows(args: argparse.Namespace, metrics: dict[str, object]) -> list
         hard_check("date-span", metrics["dateSpanDays"], args.min_date_span_days, ">=", "coverage across most of the fiscal year"),
         hard_check("piid-coverage", metrics["knownPiidShare"], args.min_piid_share, ">=", "PIID coverage for action-history grouping"),
         hard_check("action-date-coverage", metrics["actionDateShare"], args.min_action_date_share, ">=", "action-date coverage for time-window validation"),
+        hard_check("action-obligation-coverage", metrics["actionObligationShare"], 1.0, ">=", "all actions require a finite action obligation; totals and ceilings are not substitutes"),
         soft_check("uei-coverage", metrics["knownUeiShare"], args.min_uei_share, ">=", "UEI coverage for recipient matching"),
         soft_check("competition-coverage", metrics["knownCompetitionShare"], args.min_competition_share, ">=", "competition fields for procurement-firewall diagnostics"),
         metric_row("modified-action-share", metrics["modifiedActionShare"], "diagnostic", "not a pass/fail threshold; compare to source-moment benchmark"),
@@ -379,37 +382,11 @@ def checklist_rows(args: argparse.Namespace, metrics: dict[str, object]) -> list
 
 
 def raw_field_metrics(fetcher, records: list[dict[str, object]]) -> dict[str, object]:
-    action_paths = (
-        "awardDetails.transactionData.approvedDate",
-        "coreData.dateSigned",
-        "dateSigned",
-        "Date Signed",
-        "Award Date",
-        "Last Modified Date",
-        "approvedDate",
-        "Approved Date",
-        "actionDate",
-    )
-    amount_paths = (
-        "awardDetails.dollars.actionObligation",
-        "awardDetails.dollars.dollarsObligated",
-        "awardDetails.dollars.baseAndAllOptionsValue",
-        "awardDetails.dollars.currentTotalValueOfAward",
-        "awardDetails.totalContractDollars.totalActionObligation",
-        "dollarsObligated",
-        "actionObligation",
-        "Action Obligation",
-        "Federal Action Obligation",
-        "Total Action Obligation",
-        "Dollars Obligated",
-        "Current Total Value of Award",
-        "totalDollarsObligated",
-    )
     return {
         "rawRecordCount": len(records),
-        "rawActionDateCandidateShare": raw_path_share(fetcher, records, action_paths),
+        "rawActionDateCandidateShare": raw_path_share(fetcher, records, fetcher.SAM_ACTION_FIELD_PATHS["actionDate"]),
         "rawSolicitationDateShare": raw_path_share(fetcher, records, ("coreData.solicitationDate", "solicitationDate")),
-        "rawAmountFieldShare": raw_path_share(fetcher, records, amount_paths),
+        "rawAmountFieldShare": raw_path_share(fetcher, records, fetcher.SAM_ACTION_FIELD_PATHS["actionObligationDollars"]),
     }
 
 
@@ -464,6 +441,12 @@ def values(rows: list[dict[str, object]], key: str) -> set[str]:
 
 
 def award_key(row: dict[str, object]) -> str:
+    if row.get("parsedRecordSha256"):
+        piid = str(row.get("piid", "")).strip()
+        if not piid or piid == "UNKNOWN":
+            return ""
+        return "|".join(str(row.get(key, "")) for key in
+            ("awardingSubtierCode", "piid", "referencedIdvSubtierCode", "referencedIdvPiid"))
     for key in ("piid", "awardId"):
         value = str(row.get(key, "")).strip()
         if value:
@@ -507,8 +490,17 @@ def known_competition_share(rows: list[dict[str, object]]) -> float:
     )
 
 
+def valid_amount(value: object) -> bool:
+    try:
+        return Decimal(str(value).strip()).is_finite()
+    except InvalidOperation:
+        return False
+
+
 def known_offer_share(rows: list[dict[str, object]]) -> float:
-    return safe_divide(sum(1 for row in rows if number(row.get("numberOfOffers")) > 0), len(rows))
+    # Explicit zero is observed; missing, negative and fractional counts are not.
+    return safe_divide(sum(bool(re.fullmatch(r"[0-9]+", str(row.get("numberOfOffers", "")).strip()))
+                           for row in rows), len(rows))
 
 
 def top_group_share(rows: list[dict[str, object]], key: str, *, amount_weighted: bool) -> float:

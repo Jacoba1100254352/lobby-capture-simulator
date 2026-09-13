@@ -18,6 +18,16 @@ The repository now contains a runnable Java mechanism model with a Makefile work
 
 The publication-readiness path is treated as part of the project, not a side artifact. `make paper-artifacts-check` regenerates reports, paper tables, figures, PDFs, layout audits, manual visual-review checklists, and the Wiley submission ZIP, then verifies that the ZIP compiles from an extracted directory. Release-oriented builds pin a GitHub release tag in both the manuscript declarations and the artifact checker so the paper, code, and published review bundle stay synchronized.
 
+A source-definition review also corrects the prospective SAM import path:
+signed action dates, exact action obligations and order offer counts no longer
+inherit approval dates, contract totals or parent counts. Added source columns
+preserve parent/subtier/transaction identity and offer-count provenance, and
+parsed-record fingerprints prevent partial-key deduplication. Missing action
+amounts block the export screen. Competition-procedure wording does not supply
+historical exclusion evidence. Synthetic regressions and the companion notebook
+check these changes; no live SAM records, frozen snapshot values or simulator
+parameters are promoted by this repair.
+
 The September 2026 empirical work is tracked by `docs/substitution-study-redesign.md`,
 `docs/comment-uptake-pilot.md`, `docs/procurement-source-reconciliation.md`, and
 `reports/empirical-expansion-audit.md`. Expanded source history and observed PAC

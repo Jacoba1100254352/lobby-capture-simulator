@@ -144,6 +144,17 @@ Before promoting a downloaded SAM export, run `SAM_CONTRACT_AWARDS_LIVE_CSV=/pat
 
 For an emailed SAM.gov async-export link, run `make sam-contract-awards-record-export-link < sam-email.txt` immediately after the email arrives, or pass the URL directly to `python3 scripts/record-sam-export-link.py --url ... --generated-at YYYY-MM-DDTHH:MM:SSZ`. If `sam-email.txt` includes a standard email `Date:` header, the helper uses that timestamp as the token generation time; otherwise use an explicit `--generated-at` value. Body-only pasted emails with no `Date:` header now fail closed unless you use `make sam-contract-awards-record-fresh-link < sam-email-body.txt` or pass `--assume-fresh`; that override should be used only when the email was just generated. If several SAM.gov emails are pasted together, `--url-selection auto` chooses the latest dated URL, or the last URL when dates are unavailable. Timestamped links that have already expired are rejected by default before `.env` is changed; use `--allow-expired` only for fixtures or diagnostics. Treat `timeSource=recorded_at_fallback` as usable only for an intentional `--assume-fresh` body-only capture; overnight or otherwise delayed messages should be discarded and replaced with a fresh export email. The helper stores `SAM_CONTRACT_AWARDS_LIVE_URL` with `api_key=REPLACE_WITH_API_KEY`, records generation, expiration, validity-window, recorded-at, and timestamp-source metadata, and clears `SAM_CONTRACT_AWARDS_LIVE_CSV` unless `--keep-live-csv` is supplied. `make sam-contract-awards-export-audit` substitutes the key at runtime, redacts both key and token from diagnostics, and treats an explicitly expired emailed link as a manual-refresh condition rather than a promotable source. If SAM.gov returns a quota reset after the emailed token expires, the export audit records that retry window and `make external-finalization-checklist` keeps the SAM input manual rather than treating the still-fresh token as promotable. The checklist summarizes whether a SAM export URL/CSV, GitHub release asset audit, GitHub CI audit, Zenodo token/draft/upload state, DOI record, human read-through, and live journal-guideline refresh are ready, manual, or blocked. Its reports are ignored because they can reflect private `.env` and live release state.
 
+The SAM importer now keeps signed action dates separate from approval, performance
+and modification dates; action obligations separate from totals/ceilings; and
+order offer counts separate from parent counts. Missing values are not filled with
+zero. Its CSV adds exact source-dollar amounts, parsed-record paths/fingerprints,
+parent/subtier/transaction identifiers and offer-count provenance. Competition
+"after exclusion of sources" does not establish a vendor exclusion: the model
+flag remains a placeholder with an explicit unobserved-evidence status. The export
+screen blocks missing or invalid action obligations. These are import corrections,
+not newly acquired SAM observations or proof of representative coverage. See the
+[reconciliation checks](docs/procurement-source-reconciliation.md#sam-import-semantics-regression-review).
+
 For the remaining procurement-source refresh, prefer the guarded wrapper:
 
 ```sh

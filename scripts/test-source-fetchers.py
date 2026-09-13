@@ -386,7 +386,7 @@ def assert_sam_contract_awards(fetchers) -> None:
     assert len(extract_records) == 2, extract_records
     extract_rows = fetchers.normalize_sam_contract_award_records(extract_records)
     assert extract_rows[0]["awardId"] == "80GSFC24C0001", extract_rows[0]
-    assert extract_rows[0]["amount"] == 1.25, extract_rows[0]
+    assert extract_rows[0]["amount"] == "1.25", extract_rows[0]
     assert extract_rows[1]["modificationNumber"] == "P00002", extract_rows[1]
     assert extract_rows[1]["exPostModification"] == "true", extract_rows[1]
     csv_records = fetchers.sam_contract_awards_records_from_csv_or_message(
@@ -399,7 +399,7 @@ def assert_sam_contract_awards(fetchers) -> None:
     )
     csv_rows = fetchers.normalize_sam_contract_award_records(csv_records)
     assert csv_rows[0]["recipient"] == "CSV CONTRACTOR LLC", csv_rows[0]
-    assert csv_rows[0]["amount"] == 0.75, csv_rows[0]
+    assert csv_rows[0]["amount"] == "0.75", csv_rows[0]
     assert csv_rows[0]["competitionType"] == "NOT COMPETED", csv_rows[0]
     assert csv_rows[0]["numberOfOffers"] == "1", csv_rows[0]
     assert csv_rows[0]["exPostModification"] == "true", csv_rows[0]
@@ -419,7 +419,7 @@ def assert_sam_contract_awards(fetchers) -> None:
         )
         assert export_rows[0]["awardId"] == "68HERH24C0004", export_rows[0]
         assert export_rows[0]["recipient"] == "MANUAL EXPORT CONTRACTOR", export_rows[0]
-        assert export_rows[0]["amount"] == 1.25, export_rows[0]
+        assert export_rows[0]["amount"] == "1.25", export_rows[0]
         assert export_rows[0]["uei"] == "EXPORTUEI1234", export_rows[0]
         assert export_rows[0]["exPostModification"] == "true", export_rows[0]
         zip_path = Path(tmp) / "download-without-extension"
@@ -439,19 +439,19 @@ def assert_sam_contract_awards(fetchers) -> None:
     ):
         os.environ.pop(name, None)
     rows = fetchers.normalize_sam_contract_award_records(records)
-    assert rows[0] == {
+    assert {k: rows[0][k] for k in fetchers.USASPENDING_FIELDS} == {
         "awardId": "68HERH24F0001",
         "recipient": "EXAMPLE ENVIRONMENTAL CONTRACTOR LLC",
         "agency": "ENVIRONMENTAL PROTECTION AGENCY",
         "subAgency": "ENVIRONMENTAL PROTECTION AGENCY",
         "awardType": "DELIVERY ORDER",
-        "amount": 2.5,
+        "amount": "2.5",
         "issueDomain": "procurement",
         "awardCount": 1,
         "uei": "ABCDEF123456",
         "piid": "68HERH24F0001",
         "modificationNumber": "0",
-        "actionDate": "2024-03-15T11:39:06Z",
+        "actionDate": "",
         "competitionType": "FULL AND OPEN COMPETITION",
         "numberOfOffers": "3",
         "priceOnlyAward": "false",
@@ -460,7 +460,8 @@ def assert_sam_contract_awards(fetchers) -> None:
         "exclusionFlag": "false",
         "firewallCovered": "false",
     }, rows[0]
-    assert rows[1]["amount"] == 0.5, rows[1]
+    assert rows[0]["actionDateSourcePath"] == "", rows[0]  # Fixture only supplies approval time.
+    assert rows[1]["amount"] == "0.5", rows[1]
     assert rows[1]["modificationNumber"] == "P00001", rows[1]
     assert rows[1]["competitionType"] == "NOT COMPETED", rows[1]
     assert rows[1]["numberOfOffers"] == "1", rows[1]

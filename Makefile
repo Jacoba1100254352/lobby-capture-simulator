@@ -49,6 +49,7 @@ test: script-checks compile
 	python3 scripts/test-substitution-source-expansion.py
 	python3 scripts/test-procurement-linkage-pilot.py
 	python3 scripts/test-procurement-bulk-frame.py
+	python3 scripts/test-sam-reconciliation.py
 	./scripts/test-normalizers.sh
 
 run: compile
