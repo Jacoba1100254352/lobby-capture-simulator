@@ -401,6 +401,14 @@ from the committed profile; `python3 scripts/audit-procurement-bulk-frame.py --s
 requires the ignored original ZIPs and repeats the raw-file checks. Neither mode
 promotes a representative SAM export or causal calibration.
 
+A [saved-partition comparison](docs/procurement-source-reconciliation.md#saved-agriculture-partition-comparison)
+finds the same 34,657 complete Agriculture rows in the quarter ZIP and 33
+smaller exports covering all 92 days. Finer saved partitioning recovers no
+additional rows. The 21-row Agriculture count gap and one-row Defense gap
+remain unidentified. A pinned upstream source review documents separate count,
+cache, ID-lookup and database-export stages without assigning the cause or
+certifying a production version. The alternatives are not added to the panel.
+
 The venue causal-upgrade packet is the matching control artifact for the P2 venue-shifting detection target. It consolidates candidate actor identifiers, alias audits, issue crosswalks, false-match logs, linked actor-issue-venue-time rows, and the no-linkage-clearance boundary. It is not source evidence and does not clear causal venue-shifting or calibrated policy-simulation claims; after editing venue linkage products, rerun `make first-wave-source-products`, `make first-wave-source-readiness`, `make first-wave-manual-adjudication-plan`, `make venue-causal-upgrade-packet`, and `make paper-artifacts-check`.
 
 For the GAO protest overlay, `make gao-protest-feed-preflight` uses the no-key GAO Legal Products XML feed to write ignored operational reports under `reports/gao-protest-feed-preflight.*`. The parser also attempts best-effort outcome enrichment from the official recent bid-protest decisions page when that page is reachable from the runtime, and supports `--recent-page-input` for saved HTML review fixtures when the live page is blocked. Those rows are a discovery worklist only: they remain candidate-only until a human review links protest IDs to agency, vendor, PIID/UEI, outcome, issue, and source-page fields in `data/calibration/first-wave/gao-protest-overlay.csv`, followed by the first-wave source-product and paper artifact gates.

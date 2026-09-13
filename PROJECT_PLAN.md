@@ -140,6 +140,15 @@ The full archived bulk frame audit now verifies all 56 selected ZIPs and their
 and a competition-procedure flag that cannot substitute for historical SAM
 vendor exclusions. A reviewed EPA blank-type row has an official IDV identity;
 unresolved types must remain separate from the intended A/B/C/D comparison.
+A separate 34-archive comparison confirms that 33 smaller Agriculture exports
+cover the quarter's 92 days and reproduce the same 34,657 complete thirteen-field
+rows as the selected quarter file. Multiplicities are retained; no unmatched
+or value-exact duplicate rows occur. The 21-row Agriculture count difference
+and one-row Defense difference remain unidentified. Pinned upstream source
+documents separate count/cache, export-job, ID-lookup and database stages, but
+does not prove the deployed version or the cause. The source ledger, notebook
+and native archive verifier preserve this negative result without appending
+overlapping alternatives or promoting representative SAM and exclusion claims.
 The separate heavy-duty Phase 3 comment-response pilot now links two
 agency-reproduced request excerpts to named responses, separating a clarification
 from disagreement with an alleged calculation error. It preserves submission and

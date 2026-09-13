@@ -1318,6 +1318,14 @@ def audit():
     add("procurement-archived-bulk-frame", "mixed_frame_missing_offers_not_sam_exclusions",
         f"archivedRows={bulk['rows']}; manifestStrata={len(bulk_profile['strata'])}; inclusiveDaysPerAgency={bulk_profile['inclusiveDaysPerAgency']}; childDescriptionRows={bulk['childDescriptionRows']}; blankAwardTypeRows={bulk['blankAwardTypeRows']}; missingOffersRows={bulk['missingOffersRows']}; explicitZeroOffersRows={bulk['zeroOffersRows']}; afterExclusionCompetitionRows={bulk['afterExclusionCompetitionRows']}; outsideDateRows={bulk['outsideDateRows']}; wrongAgencyRows={bulk['wrongAgencyRows']}; reviewedBlankTypeExample={reviewed_type}",
         "Saved-profile checks are not an independent re-scan of the ignored ZIPs. Reconcile native A/B/C/D actions separately from IDVs, retain unknown award types and missing offers, and obtain historical SAM status plus full action keys. Competition after exclusion of sources is not vendor debarment. Count/export drift remains unattributed.")
+    partitions_spec = importlib.util.spec_from_file_location("procurement_partitions", ROOT / "scripts/review-procurement-partitions.py")
+    partitions_module = importlib.util.module_from_spec(partitions_spec)
+    partitions_spec.loader.exec_module(partitions_module)
+    partition_review = json.loads(partitions_module.LEDGER.read_text(encoding="utf-8"))
+    partition_result = partitions_module.validate(partition_review, bulk_summary)
+    add("procurement-saved-partition-comparison", "identical_export_rows_count_gap_unidentified",
+        "; ".join(f"{key}={value}" for key, value in partition_result.items()),
+        "The 33 saved Agriculture alternatives cover all 92 quarter days and reproduce all 34,657 complete 13-field rows, including multiplicities, in the manifest-selected quarter ZIP. They add no rows to the panel and do not recover the count endpoint's additional 21 identities. Upstream code near the archive date separates cached counts from export jobs, search-ID collection and database retrieval; its production deployment and the actual cause are unverified. The separate Defense difference of one remains unresolved. Representative SAM, historical exclusions, unique action identity and causal claims remain uncleared.")
     add("overall", "not_identified",
         "New source history, PAC outcomes and issue-level comment coding exist; no provision-exposure control design, representative SAM export or historical exclusion overlay has cleared.",
         "Continue all three tracks. These findings are an interim source/design audit, not completion of the active empirical goal.")

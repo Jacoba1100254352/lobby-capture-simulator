@@ -75,6 +75,7 @@ PACKAGE_INPUTS = [
             "gao-procurement-publisher-review.json",
             "gao-archived-publisher-review.json",
             "procurement-bulk-frame-profile.json", "procurement-bulk-type-review.json",
+            "procurement-bulk-partition-comparison.json",
         )
     ],
     *[

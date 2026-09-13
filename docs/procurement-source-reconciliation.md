@@ -738,6 +738,66 @@ floating-point millions and differs by less than $0.25 in each total; its
 frozen bytes are unchanged. Net spending and absolute action volume remain
 different concepts, and neither includes parent ceilings as child obligations.
 
+### Saved Agriculture partition comparison
+
+The September 13 follow-up compares the manifest-selected Agriculture
+July-September ZIP with 33 saved alternative exports: July and September
+monthly files plus one file for every August day. They cover all 92 days once.
+All **34,657 complete rows match exactly across all thirteen exported fields**,
+including multiplicities. Neither set has value-exact duplicate rows or
+unmatched rows. The monthly totals are 10,626 for July, 11,500 for August and
+12,531 for September. The alternatives are comparison evidence and are never
+appended to the frozen panel.
+
+`procurement-bulk-partition-comparison.json` records all 34 archive hashes,
+member names, excluded subaward members, per-file counts and complete-row
+multiset hashes. CSV values remain untrimmed and unrounded. The digest sorts
+the complete field tuples and hashes compact ASCII JSON records containing
+each tuple and its multiplicity, separated by newlines. This preserves missing
+fields, quoted CSV text and repeated rows; it is not deduplication on a partial
+award key. Agency and action-date containment are checked for every source row.
+The ZIP member times have no specified timezone and are not count-query times
+or evidence of an unchanged contemporaneous FY2024 source snapshot.
+
+This is a negative result for recovering the additional Agriculture rows by
+finer saved partitioning: the same 34,657 exported rows recur. It does not
+identify the count endpoint's 34,678 records, explain the 21-row difference,
+or certify unique action identity and source completeness. The Defense May
+difference of one remains unresolved, so the aggregate 22-row discrepancy
+remains open. No alternative full-May export was found in the scoped local
+archive inventory, and no new Defense identity reconciliation is claimed.
+
+### Count and export implementation scope
+
+A read-only review of USAspending's public source at commit
+`56ccdab55cdc6fa38854c036630288dad6e944d7`, committed June 12, 2026,
+documents distinct stages. This was the latest commit returned on `master`
+before June 13 UTC, **not a verified production deployment**:
+
+- The [count endpoint](https://github.com/fedspendingtransparency/usaspending-api/blob/56ccdab55cdc6fa38854c036630288dad6e944d7/usaspending_api/download/v2/download_count.py#L44-L85)
+  counts transaction search-index records under a response-cache decorator.
+- The [export helper](https://github.com/fedspendingtransparency/usaspending-api/blob/56ccdab55cdc6fa38854c036630288dad6e944d7/usaspending_api/download/helpers/elasticsearch_download_functions.py#L59-L159)
+  collects transaction IDs through a search point in time, populates a job lookup
+  and joins those IDs to database transaction rows. It obtains its own count.
+- The [contract export path](https://github.com/fedspendingtransparency/usaspending-api/blob/56ccdab55cdc6fa38854c036630288dad6e944d7/usaspending_api/download/filestreaming/download_generation.py#L297-L319)
+  additionally filters database rows on `is_fpds=True` before SQL export.
+- [Export-job reuse](https://github.com/fedspendingtransparency/usaspending-api/blob/56ccdab55cdc6fa38854c036630288dad6e944d7/usaspending_api/download/v2/base_download_viewset.py#L205-L246)
+  uses stored requests and load/submission-window dates separately from the
+  count-response cache. The ID collector also contains a timeout branch that
+  can return a partial ID list, but its use in these jobs is not established.
+
+The source code supplies concrete reconciliation stages, not a diagnosis of
+this historical discrepancy. Cache reuse, source changes, incomplete ID
+enumeration and database/filter differences remain unassigned possibilities.
+Resolving them requires count-time membership, historical request/cache/job
+records, matched index/database vintages and production-code identity. No
+upstream code was executed or modified. Independent source review is pending.
+
+Run `python3 scripts/review-procurement-partitions.py --scan` to reproduce the
+34-archive comparison. Its default mode checks the saved ledger; the empirical
+audit and notebook use that portable mode. These checks do not promote a
+representative SAM export, historical exclusion intervals or causal estimates.
+
 ## Historical exclusions: a located but uninspected archive
 
 The September 12 browser inspection of SAM's

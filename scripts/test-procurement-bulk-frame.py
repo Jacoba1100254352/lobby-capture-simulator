@@ -2,6 +2,7 @@
 """Offline manifest, row-semantics and archive-isolation regression tests."""
 
 import copy
+from collections import Counter
 import csv
 from datetime import date
 import importlib.util
@@ -16,6 +17,54 @@ ROOT = Path(__file__).resolve().parents[1]
 spec = importlib.util.spec_from_file_location("bulk_frame", ROOT / "scripts/audit-procurement-bulk-frame.py")
 audit = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(audit)
+
+
+partition_spec = importlib.util.spec_from_file_location("partitions", ROOT / "scripts/review-procurement-partitions.py")
+partitions = importlib.util.module_from_spec(partition_spec)
+partition_spec.loader.exec_module(partitions)
+
+
+class PartitionComparisonTests(unittest.TestCase):
+    def test_equal_counts_and_distinct_values_do_not_hide_changed_multiplicity(self):
+        quarter = Counter({("A",): 2, ("B",): 1})
+        other = Counter({("A",): 1, ("B",): 2})
+        result = partitions.compare(quarter, other)
+        self.assertEqual(result["quarterRows"], result["partitionRows"])
+        self.assertEqual((result["quarterOnlyRows"], result["partitionOnlyRows"]), (1, 1))
+        self.assertNotEqual(result["quarterMultisetSha256"], result["partitionMultisetSha256"])
+        self.assertEqual(partitions.multiset_hash(quarter), partitions.multiset_hash(Counter(dict(reversed(list(quarter.items()))))))
+
+    def write_zip(self, path, rows):
+        stream = StringIO(newline="")
+        writer = csv.writer(stream, lineterminator="\n")
+        writer.writerow(partitions.FIELDS)
+        writer.writerows(rows)
+        with zipfile.ZipFile(path, "w") as archive:
+            archive.writestr("Contracts_PrimeTransactions_test.csv", stream.getvalue())
+            archive.writestr("Contracts_Subawards_test.csv", stream.getvalue())
+
+    def row(self):
+        return ["Award,with\nquoted text", "", "P00001", "0.00", "2024-08-01", "Vendor", "UEI",
+                partitions.AGENCY, "Subagency", "DELIVERY ORDER", "FIRM FIXED PRICE", "FULL AND OPEN", ""]
+
+    def test_archive_read_preserves_csv_values_blanks_and_duplicates_excluding_subawards(self):
+        with tempfile.TemporaryDirectory() as directory:
+            path = Path(directory) / "fixture.zip"
+            self.write_zip(path, [self.row(), self.row()])
+            rows, record = partitions.read_archive(path, "2024-08-01", "2024-08-01")
+        self.assertEqual(rows, Counter({tuple(self.row()): 2}))
+        self.assertEqual((record["rows"], record["distinctValueRows"]), (2, 1))
+        self.assertEqual(len(record["excludedMembers"]), 1)
+
+    def test_rows_from_another_agency_or_day_cannot_clear_partition_coverage(self):
+        for index, value in [(4, "2024-08-02"), (7, "Another agency")]:
+            row = self.row()
+            row[index] = value
+            with self.subTest(field=index), tempfile.TemporaryDirectory() as directory:
+                path = Path(directory) / "fixture.zip"
+                self.write_zip(path, [row])
+                with self.assertRaisesRegex(ValueError, "outside agency/date"):
+                    partitions.read_archive(path, "2024-08-01", "2024-08-01")
 
 
 class FrameTests(unittest.TestCase):

@@ -1,0 +1,1201 @@
+{
+  "schema": "procurement-bulk-partition-comparison-v1",
+  "reviewDate": "2026-09-13",
+  "reviewer": "Codex source inspection; independent adjudication pending",
+  "manifestFile": "data/snapshots/2024-env/normalized/usaspending-procurement-bulk-summary.json",
+  "manifestSha256": "a1f241028cdabcb56af6f0961437029adaab19d02b1e94d397a20b8de15e0918",
+  "archiveDirectory": "data/raw/usaspending-transaction-downloads",
+  "sourceHeader": [
+    "award_id_piid",
+    "parent_award_id_piid",
+    "modification_number",
+    "federal_action_obligation",
+    "action_date",
+    "recipient_name",
+    "recipient_uei",
+    "awarding_agency_name",
+    "awarding_sub_agency_name",
+    "award_type",
+    "type_of_contract_pricing",
+    "extent_competed",
+    "number_of_offers_received"
+  ],
+  "selection": "The manifest-selected Agriculture FY2024 fourth-quarter ZIP compared with the saved July and September monthly ZIPs and all 31 August daily ZIPs. These 33 overlapping alternatives are comparison evidence only, not additional panel data. No new exports were requested.",
+  "plannedRows": 34678,
+  "unresolvedCountDifference": 21,
+  "quarterArchive": {
+    "archiveName": "department-of-agriculture-2024-07-01-2024-09-30.zip",
+    "sha256": "1ba49bb27b50101c7333e13573aba42ecfccc082fbb6247bf13373cd2f408367",
+    "byteSize": 770574,
+    "startDate": "2024-07-01",
+    "endDate": "2024-09-30",
+    "rows": 34657,
+    "distinctValueRows": 34657,
+    "rowMultisetSha256": "fb2f1d3e24026a55b5d041cf865b9c66cfc6cbe096e6c51f8a5709ae90f3a18d",
+    "primeMembers": [
+      {
+        "name": "Contracts_PrimeTransactions_2026-06-13_H04M55S00_1.csv",
+        "zipMemberTime": [
+          2026,
+          6,
+          13,
+          4,
+          55,
+          40
+        ],
+        "rows": 34657
+      }
+    ],
+    "excludedMembers": [
+      {
+        "name": "Contracts_Subawards_2026-06-13_H04M55S00.csv",
+        "byteSize": 0
+      }
+    ]
+  },
+  "partitionArchives": [
+    {
+      "archiveName": "department-of-agriculture-2024-07-01-2024-07-31.zip",
+      "sha256": "4fd25b2ef01a268d1e7a1c8a409150e19fd583fc6f408b6c14d7542991149e75",
+      "byteSize": 255131,
+      "startDate": "2024-07-01",
+      "endDate": "2024-07-31",
+      "rows": 10626,
+      "distinctValueRows": 10626,
+      "rowMultisetSha256": "ffbac2a4ece455c4ab0cf2145362327470fbd3e2667ccc74a66ce7039c63606f",
+      "primeMembers": [
+        {
+          "name": "Contracts_PrimeTransactions_2026-06-13_H04M37S41_1.csv",
+          "zipMemberTime": [
+            2026,
+            6,
+            13,
+            4,
+            37,
+            56
+          ],
+          "rows": 10626
+        }
+      ],
+      "excludedMembers": [
+        {
+          "name": "Contracts_Subawards_2026-06-13_H04M37S41.csv",
+          "byteSize": 0
+        }
+      ]
+    },
+    {
+      "archiveName": "department-of-agriculture-2024-08-01-2024-08-01.zip",
+      "sha256": "81c2b0626c971cc7d3815ca1c3e55317aca3a5feca1f2628a453e1239953ffdc",
+      "byteSize": 20429,
+      "startDate": "2024-08-01",
+      "endDate": "2024-08-01",
+      "rows": 629,
+      "distinctValueRows": 629,
+      "rowMultisetSha256": "8b1fe11a754fe6a6449fe093597a114eaeed882a496d4df1a2de876f23040427",
+      "primeMembers": [
+        {
+          "name": "Contracts_PrimeTransactions_2026-06-13_H04M39S45_1.csv",
+          "zipMemberTime": [
+            2026,
+            6,
+            13,
+            4,
+            39,
+            48
+          ],
+          "rows": 629
+        }
+      ],
+      "excludedMembers": [
+        {
+          "name": "Contracts_Subawards_2026-06-13_H04M39S45.csv",
+          "byteSize": 0
+        }
+      ]
+    },
+    {
+      "archiveName": "department-of-agriculture-2024-08-02-2024-08-02.zip",
+      "sha256": "7d557dc65cbe6cd542208b0bfa078b031abb30c3748634eab3755c3d0b68ab68",
+      "byteSize": 14246,
+      "startDate": "2024-08-02",
+      "endDate": "2024-08-02",
+      "rows": 378,
+      "distinctValueRows": 378,
+      "rowMultisetSha256": "a78f829484bdfd36a5110669b699304ccc297a590335599174d771cea7eaaa89",
+      "primeMembers": [
+        {
+          "name": "Contracts_PrimeTransactions_2026-06-13_H04M40S01_1.csv",
+          "zipMemberTime": [
+            2026,
+            6,
+            13,
+            4,
+            40,
+            2
+          ],
+          "rows": 378
+        }
+      ],
+      "excludedMembers": [
+        {
+          "name": "Contracts_Subawards_2026-06-13_H04M40S01.csv",
+          "byteSize": 0
+        }
+      ]
+    },
+    {
+      "archiveName": "department-of-agriculture-2024-08-03-2024-08-03.zip",
+      "sha256": "b69dc7f632a74ca96dae2c49882d5b840f5fb553170ec7565b6f1f93fae41af7",
+      "byteSize": 6793,
+      "startDate": "2024-08-03",
+      "endDate": "2024-08-03",
+      "rows": 191,
+      "distinctValueRows": 191,
+      "rowMultisetSha256": "537be0d46aa00292804c76e1a7f4fa7f4e6dea3347895e4a11c183966c3b6a59",
+      "primeMembers": [
+        {
+          "name": "Contracts_PrimeTransactions_2026-06-13_H04M40S08_1.csv",
+          "zipMemberTime": [
+            2026,
+            6,
+            13,
+            4,
+            40,
+            8
+          ],
+          "rows": 191
+        }
+      ],
+      "excludedMembers": [
+        {
+          "name": "Contracts_Subawards_2026-06-13_H04M40S08.csv",
+          "byteSize": 0
+        }
+      ]
+    },
+    {
+      "archiveName": "department-of-agriculture-2024-08-04-2024-08-04.zip",
+      "sha256": "6bc092f0b88cc1d18c3b09c64ee88a16ef0c30cc9432b8fe2664f7246ab69df4",
+      "byteSize": 7487,
+      "startDate": "2024-08-04",
+      "endDate": "2024-08-04",
+      "rows": 227,
+      "distinctValueRows": 227,
+      "rowMultisetSha256": "ade5dd322cdb4ff6903690fe9e01c75ae7892d74e0879d8ac3cfd9a74b3f743c",
+      "primeMembers": [
+        {
+          "name": "Contracts_PrimeTransactions_2026-06-13_H04M40S46_1.csv",
+          "zipMemberTime": [
+            2026,
+            6,
+            13,
+            4,
+            40,
+            46
+          ],
+          "rows": 227
+        }
+      ],
+      "excludedMembers": [
+        {
+          "name": "Contracts_Subawards_2026-06-13_H04M40S46.csv",
+          "byteSize": 0
+        }
+      ]
+    },
+    {
+      "archiveName": "department-of-agriculture-2024-08-05-2024-08-05.zip",
+      "sha256": "dce7774297a316a82ec14c3fd6ad1f7d888f038a9f1c0b55d873a8640af59c5b",
+      "byteSize": 13615,
+      "startDate": "2024-08-05",
+      "endDate": "2024-08-05",
+      "rows": 365,
+      "distinctValueRows": 365,
+      "rowMultisetSha256": "b8855812d68e0b2a2a24ee09a7a28549cbb432794bfe71063a051ac14dcb57f0",
+      "primeMembers": [
+        {
+          "name": "Contracts_PrimeTransactions_2026-06-13_H04M41S39_1.csv",
+          "zipMemberTime": [
+            2026,
+            6,
+            13,
+            4,
+            41,
+            40
+          ],
+          "rows": 365
+        }
+      ],
+      "excludedMembers": [
+        {
+          "name": "Contracts_Subawards_2026-06-13_H04M41S39.csv",
+          "byteSize": 0
+        }
+      ]
+    },
+    {
+      "archiveName": "department-of-agriculture-2024-08-06-2024-08-06.zip",
+      "sha256": "db07d990c4c70707c2bdfa9b85fc99363e3cd29dfdf7cb0049ba76ee49753f50",
+      "byteSize": 14465,
+      "startDate": "2024-08-06",
+      "endDate": "2024-08-06",
+      "rows": 402,
+      "distinctValueRows": 402,
+      "rowMultisetSha256": "04f3201ce65d72e5f816a124614e61f4adfbbe2c71d638f101126721fae98e2c",
+      "primeMembers": [
+        {
+          "name": "Contracts_PrimeTransactions_2026-06-13_H04M42S19_1.csv",
+          "zipMemberTime": [
+            2026,
+            6,
+            13,
+            4,
+            42,
+            20
+          ],
+          "rows": 402
+        }
+      ],
+      "excludedMembers": [
+        {
+          "name": "Contracts_Subawards_2026-06-13_H04M42S19.csv",
+          "byteSize": 0
+        }
+      ]
+    },
+    {
+      "archiveName": "department-of-agriculture-2024-08-07-2024-08-07.zip",
+      "sha256": "834ef39cb99cdcad56e608b6dd3fc87adb86e19b30f46aa5c6b3fc7adbe6c242",
+      "byteSize": 17576,
+      "startDate": "2024-08-07",
+      "endDate": "2024-08-07",
+      "rows": 506,
+      "distinctValueRows": 506,
+      "rowMultisetSha256": "f00d249fff4fa420745f2d71bbd55bcbc2223387d7d20ac3cd83c39ea9c77f2d",
+      "primeMembers": [
+        {
+          "name": "Contracts_PrimeTransactions_2026-06-13_H04M42S29_1.csv",
+          "zipMemberTime": [
+            2026,
+            6,
+            13,
+            4,
+            42,
+            30
+          ],
+          "rows": 506
+        }
+      ],
+      "excludedMembers": [
+        {
+          "name": "Contracts_Subawards_2026-06-13_H04M42S29.csv",
+          "byteSize": 0
+        }
+      ]
+    },
+    {
+      "archiveName": "department-of-agriculture-2024-08-08-2024-08-08.zip",
+      "sha256": "f2c1beff450521296452d694d9dad5d7b20b654f48b4cccfcdddae7f0b9d9705",
+      "byteSize": 14703,
+      "startDate": "2024-08-08",
+      "endDate": "2024-08-08",
+      "rows": 418,
+      "distinctValueRows": 418,
+      "rowMultisetSha256": "861ef85e053f041f1041301cbe15c0cb8efa91447491db4deb84ce88f1af2084",
+      "primeMembers": [
+        {
+          "name": "Contracts_PrimeTransactions_2026-06-13_H04M43S06_1.csv",
+          "zipMemberTime": [
+            2026,
+            6,
+            13,
+            4,
+            43,
+            6
+          ],
+          "rows": 418
+        }
+      ],
+      "excludedMembers": [
+        {
+          "name": "Contracts_Subawards_2026-06-13_H04M43S06.csv",
+          "byteSize": 0
+        }
+      ]
+    },
+    {
+      "archiveName": "department-of-agriculture-2024-08-09-2024-08-09.zip",
+      "sha256": "dc2785c254c670474681b0bc36d1ff17c28da8e5e7ac19e77a9a81e796e395aa",
+      "byteSize": 14830,
+      "startDate": "2024-08-09",
+      "endDate": "2024-08-09",
+      "rows": 407,
+      "distinctValueRows": 407,
+      "rowMultisetSha256": "c674c4c983824000e173cee9fa7880036c48e00c3a25dbb37f165e4448f45c25",
+      "primeMembers": [
+        {
+          "name": "Contracts_PrimeTransactions_2026-06-13_H04M44S45_1.csv",
+          "zipMemberTime": [
+            2026,
+            6,
+            13,
+            4,
+            44,
+            46
+          ],
+          "rows": 407
+        }
+      ],
+      "excludedMembers": [
+        {
+          "name": "Contracts_Subawards_2026-06-13_H04M44S45.csv",
+          "byteSize": 0
+        }
+      ]
+    },
+    {
+      "archiveName": "department-of-agriculture-2024-08-10-2024-08-10.zip",
+      "sha256": "e5e60d67ef3c68246edbc38ef1c991cfc1cc776d3787f1088f3062d5b50ed92f",
+      "byteSize": 8440,
+      "startDate": "2024-08-10",
+      "endDate": "2024-08-10",
+      "rows": 279,
+      "distinctValueRows": 279,
+      "rowMultisetSha256": "d67d979af29c65d24b2cd3205ee167f13a62362b9ef02a40525a784a9691b419",
+      "primeMembers": [
+        {
+          "name": "Contracts_PrimeTransactions_2026-06-13_H04M45S21_1.csv",
+          "zipMemberTime": [
+            2026,
+            6,
+            13,
+            4,
+            45,
+            22
+          ],
+          "rows": 279
+        }
+      ],
+      "excludedMembers": [
+        {
+          "name": "Contracts_Subawards_2026-06-13_H04M45S21.csv",
+          "byteSize": 0
+        }
+      ]
+    },
+    {
+      "archiveName": "department-of-agriculture-2024-08-11-2024-08-11.zip",
+      "sha256": "ed3872f6b85b9bc0e655b3dcb3833828ac0a8b6a1e0ab9cb55bf5f7b46552fb0",
+      "byteSize": 8488,
+      "startDate": "2024-08-11",
+      "endDate": "2024-08-11",
+      "rows": 272,
+      "distinctValueRows": 272,
+      "rowMultisetSha256": "7f8309447a53ecff842d429fe801524ceccee5840581a6bb0af748d1e976f278",
+      "primeMembers": [
+        {
+          "name": "Contracts_PrimeTransactions_2026-06-13_H04M46S03_1.csv",
+          "zipMemberTime": [
+            2026,
+            6,
+            13,
+            4,
+            46,
+            4
+          ],
+          "rows": 272
+        }
+      ],
+      "excludedMembers": [
+        {
+          "name": "Contracts_Subawards_2026-06-13_H04M46S03.csv",
+          "byteSize": 0
+        }
+      ]
+    },
+    {
+      "archiveName": "department-of-agriculture-2024-08-12-2024-08-12.zip",
+      "sha256": "5f91a9bcc352dbaace9080e843391bcfd81f705d6b22340ccc5e75e1de4219f8",
+      "byteSize": 15160,
+      "startDate": "2024-08-12",
+      "endDate": "2024-08-12",
+      "rows": 440,
+      "distinctValueRows": 440,
+      "rowMultisetSha256": "0eb952c16a60ab8d14a2371705c177dff21b04279761ff0e1899e89d7ec7de14",
+      "primeMembers": [
+        {
+          "name": "Contracts_PrimeTransactions_2026-06-13_H04M46S11_1.csv",
+          "zipMemberTime": [
+            2026,
+            6,
+            13,
+            4,
+            46,
+            12
+          ],
+          "rows": 440
+        }
+      ],
+      "excludedMembers": [
+        {
+          "name": "Contracts_Subawards_2026-06-13_H04M46S11.csv",
+          "byteSize": 0
+        }
+      ]
+    },
+    {
+      "archiveName": "department-of-agriculture-2024-08-13-2024-08-13.zip",
+      "sha256": "0c773b3a3eb2566cf999562e3070663af352da14fbdc416a023b646d6dd2193f",
+      "byteSize": 16217,
+      "startDate": "2024-08-13",
+      "endDate": "2024-08-13",
+      "rows": 483,
+      "distinctValueRows": 483,
+      "rowMultisetSha256": "a21faf7e99b3410fae13d88c81359d6970e87798a2040be8291568edbfcecfb7",
+      "primeMembers": [
+        {
+          "name": "Contracts_PrimeTransactions_2026-06-13_H04M46S17_1.csv",
+          "zipMemberTime": [
+            2026,
+            6,
+            13,
+            4,
+            46,
+            18
+          ],
+          "rows": 483
+        }
+      ],
+      "excludedMembers": [
+        {
+          "name": "Contracts_Subawards_2026-06-13_H04M46S17.csv",
+          "byteSize": 0
+        }
+      ]
+    },
+    {
+      "archiveName": "department-of-agriculture-2024-08-14-2024-08-14.zip",
+      "sha256": "8fad124823a019214a55730320536b2fa5ee871b01a9b622125f4e61a2c5a619",
+      "byteSize": 14789,
+      "startDate": "2024-08-14",
+      "endDate": "2024-08-14",
+      "rows": 412,
+      "distinctValueRows": 412,
+      "rowMultisetSha256": "88582c7170bed60cf02d1b1b4e6700ec55bc1a90c928ce129ab669141d842467",
+      "primeMembers": [
+        {
+          "name": "Contracts_PrimeTransactions_2026-06-13_H04M46S23_1.csv",
+          "zipMemberTime": [
+            2026,
+            6,
+            13,
+            4,
+            46,
+            24
+          ],
+          "rows": 412
+        }
+      ],
+      "excludedMembers": [
+        {
+          "name": "Contracts_Subawards_2026-06-13_H04M46S23.csv",
+          "byteSize": 0
+        }
+      ]
+    },
+    {
+      "archiveName": "department-of-agriculture-2024-08-15-2024-08-15.zip",
+      "sha256": "308abfec0c02b54e6eca96a91ec790d8fe354401032e0d2baa212215e6c78e83",
+      "byteSize": 14273,
+      "startDate": "2024-08-15",
+      "endDate": "2024-08-15",
+      "rows": 419,
+      "distinctValueRows": 419,
+      "rowMultisetSha256": "5f7c469da63f67ae3ca9373eb22be7ec26d65fd51c37dc156850814ea99dfe8a",
+      "primeMembers": [
+        {
+          "name": "Contracts_PrimeTransactions_2026-06-13_H04M46S29_1.csv",
+          "zipMemberTime": [
+            2026,
+            6,
+            13,
+            4,
+            46,
+            30
+          ],
+          "rows": 419
+        }
+      ],
+      "excludedMembers": [
+        {
+          "name": "Contracts_Subawards_2026-06-13_H04M46S29.csv",
+          "byteSize": 0
+        }
+      ]
+    },
+    {
+      "archiveName": "department-of-agriculture-2024-08-16-2024-08-16.zip",
+      "sha256": "e31fb7b1726b5cef7cfa41c7b8450d9a0523de3c7d344697e8dbc2f8f0fc6dd4",
+      "byteSize": 16125,
+      "startDate": "2024-08-16",
+      "endDate": "2024-08-16",
+      "rows": 534,
+      "distinctValueRows": 534,
+      "rowMultisetSha256": "421c35190b12a060b2ad922f7124f20892dd5ba40612bb88b22f31c22036b872",
+      "primeMembers": [
+        {
+          "name": "Contracts_PrimeTransactions_2026-06-13_H04M46S39_1.csv",
+          "zipMemberTime": [
+            2026,
+            6,
+            13,
+            4,
+            46,
+            40
+          ],
+          "rows": 534
+        }
+      ],
+      "excludedMembers": [
+        {
+          "name": "Contracts_Subawards_2026-06-13_H04M46S39.csv",
+          "byteSize": 0
+        }
+      ]
+    },
+    {
+      "archiveName": "department-of-agriculture-2024-08-17-2024-08-17.zip",
+      "sha256": "35438a19ecb343536c3f5fd55df8aa8cae2bf327612d7e10ee304eca0f618d7c",
+      "byteSize": 5158,
+      "startDate": "2024-08-17",
+      "endDate": "2024-08-17",
+      "rows": 130,
+      "distinctValueRows": 130,
+      "rowMultisetSha256": "fb3e6e2b8ce43cefb9865ab2a003cdf37940c71af2a6d21cdbcdbabb2c9ec987",
+      "primeMembers": [
+        {
+          "name": "Contracts_PrimeTransactions_2026-06-13_H04M47S14_1.csv",
+          "zipMemberTime": [
+            2026,
+            6,
+            13,
+            4,
+            47,
+            14
+          ],
+          "rows": 130
+        }
+      ],
+      "excludedMembers": [
+        {
+          "name": "Contracts_Subawards_2026-06-13_H04M47S14.csv",
+          "byteSize": 0
+        }
+      ]
+    },
+    {
+      "archiveName": "department-of-agriculture-2024-08-18-2024-08-18.zip",
+      "sha256": "af1b1830957e15d4b52c82b0c1cdaa09a3c813e9859ac3c5998e0e40fc57baac",
+      "byteSize": 6526,
+      "startDate": "2024-08-18",
+      "endDate": "2024-08-18",
+      "rows": 175,
+      "distinctValueRows": 175,
+      "rowMultisetSha256": "bdfaf1898021792d5dc550ece0c6cfda016a0628417703907c938491332bf95b",
+      "primeMembers": [
+        {
+          "name": "Contracts_PrimeTransactions_2026-06-13_H04M47S21_1.csv",
+          "zipMemberTime": [
+            2026,
+            6,
+            13,
+            4,
+            47,
+            22
+          ],
+          "rows": 175
+        }
+      ],
+      "excludedMembers": [
+        {
+          "name": "Contracts_Subawards_2026-06-13_H04M47S21.csv",
+          "byteSize": 0
+        }
+      ]
+    },
+    {
+      "archiveName": "department-of-agriculture-2024-08-19-2024-08-19.zip",
+      "sha256": "c9fee90e344b12b2edfba813cd04c743d1db3d13927228085515d2bbc62261c8",
+      "byteSize": 13642,
+      "startDate": "2024-08-19",
+      "endDate": "2024-08-19",
+      "rows": 382,
+      "distinctValueRows": 382,
+      "rowMultisetSha256": "c3f85775a704569f35f474c0340362e00f5285d7a3ab2e5abffaeceba5a65b4a",
+      "primeMembers": [
+        {
+          "name": "Contracts_PrimeTransactions_2026-06-13_H04M47S29_1.csv",
+          "zipMemberTime": [
+            2026,
+            6,
+            13,
+            4,
+            47,
+            30
+          ],
+          "rows": 382
+        }
+      ],
+      "excludedMembers": [
+        {
+          "name": "Contracts_Subawards_2026-06-13_H04M47S29.csv",
+          "byteSize": 0
+        }
+      ]
+    },
+    {
+      "archiveName": "department-of-agriculture-2024-08-20-2024-08-20.zip",
+      "sha256": "92f03419e6d68e5961b86dd80c220891889da117807363b30adb0da5b5604b05",
+      "byteSize": 14833,
+      "startDate": "2024-08-20",
+      "endDate": "2024-08-20",
+      "rows": 405,
+      "distinctValueRows": 405,
+      "rowMultisetSha256": "de0b323bf16fbccd7b73922bb5f0a63c9ff0b8fd944060be81a5000856c67ef7",
+      "primeMembers": [
+        {
+          "name": "Contracts_PrimeTransactions_2026-06-13_H04M47S36_1.csv",
+          "zipMemberTime": [
+            2026,
+            6,
+            13,
+            4,
+            47,
+            36
+          ],
+          "rows": 405
+        }
+      ],
+      "excludedMembers": [
+        {
+          "name": "Contracts_Subawards_2026-06-13_H04M47S36.csv",
+          "byteSize": 0
+        }
+      ]
+    },
+    {
+      "archiveName": "department-of-agriculture-2024-08-21-2024-08-21.zip",
+      "sha256": "9fc48cd97a695cd2005e88641ba94c11035af4abdd852bb5dd0ca24cb5c2c024",
+      "byteSize": 15490,
+      "startDate": "2024-08-21",
+      "endDate": "2024-08-21",
+      "rows": 429,
+      "distinctValueRows": 429,
+      "rowMultisetSha256": "522ef8c7c3403d6a7c62785435973edf071b90df136085f710c6e210d62edbd4",
+      "primeMembers": [
+        {
+          "name": "Contracts_PrimeTransactions_2026-06-13_H04M47S47_1.csv",
+          "zipMemberTime": [
+            2026,
+            6,
+            13,
+            4,
+            47,
+            48
+          ],
+          "rows": 429
+        }
+      ],
+      "excludedMembers": [
+        {
+          "name": "Contracts_Subawards_2026-06-13_H04M47S47.csv",
+          "byteSize": 0
+        }
+      ]
+    },
+    {
+      "archiveName": "department-of-agriculture-2024-08-22-2024-08-22.zip",
+      "sha256": "be0195b83c23a7593b24f7f79ccb6cc363ee0fdbf86e596c562476491d1af1cb",
+      "byteSize": 15065,
+      "startDate": "2024-08-22",
+      "endDate": "2024-08-22",
+      "rows": 432,
+      "distinctValueRows": 432,
+      "rowMultisetSha256": "b3a92427dd3887a87b9e976a5435a57684d4e365777c3d91725e88bef665afc5",
+      "primeMembers": [
+        {
+          "name": "Contracts_PrimeTransactions_2026-06-13_H04M47S54_1.csv",
+          "zipMemberTime": [
+            2026,
+            6,
+            13,
+            4,
+            47,
+            54
+          ],
+          "rows": 432
+        }
+      ],
+      "excludedMembers": [
+        {
+          "name": "Contracts_Subawards_2026-06-13_H04M47S54.csv",
+          "byteSize": 0
+        }
+      ]
+    },
+    {
+      "archiveName": "department-of-agriculture-2024-08-23-2024-08-23.zip",
+      "sha256": "c771c1ab4f889761e33e8ad9d20e6691c9871d4ed7b3eeac37df99e6e48e2c05",
+      "byteSize": 13967,
+      "startDate": "2024-08-23",
+      "endDate": "2024-08-23",
+      "rows": 392,
+      "distinctValueRows": 392,
+      "rowMultisetSha256": "7866134a75d2a491b9cafde00f84f9168f62f65de6cb9feefa00c11f6aec5178",
+      "primeMembers": [
+        {
+          "name": "Contracts_PrimeTransactions_2026-06-13_H04M48S01_1.csv",
+          "zipMemberTime": [
+            2026,
+            6,
+            13,
+            4,
+            48,
+            2
+          ],
+          "rows": 392
+        }
+      ],
+      "excludedMembers": [
+        {
+          "name": "Contracts_Subawards_2026-06-13_H04M48S01.csv",
+          "byteSize": 0
+        }
+      ]
+    },
+    {
+      "archiveName": "department-of-agriculture-2024-08-24-2024-08-24.zip",
+      "sha256": "b5c1f6ff5ca3e398ae502474072bf9abfd403bbd9e350fc146e3eb1ba9bf9352",
+      "byteSize": 6986,
+      "startDate": "2024-08-24",
+      "endDate": "2024-08-24",
+      "rows": 209,
+      "distinctValueRows": 209,
+      "rowMultisetSha256": "baa51efa9474653507fce6ec214ba87fbb4715d133e0bd198909e6c153caa7e7",
+      "primeMembers": [
+        {
+          "name": "Contracts_PrimeTransactions_2026-06-13_H04M48S08_1.csv",
+          "zipMemberTime": [
+            2026,
+            6,
+            13,
+            4,
+            48,
+            8
+          ],
+          "rows": 209
+        }
+      ],
+      "excludedMembers": [
+        {
+          "name": "Contracts_Subawards_2026-06-13_H04M48S08.csv",
+          "byteSize": 0
+        }
+      ]
+    },
+    {
+      "archiveName": "department-of-agriculture-2024-08-25-2024-08-25.zip",
+      "sha256": "434ec507b8409366013ac0385009d4d96c419d5561bfbe648abf949b16546702",
+      "byteSize": 7433,
+      "startDate": "2024-08-25",
+      "endDate": "2024-08-25",
+      "rows": 233,
+      "distinctValueRows": 233,
+      "rowMultisetSha256": "711c2848a3e1168670870de9a5606fb190eedc4100548319904facbf917500da",
+      "primeMembers": [
+        {
+          "name": "Contracts_PrimeTransactions_2026-06-13_H04M48S16_1.csv",
+          "zipMemberTime": [
+            2026,
+            6,
+            13,
+            4,
+            48,
+            16
+          ],
+          "rows": 233
+        }
+      ],
+      "excludedMembers": [
+        {
+          "name": "Contracts_Subawards_2026-06-13_H04M48S16.csv",
+          "byteSize": 0
+        }
+      ]
+    },
+    {
+      "archiveName": "department-of-agriculture-2024-08-26-2024-08-26.zip",
+      "sha256": "ee864049b4303a52a6b13aef481f234338310cb76a731aabd15cdaec45bdaa09",
+      "byteSize": 15242,
+      "startDate": "2024-08-26",
+      "endDate": "2024-08-26",
+      "rows": 453,
+      "distinctValueRows": 453,
+      "rowMultisetSha256": "edbe83d56354a4ea8d82bfb37e42a0fefb96711a99b2dbfafe88b779948edcf1",
+      "primeMembers": [
+        {
+          "name": "Contracts_PrimeTransactions_2026-06-13_H04M48S23_1.csv",
+          "zipMemberTime": [
+            2026,
+            6,
+            13,
+            4,
+            48,
+            24
+          ],
+          "rows": 453
+        }
+      ],
+      "excludedMembers": [
+        {
+          "name": "Contracts_Subawards_2026-06-13_H04M48S23.csv",
+          "byteSize": 0
+        }
+      ]
+    },
+    {
+      "archiveName": "department-of-agriculture-2024-08-27-2024-08-27.zip",
+      "sha256": "1ff20c7112511597554de6b26e6954a9305bdca3f58838fa167f3a47aef56e76",
+      "byteSize": 17441,
+      "startDate": "2024-08-27",
+      "endDate": "2024-08-27",
+      "rows": 506,
+      "distinctValueRows": 506,
+      "rowMultisetSha256": "6ec521ef1554ff7f94b7723a76ab5a7cdab8c0785a2a5e81b2c6dd2e57996113",
+      "primeMembers": [
+        {
+          "name": "Contracts_PrimeTransactions_2026-06-13_H04M48S30_1.csv",
+          "zipMemberTime": [
+            2026,
+            6,
+            13,
+            4,
+            48,
+            30
+          ],
+          "rows": 506
+        }
+      ],
+      "excludedMembers": [
+        {
+          "name": "Contracts_Subawards_2026-06-13_H04M48S30.csv",
+          "byteSize": 0
+        }
+      ]
+    },
+    {
+      "archiveName": "department-of-agriculture-2024-08-28-2024-08-28.zip",
+      "sha256": "2e36ec5a465832f0efb5e82b4d873524170529245d5af2465fae2e1d06a02df8",
+      "byteSize": 16261,
+      "startDate": "2024-08-28",
+      "endDate": "2024-08-28",
+      "rows": 466,
+      "distinctValueRows": 466,
+      "rowMultisetSha256": "6949c2ea80db835fa0b2c3c00cc09e4831e38905f1eb94f8c600bbe5685d7c9c",
+      "primeMembers": [
+        {
+          "name": "Contracts_PrimeTransactions_2026-06-13_H04M48S37_1.csv",
+          "zipMemberTime": [
+            2026,
+            6,
+            13,
+            4,
+            48,
+            38
+          ],
+          "rows": 466
+        }
+      ],
+      "excludedMembers": [
+        {
+          "name": "Contracts_Subawards_2026-06-13_H04M48S37.csv",
+          "byteSize": 0
+        }
+      ]
+    },
+    {
+      "archiveName": "department-of-agriculture-2024-08-29-2024-08-29.zip",
+      "sha256": "0bc8ea14ea44149bc448eca25110b66034f0195cc9c488708ea0b1eef3c23dd4",
+      "byteSize": 15898,
+      "startDate": "2024-08-29",
+      "endDate": "2024-08-29",
+      "rows": 456,
+      "distinctValueRows": 456,
+      "rowMultisetSha256": "696699168da1019cbea9333bcfd37d26bd83241413345ccd59b698ea834f4c90",
+      "primeMembers": [
+        {
+          "name": "Contracts_PrimeTransactions_2026-06-13_H04M48S44_1.csv",
+          "zipMemberTime": [
+            2026,
+            6,
+            13,
+            4,
+            48,
+            44
+          ],
+          "rows": 456
+        }
+      ],
+      "excludedMembers": [
+        {
+          "name": "Contracts_Subawards_2026-06-13_H04M48S44.csv",
+          "byteSize": 0
+        }
+      ]
+    },
+    {
+      "archiveName": "department-of-agriculture-2024-08-30-2024-08-30.zip",
+      "sha256": "6a8fa8a262a9565cef055d3903ff6b029038ce6f0acf3e488f9934763880c861",
+      "byteSize": 12911,
+      "startDate": "2024-08-30",
+      "endDate": "2024-08-30",
+      "rows": 353,
+      "distinctValueRows": 353,
+      "rowMultisetSha256": "a13d89acc5df1b43d4a69849b9225d8019fe7ee6e16494ba5b9813a62a6a15d8",
+      "primeMembers": [
+        {
+          "name": "Contracts_PrimeTransactions_2026-06-13_H04M48S51_1.csv",
+          "zipMemberTime": [
+            2026,
+            6,
+            13,
+            4,
+            48,
+            52
+          ],
+          "rows": 353
+        }
+      ],
+      "excludedMembers": [
+        {
+          "name": "Contracts_Subawards_2026-06-13_H04M48S51.csv",
+          "byteSize": 0
+        }
+      ]
+    },
+    {
+      "archiveName": "department-of-agriculture-2024-08-31-2024-08-31.zip",
+      "sha256": "558950a6c3669d3e935dcc1ceb22478ab5d3e345789bc4188c3c7e201dccf599",
+      "byteSize": 4524,
+      "startDate": "2024-08-31",
+      "endDate": "2024-08-31",
+      "rows": 117,
+      "distinctValueRows": 117,
+      "rowMultisetSha256": "0b109c5a53939310ce80af8d161d3a7e0b85f20ac380ec27f7ef8dab7d051624",
+      "primeMembers": [
+        {
+          "name": "Contracts_PrimeTransactions_2026-06-13_H04M49S30_1.csv",
+          "zipMemberTime": [
+            2026,
+            6,
+            13,
+            4,
+            49,
+            30
+          ],
+          "rows": 117
+        }
+      ],
+      "excludedMembers": [
+        {
+          "name": "Contracts_Subawards_2026-06-13_H04M49S30.csv",
+          "byteSize": 0
+        }
+      ]
+    },
+    {
+      "archiveName": "department-of-agriculture-2024-09-01-2024-09-30.zip",
+      "sha256": "a791f504b158ed80de71c33e59ba1f8f947970808abd114924780eac43350655",
+      "byteSize": 309646,
+      "startDate": "2024-09-01",
+      "endDate": "2024-09-30",
+      "rows": 12531,
+      "distinctValueRows": 12531,
+      "rowMultisetSha256": "46b6a548216c87e3aa790fd4ec42842ed40706c2fa8e8702a2086a33234e3451",
+      "primeMembers": [
+        {
+          "name": "Contracts_PrimeTransactions_2026-06-13_H04M51S08_1.csv",
+          "zipMemberTime": [
+            2026,
+            6,
+            13,
+            4,
+            51,
+            22
+          ],
+          "rows": 12531
+        }
+      ],
+      "excludedMembers": [
+        {
+          "name": "Contracts_Subawards_2026-06-13_H04M51S08.csv",
+          "byteSize": 0
+        }
+      ]
+    }
+  ],
+  "comparison": {
+    "quarterRows": 34657,
+    "partitionRows": 34657,
+    "commonRows": 34657,
+    "quarterOnlyRows": 0,
+    "partitionOnlyRows": 0,
+    "quarterDuplicateValueRows": 0,
+    "partitionDuplicateValueRows": 0,
+    "quarterMultisetSha256": "fb2f1d3e24026a55b5d041cf865b9c66cfc6cbe096e6c51f8a5709ae90f3a18d",
+    "partitionMultisetSha256": "fb2f1d3e24026a55b5d041cf865b9c66cfc6cbe096e6c51f8a5709ae90f3a18d"
+  },
+  "nativeTimeCaution": "Member filename timestamps and ZIP member times are retained as recorded, with timezone unspecified. They are not count-response timestamps, verified extraction-state identifiers or contemporaneous FY2024 observations.",
+  "upstreamSourceReview": {
+    "repository": "https://github.com/fedspendingtransparency/usaspending-api",
+    "commit": "56ccdab55cdc6fa38854c036630288dad6e944d7",
+    "commitDate": "2026-06-12T18:24:25Z",
+    "selection": "Latest commit returned on master with a committer-date cutoff of 2026-06-13T00:00:00Z. This is a source-code reference near the export date, not a verified production deployment.",
+    "files": [
+      {
+        "path": "usaspending_api/download/v2/download_count.py",
+        "url": "https://raw.githubusercontent.com/fedspendingtransparency/usaspending-api/56ccdab55cdc6fa38854c036630288dad6e944d7/usaspending_api/download/v2/download_count.py",
+        "sha256": "ccfd51c5b845aa4ca45e27b79d43419bb3f05ef92501f1ebed7c1372ae37278d",
+        "bytes": 5543,
+        "reviewedLineRanges": [
+          [
+            44,
+            85
+          ]
+        ]
+      },
+      {
+        "path": "usaspending_api/download/v2/views.py",
+        "url": "https://raw.githubusercontent.com/fedspendingtransparency/usaspending-api/56ccdab55cdc6fa38854c036630288dad6e944d7/usaspending_api/download/v2/views.py",
+        "sha256": "4383e0d103ba20bd2558ca4ab4fb647ee3cfaa15344bf55ae845bfe017f7b4de",
+        "bytes": 4741,
+        "reviewedLineRanges": [
+          [
+            69,
+            80
+          ]
+        ]
+      },
+      {
+        "path": "usaspending_api/download/v2/base_download_viewset.py",
+        "url": "https://raw.githubusercontent.com/fedspendingtransparency/usaspending-api/56ccdab55cdc6fa38854c036630288dad6e944d7/usaspending_api/download/v2/base_download_viewset.py",
+        "sha256": "dedbe04ef96ca7b0de5a55af89e8429629766191381a3ad92a261ccbd469a2a6",
+        "bytes": 11696,
+        "reviewedLineRanges": [
+          [
+            62,
+            78
+          ],
+          [
+            205,
+            246
+          ]
+        ]
+      },
+      {
+        "path": "usaspending_api/common/cache_decorator.py",
+        "url": "https://raw.githubusercontent.com/fedspendingtransparency/usaspending-api/56ccdab55cdc6fa38854c036630288dad6e944d7/usaspending_api/common/cache_decorator.py",
+        "sha256": "60f1781037874bdf4a735f6e66c7ae2194e88e2898c8e9300601a1cda6016723",
+        "bytes": 3760,
+        "reviewedLineRanges": [
+          [
+            32,
+            87
+          ]
+        ]
+      },
+      {
+        "path": "usaspending_api/download/filestreaming/download_generation.py",
+        "url": "https://raw.githubusercontent.com/fedspendingtransparency/usaspending-api/56ccdab55cdc6fa38854c036630288dad6e944d7/usaspending_api/download/filestreaming/download_generation.py",
+        "sha256": "aa7868c973ff8c764db83c76384f51e886cbec64db96b12f006ba2d34ebb4059",
+        "bytes": 44251,
+        "reviewedLineRanges": [
+          [
+            270,
+            329
+          ],
+          [
+            478,
+            515
+          ]
+        ]
+      },
+      {
+        "path": "usaspending_api/download/lookups.py",
+        "url": "https://raw.githubusercontent.com/fedspendingtransparency/usaspending-api/56ccdab55cdc6fa38854c036630288dad6e944d7/usaspending_api/download/lookups.py",
+        "sha256": "bc6540bbcebfbda8c9b92a55028b5b134be1f21724b51ee8a9895a93a214c1dc",
+        "bytes": 12282,
+        "reviewedLineRanges": [
+          [
+            89,
+            99
+          ]
+        ]
+      },
+      {
+        "path": "usaspending_api/download/helpers/elasticsearch_download_functions.py",
+        "url": "https://raw.githubusercontent.com/fedspendingtransparency/usaspending-api/56ccdab55cdc6fa38854c036630288dad6e944d7/usaspending_api/download/helpers/elasticsearch_download_functions.py",
+        "sha256": "a848940ecd1b5f566d717e375dc890493415cffea9e1aea7ad22942f33a13afa",
+        "bytes": 10108,
+        "reviewedLineRanges": [
+          [
+            40,
+            111
+          ],
+          [
+            144,
+            159
+          ],
+          [
+            190,
+            215
+          ]
+        ]
+      }
+    ],
+    "findings": [
+      "The transaction count endpoint applies a cached response decorator and obtains its count from a TransactionSearch index query.",
+      "The transaction download endpoint creates or reuses a separate export job. Export-job reuse depends on its stored request and data-load/submission-window dates, separately from count-response caching.",
+      "The export helper retrieves transaction IDs using a search point in time, writes a job lookup and joins that lookup to database transaction rows. It obtains its own count rather than carrying the earlier public count request's membership.",
+      "The contract export adds an is_fpds=True database filter before writing CSV rows through a SQL export. An index count is therefore not an atomic proof of the final CSV row count.",
+      "The ID-collection loop contains a five-minute timeout branch that warns and returns collected IDs. No runtime evidence establishes that this branch, cache reuse, a missing database join or source updates caused the observed discrepancies."
+    ],
+    "scope": "Read-only source review of the specified ranges. No upstream code executed, public service modified, production version certified or historical job/cache/database state recovered."
+  },
+  "negativeResult": {
+    "finding": "All 34,657 complete 13-field rows match exactly, including multiplicities, between the quarter archive and the union of 33 smaller partitions. No value-exact duplicate rows or unmatched rows are present in either set.",
+    "whatThisResolves": "Finer saved partitioning does not recover additional Agriculture rows and supplies no evidence of quarter-specific losses relative to these alternative exports.",
+    "whatRemainsUnidentified": "The count endpoint's 34,678 transaction identities and the cause of its 21-row difference remain unknown. Equal exported projections do not prove source-system completeness or unique action identity.",
+    "defense": "The frozen manifest's separate May 2024 Defense count/export difference of one remains unresolved. No alternative full-May export was found in the scoped local archive inventory; no Defense identity reconciliation is claimed.",
+    "overallUnresolvedCountDifference": 22,
+    "requiredEvidence": [
+      "Count-time transaction membership or an equivalent immutable source snapshot.",
+      "Historical count request/response, cache status and query timing, plus export-job request, status and ID-lookup records.",
+      "Matched search/database vintages and production code identity to distinguish source changes, filtering, joins, caching and incomplete enumeration."
+    ]
+  },
+  "boundary": {
+    "countTimeMembershipRecovered": false,
+    "missingRecordIdentitiesEstablished": false,
+    "causeEstablished": false,
+    "upstreamDeploymentVersionVerified": false,
+    "independentReview": "pending",
+    "representativeSamExport": false,
+    "frozenPanelChanged": false,
+    "additionalPanelRows": 0,
+    "historicalExclusionIntervalsEstablished": false,
+    "causalEffect": "not_identified"
+  },
+  "reviewFingerprint": "eec3d40612befde8c05a2111d79137e58b9fbab6d0ef2a1b0c659d853cc9d3b7"
+}

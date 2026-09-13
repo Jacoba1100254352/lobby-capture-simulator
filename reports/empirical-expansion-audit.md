@@ -218,6 +218,14 @@ archivedRows=6449101; manifestStrata=56; inclusiveDaysPerAgency=366; childDescri
 
 Remaining: Saved-profile checks are not an independent re-scan of the ignored ZIPs. Reconcile native A/B/C/D actions separately from IDVs, retain unknown award types and missing offers, and obtain historical SAM status plus full action keys. Competition after exclusion of sources is not vendor debarment. Count/export drift remains unattributed.
 
+## procurement-saved-partition-comparison
+
+Status: `identical_export_rows_count_gap_unidentified`
+
+alternativeArchives=33; inclusiveDays=92; matchedCompleteRows=34657; comparedFields=13; unmatchedRows=0; unresolvedAgricultureCountDifference=21; missingRecordIdentitiesEstablished=False; additionalPanelRows=0
+
+Remaining: The 33 saved Agriculture alternatives cover all 92 quarter days and reproduce all 34,657 complete 13-field rows, including multiplicities, in the manifest-selected quarter ZIP. They add no rows to the panel and do not recover the count endpoint's additional 21 identities. Upstream code near the archive date separates cached counts from export jobs, search-ID collection and database retrieval; its production deployment and the actual cause are unverified. The separate Defense difference of one remains unresolved. Representative SAM, historical exclusions, unique action identity and causal claims remain uncleared.
+
 ## overall
 
 Status: `not_identified`

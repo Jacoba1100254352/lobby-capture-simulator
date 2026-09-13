@@ -160,6 +160,7 @@ for source_product in \
   gao-procurement-publisher-review.json \
   gao-archived-publisher-review.json \
   procurement-bulk-frame-profile.json \
+  procurement-bulk-partition-comparison.json \
   procurement-bulk-type-review.json \
   sam-fpds-action-history-crosswalk.csv \
   gao-protest-overlay.csv \
