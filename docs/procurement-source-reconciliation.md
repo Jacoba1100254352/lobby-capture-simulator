@@ -281,6 +281,41 @@ amount-only mappings, offer-count and solicitation reconciliation, representativ
 and historical exclusion evidence remain required. No rate or causal estimate
 is added.
 
+### Offer-count provenance and dictionary-version limits
+
+On September 13 UTC, GSA's public [dictionary article, KB0090014](https://www.fsd.gov/gsafsd_sp/en/fpds-help-data-dictionary-v1-5?id=kb_article_view&sys_kb_id=bc3f142fcf190750d1eaf2c42f851ca4&spa=1)
+linked a [downloadable FPDS V1.5 dictionary](https://falextracts.s3.amazonaws.com/Data%20Dictionary/Contract%20Awards/FPDS%20V1.5%20Specifications/FPDS_Data_Dictionary_V1.5.pdf).
+The article labels it 2026, but the downloaded cover is dated October 20, 2025.
+Its SHA-256 is `020e9684bba3e2551c5878ad4aa45959c8e97f1a2a821d8e7c48de94e36beedd`.
+Printed pages 119-122 (PDF 121-124) were read and visually checked:
+
+- **10D** counts bids/offers submitted for a solicitation, not a stated count of
+  technically acceptable proposals. Its requirement table distinguishes order
+  types and shows propagation for modifications.
+- **10F**, XML `numberOfOffersSource`, identifies whether the count was entered
+  on this action (code `F`) or inherited from a referenced vehicle (codes `A-E`).
+- **10G**, XML `idvNumberOfOffersReceived`, is a separate parent-vehicle count.
+  The revision history records its addition on October 18, 2025 and a change to
+  10D's notes on September 20, 2025 (printed page 8, PDF 10).
+
+These later specifications do not establish the rules applied to May 2024
+records. No contemporaneous dictionary or per-record 10F value was recovered.
+
+Reopening all four hash-matched, 297-column transaction members finds exactly
+one header containing `offer`: `number_of_offers_received`. Thus neither 10F nor
+10G is separately exposed under an offer-named column in these downloads.
+Each original row reports `fair_opportunity_limited_sources_code=FAIR`; the
+native `idv_type_code` and `multiple_or_single_award_idv_code` cells are blank.
+Those child-row blanks do not classify the referenced vehicle. The notebook
+reproduces this schema/row check when the ignored raw files are available.
+
+**Assessment: share with caveats.** The definitions identify additional source
+fields needed for reconciliation; they do not explain the four-versus-five
+VISN 8 discrepancy. Do not infer inheritance, discard an allegedly unacceptable
+proposal, or replace either source count. The next step is a source-preserving
+SAM action record with its offer-count provenance and the applicable historical
+specification, followed by comparison with the decision-cited agency record.
+
 ## Prespecified SAM reconciliation population
 
 The baseline action window is **fiscal year 2024: October 1, 2023 through
@@ -300,6 +335,12 @@ date, UEI, original currency/dollar obligation, and the source/scope of offers
 and competition fields. Record extract time, filters, pagination and all
 excluded or failed partitions. This target is a public twelve-agency population,
 not a claim to cover all federal or hidden procurement.
+
+For offer counts, request 10F/source provenance alongside 10D, retaining native
+codes and the applicable dictionary version. Keep any separately supplied 10G
+parent-vehicle count distinct; its later documentation is not a requirement that
+an original 2024 record contain that field. Do not substitute a parent count for
+an order's count or treat modification rows as new solicitations.
 
 The existing small panel takes at most two 100-row pages under each of three
 sorts per agency-quarter: modification ascending, amount descending, and action
