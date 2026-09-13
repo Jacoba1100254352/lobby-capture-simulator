@@ -12,11 +12,11 @@ Remaining: Validate amendments and exact actor identities; pre-period counts are
 
 ## lda-posting-date-anomaly
 
-Status: `review_required`
+Status: `source_reviewed_dates_not_orderable`
 
-postingBeforeCoveredPeriod=3; filingUUIDs=9bd361f7-98e7-46a9-90cd-267ace5ca84c;a93a23e5-9da2-4c18-8625-b41fc0987d06;bcb55688-3d56-4c98-a546-0730eb923bfa
+postingBeforeCoveredPeriod=3; reviewedEmbeddedCovers=3; receiptDatesAfterPeriod=3; registrationComponentMatches=3; differentRegistrantNames=2; reviewedExpenseMethods={'A': 2}; censoredIncomeDisclosures=1; sourceMissingTerminationDates=1; correctedApiPostingDates=0; amendmentOrderingCleared=False; controlAssignmentCleared=False; causalEffect=not_identified
 
-Remaining: Review original filings and resolve API/scanned-form disagreements. One 2004 scan is reviewed in the redesign note; its amount is below-threshold, not an observed zero. Do not order amendments or treatment timing solely by dtPosted.
+Remaining: All three flagged covers now have full embedded-scan reviews and source-matched registration components. Receipt stamps, API posting dates and termination dates remain different fields. Two covers supply Method A observations; one income disclosure is below $10,000, not a point zero. Resolve source-date origins and complete filing/version families before ordering amendments, aggregating actor amounts or selecting comparable controls. Other dates and zeros are not cleared by this selected review; independent review remains pending.
 
 ## lda-measurement-comparability
 
@@ -24,7 +24,7 @@ Status: `source_measures_not_comparable_totals`
 
 filings=427; amountKinds={'income': 267, 'neither': 71, 'expenses': 89}; expenseMethodMissing=63; sourceZeroFilings=25; incomeExpenseOverlapActorPeriods=74; aliasFilings=15; reviewedForms=2; reviewedExpenseMethods={'C': 1, 'A': 1}
 
-Remaining: Do not add organizational expenses to retained-firm income. Missing API accounting methods need original-form review; the reviewed Method A and Method C reports use different outcome definitions. Reviewed aliases restore only a specified registration, not exhaustive organization coverage. Null amounts remain blank and source zeros remain unadjudicated. No actor spending total or matched control is validated by these checks.
+Remaining: Do not add organizational expenses to retained-firm income. Missing API accounting methods need original-form review; the reviewed Method A and Method C reports use different outcome definitions. Reviewed aliases restore only a specified registration, not exhaustive organization coverage. Null amounts remain blank. The separate date-review ledger codes one source zero as censored income; other source zeros remain unadjudicated. No actor spending total or matched control is validated by these checks.
 
 ## alternate-channel-reports
 

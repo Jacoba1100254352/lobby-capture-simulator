@@ -104,6 +104,114 @@ def lda_measurement_diagnostics(issue_rows, metadata, reviews, aliases):
     }
 
 
+def lda_date_review_diagnostics(metadata, sources):
+    """Reconcile selected covers without inventing corrected posting dates."""
+    if (sources.get("schema") != "substitution-lda-date-reviews-v1"
+            or sources.get("baselineMetadataFile") != "substitution-lda-filing-metadata.csv"
+            or sources.get("independentReviewStatus") != "pending"
+            or any(not sources.get(k) for k in ("reviewer", "selection", "sourceAuthentication"))
+            or sources.get("reviewFingerprint") != source_fingerprint(
+                {k: v for k, v in sources.items() if k != "reviewFingerprint"})):
+        raise ValueError("Stale LDA date-review fingerprint or scope")
+    date.fromisoformat(sources["reviewDate"])
+    by_uuid = {r["filingUuid"]: r for r in metadata}
+    expected = {r["filingUuid"] for r in metadata if r["dtPosted"][:10] < r["periodStart"]}
+    reviews = sources["reviews"]
+    if (len(by_uuid) != len(metadata) or not expected or len(reviews) != len(expected)
+            or {r["filingUuid"] for r in reviews} != expected):
+        raise ValueError("Missing, duplicate or off-frame LDA date review")
+    spec = importlib.util.spec_from_file_location("lda_date_source", ROOT / "scripts/build-substitution-historical-lda-panel.py")
+    lda_source = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(lda_source)
+    documentation = sources["apiDocumentation"]
+    if (documentation["url"] != "https://lda.gov/api/openapi/v1/"
+            or not re.fullmatch(r"[a-f0-9]{64}", documentation["sha256"])
+            or documentation["contentType"] != "YAML"
+            or not documentation["reviewedLocations"] or not documentation["interpretation"]):
+        raise ValueError("Missing LDA date-field documentation provenance")
+    fixed_boundary = {
+        "reviewScope": "full_embedded_cover_scan_only",
+        "registrationMatch": "senate_registrant_and_client_relationship_components",
+        "rawMetadataUnchanged": True, "correctedApiPostingDates": 0,
+        "amendmentOrderingCleared": False, "amountAggregationCleared": False,
+        "controlAssignmentCleared": False, "causalEffect": "not_identified",
+    }
+    boundary = sources["reviewBoundary"]
+    if (any(boundary.get(k) != v for k, v in fixed_boundary.items())
+            or not boundary["imageExtraction"] or not boundary["remainingRequirements"]):
+        raise ValueError("Unsupported LDA date-review promotion")
+    methods = Counter()
+    censored = missing_termination = differing_names = 0
+    for review in reviews:
+        source = by_uuid[review["filingUuid"]]
+        if (review["sourceFingerprint"] != source["sourceFingerprint"]
+                or source["sourceFingerprint"] != lda_source.metadata_fingerprint(source)
+                or any(not re.fullmatch(r"[a-f0-9]{64}", review[k]) for k in
+                       ("responseSha256", "pdfSha256", "embeddedCoverPngSha256"))
+                or not isinstance(review["pdfPages"], int) or review["pdfPages"] < 2
+                or not review["scanIdentifier"]):
+            raise ValueError("Stale LDA source or missing cover provenance")
+        projection = {
+            "filing_uuid": source["filingUuid"], "filing_type": source["filingType"],
+            "filing_year": int(source["filingYear"]), "filing_period": source["filingPeriod"],
+            "dt_posted": source["dtPosted"], "income": source["incomeDollars"] or None,
+            "expenses": source["expensesDollars"] or None, "expenses_method": source["expensesMethod"] or None,
+            "termination_date": source["terminationDate"] or None,
+            "registrant": {"id": int(source["registrantApiId"]), "name": source["registrantName"]},
+            "client": {"id": int(source["clientApiId"]), "client_id": int(source["clientRelationshipId"]), "name": source["clientName"]},
+        }
+        if review["apiProjection"] != projection:
+            raise ValueError("LDA API projection differs from frozen metadata")
+        form = review["form"]
+        if (not form["registrantName"] or not form["houseId"] or not form["notes"]
+                or form["senateId"] != source["registrantApiId"] + "-" + source["clientRelationshipId"]
+                or form["year"] != int(source["filingYear"]) or form["period"] != source["filingPeriod"]
+                or form["amendmentBoxChecked"] is not False
+                or (form["period"], form["terminationBoxChecked"]) != {
+                    "MM": ("mid_year", False), "YY": ("year_end", False),
+                    "YT": ("year_end", True)}.get(source["filingType"])):
+            raise ValueError("LDA cover registration, period or report-type mismatch")
+        receipt = date.fromisoformat(form["receiptDate"])
+        if (receipt <= date.fromisoformat(source["periodEnd"])
+                or not form["receiptStamp"].startswith(receipt.strftime("%y %b %d").upper())
+                or form["receiptTimezone"] != "not_stated"):
+            raise ValueError("LDA receipt chronology, stamp or timezone mismatch")
+        if form["terminationBoxChecked"]:
+            if date.fromisoformat(form["terminationDate"]) > receipt:
+                raise ValueError("Termination date follows receipt")
+            missing_termination += not source["terminationDate"]
+        elif form["terminationDate"] is not None:
+            raise ValueError("Unchecked termination cannot supply a date")
+        differing_names += lda_source.normalize_name(form["registrantName"]) != lda_source.normalize_name(source["registrantName"])
+        if form["amountKind"] == "expenses":
+            if (source["amountKind"] != "expenses" or form["clientSelf"] is not True
+                    or form["clientName"] is not None or form["expensesMethod"] not in {"A", "B", "C"}
+                    or form["reportedAmountDollars"] != source["expensesDollars"]
+                    or form["amountDisclosure"] not in {"at_least_threshold_rounded", "numeric_amount_threshold_boxes_unchecked"}
+                    or form["incomeUpperBoundExclusiveDollars"] is not None):
+                raise ValueError("Unsupported reviewed expense amount or method")
+            methods[form["expensesMethod"]] += 1
+        elif form["amountKind"] == "income":
+            if (source["amountKind"] != "income" or source["incomeDollars"] != "0.00"
+                    or form["clientSelf"] is not False
+                    or lda_source.normalize_name(form["clientName"]) != lda_source.normalize_name(source["clientName"])
+                    or form["reportedAmountDollars"] is not None or form["expensesMethod"] is not None
+                    or form["amountDisclosure"] != "less_than_threshold_censored"
+                    or form["incomeUpperBoundExclusiveDollars"] != "10000.00"):
+                raise ValueError("Censored income cannot become a point zero or expense")
+            censored += 1
+        else:
+            raise ValueError("Unknown reviewed LDA amount kind")
+    return {
+        "postingBeforeCoveredPeriod": len(expected), "reviewedEmbeddedCovers": len(reviews),
+        "receiptDatesAfterPeriod": len(reviews), "registrationComponentMatches": len(reviews),
+        "differentRegistrantNames": differing_names, "reviewedExpenseMethods": dict(methods),
+        "censoredIncomeDisclosures": censored, "sourceMissingTerminationDates": missing_termination,
+        "correctedApiPostingDates": 0, "amendmentOrderingCleared": False,
+        "controlAssignmentCleared": False, "causalEffect": "not_identified",
+    }
+
+
 def report_period_diagnostics(rows):
     groups = defaultdict(list)
     for row in rows:
@@ -844,23 +952,22 @@ def audit():
         raise ValueError("Expanded acquisition must not assign treatment/control exposure")
     filings = {r["filingUuid"]: r for r in lda}
     periods = defaultdict(set)
-    anomalies = []
     for row in filings.values():
-        if row["dtPosted"][:10] < row["periodStart"]:
-            anomalies.append(row["filingUuid"])
         if row["filingType"] not in {"RA", "RR"} and row["periodEnd"] < "2007-09-14":
             periods[row["canonicalActorId"]].add((row["periodStart"], row["periodEnd"]))
     add("expanded-lda-history", "source_only",
         f"issueRows={len(lda)}; filingUUIDs={len(filings)}; actors={len(set(r['canonicalActorId'] for r in lda))}; years={','.join(sorted(set(r['filingYear'] for r in lda)))}; observedPrePeriodsByActor=" + ";".join(f"{a}:{len(p)}" for a,p in sorted(periods.items())),
         "Validate amendments and exact actor identities; pre-period counts are native reporting periods, not independent quarters or proof of completeness.")
-    add("lda-posting-date-anomaly", "review_required" if anomalies else "none_observed",
-        f"postingBeforeCoveredPeriod={len(anomalies)}; filingUUIDs={';'.join(anomalies)}",
-        "Review original filings and resolve API/scanned-form disagreements. One 2004 scan is reviewed in the redesign note; its amount is below-threshold, not an observed zero. Do not order amendments or treatment timing solely by dtPosted.")
+    date_sources = json.loads((DATA / "substitution-lda-date-reviews.json").read_text(encoding="utf-8"))
+    date_checks = lda_date_review_diagnostics(read("substitution-lda-filing-metadata.csv"), date_sources)
+    add("lda-posting-date-anomaly", "source_reviewed_dates_not_orderable",
+        "; ".join(f"{key}={value}" for key, value in date_checks.items()),
+        "All three flagged covers now have full embedded-scan reviews and source-matched registration components. Receipt stamps, API posting dates and termination dates remain different fields. Two covers supply Method A observations; one income disclosure is below $10,000, not a point zero. Resolve source-date origins and complete filing/version families before ordering amendments, aggregating actor amounts or selecting comparable controls. Other dates and zeros are not cleared by this selected review; independent review remains pending.")
     measurement = lda_measurement_diagnostics(lda, read("substitution-lda-filing-metadata.csv"),
         read("substitution-lda-filing-reviews.csv"), read("substitution-lda-alias-reviews.csv"))
     add("lda-measurement-comparability", "source_measures_not_comparable_totals",
         "; ".join(f"{key}={value}" for key, value in measurement.items()),
-        "Do not add organizational expenses to retained-firm income. Missing API accounting methods need original-form review; the reviewed Method A and Method C reports use different outcome definitions. Reviewed aliases restore only a specified registration, not exhaustive organization coverage. Null amounts remain blank and source zeros remain unadjudicated. No actor spending total or matched control is validated by these checks.")
+        "Do not add organizational expenses to retained-firm income. Missing API accounting methods need original-form review; the reviewed Method A and Method C reports use different outcome definitions. Reviewed aliases restore only a specified registration, not exhaustive organization coverage. Null amounts remain blank. The separate date-review ledger codes one source zero as censored income; other source zeros remain unadjudicated. No actor spending total or matched control is validated by these checks.")
     fec = read("substitution-fec-report-panel.csv")
     histories = read("substitution-fec-affiliation-history.csv")
     cohort = read("substitution-fec-acquisition-cohort.csv")

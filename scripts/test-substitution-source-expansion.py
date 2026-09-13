@@ -5,6 +5,7 @@ import importlib.util
 import json
 import tempfile
 from argparse import Namespace
+from copy import deepcopy
 from pathlib import Path
 import unittest
 from unittest.mock import patch
@@ -21,6 +22,99 @@ FEC = load("fec_expansion", "fetch-substitution-fec-reports.py")
 LDA = load("lda_expansion", "build-substitution-historical-lda-panel.py")
 PERIODS = load("fec_periods", "prepare-substitution-fec-periods.py")
 AUDIT = load("source_measurement_audit", "audit-empirical-expansion.py")
+
+
+class LDADateReviewTests(unittest.TestCase):
+    def setUp(self):
+        self.metadata = AUDIT.read("substitution-lda-filing-metadata.csv")
+        self.sources = json.loads((AUDIT.DATA / "substitution-lda-date-reviews.json").read_text())
+
+    def check(self, sources, refresh=True):
+        if refresh:
+            sources["reviewFingerprint"] = AUDIT.source_fingerprint(
+                {k: v for k, v in sources.items() if k != "reviewFingerprint"})
+        return AUDIT.lda_date_review_diagnostics(self.metadata, sources)
+
+    def test_all_flagged_covers_reviewed_without_rewriting_metadata(self):
+        original = deepcopy(self.metadata)
+        result = self.check(self.sources, refresh=False)
+        self.assertEqual(result["postingBeforeCoveredPeriod"], 3)
+        self.assertEqual(result["reviewedEmbeddedCovers"], 3)
+        self.assertEqual(result["registrationComponentMatches"], 3)
+        self.assertEqual(result["differentRegistrantNames"], 2)
+        self.assertEqual(result["reviewedExpenseMethods"], {"A": 2})
+        self.assertEqual(result["censoredIncomeDisclosures"], 1)
+        self.assertEqual(result["sourceMissingTerminationDates"], 1)
+        self.assertEqual(result["correctedApiPostingDates"], 0)
+        self.assertFalse(result["amendmentOrderingCleared"])
+        self.assertEqual(self.metadata, original)
+
+    def test_missing_duplicate_or_foreign_review_fails(self):
+        for kind in ("missing", "duplicate", "foreign"):
+            sources = deepcopy(self.sources)
+            if kind == "missing":
+                sources["reviews"].pop()
+            elif kind == "duplicate":
+                sources["reviews"].append(deepcopy(sources["reviews"][0]))
+            else:
+                sources["reviews"][0]["filingUuid"] = "foreign"
+            with self.subTest(kind=kind), self.assertRaisesRegex(ValueError, "frame"):
+                self.check(sources)
+
+    def test_stale_source_or_changed_review_requires_revalidation(self):
+        sources = deepcopy(self.sources)
+        sources["reviews"][0]["form"]["notes"] = "Different reading"
+        with self.assertRaisesRegex(ValueError, "fingerprint"):
+            self.check(sources, refresh=False)
+        self.metadata[0]["dtPosted"] = "1900-01-01T00:00:00-05:00"
+        with self.assertRaises(ValueError):
+            self.check(self.sources)
+
+    def test_api_projection_is_not_a_corrected_source(self):
+        for field, value in (("dt_posted", "2003-07-31T10:32:00-04:00"),
+                             ("expenses_method", "A"), ("termination_date", "2003-07-31")):
+            sources = deepcopy(self.sources)
+            sources["reviews"][0]["apiProjection"][field] = value
+            with self.subTest(field=field), self.assertRaisesRegex(ValueError, "projection"):
+                self.check(sources)
+
+    def test_receipt_stamp_period_and_registration_are_distinct(self):
+        for field, value in (("receiptDate", "2003-07-30"), ("receiptTimezone", "America/New_York"),
+                             ("period", "year_end"), ("senateId", "74077-90"),
+                             ("amendmentBoxChecked", True), ("terminationDate", "2003-07-31")):
+            sources = deepcopy(self.sources)
+            sources["reviews"][0]["form"][field] = value
+            with self.subTest(field=field), self.assertRaises(ValueError):
+                self.check(sources)
+
+    def test_below_threshold_income_cannot_be_promoted_to_point_zero(self):
+        for field, value in (("reportedAmountDollars", "0.00"), ("expensesMethod", "A"),
+                             ("incomeUpperBoundExclusiveDollars", "0.00"),
+                             ("amountDisclosure", "exact_zero"), ("clientSelf", True)):
+            sources = deepcopy(self.sources)
+            sources["reviews"][2]["form"][field] = value
+            with self.subTest(field=field), self.assertRaisesRegex(ValueError, "Censored"):
+                self.check(sources)
+
+    def test_review_does_not_clear_ordering_aggregation_or_controls(self):
+        for field, value in (("correctedApiPostingDates", 3), ("amendmentOrderingCleared", True),
+                             ("amountAggregationCleared", True), ("controlAssignmentCleared", True),
+                             ("rawMetadataUnchanged", False), ("causalEffect", "identified")):
+            sources = deepcopy(self.sources)
+            sources["reviewBoundary"][field] = value
+            with self.subTest(field=field), self.assertRaisesRegex(ValueError, "promotion"):
+                self.check(sources)
+
+    def test_full_image_provenance_and_independent_review_cannot_be_dropped(self):
+        for field in ("pdfSha256", "embeddedCoverPngSha256", "responseSha256"):
+            sources = deepcopy(self.sources)
+            sources["reviews"][0][field] = ""
+            with self.subTest(field=field), self.assertRaisesRegex(ValueError, "provenance"):
+                self.check(sources)
+        sources = deepcopy(self.sources)
+        sources["independentReviewStatus"] = "complete"
+        with self.assertRaises(ValueError):
+            self.check(sources)
 
 
 class SourceExpansionTests(unittest.TestCase):

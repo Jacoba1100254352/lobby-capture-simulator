@@ -28,7 +28,12 @@ does not assign treatment/control status. A scoped AdvaMed registration alias
 restores fifteen LDA filings, bringing the source panel to 427 filings. Separate
 filing-grain income/expense metadata and original-form reviews expose accounting
 method differences and possible double counting; they do not establish comparable
-organizational spending totals. Issue-level comment coding is separate from the
+organizational spending totals. A separate review of all three flagged posting-date
+anomalies recovers full embedded covers and matches registration components.
+Receipt and termination dates remain separate from unchanged API timestamps;
+two additional Method A observations are filing-specific, and one API income zero
+is a censored disclosure. These checks do not clear filing-family ordering or
+control selection. Issue-level comment coding is separate from the
 unreviewed individual-comment linkage product. A separate public-letter pilot
 codes two policy positions already present in both the proposed and final action;
 the docket-copy match and agency uptake remain unverified. Located 2004 travel

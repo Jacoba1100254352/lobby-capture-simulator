@@ -173,6 +173,13 @@ The September 2026 empirical expansion is documented in [the substitution redesi
 
 A separate public-letter position pilot records two positions agreeing with both EPA's proposal and final action. Its candidate docket-copy match and agency-response link remain unverified; policy agreement is not coded as uptake. The same audit checks metadata fingerprints, distinct submission identities, source-page provenance and the no-promotion boundary. Historical travel archive summaries now provide concrete 2004 exposure leads, but their original forms require login and no verified travel baseline has been acquired.
 
+All three flagged LDA posting-date anomalies now have full embedded-cover reviews
+in `substitution-lda-date-reviews.json`. The scans recover clipped registration
+fields and receipt stamps; receipt dates do not replace API posting dates.
+Two covers add filing-specific Method A observations, and one API zero represents
+below-threshold income rather than a point zero. Raw metadata is unchanged;
+filing-family ordering, comparable controls and independent review remain unresolved.
+
 A separate [heavy-duty Phase 3 response pilot](docs/comment-response-document-pilot.md)
 links two agency-reproduced request excerpts to explicitly named responses:
 a Cummins clarification and disagreement with an Allison calculation-error claim.

@@ -47,6 +47,7 @@ PACKAGE_INPUTS = [
             "substitution-expanded-lda-panel.csv", "substitution-fec-report-panel.csv",
             "substitution-lda-alias-reviews.csv", "substitution-lda-filing-metadata.csv",
             "substitution-lda-filing-reviews.csv",
+            "substitution-lda-date-reviews.json",
             "substitution-fec-affiliation-history.csv", "substitution-fec-halfyear-panel.csv",
             "substitution-fec-acquisition-cohort.csv", "substitution-fec-halfyear-coverage.csv",
             "substitution-fec-version-adjudications.csv",

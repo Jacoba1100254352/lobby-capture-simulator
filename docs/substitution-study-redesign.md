@@ -30,7 +30,7 @@ The legacy 2007-2008 diagnostic inputs are unchanged.
 
 Two additional 2003 filing UUIDs, `9bd361f7-98e7-46a9-90cd-267ace5ca84c` and
 `bcb55688-3d56-4c98-a546-0730eb923bfa`, also have posting dates before their
-covered periods; their original scans remain unreviewed. Filing-level amounts
+covered periods; their complete cover scans are now reviewed below. Filing-level amounts
 are repeated on issue rows, not allocated across issues. Any monetary total
 must first collapse to verified unique filings and resolve amendments; summing
 issue rows would multiply the same amount. The source collector fails closed
@@ -39,6 +39,70 @@ UUIDs and pagination truncation. The entire 2003-2008 acquisition was rerun
 successfully under those rules. A same-UTC-day public-response cache supports
 resumption without refetching successful pages; cache URL, date and content
 hashes are checked. Authentication and quota errors are not automatically retried.
+
+### Complete review of the three flagged posting dates
+
+The separate `substitution-lda-date-reviews.json` covers all three unique filings
+whose API posting date precedes the reporting-period start in the frozen
+427-filing panel. This is an anomaly-selected review, not evidence that the
+other 424 dates are correct or that the population is complete. September 12
+public API rechecks still match the saved metadata for all three records.
+
+| Filing | API posting date | Source receipt stamp date | Full Senate ID on the cover |
+| --- | --- | --- | --- |
+| [APGA candidate, 2003H1](https://lda.gov/filings/public/filing/9bd361f7-98e7-46a9-90cd-267ace5ca84c/print/) | 2002-08-29 | 2003-07-31 | 74077-12 |
+| [AAJ/ATLA, 2003H2](https://lda.gov/filings/public/filing/bcb55688-3d56-4c98-a546-0730eb923bfa/print/) | 2003-02-24 | 2004-02-24 | 4733-12 |
+| [Shea & Gardner for API, 2004H2](https://lda.gov/filings/public/filing/a93a23e5-9da2-4c18-8625-b41fc0987d06/print/) | 1995-05-19 | 2005-01-19 | 35024-90 |
+
+Receipt dates are separately transcribed observations, **not corrected API
+posting dates**. The stamps show times without an explicit timezone; no UTC
+timestamp is inferred. The official [API schema](https://lda.gov/api/openapi/v1/)
+labels the query filters as date-posted filters and supplies a read-only
+date-time field separately from the termination date. The inspected definitions
+do not establish how to convert a receipt stamp into a posting timestamp or
+guarantee amendment ordering. The origin of the date discrepancies remains
+unknown; these checks do not establish whether a filing was late.
+
+The ordinary PDF render clips the right edge of these scanned forms. Extracting
+the original embedded image with `pdfimages -f 1 -l 1 -png` reveals the full
+cover without modifying its pixels. Object 6 0, a 1696-by-2200 image, occurs on
+PDF pages 1 and 2. The three PDFs have 8, 28 and 6 pages respectively; their
+cover images are each one underlying scanned form page, not two independent
+records. The full images recover the registration components, AAJ's checked
+year-end box, and the complete receipt stamps. This review covers those three
+embedded covers only, not every page of the filings or their version families.
+The JSON retains PDF, extracted-image and API-response hashes plus the public
+API projection, scan identifiers, reviewer, date and pending independent review.
+
+The APGA candidate's cover names **Bert Kalisch**, checks Self and Method A,
+and reports $100,000 of expenses. Both expense-threshold boxes appear unchecked;
+the numeric disclosure is retained with that caveat. The full Senate ID matches
+API registrant 74077 and client-relationship component 12, despite the API's
+organization name. That matches this source registration, not every historical
+name or organization-level financial perimeter. AAJ's historical ATLA cover
+reports $2,380,000 of expenses using Method A; its year-end, Self and threshold
+boxes are checked. Both API accounting methods remain null. These are two
+additional filing-specific method observations, not permission to carry Method A
+across either organization's whole history.
+
+The Shea & Gardner cover supplies no point income amount: its selected category
+is below $10,000. The source API zero remains unchanged, while the reviewed
+disclosure is censored and cannot be used as an exact zero. The checked
+termination box gives January 5, 2005, separately from the January 19 receipt
+stamp; the API termination date remains null. The API filing type YT already
+labels the report as a year-end termination. All three cover amendment boxes
+are unchecked; no API amendment-status conflict is established. In particular,
+`sameClientRegistrantName` is a name-comparison flag, not amendment status.
+
+**Assessment: share with caveats for the source discrepancies.** The timing and
+censored-amount issues are high-risk for version selection and aggregation.
+The offline audit checks the complete flagged frame, fresh-source projections,
+registration components, dates, field distinctions and no-promotion boundaries;
+it does not independently authenticate the manual reading. Next, review complete
+filing families and methods before constructing comparable actor-period totals.
+No receipt date repairs treatment exposure, and no matched registration supplies
+a valid untreated control. Independent review and source-date explanations
+remain unresolved.
 
 ### Restored registration and incompatible spending measures
 
@@ -57,7 +121,8 @@ client and registrant IDs, dates, source URLs and a projected-source fingerprint
 There are 267 income reports, 89 expense reports and 71 filings with neither
 amount supplied. The successor issue panel leaves these missing amounts blank
 instead of converting them to zero; 122 issue rows are affected. Twenty-five
-filings contain a source-reported zero, which remains unadjudicated rather than
+filings contain a source-reported zero. The separate date-review ledger above
+identifies one as censored income; the other 24 remain unadjudicated rather than
 being declared exact zero spending. Dollar-to-million conversion retains eight
 decimal places, without claiming greater precision than the reported source.
 

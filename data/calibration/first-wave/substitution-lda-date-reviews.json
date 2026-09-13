@@ -1,0 +1,100 @@
+{
+  "schema": "substitution-lda-date-reviews-v1",
+  "reviewDate": "2026-09-12",
+  "reviewer": "codex-source-review",
+  "independentReviewStatus": "pending",
+  "baselineMetadataFile": "substitution-lda-filing-metadata.csv",
+  "selection": "All three unique filings in the frozen 427-filing panel whose API dtPosted date precedes the source reporting-period start. This is an anomaly-selected review, not a random sample or an audit of every source date.",
+  "sourceAuthentication": "Official public filing API responses were retrieved again and projected against the frozen metadata. Full embedded cover scans were extracted from object 6 0 on PDF page 1 and visually reviewed. The same image object occurs on PDF pages 1 and 2; clipped PDF rendering does not imply missing image content. Saved hashes bind source bytes and coding, not an independent reviewer's interpretation.",
+  "apiDocumentation": {
+    "url": "https://lda.gov/api/openapi/v1/",
+    "sha256": "6c5f13c470bf1b4b09071db32d10df72372210fd2c2be921214e3c94f47dde8a",
+    "contentType": "YAML",
+    "reviewedLocations": "Filing date-posted query filters, downloaded lines 1598-1610 and 2589-2601; dt_posted and termination_date properties, lines 4701-4709.",
+    "interpretation": "The schema labels the filters Date Posted and dt_posted as a read-only date-time, separately from termination_date. These inspected definitions supply no conversion from a scanned receipt stamp to an API posting timestamp or amendment-order guarantee."
+  },
+  "reviews": [
+    {
+      "filingUuid": "9bd361f7-98e7-46a9-90cd-267ace5ca84c",
+      "sourceFingerprint": "466a8828cc5c77647ccbb75a8911f5f3bcba8c00487282aecc371f830e986b61",
+      "responseSha256": "1ed175202680df79d32067b6a794bd925abd88178064b027756526606799c1a3",
+      "pdfSha256": "5876918d52e8da439ded25ff9ff7929e8c110edf06ff67a39c04a4f94d8d5367",
+      "pdfPages": 8,
+      "embeddedCoverPngSha256": "236c4c3bca999d84414905eb3c4c766a5fb8e403ca6b4a1201558055ab282f11",
+      "scanIdentifier": "00000232928",
+      "apiProjection": {
+        "filing_uuid": "9bd361f7-98e7-46a9-90cd-267ace5ca84c", "filing_type": "MM", "filing_year": 2003, "filing_period": "mid_year",
+        "dt_posted": "2002-08-29T00:00:00-04:00", "income": null, "expenses": "100000.00", "expenses_method": null, "termination_date": null,
+        "registrant": {"id": 74077, "name": "THE AMERICAN PUBLIC GAS ASSOCIATION"},
+        "client": {"id": 167305, "client_id": 12, "name": "AMERICAN PUBLIC GAS ASSOCIATION"}
+      },
+      "form": {
+        "registrantName": "Bert Kalisch", "clientName": null, "clientSelf": true, "senateId": "74077-12", "houseId": "35969000",
+        "year": 2003, "period": "mid_year", "amendmentBoxChecked": false, "terminationBoxChecked": false, "terminationDate": null,
+        "receiptStamp": "03 JUL 31 AM 10:32", "receiptDate": "2003-07-31", "receiptTimezone": "not_stated",
+        "amountKind": "expenses", "reportedAmountDollars": "100000.00", "expensesMethod": "A", "amountDisclosure": "numeric_amount_threshold_boxes_unchecked",
+        "incomeUpperBoundExclusiveDollars": null,
+        "notes": "The complete embedded scan restores the full Senate ID and signature title, Vice President for Government Relations. Self and Method A are checked; both expense-threshold boxes appear unchecked despite the numeric amount. The API organization name differs from the personal registrant on the form. Matching registration components link this filing, not all historical organization aliases or economic ownership."
+      }
+    },
+    {
+      "filingUuid": "bcb55688-3d56-4c98-a546-0730eb923bfa",
+      "sourceFingerprint": "3bfec23959a68728df806d73c2e378b7c9cbae3f77a2225c364344706ba3a1df",
+      "responseSha256": "7c2d06f5fa21cb72f7b968ec96b40fc1f40e8d98c47b39676f75d525447d0349",
+      "pdfSha256": "f3848adf916ecf069f571ec856aca781b6bf283f703d2e87ed51abf16902fcaa",
+      "pdfPages": 28,
+      "embeddedCoverPngSha256": "74af80d7edd114c958a91a371b7c85e74745b11c63e85a3ecd7f1468bdd511f5",
+      "scanIdentifier": "00000540632",
+      "apiProjection": {
+        "filing_uuid": "bcb55688-3d56-4c98-a546-0730eb923bfa", "filing_type": "YY", "filing_year": 2003, "filing_period": "year_end",
+        "dt_posted": "2003-02-24T00:00:00-05:00", "income": null, "expenses": "2380000.00", "expenses_method": null, "termination_date": null,
+        "registrant": {"id": 4733, "name": "AMERICAN ASSOCIATION FOR JUSTICE"},
+        "client": {"id": 104895, "client_id": 12, "name": "AMERICAN ASSOCIATION FOR JUSTICE"}
+      },
+      "form": {
+        "registrantName": "Association of Trial Lawyers of America", "clientName": null, "clientSelf": true, "senateId": "4733-12", "houseId": "31241000",
+        "year": 2003, "period": "year_end", "amendmentBoxChecked": false, "terminationBoxChecked": false, "terminationDate": null,
+        "receiptStamp": "04 FEB 24 PM 2:35", "receiptDate": "2004-02-24", "receiptTimezone": "not_stated",
+        "amountKind": "expenses", "reportedAmountDollars": "2380000.00", "expensesMethod": "A", "amountDisclosure": "at_least_threshold_rounded",
+        "incomeUpperBoundExclusiveDollars": null,
+        "notes": "The complete embedded scan restores the checked Year End box. Self, the expense threshold and Method A are checked; amendment and termination boxes are unchecked. API filing type YY agrees with a year-end report. The metadata CSV boolean sameClientRegistrantName is a name-comparison flag, not amendment status. This cover review does not establish version-family completeness."
+      }
+    },
+    {
+      "filingUuid": "a93a23e5-9da2-4c18-8625-b41fc0987d06",
+      "sourceFingerprint": "09ef5fe196f1bb25864d983574d33bc5e8a272552c9a84d63bb689299614f561",
+      "responseSha256": "ce97b288e3b8700119db20ed23757b956b1b35926b8df3468afcf147b2209c98",
+      "pdfSha256": "c24c6b2b88cab1490d318c5514d4ffb2385db52250274fcaf372be5e02ba5b34",
+      "pdfPages": 6,
+      "embeddedCoverPngSha256": "c076853851d9b479d1a7926de773816ec40fe492b037cd3cb3d76090f511d3e4",
+      "scanIdentifier": "00000020071",
+      "apiProjection": {
+        "filing_uuid": "a93a23e5-9da2-4c18-8625-b41fc0987d06", "filing_type": "YT", "filing_year": 2004, "filing_period": "year_end",
+        "dt_posted": "1995-05-19T00:00:00-04:00", "income": "0.00", "expenses": null, "expenses_method": null, "termination_date": null,
+        "registrant": {"id": 35024, "name": "SHEA & GARDNER"},
+        "client": {"id": 143410, "client_id": 90, "name": "AMERICAN PETROLEUM INSTITUTE"}
+      },
+      "form": {
+        "registrantName": "Shea & Gardner", "clientName": "American Petroleum Institute", "clientSelf": false, "senateId": "35024-90", "houseId": "33032005",
+        "year": 2004, "period": "year_end", "amendmentBoxChecked": false, "terminationBoxChecked": true, "terminationDate": "2005-01-05",
+        "receiptStamp": "05 JAN 19 AM 10:21", "receiptDate": "2005-01-19", "receiptTimezone": "not_stated",
+        "amountKind": "income", "reportedAmountDollars": null, "expensesMethod": null, "amountDisclosure": "less_than_threshold_censored",
+        "incomeUpperBoundExclusiveDollars": "10000.00",
+        "notes": "The original cover previously reviewed in the redesign note is now included in this complete anomaly-selected ledger. The Less than $10,000 income box is checked, with no point amount. Year End and termination are checked. The API preserves income 0.00 and null termination date; neither overrides the scanned category or date. An expense accounting method does not apply to this firm's income disclosure."
+      }
+    }
+  ],
+  "reviewBoundary": {
+    "reviewScope": "full_embedded_cover_scan_only",
+    "imageExtraction": "pdfimages -f 1 -l 1 -png INPUT.pdf PREFIX; image index 0, PDF object 6 0, 1696 by 2200 pixels",
+    "registrationMatch": "senate_registrant_and_client_relationship_components",
+    "rawMetadataUnchanged": true,
+    "correctedApiPostingDates": 0,
+    "amendmentOrderingCleared": false,
+    "amountAggregationCleared": false,
+    "controlAssignmentCleared": false,
+    "causalEffect": "not_identified",
+    "remainingRequirements": "Determine the origin of the API date discrepancies and audit complete filing/amendment families before choosing versions. Carry reviewed receipt, termination, amount-category and method observations separately; never replace posting time with receipt time or carry a method across periods. Registration-component matches do not prove an exhaustive actor spine, comparable controls, or historical exposure. Independent coding review remains pending."
+  },
+  "reviewFingerprint": "3f193a30e30ef66fd9e0d739b73602c35853671efe15f510699b0c2ded8dd3f1"
+}
