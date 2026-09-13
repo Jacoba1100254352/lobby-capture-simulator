@@ -86,6 +86,12 @@ consideration and a time-limited final provision, not full program-life acceptan
 or a comment-caused change. Four facets are part of one existing request, not
 four new observations. Original-file verification and independent review remain
 pending.
+The September 13 UTC travel-publisher review adds earlier-change and measurement
+risks to the substitution design. Published pre-2007 declines require an assessment
+of scrutiny/adaptation and election-cycle composition before selecting a baseline.
+Currency-related zeros, imprecise dates and member/staff coverage need source-level
+adjudication. The underlying travel rows were not recovered; the existing LDA/PAC
+panel and treatment/control assignments remain unchanged.
 The Java mechanism model and its
 policy parameters have not been recalibrated from these provisional products.
 

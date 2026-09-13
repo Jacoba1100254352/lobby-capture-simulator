@@ -1,6 +1,6 @@
 # Substitution study redesign
 
-Updated 2026-09-12. Status: expanded sources, identification unresolved.
+Updated 2026-09-13 UTC. Status: expanded sources, identification unresolved.
 
 ## New evidence and its limits
 
@@ -412,6 +412,8 @@ these amount, missingness and date issues.
    actor is treated merely because it appears in federal LDA. Do not select
    controls using post-reform survival or observed spending changes. If credible
    differential exposure cannot be documented, HLOGA remains a descriptive study.
+   For travel, assess the earlier scrutiny/adaptation period described below;
+   being before the legal effective date does not establish an unaffected baseline.
 2. **Use comparable controls.** Draw potential controls from the same federal
    LDA source, reporting regime, pre-period, and organization/issue strata. Match
    or weight using pre-event size, trends, issue mix and organizational features;
@@ -527,6 +529,54 @@ and recruit comparable sponsors using pre-reform characteristics. Keep chamber
 timing and shared event identities explicit. Do not infer that the House reform
 also supplies an untreated Senate control or assign treatment from one located
 trip. User provision of the two original disclosures has been requested.
+
+### Historical publisher records: measurement and earlier-change risks
+
+A September 13 UTC follow-up reviewed the original data publishers' descriptions,
+not a recovered trip-level dataset. CPI's [Power Trips methodology](https://publicintegrity.org/politics/methodology-the-team-for-power-trips/)
+describes trip starts from January 1, 2000 through June 30, 2005. It warns that
+disclosure and collection problems make its totals conservative. It also records
+setting foreign-currency totals to zero, assigning some incomplete dates to a
+year, and leaving most conflicting sponsorships and proportional co-sponsor
+allocations unresolved. Thus a recovered numeric zero would need its original
+currency and coding history checked; date precision and sponsor shares cannot
+be assumed. These are publisher-described operations, not independently measured
+error rates in a dataset acquired here.
+
+The publishers also report changes before the 2007 House restriction:
+
+| Publisher and observation window | Published observation | Design implication |
+| --- | --- | --- |
+| [CPI, January 3, 2007 article](https://publicintegrity.org/politics/with-change-on-the-horizon-privately-funded-travel-plummets/), July 2005-June 2006 versus the preceding year | Roughly 2,700 versus 4,700 trips; over $5.4 million versus over $10.3 million | A pre-2007 decline is already reported. These rounded aggregates are not an actor/chamber panel or an estimated reform effect. |
+| [American RadioWorks, Chilled Travel](https://americanradioworks.publicradio.org/features/chilledtravel/), July 2004-June 2005 versus the preceding year | A reported 20 percent decline in members' privately paid trips | The risk extends earlier than 2006. This is a member-focused series, not a replication of CPI's member-and-staff comparison. |
+
+The CPI article's June 12, 2006 related-story box is not its publication date.
+Its own byline dates the article January 3, 2007. Neither publisher's comparison
+identifies a common anticipation date, differential trends between our candidate
+actors, or whether scrutiny caused the decline. Their findings motivate checking
+those possibilities, not mechanically deleting every 2004-2006 observation.
+Do not splice these aggregate series or use them as LDA/PAC outcomes.
+
+[American RadioWorks' data overview](https://americanradioworks.publicradio.org/features/congtravel/data.html)
+specifies members only, January 2000 through mid-November 2005, with incomplete
+records reflecting incomplete or illegible disclosures. That scope excludes
+staff and ends before the required 2006 baseline coverage. Its linked member,
+top-sponsor and expensive-trip pages returned HTTP 403 through the web reader.
+CPI's linked `projects.publicintegrity.org` database hostname failed local DNS
+resolution. A bounded Internet Archive index request timed out without a response.
+These access observations do not establish that the data are lost or that no
+authorized archive is available. No travel rows or original forms were acquired.
+
+**Next acquisition and comparison requirements.** Seek a recoverable trip-level
+corpus and originals spanning the intended pre-period, with traveler/chamber,
+historical sponsor, shared event, currency, date precision and amendment fields.
+Evaluate coverage by sponsor, chamber and period before coding nonappearance as
+zero. Preserve both member-only and member-plus-staff definitions when bridging
+sources. Check earlier changes and election-cycle composition with matched
+actors' observed LDA and PAC outcomes; choose exposure and comparison rules
+without conditioning on their subsequent spending. Extending history alone
+does not establish unaffected controls. No exposure assignment or causal estimate
+is cleared by this publisher review; independent review remains pending.
 
 ## Reproduce acquisition and preparation
 
