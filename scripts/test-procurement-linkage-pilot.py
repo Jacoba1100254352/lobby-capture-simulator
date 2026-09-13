@@ -212,5 +212,115 @@ class DocketTimingTests(unittest.TestCase):
             self.check()
 
 
+class OriginalActionTests(unittest.TestCase):
+    def setUp(self):
+        self.review = json.loads((audit.DATA / "gao-original-action-review.json").read_text())
+        self.baseline = json.loads((audit.DATA / "gao-award-linkage-source.json").read_text())
+        self.dockets = json.loads((audit.DATA / "gao-docket-timing-source.json").read_text())
+        self.rows = audit.read("gao-docket-timing-pilot.csv")
+
+    def check(self, rehash=False):
+        if rehash:
+            self.review["reviewFingerprint"] = audit.source_fingerprint(
+                {k: v for k, v in self.review.items() if k != "reviewFingerprint"})
+        return audit.original_action_diagnostics(self.review, self.baseline, self.dockets, self.rows)
+
+    def test_complete_followup_and_many_to_many_links_reproduce(self):
+        before = copy.deepcopy((self.review, self.baseline, self.dockets, self.rows))
+        result, links = self.check()
+        self.assertEqual(result["historyRows"], 26)
+        self.assertEqual(result["reviewedAwards"], 4)
+        self.assertEqual(result["explicitOriginalServiceAreas"], 2)
+        self.assertEqual(result["amountBasedServiceAreaCandidates"], {"36C10X24N0088": "OGA", "36C10X24N0089": "VISN 8"})
+        self.assertEqual(result["roundedPotentialValueMinusDecisionDollars"], {
+            "36C10X24N0074": 0, "36C10X24N0088": 0, "36C10X24N0089": 0, "36C10X24N0108": -100})
+        self.assertEqual(result["reportedOffersMinusTimelyProposals"], {"36C10X24N0089": -1})
+        self.assertEqual(result["blankSolicitationIdentifiers"], 4)
+        self.assertEqual(result["provisionalAwardDocketPairs"], 16)
+        self.assertEqual(result["distinctLinkedDockets"], 13)
+        self.assertEqual(result["originalReportedOffers"], {
+            "36C10X24N0074": "4", "36C10X24N0088": "2",
+            "36C10X24N0089": "4", "36C10X24N0108": "4"})
+        self.assertEqual(sum(r["decisionCaseId"] == "B-422693.3" for r in links), 4)
+        self.assertEqual({r["filedDate"] for r in links}, {"2024-06-24", "2024-06-26", "2024-08-02"})
+        self.assertEqual((self.review, self.baseline, self.dockets, self.rows), before)
+
+    def test_stale_projection_or_baseline_rejected(self):
+        self.review["awards"][0]["originalProjection"]["number_of_offers_received"] = "0"
+        with self.assertRaisesRegex(ValueError, "fingerprint"):
+            self.check()
+
+    def test_missing_award_cannot_shrink_frame(self):
+        self.review["awards"].pop()
+        with self.assertRaisesRegex(ValueError, "off-frame"):
+            self.check(rehash=True)
+
+    def test_incomplete_history_rejected(self):
+        self.review["awards"][0]["historyResponse"]["page_metadata"]["hasNext"] = True
+        with self.assertRaisesRegex(ValueError, "pagination"):
+            self.check(rehash=True)
+
+    def test_duplicate_history_ids_rejected(self):
+        history = self.review["awards"][0]["historyResponse"]["results"]
+        history[-1] = history[0].copy()
+        with self.assertRaisesRegex(ValueError, "transaction identity"):
+            self.check(rehash=True)
+
+    def test_later_modification_cannot_replace_original(self):
+        self.review["awards"][0]["originalProjection"]["modification_number"] = "P00001"
+        with self.assertRaisesRegex(ValueError, "substituted modification"):
+            self.check(rehash=True)
+
+    def test_current_totals_and_solicitation_dates_cannot_replace_action_values(self):
+        row = self.review["awards"][0]["originalProjection"]
+        for field, value in (("federal_action_obligation", "0.00"), ("action_date", row["solicitation_date"])):
+            original = row[field]
+            row[field] = value
+            with self.subTest(field=field), self.assertRaisesRegex(ValueError, "date, amount"):
+                self.check(rehash=True)
+            row[field] = original
+
+    def test_generic_description_cannot_be_assigned_by_elimination(self):
+        self.review["awards"][1]["explicitServiceArea"] = "OGA"
+        with self.assertRaisesRegex(ValueError, "service-area assignment"):
+            self.check(rehash=True)
+
+    def test_native_blank_solicitation_cannot_be_filled_from_docket(self):
+        self.review["awards"][0]["originalProjection"]["solicitation_identifier"] = "36C10X24R0014"
+        with self.assertRaisesRegex(ValueError, "solicitation assignment"):
+            self.check(rehash=True)
+
+    def test_failed_download_is_not_an_empty_observation(self):
+        self.review["awards"][0]["downloadStatus"]["status"] = "failed"
+        with self.assertRaisesRegex(ValueError, "job provenance"):
+            self.check(rehash=True)
+
+    def test_unsupported_promotion_rejected(self):
+        self.review["awardSpecificDatesPromoted"] = True
+        with self.assertRaisesRegex(ValueError, "promotion"):
+            self.check(rehash=True)
+
+    def test_docket_date_must_match_saved_source(self):
+        self.rows[0]["filedDate"] = "2024-05-31"
+        with self.assertRaisesRegex(ValueError, "docket frame"):
+            self.check()
+
+    def test_negative_reported_offer_count_rejected(self):
+        self.review["awards"][0]["originalProjection"]["number_of_offers_received"] = "-1"
+        with self.assertRaisesRegex(ValueError, "offer count"):
+            self.check(rehash=True)
+
+    def test_value_candidate_requires_a_unique_rounded_match(self):
+        self.review["awards"][1]["originalProjection"]["potential_total_value_of_award"] = "149280000.00"
+        with self.assertRaisesRegex(ValueError, "service-area assignment"):
+            self.check(rehash=True)
+
+    def test_action_obligation_cannot_replace_potential_order_value(self):
+        row = self.review["awards"][1]["originalProjection"]
+        row["potential_total_value_of_award"] = row["federal_action_obligation"]
+        with self.assertRaisesRegex(ValueError, "service-area assignment"):
+            self.check(rehash=True)
+
+
 if __name__ == "__main__":
     unittest.main()

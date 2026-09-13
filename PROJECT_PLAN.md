@@ -54,8 +54,14 @@ without promoting the selected cases into a representative protest denominator.
 The companion docket ledger now reviews all thirteen listed case entries and
 preserves filing dates separately from decision, posted and due dates. Multiple
 solicitation fields and a cross-service-area supplemental entry prevent a simple
-one-to-one join; two current award-description candidates do not clear original-action
-mapping. A decision-reported SAM check supplies no independently verified historical
+one-to-one join. A separate September 13 UTC follow-up acquires 26 transaction-history
+rows and four full contract downloads. Two original-action descriptions explicitly
+identify VISN 19 and VISN 22. Unique rounded-value matches add OGA and VISN 8
+candidates, producing sixteen provisional pairs across thirteen dockets, not
+verified solicitation identities. All four solicitation identifiers are blank;
+the candidate VISN 8 offer count differs from GAO's timely-proposal count.
+Baseline timing cells and independent-review gates remain unchanged.
+A decision-reported SAM check supplies no independently verified historical
 interval. Original-action mappings and independent coding review remain unresolved.
 The full archived bulk frame audit now verifies all 56 selected ZIPs and their
 6,449,101 rows, while exposing blank award types, extensive missing offer counts,

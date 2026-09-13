@@ -109,6 +109,7 @@ EMPIRICAL_EXPANSION_PRODUCTS = [
         "comment-request-followups.json",
         "gao-award-linkage-pilot.csv", "gao-award-linkage-source.json",
         "gao-docket-timing-pilot.csv", "gao-docket-timing-source.json",
+        "gao-original-action-review.json",
         "procurement-bulk-frame-profile.json", "procurement-bulk-type-review.json",
     )
 ]

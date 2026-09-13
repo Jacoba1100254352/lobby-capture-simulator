@@ -136,7 +136,15 @@ Status: `docket_timing_verified_award_mapping_unresolved`
 
 expectedEntries=13; reviewedEntries=13; decisionFamilies=1; filingDates={'2024-06-24': 6, '2024-06-26': 4, '2024-08-02': 3}; multiSolicitationEntries=3; multiServiceAreaEntries=1; currentDescriptionCandidates=2; awardSpecificDatesPromoted=0; historicalExclusionIntervalsPromoted=0
 
-Remaining: Review original-action solicitation/service-area links and obtain independent coding review. Three docket entries list multiple solicitations and one spans four decision service areas. Current descriptions supply two candidates only; the archived export lacks description/solicitation columns. A GAO-reported SAM check has no verified date or underlying interval. No protest rate, award-specific timing or historical exclusion coverage is promoted.
+Remaining: The unchanged baseline used current descriptions and a thirteen-column archive. See the separate original-action follow-up for new transaction-level evidence. Three docket entries list multiple solicitations and one spans four decision service areas. A GAO-reported SAM check has no verified date or underlying interval. No protest rate, final award-specific timing or historical exclusion coverage is promoted.
+
+## gao-original-action-followup
+
+Status: `partial_original_description_bridge_pending_review`
+
+reviewedAwards=4; historyRows=26; originalActions=4; blankSolicitationIdentifiers=4; explicitOriginalServiceAreas=2; amountBasedServiceAreaCandidates={'36C10X24N0088': 'OGA', '36C10X24N0089': 'VISN 8'}; roundedPotentialValueMinusDecisionDollars={'36C10X24N0074': 0, '36C10X24N0088': 0, '36C10X24N0089': 0, '36C10X24N0108': -100}; reportedOffersMinusTimelyProposals={'36C10X24N0089': -1}; independentlyReviewedMappings=0; provisionalAwardDocketPairs=16; distinctLinkedDockets=13; originalReportedOffers={'36C10X24N0074': '4', '36C10X24N0088': '2', '36C10X24N0089': '4', '36C10X24N0108': '4'}; awardSpecificDatesPromoted=0; historicalExclusionsPromoted=0; causalEffect=not_identified
+
+Remaining: Two explicit original-description links and two rounded-value candidates support a sixteen-pair provisional crosswalk, not verified solicitation identity or independent events. The VISN 22 rounded value is $100 below the decision, as GAO notes; the candidate VISN 8 row reports four offers versus five timely proposals in the decision, an unresolved definition/source discrepancy. All four solicitation identifiers are blank. Independently review mapping and count definitions before timing or rate promotion; representative SAM and historical exclusions remain absent.
 
 ## procurement-archived-bulk-frame
 

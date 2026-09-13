@@ -200,6 +200,16 @@ and corrects the earlier America Votes House-ID transcription to 35960015.
 The other fifteen records are not thereby cleared as final actor-period outcomes.
 Run `make empirical-expansion-audit` to regenerate and verify these products.
 
+The [procurement original-action follow-up](docs/procurement-source-reconciliation.md#original-action-follow-up-recovered-fields-and-a-partial-crosswalk)
+adds four full contract downloads and 26 transaction-history rows. Two original
+descriptions identify VISN 19 and VISN 22; two unique rounded-value matches supply
+OGA and VISN 8 candidates. The sixteen provisional pairs across thirteen dockets
+are not verified solicitation identities. All four native solicitation identifiers
+are blank. The candidate VISN 8 row reports four offers versus GAO's five timely
+proposals; these definitions and sources have not been reconciled. The
+baseline timing ledgers remain unchanged, with independent review, representative
+SAM access and historical exclusion evidence still outstanding.
+
 A separate [heavy-duty Phase 3 response pilot](docs/comment-response-document-pilot.md)
 links two agency-reproduced request excerpts to explicitly named responses:
 a Cummins clarification and disagreement with an Allison calculation-error claim.

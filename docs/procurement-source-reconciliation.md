@@ -1,6 +1,6 @@
 # Procurement source reconciliation: interim findings
 
-Reviewed 2026-09-12. No representative SAM export has been obtained or promoted.
+Reviewed through 2026-09-13 UTC. No representative SAM export has been obtained or promoted.
 The saved export link was expired, the minimal Contract Awards request returned
 no usable rows, and the Exclusions request returned HTTP 401. Private operational
 reports remain ignored. These are access findings, not zero procurement or zero
@@ -188,6 +188,98 @@ evidence and independent source/coding review. Until then, all four award-pilot
 `filedDate` cells and all docket-ledger `piid` cells stay blank. Even a later
 verified mapping would require an explicit initial-versus-supplemental timing
 definition and a representative denominator before protest-rate estimation.
+
+### Original-action follow-up: recovered fields and a partial crosswalk
+
+On September 13 UTC, the public USAspending
+[transaction-history endpoint](https://github.com/fedspendingtransparency/usaspending-api/blob/master/usaspending_api/api_contracts/contracts/v2/transactions.md)
+returned complete pages for all four existing pilot awards: 26 transaction rows
+in total, with one modification-`0` action per award. Separate
+[contract-specific downloads](https://github.com/fedspendingtransparency/usaspending-api/blob/master/usaspending_api/api_contracts/contracts/v2/download/contract.md)
+finished successfully for all four. Each ZIP passed its CRC check. The transaction
+members contain 6, 7, 7 and 6 rows, respectively, and 297 columns per member.
+The status endpoint's 505-column figure describes the download package, not the
+transaction member's schema. An earlier four-award general transaction-download
+job failed with a generic server error; its zero-row status is not a zero-award
+observation. No failed job was restarted.
+
+The new `gao-original-action-review.json` preserves the requests, full history
+responses, ZIP/member hashes, complete transaction-ID lists, original CSV row
+locations and selected source-native fields. All 26 API IDs match the downloaded
+transaction IDs after accounting for the API's `CONT_TX_` prefix. Original dates,
+descriptions and obligations agree across the API and downloads; the four dates,
+identities and dollar obligations also agree with the prior selected bulk rows.
+These are newly retrieved records describing 2024 actions, not a contemporaneous
+2024 archive. Source initial-report and last-modified timestamps are retained
+separately from action dates; an initial report before the action is not a protest
+filing date or an earlier award date.
+
+| Original-action PIID | Explicit service-area label | Reported offers | Native solicitation identifier |
+| --- | --- | ---: | --- |
+| 36C10X24N0074 | VISN 19 | 4 | blank |
+| 36C10X24N0088 | unassigned | 2 | blank |
+| 36C10X24N0089 | unassigned | 4 | blank |
+| 36C10X24N0108 | VISN 22 | 4 | blank |
+
+All four original actions are May 31, 2024 delivery orders with $10,000.00 action
+obligations, competition code `A` and solicitation-procedure code `MAFO`. Preserve
+both source fields: the latter describes multiple-award fair opportunity. These
+reported offer counts have not been verified against bids or agency records and
+do not resolve missing offer fields in the broader panel. The solicitation
+identifier column is now observed and blank in each original row, unlike the
+earlier limited archive where the entire column was absent. The separately
+reported October 17, 2023 solicitation date does not supply an identifier.
+
+The explicit VISN 19 and VISN 22 labels now occur in **original-action**
+descriptions, not only in latest award summaries. Together with decision
+footnotes 3 and 4, they support eight provisional award/docket pairs across seven
+distinct dockets. The supplemental `B-422693.3` belongs to both service areas;
+preserve that many-to-many relationship. These are candidate documentary links,
+not eight independent protest events or new observations in a representative
+sample. Descriptions alone do not assign the other two awards: a generic reference
+to other government agencies is not a unique OGA identification, and the residual
+award must not be assigned VISN 8 by elimination.
+
+Reopening the public decision also supplied an additional, explicitly inferential
+cross-check. Its Jurisdiction discussion reports total order values by service
+area; footnote 10 specifies whole-dollar rounding. Three original potential-total
+values match those amounts after rounding. The explicitly labeled VISN 22 record
+is $100 lower after rounding, exactly the source-system difference described in
+footnote 15. Do not change the original dollar amounts to remove that difference.
+
+| PIID | Original potential total, dollars | Decision service area | Decision total, dollars | Evidence basis |
+| --- | ---: | --- | ---: | --- |
+| 36C10X24N0074 | 164,568,206.07 | VISN 19 | 164,568,206 | explicit description; rounded value agrees |
+| 36C10X24N0088 | 149,284,426.64 | OGA | 149,284,427 | unique rounded-value candidate |
+| 36C10X24N0089 | 373,078,665.37 | VISN 8 | 373,078,665 | unique rounded-value candidate |
+| 36C10X24N0108 | 340,131,789.10 | VISN 22 | 340,131,889 | explicit description; documented $100 difference |
+
+The two amount-only matches are candidates within this already declared four-award
+frame, not verified solicitation identities or justification for a general fuzzy
+amount join. They extend the provisional crosswalk to sixteen award/docket pairs
+covering all thirteen listed dockets. The shared supplemental case maps to all
+four service areas and must not be counted four times as independent evidence.
+
+**High-priority reconciliation issue:** the decision's Background reports five
+timely proposals for VISN 8, four for VISN 19, four for VISN 22 and two for OGA.
+The candidate VISN 8 original row instead reports four offers. The other three
+numbers agree at this scope, but neither agreement nor disagreement proves an
+underlying bid count or establishes that these source fields have identical
+definitions. Preserve the discrepancy; do not correct either source, discard
+the fifth proposal or use count agreement to select an award mapping. Resolving
+it requires source definitions and, if available, the underlying agency records.
+
+**Validation assessment: share with caveats for this partial documentary
+crosswalk.** The prior four-award and thirteen-docket ledgers remain unchanged.
+The notebook derives the provisional pairs and their source filing dates in a
+separate follow-up; it does not fill the baseline timing cells. The offline audit
+and regression tests check the fixed award/docket frames, pagination, transaction
+identity, original-versus-modified actions, exact obligations, source dates and
+unsupported promotion. They do not independently authenticate the ignored raw
+files or review manual source interpretation. Independent review, the two
+amount-only mappings, offer-count and solicitation reconciliation, representative SAM data
+and historical exclusion evidence remain required. No rate or causal estimate
+is added.
 
 ## Prespecified SAM reconciliation population
 

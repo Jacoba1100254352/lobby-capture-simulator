@@ -8,7 +8,7 @@ import json
 import re
 from collections import Counter, defaultdict
 from datetime import date, datetime, timedelta
-from decimal import Decimal
+from decimal import Decimal, ROUND_HALF_UP
 from pathlib import Path
 
 
@@ -733,6 +733,151 @@ def comment_followup_diagnostics(sources, baseline, pilot_sources):
     }
 
 
+def original_action_diagnostics(review, baseline, docket_sources, docket_rows):
+    """Check the fixed four-award follow-up without promoting timing or rates."""
+    if (review.get("schema") != "gao-original-action-review-v1"
+            or review.get("baselineFingerprint") != source_fingerprint(baseline)
+            or review.get("docketSourceFingerprint") != source_fingerprint(docket_sources)
+            or review.get("reviewFingerprint") != source_fingerprint(
+                {k: v for k, v in review.items() if k != "reviewFingerprint"})):
+        raise ValueError("Stale original-action source fingerprint or baseline")
+    date.fromisoformat(review["reviewDate"])
+    boundary = {"independentReviewStatus": "pending", "baselineUnchanged": True,
+                "awardSpecificDatesPromoted": False, "historicalExclusionsPromoted": False,
+                "causalEffect": "not_identified"}
+    if (any(review.get(k) != v for k, v in boundary.items())
+            or any(not review.get(k) for k in ("reviewer", "selection", "scope", "sourceAuthentication", "linkageRule"))):
+        raise ValueError("Unsupported original-action promotion or review boundary")
+    if (review["historyEndpoint"] != "https://api.usaspending.gov/api/v2/transactions/"
+            or review["downloadEndpoint"] != "https://api.usaspending.gov/api/v2/download/contract/"):
+        raise ValueError("Unexpected original-action source endpoint")
+    expected = {r["piid"]: r for r in baseline["bulkExtract"]["records"]}
+    awards = review["awards"]
+    if len(awards) != len(expected) or {a["piid"] for a in awards} != set(expected):
+        raise ValueError("Missing, duplicate or off-frame original-action awards")
+    docket_by_id = {r["decisionCaseId"]: r for r in docket_rows}
+    if (len(docket_by_id) != len(docket_rows)
+            or set(docket_by_id) != set(docket_sources["decisionReview"]["caseNumbers"])
+            or docket_by_id != {r["decisionCaseId"]: r for r in docket_timing_rows(docket_sources)}):
+        raise ValueError("Incomplete original-action docket frame")
+    footnotes = {f["serviceArea"]: f for f in docket_sources["decisionReview"]["serviceAreaFootnotes"]}
+    value_review = review["decisionValueReview"]
+    if (value_review["sourceUrl"] != docket_sources["decisionReview"]["sourceUrl"]
+            or value_review["independentReviewStatus"] != "pending"
+            or set(value_review["reportedTotalOrderValuesDollars"]) != set(footnotes)
+            or set(value_review["reportedTimelyProposals"]) != set(footnotes)
+            or value_review["reportedFpdsDifference"] != {
+                "serviceArea": "VISN 22", "fpdsMinusDecisionDollars": -100, "sourceFootnote": 15}
+            or any(not value_review.get(k) for k in ("reviewMethod", "sourceLocation", "sourceRounding"))):
+        raise ValueError("Missing decision-value review provenance")
+    links, history_count, missing_solicitations, offers = [], 0, 0, {}
+    explicit_areas, value_candidates, value_comparisons, offer_differences = {}, {}, {}, {}
+    for award in awards:
+        piid, key, original = award["piid"], award["awardKey"], award["originalProjection"]
+        old = expected[piid]
+        if (key != f"CONT_AWD_{piid}_3600_36C10X23D0032_3600"
+                or award["historyRequest"] != {"award_id": key, "page": 1, "limit": 100,
+                                               "sort": "action_date", "order": "asc"}
+                or award["downloadRequest"] != {"award_id": key, "file_format": "csv"}):
+            raise ValueError("Original-action request or award identity mismatch")
+        history = award["historyResponse"]
+        meta, records = history["page_metadata"], history["results"]
+        if (meta["page"] != 1 or meta["hasNext"] or meta["next"] is not None
+                or meta["hasPrevious"] or meta["previous"] is not None):
+            raise ValueError("Incomplete original-action history pagination")
+        ids = [r["id"] for r in records]
+        archive_ids = award["transactionIds"]
+        if (not records or len(set(ids)) != len(ids)
+                or len(set(archive_ids)) != len(archive_ids)
+                or set(ids) != {"CONT_TX_" + i for i in archive_ids}
+                or len(records) != award["transactionRowCount"]):
+            raise ValueError("History versus archive transaction identity mismatch")
+        status, job = award["downloadStatus"], award["downloadJob"]
+        if (status["status"] != "finished" or status["total_rows"] != len(records)
+                or status["file_url"] != job["file_url"]
+                or status["file_name"] != job["file_name"]
+                or job["file_url"] != "https://files.usaspending.gov/generated_downloads/" + job["file_name"]
+                or job["status_url"] != "https://api.usaspending.gov/api/v2/download/status?file_name=" + job["file_name"]
+                or award["transactionMember"] != f"Contract_{piid}_TransactionHistory_1.csv"
+                or award["transactionColumnCount"] < len(original)
+                or not 2 <= award["originalCsvRowIncludingHeader"] <= len(records) + 1):
+            raise ValueError("Original-action archive or job provenance mismatch")
+        for field in ("historyRawSha256", "archiveSha256", "transactionMemberSha256", "originalFullRowFingerprint"):
+            if not re.fullmatch(r"[0-9a-f]{64}", award[field]):
+                raise ValueError("Missing original-action source hash")
+        originals = [r for r in records if r["modification_number"] == "0"]
+        if len(originals) != 1 or original["modification_number"] != "0":
+            raise ValueError("Ambiguous original action or substituted modification")
+        api = originals[0]
+        if (api["id"] != "CONT_TX_" + original["contract_transaction_unique_key"]
+                or original["contract_award_unique_key"] != key
+                or original["award_id_piid"] != piid
+                or original["parent_award_id_piid"] != "36C10X23D0032"
+                or original["parent_award_agency_id"] != "3600"
+                or original["awarding_sub_agency_code"] != "3600"
+                or original["recipient_uei"] != old["uei"]
+                or api["type"] != "C" or original["award_type"] != "DELIVERY ORDER"):
+            raise ValueError("Original-action source identity or type mismatch")
+        if (original["action_date"] != api["action_date"]
+                or original["action_date"] != old["actionDate"]
+                or Decimal(original["federal_action_obligation"]) != Decimal(str(api["federal_action_obligation"]))
+                or Decimal(original["federal_action_obligation"]) != Decimal(old["amount"]) * 1_000_000
+                or original["transaction_description"] != api["description"]):
+            raise ValueError("Original-action date, amount or description mismatch")
+        # The native solicitation field is present but empty in all four reviewed rows.
+        # It must not be filled from a docket label or confused with solicitation_date.
+        if original["solicitation_identifier"] != "":
+            raise ValueError("Unsupported original-action solicitation assignment")
+        missing_solicitations += 1
+        offers[piid] = original["number_of_offers_received"]
+        if offers[piid] and not re.fullmatch(r"[0-9]+", offers[piid]):
+            raise ValueError("Invalid original-action reported offer count")
+        history_count += len(records)
+        area_labels = set(re.findall(r"\bVISN (19|22)\b", api["description"]))
+        explicit_area = "VISN " + next(iter(area_labels)) if len(area_labels) == 1 else ""
+        total = Decimal(original["potential_total_value_of_award"])
+        rounded = total.quantize(Decimal("1"), rounding=ROUND_HALF_UP)
+        matches = [area for area, value in value_review["reportedTotalOrderValuesDollars"].items()
+                   if rounded == value]
+        area = explicit_area or (matches[0] if len(matches) == 1 else "")
+        expected_status = ("original_description_bridge_pending_independent_review" if explicit_area
+                           else "rounded_value_candidate_not_verified_identity")
+        if (not area or award["explicitServiceArea"] != explicit_area
+                or award["provisionalServiceArea"] != area or award["mappingStatus"] != expected_status):
+            raise ValueError("Unsupported original-action service-area assignment")
+        if explicit_area:
+            explicit_areas[piid] = area
+        else:
+            value_candidates[piid] = area
+        value_comparisons[piid] = int(rounded) - value_review["reportedTotalOrderValuesDollars"][area]
+        if offers[piid]:
+            difference = int(offers[piid]) - value_review["reportedTimelyProposals"][area]
+            if difference:
+                offer_differences[piid] = difference
+        if area:
+            footnote = footnotes[area]
+            for case in footnote["caseNumbers"]:
+                docket = docket_by_id[case]
+                if area not in docket["decisionServiceAreas"].split(";") or docket["piid"]:
+                    raise ValueError("Docket service area mismatch or overwritten baseline")
+                links.append({"piid": piid, "serviceArea": area, "decisionCaseId": case,
+                              "filedDate": docket["filedDate"], "decisionFootnote": footnote["footnote"],
+                              "mappingBasis": expected_status,
+                              "status": "provisional_not_promoted", "independentReviewStatus": "pending"})
+    return {
+        "reviewedAwards": len(awards), "historyRows": history_count,
+        "originalActions": len(awards), "blankSolicitationIdentifiers": missing_solicitations,
+        "explicitOriginalServiceAreas": len(explicit_areas),
+        "amountBasedServiceAreaCandidates": value_candidates,
+        "roundedPotentialValueMinusDecisionDollars": value_comparisons,
+        "reportedOffersMinusTimelyProposals": offer_differences,
+        "independentlyReviewedMappings": 0,
+        "provisionalAwardDocketPairs": len(links), "distinctLinkedDockets": len({r["decisionCaseId"] for r in links}),
+        "originalReportedOffers": offers, "awardSpecificDatesPromoted": 0,
+        "historicalExclusionsPromoted": 0, "causalEffect": "not_identified",
+    }, links
+
+
 def protest_linkage_diagnostics(rows, sources, frozen):
     """Verify a selected decision-to-award bridge, never a protest-rate frame."""
     review = sources["gaoReview"]
@@ -1072,7 +1217,13 @@ def audit():
     docket = docket_timing_diagnostics(read("gao-docket-timing-pilot.csv"), docket_sources, sources, bulk_summary)
     add("gao-docket-timing-pilot", "docket_timing_verified_award_mapping_unresolved",
         "; ".join(f"{key}={value}" for key, value in docket.items()),
-        "Review original-action solicitation/service-area links and obtain independent coding review. Three docket entries list multiple solicitations and one spans four decision service areas. Current descriptions supply two candidates only; the archived export lacks description/solicitation columns. A GAO-reported SAM check has no verified date or underlying interval. No protest rate, award-specific timing or historical exclusion coverage is promoted.")
+        "The unchanged baseline used current descriptions and a thirteen-column archive. See the separate original-action follow-up for new transaction-level evidence. Three docket entries list multiple solicitations and one spans four decision service areas. A GAO-reported SAM check has no verified date or underlying interval. No protest rate, final award-specific timing or historical exclusion coverage is promoted.")
+    original_review = json.loads((DATA / "gao-original-action-review.json").read_text(encoding="utf-8"))
+    originals, _ = original_action_diagnostics(
+        original_review, sources, docket_sources, read("gao-docket-timing-pilot.csv"))
+    add("gao-original-action-followup", "partial_original_description_bridge_pending_review",
+        "; ".join(f"{key}={value}" for key, value in originals.items()),
+        "Two explicit original-description links and two rounded-value candidates support a sixteen-pair provisional crosswalk, not verified solicitation identity or independent events. The VISN 22 rounded value is $100 below the decision, as GAO notes; the candidate VISN 8 row reports four offers versus five timely proposals in the decision, an unresolved definition/source discrepancy. All four solicitation identifiers are blank. Independently review mapping and count definitions before timing or rate promotion; representative SAM and historical exclusions remain absent.")
     spec = importlib.util.spec_from_file_location("bulk_frame", ROOT / "scripts/audit-procurement-bulk-frame.py")
     bulk_frame = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(bulk_frame)

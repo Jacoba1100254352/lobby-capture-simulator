@@ -99,6 +99,19 @@ and do not independently establish that manual coding is correct.
 
 ## Remaining requirements and next decision
 
+A September 13 UTC access follow-up located CARB's own
+[program-page link to its Phase 3 comments](https://ww2.arb.ca.gov/es/node/23406).
+It points to [comment 1591](https://www.regulations.gov/comment/EPA-HQ-OAR-2022-0985-1591),
+which the ordinary public browser displayed as a CARB submission received and
+postmarked June 16, 2023, posted June 21, with one Comment attachment. This
+corroborates the section inventory's cited submission identity, not the original
+PDF's content or version. The direct attachment returned HTTP 403, and the
+browser could not open it. The Volvo attachment also returned HTTP 403 through
+the web reader. A bounded publisher search did not recover an original copy for
+the existing Cummins/Allison pilot; it does not establish that none exists.
+User-provided original PDFs were requested. No new request rows, original-file
+verification, uptake classification or independent-review clearance resulted.
+
 Independent source/coding review is pending for both observations. The reviewer
 should check the cited excerpts and named responses, distinguish the collective
 method change, and verify any subsequently available original attachment against

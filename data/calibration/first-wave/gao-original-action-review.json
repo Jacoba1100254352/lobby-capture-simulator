@@ -1,0 +1,817 @@
+{
+  "schema": "gao-original-action-review-v1",
+  "reviewDate": "2026-09-13",
+  "reviewer": "codex-source-review",
+  "independentReviewStatus": "pending",
+  "selection": "All four awards in the existing one-decision linkage pilot, selected before this retrieval. Full transaction-history API pages and contract-specific downloads were acquired. Only each unique modification-0 action is adjudicated here; later actions are retained in the history response for identity and completeness checks, not coded for protest effects.",
+  "scope": "September 13, 2026 retrieval of records describing May 31, 2024 actions. This is not a contemporaneously archived 2024 observation, a representative SAM export, a protest-rate denominator or a causal estimate.",
+  "baselineFingerprint": "afa2b526c1d4302a7da3381b1a27d0a6f09ed81b13b9611e6954536a9a24d8d3",
+  "docketSourceFingerprint": "2f1b070edd0c906d78ec50eb8ee992767695c590ade0d14a262b6ab882e9031d",
+  "sourceAuthentication": "Four downloaded ZIPs passed CRC checks; their transaction CSV members and the four public transaction-history JSON responses were read directly. Raw-byte hashes, member hashes, original-row fingerprints and projected original fields are retained. Offline checks verify the saved projections, not original bytes or independent manual correctness. Original source ZIPs and JSON responses remain ignored local acquisition artifacts.",
+  "historyEndpoint": "https://api.usaspending.gov/api/v2/transactions/",
+  "downloadEndpoint": "https://api.usaspending.gov/api/v2/download/contract/",
+  "documentation": [
+    "https://github.com/fedspendingtransparency/usaspending-api/blob/master/usaspending_api/api_contracts/contracts/v2/transactions.md",
+    "https://github.com/fedspendingtransparency/usaspending-api/blob/master/usaspending_api/api_contracts/contracts/v2/download/contract.md"
+  ],
+  "failedInitialExport": {
+    "endpoint": "https://api.usaspending.gov/api/v2/download/transactions/",
+    "request": {
+      "filters": {
+        "award_ids": [
+          "\"36C10X24N0074\"",
+          "\"36C10X24N0088\"",
+          "\"36C10X24N0089\"",
+          "\"36C10X24N0108\""
+        ],
+        "award_type_codes": [
+          "A",
+          "B",
+          "C",
+          "D"
+        ],
+        "agencies": [
+          {
+            "type": "awarding",
+            "tier": "toptier",
+            "name": "Department of Veterans Affairs"
+          }
+        ],
+        "time_period": [
+          {
+            "start_date": "2023-10-01",
+            "end_date": "2024-09-30",
+            "date_type": "action_date"
+          }
+        ]
+      },
+      "file_format": "csv",
+      "limit": 1000
+    },
+    "job": {
+      "file_name": "PrimeTransactionsAndSubawards_2026-09-13_H01M44S37503974.zip",
+      "file_url": "https://files.usaspending.gov/generated_downloads/PrimeTransactionsAndSubawards_2026-09-13_H01M44S37503974.zip",
+      "status_url": "https://api.usaspending.gov/api/v2/download/status?file_name=PrimeTransactionsAndSubawards_2026-09-13_H01M44S37503974.zip"
+    },
+    "terminalStatus": {
+      "status": "failed",
+      "message": "An error occurred.",
+      "file_name": "PrimeTransactionsAndSubawards_2026-09-13_H01M44S37503974.zip",
+      "file_url": "https://files.usaspending.gov/generated_downloads/PrimeTransactionsAndSubawards_2026-09-13_H01M44S37503974.zip",
+      "total_size": null,
+      "total_columns": 0,
+      "total_rows": 0,
+      "seconds_elapsed": "5.191938"
+    },
+    "interpretation": "Server reported failed with a generic error. No source rows were obtained from this job; zero reported rows are not an observed zero-award result. The contract-specific route below succeeded."
+  },
+  "awards": [
+    {
+      "piid": "36C10X24N0074",
+      "awardKey": "CONT_AWD_36C10X24N0074_3600_36C10X23D0032_3600",
+      "historyRequest": {
+        "award_id": "CONT_AWD_36C10X24N0074_3600_36C10X23D0032_3600",
+        "page": 1,
+        "limit": 100,
+        "sort": "action_date",
+        "order": "asc"
+      },
+      "historyRawSha256": "cea89050fe5b01550226bff8ba830095baf40043525d31be5c50a1660c346a53",
+      "historyResponse": {
+        "page_metadata": {
+          "page": 1,
+          "next": null,
+          "previous": null,
+          "hasNext": false,
+          "hasPrevious": false
+        },
+        "results": [
+          {
+            "id": "CONT_TX_3600_3600_36C10X24N0074_0_36C10X23D0032_0",
+            "type": "C",
+            "type_description": "DELIVERY ORDER",
+            "action_date": "2024-05-31",
+            "action_type": null,
+            "action_type_description": null,
+            "modification_number": "0",
+            "description": "VISN 19 MEDICAL/SURGICAL PRIME VENDOR GENERATION-Z VERSION 1 (MSPV GEN-Z V1) DELIVERY ORDER AWARD TO PROVIDE DISTRIBUTION AND SUPPLY MANAGEMENT FOR VA MEDICAL CENTERS.",
+            "federal_action_obligation": 10000.0,
+            "face_value_loan_guarantee": 0.0,
+            "original_loan_subsidy_cost": 0.0
+          },
+          {
+            "id": "CONT_TX_3600_3600_36C10X24N0074_P00001_36C10X23D0032_0",
+            "type": "C",
+            "type_description": "DELIVERY ORDER",
+            "action_date": "2024-10-29",
+            "action_type": "B",
+            "action_type_description": "SUPPLEMENTAL AGREEMENT FOR WORK WITHIN SCOPE",
+            "modification_number": "P00001",
+            "description": "MODIFICATION P00001 TO CHANGE CO, CS, ADD SLA LANGUAGE, AND ADD CBOC LOCATION.",
+            "federal_action_obligation": 0.0,
+            "face_value_loan_guarantee": 0.0,
+            "original_loan_subsidy_cost": 0.0
+          },
+          {
+            "id": "CONT_TX_3600_3600_36C10X24N0074_P00002_36C10X23D0032_0",
+            "type": "C",
+            "type_description": "DELIVERY ORDER",
+            "action_date": "2025-01-27",
+            "action_type": "B",
+            "action_type_description": "SUPPLEMENTAL AGREEMENT FOR WORK WITHIN SCOPE",
+            "modification_number": "P00002",
+            "description": "MODIFICATION P00001 TO CHANGE CO, CS, ADD SLA LANGUAGE, AND ADD CBOC LOCATION.",
+            "federal_action_obligation": -10000.0,
+            "face_value_loan_guarantee": 0.0,
+            "original_loan_subsidy_cost": 0.0
+          },
+          {
+            "id": "CONT_TX_3600_3600_36C10X24N0074_P00003_36C10X23D0032_0",
+            "type": "C",
+            "type_description": "DELIVERY ORDER",
+            "action_date": "2025-02-24",
+            "action_type": "G",
+            "action_type_description": "EXERCISE AN OPTION",
+            "modification_number": "P00003",
+            "description": "MODIFICATION P00001 TO CHANGE CO, CS, ADD SLA LANGUAGE, AND ADD CBOC LOCATION.",
+            "federal_action_obligation": 0.0,
+            "face_value_loan_guarantee": 0.0,
+            "original_loan_subsidy_cost": 0.0
+          },
+          {
+            "id": "CONT_TX_3600_3600_36C10X24N0074_P00004_36C10X23D0032_0",
+            "type": "C",
+            "type_description": "DELIVERY ORDER",
+            "action_date": "2025-06-25",
+            "action_type": "B",
+            "action_type_description": "SUPPLEMENTAL AGREEMENT FOR WORK WITHIN SCOPE",
+            "modification_number": "P00004",
+            "description": "REMOVE FROM THE DELIVERY ORDER ATTACHMENT B -SOW ATT C -SLEF, AND ATT E TERM CLAR ADD. REMOVE ATTACHMENT F APPENDIX F FROM ATT B MSPV GEN-Z V1 VISN 20 DELIVERY ADD IN ITS ENTIRETY FROM THE DEL ORDER AND REMOVE ALL GOV POCS FROM DEL ORDER.",
+            "federal_action_obligation": 0.0,
+            "face_value_loan_guarantee": 0.0,
+            "original_loan_subsidy_cost": 0.0
+          },
+          {
+            "id": "CONT_TX_3600_3600_36C10X24N0074_P00005_36C10X23D0032_0",
+            "type": "C",
+            "type_description": "DELIVERY ORDER",
+            "action_date": "2026-03-17",
+            "action_type": "G",
+            "action_type_description": "EXERCISE AN OPTION",
+            "modification_number": "P00005",
+            "description": "EXERCISE OPTION",
+            "federal_action_obligation": 0.0,
+            "face_value_loan_guarantee": 0.0,
+            "original_loan_subsidy_cost": 0.0
+          }
+        ]
+      },
+      "downloadRequest": {
+        "award_id": "CONT_AWD_36C10X24N0074_3600_36C10X23D0032_3600",
+        "file_format": "csv"
+      },
+      "downloadJob": {
+        "file_name": "CONT_36C10X24N0074_2026-09-13_H01M45S56669064.zip",
+        "file_url": "https://files.usaspending.gov/generated_downloads/CONT_36C10X24N0074_2026-09-13_H01M45S56669064.zip",
+        "status_url": "https://api.usaspending.gov/api/v2/download/status?file_name=CONT_36C10X24N0074_2026-09-13_H01M45S56669064.zip"
+      },
+      "downloadStatus": {
+        "status": "finished",
+        "message": null,
+        "file_name": "CONT_36C10X24N0074_2026-09-13_H01M45S56669064.zip",
+        "file_url": "https://files.usaspending.gov/generated_downloads/CONT_36C10X24N0074_2026-09-13_H01M45S56669064.zip",
+        "total_size": 113.901,
+        "total_columns": 505,
+        "total_rows": 6,
+        "seconds_elapsed": "8.098072"
+      },
+      "archiveSha256": "4ed1a7424d78974e1647265ba2d15fe4e178031ff1efe057b0571865d36b6843",
+      "transactionMember": "Contract_36C10X24N0074_TransactionHistory_1.csv",
+      "transactionMemberSha256": "8f0f4debc6aa182eaab848283691b22b078ea3e5fba0d6ee3a4ac3926285793a",
+      "transactionRowCount": 6,
+      "transactionColumnCount": 297,
+      "transactionIds": [
+        "3600_3600_36C10X24N0074_P00005_36C10X23D0032_0",
+        "3600_3600_36C10X24N0074_P00004_36C10X23D0032_0",
+        "3600_3600_36C10X24N0074_0_36C10X23D0032_0",
+        "3600_3600_36C10X24N0074_P00002_36C10X23D0032_0",
+        "3600_3600_36C10X24N0074_P00003_36C10X23D0032_0",
+        "3600_3600_36C10X24N0074_P00001_36C10X23D0032_0"
+      ],
+      "originalCsvRowIncludingHeader": 4,
+      "originalFullRowFingerprint": "88ba1f027d892b959893aae97c6dbe549b629ad3e636868af31366bbca558b92",
+      "originalProjection": {
+        "contract_transaction_unique_key": "3600_3600_36C10X24N0074_0_36C10X23D0032_0",
+        "contract_award_unique_key": "CONT_AWD_36C10X24N0074_3600_36C10X23D0032_3600",
+        "award_id_piid": "36C10X24N0074",
+        "parent_award_id_piid": "36C10X23D0032",
+        "parent_award_agency_id": "3600",
+        "parent_award_modification_number": "0",
+        "modification_number": "0",
+        "action_date": "2024-05-31",
+        "action_date_fiscal_year": "2024",
+        "federal_action_obligation": "10000.00",
+        "recipient_name": "MEDLINE INDUSTRIES, LP",
+        "recipient_uei": "DMPAKJ9N9K66",
+        "awarding_agency_code": "036",
+        "awarding_agency_name": "Department of Veterans Affairs",
+        "awarding_sub_agency_code": "3600",
+        "awarding_sub_agency_name": "Department of Veterans Affairs",
+        "award_type": "DELIVERY ORDER",
+        "transaction_description": "VISN 19 MEDICAL/SURGICAL PRIME VENDOR GENERATION-Z VERSION 1 (MSPV GEN-Z V1) DELIVERY ORDER AWARD TO PROVIDE DISTRIBUTION AND SUPPLY MANAGEMENT FOR VA MEDICAL CENTERS.",
+        "prime_award_base_transaction_description": "VISN 19 MEDICAL/SURGICAL PRIME VENDOR GENERATION-Z VERSION 1 (MSPV GEN-Z V1) DELIVERY ORDER AWARD TO PROVIDE DISTRIBUTION AND SUPPLY MANAGEMENT FOR VA MEDICAL CENTERS.",
+        "solicitation_identifier": "",
+        "solicitation_date": "2023-10-17",
+        "number_of_offers_received": "4",
+        "extent_competed_code": "A",
+        "extent_competed": "FULL AND OPEN COMPETITION",
+        "solicitation_procedures_code": "MAFO",
+        "solicitation_procedures": "SUBJECT TO MULTIPLE AWARD FAIR OPPORTUNITY",
+        "initial_report_date": "2024-05-16 15:43:46+00",
+        "last_modified_date": "2024-05-31 10:49:38+00",
+        "base_and_exercised_options_value": "31124157.73",
+        "current_total_value_of_award": "31124157.73",
+        "base_and_all_options_value": "164568206.07",
+        "potential_total_value_of_award": "164568206.07"
+      },
+      "explicitServiceArea": "VISN 19",
+      "mappingStatus": "original_description_bridge_pending_independent_review",
+      "provisionalServiceArea": "VISN 19"
+    },
+    {
+      "piid": "36C10X24N0088",
+      "awardKey": "CONT_AWD_36C10X24N0088_3600_36C10X23D0032_3600",
+      "historyRequest": {
+        "award_id": "CONT_AWD_36C10X24N0088_3600_36C10X23D0032_3600",
+        "page": 1,
+        "limit": 100,
+        "sort": "action_date",
+        "order": "asc"
+      },
+      "historyRawSha256": "9929786bc8b089b3a29da01b15537617d66911e72d4e020130b97967f90590dc",
+      "historyResponse": {
+        "page_metadata": {
+          "page": 1,
+          "next": null,
+          "previous": null,
+          "hasNext": false,
+          "hasPrevious": false
+        },
+        "results": [
+          {
+            "id": "CONT_TX_3600_3600_36C10X24N0088_0_36C10X23D0032_0",
+            "type": "C",
+            "type_description": "DELIVERY ORDER",
+            "action_date": "2024-05-31",
+            "action_type": null,
+            "action_type_description": null,
+            "modification_number": "0",
+            "description": "MEDICAL/SURGICAL PRIME VENDOR GENERATION-Z VERSION 1 (MSPV GEN-Z V1) IDIQ AWARD TO PROVIDE DISTRIBUTION AND SUPPLY MANAGEMENT FOR VA MEDICAL CENTERS AND OTHER GOVERNMENT AGENCIES.",
+            "federal_action_obligation": 10000.0,
+            "face_value_loan_guarantee": 0.0,
+            "original_loan_subsidy_cost": 0.0
+          },
+          {
+            "id": "CONT_TX_3600_3600_36C10X24N0088_P00001_36C10X23D0032_0",
+            "type": "C",
+            "type_description": "DELIVERY ORDER",
+            "action_date": "2025-01-31",
+            "action_type": "B",
+            "action_type_description": "SUPPLEMENTAL AGREEMENT FOR WORK WITHIN SCOPE",
+            "modification_number": "P00001",
+            "description": "MEDICAL/SURGICAL PRIME VENDOR GENERATION-Z VERSION 1 (MSPV GEN-Z V1) IDIQ AWARD TO PROVIDE DISTRIBUTION AND SUPPLY MANAGEMENT FOR VA MEDICAL CENTERS AND OTHER GOVERNMENT AGENCIES.",
+            "federal_action_obligation": -10000.0,
+            "face_value_loan_guarantee": 0.0,
+            "original_loan_subsidy_cost": 0.0
+          },
+          {
+            "id": "CONT_TX_3600_3600_36C10X24N0088_P00002_36C10X23D0032_0",
+            "type": "C",
+            "type_description": "DELIVERY ORDER",
+            "action_date": "2025-02-06",
+            "action_type": "B",
+            "action_type_description": "SUPPLEMENTAL AGREEMENT FOR WORK WITHIN SCOPE",
+            "modification_number": "P00002",
+            "description": "MEDICAL/SURGICAL PRIME VENDOR GENERATION-Z VERSION 1 (MSPV GEN-Z V1) IDIQ AWARD TO PROVIDE DISTRIBUTION AND SUPPLY MANAGEMENT FOR VA MEDICAL CENTERS AND OTHER GOVERNMENT AGENCIES.",
+            "federal_action_obligation": 0.0,
+            "face_value_loan_guarantee": 0.0,
+            "original_loan_subsidy_cost": 0.0
+          },
+          {
+            "id": "CONT_TX_3600_3600_36C10X24N0088_P00003_36C10X23D0032_0",
+            "type": "C",
+            "type_description": "DELIVERY ORDER",
+            "action_date": "2025-03-03",
+            "action_type": "G",
+            "action_type_description": "EXERCISE AN OPTION",
+            "modification_number": "P00003",
+            "description": "MEDICAL/SURGICAL PRIME VENDOR GENERATION-Z VERSION 1 (MSPV GEN-Z V1) IDIQ AWARD TO PROVIDE DISTRIBUTION AND SUPPLY MANAGEMENT FOR VA MEDICAL CENTERS AND OTHER GOVERNMENT AGENCIES.",
+            "federal_action_obligation": 0.0,
+            "face_value_loan_guarantee": 0.0,
+            "original_loan_subsidy_cost": 0.0
+          },
+          {
+            "id": "CONT_TX_3600_3600_36C10X24N0088_P00004_36C10X23D0032_0",
+            "type": "C",
+            "type_description": "DELIVERY ORDER",
+            "action_date": "2025-03-21",
+            "action_type": "B",
+            "action_type_description": "SUPPLEMENTAL AGREEMENT FOR WORK WITHIN SCOPE",
+            "modification_number": "P00004",
+            "description": "MEDICAL/SURGICAL PRIME VENDOR GENERATION-Z VERSION 1 (MSPV GEN-Z V1) IDIQ AWARD TO PROVIDE DISTRIBUTION AND SUPPLY MANAGEMENT FOR VA MEDICAL CENTERS AND OTHER GOVERNMENT AGENCIES.",
+            "federal_action_obligation": 0.0,
+            "face_value_loan_guarantee": 0.0,
+            "original_loan_subsidy_cost": 0.0
+          },
+          {
+            "id": "CONT_TX_3600_3600_36C10X24N0088_P00005_36C10X23D0032_0",
+            "type": "C",
+            "type_description": "DELIVERY ORDER",
+            "action_date": "2025-06-24",
+            "action_type": "M",
+            "action_type_description": "OTHER ADMINISTRATIVE ACTION",
+            "modification_number": "P00005",
+            "description": "MODIFICATION REQUEST TO MAKE ADMINISTRATIVE CHANGES IN ACCORDANCE WITH (IAW) 52.212-4 (C), CHANGES. REMOVE ATTACHMENT B, C AND E FROM DO TO RETAIN AT IDIQ LEVEL.",
+            "federal_action_obligation": 0.0,
+            "face_value_loan_guarantee": 0.0,
+            "original_loan_subsidy_cost": 0.0
+          },
+          {
+            "id": "CONT_TX_3600_3600_36C10X24N0088_P00006_36C10X23D0032_0",
+            "type": "C",
+            "type_description": "DELIVERY ORDER",
+            "action_date": "2026-03-17",
+            "action_type": "G",
+            "action_type_description": "EXERCISE AN OPTION",
+            "modification_number": "P00006",
+            "description": "EXERCISE OPTION PERIOD TWO",
+            "federal_action_obligation": 0.0,
+            "face_value_loan_guarantee": 0.0,
+            "original_loan_subsidy_cost": 0.0
+          }
+        ]
+      },
+      "downloadRequest": {
+        "award_id": "CONT_AWD_36C10X24N0088_3600_36C10X23D0032_3600",
+        "file_format": "csv"
+      },
+      "downloadJob": {
+        "file_name": "CONT_36C10X24N0088_2026-09-13_H01M46S26961605.zip",
+        "file_url": "https://files.usaspending.gov/generated_downloads/CONT_36C10X24N0088_2026-09-13_H01M46S26961605.zip",
+        "status_url": "https://api.usaspending.gov/api/v2/download/status?file_name=CONT_36C10X24N0088_2026-09-13_H01M46S26961605.zip"
+      },
+      "downloadStatus": {
+        "status": "finished",
+        "message": null,
+        "file_name": "CONT_36C10X24N0088_2026-09-13_H01M46S26961605.zip",
+        "file_url": "https://files.usaspending.gov/generated_downloads/CONT_36C10X24N0088_2026-09-13_H01M46S26961605.zip",
+        "total_size": 113.926,
+        "total_columns": 505,
+        "total_rows": 7,
+        "seconds_elapsed": "7.866648"
+      },
+      "archiveSha256": "c64c678214449b8188f55c6369c169b26d8c9e89118dff60b9c37d18e702d580",
+      "transactionMember": "Contract_36C10X24N0088_TransactionHistory_1.csv",
+      "transactionMemberSha256": "2c0ef02605aa17f4091ad07fcceefb2404802c764cf58a3d2660d5a6015c267e",
+      "transactionRowCount": 7,
+      "transactionColumnCount": 297,
+      "transactionIds": [
+        "3600_3600_36C10X24N0088_P00005_36C10X23D0032_0",
+        "3600_3600_36C10X24N0088_P00004_36C10X23D0032_0",
+        "3600_3600_36C10X24N0088_0_36C10X23D0032_0",
+        "3600_3600_36C10X24N0088_P00002_36C10X23D0032_0",
+        "3600_3600_36C10X24N0088_P00001_36C10X23D0032_0",
+        "3600_3600_36C10X24N0088_P00006_36C10X23D0032_0",
+        "3600_3600_36C10X24N0088_P00003_36C10X23D0032_0"
+      ],
+      "originalCsvRowIncludingHeader": 4,
+      "originalFullRowFingerprint": "e305f0290465a9129b28ee7f9d2ca5c1abe21d310d65555928b2ec32d6050455",
+      "originalProjection": {
+        "contract_transaction_unique_key": "3600_3600_36C10X24N0088_0_36C10X23D0032_0",
+        "contract_award_unique_key": "CONT_AWD_36C10X24N0088_3600_36C10X23D0032_3600",
+        "award_id_piid": "36C10X24N0088",
+        "parent_award_id_piid": "36C10X23D0032",
+        "parent_award_agency_id": "3600",
+        "parent_award_modification_number": "0",
+        "modification_number": "0",
+        "action_date": "2024-05-31",
+        "action_date_fiscal_year": "2024",
+        "federal_action_obligation": "10000.00",
+        "recipient_name": "MEDLINE INDUSTRIES, LP",
+        "recipient_uei": "DMPAKJ9N9K66",
+        "awarding_agency_code": "036",
+        "awarding_agency_name": "Department of Veterans Affairs",
+        "awarding_sub_agency_code": "3600",
+        "awarding_sub_agency_name": "Department of Veterans Affairs",
+        "award_type": "DELIVERY ORDER",
+        "transaction_description": "MEDICAL/SURGICAL PRIME VENDOR GENERATION-Z VERSION 1 (MSPV GEN-Z V1) IDIQ AWARD TO PROVIDE DISTRIBUTION AND SUPPLY MANAGEMENT FOR VA MEDICAL CENTERS AND OTHER GOVERNMENT AGENCIES.",
+        "prime_award_base_transaction_description": "MEDICAL/SURGICAL PRIME VENDOR GENERATION-Z VERSION 1 (MSPV GEN-Z V1) IDIQ AWARD TO PROVIDE DISTRIBUTION AND SUPPLY MANAGEMENT FOR VA MEDICAL CENTERS AND OTHER GOVERNMENT AGENCIES.",
+        "solicitation_identifier": "",
+        "solicitation_date": "2023-10-17",
+        "number_of_offers_received": "2",
+        "extent_competed_code": "A",
+        "extent_competed": "FULL AND OPEN COMPETITION",
+        "solicitation_procedures_code": "MAFO",
+        "solicitation_procedures": "SUBJECT TO MULTIPLE AWARD FAIR OPPORTUNITY",
+        "initial_report_date": "2024-05-29 07:29:58+00",
+        "last_modified_date": "2024-05-31 11:37:13+00",
+        "base_and_exercised_options_value": "28326691.52",
+        "current_total_value_of_award": "28326691.52",
+        "base_and_all_options_value": "149284426.64",
+        "potential_total_value_of_award": "149284426.64"
+      },
+      "explicitServiceArea": "",
+      "mappingStatus": "rounded_value_candidate_not_verified_identity",
+      "provisionalServiceArea": "OGA"
+    },
+    {
+      "piid": "36C10X24N0089",
+      "awardKey": "CONT_AWD_36C10X24N0089_3600_36C10X23D0032_3600",
+      "historyRequest": {
+        "award_id": "CONT_AWD_36C10X24N0089_3600_36C10X23D0032_3600",
+        "page": 1,
+        "limit": 100,
+        "sort": "action_date",
+        "order": "asc"
+      },
+      "historyRawSha256": "3aa6f22b557159f1bdba6eb7aee12d76d449f33b738b2991b3ed32bf69409024",
+      "historyResponse": {
+        "page_metadata": {
+          "page": 1,
+          "next": null,
+          "previous": null,
+          "hasNext": false,
+          "hasPrevious": false
+        },
+        "results": [
+          {
+            "id": "CONT_TX_3600_3600_36C10X24N0089_0_36C10X23D0032_0",
+            "type": "C",
+            "type_description": "DELIVERY ORDER",
+            "action_date": "2024-05-31",
+            "action_type": null,
+            "action_type_description": null,
+            "modification_number": "0",
+            "description": "MEDICAL/SURGICAL PRIME VENDOR GENERATION-Z VERSION 1 (MSPV GEN-Z V1) IDIQ AWARD TO PROVIDE DISTRIBUTION AND SUPPLY MANAGEMENT FOR VA MEDICAL CENTERS.",
+            "federal_action_obligation": 10000.0,
+            "face_value_loan_guarantee": 0.0,
+            "original_loan_subsidy_cost": 0.0
+          },
+          {
+            "id": "CONT_TX_3600_3600_36C10X24N0089_P00001_36C10X23D0032_0",
+            "type": "C",
+            "type_description": "DELIVERY ORDER",
+            "action_date": "2025-01-16",
+            "action_type": "B",
+            "action_type_description": "SUPPLEMENTAL AGREEMENT FOR WORK WITHIN SCOPE",
+            "modification_number": "P00001",
+            "description": "MODIFICATION TO DE-OB GUARANTEED FUNDS, CHANGE CO, CS, AND COR, ADD LANGUAGE TO SLA, AND UPDATE ADDRESS FOR A DELIVERY LOCATION.",
+            "federal_action_obligation": -10000.0,
+            "face_value_loan_guarantee": 0.0,
+            "original_loan_subsidy_cost": 0.0
+          },
+          {
+            "id": "CONT_TX_3600_3600_36C10X24N0089_P00002_36C10X23D0032_0",
+            "type": "C",
+            "type_description": "DELIVERY ORDER",
+            "action_date": "2025-01-29",
+            "action_type": "B",
+            "action_type_description": "SUPPLEMENTAL AGREEMENT FOR WORK WITHIN SCOPE",
+            "modification_number": "P00002",
+            "description": "MODIFICATION TO ADD FOUR DELIVERY LOCATIONS.",
+            "federal_action_obligation": 0.0,
+            "face_value_loan_guarantee": 0.0,
+            "original_loan_subsidy_cost": 0.0
+          },
+          {
+            "id": "CONT_TX_3600_3600_36C10X24N0089_P00003_36C10X23D0032_0",
+            "type": "C",
+            "type_description": "DELIVERY ORDER",
+            "action_date": "2025-03-05",
+            "action_type": "G",
+            "action_type_description": "EXERCISE AN OPTION",
+            "modification_number": "P00003",
+            "description": "MODIFICATION TO EXERCISE OPTION PERIOD ONE.",
+            "federal_action_obligation": 0.0,
+            "face_value_loan_guarantee": 0.0,
+            "original_loan_subsidy_cost": 0.0
+          },
+          {
+            "id": "CONT_TX_3600_3600_36C10X24N0089_P00004_36C10X23D0032_0",
+            "type": "C",
+            "type_description": "DELIVERY ORDER",
+            "action_date": "2025-04-07",
+            "action_type": "B",
+            "action_type_description": "SUPPLEMENTAL AGREEMENT FOR WORK WITHIN SCOPE",
+            "modification_number": "P00004",
+            "description": "MODIFICATION TO REMOVE DELIVERY LOCATIONS FROM THE DELIVERY ORDER AND UPDATE GOVERNMENT POINT OF CONTACT INFORMATION.",
+            "federal_action_obligation": 0.0,
+            "face_value_loan_guarantee": 0.0,
+            "original_loan_subsidy_cost": 0.0
+          },
+          {
+            "id": "CONT_TX_3600_3600_36C10X24N0089_P00005_36C10X23D0032_0",
+            "type": "C",
+            "type_description": "DELIVERY ORDER",
+            "action_date": "2025-06-24",
+            "action_type": "M",
+            "action_type_description": "OTHER ADMINISTRATIVE ACTION",
+            "modification_number": "P00005",
+            "description": "MODIFICATION REQUEST TO MAKE ADMINISTRATIVE CHANGES IN ACCORDANCE WITH (IAW) 52.212-4 (C), CHANGES. REMOVE ATTACHMENT B, C AND E FROM DO TO RETAIN AT IDIQ LEVEL.",
+            "federal_action_obligation": 0.0,
+            "face_value_loan_guarantee": 0.0,
+            "original_loan_subsidy_cost": 0.0
+          },
+          {
+            "id": "CONT_TX_3600_3600_36C10X24N0089_P00006_36C10X23D0032_0",
+            "type": "C",
+            "type_description": "DELIVERY ORDER",
+            "action_date": "2026-04-09",
+            "action_type": "M",
+            "action_type_description": "OTHER ADMINISTRATIVE ACTION",
+            "modification_number": "P00006",
+            "description": "MODIFICATION REQUEST TO EXERCISE OPTION YEAR 2 MSPV VISN 8",
+            "federal_action_obligation": 0.0,
+            "face_value_loan_guarantee": 0.0,
+            "original_loan_subsidy_cost": 0.0
+          }
+        ]
+      },
+      "downloadRequest": {
+        "award_id": "CONT_AWD_36C10X24N0089_3600_36C10X23D0032_3600",
+        "file_format": "csv"
+      },
+      "downloadJob": {
+        "file_name": "CONT_36C10X24N0089_2026-09-13_H01M46S27001131.zip",
+        "file_url": "https://files.usaspending.gov/generated_downloads/CONT_36C10X24N0089_2026-09-13_H01M46S27001131.zip",
+        "status_url": "https://api.usaspending.gov/api/v2/download/status?file_name=CONT_36C10X24N0089_2026-09-13_H01M46S27001131.zip"
+      },
+      "downloadStatus": {
+        "status": "finished",
+        "message": null,
+        "file_name": "CONT_36C10X24N0089_2026-09-13_H01M46S27001131.zip",
+        "file_url": "https://files.usaspending.gov/generated_downloads/CONT_36C10X24N0089_2026-09-13_H01M46S27001131.zip",
+        "total_size": 114.04,
+        "total_columns": 505,
+        "total_rows": 7,
+        "seconds_elapsed": "8.262125"
+      },
+      "archiveSha256": "7124b2b8583009cad6c5477413dbdca5fbfcb36e30cc7260b5f895233f514d4a",
+      "transactionMember": "Contract_36C10X24N0089_TransactionHistory_1.csv",
+      "transactionMemberSha256": "3d37f2dfd977e3d700a6d23a6405992ae411dc8e49b91aa446d2871508c62be7",
+      "transactionRowCount": 7,
+      "transactionColumnCount": 297,
+      "transactionIds": [
+        "3600_3600_36C10X24N0089_P00001_36C10X23D0032_0",
+        "3600_3600_36C10X24N0089_P00005_36C10X23D0032_0",
+        "3600_3600_36C10X24N0089_P00006_36C10X23D0032_0",
+        "3600_3600_36C10X24N0089_0_36C10X23D0032_0",
+        "3600_3600_36C10X24N0089_P00003_36C10X23D0032_0",
+        "3600_3600_36C10X24N0089_P00004_36C10X23D0032_0",
+        "3600_3600_36C10X24N0089_P00002_36C10X23D0032_0"
+      ],
+      "originalCsvRowIncludingHeader": 5,
+      "originalFullRowFingerprint": "6de323b3d7360846263a6d8c2520506b5e61bd2fb78382f8b822b3934f910382",
+      "originalProjection": {
+        "contract_transaction_unique_key": "3600_3600_36C10X24N0089_0_36C10X23D0032_0",
+        "contract_award_unique_key": "CONT_AWD_36C10X24N0089_3600_36C10X23D0032_3600",
+        "award_id_piid": "36C10X24N0089",
+        "parent_award_id_piid": "36C10X23D0032",
+        "parent_award_agency_id": "3600",
+        "parent_award_modification_number": "0",
+        "modification_number": "0",
+        "action_date": "2024-05-31",
+        "action_date_fiscal_year": "2024",
+        "federal_action_obligation": "10000.00",
+        "recipient_name": "MEDLINE INDUSTRIES, LP",
+        "recipient_uei": "DMPAKJ9N9K66",
+        "awarding_agency_code": "036",
+        "awarding_agency_name": "Department of Veterans Affairs",
+        "awarding_sub_agency_code": "3600",
+        "awarding_sub_agency_name": "Department of Veterans Affairs",
+        "award_type": "DELIVERY ORDER",
+        "transaction_description": "MEDICAL/SURGICAL PRIME VENDOR GENERATION-Z VERSION 1 (MSPV GEN-Z V1) IDIQ AWARD TO PROVIDE DISTRIBUTION AND SUPPLY MANAGEMENT FOR VA MEDICAL CENTERS.",
+        "prime_award_base_transaction_description": "MEDICAL/SURGICAL PRIME VENDOR GENERATION-Z VERSION 1 (MSPV GEN-Z V1) IDIQ AWARD TO PROVIDE DISTRIBUTION AND SUPPLY MANAGEMENT FOR VA MEDICAL CENTERS.",
+        "solicitation_identifier": "",
+        "solicitation_date": "2023-10-17",
+        "number_of_offers_received": "4",
+        "extent_competed_code": "A",
+        "extent_competed": "FULL AND OPEN COMPETITION",
+        "solicitation_procedures_code": "MAFO",
+        "solicitation_procedures": "SUBJECT TO MULTIPLE AWARD FAIR OPPORTUNITY",
+        "initial_report_date": "2024-05-31 09:32:22+00",
+        "last_modified_date": "2024-05-31 09:40:23+00",
+        "base_and_exercised_options_value": "70737395.50",
+        "current_total_value_of_award": "70737395.50",
+        "base_and_all_options_value": "373078665.37",
+        "potential_total_value_of_award": "373078665.37"
+      },
+      "explicitServiceArea": "",
+      "mappingStatus": "rounded_value_candidate_not_verified_identity",
+      "provisionalServiceArea": "VISN 8"
+    },
+    {
+      "piid": "36C10X24N0108",
+      "awardKey": "CONT_AWD_36C10X24N0108_3600_36C10X23D0032_3600",
+      "historyRequest": {
+        "award_id": "CONT_AWD_36C10X24N0108_3600_36C10X23D0032_3600",
+        "page": 1,
+        "limit": 100,
+        "sort": "action_date",
+        "order": "asc"
+      },
+      "historyRawSha256": "340c172afbb3877de598e4680325d86824f2c26cefbd772469878f60ed8a7041",
+      "historyResponse": {
+        "page_metadata": {
+          "page": 1,
+          "next": null,
+          "previous": null,
+          "hasNext": false,
+          "hasPrevious": false
+        },
+        "results": [
+          {
+            "id": "CONT_TX_3600_3600_36C10X24N0108_0_36C10X23D0032_0",
+            "type": "C",
+            "type_description": "DELIVERY ORDER",
+            "action_date": "2024-05-31",
+            "action_type": null,
+            "action_type_description": null,
+            "modification_number": "0",
+            "description": "MEDICAL/SURGICAL PRIME VENDOR GENERATION-Z VERSION 1 (MSPV GEN-Z V1) IDIQ AWARD TO PROVIDE DISTRIBUTION AND SUPPLY MANAGEMENT FOR VA MEDICAL CENTERS FOR VISN 22.",
+            "federal_action_obligation": 10000.0,
+            "face_value_loan_guarantee": 0.0,
+            "original_loan_subsidy_cost": 0.0
+          },
+          {
+            "id": "CONT_TX_3600_3600_36C10X24N0108_P00001_36C10X23D0032_0",
+            "type": "C",
+            "type_description": "DELIVERY ORDER",
+            "action_date": "2025-01-22",
+            "action_type": "B",
+            "action_type_description": "SUPPLEMENTAL AGREEMENT FOR WORK WITHIN SCOPE",
+            "modification_number": "P00001",
+            "description": "MEDICAL/SURGICAL PRIME VENDOR GENERATION-Z VERSION 1 (MSPV GEN-Z V1) IDIQ AWARD TO PROVIDE DISTRIBUTION AND SUPPLY MANAGEMENT FOR VA MEDICAL CENTERS FOR VISN 22.",
+            "federal_action_obligation": -10000.0,
+            "face_value_loan_guarantee": 0.0,
+            "original_loan_subsidy_cost": 0.0
+          },
+          {
+            "id": "CONT_TX_3600_3600_36C10X24N0108_P00002_36C10X23D0032_0",
+            "type": "C",
+            "type_description": "DELIVERY ORDER",
+            "action_date": "2025-03-03",
+            "action_type": "G",
+            "action_type_description": "EXERCISE AN OPTION",
+            "modification_number": "P00002",
+            "description": "MEDICAL/SURGICAL PRIME VENDOR GENERATION-Z VERSION 1 (MSPV GEN-Z V1) IDIQ AWARD TO PROVIDE DISTRIBUTION AND SUPPLY MANAGEMENT FOR VA MEDICAL CENTERS FOR VISN 22.",
+            "federal_action_obligation": 0.0,
+            "face_value_loan_guarantee": 0.0,
+            "original_loan_subsidy_cost": 0.0
+          },
+          {
+            "id": "CONT_TX_3600_3600_36C10X24N0108_P00003_36C10X23D0032_0",
+            "type": "C",
+            "type_description": "DELIVERY ORDER",
+            "action_date": "2025-03-21",
+            "action_type": "B",
+            "action_type_description": "SUPPLEMENTAL AGREEMENT FOR WORK WITHIN SCOPE",
+            "modification_number": "P00003",
+            "description": "MEDICAL/SURGICAL PRIME VENDOR GENERATION-Z VERSION 1 (MSPV GEN-Z V1) IDIQ AWARD TO PROVIDE DISTRIBUTION AND SUPPLY MANAGEMENT FOR VA MEDICAL CENTERS FOR VISN 22.",
+            "federal_action_obligation": 0.0,
+            "face_value_loan_guarantee": 0.0,
+            "original_loan_subsidy_cost": 0.0
+          },
+          {
+            "id": "CONT_TX_3600_3600_36C10X24N0108_P00004_36C10X23D0032_0",
+            "type": "C",
+            "type_description": "DELIVERY ORDER",
+            "action_date": "2025-06-24",
+            "action_type": "M",
+            "action_type_description": "OTHER ADMINISTRATIVE ACTION",
+            "modification_number": "P00004",
+            "description": "MEDICAL/SURGICAL PRIME VENDOR GENERATION-Z VERSION 1 (MSPV GEN-Z V1) IDIQ AWARD TO PROVIDE DISTRIBUTION AND SUPPLY MANAGEMENT FOR VA MEDICAL CENTERS FOR VISN 22.",
+            "federal_action_obligation": 0.0,
+            "face_value_loan_guarantee": 0.0,
+            "original_loan_subsidy_cost": 0.0
+          },
+          {
+            "id": "CONT_TX_3600_3600_36C10X24N0108_P00005_36C10X23D0032_0",
+            "type": "C",
+            "type_description": "DELIVERY ORDER",
+            "action_date": "2026-03-17",
+            "action_type": "G",
+            "action_type_description": "EXERCISE AN OPTION",
+            "modification_number": "P00005",
+            "description": "EXERCISE OPTION.",
+            "federal_action_obligation": 0.0,
+            "face_value_loan_guarantee": 0.0,
+            "original_loan_subsidy_cost": 0.0
+          }
+        ]
+      },
+      "downloadRequest": {
+        "award_id": "CONT_AWD_36C10X24N0108_3600_36C10X23D0032_3600",
+        "file_format": "csv"
+      },
+      "downloadJob": {
+        "file_name": "CONT_36C10X24N0108_2026-09-13_H01M46S27001024.zip",
+        "file_url": "https://files.usaspending.gov/generated_downloads/CONT_36C10X24N0108_2026-09-13_H01M46S27001024.zip",
+        "status_url": "https://api.usaspending.gov/api/v2/download/status?file_name=CONT_36C10X24N0108_2026-09-13_H01M46S27001024.zip"
+      },
+      "downloadStatus": {
+        "status": "finished",
+        "message": null,
+        "file_name": "CONT_36C10X24N0108_2026-09-13_H01M46S27001024.zip",
+        "file_url": "https://files.usaspending.gov/generated_downloads/CONT_36C10X24N0108_2026-09-13_H01M46S27001024.zip",
+        "total_size": 113.728,
+        "total_columns": 505,
+        "total_rows": 6,
+        "seconds_elapsed": "8.346926"
+      },
+      "archiveSha256": "612c3ab5403acbce5f761c3761422de9ccbc40de0f070f409f3351463e236d52",
+      "transactionMember": "Contract_36C10X24N0108_TransactionHistory_1.csv",
+      "transactionMemberSha256": "736dc1bd867b4331e6e7e06c63fc77ef9f2ea41fda57e92ed3be9da0238aae25",
+      "transactionRowCount": 6,
+      "transactionColumnCount": 297,
+      "transactionIds": [
+        "3600_3600_36C10X24N0108_P00003_36C10X23D0032_0",
+        "3600_3600_36C10X24N0108_P00005_36C10X23D0032_0",
+        "3600_3600_36C10X24N0108_P00004_36C10X23D0032_0",
+        "3600_3600_36C10X24N0108_P00002_36C10X23D0032_0",
+        "3600_3600_36C10X24N0108_P00001_36C10X23D0032_0",
+        "3600_3600_36C10X24N0108_0_36C10X23D0032_0"
+      ],
+      "originalCsvRowIncludingHeader": 7,
+      "originalFullRowFingerprint": "e2e9bf49a39b17cd470080440fc9d60f63d5951264b66804cdbe68d191679d8d",
+      "originalProjection": {
+        "contract_transaction_unique_key": "3600_3600_36C10X24N0108_0_36C10X23D0032_0",
+        "contract_award_unique_key": "CONT_AWD_36C10X24N0108_3600_36C10X23D0032_3600",
+        "award_id_piid": "36C10X24N0108",
+        "parent_award_id_piid": "36C10X23D0032",
+        "parent_award_agency_id": "3600",
+        "parent_award_modification_number": "0",
+        "modification_number": "0",
+        "action_date": "2024-05-31",
+        "action_date_fiscal_year": "2024",
+        "federal_action_obligation": "10000.00",
+        "recipient_name": "MEDLINE INDUSTRIES, LP",
+        "recipient_uei": "DMPAKJ9N9K66",
+        "awarding_agency_code": "036",
+        "awarding_agency_name": "Department of Veterans Affairs",
+        "awarding_sub_agency_code": "3600",
+        "awarding_sub_agency_name": "Department of Veterans Affairs",
+        "award_type": "DELIVERY ORDER",
+        "transaction_description": "MEDICAL/SURGICAL PRIME VENDOR GENERATION-Z VERSION 1 (MSPV GEN-Z V1) IDIQ AWARD TO PROVIDE DISTRIBUTION AND SUPPLY MANAGEMENT FOR VA MEDICAL CENTERS FOR VISN 22.",
+        "prime_award_base_transaction_description": "MEDICAL/SURGICAL PRIME VENDOR GENERATION-Z VERSION 1 (MSPV GEN-Z V1) IDIQ AWARD TO PROVIDE DISTRIBUTION AND SUPPLY MANAGEMENT FOR VA MEDICAL CENTERS FOR VISN 22.",
+        "solicitation_identifier": "",
+        "solicitation_date": "2023-10-17",
+        "number_of_offers_received": "4",
+        "extent_competed_code": "A",
+        "extent_competed": "FULL AND OPEN COMPETITION",
+        "solicitation_procedures_code": "MAFO",
+        "solicitation_procedures": "SUBJECT TO MULTIPLE AWARD FAIR OPPORTUNITY",
+        "initial_report_date": "2024-05-30 17:20:45+00",
+        "last_modified_date": "2024-05-31 11:17:11+00",
+        "base_and_exercised_options_value": "64384786.35",
+        "current_total_value_of_award": "64384786.35",
+        "base_and_all_options_value": "340131789.10",
+        "potential_total_value_of_award": "340131789.10"
+      },
+      "explicitServiceArea": "VISN 22",
+      "mappingStatus": "original_description_bridge_pending_independent_review",
+      "provisionalServiceArea": "VISN 22"
+    }
+  ],
+  "linkageRule": "Prefer explicit original-description VISN labels. For the two other already-listed awards, retain an amount-based service-area candidate only when the original potential total value rounded to whole dollars uniquely matches a reported decision order value within this four-award frame. This is not verified solicitation identity or a general fuzzy join. The VISN 22 difference is compared only after its explicit description link; never adjust amounts or use a generic tolerance. Preserve reported offers versus timely-proposal differences without forcing equivalence.",
+  "baselineUnchanged": true,
+  "awardSpecificDatesPromoted": false,
+  "historicalExclusionsPromoted": false,
+  "causalEffect": "not_identified",
+  "reviewFingerprint": "69b8976a86e39a4a44073ea3013e9a2a1dbf74304dc4fbb227994991036fea8d",
+  "decisionValueReview": {
+    "sourceUrl": "https://www.gao.gov/products/b-422689,b-422689.2,b-422689.3,b-422689.4,b-422690,b-422690.2,b-422690.3,b-422690.4,b-422692,b-422692.2,b-422693,b-422693.2,b-422693.3",
+    "reviewDate": "2026-09-13",
+    "sourceLocation": "Public decision, Background paragraph beginning The agency received five timely proposals; Jurisdiction paragraph beginning Because of the structure / subsequent paragraph beginning We further note that the DOPRs advised; footnotes 2-6, 10 and 15.",
+    "reviewMethod": "Reopened the ordinary public GAO decision in the browser and read the displayed paragraphs and footnotes. No underlying protected agency report, individual bid or original HTML archive was obtained.",
+    "sourceRounding": "Footnote 10 states that all evaluated or awarded prices in the decision are rounded to the nearest dollar.",
+    "reportedTotalOrderValuesDollars": {
+      "VISN 8": 373078665,
+      "VISN 19": 164568206,
+      "VISN 22": 340131889,
+      "OGA": 149284427
+    },
+    "reportedTimelyProposals": {
+      "VISN 8": 5,
+      "VISN 19": 4,
+      "VISN 22": 4,
+      "OGA": 2
+    },
+    "reportedFpdsDifference": {
+      "serviceArea": "VISN 22",
+      "fpdsMinusDecisionDollars": -100,
+      "sourceFootnote": 15
+    },
+    "independentReviewStatus": "pending"
+  }
+}
