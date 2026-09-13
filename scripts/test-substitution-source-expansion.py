@@ -46,13 +46,16 @@ class LDAFamilyReviewTests(unittest.TestCase):
                         groupsWithPostingTies=3, groupsWithLatestMissingEarlierAmount=2,
                         groupsWithNoActivityNonzero=1, singletonAmendmentGroups=1,
                         apgaQueriedApiFilings=2, nvgQueryReturnedFilings=14, identityApiFilingsChecked=2,
-                        reviewedDistinctImages=22, apgaReviewedDistinctImages=5, energyAgencyMismatches=2,
-                        sourceReviewedGroups=6, initialIdentityReviewedCovers=2, initialDifferentClientCovers=1,
+                        reviewedDistinctImages=36, apgaReviewedDistinctImages=5, energyAgencyMismatches=2,
+                        sourceReviewedGroups=7, initialIdentityReviewedCovers=2, initialDifferentClientCovers=1,
                         initialRegistrationSuffixDiscrepancies=1, initialUnlabelledAmendedCovers=1,
                         nvgHistoryReviewedFilings=21, nvgHistoryPdfCovers=17, nvgHistoryHtmlForms=4,
                         nvgDifferentClientFilings=6, nvgDifferentClientActivityFilings=5,
                         nvgMixedClientCandidateGroups=5, nvgSourceYearDisagreements=2,
                         nvgSourceSenateIdDisagreements=6, nvgSourceSenateIdBlank=5,
+                        expenseFamiliesResolved=1, aajReviewedDistinctImages=14,
+                        aajOriginalApiActivityRows=7, aajAmendmentApiActivityRows=0,
+                        aajOriginalContactDiscrepancies=2, independentlyReviewedExpenseFamilies=0,
                         finalVersionsSelected=0)
         for key, value in expected.items():
             self.assertEqual(result[key], value, key)
@@ -69,6 +72,89 @@ class LDAFamilyReviewTests(unittest.TestCase):
             self.check(refresh=False)
         self.metadata[0]["incomeDollars"] = "0.00"
         with self.assertRaisesRegex(ValueError, "Stale filing"):
+            self.check()
+
+    def test_expense_resolution_is_one_observation_with_a_source_bound_letter(self):
+        before = deepcopy((self.metadata, self.source))
+        rows, counts = FAMILIES.expense_adjudications(self.metadata, self.source["aajExpenseReview"])
+        self.assertEqual(rows, AUDIT.read("substitution-lda-expense-adjudications.csv"))
+        self.assertEqual(len(rows), 1)
+        self.assertEqual(rows[0]["expensesDollars"], "4020000.00")
+        self.assertEqual(rows[0]["expensesMethod"], "A")
+        self.assertEqual(rows[0]["actorPeriodAggregationCleared"], "false")
+        self.assertEqual(counts["aajOriginalContactDiscrepancies"], 2)
+        self.assertEqual((self.metadata, self.source), before)
+
+    def test_expense_resolution_cannot_sum_versions_or_promote_whole_filing(self):
+        original = deepcopy(self.source)
+        changes = (("expensesDollars", "8040000.00"), ("economicObservations", 2),
+                   ("selectedFinalFilingUuid", "d72204ef-692a-4b5f-a757-b480ccd9c646"),
+                   ("actorPeriodAggregationCleared", True), ("controlAssignmentCleared", True),
+                   ("rawMetadataUnchanged", False), ("causalEffect", "identified"))
+        for field, value in changes:
+            self.source = deepcopy(original)
+            self.source["aajExpenseReview"]["expenseResolution"][field] = value
+            with self.subTest(field=field), self.assertRaisesRegex(ValueError, "promotion"):
+                self.check()
+
+    def test_expense_resolution_cannot_use_equal_amounts_without_the_letter(self):
+        self.source["aajExpenseReview"]["amendmentExplanation"]["expenseUnchangedQuote"] = ""
+        with self.assertRaisesRegex(ValueError, "explicit amendment letter"):
+            self.check()
+
+    def test_expense_query_cannot_omit_an_amendment_or_hide_more_results(self):
+        original = deepcopy(self.source)
+        for field, value in (("next", "https://lda.gov/api/v1/filings/?page=2"), ("count", 1),
+                             ("records", self.source["aajExpenseReview"]["query"]["records"][:1])):
+            self.source = deepcopy(original)
+            self.source["aajExpenseReview"]["query"][field] = value
+            with self.subTest(field=field), self.assertRaisesRegex(ValueError, "pagination"):
+                self.check()
+
+    def test_expense_cover_identity_method_and_empty_activity_are_not_inferred(self):
+        original = deepcopy(self.source)
+        for field, value in (("senateId", "76833-330"), ("expensesMethod", "C"),
+                             ("amendmentBoxChecked", False), ("noActivityBoxChecked", True),
+                             ("receiptDate", "2005-08-11"), ("receiptTimezone", "America/New_York")):
+            self.source = deepcopy(original)
+            self.source["aajExpenseReview"]["covers"][1][field] = value
+            with self.subTest(field=field), self.assertRaisesRegex(ValueError, "cover"):
+                self.check()
+
+    def test_expense_replacement_page_must_match_the_original_page(self):
+        self.source["aajExpenseReview"]["amendmentExplanation"]["originalPageImageId"] = "aaj-original-9"
+        with self.assertRaisesRegex(ValueError, "replacement page"):
+            self.check()
+
+    def test_expense_document_cannot_hide_pages_or_count_duplicate_images(self):
+        original = deepcopy(self.source)
+        for operation in ("drop", "duplicate"):
+            self.source = deepcopy(original)
+            images = self.source["aajExpenseReview"]["documents"][0]["images"]
+            if operation == "drop":
+                images.pop()
+            else:
+                images[1] = deepcopy(images[0])
+            with self.subTest(operation=operation), self.assertRaisesRegex(ValueError, "coverage|alignment"):
+                self.check()
+
+    def test_expense_review_does_not_repair_empty_amendment_api_activities(self):
+        records = self.source["aajExpenseReview"]["query"]["records"]
+        original = next(r for r in records if r["filing_type"] == "MM")
+        amendment = next(r for r in records if r["filing_type"] == "MA")
+        amendment["activities"] = deepcopy(original["activities"])
+        with self.assertRaisesRegex(ValueError, "API activity coverage"):
+            self.check()
+
+    def test_expense_review_preserves_house_only_source_contact_discrepancy(self):
+        images = self.source["aajExpenseReview"]["documents"][0]["images"]
+        next(r for r in images if r["issueCode"] == "INS")["governmentEntities"].append("SENATE")
+        with self.assertRaisesRegex(ValueError, "contact discrepancies"):
+            self.check()
+
+    def test_expense_review_does_not_fill_missing_api_accounting_method(self):
+        self.source["aajExpenseReview"]["query"]["records"][0]["expenses_method"] = "A"
+        with self.assertRaisesRegex(ValueError, "projection"):
             self.check()
 
     def test_duplicate_metadata_and_missing_catalog_code_fail(self):

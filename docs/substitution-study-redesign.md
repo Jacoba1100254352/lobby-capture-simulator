@@ -123,8 +123,9 @@ exclusive classes or verified source errors. Different decimal representations
 of the same numeric amount are not counted as different amounts. Income and
 expenses remain separate measures. A no-activity label is not a rule for setting
 income to zero, and neither the latest posting nor an amount match selects a
-final version. The other 20 multi-record groups remain unreviewed at source-page
-level by this new family product.
+final version. The source reviews below now reach seven candidate groups;
+fifteen remain unreviewed at source-page level. Reviewed groups are not thereby
+certified as complete historical version families.
 
 The separately selected APGA 2003H1 group has a terminal [official API query](https://lda.gov/api/v1/filings/?registrant_id=74077&filing_year=2003&filing_period=mid_year&page_size=100)
 with two unique records and no next page. Both reproduce every frozen metadata
@@ -252,6 +253,68 @@ selected. The high-risk gaps are historical packet/field inheritance and API
 field fidelity, with independent review still pending. Reproduce the queue with
 `python3 scripts/review-substitution-lda-families.py`; the companion notebook
 checks its full membership, source fingerprints, flags and no-promotion boundary.
+
+### AAJ 2005H1: an explicit, expense-only amendment resolution
+
+The September 13 UTC review selected the unreviewed pre-reform self-expense pair
+for registration `4733-12`, 2005 midyear, before reading its source outcome.
+The [original filing](https://lda.gov/filings/public/filing/e8171441-7e83-4c9e-b896-51e57a851cc7/print/)
+has 22 PDF pages containing eleven distinct scans, each repeated twice. The
+[amendment](https://lda.gov/filings/public/filing/d72204ef-692a-4b5f-a757-b480ccd9c646/print/)
+has six pages containing three distinct scans, likewise repeated. All fourteen
+distinct images were visually reviewed. A terminal [public API query](https://lda.gov/api/v1/filings/?registrant_id=4733&filing_year=2005&filing_period=mid_year&page_size=100)
+returned exactly these two records and matched their frozen metadata. This query
+does not establish complete historical aliases or every possible version.
+
+Both covers name Association of Trial Lawyers of America as registrant and
+self-client, with Senate ID `4733-12` and House ID `31241000`. Each reports
+$4,020,000 of expenses using Method A for January-June 2005. Only the amended
+cover checks the amendment box; neither checks No Lobbying Activity or
+termination. API expenses match both covers, but API accounting methods remain
+null. The review does not fill those nulls or change the raw metadata.
+
+The amendment includes a letter dated August 11, 2005, explaining an omitted TOR
+item and explicitly retaining the expense amount:
+
+> the item was included in factoring our expenses shown on page one, so that amount is unchanged.
+
+The letter is on amendment PDF pages 5-6, scan `00000372198`. The replacement
+printed page 10, amendment PDF pages 3-4, retains the earlier items and adds
+H.AMDT 28 to H.R. 3 concerning rental-car-owner vicarious liability. Its original
+counterpart is printed page 10 on original PDF pages 19-20, not the preceding
+TOR activity page. The original receipt stamp is August 11 at 1:53 PM; the
+amended cover and letter are stamped August 15 at 4:20 PM, with timezone
+unstated. Letter dates, receipt stamps and API posting timestamps remain
+distinct evidence fields.
+
+The generated `substitution-lda-expense-adjudications.csv` therefore records
+**one reported $4,020,000 Method A expense observation for this pair**, supported
+by matching covers and the explicit letter. Adding versions would incorrectly
+produce $8,040,000. This is neither independently audited expenditure nor an
+instruction to split the amount into quarters, add retained-firm income, or
+replace the entire eleven-image original with the three-image amendment.
+
+The activity evidence remains a separate, high-risk measurement issue:
+
+| Source field | Downloaded source | API projection | Analytical risk |
+| --- | --- | --- | --- |
+| Amendment TOR addendum | Revised printed page 10 is present | Zero activity rows | Empty API activities cannot establish no lobbying or deletion of the original issues |
+| Original TAX contacts | House only, printed page 7 | House and Senate | Senate exposure cannot be assigned from this API row alone |
+| Original INS contacts | House only, printed page 8 | House and Senate | Same unresolved contact discrepancy |
+
+The original has seven issue activity pages: ENG, GOV, HCR, MAR, TAX, INS and
+TOR. All seven API descriptions are null. The other five source contact lists
+agree with House/Senate API labels at the reviewed scope. Neither the expense
+resolution nor that agreement establishes a valid treatment or control group.
+
+**Assessment: share with caveats as a field-specific source adjudication.**
+Independent review, complete actor/version histories, compatible spending
+definitions, exposure and control selection remain pending. The companion
+`notebooks/empirical-expansion-review.ipynb` reproduces the expense row and,
+when the ignored raw downloads and Poppler tools are available, checks query/PDF
+hashes and all fourteen embedded-image pairs. Those checks authenticate saved
+bytes and reproduce transformations; they do not independently verify the
+manual source interpretation. No causal effect or model recalibration is cleared.
 
 ### Restored registration and incompatible spending measures
 

@@ -43,6 +43,12 @@ groups are marked not mergeable. Seventeen PDF covers and four HTML forms were
 reviewed at identity/timing scope; two source-year disagreements and an explicit
 House-ID transcription correction remain documented. Source indexing, complete
 historical client/version mapping and independent review are not cleared.
+A separate AAJ 2005H1 review checks fourteen distinct source images and resolves
+one reported $4,020,000 Method A expense field through matching covers and an
+explicit amendment letter. Its TOR addendum is missing from API activities;
+original INS/TAX contacts also differ from the API. This field-specific decision
+does not select an entire final filing, alter raw metadata, clear actor-period
+aggregation or assign exposure/controls. Independent review remains pending.
 Issue-level comment coding is separate from the
 unreviewed individual-comment linkage product. A separate public-letter pilot
 codes two policy positions already present in both the proposed and final action;

@@ -1,6 +1,6 @@
 {
   "schema": "substitution-lda-family-review-v1",
-  "reviewDate": "2026-09-12",
+  "reviewDate": "2026-09-13",
   "reviewer": "codex-source-review",
   "independentReviewStatus": "pending",
   "selection": "One APGA registration-period group selected because its original posting date is anomalous and a candidate amendment has missing amounts. The companion queue covers all multi-record groups in the frozen acquisition, not all actual historical filing families.",
@@ -650,7 +650,7 @@
       "remainingRequirements": "The source API assigns both UUIDs to client 169036, relationship 330 and AAJ, but the two covers identify different clients/registration suffixes. Do not merge them as financial versions of one client-period. Resolve source indexing and the remaining NVG history before any actor reassignment or final amount. Separate handwritten received date from the later fax header; only covers have been reviewed."
     }
   ],
-  "reviewFingerprint": "a3cfe226413794ccd918715433c831c5f9e5d210abea12a92ce0ac2e0e8b98a4",
+  "reviewFingerprint": "92a5759e298eebd079fd217342b772a73ccdb447444555556ec6ded0fa0b86b3",
   "nvgHistoryReview": {
     "schema": "nvg-frozen-history-identity-review-v1",
     "reviewDate": "2026-09-12",
@@ -1377,5 +1377,814 @@
       "controlAssignmentCleared": false,
       "causalEffect": "not_identified"
     }
+  },
+  "aajExpenseReview": {
+    "reviewDate": "2026-09-13",
+    "reviewer": "codex-source-review",
+    "independentReviewStatus": "pending",
+    "selection": "The unreviewed 4733-12, 2005 mid-year original/amendment pair in the frozen 22-group queue, selected as a pre-reform self-reported expense family. Selection preceded reading the letter or comparing issue contacts.",
+    "scope": "Both complete downloaded PDFs were inspected through all fourteen distinct embedded images. This is one registration-period pair, not all historical AAJ aliases, versions or actor-period outcomes.",
+    "query": {
+      "url": "https://lda.gov/api/v1/filings/?registrant_id=4733&filing_year=2005&filing_period=mid_year&page_size=100",
+      "responseSha256": "0181f3904bd63cb77a4bf1c20b1eda351001540fb8cae9d3636af74379248f4e",
+      "count": 2,
+      "next": null,
+      "previous": null,
+      "records": [
+        {
+          "filing_uuid": "e8171441-7e83-4c9e-b896-51e57a851cc7",
+          "filing_type": "MM",
+          "filing_type_display": "Mid-Year Report",
+          "filing_year": 2005,
+          "filing_period": "mid_year",
+          "dt_posted": "2005-08-11T00:00:00-04:00",
+          "income": null,
+          "expenses": "4020000.00",
+          "expenses_method": null,
+          "termination_date": null,
+          "registrant": {
+            "id": 4733,
+            "name": "AMERICAN ASSOCIATION FOR JUSTICE"
+          },
+          "client": {
+            "id": 104895,
+            "client_id": 12,
+            "name": "AMERICAN ASSOCIATION FOR JUSTICE"
+          },
+          "activities": [
+            {
+              "issueCode": "HCR",
+              "description": null,
+              "governmentEntities": [
+                {
+                  "id": 2,
+                  "name": "HOUSE OF REPRESENTATIVES"
+                },
+                {
+                  "id": 1,
+                  "name": "SENATE"
+                }
+              ],
+              "lobbyists": [
+                {
+                  "id": 23247,
+                  "first_name": "ELIZABETH",
+                  "last_name": "HUMPHREY"
+                },
+                {
+                  "id": 24406,
+                  "first_name": "MICHAEL",
+                  "last_name": "STRAUTMANIS"
+                },
+                {
+                  "id": 42545,
+                  "first_name": "LINDA",
+                  "last_name": "LIPSEN"
+                },
+                {
+                  "id": 42547,
+                  "first_name": "JULIA",
+                  "last_name": "DUNCAN"
+                },
+                {
+                  "id": 42548,
+                  "first_name": "SUSAN",
+                  "last_name": "STEINMAN"
+                },
+                {
+                  "id": 42550,
+                  "first_name": "THOMAS",
+                  "last_name": "WHITE"
+                },
+                {
+                  "id": 42555,
+                  "first_name": "DAN",
+                  "last_name": "COHEN"
+                },
+                {
+                  "id": 49133,
+                  "first_name": "JOHN",
+                  "last_name": "BOWMAN"
+                }
+              ]
+            },
+            {
+              "issueCode": "MAR",
+              "description": null,
+              "governmentEntities": [
+                {
+                  "id": 2,
+                  "name": "HOUSE OF REPRESENTATIVES"
+                },
+                {
+                  "id": 1,
+                  "name": "SENATE"
+                }
+              ],
+              "lobbyists": [
+                {
+                  "id": 23247,
+                  "first_name": "ELIZABETH",
+                  "last_name": "HUMPHREY"
+                },
+                {
+                  "id": 24406,
+                  "first_name": "MICHAEL",
+                  "last_name": "STRAUTMANIS"
+                },
+                {
+                  "id": 42545,
+                  "first_name": "LINDA",
+                  "last_name": "LIPSEN"
+                },
+                {
+                  "id": 42547,
+                  "first_name": "JULIA",
+                  "last_name": "DUNCAN"
+                },
+                {
+                  "id": 42548,
+                  "first_name": "SUSAN",
+                  "last_name": "STEINMAN"
+                },
+                {
+                  "id": 42550,
+                  "first_name": "THOMAS",
+                  "last_name": "WHITE"
+                },
+                {
+                  "id": 42555,
+                  "first_name": "DAN",
+                  "last_name": "COHEN"
+                },
+                {
+                  "id": 49133,
+                  "first_name": "JOHN",
+                  "last_name": "BOWMAN"
+                }
+              ]
+            },
+            {
+              "issueCode": "INS",
+              "description": null,
+              "governmentEntities": [
+                {
+                  "id": 2,
+                  "name": "HOUSE OF REPRESENTATIVES"
+                },
+                {
+                  "id": 1,
+                  "name": "SENATE"
+                }
+              ],
+              "lobbyists": [
+                {
+                  "id": 23247,
+                  "first_name": "ELIZABETH",
+                  "last_name": "HUMPHREY"
+                },
+                {
+                  "id": 24406,
+                  "first_name": "MICHAEL",
+                  "last_name": "STRAUTMANIS"
+                },
+                {
+                  "id": 42545,
+                  "first_name": "LINDA",
+                  "last_name": "LIPSEN"
+                },
+                {
+                  "id": 42547,
+                  "first_name": "JULIA",
+                  "last_name": "DUNCAN"
+                },
+                {
+                  "id": 42548,
+                  "first_name": "SUSAN",
+                  "last_name": "STEINMAN"
+                },
+                {
+                  "id": 42550,
+                  "first_name": "THOMAS",
+                  "last_name": "WHITE"
+                },
+                {
+                  "id": 42555,
+                  "first_name": "DAN",
+                  "last_name": "COHEN"
+                },
+                {
+                  "id": 49133,
+                  "first_name": "JOHN",
+                  "last_name": "BOWMAN"
+                }
+              ]
+            },
+            {
+              "issueCode": "GOV",
+              "description": null,
+              "governmentEntities": [
+                {
+                  "id": 2,
+                  "name": "HOUSE OF REPRESENTATIVES"
+                },
+                {
+                  "id": 1,
+                  "name": "SENATE"
+                }
+              ],
+              "lobbyists": [
+                {
+                  "id": 23247,
+                  "first_name": "ELIZABETH",
+                  "last_name": "HUMPHREY"
+                },
+                {
+                  "id": 24406,
+                  "first_name": "MICHAEL",
+                  "last_name": "STRAUTMANIS"
+                },
+                {
+                  "id": 42545,
+                  "first_name": "LINDA",
+                  "last_name": "LIPSEN"
+                },
+                {
+                  "id": 42547,
+                  "first_name": "JULIA",
+                  "last_name": "DUNCAN"
+                },
+                {
+                  "id": 42548,
+                  "first_name": "SUSAN",
+                  "last_name": "STEINMAN"
+                },
+                {
+                  "id": 42550,
+                  "first_name": "THOMAS",
+                  "last_name": "WHITE"
+                },
+                {
+                  "id": 42555,
+                  "first_name": "DAN",
+                  "last_name": "COHEN"
+                },
+                {
+                  "id": 49133,
+                  "first_name": "JOHN",
+                  "last_name": "BOWMAN"
+                }
+              ]
+            },
+            {
+              "issueCode": "ENG",
+              "description": null,
+              "governmentEntities": [
+                {
+                  "id": 2,
+                  "name": "HOUSE OF REPRESENTATIVES"
+                },
+                {
+                  "id": 1,
+                  "name": "SENATE"
+                }
+              ],
+              "lobbyists": [
+                {
+                  "id": 23247,
+                  "first_name": "ELIZABETH",
+                  "last_name": "HUMPHREY"
+                },
+                {
+                  "id": 24406,
+                  "first_name": "MICHAEL",
+                  "last_name": "STRAUTMANIS"
+                },
+                {
+                  "id": 42545,
+                  "first_name": "LINDA",
+                  "last_name": "LIPSEN"
+                },
+                {
+                  "id": 42547,
+                  "first_name": "JULIA",
+                  "last_name": "DUNCAN"
+                },
+                {
+                  "id": 42548,
+                  "first_name": "SUSAN",
+                  "last_name": "STEINMAN"
+                },
+                {
+                  "id": 42550,
+                  "first_name": "THOMAS",
+                  "last_name": "WHITE"
+                },
+                {
+                  "id": 42555,
+                  "first_name": "DAN",
+                  "last_name": "COHEN"
+                },
+                {
+                  "id": 49133,
+                  "first_name": "JOHN",
+                  "last_name": "BOWMAN"
+                }
+              ]
+            },
+            {
+              "issueCode": "TOR",
+              "description": null,
+              "governmentEntities": [
+                {
+                  "id": 2,
+                  "name": "HOUSE OF REPRESENTATIVES"
+                },
+                {
+                  "id": 1,
+                  "name": "SENATE"
+                }
+              ],
+              "lobbyists": [
+                {
+                  "id": 23247,
+                  "first_name": "ELIZABETH",
+                  "last_name": "HUMPHREY"
+                },
+                {
+                  "id": 24406,
+                  "first_name": "MICHAEL",
+                  "last_name": "STRAUTMANIS"
+                },
+                {
+                  "id": 42545,
+                  "first_name": "LINDA",
+                  "last_name": "LIPSEN"
+                },
+                {
+                  "id": 42547,
+                  "first_name": "JULIA",
+                  "last_name": "DUNCAN"
+                },
+                {
+                  "id": 42548,
+                  "first_name": "SUSAN",
+                  "last_name": "STEINMAN"
+                },
+                {
+                  "id": 42550,
+                  "first_name": "THOMAS",
+                  "last_name": "WHITE"
+                },
+                {
+                  "id": 42555,
+                  "first_name": "DAN",
+                  "last_name": "COHEN"
+                },
+                {
+                  "id": 49133,
+                  "first_name": "JOHN",
+                  "last_name": "BOWMAN"
+                }
+              ]
+            },
+            {
+              "issueCode": "TAX",
+              "description": null,
+              "governmentEntities": [
+                {
+                  "id": 2,
+                  "name": "HOUSE OF REPRESENTATIVES"
+                },
+                {
+                  "id": 1,
+                  "name": "SENATE"
+                }
+              ],
+              "lobbyists": [
+                {
+                  "id": 23247,
+                  "first_name": "ELIZABETH",
+                  "last_name": "HUMPHREY"
+                },
+                {
+                  "id": 24406,
+                  "first_name": "MICHAEL",
+                  "last_name": "STRAUTMANIS"
+                },
+                {
+                  "id": 42545,
+                  "first_name": "LINDA",
+                  "last_name": "LIPSEN"
+                },
+                {
+                  "id": 42547,
+                  "first_name": "JULIA",
+                  "last_name": "DUNCAN"
+                },
+                {
+                  "id": 42548,
+                  "first_name": "SUSAN",
+                  "last_name": "STEINMAN"
+                },
+                {
+                  "id": 42550,
+                  "first_name": "THOMAS",
+                  "last_name": "WHITE"
+                },
+                {
+                  "id": 42555,
+                  "first_name": "DAN",
+                  "last_name": "COHEN"
+                },
+                {
+                  "id": 49133,
+                  "first_name": "JOHN",
+                  "last_name": "BOWMAN"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "filing_uuid": "d72204ef-692a-4b5f-a757-b480ccd9c646",
+          "filing_type": "MA",
+          "filing_type_display": "Mid-Year Amendment",
+          "filing_year": 2005,
+          "filing_period": "mid_year",
+          "dt_posted": "2005-08-15T00:00:00-04:00",
+          "income": null,
+          "expenses": "4020000.00",
+          "expenses_method": null,
+          "termination_date": null,
+          "registrant": {
+            "id": 4733,
+            "name": "AMERICAN ASSOCIATION FOR JUSTICE"
+          },
+          "client": {
+            "id": 104895,
+            "client_id": 12,
+            "name": "AMERICAN ASSOCIATION FOR JUSTICE"
+          },
+          "activities": []
+        }
+      ]
+    },
+    "documents": [
+      {
+        "filingUuid": "e8171441-7e83-4c9e-b896-51e57a851cc7",
+        "role": "original",
+        "url": "https://lda.gov/filings/public/filing/e8171441-7e83-4c9e-b896-51e57a851cc7/print/",
+        "pdfSha256": "59480d18c7c897f68f3c79c7d6ba7c5e965ac17fa7e7a8c83ad8f0dc6fb5177a",
+        "pdfPages": 22,
+        "images": [
+          {
+            "imageId": "aaj-original-1",
+            "pdfPages": [
+              1,
+              2
+            ],
+            "objectId": "6 0",
+            "pngSha256": "264ca6ceb2f3a8edb66a4a65101857ce6780336744197f98fea62a13ac4c05f5",
+            "width": 1696,
+            "height": 2200,
+            "scanIdentifier": "00000311652",
+            "printedPage": 1,
+            "kind": "cover",
+            "issueCode": null
+          },
+          {
+            "imageId": "aaj-original-2",
+            "pdfPages": [
+              3,
+              4
+            ],
+            "objectId": "19 0",
+            "pngSha256": "3bffe32d9b63d14b1fa07a62ec38ce63a3c87c840a0f1b1c87ec1f123d3ca736",
+            "width": 1696,
+            "height": 2200,
+            "scanIdentifier": "00000311653",
+            "printedPage": 2,
+            "kind": "activity",
+            "issueCode": "ENG",
+            "governmentEntitiesLiteral": [
+              "House of Representatives",
+              "Senate"
+            ],
+            "governmentEntities": [
+              "HOUSE OF REPRESENTATIVES",
+              "SENATE"
+            ]
+          },
+          {
+            "imageId": "aaj-original-3",
+            "pdfPages": [
+              5,
+              6
+            ],
+            "objectId": "31 0",
+            "pngSha256": "45b9c876a123e926f35b432427530c6aa0e24e295ef0057bd8b1aed1eac4c9a7",
+            "width": 1696,
+            "height": 2200,
+            "scanIdentifier": "00000311654",
+            "printedPage": 3,
+            "kind": "activity",
+            "issueCode": "GOV",
+            "governmentEntitiesLiteral": [
+              "House of Representatives",
+              "Senate"
+            ],
+            "governmentEntities": [
+              "HOUSE OF REPRESENTATIVES",
+              "SENATE"
+            ]
+          },
+          {
+            "imageId": "aaj-original-4",
+            "pdfPages": [
+              7,
+              8
+            ],
+            "objectId": "43 0",
+            "pngSha256": "f5fa19b307e5d9bb2971eb6e9cd10f80b9ab1fd44dcc75d421c21a6769d12bdb",
+            "width": 1696,
+            "height": 2200,
+            "scanIdentifier": "00000311655",
+            "printedPage": 4,
+            "kind": "activity",
+            "issueCode": "HCR",
+            "governmentEntitiesLiteral": [
+              "House of Representatives",
+              "Senate"
+            ],
+            "governmentEntities": [
+              "HOUSE OF REPRESENTATIVES",
+              "SENATE"
+            ]
+          },
+          {
+            "imageId": "aaj-original-5",
+            "pdfPages": [
+              9,
+              10
+            ],
+            "objectId": "55 0",
+            "pngSha256": "7f0e4b62350c34e87665fcae11bb9a7ca5e8ffe2d7f7c0bcb33b307921e4975a",
+            "width": 1696,
+            "height": 2200,
+            "scanIdentifier": "00000311656",
+            "printedPage": 5,
+            "kind": "addendum",
+            "issueCode": "HCR"
+          },
+          {
+            "imageId": "aaj-original-6",
+            "pdfPages": [
+              11,
+              12
+            ],
+            "objectId": "67 0",
+            "pngSha256": "03172ebc6dc78ef14143a22ee44c43b9e13b5b3e5cd1df28329ec3eb0ebcef92",
+            "width": 1696,
+            "height": 2200,
+            "scanIdentifier": "00000311657",
+            "printedPage": 6,
+            "kind": "activity",
+            "issueCode": "MAR",
+            "governmentEntitiesLiteral": [
+              "House of Representatives",
+              "Senate"
+            ],
+            "governmentEntities": [
+              "HOUSE OF REPRESENTATIVES",
+              "SENATE"
+            ]
+          },
+          {
+            "imageId": "aaj-original-7",
+            "pdfPages": [
+              13,
+              14
+            ],
+            "objectId": "79 0",
+            "pngSha256": "66fb069e462f0cfad26f74d8a994c888c046031a052341b3494658af643185a5",
+            "width": 1696,
+            "height": 2200,
+            "scanIdentifier": "00000311658",
+            "printedPage": 7,
+            "kind": "activity",
+            "issueCode": "TAX",
+            "governmentEntitiesLiteral": [
+              "House"
+            ],
+            "governmentEntities": [
+              "HOUSE OF REPRESENTATIVES"
+            ]
+          },
+          {
+            "imageId": "aaj-original-8",
+            "pdfPages": [
+              15,
+              16
+            ],
+            "objectId": "91 0",
+            "pngSha256": "71e39f3130bac4d0ffaf91b944fa473008bdd5628482dfa0f2cecded42e53ea9",
+            "width": 1696,
+            "height": 2200,
+            "scanIdentifier": "00000311659",
+            "printedPage": 8,
+            "kind": "activity",
+            "issueCode": "INS",
+            "governmentEntitiesLiteral": [
+              "House"
+            ],
+            "governmentEntities": [
+              "HOUSE OF REPRESENTATIVES"
+            ]
+          },
+          {
+            "imageId": "aaj-original-9",
+            "pdfPages": [
+              17,
+              18
+            ],
+            "objectId": "103 0",
+            "pngSha256": "c09bc56537b2094d154e8ec5c932ab35efad17dbea142ee44898464f22d3cb6c",
+            "width": 1696,
+            "height": 2200,
+            "scanIdentifier": "00000311660",
+            "printedPage": 9,
+            "kind": "activity",
+            "issueCode": "TOR",
+            "governmentEntitiesLiteral": [
+              "House of Representatives",
+              "Senate"
+            ],
+            "governmentEntities": [
+              "HOUSE OF REPRESENTATIVES",
+              "SENATE"
+            ]
+          },
+          {
+            "imageId": "aaj-original-10",
+            "pdfPages": [
+              19,
+              20
+            ],
+            "objectId": "115 0",
+            "pngSha256": "15bab0ea1afd99ed7de5cc16919c50af265161b845f941539b232c039757efed",
+            "width": 1696,
+            "height": 2200,
+            "scanIdentifier": "00000311661",
+            "printedPage": 10,
+            "kind": "addendum",
+            "issueCode": "TOR"
+          },
+          {
+            "imageId": "aaj-original-11",
+            "pdfPages": [
+              21,
+              22
+            ],
+            "objectId": "127 0",
+            "pngSha256": "fd1576924a4e01ddb91a93560c3f1df3923d7caf36eee6e38e298d0f9ad7c243",
+            "width": 1696,
+            "height": 2200,
+            "scanIdentifier": "00000311662",
+            "printedPage": 11,
+            "kind": "information_update",
+            "issueCode": null
+          }
+        ]
+      },
+      {
+        "filingUuid": "d72204ef-692a-4b5f-a757-b480ccd9c646",
+        "role": "amendment",
+        "url": "https://lda.gov/filings/public/filing/d72204ef-692a-4b5f-a757-b480ccd9c646/print/",
+        "pdfSha256": "c5aa42881d34e01f242e91a8cba025a0bf02798073e17715bf00c3bfb580d82b",
+        "pdfPages": 6,
+        "images": [
+          {
+            "imageId": "aaj-amendment-1",
+            "pdfPages": [
+              1,
+              2
+            ],
+            "objectId": "6 0",
+            "pngSha256": "d7653a9294f6dda05ecfc0d97b47023056d02fe9c63caff89b4d53279ecc1162",
+            "width": 1728,
+            "height": 2200,
+            "scanIdentifier": "00000372196",
+            "printedPage": 1,
+            "kind": "cover",
+            "issueCode": null
+          },
+          {
+            "imageId": "aaj-amendment-2",
+            "pdfPages": [
+              3,
+              4
+            ],
+            "objectId": "19 0",
+            "pngSha256": "0df597d93204112355a86bb88f7ef999243d780800aab9e38a14e91024aa43f2",
+            "width": 1728,
+            "height": 2200,
+            "scanIdentifier": "00000372197",
+            "printedPage": 10,
+            "kind": "addendum",
+            "issueCode": "TOR"
+          },
+          {
+            "imageId": "aaj-amendment-3",
+            "pdfPages": [
+              5,
+              6
+            ],
+            "objectId": "31 0",
+            "pngSha256": "e003b5a54d5ab7b3fb363d7c22ed15c94f70a265719eb9d5753b97da15e1b956",
+            "width": 1728,
+            "height": 2200,
+            "scanIdentifier": "00000372198",
+            "printedPage": null,
+            "kind": "explanatory_letter",
+            "issueCode": null
+          }
+        ]
+      }
+    ],
+    "covers": [
+      {
+        "filingUuid": "e8171441-7e83-4c9e-b896-51e57a851cc7",
+        "imageId": "aaj-original-1",
+        "registrantName": "Association of Trial Lawyers of America",
+        "clientName": "Association of Trial Lawyers of America",
+        "clientSelf": true,
+        "senateId": "4733-12",
+        "houseId": "31241000",
+        "year": 2005,
+        "period": "mid_year",
+        "amendmentBoxChecked": false,
+        "terminationBoxChecked": false,
+        "noActivityBoxChecked": false,
+        "expensesDollars": "4020000.00",
+        "expensesMethod": "A",
+        "incomeDollars": null,
+        "receiptDate": "2005-08-11",
+        "receiptStamp": "05 AUG 11 PM 1:53",
+        "receiptTimezone": "not_stated"
+      },
+      {
+        "filingUuid": "d72204ef-692a-4b5f-a757-b480ccd9c646",
+        "imageId": "aaj-amendment-1",
+        "registrantName": "Association of Trial Lawyers of America",
+        "clientName": "Association of Trial Lawyers of America",
+        "clientSelf": true,
+        "senateId": "4733-12",
+        "houseId": "31241000",
+        "year": 2005,
+        "period": "mid_year",
+        "amendmentBoxChecked": true,
+        "terminationBoxChecked": false,
+        "noActivityBoxChecked": false,
+        "expensesDollars": "4020000.00",
+        "expensesMethod": "A",
+        "incomeDollars": null,
+        "receiptDate": "2005-08-15",
+        "receiptStamp": "05 AUG 15 PM 4:20",
+        "receiptTimezone": "not_stated"
+      }
+    ],
+    "amendmentExplanation": {
+      "letterImageId": "aaj-amendment-3",
+      "letterDate": "2005-08-11",
+      "receiptDate": "2005-08-15",
+      "receiptStamp": "05 AUG 15 PM 4:20",
+      "receiptTimezone": "not_stated",
+      "originalPageImageId": "aaj-original-10",
+      "amendedPageImageId": "aaj-amendment-2",
+      "printedPage": 10,
+      "issueCode": "TOR",
+      "addedItem": "H.AMDT 28 to H.R. 3",
+      "originalContainsAddedItem": false,
+      "amendedContainsAddedItem": true,
+      "earlierListedItemsRetained": true,
+      "expenseUnchangedQuote": "the item was included in factoring our expenses shown on page one, so that amount is unchanged.",
+      "interpretation": "The letter explicitly identifies an omitted TOR item and unchanged page-one expenses. The replacement page retains the earlier items and adds the named amendment. This supports an expense-field resolution, not replacing the entire original packet with the three-image amendment PDF."
+    },
+    "expenseResolution": {
+      "status": "source_supported_expense_only",
+      "expensesDollars": "4020000.00",
+      "expensesMethod": "A",
+      "economicObservations": 1,
+      "evidenceBasis": "matching_covers_and_explicit_amendment_letter",
+      "selectedExpenseFilingUuid": "d72204ef-692a-4b5f-a757-b480ccd9c646",
+      "amountSemantics": "reported_expenses_not_audited_expenditure",
+      "selectedFinalFilingUuid": null,
+      "actorPeriodAggregationCleared": false,
+      "controlAssignmentCleared": false,
+      "rawMetadataUnchanged": true,
+      "causalEffect": "not_identified"
+    },
+    "remainingRequirements": "Independent source/coding review, complete historical identity/version coverage and comparable exposure/control design remain required. Preserve the amendment API activity omission and original INS/TAX contact discrepancies; do not infer zero activity, repair the API or select an entire final filing from timestamps."
   }
 }

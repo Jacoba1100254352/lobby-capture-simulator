@@ -1120,9 +1120,12 @@ def audit():
     family_queue, family_checks = family_module.validate_review(read("substitution-lda-filing-metadata.csv"), family_sources, date_sources)
     if family_queue != read("substitution-lda-family-queue.csv"):
         raise ValueError("LDA candidate-family queue is stale")
+    expense_rows, _ = family_module.expense_adjudications(read("substitution-lda-filing-metadata.csv"), family_sources["aajExpenseReview"])
+    if expense_rows != read("substitution-lda-expense-adjudications.csv"):
+        raise ValueError("LDA expense adjudication is stale")
     add("lda-filing-family-review", "partial_field_review_not_final_versions",
         "; ".join(f"{key}={value}" for key, value in family_checks.items()),
-        "The 22 multi-record groups are candidates, not complete families. APGA's amendment download has one issue image and no financial cover; both scanned ENG pages name FERC, unlike their API contact lists. All 21 frozen NVG records now have identity/timing reviews: 17 PDF covers and four HTML forms, not complete document histories. Six name America Votes, including one registration, and five mixed-client candidate groups are not mergeable. Two cover/API year disagreements and differing Senate suffixes prevent global remapping. The initial America Votes House-ID transcription was corrected to 35960015 against the unchanged scan. Source indexing, historical packet completeness and independent review remain unresolved. No final amount, corrected raw record, agency exposure or control assignment is promoted.")
+        "The 22 multi-record groups are candidates, not complete historical families. APGA's partial amendment does not resolve its amount. Five NVG mixed-client groups are not mergeable. A separate AAJ 2005H1 review resolves one reported $4,020,000 Method A expense field using matching covers and an explicit unchanged-expense letter, not a sum of versions or selection of a whole final filing. All fourteen downloaded images were reviewed. The amendment API has no activity rows despite its TOR addendum; original INS/TAX pages name only the House while their API rows also name the Senate. Preserve source discrepancies, independent-review requirements and unchanged raw metadata. Historical identity/version coverage, actor-period aggregation, exposure and control selection remain unresolved.")
     fec = read("substitution-fec-report-panel.csv")
     histories = read("substitution-fec-affiliation-history.csv")
     cohort = read("substitution-fec-acquisition-cohort.csv")

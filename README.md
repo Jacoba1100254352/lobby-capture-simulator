@@ -200,6 +200,14 @@ and corrects the earlier America Votes House-ID transcription to 35960015.
 The other fifteen records are not thereby cleared as final actor-period outcomes.
 Run `make empirical-expansion-audit` to regenerate and verify these products.
 
+A separate [AAJ 2005H1 expense review](docs/substitution-study-redesign.md#aaj-2005h1-an-explicit-expense-only-amendment-resolution)
+checks all fourteen distinct images in an original/amended pair. Matching covers
+and an explicit unchanged-expense letter support one reported $4,020,000 Method A
+expense observation, not a sum of versions or selection of an entire final filing.
+The amendment API omits its TOR activity, and two original contact lists differ
+from API labels. Raw metadata stays unchanged; independent review, complete
+actor-period aggregation and treatment/control assignments remain unresolved.
+
 The [procurement original-action follow-up](docs/procurement-source-reconciliation.md#original-action-follow-up-recovered-fields-and-a-partial-crosswalk)
 adds four full contract downloads and 26 transaction-history rows. Two original
 descriptions identify VISN 19 and VISN 22; two unique rounded-value matches supply

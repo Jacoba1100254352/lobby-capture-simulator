@@ -125,6 +125,7 @@ for source_product in \
   substitution-lda-date-reviews.json \
   substitution-lda-family-review.json \
   substitution-lda-family-queue.csv \
+  substitution-lda-expense-adjudications.csv \
   substitution-fec-report-panel.csv \
   substitution-fec-affiliation-history.csv \
   substitution-fec-acquisition-cohort.csv \

@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Inspect candidate LDA families without choosing final versions or amounts."""
+"""Review source-specific LDA amendments without overwriting raw filings."""
 
 import csv
 import hashlib
@@ -15,6 +15,11 @@ ROOT = Path(__file__).resolve().parents[1]
 DATA = ROOT / "data/calibration/first-wave"
 SOURCE = DATA / "substitution-lda-family-review.json"
 QUEUE = DATA / "substitution-lda-family-queue.csv"
+EXPENSES = DATA / "substitution-lda-expense-adjudications.csv"
+EXPENSE_FIELDS = ["adjudicationId", "canonicalActorId", "registrantApiId", "clientRelationshipId",
+                  "filingYear", "filingPeriod", "periodStart", "periodEnd", "originalFilingUuid",
+                  "amendmentFilingUuid", "expensesDollars", "expensesMethod", "evidenceBasis",
+                  "reviewStatus", "independentReviewStatus", "actorPeriodAggregationCleared", "sourceFingerprint"]
 GROUP_FIELDS = ("registrantApiId", "clientRelationshipId", "filingYear", "filingPeriod")
 QUEUE_FIELDS = [*GROUP_FIELDS, "canonicalActorId", "primaryName", "filings", "filingUuids",
                 "filingTypes", "amendmentLabeledFilings", "distinctSourceAmounts",
@@ -211,14 +216,139 @@ def validate_review(metadata, source, cover_source):
         raise ValueError("Unsupported family amount, exposure or causal promotion")
     identity_counts = validate_identity_reviews(metadata, source["identityReviews"], source["identityQuery"])
     history_counts, mixed_groups = validate_nvg_history(metadata, source["nvgHistoryReview"], source["identityReviews"])
+    expense_rows, expense_counts = expense_adjudications(metadata, source["aajExpenseReview"])
     for row in queue:
         if tuple(row[f] for f in GROUP_FIELDS) in mixed_groups:
             row["reviewStatus"] = "source_identity_conflict_not_mergeable"
-    return queue, {**counts, "sourceReviewedGroups": 1 + len(mixed_groups), "apgaQueriedApiFilings": len(records),
+        elif tuple(row[f] for f in GROUP_FIELDS) == ("4733", "12", "2005", "mid_year"):
+            row["reviewStatus"] = "source_expense_resolved_activity_review_pending"
+    return queue, {**counts, "sourceReviewedGroups": 1 + len(mixed_groups) + len(expense_rows), "apgaQueriedApiFilings": len(records),
                    "nvgQueryReturnedFilings": source["identityQuery"]["count"], "identityApiFilingsChecked": 2,
-                   "apgaReviewedDistinctImages": len(images), "reviewedDistinctImages": len(images) + history_counts["nvgHistoryPdfCovers"],
+                   "apgaReviewedDistinctImages": len(images), "reviewedDistinctImages": len(images) + history_counts["nvgHistoryPdfCovers"] + expense_counts["aajReviewedDistinctImages"],
                    "energyAgencyMismatches": mismatch,
-                   **identity_counts, **history_counts, "finalVersionsSelected": 0, "causalEffect": "not_identified"}
+                   **identity_counts, **history_counts, **expense_counts, "finalVersionsSelected": 0, "causalEffect": "not_identified"}
+
+
+def expense_adjudications(metadata, review):
+    """Resolve the documented AAJ expense field, not a whole final filing."""
+    if (review["independentReviewStatus"] != "pending"
+            or any(not review.get(k) for k in ("reviewer", "selection", "scope", "remainingRequirements"))):
+        raise ValueError("Missing expense review scope or independent-review boundary")
+    date.fromisoformat(review["reviewDate"])
+    selected = {r["filingUuid"]: r for r in metadata
+                if tuple(r[f] for f in GROUP_FIELDS) == ("4733", "12", "2005", "mid_year")}
+    expected_ids = {"e8171441-7e83-4c9e-b896-51e57a851cc7", "d72204ef-692a-4b5f-a757-b480ccd9c646"}
+    if len(selected) != 2 or set(selected) != expected_ids:
+        raise ValueError("Expense review candidate frame changed")
+    query = review["query"]
+    if (query["url"] != "https://lda.gov/api/v1/filings/?registrant_id=4733&filing_year=2005&filing_period=mid_year&page_size=100"
+            or query["count"] != 2 or query["next"] is not None or query["previous"] is not None
+            or not re_hash(query["responseSha256"]) or len(query["records"]) != 2
+            or {r["filing_uuid"] for r in query["records"]} != expected_ids):
+        raise ValueError("Expense query membership or pagination changed")
+    by_type = {}
+    for record in query["records"]:
+        row = selected[record["filing_uuid"]]
+        expected = {"filing_type": row["filingType"], "filing_year": int(row["filingYear"]),
+                    "filing_period": row["filingPeriod"], "dt_posted": row["dtPosted"],
+                    "income": row["incomeDollars"] or None, "expenses": row["expensesDollars"] or None,
+                    "expenses_method": row["expensesMethod"] or None,
+                    "termination_date": row["terminationDate"] or None,
+                    "registrant": {"id": int(row["registrantApiId"]), "name": row["registrantName"]},
+                    "client": {"id": int(row["clientApiId"]), "client_id": int(row["clientRelationshipId"]), "name": row["clientName"]}}
+        if any(record[k] != v for k, v in expected.items()):
+            raise ValueError("Expense API projection differs from frozen metadata")
+        by_type[record["filing_type"]] = record
+    if set(by_type) != {"MM", "MA"}:
+        raise ValueError("Expense review requires the original and amendment")
+    documents = {d["role"]: d for d in review["documents"]}
+    if len(review["documents"]) != 2 or set(documents) != {"original", "amendment"}:
+        raise ValueError("Missing or duplicate expense source document")
+    images = {}
+    original_roles = [("cover", None), ("activity", "ENG"), ("activity", "GOV"),
+                      ("activity", "HCR"), ("addendum", "HCR"), ("activity", "MAR"),
+                      ("activity", "TAX"), ("activity", "INS"), ("activity", "TOR"),
+                      ("addendum", "TOR"), ("information_update", None)]
+    for role, kinds, printed in (("original", original_roles, list(range(1, 12))),
+                                ("amendment", [("cover", None), ("addendum", "TOR"), ("explanatory_letter", None)], [1, 10, None])):
+        document = documents[role]
+        record = by_type["MM" if role == "original" else "MA"]
+        if (document["filingUuid"] != record["filing_uuid"]
+                or document["url"] != selected[record["filing_uuid"]]["filingDocumentUrl"]
+                or not re_hash(document["pdfSha256"]) or document["pdfPages"] != 2 * len(kinds)
+                or len(document["images"]) != len(kinds)):
+            raise ValueError("Expense document identity or complete download coverage changed")
+        for i, (image, kind, page) in enumerate(zip(document["images"], kinds, printed)):
+            key = f"aaj-{role}-{i + 1}"
+            if (image["imageId"] != key or image["pdfPages"] != [2*i+1, 2*i+2]
+                    or image["objectId"] != f"{6 if i == 0 else 19 + 12*(i-1)} 0"
+                    or image["printedPage"] != page or (image["kind"], image["issueCode"]) != kind
+                    or image["width"] != (1696 if role == "original" else 1728) or image["height"] != 2200
+                    or image["scanIdentifier"] != str((311652 if role == "original" else 372196)+i).zfill(11)
+                    or not re_hash(image["pngSha256"])):
+                raise ValueError("Expense image provenance or original/amended page alignment changed")
+            images[key] = image
+    covers = {r["filingUuid"]: r for r in review["covers"]}
+    if len(review["covers"]) != 2 or set(covers) != expected_ids:
+        raise ValueError("Missing matching expense covers")
+    for role, filing_type, receipt, stamp in (("original", "MM", "2005-08-11", "05 AUG 11 PM 1:53"),
+                                             ("amendment", "MA", "2005-08-15", "05 AUG 15 PM 4:20")):
+        record = by_type[filing_type]
+        expected = {"imageId": f"aaj-{role}-1", "registrantName": "Association of Trial Lawyers of America",
+                    "clientName": "Association of Trial Lawyers of America", "clientSelf": True,
+                    "senateId": "4733-12", "houseId": "31241000", "year": 2005, "period": "mid_year",
+                    "amendmentBoxChecked": role == "amendment", "terminationBoxChecked": False,
+                    "noActivityBoxChecked": False, "expensesDollars": record["expenses"],
+                    "expensesMethod": "A", "incomeDollars": None, "receiptDate": receipt,
+                    "receiptStamp": stamp, "receiptTimezone": "not_stated"}
+        if any(covers[record["filing_uuid"]].get(k) != v for k, v in expected.items()):
+            raise ValueError("Expense cover amount, method, identity or receipt changed")
+    explanation = review["amendmentExplanation"]
+    expected_letter = {"letterImageId": "aaj-amendment-3", "letterDate": "2005-08-11",
+                       "receiptDate": "2005-08-15", "receiptStamp": "05 AUG 15 PM 4:20", "receiptTimezone": "not_stated",
+                       "originalPageImageId": "aaj-original-10", "amendedPageImageId": "aaj-amendment-2",
+                       "printedPage": 10, "issueCode": "TOR", "addedItem": "H.AMDT 28 to H.R. 3",
+                       "originalContainsAddedItem": False, "amendedContainsAddedItem": True, "earlierListedItemsRetained": True,
+                       "expenseUnchangedQuote": "the item was included in factoring our expenses shown on page one, so that amount is unchanged."}
+    if any(explanation.get(k) != v for k, v in expected_letter.items()) or not explanation["interpretation"]:
+        raise ValueError("Expense resolution requires the explicit amendment letter and matched replacement page")
+    resolution = review["expenseResolution"]
+    expected_resolution = {"status": "source_supported_expense_only", "expensesDollars": by_type["MA"]["expenses"],
+                           "expensesMethod": "A", "economicObservations": 1,
+                           "evidenceBasis": "matching_covers_and_explicit_amendment_letter",
+                           "selectedExpenseFilingUuid": by_type["MA"]["filing_uuid"],
+                           "amountSemantics": "reported_expenses_not_audited_expenditure",
+                           "selectedFinalFilingUuid": None, "actorPeriodAggregationCleared": False,
+                           "controlAssignmentCleared": False, "rawMetadataUnchanged": True, "causalEffect": "not_identified"}
+    if (resolution != expected_resolution or by_type["MM"]["expenses"] != by_type["MA"]["expenses"]
+            or not Decimal(resolution["expensesDollars"]).is_finite() or Decimal(resolution["expensesDollars"]) <= 0):
+        raise ValueError("Unsupported expense total, whole-filing or control promotion")
+    activities = {r["issueCode"]: r for r in by_type["MM"]["activities"]}
+    if (len(activities) != 7 or len(by_type["MM"]["activities"]) != 7 or by_type["MA"]["activities"]):
+        raise ValueError("Expense review must preserve source API activity coverage")
+    disagreements = 0
+    for image in documents["original"]["images"]:
+        if image["kind"] != "activity":
+            continue
+        issue = image["issueCode"]
+        source_contacts = ["HOUSE OF REPRESENTATIVES"] + ([] if issue in {"TAX", "INS"} else ["SENATE"])
+        literal = ["House"] if issue in {"TAX", "INS"} else ["House of Representatives", "Senate"]
+        record = activities.get(issue)
+        if (not record or record["description"] is not None or image["governmentEntities"] != source_contacts
+                or image["governmentEntitiesLiteral"] != literal
+                or [r["name"] for r in record["governmentEntities"]] != ["HOUSE OF REPRESENTATIVES", "SENATE"]):
+            raise ValueError("Expense review must preserve the source contact discrepancies")
+        disagreements += source_contacts != [r["name"] for r in record["governmentEntities"]]
+    original = selected[by_type["MM"]["filing_uuid"]]
+    row = {"adjudicationId": "aaj-2005h1-expense", **{f: original[f] for f in
+           ("canonicalActorId", "registrantApiId", "clientRelationshipId", "filingYear", "filingPeriod", "periodStart", "periodEnd")},
+           "originalFilingUuid": by_type["MM"]["filing_uuid"], "amendmentFilingUuid": by_type["MA"]["filing_uuid"],
+           "expensesDollars": resolution["expensesDollars"], "expensesMethod": resolution["expensesMethod"],
+           "evidenceBasis": resolution["evidenceBasis"], "reviewStatus": resolution["status"],
+           "independentReviewStatus": "pending", "actorPeriodAggregationCleared": "false", "sourceFingerprint": fingerprint(review)}
+    return [row], {"expenseFamiliesResolved": 1, "aajReviewedDistinctImages": len(images),
+                   "aajOriginalApiActivityRows": len(activities), "aajAmendmentApiActivityRows": 0,
+                   "aajOriginalContactDiscrepancies": disagreements, "independentlyReviewedExpenseFamilies": 0}
 
 
 def validate_identity_reviews(metadata, reviews, query):
@@ -374,10 +504,15 @@ def main():
     source = json.loads(SOURCE.read_text())
     cover_source = json.loads((DATA / "substitution-lda-date-reviews.json").read_text())
     queue, counts = validate_review(metadata, source, cover_source)
+    expense_rows, _ = expense_adjudications(metadata, source["aajExpenseReview"])
     with QUEUE.open("w", newline="", encoding="utf-8") as handle:
         writer = csv.DictWriter(handle, fieldnames=QUEUE_FIELDS)
         writer.writeheader()
         writer.writerows(queue)
+    with EXPENSES.open("w", newline="", encoding="utf-8") as handle:
+        writer = csv.DictWriter(handle, fieldnames=EXPENSE_FIELDS)
+        writer.writeheader()
+        writer.writerows(expense_rows)
     print(json.dumps(counts, sort_keys=True))
 
 
