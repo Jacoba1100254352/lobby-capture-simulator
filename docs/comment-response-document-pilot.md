@@ -86,12 +86,111 @@ content/attachment page-count confusion, stale bindings, unsupported acceptance,
 and turning unadjudicated entries into nonresponses. The companion notebook
 recomputes counts and displays the four findings.
 
-Forty-four entries have not yet been adjudicated against agency responses.
-They are neither nonresponses nor rejections. The next coding pass should use
+At the warranty-only checkpoint, forty-four entries had not been adjudicated
+against agency responses. The later technology review below reduces that pending
+count to 35; broad requests can still be only partly resolved within reviewed scope.
+Unadjudicated entries are neither nonresponses nor rejections. Further coding should use
 the frozen frame, log search scope and preserve unresolved matches. Exact docket
 version verification, independent coding review, and a justified population
 frame remain requirements before stronger use. No causal simulator parameter
 or older pilot count changes from this increment.
+
+## Technology and fuel follow-up, September 13
+
+**Assessment: share with caveats for bounded documentary coding, not causal
+uptake or docket rates.** The separate `comment-publisher-technology-review.json`
+follows up nine existing entries: r01, r04-r07 and r30-r33. These technical/fuel
+and hydrogen-policy clusters were selected after response exposure. They are
+not all technology requests, a blinded sample, or nine additional comments.
+The frozen 48-entry frame and four warranty reviews remain unchanged.
+
+### Findings and source links
+
+All IDs below have prefix `mema-1570-`. Publisher page numbers are physical PDF
+pages, also numbered in the letter. Response references are physical PDF pages
+in the [March 2024 EPA response document](https://www.epa.gov/system/files/documents/2024-03/420r24007.pdf);
+subtract 18 for its printed page number.
+
+| Entry | Original pages; response locations | Bounded finding |
+| --- | --- | --- |
+| r01, technology neutrality | 2, 4-5; excerpts 80-81, named summary 108, response 132-134 | EPA explains a performance-based approach without a ZEV mandate. The letter already recognizes a performance-based proposal; no new concession or full technical acceptance is established. |
+| r04, cleaner-combustion/fuel incentives | 4-6; excerpts 81, 1309, responses 1259-1263, 1321-1323 | EPA describes compliance pathways but does not grant blanket new incentives. The H2ICE multiplier refusal is the same decision discussed under r30, not another policy event. |
+| r05, alternative-fuel analysis | 5; excerpt 1240, response 1259-1263 | Pathways and rule scope are explained. Completion of the requested additional comparative analysis is not verified. |
+| r06, renewable-diesel compliance | 5; excerpt 1240, summary 1258, response 1259-1263 | Conditional exhaust-CO2 credit and the rule's lifecycle/fuel limits are discussed. The precise cited CARB off-road provision is not separately adjudicated in these passages. |
+| r07, lifecycle-carbon assessment | 5-6; excerpt 81, responses 1259-1263, 1321-1323, 1608-1612 | EPA retains vehicle-based standard setting; broader requested assessment is not verified. The response does discuss some upstream hydrogen analysis, so this is not evidence that all upstream emissions were ignored. |
+| r30, H2ICE multiplier extension | 14-15; excerpt 1411, summary 1319, responses 1321-1323, 1421-1423 | EPA explicitly names MEMA and declines a new multiplier as outside the reopened scope. This is a documented refusal, not missing response. |
+| r31, FCEV multiplier retention | 14-15; excerpts 1309, 1411, response 1421-1423 | FCEV credit generation is retained as proposed through MY2027, with final restrictions on multiplier-credit use. This is not indefinite retention or an unchanged whole credit program. |
+| r32, H2ICE zero-CO2 retention | 15; excerpt 1309, summary 1319, responses 1321-1323, 1421-1423 | The scoped vehicle clause is unchanged from the proposal. Neat-hydrogen vehicle treatment differs from engine certification and other-pollutant requirements. |
+| r33, broader CARB exceptions | 15; excerpt 1309, named summary 1319, response 1321-1323 | The complete section-9.3 response does not separately commit to the requested CARB engagement. This is not docket-wide nonresponse or proof no interagency action occurred. |
+
+The response review covers the complete general responses in sections 9.1, 9.3,
+10.3.1 and 17.1, but only the opening performance-based discussion in section
+2.1B. Section 9.1 stops before the ClearFlame-specific response on PDF 1263;
+section 17.1 stops before individual responses on PDF 1612. Original statement
+repetitions are matched at the recorded pages, not claimed as whole-letter
+verbatim correspondence. Referenced RIA chapters were not independently reviewed.
+
+### Two scoped proposal/final comparisons
+
+The [April 2023 proposal](https://www.govinfo.gov/content/pkg/FR-2023-04-27/pdf/2023-07955.pdf)
+and [April 2024 final rule](https://www.govinfo.gov/content/pkg/FR-2024-04-22/pdf/2024-06809.pdf)
+support two comparisons, not two independently caused policy events:
+
+- **Multiplier provision, shared by r30/r31:** proposed section 1037.150(p),
+  PDF 201 / printed 26126, and final PDF 335 / printed 29774 enumerate PHEV,
+  BEV and FCEV, without adding an H2ICE multiplier. Proposal PDF 88 / printed
+  26013 already retains the 5.5 FCEV generation multiplier through MY2027.
+  Final preamble PDF 165-166 / printed 29604-29605 and the final clause retain
+  that generation but separate base/multiplier balances, restrict Phase 3 use
+  in MY2027-2029 and prohibit multiplier use to certify MY2030 and later vehicles.
+  Older Phase 2 deficit resolution is excepted; base credits have separate rules.
+  PHEV/BEV generation through MY2027 differs from the proposed MY2026 cutoff,
+  but that change is not attributed to MEMA's FCEV retention request.
+- **Vehicle testing clause, r32:** proposed section 1037.150(f), PDF 201 /
+  printed 26126, and final PDF 334 / printed 29773 have the same relevant
+  neat-hydrogen vehicle zero-CO2 wording. Proposal preamble PDF 97 / printed
+  26022 and final PDF 182 / printed 29621 distinguish this from other-pollutant
+  engine obligations. Final preamble PDF 181-182 / printed 29620-29621 separately
+  describes an optional engine default of 3 g/hp-hr and lower-emissions testing.
+  This is a preamble reading, not an independent engine-clause comparison.
+
+### Source discrepancies and interpretation risks
+
+Three discrepancies remain explicit rather than silently corrected:
+
+- **High analytical risk, program identity:** the original p5 footnote 3 and
+  response PDF 1240 cite CARB's In-Use Off-Road Diesel-Fueled Fleets Regulation
+  section 2449.1(f). PDF 1258 groups MEMA with cap-and-trade/Low Carbon Fuel
+  Standard comments. That grouped summary cannot establish a response to the
+  exact original program request; the CARB provision itself was not re-reviewed.
+- **High analytical risk, units:** response PDF 1423 / printed 1405, footnote
+  806, states the engine default as 3 grams CO2/ton-mile, whereas the final
+  preamble uses 3 g/hp-hr. Both readings are preserved. No conversion or
+  quantitative calibration is made, and neither is the vehicle zero-CO2 clause.
+- **Medium navigation risk:** response PDF 1421 refers lifecycle comments to
+  section 17.2. The heading and section-9.1 referral identify section 17.1.
+  The review follows the verified heading without repairing the source text.
+
+### Validation and remaining work
+
+The combined ledger contains 13 distinct entries with bounded response reviews
+(four warranty plus nine technology/fuel), leaving 35 entries without a response
+adjudication. This coverage count does not mean all facets of the thirteen are
+resolved. Broad assessment, precise CARB-program and state-engagement requests
+retain the limitations above. There is still one letter, zero independently
+reviewed entries, no docket-rate eligibility and no identified individual effect.
+
+`validate_all` in `scripts/review-comment-publisher.py` checks the frozen
+inventory binding, thematic selection, physical/printed page mappings, source
+links, shared comparisons, units and claim boundaries. Its older `validate`
+function remains explicitly warranty-only and returns the historical 44 pending
+entries; the CLI, empirical audit and notebook use the combined 35-entry count.
+Mutation tests reject unsupported acceptance, altered scope, unit/program
+conflation and duplicate coverage. The notebook displays both thematic products
+and the source cautions. Optional archived-source checks verify all five file
+hashes and regenerate the metadata projection, not independent coding or exact
+docket-copy identity. No current regulatory-status or simulator-calibration
+claim is made. Procurement and substitution requirements remain open.
 
 ## Original two-request agency-excerpt pilot
 

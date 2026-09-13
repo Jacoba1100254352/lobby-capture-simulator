@@ -1,0 +1,649 @@
+{
+  "schema": "comment-publisher-technology-review-v1",
+  "reviewDate": "2026-09-13",
+  "reviewer": "Codex source review",
+  "inventoryFile": "comment-publisher-inventory.json",
+  "inventoryFrameSha256": "717738adcf4cba674307d1721c1d8a60429c21f804232c1a57bdc7f28a2f4f39",
+  "publisherSha256": "e6f6c3c34594d69654b4375e29896175b3057f4c6a0c987e141ac229f10d0159",
+  "selection": {
+    "requestIds": [
+      "mema-1570-r01",
+      "mema-1570-r04",
+      "mema-1570-r05",
+      "mema-1570-r06",
+      "mema-1570-r07",
+      "mema-1570-r30",
+      "mema-1570-r31",
+      "mema-1570-r32",
+      "mema-1570-r33"
+    ],
+    "mode": "targeted_technical_fuel_and_hydrogen_clusters",
+    "priorOutcomeExposure": true,
+    "blinded": false,
+    "scope": "Nine already-inventoried entries, selected thematically after response exposure. Not all technology requests, a random sample, or nine new independent comments. The frozen 48-entry frame and four warranty reviews remain unchanged."
+  },
+  "documents": {
+    "response": {
+      "url": "https://www.epa.gov/system/files/documents/2024-03/420r24007.pdf",
+      "sha256": "4ce468a6ea85ede970b8189dab82b0ab5112692abcc1f684a585f563b6b4ab8e",
+      "scope": "Selected MEMA excerpts/summaries, opening section-2.1B performance-based discussion, and complete general responses in 9.1, 9.3, 10.3.1 and 17.1. Individual responses after the 9.1 and 17.1 general responses are outside scope.",
+      "reviewedPages": [
+        {
+          "pdfPage": 80,
+          "printedPage": 62
+        },
+        {
+          "pdfPage": 81,
+          "printedPage": 63
+        },
+        {
+          "pdfPage": 108,
+          "printedPage": 90
+        },
+        {
+          "pdfPage": 132,
+          "printedPage": 114
+        },
+        {
+          "pdfPage": 133,
+          "printedPage": 115
+        },
+        {
+          "pdfPage": 134,
+          "printedPage": 116
+        },
+        {
+          "pdfPage": 1240,
+          "printedPage": 1222
+        },
+        {
+          "pdfPage": 1258,
+          "printedPage": 1240
+        },
+        {
+          "pdfPage": 1259,
+          "printedPage": 1241
+        },
+        {
+          "pdfPage": 1260,
+          "printedPage": 1242
+        },
+        {
+          "pdfPage": 1261,
+          "printedPage": 1243
+        },
+        {
+          "pdfPage": 1262,
+          "printedPage": 1244
+        },
+        {
+          "pdfPage": 1263,
+          "printedPage": 1245
+        },
+        {
+          "pdfPage": 1309,
+          "printedPage": 1291
+        },
+        {
+          "pdfPage": 1319,
+          "printedPage": 1301
+        },
+        {
+          "pdfPage": 1320,
+          "printedPage": 1302
+        },
+        {
+          "pdfPage": 1321,
+          "printedPage": 1303
+        },
+        {
+          "pdfPage": 1322,
+          "printedPage": 1304
+        },
+        {
+          "pdfPage": 1323,
+          "printedPage": 1305
+        },
+        {
+          "pdfPage": 1411,
+          "printedPage": 1393
+        },
+        {
+          "pdfPage": 1421,
+          "printedPage": 1403
+        },
+        {
+          "pdfPage": 1422,
+          "printedPage": 1404
+        },
+        {
+          "pdfPage": 1423,
+          "printedPage": 1405
+        },
+        {
+          "pdfPage": 1608,
+          "printedPage": 1590
+        },
+        {
+          "pdfPage": 1609,
+          "printedPage": 1591
+        },
+        {
+          "pdfPage": 1610,
+          "printedPage": 1592
+        },
+        {
+          "pdfPage": 1611,
+          "printedPage": 1593
+        },
+        {
+          "pdfPage": 1612,
+          "printedPage": 1594
+        }
+      ]
+    },
+    "proposal": {
+      "url": "https://www.govinfo.gov/content/pkg/FR-2023-04-27/pdf/2023-07955.pdf",
+      "sha256": "30f6f81aadc5313a4762e4234f93a4d937f83c5db75ec2607eb68ce028affc1a",
+      "scope": "Historical April 2023 preamble and proposed 40 CFR 1037.150(f), (p); no broad stringency comparison.",
+      "reviewedPages": [
+        {
+          "pdfPage": 88,
+          "printedPage": 26013
+        },
+        {
+          "pdfPage": 97,
+          "printedPage": 26022
+        },
+        {
+          "pdfPage": 201,
+          "printedPage": 26126
+        }
+      ]
+    },
+    "final": {
+      "url": "https://www.govinfo.gov/content/pkg/FR-2024-04-22/pdf/2024-06809.pdf",
+      "sha256": "9d1b9a74a8528e36b7783ddfacf9b3089f484225431b1496324b5d5d2963eb94",
+      "scope": "Historical April 2024 preamble and 40 CFR 1037.150(f), (p). Engine default is read from preamble III.C.2, not independently compared across engine regulatory clauses. No current legal-status assessment.",
+      "reviewedPages": [
+        {
+          "pdfPage": 165,
+          "printedPage": 29604
+        },
+        {
+          "pdfPage": 166,
+          "printedPage": 29605
+        },
+        {
+          "pdfPage": 181,
+          "printedPage": 29620
+        },
+        {
+          "pdfPage": 182,
+          "printedPage": 29621
+        },
+        {
+          "pdfPage": 334,
+          "printedPage": 29773
+        },
+        {
+          "pdfPage": 335,
+          "printedPage": 29774
+        }
+      ]
+    }
+  },
+  "responseScopes": {
+    "technology-neutrality": {
+      "pdfPages": [
+        132,
+        133,
+        134
+      ],
+      "locator": "Opening performance-based/no-mandate discussion in section 2.1B, not the complete section 2.1.",
+      "completeGeneralResponse": false
+    },
+    "alternative-fuels": {
+      "pdfPages": [
+        1259,
+        1260,
+        1261,
+        1262,
+        1263
+      ],
+      "locator": "Section 9.1 general response, ending before the ClearFlame-specific response on PDF 1263.",
+      "completeGeneralResponse": true
+    },
+    "hydrogen": {
+      "pdfPages": [
+        1321,
+        1322,
+        1323
+      ],
+      "locator": "Complete section 9.3 general response; other sections are not an exhaustive docket search.",
+      "completeGeneralResponse": true
+    },
+    "multipliers": {
+      "pdfPages": [
+        1421,
+        1422,
+        1423
+      ],
+      "locator": "Complete section 10.3.1 response.",
+      "completeGeneralResponse": true
+    },
+    "lifecycle": {
+      "pdfPages": [
+        1608,
+        1609,
+        1610,
+        1611,
+        1612
+      ],
+      "locator": "Section 17.1 general response, ending before responses to specific comments on PDF 1612.",
+      "completeGeneralResponse": true
+    }
+  },
+  "reviews": [
+    {
+      "requestId": "mema-1570-r01",
+      "originalPdfPages": [
+        2,
+        4,
+        5
+      ],
+      "matchedOriginalPdfPages": [
+        4,
+        5
+      ],
+      "excerptPdfPages": [
+        80,
+        81
+      ],
+      "summaryPdfPages": [
+        108
+      ],
+      "responseScopeIds": [
+        "technology-neutrality"
+      ],
+      "responseLink": "named_summary_collective_response",
+      "disposition": "performance_based_approach_explained",
+      "ruleComparisonId": null,
+      "basis": "EPA names MEMA's technology-neutrality position in its summary and explains numeric performance-based standards without a ZEV mandate. MEMA itself describes the proposal as attempting performance-based standards. This is not proof of a new concession or full acceptance of every requested technology/incentive. No numeric stringency comparison was performed.",
+      "citedCommentId": "EPA-HQ-OAR-2022-0985-1570",
+      "citedAttachmentOrder": 1,
+      "excerptContentMatch": "selected_request_wording_and_original_page_citations_agree",
+      "independentReviewStatus": "pending",
+      "individualCausalEffect": "not_identified"
+    },
+    {
+      "requestId": "mema-1570-r04",
+      "originalPdfPages": [
+        4,
+        5,
+        6
+      ],
+      "matchedOriginalPdfPages": [
+        5,
+        6
+      ],
+      "excerptPdfPages": [
+        81,
+        1309
+      ],
+      "summaryPdfPages": [],
+      "responseScopeIds": [
+        "alternative-fuels",
+        "hydrogen"
+      ],
+      "responseLink": "reproduced_request_collective_response",
+      "disposition": "compliance_pathways_explained_not_blanket_new_incentives",
+      "ruleComparisonId": null,
+      "basis": "The reproduced recommendations request cleaner-combustion/fuel incentives. EPA describes technology choices, conditional alternative-fuel tailpipe credit and GEM pathways, while declining the new H2ICE multiplier separately coded at r30. Existing eligibility, fuel approval and retained approaches do not establish a blanket new incentive or another independent policy event.",
+      "citedCommentId": "EPA-HQ-OAR-2022-0985-1570",
+      "citedAttachmentOrder": 1,
+      "excerptContentMatch": "selected_request_wording_and_original_page_citations_agree",
+      "independentReviewStatus": "pending",
+      "individualCausalEffect": "not_identified"
+    },
+    {
+      "requestId": "mema-1570-r05",
+      "originalPdfPages": [
+        5
+      ],
+      "matchedOriginalPdfPages": [
+        5
+      ],
+      "excerptPdfPages": [
+        1240
+      ],
+      "summaryPdfPages": [],
+      "responseScopeIds": [
+        "alternative-fuels"
+      ],
+      "responseLink": "reproduced_request_collective_response",
+      "disposition": "pathways_explained_requested_analysis_not_verified",
+      "ruleComparisonId": null,
+      "basis": "The original and reproduced paragraph ask for more analysis of hydrogen, ethanol, renewable natural gas and renewable diesel. The reviewed general response explains pathways and rule scope; it does not verify completion of the requested comparative analysis. Referenced regulatory-impact-analysis chapters were not independently reviewed.",
+      "citedCommentId": "EPA-HQ-OAR-2022-0985-1570",
+      "citedAttachmentOrder": 1,
+      "excerptContentMatch": "selected_request_wording_and_original_page_citations_agree",
+      "independentReviewStatus": "pending",
+      "individualCausalEffect": "not_identified"
+    },
+    {
+      "requestId": "mema-1570-r06",
+      "originalPdfPages": [
+        5
+      ],
+      "matchedOriginalPdfPages": [
+        5
+      ],
+      "excerptPdfPages": [
+        1240
+      ],
+      "summaryPdfPages": [
+        1258
+      ],
+      "responseScopeIds": [
+        "alternative-fuels"
+      ],
+      "responseLink": "reproduced_request_collective_response",
+      "disposition": "specific_carb_program_not_separately_adjudicated",
+      "ruleComparisonId": null,
+      "basis": "The original footnote and reproduced excerpt cite CARB's In-Use Off-Road Diesel-Fueled Fleets Regulation section 2449.1(f), but the later summary groups MEMA with cap-and-trade and the Low Carbon Fuel Standard. The general response explains conditional exhaust-CO2 credits and declines a lifecycle/fuel-regulatory alternative within this rule. It does not separately decide the exact cited off-road provision. Neither blanket renewable-diesel prohibition nor a new CARB-style compliance provision is established.",
+      "citedCommentId": "EPA-HQ-OAR-2022-0985-1570",
+      "citedAttachmentOrder": 1,
+      "excerptContentMatch": "selected_request_wording_and_original_page_citations_agree",
+      "independentReviewStatus": "pending",
+      "individualCausalEffect": "not_identified"
+    },
+    {
+      "requestId": "mema-1570-r07",
+      "originalPdfPages": [
+        5,
+        6
+      ],
+      "matchedOriginalPdfPages": [
+        5,
+        6
+      ],
+      "excerptPdfPages": [
+        81
+      ],
+      "summaryPdfPages": [],
+      "responseScopeIds": [
+        "alternative-fuels",
+        "lifecycle",
+        "hydrogen"
+      ],
+      "responseLink": "reproduced_request_thematic_response",
+      "disposition": "lifecycle_basis_declined_broader_assessment_not_verified",
+      "ruleComparisonId": null,
+      "basis": "MEMA asks for broader assessment of vehicle/component production and charging emissions, not only a lifecycle-based standard. Section 17.1's general response retains vehicle-based standard setting and discusses upstream attribution limitations. Section 9.3 discusses hydrogen-production comparisons and refers to RIA 4.8, which was not independently reviewed. This supports a standards-scope response, not a claim EPA ignored all upstream emissions or completed the full requested assessment.",
+      "citedCommentId": "EPA-HQ-OAR-2022-0985-1570",
+      "citedAttachmentOrder": 1,
+      "excerptContentMatch": "selected_request_wording_and_original_page_citations_agree",
+      "independentReviewStatus": "pending",
+      "individualCausalEffect": "not_identified"
+    },
+    {
+      "requestId": "mema-1570-r30",
+      "originalPdfPages": [
+        14,
+        15
+      ],
+      "matchedOriginalPdfPages": [
+        14,
+        15
+      ],
+      "excerptPdfPages": [
+        1411
+      ],
+      "summaryPdfPages": [
+        1319
+      ],
+      "responseScopeIds": [
+        "hydrogen",
+        "multipliers"
+      ],
+      "responseLink": "explicit_named_response",
+      "disposition": "new_h2ice_multiplier_declined_as_out_of_scope",
+      "ruleComparisonId": "advanced-multipliers-1037-150-p",
+      "basis": "Section 9.3 explicitly disagrees with MEMA's new H2ICE multiplier request; section 10.3.1 names MEMA among the requesting organizations and declines a new multiplier because that extension was outside the reopened scope. Both scoped multiplier clauses enumerate PHEV, BEV and FCEV, not a new H2ICE multiplier. This is a documented refusal, not a missing response.",
+      "citedCommentId": "EPA-HQ-OAR-2022-0985-1570",
+      "citedAttachmentOrder": 1,
+      "excerptContentMatch": "selected_request_wording_and_original_page_citations_agree",
+      "independentReviewStatus": "pending",
+      "individualCausalEffect": "not_identified"
+    },
+    {
+      "requestId": "mema-1570-r31",
+      "originalPdfPages": [
+        14,
+        15
+      ],
+      "matchedOriginalPdfPages": [
+        14,
+        15
+      ],
+      "excerptPdfPages": [
+        1309,
+        1411
+      ],
+      "summaryPdfPages": [],
+      "responseScopeIds": [
+        "multipliers"
+      ],
+      "responseLink": "reproduced_request_collective_response",
+      "disposition": "fcev_generation_retained_as_proposed_with_use_limits",
+      "ruleComparisonId": "advanced-multipliers-1037-150-p",
+      "basis": "The proposal already retained the 5.5 FCEV generation multiplier through MY2027. The final generation provision retains it, but the multiplier-credit use rules restrict Phase 3 use in MY2027-2029 and prohibit certification use from MY2030. The final also retains PHEV/BEV generation through MY2027, unlike the proposed earlier phase-out; that separate change is not attributed to MEMA's FCEV retention request. Generation, use and base credits are distinct.",
+      "citedCommentId": "EPA-HQ-OAR-2022-0985-1570",
+      "citedAttachmentOrder": 1,
+      "excerptContentMatch": "selected_request_wording_and_original_page_citations_agree",
+      "independentReviewStatus": "pending",
+      "individualCausalEffect": "not_identified"
+    },
+    {
+      "requestId": "mema-1570-r32",
+      "originalPdfPages": [
+        15
+      ],
+      "matchedOriginalPdfPages": [
+        15
+      ],
+      "excerptPdfPages": [
+        1309
+      ],
+      "summaryPdfPages": [
+        1319
+      ],
+      "responseScopeIds": [
+        "hydrogen",
+        "multipliers"
+      ],
+      "responseLink": "named_summary_collective_response",
+      "disposition": "vehicle_zero_co2_clause_retained_as_proposed",
+      "ruleComparisonId": "neat-hydrogen-vehicles-1037-150-f",
+      "basis": "MEMA explicitly supports the proposed vehicle/GEM zero-CO2 treatment. Proposed and final section 1037.150(f) have the same relevant clause for neat-hydrogen vehicles, and the final preamble distinguishes vehicle certification from the engine program. This is retained proposal alignment, not a newly caused concession, a full ZEV definition, zero for all pollutants or zero for all hydrogen blends. The separate engine default is optional and has a different unit.",
+      "citedCommentId": "EPA-HQ-OAR-2022-0985-1570",
+      "citedAttachmentOrder": 1,
+      "excerptContentMatch": "selected_request_wording_and_original_page_citations_agree",
+      "independentReviewStatus": "pending",
+      "individualCausalEffect": "not_identified"
+    },
+    {
+      "requestId": "mema-1570-r33",
+      "originalPdfPages": [
+        15
+      ],
+      "matchedOriginalPdfPages": [
+        15
+      ],
+      "excerptPdfPages": [
+        1309
+      ],
+      "summaryPdfPages": [
+        1319
+      ],
+      "responseScopeIds": [
+        "hydrogen"
+      ],
+      "responseLink": "named_summary_no_separate_disposition_in_reviewed_section",
+      "disposition": "carb_engagement_not_separately_resolved",
+      "ruleComparisonId": null,
+      "basis": "The original and reproduced text ask EPA to encourage broader CARB exceptions; the section-9.3 summary names MEMA. The complete general response in that section does not separately commit to the requested state engagement. Federal testing treatment and EPA's response to CARB's own position are not this requested action. This is not docket-wide nonresponse, rejection, or proof that no interagency action occurred.",
+      "citedCommentId": "EPA-HQ-OAR-2022-0985-1570",
+      "citedAttachmentOrder": 1,
+      "excerptContentMatch": "selected_request_wording_and_original_page_citations_agree",
+      "independentReviewStatus": "pending",
+      "individualCausalEffect": "not_identified"
+    }
+  ],
+  "ruleComparisons": [
+    {
+      "comparisonId": "advanced-multipliers-1037-150-p",
+      "requestIds": [
+        "mema-1570-r30",
+        "mema-1570-r31"
+      ],
+      "proposalPdfPages": [
+        201
+      ],
+      "finalPdfPages": [
+        335
+      ],
+      "proposalPreamblePdfPages": [
+        88
+      ],
+      "finalPreamblePdfPages": [
+        165,
+        166
+      ],
+      "assessment": "no_new_h2ice_multiplier_fcev_generation_retained_use_rules_changed",
+      "facts": {
+        "fcevMultiplier": 5.5,
+        "proposalFcevLastGenerationModelYear": 2027,
+        "finalFcevLastGenerationModelYear": 2027,
+        "finalMultiplierUseProhibitedFromModelYear": 2030,
+        "h2iceNewMultiplierFinalized": false,
+        "phevBevGenerationDiffersFromProposal": true,
+        "baseCreditsShareMultiplierUseCutoff": false,
+        "phase2DeficitResolutionException": true
+      },
+      "observedChange": "FCEV generation retention was already proposed. Final PHEV/BEV generation lasts through MY2027 rather than the proposed MY2026 cutoff; the final separates base/multiplier balances and restricts multiplier use. MY2030 cutoff does not prohibit resolving older Phase 2 deficits. No causal attribution to MEMA or duplicate policy-event count.",
+      "individualAttribution": "not_identified",
+      "distinctPolicyChanges": "not_counted"
+    },
+    {
+      "comparisonId": "neat-hydrogen-vehicles-1037-150-f",
+      "requestIds": [
+        "mema-1570-r32"
+      ],
+      "proposalPdfPages": [
+        201
+      ],
+      "finalPdfPages": [
+        334
+      ],
+      "proposalPreamblePdfPages": [
+        97
+      ],
+      "finalPreamblePdfPages": [
+        181,
+        182
+      ],
+      "assessment": "scoped_vehicle_zero_co2_clause_unchanged_from_proposal",
+      "facts": {
+        "vehicleCO2Treatment": 0,
+        "neatHydrogenOnly": true,
+        "vehicleClauseUnchanged": true,
+        "allPollutantsZero": false,
+        "engineProgramSameAsVehicle": false,
+        "engineDefaultValue": 3,
+        "engineDefaultUnit": "g/hp-hr",
+        "engineDefaultOptional": true,
+        "engineValueSource": "final_preamble_not_independent_engine_clause_comparison"
+      },
+      "observedChange": "The vehicle testing clause is unchanged at the reviewed scope. The final preamble separately describes the engine default and unchanged other-pollutant obligations. Response footnote 806 uses a conflicting engine unit; do not infer a conversion or calibrate from it.",
+      "individualAttribution": "not_identified",
+      "distinctPolicyChanges": "not_counted"
+    }
+  ],
+  "sourceCautions": [
+    {
+      "cautionId": "renewable-diesel-program-summary",
+      "requestIds": [
+        "mema-1570-r06"
+      ],
+      "publisherPdfPages": [
+        5
+      ],
+      "responsePdfPages": [
+        1240,
+        1258,
+        1260,
+        1261
+      ],
+      "finalPdfPages": [],
+      "status": "source_scope_mismatch_preserved",
+      "severity": "high",
+      "finding": "Original footnote 3 and reproduced excerpt cite section 2449.1(f) of CARB's In-Use Off-Road Diesel-Fueled Fleets Regulation. The named summary instead groups MEMA with cap-and-trade/Low Carbon Fuel Standard. Grouped summary does not preserve the exact program request.",
+      "handling": "Keep the original program identity; do not code the generic reply as a separate decision on that precise provision."
+    },
+    {
+      "cautionId": "hydrogen-engine-unit",
+      "requestIds": [
+        "mema-1570-r32"
+      ],
+      "publisherPdfPages": [
+        15
+      ],
+      "responsePdfPages": [
+        1423
+      ],
+      "finalPdfPages": [
+        181,
+        182
+      ],
+      "status": "source_unit_discrepancy_preserved",
+      "severity": "high",
+      "finding": "Response footnote 806 says 3 grams CO2/ton-mile for the engine default; the final preamble III.C.2 says 3 g/hp-hr. Vehicle zero-CO2 treatment is a separate certification provision.",
+      "handling": "Retain both source readings with their locations. Use the preamble unit only as a documented reading; no unit conversion, raw-source correction or quantitative calibration."
+    },
+    {
+      "cautionId": "lifecycle-section-crossreference",
+      "requestIds": [
+        "mema-1570-r07"
+      ],
+      "publisherPdfPages": [
+        5,
+        6
+      ],
+      "responsePdfPages": [
+        1260,
+        1421,
+        1608
+      ],
+      "finalPdfPages": [],
+      "status": "source_crossreference_discrepancy_preserved",
+      "severity": "medium",
+      "finding": "Section 10.3.1's response on PDF 1421 points to section 17.2 for lifecycle comments; the dedicated lifecycle section and the section-9.1 referral identify 17.1.",
+      "handling": "Navigate from the verified section heading and general response, preserving rather than silently repairing the printed referral."
+    }
+  ],
+  "boundary": {
+    "officialAttachmentByteMatch": "not_verified",
+    "independentReviewStatus": "pending",
+    "docketRateEligible": false,
+    "overallLetterResponseCodingComplete": false,
+    "currentLegalStatusAssessed": false,
+    "causalEffect": "not_identified",
+    "simulatorRecalibrated": false,
+    "remainingEntriesStatus": "not_yet_adjudicated_not_nonresponse",
+    "comparisonBoundary": "Nine follow-ups plus four warranty reviews concern thirteen entries in one 48-entry letter. Shared responses and clause comparisons are not independent policy events. This targeted documentary coding does not identify docket rates, effects, or complete assessment uptake.",
+    "unreviewedAnalysis": "Referenced RIA chapters and exact CARB regulatory provision were not independently reviewed; broad requests remain only partially adjudicated at the stated source scope."
+  },
+  "reviewFingerprint": "3be7942e3c49684559a52da89d08ec567df9b2c8070cd310cc559e4987556d23"
+}

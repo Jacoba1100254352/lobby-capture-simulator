@@ -174,6 +174,126 @@ class CommentPublisherTests(unittest.TestCase):
                 self.check()
 
 
+class CommentTechnologyTests(unittest.TestCase):
+    def setUp(self):
+        self.inventory = json.loads((AUDIT.DATA / "comment-publisher-inventory.json").read_text())
+        self.warranty = json.loads((AUDIT.DATA / "comment-publisher-warranty-review.json").read_text())
+        self.technology = json.loads((AUDIT.DATA / "comment-publisher-technology-review.json").read_text())
+
+    def check(self, refresh=True):
+        if refresh:
+            self.technology["reviewFingerprint"] = PUBLISHER.fingerprint({
+                k: v for k, v in self.technology.items() if k != "reviewFingerprint"})
+        return PUBLISHER.validate_all(self.inventory, self.warranty, self.technology)
+
+    def test_nine_followups_extend_coverage_not_the_letter_or_comment_population(self):
+        before = deepcopy((self.inventory, self.warranty, self.technology))
+        result = self.check(False)
+        self.assertEqual((self.inventory, self.warranty, self.technology), before)
+        for key, value in {"publisherLetters": 1, "inventoryEntries": 48, "warrantyEntriesReviewed": 4,
+                           "technologyEntriesReviewed": 9, "boundedResponseReviews": 13,
+                           "otherEntriesAwaitingAdjudication": 35, "technologyScopedRuleComparisons": 2,
+                           "technologySourceCautions": 3, "independentlyReviewedEntries": 0,
+                           "verifiedDocketByteMatches": 0, "docketRateEligibleEntries": 0}.items():
+            self.assertEqual(result[key], value)
+        self.assertEqual(PUBLISHER.validate(self.inventory, self.warranty)["otherEntriesAwaitingAdjudication"], 44)
+
+    def test_stale_fingerprint_and_inventory_binding_fail(self):
+        self.technology["inventoryFrameSha256"] = "0" * 64
+        with self.assertRaisesRegex(ValueError, "fingerprint"):
+            self.check(False)
+        with self.assertRaisesRegex(ValueError, "binding"):
+            self.check()
+
+    def test_missing_duplicate_or_warranty_request_cannot_expand_coverage(self):
+        original = deepcopy(self.technology)
+        for reviews in (original["reviews"][:-1], original["reviews"] * 2,
+                        original["reviews"][:-1] + self.warranty["reviews"][:1]):
+            self.technology = deepcopy(original)
+            self.technology["reviews"] = reviews
+            with self.subTest(count=len(reviews)), self.assertRaisesRegex(ValueError, "frame"):
+                self.check()
+
+    def test_targeted_selection_cannot_become_blinded(self):
+        self.technology["selection"]["blinded"] = True
+        with self.assertRaisesRegex(ValueError, "selection"):
+            self.check()
+
+    def test_document_identity_and_physical_page_mapping_are_required(self):
+        original = deepcopy(self.technology)
+        for key, value in (("url", "https://example.org/different.pdf"), ("sha256", "0" * 64),
+                           ("reviewedPages", [{"pdfPage": 202, "printedPage": 26126}])):
+            self.technology = deepcopy(original)
+            self.technology["documents"]["proposal"][key] = value
+            with self.subTest(key=key), self.assertRaisesRegex(ValueError, "identity/page"):
+                self.check()
+
+    def test_scope_completion_does_not_extend_to_unread_sections(self):
+        self.technology["responseScopes"]["technology-neutrality"]["completeGeneralResponse"] = True
+        with self.assertRaisesRegex(ValueError, "scope changed"):
+            self.check()
+
+    def test_cross_comment_original_page_and_response_link_swaps_fail(self):
+        original = deepcopy(self.technology)
+        for key, value in (("citedCommentId", "EPA-HQ-OAR-2022-0985-1598"),
+                           ("citedAttachmentOrder", 2), ("originalPdfPages", [15]),
+                           ("excerptPdfPages", [1411]), ("responseScopeIds", ["hydrogen"])):
+            self.technology = deepcopy(original)
+            self.technology["reviews"][0][key] = value
+            with self.subTest(key=key), self.assertRaisesRegex(ValueError, "linkage"):
+                self.check()
+
+    def test_broad_analysis_program_mismatch_and_unknowns_are_not_full_acceptance(self):
+        original = deepcopy(self.technology)
+        for index in range(9):
+            self.technology = deepcopy(original)
+            self.technology["reviews"][index]["disposition"] = "fully_accepted"
+            with self.subTest(index=index), self.assertRaisesRegex(ValueError, "coding/promotion"):
+                self.check()
+
+    def test_shared_comparisons_do_not_become_independent_events(self):
+        self.technology["ruleComparisons"] *= 2
+        with self.assertRaisesRegex(ValueError, "multiply policy events"):
+            self.check()
+
+    def test_generation_use_and_base_credit_boundaries(self):
+        original = deepcopy(self.technology)
+        for key, value in (("h2iceNewMultiplierFinalized", True), ("finalFcevLastGenerationModelYear", 2030),
+                           ("finalMultiplierUseProhibitedFromModelYear", 2028),
+                           ("baseCreditsShareMultiplierUseCutoff", True),
+                           ("phase2DeficitResolutionException", False)):
+            self.technology = deepcopy(original)
+            self.technology["ruleComparisons"][0]["facts"][key] = value
+            with self.subTest(key=key), self.assertRaisesRegex(ValueError, "comparison"):
+                self.check()
+
+    def test_neat_hydrogen_vehicle_and_engine_units_cannot_be_conflated(self):
+        original = deepcopy(self.technology)
+        for key, value in (("engineDefaultUnit", "g/ton-mile"), ("engineProgramSameAsVehicle", True),
+                           ("allPollutantsZero", True), ("neatHydrogenOnly", False),
+                           ("vehicleClauseUnchanged", False), ("engineDefaultOptional", False)):
+            self.technology = deepcopy(original)
+            self.technology["ruleComparisons"][1]["facts"][key] = value
+            with self.subTest(key=key), self.assertRaisesRegex(ValueError, "conflation"):
+                self.check()
+
+    def test_source_discrepancies_are_retained_not_silently_repaired(self):
+        self.technology["sourceCautions"].pop(0)
+        with self.assertRaisesRegex(ValueError, "discrepancy"):
+            self.check()
+
+    def test_missing_review_does_not_clear_rates_causality_or_current_law(self):
+        original = deepcopy(self.technology)
+        for key, value in (("remainingEntriesStatus", "no_response"), ("independentReviewStatus", "complete"),
+                           ("causalEffect", "identified"), ("docketRateEligible", True),
+                           ("overallLetterResponseCodingComplete", True), ("simulatorRecalibrated", True),
+                           ("currentLegalStatusAssessed", True)):
+            self.technology = deepcopy(original)
+            self.technology["boundary"][key] = value
+            with self.subTest(key=key), self.assertRaisesRegex(ValueError, "boundary"):
+                self.check()
+
+
 class CommentFollowupTests(unittest.TestCase):
     def setUp(self):
         self.sources = json.loads((AUDIT.DATA / "comment-request-followups.json").read_text())

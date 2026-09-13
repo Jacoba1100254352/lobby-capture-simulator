@@ -277,7 +277,12 @@ comments. Metadata title and exact byte size corroborate the publisher file;
 the inaccessible docket attachment's byte version remains unverified. A four-entry
 warranty follow-up distinguishes an existing-provision explanation, collective
 scope clarification and a process request not separately resolved in the reviewed
-passages. Forty-four other entries remain unadjudicated, not nonresponses.
+passages. A separate nine-entry technology/fuel follow-up distinguishes a declined
+new hydrogen-engine multiplier, FCEV generation retained as proposed with use
+limits, and an unchanged proposed neat-hydrogen vehicle zero-CO2 clause. Broad
+assessment requests remain partly unresolved. The combined thirteen bounded
+reviews leave 35 other entries unadjudicated, not nonresponses; program-summary,
+engine-unit and section-reference discrepancies remain explicit.
 The [source review and codebook](docs/comment-response-document-pilot.md#publisher-original-inventory-and-warranty-follow-up-september-13)
 and offline notebook retain prior outcome exposure, request segmentation and
 independent-review limits. Earlier pilots and simulator parameters are unchanged.

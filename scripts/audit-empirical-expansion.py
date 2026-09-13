@@ -1216,10 +1216,11 @@ def audit():
     publisher_comment_spec.loader.exec_module(publisher_comment)
     publisher_inventory = json.loads((DATA / "comment-publisher-inventory.json").read_text(encoding="utf-8"))
     publisher_followup = json.loads((DATA / "comment-publisher-warranty-review.json").read_text(encoding="utf-8"))
-    publisher_comments = publisher_comment.validate(publisher_inventory, publisher_followup)
+    publisher_technology = json.loads((DATA / "comment-publisher-technology-review.json").read_text(encoding="utf-8"))
+    publisher_comments = publisher_comment.validate_all(publisher_inventory, publisher_followup, publisher_technology)
     add("comment-publisher-letter-inventory", "original_publisher_frame_not_docket_rates",
         "; ".join(f"{key}={value}" for key, value in publisher_comments.items()),
-        "One access-led MEMA letter, fully visually reviewed, supplies 48 action/retention entries under explicit segmentation, not independent comments. The four-entry warranty follow-up separates an existing-provision explanation, collective component-scope clarification and a list-process request not separately resolved in the reviewed passages. The shared proposed/final clause comparison does not identify individual influence. Forty-four other entries remain unadjudicated, not nonresponses. Exact docket-file version, independent review and a docket sampling frame remain unresolved. Earlier pilot/corpus products are unchanged.")
+        "One access-led MEMA letter supplies 48 action/retention entries, not independent comments. Four warranty and nine targeted technology/fuel follow-ups cover thirteen distinct entries, leaving 35 without response adjudication. New reviews distinguish a declined H2ICE multiplier, FCEV generation retained as proposed with use limits, and unchanged proposed vehicle zero-CO2 treatment. Broad assessment requests remain only partly adjudicated; the exact CARB program request and state-engagement request are not separately resolved in the reviewed passages. Program-summary, engine-unit and section-reference discrepancies remain explicit. Shared comparisons identify neither independent events nor individual influence. Exact docket version, independent review and a sampling frame remain unresolved; earlier pilots and simulator parameters are unchanged.")
     protests = read("gao-protest-overlay.csv")
     reviewed = [r for r in protests if "Partial source-page review" in r["notes"]]
     add("gao-partial-adjudication", "not_award_linked",

@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Validate a frozen publisher-letter inventory and bounded warranty follow-up.
+"""Validate a frozen publisher-letter inventory and bounded thematic follow-ups.
 
 Offline checks protect identities, grain and claim boundaries. They cannot
 authenticate an unread docket PDF or independently adjudicate manual coding.
@@ -31,6 +31,31 @@ SOURCE_URLS = {
     "response": "https://www.epa.gov/system/files/documents/2024-03/420r24007.pdf",
     "proposal": "https://www.govinfo.gov/content/pkg/FR-2023-04-27/pdf/2023-07955.pdf",
     "final": "https://www.govinfo.gov/content/pkg/FR-2024-04-22/pdf/2024-06809.pdf",
+}
+TECHNOLOGY_PAGES = {
+    "response": [80, 81, 108, 132, 133, 134, 1240, 1258, 1259, 1260, 1261, 1262, 1263,
+                 1309, 1319, 1320, 1321, 1322, 1323, 1411, 1421, 1422, 1423,
+                 1608, 1609, 1610, 1611, 1612],
+    "proposal": [88, 97, 201],
+    "final": [165, 166, 181, 182, 334, 335],
+}
+TECHNOLOGY_SCOPES = {
+    "technology-neutrality": ([132, 133, 134], False),
+    "alternative-fuels": ([1259, 1260, 1261, 1262, 1263], True),
+    "hydrogen": ([1321, 1322, 1323], True),
+    "multipliers": ([1421, 1422, 1423], True),
+    "lifecycle": ([1608, 1609, 1610, 1611, 1612], True),
+}
+TECHNOLOGY_CODINGS = {
+    1: ("named_summary_collective_response", "performance_based_approach_explained"),
+    4: ("reproduced_request_collective_response", "compliance_pathways_explained_not_blanket_new_incentives"),
+    5: ("reproduced_request_collective_response", "pathways_explained_requested_analysis_not_verified"),
+    6: ("reproduced_request_collective_response", "specific_carb_program_not_separately_adjudicated"),
+    7: ("reproduced_request_thematic_response", "lifecycle_basis_declined_broader_assessment_not_verified"),
+    30: ("explicit_named_response", "new_h2ice_multiplier_declined_as_out_of_scope"),
+    31: ("reproduced_request_collective_response", "fcev_generation_retained_as_proposed_with_use_limits"),
+    32: ("named_summary_collective_response", "vehicle_zero_co2_clause_retained_as_proposed"),
+    33: ("named_summary_no_separate_disposition_in_reviewed_section", "carb_engagement_not_separately_resolved"),
 }
 
 
@@ -197,6 +222,119 @@ def validate(inventory, followup):
         "independentlyReviewedEntries": 0, "docketRateEligibleEntries": 0, "causalEffect": "not_identified"}
 
 
+def validate_technology(inventory, ledger):
+    """Protect this reviewed artifact, not independently authenticate its coding."""
+    check_review(ledger, "comment-publisher-technology-review-v1")
+    require(ledger["inventoryFile"] == "comment-publisher-inventory.json"
+            and ledger["inventoryFrameSha256"] == inventory["requestFrameSha256"]
+            and ledger["publisherSha256"] == inventory["publisher"]["sha256"] == PUBLISHER_SHA,
+            "Technology review has stale inventory/source binding")
+    expected_ids = [f"mema-1570-r{n:02d}" for n in TECHNOLOGY_CODINGS]
+    selection = ledger["selection"]
+    require(selection["requestIds"] == expected_ids
+            and selection["mode"] == "targeted_technical_fuel_and_hydrogen_clusters"
+            and selection["priorOutcomeExposure"] is True and selection["blinded"] is False
+            and bool(selection["scope"]), "Technology selection/frame disclosure mismatch")
+    require(set(ledger["documents"]) == set(TECHNOLOGY_PAGES), "Missing technology source document")
+    for name, pages in TECHNOLOGY_PAGES.items():
+        doc = ledger["documents"][name]
+        offset = {"response": -18, "proposal": 25925, "final": 29439}[name]
+        require(doc["sha256"] == SOURCE_DOCS[name][0] and doc["url"] == SOURCE_URLS[name]
+                and doc["reviewedPages"] == [{"pdfPage": p, "printedPage": p + offset} for p in pages]
+                and bool(doc["scope"]), "Technology source identity/page mapping mismatch")
+    scopes = ledger["responseScopes"]
+    require(set(scopes) == set(TECHNOLOGY_SCOPES), "Technology response scopes missing")
+    for name, (pages, complete) in TECHNOLOGY_SCOPES.items():
+        require(scopes[name]["pdfPages"] == pages and scopes[name]["completeGeneralResponse"] is complete
+                and bool(scopes[name]["locator"]), "Technology reviewed response scope changed")
+    reviews = ledger["reviews"]
+    require([r["requestId"] for r in reviews] == expected_ids, "Technology review frame mismatch")
+    rows = {r["requestId"]: r for r in inventory["requests"]}
+    # Frozen source links include selected repeated wording, not whole-letter excerpt matches.
+    links = [
+        ([4, 5], [80, 81], [108], ["technology-neutrality"]),
+        ([5, 6], [81, 1309], [], ["alternative-fuels", "hydrogen"]),
+        ([5], [1240], [], ["alternative-fuels"]),
+        ([5], [1240], [1258], ["alternative-fuels"]),
+        ([5, 6], [81], [], ["alternative-fuels", "lifecycle", "hydrogen"]),
+        ([14, 15], [1411], [1319], ["hydrogen", "multipliers"]),
+        ([14, 15], [1309, 1411], [], ["multipliers"]),
+        ([15], [1309], [1319], ["hydrogen", "multipliers"]),
+        ([15], [1309], [1319], ["hydrogen"]),
+    ]
+    comparison_ids = [None] * 5 + ["advanced-multipliers-1037-150-p"] * 2 + [
+        "neat-hydrogen-vehicles-1037-150-f", None]
+    for r, codes, link, comparison_id in zip(reviews, TECHNOLOGY_CODINGS.values(), links, comparison_ids):
+        require(r["citedCommentId"] == COMMENT_ID and r["citedAttachmentOrder"] == 1
+                and r["originalPdfPages"] == rows[r["requestId"]]["pdfPages"]
+                and tuple(r[k] for k in ("matchedOriginalPdfPages", "excerptPdfPages",
+                    "summaryPdfPages", "responseScopeIds")) == link
+                and r["excerptContentMatch"] == "selected_request_wording_and_original_page_citations_agree",
+                "Technology original/excerpt/response linkage mismatch")
+        require((r["responseLink"], r["disposition"]) == codes and r["ruleComparisonId"] == comparison_id
+                and bool(r["basis"]) and r["independentReviewStatus"] == "pending"
+                and r["individualCausalEffect"] == "not_identified", "Unsupported technology coding/promotion")
+    comparisons = ledger["ruleComparisons"]
+    require([c["comparisonId"] for c in comparisons] == [
+        "advanced-multipliers-1037-150-p", "neat-hydrogen-vehicles-1037-150-f"],
+        "Shared technology comparisons must not multiply policy events")
+    expected_comparisons = [
+        (["mema-1570-r30", "mema-1570-r31"], [201], [335], [88], [165, 166],
+         "no_new_h2ice_multiplier_fcev_generation_retained_use_rules_changed", {
+             "fcevMultiplier": 5.5, "proposalFcevLastGenerationModelYear": 2027,
+             "finalFcevLastGenerationModelYear": 2027, "finalMultiplierUseProhibitedFromModelYear": 2030,
+             "h2iceNewMultiplierFinalized": False, "phevBevGenerationDiffersFromProposal": True,
+             "baseCreditsShareMultiplierUseCutoff": False, "phase2DeficitResolutionException": True}),
+        (["mema-1570-r32"], [201], [334], [97], [181, 182],
+         "scoped_vehicle_zero_co2_clause_unchanged_from_proposal", {
+             "vehicleCO2Treatment": 0, "neatHydrogenOnly": True, "vehicleClauseUnchanged": True,
+             "allPollutantsZero": False, "engineProgramSameAsVehicle": False, "engineDefaultValue": 3,
+             "engineDefaultUnit": "g/hp-hr", "engineDefaultOptional": True,
+             "engineValueSource": "final_preamble_not_independent_engine_clause_comparison"}),
+    ]
+    for c, expected in zip(comparisons, expected_comparisons):
+        require(tuple(c[k] for k in ("requestIds", "proposalPdfPages", "finalPdfPages",
+                    "proposalPreamblePdfPages", "finalPreamblePdfPages", "assessment", "facts")) == expected
+                and c["individualAttribution"] == "not_identified" and c["distinctPolicyChanges"] == "not_counted"
+                and bool(c["observedChange"]), "Unsupported technology comparison or unit/program conflation")
+    cautions = ledger["sourceCautions"]
+    expected_cautions = [
+        ("renewable-diesel-program-summary", ["mema-1570-r06"], [5], [1240, 1258, 1260, 1261], [],
+         "source_scope_mismatch_preserved", "high"),
+        ("hydrogen-engine-unit", ["mema-1570-r32"], [15], [1423], [181, 182],
+         "source_unit_discrepancy_preserved", "high"),
+        ("lifecycle-section-crossreference", ["mema-1570-r07"], [5, 6], [1260, 1421, 1608], [],
+         "source_crossreference_discrepancy_preserved", "medium"),
+    ]
+    require(len(cautions) == len(expected_cautions), "Missing technology source discrepancy")
+    for c, expected in zip(cautions, expected_cautions):
+        require(tuple(c[k] for k in ("cautionId", "requestIds", "publisherPdfPages", "responsePdfPages",
+                    "finalPdfPages", "status", "severity")) == expected and c["finding"] and c["handling"],
+                "Technology source discrepancy boundary changed")
+    boundary = ledger["boundary"]
+    require(all(boundary.get(k) == v for k, v in {
+        "officialAttachmentByteMatch": "not_verified", "independentReviewStatus": "pending",
+        "docketRateEligible": False, "overallLetterResponseCodingComplete": False,
+        "currentLegalStatusAssessed": False, "causalEffect": "not_identified", "simulatorRecalibrated": False,
+        "remainingEntriesStatus": "not_yet_adjudicated_not_nonresponse"}.items())
+        and boundary["comparisonBoundary"] and boundary["unreviewedAnalysis"],
+        "Unsupported technology review claim boundary")
+    return {"technologyEntriesReviewed": len(reviews),
+        "technologyResponseLinks": dict(Counter(r["responseLink"] for r in reviews)),
+        "technologyScopedRuleComparisons": len(comparisons), "technologySourceCautions": len(cautions)}
+
+
+def validate_all(inventory, warranty, technology):
+    """Aggregate distinct reviewed entries; retain validate() as warranty-only history."""
+    result = validate(inventory, warranty)
+    result.update(validate_technology(inventory, technology))
+    ids = [r["requestId"] for ledger in (warranty, technology) for r in ledger["reviews"]]
+    require(len(ids) == len(set(ids)), "Overlapping publisher follow-ups inflate review coverage")
+    result["boundedResponseReviews"] = len(ids)
+    result["otherEntriesAwaitingAdjudication"] = result["inventoryEntries"] - len(ids)
+    return result
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     for name in ("publisher-pdf", "metadata-json", "response-pdf", "proposal-pdf", "final-pdf"):
@@ -204,7 +342,8 @@ def main():
     args = parser.parse_args()
     inventory = json.loads((DATA / "comment-publisher-inventory.json").read_text())
     followup = json.loads((DATA / "comment-publisher-warranty-review.json").read_text())
-    result = validate(inventory, followup)
+    technology = json.loads((DATA / "comment-publisher-technology-review.json").read_text())
+    result = validate_all(inventory, followup, technology)
     checked = []
     for name, digest in {"publisher_pdf": PUBLISHER_SHA,
             "metadata_json": inventory["docketMetadata"]["rawSha256"],
