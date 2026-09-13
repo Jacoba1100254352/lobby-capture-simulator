@@ -42,11 +42,91 @@ def sha256(value):
     return isinstance(value, str) and re.fullmatch(r"[0-9a-f]{64}", value)
 
 
+def validate_period_consistency(source, review):
+    """Reconcile dated schedule rows without repairing the reported period."""
+    document = next((d for d in review["documents"] if d["sourceRecordId"] == source["sourceRecordId"]), None)
+    if (document is None or not source["reviewId"] or not source["reviewer"]
+            or source["independentReviewStatus"] != "pending"
+            or document["pagesReviewed"] != list(range(1, document["pdfPages"] + 1))
+            or [p["pdfPage"] for p in document["pageInventory"]] != document["pagesReviewed"]):
+        raise ValueError("FEC period consistency review requires a complete page inventory")
+    date.fromisoformat(source["reviewDate"])
+    expected_boundary = {"correctedPeriodEnd": None, "zeroActivityInHeaderGapEstablished": False,
+                         "completePeriodVerified": False, "outcomePromotionCleared": False,
+                         "independentExpendituresEstablished": False}
+    if source["boundary"] != expected_boundary:
+        raise ValueError("FEC period conflict does not authorize date, zero or outcome promotion")
+    start, end = date.fromisoformat(document["periodStart"]), date.fromisoformat(document["periodEnd"])
+    if (source["headerPeriodEnd"] != document["periodEnd"] or source["headerDatePdfPages"] != [1, 2, 3]
+            or not set(source["headerDatePdfPages"]) <= set(document["pagesReviewed"])):
+        raise ValueError("FEC conflicting header date provenance changed")
+    transactions = source["transactions"]
+    keys = [(r["pdfPage"], r["slot"]) for r in transactions]
+    if not keys or len(set(keys)) != len(keys):
+        raise ValueError("Duplicate or empty FEC itemized transaction review")
+    totals = {"receipt": Decimal(0), "disbursement": Decimal(0)}
+    counts = {"receipt": 0, "disbursement": 0}
+    after_header, dates = [], []
+    page_kinds = {p["pdfPage"]: p["pageKind"] for p in document["pageInventory"]}
+    for row in transactions:
+        kind = row["kind"]
+        if (kind not in totals or row["slot"] not in {"A", "B", "C"}
+                or row["schedule"] != ("A" if kind == "receipt" else "B")
+                or page_kinds.get(row["pdfPage"]) != ("schedule_a_receipts" if kind == "receipt" else "schedule_b_disbursements")
+                or row["lineCheckbox"] not in ({"11c", None} if kind == "receipt" else {"23"})):
+            raise ValueError("FEC transaction mixes receipt/disbursement grain or source location")
+        value = Decimal(row["amountDollars"])
+        event_date = date.fromisoformat(row["reportedDate"])
+        if not value.is_finite() or value < 0 or event_date < start:
+            raise ValueError("Invalid FEC itemized amount/date")
+        totals[kind] += value
+        counts[kind] += 1
+        dates.append(event_date)
+        if event_date > end:
+            after_header.append(row)
+    if not after_header:
+        raise ValueError("FEC period-conflict review has no out-of-header transactions")
+    reconciliation = source["summaryReconciliation"]
+    observed = {o["field"]: o["valueDollars"] for o in document["observations"]}
+    if (reconciliation["receiptsPdfPage"] != 2 or reconciliation["receiptsPrintedLine"] != "6c"
+            or reconciliation["column"] != "A"
+            or totals["receipt"] != Decimal(reconciliation["receiptsDollars"])
+            or totals["disbursement"] != Decimal(observed["pac_contributions_period"])
+            or reconciliation["taxesPdfPage"] != 4 or reconciliation["taxesPrintedLine"] != "29"
+            or totals["disbursement"] + Decimal(reconciliation["taxesDollars"]) != Decimal(observed["total_disbursements_period"])
+            or observed["independent_expenditures_period"] is not None
+            or reconciliation["taxesItemizedInDownloadedPacket"] is not False):
+        raise ValueError("FEC schedule/summary amounts or blank-field boundary do not reconcile")
+    notice = source["priorNotice"]
+    projection = notice["filingProjection"]
+    report = next(r for r in review["reportProjections"] if r["sourceRecordId"] == source["sourceRecordId"])
+    if (not sha256(notice["pdfSha256"]) or notice["pdfPages"] != 2 or notice["pagesReviewed"] != [1, 2]
+            or notice["sourceUrl"] != projection["pdf_url"]
+            or not notice["sourceUrl"].startswith("https://docquery.fec.gov/pdf/")
+            or projection["beginning_image_number"] not in review["filingsQuery"]["beginningImageInventory"]
+            or projection["committee_id"] != review["committeeId"] or projection["form_type"] != "FRQ"
+            or projection["report_type"] != "Q1" or projection["report_year"] != start.year
+            or projection["coverage_start_date"] != document["periodStart"]
+            or projection["coverage_end_date"] != notice["requestedPeriodEnd"]
+            or projection["receipt_date"][:10] != notice["letterDate"]
+            or projection["pages"] != notice["pdfPages"]
+            or not (max(dates) <= date.fromisoformat(notice["requestedPeriodEnd"])
+                    < date.fromisoformat(notice["letterDate"]) < date.fromisoformat(report["receipt_date"][:10]))
+            or notice["certifiesLaterReportCoverage"] is not False or notice["establishesEnforcementOutcome"] is not False):
+        raise ValueError("FEC prior notice provenance or coverage/enforcement boundary invalid")
+    return {"sourceRecordId": source["sourceRecordId"], "itemizedReceipts": counts["receipt"],
+            "itemizedDisbursements": counts["disbursement"], "transactionsAfterHeaderEnd": len(after_header),
+            "receiptTotalDollars": format(totals["receipt"], ".2f"),
+            "contributionTotalDollars": format(totals["disbursement"], ".2f"),
+            "minTransactionDate": min(dates).isoformat(), "maxTransactionDate": max(dates).isoformat(),
+            "correctedPeriodEnd": None, "completePeriodVerified": False}
+
+
 def validate_review(rows, review):
     """Return source-record version flags plus review diagnostics; mutate nothing."""
     if review.get("reviewFingerprint") != fingerprint({k: v for k, v in review.items() if k != "reviewFingerprint"}):
         raise ValueError("Stale FEC paper review fingerprint")
-    if review["schemaVersion"] != 1 or review["boundary"] != BOUNDARY:
+    if review["schemaVersion"] != 2 or review["boundary"] != BOUNDARY:
         raise ValueError("Unsupported FEC paper review promotion")
     if not review["reviewId"] or not review["reviewer"] or review["independentReviewStatus"] != "pending":
         raise ValueError("Missing FEC paper reviewer or independent-review boundary")
@@ -170,6 +250,10 @@ def validate_review(rows, review):
                 or any(old_doc[f] != new_doc[f] for f in ("periodStart", "periodEnd"))
                 or [old_doc["periodStart"], old_doc["periodEnd"]] not in letter["referencedPeriods"]):
             raise ValueError("FEC correction pair lacks matching native forms and periods")
+    consistency = review["periodConsistencyReviews"]
+    if len({r["sourceRecordId"] for r in consistency}) != len(consistency) or not {r["sourceRecordId"] for r in consistency} <= set(ids):
+        raise ValueError("FEC period-consistency review frame mismatch")
+    period_checks = [validate_period_consistency(r, review) for r in consistency]
     return decisions, {
         "reportRowsMatched": len(decisions), "filingInventoryRows": len(inventory),
         "filingsLatestTrue": sum(decisions.values()), "filingsLatestFalse": len(decisions) - sum(decisions.values()),
@@ -177,6 +261,8 @@ def validate_review(rows, review):
         "reviewedReportPdfs": len(documents), "nativeFormTypeDiscrepancies": form_mismatches,
         "packetsWithoutDisbursementSummary": missing_pages,
         "reviewedBlankAmountFields": blank_fields,
+        "periodConflictReportIds": [r["sourceRecordId"] for r in period_checks],
+        "transactionsAfterHeaderEnd": sum(r["transactionsAfterHeaderEnd"] for r in period_checks),
         "rawAmountsPromoted": 0, "datesCorrected": 0,
         "independentReviewStatus": review["independentReviewStatus"], "causalEffect": "not_identified",
     }

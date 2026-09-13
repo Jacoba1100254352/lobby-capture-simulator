@@ -159,13 +159,14 @@ def prepare_with_coverage(rows, cohort, adjudications=(), paper_review=None):
         grouped[key].append(row)
     effective = apply_adjudications(rows, adjudications)
     if paper_review is not None:
-        decisions, _ = paper_version_review(rows, paper_review)
+        decisions, paper_checks = paper_version_review(rows, paper_review)
         for source_id, most_recent in decisions.items():
             row = effective[(paper_review["committeeId"], source_id)]
             if row.get("adjudicationId"):
                 raise ValueError("Overlapping FEC supplement and paper-version reviews")
             row["mostRecent"] = str(most_recent).lower()
             row["paperVersionReviewId"] = paper_review["reviewId"]
+            row["sourcePeriodConflict"] = source_id in paper_checks["periodConflictReportIds"]
     prepared, coverage = [], []
     for (actor, committee), (lower, upper) in sorted(bounds.items()):
         for year in range(lower.year, upper.year + 1):
@@ -184,6 +185,9 @@ def prepare_with_coverage(rows, cohort, adjudications=(), paper_review=None):
                     reasons.append("missing_reports")
                     detail.append("No acquired report for this expected half-year; not zero spending.")
                 else:
+                    if any(r.get("sourcePeriodConflict") for r in resolved):
+                        reasons.append("source_period_conflict")
+                        detail.append("Dated itemized transactions extend beyond the report header's end date. The raw-date gap is not evidence of absent activity; no corrected coverage end is established.")
                     if unknown:
                         reasons.append("unresolved_version")
                         detail.append("A non-superseded report lacks an affirmative latest/non-amended designation.")

@@ -176,10 +176,13 @@ A separate public-letter position pilot records two positions agreeing with both
 The Benefits Council PAC follow-up joins all 24 frozen reports to a separate
 280-record FEC filing inventory, recovering 21 current and three superseded
 version flags without overwriting raw reports. Seven selected report-PDF reviews
-and an FEC letter document Form 3/Form 3X differences, three downloaded packets
-without disbursement-summary pages, and a source-confirmed March 2006 date gap.
+and two FEC letters document Form 3/Form 3X differences, three downloaded packets
+without disbursement-summary pages, and an internal March 2006 date conflict.
+Six itemized transactions occur after the March 1 header end; their selected
+totals reconcile, but neither those dates nor the earlier FEC notice establishes
+a corrected coverage end. The raw-date gap is not evidence of absent activity.
 No additional complete half-year is recovered: eleven periods remain blocked
-by missing outcomes and one by the gap. The source ledger, coverage reasons and
+by missing outcomes and one by the date conflict/gap. The source ledger, coverage reasons and
 companion notebook preserve those distinctions; independent review remains open.
 
 The travel-source follow-up in the substitution redesign documents publisher-reported

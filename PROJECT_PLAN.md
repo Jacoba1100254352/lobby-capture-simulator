@@ -26,11 +26,15 @@ expected committee-half-years, including twelve unresolved periods; 36 are
 usable, one through a source-bound supplemental-filing adjudication. A separate
 280-record FEC filings inventory now supplies 21 current and three superseded
 version flags for all 24 frozen Benefits Council reports. Seven selected report
-PDFs and an FEC letter establish native-form differences, three downloaded
-packets lacking disbursement-summary pages, and a source-confirmed March 2006
-coverage gap. The version-only reconciliation changes coverage reasons but adds
+PDFs and two FEC letters establish native-form differences, three downloaded
+packets lacking disbursement-summary pages, and a March 2006 header/itemized-date
+conflict. Six transactions follow the March 1 header end and reconcile selected
+summary totals; the earlier notice requests a March 31 period end but does not
+certify the later filing's coverage. No corrected end or absence of activity is
+established. The version-only reconciliation changes coverage reasons but adds
 no usable half-years: eleven remain missing-outcome cases and one a date-gap
-case. Raw values remain unchanged; independent review is pending. Availability
+case with an explicit source-period-conflict flag. Raw values remain unchanged;
+independent review is pending. Availability
 does not assign treatment/control status. A scoped AdvaMed registration alias
 restores fifteen LDA filings, bringing the source panel to 427 filings. Separate
 filing-grain income/expense metadata and original-form reviews expose accounting

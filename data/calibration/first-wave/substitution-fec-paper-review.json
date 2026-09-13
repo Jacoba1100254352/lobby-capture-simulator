@@ -1,12 +1,12 @@
 {
-  "schemaVersion": 1,
+  "schemaVersion": 2,
   "reviewId": "fec-benefits-filings-2026-09-13",
   "reviewDate": "2026-09-13",
   "reviewer": "Codex",
   "independentReviewStatus": "pending",
   "committeeId": "C00153171",
   "canonicalActorId": "cand-5d1da86118e5",
-  "scope": "All 24 reports in the frozen 2003-2008 Benefits Council acquisition, joined to a committee-only filings inventory by beginning image number. Seven selected report PDFs plus one two-page FEC letter reviewed. This is not all historical filings or an audit of all transactions.",
+  "scope": "All 24 reports in the frozen 2003-2008 Benefits Council acquisition, joined to a committee-only filings inventory by beginning image number. Seven selected report PDFs plus two two-page FEC letters reviewed. Three reports have selected-field reviews and four have complete page inventories, including a Q1 follow-up of six itemized dates/amounts. This is not all historical filings or an independent financial audit.",
   "reportAcquisition": {
     "retrievedAt": "2026-09-13T02:55:30+00:00",
     "projectionFileSha256": "2d691f14ea258cebc20de5788ea9ca81e762c6ba485393dace242dc04840a909"
@@ -1373,15 +1373,37 @@
       "pagesReviewed": [
         1,
         2,
-        4
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10
       ],
-      "reviewScope": "selected_cover_and_summary_fields",
+      "reviewScope": "complete_page_inventory_with_selected_summary_and_transaction_fields",
       "nativeForm": "F3X",
       "coverPdfPage": 1,
       "periodStart": "2006-01-01",
       "periodEnd": "2006-03-01",
       "disbursementSummaryAbsentFromDownloadedPacket": false,
-      "pageInventory": [],
+      "pageInventory": [
+        {"pdfPage": 1, "pageKind": "cover"},
+        {"pdfPage": 2, "pageKind": "summary"},
+        {"pdfPage": 3, "pageKind": "receipts_summary"},
+        {"pdfPage": 4, "pageKind": "disbursement_summary"},
+        {"pdfPage": 5, "pageKind": "net_contributions_operating_expenditures"},
+        {"pdfPage": 6, "pageKind": "schedule_a_receipts"},
+        {"pdfPage": 7, "pageKind": "schedule_a_receipts"},
+        {"pdfPage": 8, "pageKind": "schedule_b_disbursements"},
+        {"pdfPage": 9, "pageKind": "schedule_b_disbursements"},
+        {"pdfPage": 10, "pageKind": "receipt_envelope"}
+      ],
+      "reviewHistory": [
+        {"reviewDate": "2026-09-13", "pagesReviewed": [1, 2, 4], "scope": "selected_cover_and_summary_fields"},
+        {"reviewDate": "2026-09-13", "pagesReviewed": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10], "scope": "complete_page_inventory_with_selected_summary_and_transaction_fields"}
+      ],
       "observations": [
         {
           "field": "pac_contributions_period",
@@ -1411,7 +1433,7 @@
           "valueDollars": "3778.89"
         }
       ],
-      "notes": "Cover and summary both end March 1, 2006, not March 31. The next acquired report starts April 1. API values 3769.00 and 3778.00 omit cents present in the scan. Page 2 cash arithmetic agrees with 3778.89. The itemized transactions were not reviewed; no claim of zero March activity."
+      "notes": "Cover and summary headers end March 1, 2006; the next acquired report starts April 1. Full-packet follow-up finds six itemized transactions dated March 9-30, after the header end. This is an internal date conflict, not evidence of an unreported or zero-activity month. API values 3769.00 and 3778.00 omit cents present in the scan. Selected schedule totals reconcile with page 2 receipts and page 4 contributions/disbursements; this is not independent financial or coverage verification."
     },
     {
       "sourceRecordId": "file:421241",
@@ -1761,6 +1783,124 @@
     }
   ],
   "versionDecisionNotes": "Use the filings endpoint most_recent only on the exact joined frozen report. Retain the reports endpoint is_amended. The three negative previous_file_number values are not joined to null original file_number values; matched periods, images and the form-correction letter support the paired review. API F3X classification does not override visible original Form 3 labels.",
+  "periodConsistencyReviews": [
+    {
+      "sourceRecordId": "file:220338",
+      "reviewId": "fec-benefits-q1-period-conflict-2026-09-13",
+      "reviewDate": "2026-09-13",
+      "reviewer": "Codex",
+      "independentReviewStatus": "pending",
+      "headerPeriodEnd": "2006-03-01",
+      "headerDatePdfPages": [
+        1,
+        2,
+        3
+      ],
+      "transactions": [
+        {
+          "pdfPage": 6,
+          "slot": "A",
+          "kind": "receipt",
+          "schedule": "A",
+          "lineCheckbox": "11c",
+          "amountDollars": "1500.00",
+          "reportedDate": "2006-03-30"
+        },
+        {
+          "pdfPage": 7,
+          "slot": "A",
+          "kind": "receipt",
+          "schedule": "A",
+          "lineCheckbox": null,
+          "amountDollars": "57.60",
+          "reportedDate": "2006-03-30"
+        },
+        {
+          "pdfPage": 8,
+          "slot": "A",
+          "kind": "disbursement",
+          "schedule": "B",
+          "lineCheckbox": "23",
+          "amountDollars": "1000.00",
+          "reportedDate": "2006-03-09"
+        },
+        {
+          "pdfPage": 8,
+          "slot": "B",
+          "kind": "disbursement",
+          "schedule": "B",
+          "lineCheckbox": "23",
+          "amountDollars": "1000.00",
+          "reportedDate": "2006-03-09"
+        },
+        {
+          "pdfPage": 8,
+          "slot": "C",
+          "kind": "disbursement",
+          "schedule": "B",
+          "lineCheckbox": "23",
+          "amountDollars": "1269.58",
+          "reportedDate": "2006-03-24"
+        },
+        {
+          "pdfPage": 9,
+          "slot": "A",
+          "kind": "disbursement",
+          "schedule": "B",
+          "lineCheckbox": "23",
+          "amountDollars": "500.00",
+          "reportedDate": "2006-03-29"
+        }
+      ],
+      "summaryReconciliation": {
+        "receiptsPdfPage": 2,
+        "receiptsPrintedLine": "6c",
+        "column": "A",
+        "receiptsDollars": "1557.60",
+        "taxesPdfPage": 4,
+        "taxesPrintedLine": "29",
+        "taxesDollars": "9.31",
+        "taxesItemizedInDownloadedPacket": false
+      },
+      "priorNotice": {
+        "sourceUrl": "https://docquery.fec.gov/pdf/885/26039070885/26039070885.pdf",
+        "pdfSha256": "dd76ba7eaa2f734bb191b59cdaab6d3be9eba84bb0159cee8aab96f8cf6dc9af",
+        "pdfPages": 2,
+        "pagesReviewed": [
+          1,
+          2
+        ],
+        "letterDate": "2006-05-02",
+        "requestedPeriodEnd": "2006-03-31",
+        "filingProjection": {
+          "committee_id": "C00153171",
+          "beginning_image_number": "26039070885",
+          "ending_image_number": "26039070886",
+          "pdf_url": "https://docquery.fec.gov/pdf/885/26039070885/26039070885.pdf",
+          "form_type": "FRQ",
+          "document_description": "RFAI: APRIL QUARTERLY 2006",
+          "report_year": 2006,
+          "report_type": "Q1",
+          "receipt_date": "2006-05-02T00:00:00",
+          "coverage_start_date": "2006-01-01",
+          "coverage_end_date": "2006-03-31",
+          "pages": 2
+        },
+        "certifiesLaterReportCoverage": false,
+        "establishesEnforcementOutcome": false,
+        "notes": "Page 1 is an RQ-7 notice referring to the January 1-March 31 April Quarterly report, stating that the committee may have failed to file and requesting immediate filing. Page 2 is blank except its scan image number. The notice precedes the report's May 9 receipt and does not certify the later filing's coverage or correct its header."
+      },
+      "boundary": {
+        "correctedPeriodEnd": null,
+        "zeroActivityInHeaderGapEstablished": false,
+        "completePeriodVerified": false,
+        "outcomePromotionCleared": false,
+        "independentExpendituresEstablished": false
+      },
+      "assessment": "Internal date inconsistency confirmed at selected field scope; likely header error is an inference. Neither March 31 in the prior notice nor March 30 as the latest itemized date establishes a corrected reporting end. Six dated rows reconcile selected totals, not complete historical activity.",
+      "notes": "Only dates, amounts and page/slot/line locations are retained; no contributor or recipient names/addresses are transcribed. The interest receipt has no checked line-number box; no line 17 checkbox is inferred. Receipt reconciliation uses the clear page-2 line 6c value, not every receipt-summary cell. The taxes are a page-4 summary observation without a separately itemized tax row in this packet. Blank independent expenditures remain unknown, not zero."
+    }
+  ],
   "boundary": {
     "appliedField": "mostRecent",
     "rawReportsUnchanged": true,
@@ -1770,5 +1910,5 @@
     "controlAssignmentCleared": false,
     "causalEffect": "not_identified"
   },
-  "reviewFingerprint": "f4b78c88f978dc5588cf9e81775ecc2e6ff4dc7ae9605bb4370baf37fe66ecf5"
+  "reviewFingerprint": "e5cb022f99bc5953902a1b34674aeced64620d4606d1d27ab632a16e0fa96560"
 }

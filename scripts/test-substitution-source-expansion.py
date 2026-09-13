@@ -54,7 +54,7 @@ class FECPaperReviewTests(unittest.TestCase):
         self.assertEqual(len(coverage), 48)
         reviewed = [r for r in coverage if r["committeeId"] == "C00153171"]
         self.assertEqual(sum(r["reasonCodes"] == "missing_outcome" for r in reviewed), 11)
-        self.assertEqual([r["halfYear"] for r in reviewed if r["reasonCodes"] == "gap_or_overlap"], ["2006H1"])
+        self.assertEqual([r["halfYear"] for r in reviewed if r["reasonCodes"] == "source_period_conflict;gap_or_overlap"], ["2006H1"])
         self.assertTrue(all(r["unknownVersionRecordIds"] == "" and r["latestReportCount"] == "0"
                             and r["status"] == "unresolved" and r["adjudicationIds"] == self.review["reviewId"]
                             for r in reviewed))
@@ -143,9 +143,79 @@ class FECPaperReviewTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, "complete packet"):
             self.check()
 
-    def test_source_confirmed_date_gap_is_not_repaired(self):
+    def test_source_header_date_conflict_is_not_silently_repaired(self):
         self.review["documents"][0]["periodEnd"] = "2006-03-31"
         with self.assertRaisesRegex(ValueError, "silently corrected"):
+            self.check()
+
+    def test_itemized_dates_and_distinct_receipt_disbursement_totals(self):
+        source = self.review["periodConsistencyReviews"][0]
+        checks = PAPER.validate_period_consistency(source, self.review)
+        self.assertEqual((checks["itemizedReceipts"], checks["itemizedDisbursements"]), (2, 4))
+        self.assertEqual(checks["transactionsAfterHeaderEnd"], 6)
+        self.assertEqual(checks["receiptTotalDollars"], "1557.60")
+        self.assertEqual(checks["contributionTotalDollars"], "3769.58")
+        self.assertEqual((checks["minTransactionDate"], checks["maxTransactionDate"]),
+                         ("2006-03-09", "2006-03-30"))
+        self.assertIsNone(checks["correctedPeriodEnd"])
+        self.assertIs(checks["completePeriodVerified"], False)
+        self.assertIsNone(source["transactions"][1]["lineCheckbox"])
+        _, aggregate = self.check(refresh=False)
+        self.assertEqual(aggregate["periodConflictReportIds"], ["file:220338"])
+        self.assertEqual(aggregate["transactionsAfterHeaderEnd"], 6)
+
+    def test_itemized_review_cannot_duplicate_or_drop_transactions(self):
+        initial = deepcopy(self.review)
+        for mode in ("duplicate", "drop_receipt", "drop_disbursement"):
+            self.review = deepcopy(initial)
+            rows = self.review["periodConsistencyReviews"][0]["transactions"]
+            if mode == "duplicate":
+                rows.append(deepcopy(rows[0]))
+            else:
+                rows.pop(0 if mode == "drop_receipt" else -1)
+            with self.subTest(mode=mode), self.assertRaisesRegex(ValueError, "Duplicate|reconcile"):
+                self.check()
+
+    def test_itemized_review_rejects_mixed_grain_and_inferred_checkboxes(self):
+        initial = deepcopy(self.review)
+        for index, field, value in ((0, "kind", "disbursement"), (2, "schedule", "A"),
+                                    (0, "pdfPage", 8), (1, "lineCheckbox", "17")):
+            self.review = deepcopy(initial)
+            self.review["periodConsistencyReviews"][0]["transactions"][index][field] = value
+            with self.subTest(field=field), self.assertRaisesRegex(ValueError, "grain|Duplicate"):
+                self.check()
+
+    def test_itemized_review_requires_complete_page_inventory(self):
+        self.review["documents"][0]["pageInventory"].pop()
+        with self.assertRaisesRegex(ValueError, "complete page inventory"):
+            self.check()
+
+    def test_period_reconciliation_does_not_clear_dates_zeros_or_outcomes(self):
+        initial = deepcopy(self.review)
+        for field, value in (("correctedPeriodEnd", "2006-03-31"),
+                             ("correctedPeriodEnd", "2006-03-30"),
+                             ("completePeriodVerified", True), ("outcomePromotionCleared", True),
+                             ("zeroActivityInHeaderGapEstablished", True),
+                             ("independentExpendituresEstablished", True)):
+            self.review = deepcopy(initial)
+            self.review["periodConsistencyReviews"][0]["boundary"][field] = value
+            with self.subTest(field=field), self.assertRaisesRegex(ValueError, "does not authorize"):
+                self.check()
+
+    def test_prior_notice_cannot_certify_later_coverage_or_enforcement(self):
+        initial = deepcopy(self.review)
+        for field, value in (("certifiesLaterReportCoverage", True),
+                             ("establishesEnforcementOutcome", True),
+                             ("requestedPeriodEnd", "2006-03-01"), ("letterDate", "2006-05-10")):
+            self.review = deepcopy(initial)
+            self.review["periodConsistencyReviews"][0]["priorNotice"][field] = value
+            with self.subTest(field=field), self.assertRaisesRegex(ValueError, "prior notice"):
+                self.check()
+
+    def test_reconciled_totals_do_not_turn_blank_ie_into_zero(self):
+        observation = self.review["documents"][0]["observations"][1]
+        observation.update(valueState="reported_numeric", valueDollars="0.00")
+        with self.assertRaisesRegex(ValueError, "blank-field boundary"):
             self.check()
 
     def test_version_recovery_cannot_promote_amounts_controls_or_enforcement(self):

@@ -485,17 +485,19 @@ with review ID `fec-benefits-filings-2026-09-13` in the coverage ledger. Raw fla
 dates and amounts remain untouched. Changed source rows, incomplete joins and
 contradictory flags fail validation. This clears the frozen frame's version
 obstacle but recovers **zero additional complete half-years**: eleven Benefits
-Council periods now report `missing_outcome`; 2006H1 reports `gap_or_overlap`
-before the missing-outcome check. It also has missing outcome cells. The usable
+Council periods now report `missing_outcome`; 2006H1 reports
+`source_period_conflict;gap_or_overlap` before the missing-outcome check.
+It also has missing outcome cells. The usable
 series remains 36 of 48 expected committee-half-years.
 
-Seven selected report PDFs and a two-page FEC letter were visually reviewed.
-The review is field-specific for four reports; three packets were read page by
-page to establish downloaded page inventories, not to audit transactions.
+Seven selected report PDFs and two two-page FEC letters were visually reviewed.
+The review is field-specific for three reports; four packets have complete page
+inventories. The 2006Q1 follow-up additionally checks six itemized dates/amounts
+and selected summary totals, not independently audited finances.
 
 | Source | Reviewed finding | Consequence |
 | --- | --- | --- |
-| [2006Q1](https://docquery.fec.gov/pdf/147/26039073147/26039073147.pdf), PDF 1, 2 and 4 | Both cover and summary end March 1, not March 31. Line 23 is $3,769.58 and line 31 is $3,778.89; API values are $3,769.00 and $3,778.00. Line 24 is blank. | The March 2-31 gap is source-confirmed, not repaired as an API-only error. Cents and missingness remain separate issues. Itemized activity was not reviewed. |
+| [2006Q1](https://docquery.fec.gov/pdf/147/26039073147/26039073147.pdf), all ten PDF pages | Headers on PDF 1-3 end March 1, but six itemized transactions are dated March 9-30. PDF 4 line 23 is $3,769.58 and line 31 is $3,778.89; API values omit cents. Line 24 is blank. | Internal date conflict, not an API-only error or evidence of an unreported month. Neither the latest transaction nor the preceding FEC notice establishes a corrected reporting end. |
 | [2008Q3 original](https://docquery.fec.gov/pdf/924/28039861924/28039861924.pdf) and [amendment](https://docquery.fec.gov/pdf/804/29030092804/29030092804.pdf), PDF 1 and 4 of each | The original uses Form 3; its $5,000 is line 18 transfers. The amendment uses Form 3X; its $5,000 is line 23 contributions. | Equal amounts do not make the field definitions equivalent. The amended independent-expenditure field remains blank. |
 | [2008 post-general original](https://docquery.fec.gov/pdf/791/29039971791/29039971791.pdf), all seven pages | A letter precedes Form 3. No disbursement-summary page occurs in the downloaded packet. The letter reports no candidate/PAC contributions during the period. | A reported no-contribution claim does not verify zero total disbursements or independent expenditures. PDF page 4 is a receipts summary. |
 | [2008 post-general amendment](https://docquery.fec.gov/pdf/796/29030092796/29030092796.pdf), PDF 1 and 4 | Form 3X period lines 23, 24 and 31 are blank; line 23's $16,721.22 is in year-to-date column B. | Do not turn blanks into zeros or carry year-to-date values into period spending. |
@@ -508,6 +510,40 @@ them as F3X. Their May 26, 2009 amendments use Form 3X. The three false latest
 flags belong to those originals. Negative `previous_file_number` values are
 preserved, not joined to null original file numbers. The letter is a request
 for information, not an enforcement outcome; copies are not independent events.
+
+#### 2006Q1: dated activity contradicts the reported period end
+
+The initial cover/summary review established what the header says, not an actual
+absence of March activity. Full-packet review changes that interpretation:
+
+| PDF page / slot | Source schedule | Reported date | Amount (USD) |
+| --- | --- | --- | ---: |
+| 6 / A | A receipts, line 11c checked | 2006-03-30 | 1,500.00 |
+| 7 / A | A receipts, no line box checked | 2006-03-30 | 57.60 |
+| 8 / A | B disbursements, line 23 checked | 2006-03-09 | 1,000.00 |
+| 8 / B | B disbursements, line 23 checked | 2006-03-09 | 1,000.00 |
+| 8 / C | B disbursements, line 23 checked | 2006-03-24 | 1,269.58 |
+| 9 / A | B disbursements, line 23 checked | 2006-03-29 | 500.00 |
+
+The two receipts total **$1,557.60**, matching PDF 2 line 6c, column A.
+The four disbursements total **$3,769.58**, matching PDF 4 line 23, column A.
+Adding that page's **$9.31** in line 29 taxes yields line 31's **$3,778.89**.
+The packet has no separately itemized tax row. These checks reconcile selected
+fields, not every receipt-summary cell, bank records or all historical activity.
+The blank independent-expenditure field remains unknown, not zero.
+
+The [May 2, 2006 FEC RQ-7 notice](https://docquery.fec.gov/pdf/885/26039070885/26039070885.pdf)
+references the January 1-March 31 April Quarterly report, says the committee may
+have failed to file, and requests immediate filing. PDF 1 contains the letter;
+PDF 2 is blank except its scan number. The frozen filings inventory contains the
+same notice, and the later report's receipt envelope records May 9.
+Notice PDF SHA-256:
+`dd76ba7eaa2f734bb191b59cdaab6d3be9eba84bb0159cee8aab96f8cf6dc9af`.
+The notice supports a likely header error as an **inference**, not a certified
+correction or enforcement outcome. The ledger preserves March 1 as the raw end,
+March 31 as the requested end and March 30 as the latest itemized date. No one
+of these fields substitutes for another. The combined conflict/gap code prevents
+the raw-date gap from being read as evidence of absent March activity.
 
 **Assessment: share with caveats for source reconciliation; not usable as an
 expanded financial panel.** The [FEC's data guidance](https://www.fec.gov/data/browse-data/)
