@@ -558,7 +558,135 @@ def validate_timing(inventory, ledger):
         "timingPreambleComparisons": len(comparisons), "timingSourceCautions": len(expected_cautions)}
 
 
-def validate_all(inventory, warranty, technology, infrastructure=None, timing=None):
+SUPPLY_PAGES = {
+    "response": [(p, p - 18) for p in [784, 791, 1637, 1667, *range(1670, 1682), 1690, 1691]],
+    "proposal": [(44, 25969)],
+    "final": [(59, 29498), (60, 29499)],
+    "argonne": [(1, None), (3, None), (14, "x"), (94, 76), (103, 85), (104, 86)],
+    "ria": [(1, None), (284, 259), (572, 547)],
+}
+SUPPLY_EXTRA_DOCS = {
+    "argonne": ("75e1a3b01de0545418c8f7e034c0b4c5bd5339365e229ae89f7eacdf15e360e0",
+                "https://publications.anl.gov/anlpubs/2024/03/187907.pdf", 3219953, 106, "ANL-24/06"),
+    "ria": ("46e0d7944c94f3b83ffaa30c20d05d69f061a1c244a941e4e3f5e0c2f9043165",
+            "https://nepis.epa.gov/Exe/ZyPDF.cgi?Dockey=P101A93R.pdf", 13228970, 961, "EPA-420-R-24-006"),
+}
+SUPPLY_FACTS = [
+    {"proposalAlreadyDiscussedRecycling": True, "riaReportsAddedBatteryReplacementCosts": True,
+     "replacementEqualsRecyclingOrDisposal": False, "requestedCostAdditionVerified": False,
+     "allCostInputsAudited": False},
+    {"epaReportsExpandedLithiumAnalysis": True,
+     "weightedLithiumScenarioSource": "BMI_as_reproduced_by_EPA",
+     "anlFigureII2AxisUnit": "thousand_tonnes", "anlFigureII2MinedLithiumBasis": "contained_LCE",
+     "bmiFigureII3AxisUnit": "GWh_equivalent",
+     "bmiProjectsIncluded": 153, "bmiProjectsExcluded": 177, "bmiScenarioLines": 3,
+     "bmiRecyclingAssumption": "maximum_potential_conditional_on_demand",
+     "anlCapacityUtilizationAssumption": 0.9, "anlTable13PermittingDelaysIncluded": False,
+     "anlUncertaintySensitivities": "future_work", "statisticalConfidenceLevelsVerified": False,
+     "fullRequestedMethodPackageVerified": False,
+     "sourceForecastsValidatedAgainstRealizedProduction": False},
+]
+
+
+def validate_supply(inventory, ledger):
+    """Protect reviewed documentary distinctions; not a substantive replication."""
+    check_review(ledger, "comment-publisher-supply-review-v1")
+    require(ledger["inventoryFile"] == "comment-publisher-inventory.json"
+            and ledger["inventoryFrameSha256"] == inventory["requestFrameSha256"]
+            and ledger["publisherSha256"] == inventory["publisher"]["sha256"] == PUBLISHER_SHA,
+            "Supply review has stale inventory/source binding")
+    ids = ["mema-1570-r10", "mema-1570-r11"]
+    require([r["requestId"] for r in inventory["requests"] if r["topic"] == "supply_chain"] == ids,
+            "Supply topic population changed")
+    selection = ledger["selection"]
+    require(selection["requestIds"] == ids
+            and selection["mode"] == "complete_supply_chain_topic_in_frozen_letter"
+            and selection["priorOutcomeExposure"] is True and selection["blinded"] is False
+            and selection["scope"], "Supply selection/frame disclosure mismatch")
+    visual = ledger["publisherReview"]
+    require(visual["pdfPages"] == [7, 8] and visual["method"] == "rendered_pages_with_text_navigation"
+            and visual["scope"], "Supply original visual scope mismatch")
+    require(set(ledger["documents"]) == set(SUPPLY_PAGES), "Missing supply source document")
+    for name, pairs in SUPPLY_PAGES.items():
+        doc = ledger["documents"][name]
+        digest, url = (SUPPLY_EXTRA_DOCS[name][:2] if name in SUPPLY_EXTRA_DOCS
+                       else (SOURCE_DOCS[name][0], SOURCE_URLS[name]))
+        require(doc["sha256"] == digest and doc["url"] == url and doc["scope"]
+                and doc["reviewedPages"] == [{"pdfPage": p, "printedPage": n} for p, n in pairs],
+                "Supply source identity/page mapping mismatch")
+        if name in SUPPLY_EXTRA_DOCS:
+            require((doc["byteSize"], doc["pageCount"], doc["reportNumber"]) == SUPPLY_EXTRA_DOCS[name][2:]
+                    and doc["title"], "Supply additional source metadata mismatch")
+    anl = ledger["documents"]["argonne"]
+    require(anl["titlePageDate"] == "February 2024" and anl["responseCitationDate"] == "March 2024",
+            "Supply printed date variants must remain separate")
+    scope_spec = {
+        "recycling-referral": ([791], True),
+        "mineral-availability": (list(range(1670, 1682)), True),
+        "mineral-security-recycling": ([1690, 1691], False),
+    }
+    require(set(ledger["responseScopes"]) == set(scope_spec), "Supply response scope missing")
+    for key, (pages, complete) in scope_spec.items():
+        scope = ledger["responseScopes"][key]
+        require(scope["pdfPages"] == pages and scope["completeGeneralResponse"] is complete
+                and scope["locator"], "Supply response scope mismatch")
+    reviews = ledger["reviews"]
+    require([r["requestId"] for r in reviews] == ids, "Supply review frame mismatch")
+    rows = {r["requestId"]: r for r in inventory["requests"]}
+    comparison_ids = ["recycling-and-replacement-distinction", "lithium-scenarios-and-uncertainty"]
+    codings = [("reproduced_request_thematic_response", "recycling_disposal_cost_addition_not_verified"),
+               ("reproduced_request_collective_response", "expanded_supply_scenarios_partial_method_alignment")]
+    for i, r in enumerate(reviews):
+        require(r["citedCommentId"] == COMMENT_ID and r["citedAttachmentOrder"] == 1
+                and r["originalPdfPages"] == r["matchedOriginalPdfPages"] == rows[ids[i]]["pdfPages"]
+                and r["excerptPdfPages"] == ([784, 1637] if i == 0 else [1637])
+                and r["summaryPdfPages"] == ([1667] if i == 0 else [])
+                and r["responseScopeIds"] == (list(scope_spec) if i == 0 else ["mineral-availability"])
+                and r["excerptContentMatch"] == "selected_request_wording_and_original_page_citations_agree",
+                "Supply original/excerpt/response linkage mismatch")
+        require((r["responseLink"], r["disposition"]) == codings[i] and r["basis"]
+                and r["analysisComparisonIds"] == [comparison_ids[i]]
+                and r["independentReviewStatus"] == "pending" and r["individualCausalEffect"] == "not_identified",
+                "Unsupported supply coding/promotion")
+    comparisons = ledger["analysisComparisons"]
+    require([c["comparisonId"] for c in comparisons] == comparison_ids,
+            "Supply comparisons must not multiply requests or policy events")
+    comparison_pages = [
+        {"proposal": [44], "response": [791, 1690, 1691], "ria": [284, 572]},
+        {"response": [1670, 1671, 1676], "final": [59, 60], "argonne": [14, 94, 103, 104]},
+    ]
+    assessments = ["specific_cost_addition_not_verified_in_reviewed_passages",
+                   "partial_method_alignment_not_full_request_acceptance"]
+    for i, c in enumerate(comparisons):
+        require(c["requestIds"] == [ids[i]] and c["evidencePages"] == comparison_pages[i]
+                and c["facts"] == SUPPLY_FACTS[i] and c["assessment"] == assessments[i] and c["basis"]
+                and c["distinctPolicyChanges"] == "not_counted" and c["individualAttribution"] == "not_identified",
+                "Unsupported supply analysis comparison")
+    caution_spec = [
+        ("replacement-is-not-recycling", ids[:1], "different_cost_components_preserved", "high",
+         {"publisher": [7], "ria": [284, 572]}),
+        ("scenarios-are-not-confidence-levels", ids[1:], "sources_units_and_uncertainty_preserved", "high",
+         {"final": [59, 60], "argonne": [14, 94, 103, 104]}),
+        ("source-reference-discrepancies", ids, "printed_source_references_preserved", "medium",
+         {"response": [1671], "argonne": [3], "ria": [284, 572]}),
+    ]
+    require(len(ledger["sourceCautions"]) == len(caution_spec), "Missing supply source caution")
+    for c, expected in zip(ledger["sourceCautions"], caution_spec):
+        require(tuple(c[k] for k in ("cautionId", "requestIds", "status", "severity", "evidencePages")) == expected
+                and c["finding"] and c["handling"], "Supply source caution changed")
+    boundary = ledger["boundary"]
+    require(all(boundary.get(k) == v for k, v in {
+        "officialAttachmentByteMatch": "not_verified", "independentReviewStatus": "pending",
+        "docketRateEligible": False, "overallLetterResponseCodingComplete": False,
+        "currentLegalStatusAssessed": False, "causalEffect": "not_identified", "simulatorRecalibrated": False,
+        "remainingEntriesStatus": "not_yet_adjudicated_not_nonresponse"}.items())
+        and boundary["comparisonBoundary"] and boundary["unreviewedAnalysis"], "Unsupported supply claim boundary")
+    return {"supplyEntriesReviewed": len(reviews),
+            "supplyResponseLinks": dict(Counter(r["responseLink"] for r in reviews)),
+            "supplyAnalysisComparisons": len(comparisons), "supplySourceCautions": len(caution_spec)}
+
+
+def validate_all(inventory, warranty, technology, infrastructure=None, timing=None, supply=None):
     """Aggregate supplied follow-ups; omitted ledgers retain historical review scopes."""
     result = validate(inventory, warranty)
     result.update(validate_technology(inventory, technology))
@@ -569,6 +697,9 @@ def validate_all(inventory, warranty, technology, infrastructure=None, timing=No
     if timing is not None:
         result.update(validate_timing(inventory, timing))
         ledgers.append(timing)
+    if supply is not None:
+        result.update(validate_supply(inventory, supply))
+        ledgers.append(supply)
     ids = [r["requestId"] for ledger in ledgers for r in ledger["reviews"]]
     require(len(ids) == len(set(ids)), "Overlapping publisher follow-ups inflate review coverage")
     result["boundedResponseReviews"] = len(ids)
@@ -578,7 +709,8 @@ def validate_all(inventory, warranty, technology, infrastructure=None, timing=No
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
-    for name in ("publisher-pdf", "metadata-json", "response-pdf", "proposal-pdf", "final-pdf"):
+    for name in ("publisher-pdf", "metadata-json", "response-pdf", "proposal-pdf", "final-pdf",
+                 "argonne-pdf", "ria-pdf"):
         parser.add_argument("--" + name, type=Path)
     args = parser.parse_args()
     inventory = json.loads((DATA / "comment-publisher-inventory.json").read_text())
@@ -586,11 +718,13 @@ def main():
     technology = json.loads((DATA / "comment-publisher-technology-review.json").read_text())
     infrastructure = json.loads((DATA / "comment-publisher-infrastructure-review.json").read_text())
     timing = json.loads((DATA / "comment-publisher-timing-review.json").read_text())
-    result = validate_all(inventory, followup, technology, infrastructure, timing)
+    supply = json.loads((DATA / "comment-publisher-supply-review.json").read_text())
+    result = validate_all(inventory, followup, technology, infrastructure, timing, supply)
     checked = []
     for name, digest in {"publisher_pdf": PUBLISHER_SHA,
             "metadata_json": inventory["docketMetadata"]["rawSha256"],
-            **{k + "_pdf": v[0] for k, v in SOURCE_DOCS.items()}}.items():
+            **{k + "_pdf": v[0] for k, v in SOURCE_DOCS.items()},
+            **{k + "_pdf": v[0] for k, v in SUPPLY_EXTRA_DOCS.items()}}.items():
         path = getattr(args, name)
         if path is not None:
             payload = path.read_bytes()

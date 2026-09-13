@@ -1,0 +1,446 @@
+{
+  "schema": "comment-publisher-supply-review-v1",
+  "reviewDate": "2026-09-13",
+  "reviewer": "Codex source review; independent adjudication pending",
+  "inventoryFile": "comment-publisher-inventory.json",
+  "inventoryFrameSha256": "717738adcf4cba674307d1721c1d8a60429c21f804232c1a57bdc7f28a2f4f39",
+  "publisherSha256": "e6f6c3c34594d69654b4375e29896175b3057f4c6a0c987e141ac229f10d0159",
+  "selection": {
+    "requestIds": [
+      "mema-1570-r10",
+      "mema-1570-r11"
+    ],
+    "mode": "complete_supply_chain_topic_in_frozen_letter",
+    "priorOutcomeExposure": true,
+    "blinded": false,
+    "scope": "Both existing supply-chain entries, selected after response navigation. One access-led letter; no new requests, independent events or representative sampling."
+  },
+  "publisherReview": {
+    "pdfPages": [
+      7,
+      8
+    ],
+    "method": "rendered_pages_with_text_navigation",
+    "scope": "Rechecked final highlighted recycling/disposal cost request on page 7 and opening highlighted scaling/confidence/sensitivity request on page 8."
+  },
+  "documents": {
+    "response": {
+      "url": "https://www.epa.gov/system/files/documents/2024-03/420r24007.pdf",
+      "sha256": "4ce468a6ea85ede970b8189dab82b0ab5112692abcc1f684a585f563b6b4ab8e",
+      "reviewedPages": [
+        {
+          "pdfPage": 784,
+          "printedPage": 766
+        },
+        {
+          "pdfPage": 791,
+          "printedPage": 773
+        },
+        {
+          "pdfPage": 1637,
+          "printedPage": 1619
+        },
+        {
+          "pdfPage": 1667,
+          "printedPage": 1649
+        },
+        {
+          "pdfPage": 1670,
+          "printedPage": 1652
+        },
+        {
+          "pdfPage": 1671,
+          "printedPage": 1653
+        },
+        {
+          "pdfPage": 1672,
+          "printedPage": 1654
+        },
+        {
+          "pdfPage": 1673,
+          "printedPage": 1655
+        },
+        {
+          "pdfPage": 1674,
+          "printedPage": 1656
+        },
+        {
+          "pdfPage": 1675,
+          "printedPage": 1657
+        },
+        {
+          "pdfPage": 1676,
+          "printedPage": 1658
+        },
+        {
+          "pdfPage": 1677,
+          "printedPage": 1659
+        },
+        {
+          "pdfPage": 1678,
+          "printedPage": 1660
+        },
+        {
+          "pdfPage": 1679,
+          "printedPage": 1661
+        },
+        {
+          "pdfPage": 1680,
+          "printedPage": 1662
+        },
+        {
+          "pdfPage": 1681,
+          "printedPage": 1663
+        },
+        {
+          "pdfPage": 1690,
+          "printedPage": 1672
+        },
+        {
+          "pdfPage": 1691,
+          "printedPage": 1673
+        }
+      ],
+      "scope": "MEMA excerpts, selected summary, complete section-4.7 response and section-17.2 mineral-availability response through its end before battery production; selected recycling paragraphs from mineral security, not the whole security response or all of section 17.2."
+    },
+    "proposal": {
+      "url": "https://www.govinfo.gov/content/pkg/FR-2023-04-27/pdf/2023-07955.pdf",
+      "sha256": "30f6f81aadc5313a4762e4234f93a4d937f83c5db75ec2607eb68ce028affc1a",
+      "reviewedPages": [
+        {
+          "pdfPage": 44,
+          "printedPage": 25969
+        }
+      ],
+      "scope": "Existing recycling supply, research and funding discussion; not a complete proposal cost-model audit."
+    },
+    "final": {
+      "url": "https://www.govinfo.gov/content/pkg/FR-2024-04-22/pdf/2024-06809.pdf",
+      "sha256": "9d1b9a74a8528e36b7783ddfacf9b3089f484225431b1496324b5d5d2963eb94",
+      "reviewedPages": [
+        {
+          "pdfPage": 59,
+          "printedPage": 29498
+        },
+        {
+          "pdfPage": 60,
+          "printedPage": 29499
+        }
+      ],
+      "scope": "Table II-7, Figures II-2 and II-3, footnotes and surrounding lithium-method discussion; not an operative-clause or current-law audit."
+    },
+    "argonne": {
+      "url": "https://publications.anl.gov/anlpubs/2024/03/187907.pdf",
+      "sha256": "75e1a3b01de0545418c8f7e034c0b4c5bd5339365e229ae89f7eacdf15e360e0",
+      "byteSize": 3219953,
+      "pageCount": 106,
+      "title": "Securing Critical Materials for the U.S. Electric Vehicle Industry: A Landscape Assessment of Domestic and International Supply Chains for Five Key Battery Materials",
+      "reportNumber": "ANL-24/06",
+      "titlePageDate": "February 2024",
+      "responseCitationDate": "March 2024",
+      "reviewedPages": [
+        {
+          "pdfPage": 1,
+          "printedPage": null
+        },
+        {
+          "pdfPage": 3,
+          "printedPage": null
+        },
+        {
+          "pdfPage": 14,
+          "printedPage": "x"
+        },
+        {
+          "pdfPage": 94,
+          "printedPage": 76
+        },
+        {
+          "pdfPage": 103,
+          "printedPage": 85
+        },
+        {
+          "pdfPage": 104,
+          "printedPage": 86
+        }
+      ],
+      "scope": "Cover/title page, executive-summary future-work paragraph, first conclusion page and Appendix II methodology through Table 13 and the following discussion. Not a complete report review or independent replication."
+    },
+    "ria": {
+      "url": "https://nepis.epa.gov/Exe/ZyPDF.cgi?Dockey=P101A93R.pdf",
+      "sha256": "46e0d7944c94f3b83ffaa30c20d05d69f061a1c244a941e4e3f5e0c2f9043165",
+      "byteSize": 13228970,
+      "pageCount": 961,
+      "title": "Greenhouse Gas Emissions Standards for Heavy-Duty Vehicles: Phase 3 - Regulatory Impact Analysis",
+      "reportNumber": "EPA-420-R-24-006",
+      "reviewedPages": [
+        {
+          "pdfPage": 1,
+          "printedPage": null
+        },
+        {
+          "pdfPage": 284,
+          "printedPage": 259
+        },
+        {
+          "pdfPage": 572,
+          "printedPage": 547
+        }
+      ],
+      "scope": "Cover, battery-deterioration referral and section-3.4.7.6 cost-method text before Table 3-81. Tables, model files and other cost chapters are not audited.",
+      "discoveryUrl": "https://www.epa.gov/regulations-emissions-vehicles-and-engines/final-rule-greenhouse-gas-emissions-standards-heavy-duty"
+    }
+  },
+  "responseScopes": {
+    "recycling-referral": {
+      "pdfPages": [
+        791
+      ],
+      "locator": "Complete section 4.7 Response before section 4.8 Safety.",
+      "completeGeneralResponse": true
+    },
+    "mineral-availability": {
+      "pdfPages": [
+        1670,
+        1671,
+        1672,
+        1673,
+        1674,
+        1675,
+        1676,
+        1677,
+        1678,
+        1679,
+        1680,
+        1681
+      ],
+      "locator": "Section 17.2 Response: Availability of the critical minerals, through the sentence before Response: Sufficiency of Battery Production on PDF 1681.",
+      "completeGeneralResponse": true
+    },
+    "mineral-security-recycling": {
+      "pdfPages": [
+        1690,
+        1691
+      ],
+      "locator": "Paragraph beginning Recycling is also a part of the solution through the conclusion preceding the human-rights response.",
+      "completeGeneralResponse": false
+    }
+  },
+  "reviews": [
+    {
+      "requestId": "mema-1570-r10",
+      "citedCommentId": "EPA-HQ-OAR-2022-0985-1570",
+      "citedAttachmentOrder": 1,
+      "originalPdfPages": [
+        7
+      ],
+      "matchedOriginalPdfPages": [
+        7
+      ],
+      "excerptPdfPages": [
+        784,
+        1637
+      ],
+      "summaryPdfPages": [
+        1667
+      ],
+      "responseScopeIds": [
+        "recycling-referral",
+        "mineral-availability",
+        "mineral-security-recycling"
+      ],
+      "excerptContentMatch": "selected_request_wording_and_original_page_citations_agree",
+      "responseLink": "reproduced_request_thematic_response",
+      "disposition": "recycling_disposal_cost_addition_not_verified",
+      "basis": "MEMA's request is reproduced twice and summarized by name. The recycling response refers to broader analysis, and the mineral-security paragraphs discuss recycling supply and funding. These passages do not establish addition of the requested recycling/disposal costs. The RIA explicitly reports a different addition: battery-replacement and ICE-rebuild purchaser costs.",
+      "analysisComparisonIds": [
+        "recycling-and-replacement-distinction"
+      ],
+      "independentReviewStatus": "pending",
+      "individualCausalEffect": "not_identified"
+    },
+    {
+      "requestId": "mema-1570-r11",
+      "citedCommentId": "EPA-HQ-OAR-2022-0985-1570",
+      "citedAttachmentOrder": 1,
+      "originalPdfPages": [
+        8
+      ],
+      "matchedOriginalPdfPages": [
+        8
+      ],
+      "excerptPdfPages": [
+        1637
+      ],
+      "summaryPdfPages": [],
+      "responseScopeIds": [
+        "mineral-availability"
+      ],
+      "excerptContentMatch": "selected_request_wording_and_original_page_citations_agree",
+      "responseLink": "reproduced_request_collective_response",
+      "disposition": "expanded_supply_scenarios_partial_method_alignment",
+      "basis": "The collective response acknowledges uncertainty, rejects projected mineral-shortfall objections and cites a new ANL analysis. The final preamble adds BMI lithium scenarios with project-stage weighting. This partly aligns with the requested method changes, but does not verify the full scaling/confidence/sensitivity request or attribute changes to MEMA.",
+      "analysisComparisonIds": [
+        "lithium-scenarios-and-uncertainty"
+      ],
+      "independentReviewStatus": "pending",
+      "individualCausalEffect": "not_identified"
+    }
+  ],
+  "analysisComparisons": [
+    {
+      "comparisonId": "recycling-and-replacement-distinction",
+      "requestIds": [
+        "mema-1570-r10"
+      ],
+      "evidencePages": {
+        "proposal": [
+          44
+        ],
+        "response": [
+          791,
+          1690,
+          1691
+        ],
+        "ria": [
+          284,
+          572
+        ]
+      },
+      "assessment": "specific_cost_addition_not_verified_in_reviewed_passages",
+      "basis": "Recycling as a mineral source and recycling funding were already discussed at proposal. RIA section 3.4.7.6 describes newly added replacement/rebuild purchaser costs; neither this nor a funding announcement verifies the requested recycling/disposal cost input.",
+      "facts": {
+        "proposalAlreadyDiscussedRecycling": true,
+        "riaReportsAddedBatteryReplacementCosts": true,
+        "replacementEqualsRecyclingOrDisposal": false,
+        "requestedCostAdditionVerified": false,
+        "allCostInputsAudited": false
+      },
+      "distinctPolicyChanges": "not_counted",
+      "individualAttribution": "not_identified"
+    },
+    {
+      "comparisonId": "lithium-scenarios-and-uncertainty",
+      "requestIds": [
+        "mema-1570-r11"
+      ],
+      "evidencePages": {
+        "response": [
+          1670,
+          1671,
+          1676
+        ],
+        "final": [
+          59,
+          60
+        ],
+        "argonne": [
+          14,
+          94,
+          103,
+          104
+        ]
+      },
+      "assessment": "partial_method_alignment_not_full_request_acceptance",
+      "basis": "EPA describes expanded lithium analysis and BMI weighted/unweighted scenarios. ANL supplies explicit utilization and project-timing assumptions, but lists uncertainty sensitivities as future work. Forecast ranges are not established statistical confidence levels, realized supply, or MEMA-caused changes.",
+      "facts": {
+        "epaReportsExpandedLithiumAnalysis": true,
+        "weightedLithiumScenarioSource": "BMI_as_reproduced_by_EPA",
+        "anlFigureII2AxisUnit": "thousand_tonnes",
+        "anlFigureII2MinedLithiumBasis": "contained_LCE",
+        "bmiFigureII3AxisUnit": "GWh_equivalent",
+        "bmiProjectsIncluded": 153,
+        "bmiProjectsExcluded": 177,
+        "bmiScenarioLines": 3,
+        "bmiRecyclingAssumption": "maximum_potential_conditional_on_demand",
+        "anlCapacityUtilizationAssumption": 0.9,
+        "anlTable13PermittingDelaysIncluded": false,
+        "anlUncertaintySensitivities": "future_work",
+        "statisticalConfidenceLevelsVerified": false,
+        "fullRequestedMethodPackageVerified": false,
+        "sourceForecastsValidatedAgainstRealizedProduction": false
+      },
+      "distinctPolicyChanges": "not_counted",
+      "individualAttribution": "not_identified"
+    }
+  ],
+  "sourceCautions": [
+    {
+      "cautionId": "replacement-is-not-recycling",
+      "requestIds": [
+        "mema-1570-r10"
+      ],
+      "status": "different_cost_components_preserved",
+      "severity": "high",
+      "evidencePages": {
+        "publisher": [
+          7
+        ],
+        "ria": [
+          284,
+          572
+        ]
+      },
+      "finding": "A documented replacement-cost addition is not the requested recycling/disposal addition.",
+      "handling": "Keep the latter unverified within scope; do not code acceptance, rejection or docket-wide nonresponse."
+    },
+    {
+      "cautionId": "scenarios-are-not-confidence-levels",
+      "requestIds": [
+        "mema-1570-r11"
+      ],
+      "status": "sources_units_and_uncertainty_preserved",
+      "severity": "high",
+      "evidencePages": {
+        "final": [
+          59,
+          60
+        ],
+        "argonne": [
+          14,
+          94,
+          103,
+          104
+        ]
+      },
+      "finding": "EPA's BMI scenarios differ from ANL's assumptions and future-work statement. Figure II-2 uses thousands of tonnes, with mined lithium labeled contained lithium carbonate equivalent (LCE); Figure II-3 uses GWh-equivalent demand and conditional maximum recycling.",
+      "handling": "Do not combine the figure values, attribute BMI weighting to ANL, convert scenarios into confidence intervals, or treat projected capacity as realized production."
+    },
+    {
+      "cautionId": "source-reference-discrepancies",
+      "requestIds": [
+        "mema-1570-r10",
+        "mema-1570-r11"
+      ],
+      "status": "printed_source_references_preserved",
+      "severity": "medium",
+      "evidencePages": {
+        "response": [
+          1671
+        ],
+        "argonne": [
+          3
+        ],
+        "ria": [
+          284,
+          572
+        ]
+      },
+      "finding": "ANL's title page dates the report February 2024; the response cites March. RIA page 259 refers to 3.4.6.5, while the inspected replacement-cost heading is 3.4.7.6 on page 547.",
+      "handling": "Record the source variants and inspected page locations; do not silently repair citations or infer different substantive analyses."
+    }
+  ],
+  "boundary": {
+    "officialAttachmentByteMatch": "not_verified",
+    "independentReviewStatus": "pending",
+    "docketRateEligible": false,
+    "overallLetterResponseCodingComplete": false,
+    "currentLegalStatusAssessed": false,
+    "causalEffect": "not_identified",
+    "simulatorRecalibrated": false,
+    "remainingEntriesStatus": "not_yet_adjudicated_not_nonresponse",
+    "comparisonBoundary": "Historical documentary coding only. Source-method changes and thematic responses do not identify an individual comment's effect or justify simulator parameter calibration.",
+    "unreviewedAnalysis": "No complete cost-input/model audit, full ANL replication, direct BMI source review, full section-17.2 review or realized-production comparison. Nonverification is scoped, not proof that a cost is absent everywhere."
+  },
+  "reviewFingerprint": "a5347da4ecd4cf73fcd3f4b947aaab81f18f649f230e122c07a311820bda2f0e"
+}

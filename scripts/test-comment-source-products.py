@@ -1015,5 +1015,121 @@ class PublisherTimingTests(unittest.TestCase):
             boundary[key] = original
 
 
+class PublisherSupplyTests(unittest.TestCase):
+    def setUp(self):
+        names = ("inventory", "warranty-review", "technology-review", "infrastructure-review",
+                 "timing-review", "supply-review")
+        self.ledgers = [json.loads((AUDIT.DATA / f"comment-publisher-{name}.json").read_text()) for name in names]
+        self.supply = self.ledgers[-1]
+
+    def check(self, refresh=True):
+        if refresh:
+            self.supply["reviewFingerprint"] = PUBLISHER.fingerprint({
+                k: v for k, v in self.supply.items() if k != "reviewFingerprint"})
+        return PUBLISHER.validate_all(*self.ledgers)
+
+    def test_supply_adds_two_unique_reviews_preserving_historical_coverage(self):
+        before = deepcopy(self.ledgers)
+        result = self.check(False)
+        self.assertEqual(self.ledgers, before)
+        for key, value in {"publisherLetters": 1, "inventoryEntries": 48, "boundedResponseReviews": 24,
+                           "otherEntriesAwaitingAdjudication": 24, "supplyEntriesReviewed": 2,
+                           "supplyAnalysisComparisons": 2, "supplySourceCautions": 3,
+                           "verifiedDocketByteMatches": 0, "independentlyReviewedEntries": 0,
+                           "docketRateEligibleEntries": 0}.items():
+            self.assertEqual(result[key], value)
+        self.assertEqual(PUBLISHER.validate_all(*self.ledgers[:-1])["boundedResponseReviews"], 22)
+        self.assertEqual(PUBLISHER.validate_all(*self.ledgers[:-2])["boundedResponseReviews"], 20)
+
+    def test_stale_fingerprint_and_frame_binding_fail(self):
+        self.supply["inventoryFrameSha256"] = "0" * 64
+        with self.assertRaisesRegex(ValueError, "fingerprint"):
+            self.check(False)
+        with self.assertRaisesRegex(ValueError, "binding"):
+            self.check()
+
+    def test_duplicate_missing_or_different_requests_fail(self):
+        original = deepcopy(self.supply["reviews"])
+        for rows in (original[:1], original * 2, [original[0], original[0]]):
+            self.supply["reviews"] = rows
+            with self.subTest(count=len(rows)), self.assertRaisesRegex(ValueError, "frame"):
+                self.check()
+
+    def test_selection_and_visual_review_cannot_be_promoted(self):
+        self.supply["selection"]["blinded"] = True
+        with self.assertRaisesRegex(ValueError, "selection"):
+            self.check()
+        self.supply["selection"]["blinded"] = False
+        self.supply["publisherReview"]["pdfPages"] = [7]
+        with self.assertRaisesRegex(ValueError, "visual"):
+            self.check()
+
+    def test_source_hashes_and_page_maps_remain_bound(self):
+        for name in self.supply["documents"]:
+            doc = self.supply["documents"][name]
+            original = deepcopy(doc)
+            for field, value in (("sha256", "0" * 64), ("reviewedPages", [])):
+                doc[field] = value
+                with self.subTest(source=name, field=field), self.assertRaisesRegex(ValueError, "source identity"):
+                    self.check()
+                doc[field] = original[field]
+
+    def test_partial_security_review_cannot_become_complete(self):
+        self.supply["responseScopes"]["mineral-security-recycling"]["completeGeneralResponse"] = True
+        with self.assertRaisesRegex(ValueError, "response scope"):
+            self.check()
+
+    def test_mineral_response_cannot_drop_unfavorable_passages(self):
+        self.supply["responseScopes"]["mineral-availability"]["pdfPages"] = [1671]
+        with self.assertRaisesRegex(ValueError, "response scope"):
+            self.check()
+
+    def test_cost_nonverification_cannot_become_acceptance_or_rejection(self):
+        for code in ("accepted", "rejected", "no_response"):
+            self.supply["reviews"][0]["disposition"] = code
+            with self.subTest(code=code), self.assertRaisesRegex(ValueError, "coding"):
+                self.check()
+
+    def test_collective_response_cannot_become_named_mema_effect(self):
+        self.supply["reviews"][1]["responseLink"] = "explicit_named_response"
+        with self.assertRaisesRegex(ValueError, "coding"):
+            self.check()
+
+    def test_cost_and_uncertainty_distinctions_are_required(self):
+        for index, expected in enumerate(PUBLISHER.SUPPLY_FACTS):
+            facts = self.supply["analysisComparisons"][index]["facts"]
+            for key, value in expected.items():
+                facts[key] = not value if isinstance(value, bool) else "unsupported"
+                with self.subTest(key=key), self.assertRaisesRegex(ValueError, "analysis comparison"):
+                    self.check()
+                facts[key] = value
+
+    def test_source_date_variants_cannot_be_silently_repaired(self):
+        self.supply["documents"]["argonne"]["titlePageDate"] = "March 2024"
+        with self.assertRaisesRegex(ValueError, "date variants"):
+            self.check()
+
+    def test_comparisons_and_cautions_preserve_scope(self):
+        original = deepcopy(self.supply["analysisComparisons"])
+        self.supply["analysisComparisons"] *= 2
+        with self.assertRaisesRegex(ValueError, "multiply"):
+            self.check()
+        self.supply["analysisComparisons"] = original
+        self.supply["sourceCautions"].pop()
+        with self.assertRaisesRegex(ValueError, "source caution"):
+            self.check()
+
+    def test_no_causal_calibration_or_independent_review_promotion(self):
+        boundary = self.supply["boundary"]
+        for key, value in (("independentReviewStatus", "cleared"), ("docketRateEligible", True),
+                           ("overallLetterResponseCodingComplete", True), ("currentLegalStatusAssessed", True),
+                           ("simulatorRecalibrated", True), ("causalEffect", "identified")):
+            original = boundary[key]
+            boundary[key] = value
+            with self.subTest(key=key), self.assertRaisesRegex(ValueError, "claim boundary"):
+                self.check()
+            boundary[key] = original
+
+
 if __name__ == "__main__":
     unittest.main()

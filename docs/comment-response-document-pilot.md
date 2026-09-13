@@ -325,21 +325,96 @@ The response's legal rebuttal explicitly names **EMA**, a different organization
 from **MEMA**. A collective-response link therefore cannot become an explicit
 named MEMA response. These are high-risk attribution and outcome-coding issues.
 
-The combined four warranty, nine technology/fuel, seven infrastructure and two
-timing reviews now cover **22 distinct entries**, leaving **26 unadjudicated**,
+At that checkpoint, four warranty, nine technology/fuel, seven infrastructure and two
+timing reviews covered **22 distinct entries**, leaving **26 unadjudicated**,
 not nonresponses. No entry has independent-review clearance or docket-rate
 eligibility. Consistency checks and thirteen timing regressions protect source
 binding, complete response scope, category/year distinctions, the ambiguous
 condition, and the no-promotion boundary; they do not independently authenticate
 manual readings. The companion notebook preserves the historical 20/28 checkpoint
-and separately computes the latest 22/26 coverage.
+and separately computes that 22/26 coverage.
 
-RIA cost-model inputs and the full referenced cost analyses remain unread.
-Battery-cost and mineral-supply requests r10/r11 remain unadjudicated: text
-navigation has located response referrals, not completed that technical source
-chain. Exact docket-file matching, independent review and a justified sampling
+At that checkpoint, battery-cost and mineral-supply requests r10/r11 were still
+unadjudicated. The separate supply-chain follow-up below advances that technical
+source chain without changing the timing ledger. The full referenced cost-model
+inputs remain unaudited. Exact docket-file matching, independent review and a justified sampling
 frame remain open. No current legal force, post-rule implementation, individual
 causal effect or simulator recalibration is asserted.
+
+## Supply-chain methods and end-of-life costs, September 13
+
+**Assessment: share with caveats for historical documentary coding.** The new
+`comment-publisher-supply-review.json` covers r10/r11, the entire supply-chain
+topic in the unchanged 48-entry letter. Topic selection followed prior outcome
+exposure; this is not a blinded or representative sample. The earlier ledgers,
+including the timing checkpoint, remain unchanged.
+
+### Sources and review scope
+
+Rendered publisher pages 7-8 supply the original requests. The
+[EPA response](https://www.epa.gov/system/files/documents/2024-03/420r24007.pdf)
+reproduces r10 on PDF 784 and both requests on PDF 1637 (printed 766 and 1619).
+PDF 1667/printed 1649 also summarizes MEMA's disposal-cost concern by name.
+The complete section-4.7 response is a referral on PDF 791/printed 773.
+The complete mineral-availability response in section 17.2 spans PDF 1670-1681
+(printed 1652-1663), ending before the battery-production response. Only the
+recycling paragraphs on PDF 1690-1691 were reviewed within the separate
+mineral-security response; that response is not wholly reviewed.
+
+Two additional official sources are bound by hashes and explicit visual scopes:
+[ANL-24/06](https://publications.anl.gov/anlpubs/2024/03/187907.pdf), PDF 1, 3,
+14, 94, 103-104 (cover/title page and printed x, 76, 85-86), and the
+[final impact analysis](https://nepis.epa.gov/Exe/ZyPDF.cgi?Dockey=P101A93R.pdf),
+PDF 1, 284 and 572 (cover and printed 259, 547). Neither whole report nor its
+underlying model is independently replicated here.
+
+| Existing request | Bounded finding | Not established |
+| --- | --- | --- |
+| r10: add recycling/disposal costs | Reproduced request, thematic response and recycling discussion; the specified cost addition is not verified in the reviewed passages. | Acceptance, rejection, or absence of those costs everywhere in the analysis. |
+| r11: scale and stress-test material projections | Expanded analysis and BMI project-weighted lithium scenarios partly align with the method request. | Full scaling/confidence/sensitivity implementation or an individually attributable MEMA effect. |
+
+### Distinctions that change the coding
+
+Recycling as a mineral source and recycling funding already appear in the
+[proposal](https://www.govinfo.gov/content/pkg/FR-2023-04-27/pdf/2023-07955.pdf)
+on PDF 44/printed 25969. The final RIA section 3.4.7.6 explicitly describes
+adding battery-replacement and ICE-rebuild purchaser costs. Replacement is not
+recycling or disposal, and neither that change nor recycling grants verifies r10.
+
+The [final preamble](https://www.govinfo.gov/content/pkg/FR-2024-04-22/pdf/2024-06809.pdf)
+on PDF 59-60/printed 29498-29499 describes an expanded lithium analysis and
+reproduces two different sources. Figure II-2 is ANL's material-supply/demand
+comparison in thousands of tonnes; the mined-lithium series is labeled contained
+lithium carbonate equivalent (LCE). Figure II-3 is BMI's GWh-equivalent comparison, with
+three differently weighted supply scenarios, 153 included projects and 177
+excluded for unavailable production estimates. Its recycling contribution is
+conditional maximum potential, not observed recovery. We reviewed EPA's
+reproduction, not the underlying BMI source or project-level data.
+
+ANL's Appendix II uses a 90% utilization assumption and project-stage timing;
+Table 13 explicitly excludes permitting delays from its time estimates. Its
+executive summary and conclusion identify uncertainty sensitivities as future
+work. These distinctions prevent calling a scenario range a verified statistical
+confidence level or declaring the full method request accepted. EPA's collective
+response nevertheless rejects shortfall objections. That response and the
+partly aligned methods can coexist; they are not a binary acceptance finding.
+
+### Cautions, coverage and validation
+
+The ANL title page says February 2024, while the response citation says March.
+RIA printed page 259 refers to section 3.4.6.5, whereas the inspected
+replacement-cost heading is 3.4.7.6 on printed page 547. Both variants are
+preserved rather than silently repaired. No current production or legal-status
+claim is drawn from historical forecasts.
+
+The combined ledgers now cover **24 distinct entries, with 24 unadjudicated**.
+Two appearances of r10 remain one request. The two analytical comparisons do
+not add independent policy events. Thirteen new regression tests protect the
+source bindings, partial/complete scopes, method and cost distinctions, and
+claim limits; the notebook independently recomputes coverage from request IDs.
+These consistency checks do not replace independent adjudication. Exact docket
+bytes, independent review and a defensible sampling frame remain unresolved.
+No docket response rate, causal effect or simulator recalibration is cleared.
 
 ## Original two-request agency-excerpt pilot
 

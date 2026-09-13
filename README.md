@@ -321,6 +321,16 @@ cost-model addition is not verified. These are historical response/preamble
 comparisons, not individual influence, current-law findings or independent
 review clearance. See the [timing review](docs/comment-response-document-pilot.md#timing-and-transition-cost-follow-up-september-13).
 
+A separate two-entry supply-chain follow-up brings combined coverage to 24
+distinct entries, leaving 24 unadjudicated. Recycling/disposal cost additions
+remain unverified in the reviewed passages; the final RIA's documented
+battery-replacement addition is a different cost component. EPA adds BMI weighted
+lithium scenarios, while ANL supplies assumptions and lists uncertainty
+sensitivities as future work. This partly aligns with the requested methods,
+not full acceptance, statistical confidence levels or observed production.
+Source date/reference differences and pending independent review remain explicit.
+See the [supply-chain review](docs/comment-response-document-pilot.md#supply-chain-methods-and-end-of-life-costs-september-13).
+
 The archived procurement frame audit scans only the 56 manifest-selected bulk ZIPs.
 All 6,449,101 rows match their saved archive counts and agency/date partitions,
 but 243,700 have blank award types and 4,505,798 lack offers. One blank-type EPA

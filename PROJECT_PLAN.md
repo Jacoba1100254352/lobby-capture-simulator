@@ -169,7 +169,17 @@ Several 2032 categories become more stringent. The legal rebuttal names EMA,
 not MEMA; the cost note's ambiguous MY2028 condition is not silently repaired.
 The specified cost-model addition remains unverified. Source-bound ledgers and
 regressions preserve this mixed result, pending independent review and no causal
-or current-law clearance. The RIA cost and supply-chain source chains remain open.
+or current-law clearance. Its transition-cost source chain remains open.
+A separate supply-chain review covers r10/r11 and raises combined coverage to
+24 distinct entries, leaving 24 unadjudicated. The response's recycling discussion
+and the RIA's added battery-replacement costs do not verify the requested
+recycling/disposal cost input. Expanded lithium analysis and BMI project-weighted
+scenarios partly align with the method request; ANL identifies uncertainty
+sensitivities as future work. Forecast scenarios are not confidence intervals
+or realized supply. The separate ledger, notebook and regressions retain exact
+source scopes, date/reference variants and no-promotion boundaries. Full cost
+inputs, original docket bytes, independent review and causal attribution remain
+unresolved; simulator parameters and earlier follow-ups are unchanged.
 A separate NAM 2008Q1 coalition-disclosure probe reviews header/line-25 text
 and checkbox attributes in two electronic filing versions outside the frozen
 cohort. Both API affiliate lists are empty, but the original HTML forms disclose
