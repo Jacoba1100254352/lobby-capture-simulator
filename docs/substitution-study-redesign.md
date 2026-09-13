@@ -618,7 +618,7 @@ Our current design assessment is:
 | --- | --- | --- |
 | Quarterly-reporting reform | Native LDA periods before and after the reporting change | No verified unexposed group within the same reporting system; raw filing counts change mechanically with reporting frequency |
 | Gift/travel restriction exposure | Names and filing histories of candidate organizations | No pre-reform gift/travel reliance or provision-specific coverage coding; PAC spending is not a gift/travel baseline |
-| Coalition-disclosure exposure | Some actors have association names | Names do not establish qualifying funding, active participation, or prior disclosure status; pre-reform exposure and comparable controls are absent |
+| Coalition-disclosure exposure | A separate NAM original/amendment probe reveals website references despite empty API affiliate lists | Neither names nor empty affiliate arrays establish exposure; historical website contents, qualifying funding, participation, prior disclosure and comparable controls remain absent |
 
 These are negative identification findings for the current evidence, not
 findings that the reforms had no effect. The 2007H2 exclusion in the prepared
@@ -627,6 +627,72 @@ common implementation date. Keep it separate until a specific provision and
 comparison design are selected. Next acquisition should prioritize pre-reform
 exposure records and matched actors' alternate-channel outcomes; adding filing
 rows alone cannot resolve these identification failures.
+
+### Coalition exposure: website disclosure is not an empty affiliation record
+
+The September 13 source-text review records a **measurement counterexample**,
+not a new treated actor or control. National Association of Manufacturers (NAM)
+is outside the frozen six-actor LDA and four-PAC acquisition cohorts. A 2008Q1
+client-name API query returned eight records on one terminal page. Exact client
+filtering retained five, excluding three Uniform or Margarine Manufacturers
+records. Two also named NAM as registrant; the other three retained-firm forms
+were not reviewed. This is neither a representative sample nor an exhaustive
+historical NAM filing family. Unreviewed API names are not verified historical names.
+
+Both selected forms name the client and registrant `NATL ASSN OF MANUFACTURERS`,
+check Self and 2008Q1, and share Senate ID `26912-12` and House ID `316640000`.
+Line 9 distinguishes the original from the amendment. Their signature dates
+are April 21 and April 30, not the API posting dates. This textual review covers
+header fields, checkbox attributes and line 25, not visual layout or financial scope.
+
+| Source version | API named affiliates | Original HTML line-25 Internet address |
+| --- | --- | --- |
+| [Original](https://lda.gov/filings/public/filing/2b39aabb-dbd5-4ba0-ba02-32ce55f1f646/print/) | Empty list | `http://www.nam.org/disclosure` |
+| [Amendment](https://lda.gov/filings/public/filing/63c0e6d4-10bb-43c5-982d-45075dedea0d/print/) | Empty list | `http://www.nam.org/s_nam/doc1.asp?CID=202870&DID=240343` |
+
+Both additions tables contain only template labels. Line 25 asks for additions,
+followed by line 26 for removals; it is not a complete membership roster. Neither
+saved API root-key inventory contains a separate affiliation-website field.
+This need not be an API error: named rows and website references are different
+disclosure surfaces. **Empty API affiliates cannot establish no disclosure,
+no qualifying organizations, or zero exposure.** A website reference also does
+not establish that its contents met the disclosure conditions.
+
+Ordinary public requests to both addresses returned HTTP 404 after redirecting
+to `nam.org` without `www` on September 13. That current result does not establish
+historical unavailability or noncompliance. Neither historical page was acquired.
+Two website strings in two versions of one actor-quarter are not two independent
+events, newly disclosed organizations, or evidence of a membership change.
+Financial amendment scope and final filing selection remain unreviewed.
+
+The [original 1995 Act, section 4(b)(3)](https://lobbyingdisclosure.house.gov/lda.html)
+uses more than $10,000 toward lobbying in a semiannual period together with
+whole-or-major-part planning, supervision or control. HLOGA sections 201 and 207
+change the amount/period and participation language: more than $5,000 to the
+registrant or client in a quarter to fund the registrant's lobbying, together
+with active participation. Its website route excludes whole-or-major-part
+control; section 215 applies the change from January 1, 2008. These are historical
+statutory comparisons, not current compliance advice. Different time units mean
+the dollar change is not simply a halving of an annual disclosure threshold.
+
+An exposure design needs dated **pre-reform** organizational relationships,
+lobbying-directed funding and period allocations, participation roles and prior
+disclosure. LDA expenses, PAC spending, membership names or dues alone do not
+supply those facts. Even a recovered post-reform website would document a
+disclosure outcome; assigning treatment from it risks selecting on the behavior
+being studied. Quarterly reporting changes alongside coalition disclosure, so
+the comparison must isolate the provision. Comparable exposure groups remain
+unassigned, and the frozen LDA/PAC panels and model parameters are unchanged.
+
+`substitution-coalition-disclosure-review.json` preserves eight minimum API
+projections, terminal-query provenance, both HTML hashes, source fields and
+checkbox states. The API hash binds sorted compact **parsed JSON**, not raw
+HTTP bytes. The notebook checks the ledger and optionally reopens the ignored
+parsed-response cache and HTML bytes. Missing files are unavailable checks, not
+authentication. Tests reject incomplete inventories, wrong-client attribution,
+ambiguous fields and unsupported exposure/roster promotion. Independent review
+is pending. Assessment: share with these caveats for measurement design only;
+coalition-substitution effects remain unidentified.
 
 ### House travel exposure: earlier timing and an unverified baseline
 

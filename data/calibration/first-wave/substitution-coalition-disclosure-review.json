@@ -1,0 +1,257 @@
+{
+  "schema": "substitution-coalition-disclosure-review-v1",
+  "reviewDate": "2026-09-13",
+  "reviewer": "Codex source-text review",
+  "selection": "purposeful_measurement_probe_outside_frozen_cohort",
+  "unit": "filing_version_not_independent_event",
+  "independentReviewStatus": "pending",
+  "exposureAssignment": "not_assigned",
+  "historicalWebsiteContents": "not_acquired",
+  "financialVersionSelection": "not_reviewed",
+  "causalEffect": "not_identified",
+  "query": {
+    "url": "https://lda.gov/api/v1/filings/?client_name=NATIONAL+ASSOCIATION+OF+MANUFACTURERS&filing_year=2008&filing_period=first_quarter&page_size=100",
+    "responseSha256": "88c5a21aa73bcdbb9221a3f2b6026e0c1a23eac1e2a3f49aac4a676ce5c40a92",
+    "hashConvention": "sha256_of_sorted_compact_parsed_response_json_not_http_bytes",
+    "count": 8,
+    "next": null,
+    "previous": null,
+    "projections": [
+      {
+        "filing_uuid": "72295fe9-3b60-4ef3-bad7-fffd50e97cf6",
+        "filing_year": 2008,
+        "filing_period": "first_quarter",
+        "filing_type": "RR",
+        "dt_posted": "2008-02-05T11:06:47.883000-05:00",
+        "filing_document_url": "https://lda.gov/filings/public/filing/72295fe9-3b60-4ef3-bad7-fffd50e97cf6/print/",
+        "filing_document_content_type": "application/pdf",
+        "affiliated_organizations": [],
+        "client": {
+          "name": "NATIONAL ASSOCIATION OF UNIFORM MANUFACTURERS AND DISTRIBUTORS"
+        },
+        "registrant": {
+          "name": "THE CHWAT GROUP"
+        }
+      },
+      {
+        "filing_uuid": "1c565eea-7928-4a73-9417-8fa08803358c",
+        "filing_year": 2008,
+        "filing_period": "first_quarter",
+        "filing_type": "Q1",
+        "dt_posted": "2008-04-07T15:52:09-04:00",
+        "filing_document_url": "https://lda.gov/filings/public/filing/1c565eea-7928-4a73-9417-8fa08803358c/print/",
+        "filing_document_content_type": "text/html",
+        "affiliated_organizations": [],
+        "client": {
+          "name": "NATIONAL ASSOCIATION OF MANUFACTURERS"
+        },
+        "registrant": {
+          "name": "GOODWIN PROCTER LLP"
+        }
+      },
+      {
+        "filing_uuid": "6c854e04-dbca-413b-83d5-4c30118344c6",
+        "filing_year": 2008,
+        "filing_period": "first_quarter",
+        "filing_type": "Q1",
+        "dt_posted": "2008-04-21T13:42:01-04:00",
+        "filing_document_url": "https://lda.gov/filings/public/filing/6c854e04-dbca-413b-83d5-4c30118344c6/print/",
+        "filing_document_content_type": "text/html",
+        "affiliated_organizations": [],
+        "client": {
+          "name": "NATIONAL ASSOCIATION OF UNIFORM MANUFACTURERS AND DISTRIBUTORS"
+        },
+        "registrant": {
+          "name": "THE CHWAT GROUP"
+        }
+      },
+      {
+        "filing_uuid": "0b9aeb7a-6307-4622-8f62-dff773e3f179",
+        "filing_year": 2008,
+        "filing_period": "first_quarter",
+        "filing_type": "Q1Y",
+        "dt_posted": "2008-04-21T14:28:56-04:00",
+        "filing_document_url": "https://lda.gov/filings/public/filing/0b9aeb7a-6307-4622-8f62-dff773e3f179/print/",
+        "filing_document_content_type": "text/html",
+        "affiliated_organizations": [],
+        "client": {
+          "name": "NATIONAL ASSOCIATION OF MARGARINE MANUFACTURERS"
+        },
+        "registrant": {
+          "name": "OLSSON, FRANK, WEEDA, TERMAN & MATZ, PC"
+        }
+      },
+      {
+        "filing_uuid": "3148e1d5-d4f4-4db6-8ec5-5ee8d17ea49d",
+        "filing_year": 2008,
+        "filing_period": "first_quarter",
+        "filing_type": "Q1",
+        "dt_posted": "2008-04-21T14:39:44-04:00",
+        "filing_document_url": "https://lda.gov/filings/public/filing/3148e1d5-d4f4-4db6-8ec5-5ee8d17ea49d/print/",
+        "filing_document_content_type": "text/html",
+        "affiliated_organizations": [],
+        "client": {
+          "name": "NATIONAL ASSOCIATION OF MANUFACTURERS"
+        },
+        "registrant": {
+          "name": "HUNTON ANDREWS KURTH LLP"
+        }
+      },
+      {
+        "filing_uuid": "c7f25ce0-2c76-481c-a645-1638d49ebf00",
+        "filing_year": 2008,
+        "filing_period": "first_quarter",
+        "filing_type": "Q1Y",
+        "dt_posted": "2008-04-21T20:41:37-04:00",
+        "filing_document_url": "https://lda.gov/filings/public/filing/c7f25ce0-2c76-481c-a645-1638d49ebf00/print/",
+        "filing_document_content_type": "text/html",
+        "affiliated_organizations": [],
+        "client": {
+          "name": "NATIONAL ASSOCIATION OF MANUFACTURERS"
+        },
+        "registrant": {
+          "name": "BARNES & THORNBURG, LLP"
+        }
+      },
+      {
+        "filing_uuid": "2b39aabb-dbd5-4ba0-ba02-32ce55f1f646",
+        "filing_year": 2008,
+        "filing_period": "first_quarter",
+        "filing_type": "Q1",
+        "dt_posted": "2008-04-22T09:13:26-04:00",
+        "filing_document_url": "https://lda.gov/filings/public/filing/2b39aabb-dbd5-4ba0-ba02-32ce55f1f646/print/",
+        "filing_document_content_type": "text/html",
+        "affiliated_organizations": [],
+        "client": {
+          "name": "NATIONAL ASSOCIATION OF MANUFACTURERS"
+        },
+        "registrant": {
+          "name": "NATIONAL ASSOCIATION OF MANUFACTURERS"
+        }
+      },
+      {
+        "filing_uuid": "63c0e6d4-10bb-43c5-982d-45075dedea0d",
+        "filing_year": 2008,
+        "filing_period": "first_quarter",
+        "filing_type": "1A",
+        "dt_posted": "2008-04-30T18:24:43-04:00",
+        "filing_document_url": "https://lda.gov/filings/public/filing/63c0e6d4-10bb-43c5-982d-45075dedea0d/print/",
+        "filing_document_content_type": "text/html",
+        "affiliated_organizations": [],
+        "client": {
+          "name": "NATIONAL ASSOCIATION OF MANUFACTURERS"
+        },
+        "registrant": {
+          "name": "NATIONAL ASSOCIATION OF MANUFACTURERS"
+        }
+      }
+    ]
+  },
+  "forms": [
+    {
+      "filingUuid": "2b39aabb-dbd5-4ba0-ba02-32ce55f1f646",
+      "documentFile": "nam-q1.html",
+      "htmlSha256": "833be38a9022a4dc7c70ad46bee13d4e6a0f081644c503172928e65ce3898d17",
+      "reviewScope": "html_text_and_checkbox_attributes_header_and_line25_only",
+      "apiTopLevelKeys": [
+        "affiliated_organizations",
+        "client",
+        "conviction_disclosures",
+        "dt_posted",
+        "expenses",
+        "expenses_method",
+        "expenses_method_display",
+        "filing_document_content_type",
+        "filing_document_url",
+        "filing_period",
+        "filing_period_display",
+        "filing_type",
+        "filing_type_display",
+        "filing_uuid",
+        "filing_year",
+        "foreign_entities",
+        "income",
+        "lobbying_activities",
+        "posted_by_name",
+        "registrant",
+        "registrant_address_1",
+        "registrant_address_2",
+        "registrant_city",
+        "registrant_country",
+        "registrant_different_address",
+        "registrant_ppb_country",
+        "registrant_state",
+        "registrant_zip",
+        "termination_date",
+        "url"
+      ],
+      "form": {
+        "registrantName": "NATL ASSN OF MANUFACTURERS",
+        "clientName": "NATL ASSN OF MANUFACTURERS",
+        "clientSelf": true,
+        "senateId": "26912-12",
+        "houseId": "316640000",
+        "year": 2008,
+        "quarter": "Q1",
+        "amendmentChecked": false,
+        "signedDate": "2008-04-21",
+        "line25Website": "http://www.nam.org/disclosure",
+        "namedTableText": "Name Address Principal Place of Business (city and state or country) Street Address City State/Province Zip Country City State Country",
+        "line25Scope": "affiliate_additions_not_complete_roster"
+      }
+    },
+    {
+      "filingUuid": "63c0e6d4-10bb-43c5-982d-45075dedea0d",
+      "documentFile": "nam-amendment.html",
+      "htmlSha256": "f06a756bd7d56d07c4a2668e2f72d8f2bc952bf1367bba87c57c6594189ad588",
+      "reviewScope": "html_text_and_checkbox_attributes_header_and_line25_only",
+      "apiTopLevelKeys": [
+        "affiliated_organizations",
+        "client",
+        "conviction_disclosures",
+        "dt_posted",
+        "expenses",
+        "expenses_method",
+        "expenses_method_display",
+        "filing_document_content_type",
+        "filing_document_url",
+        "filing_period",
+        "filing_period_display",
+        "filing_type",
+        "filing_type_display",
+        "filing_uuid",
+        "filing_year",
+        "foreign_entities",
+        "income",
+        "lobbying_activities",
+        "posted_by_name",
+        "registrant",
+        "registrant_address_1",
+        "registrant_address_2",
+        "registrant_city",
+        "registrant_country",
+        "registrant_different_address",
+        "registrant_ppb_country",
+        "registrant_state",
+        "registrant_zip",
+        "termination_date",
+        "url"
+      ],
+      "form": {
+        "registrantName": "NATL ASSN OF MANUFACTURERS",
+        "clientName": "NATL ASSN OF MANUFACTURERS",
+        "clientSelf": true,
+        "senateId": "26912-12",
+        "houseId": "316640000",
+        "year": 2008,
+        "quarter": "Q1",
+        "amendmentChecked": true,
+        "signedDate": "2008-04-30",
+        "line25Website": "http://www.nam.org/s_nam/doc1.asp?CID=202870&DID=240343",
+        "namedTableText": "Name Address Principal Place of Business (city and state or country) Street Address City State/Province Zip Country City State Country",
+        "line25Scope": "affiliate_additions_not_complete_roster"
+      }
+    }
+  ],
+  "reviewFingerprint": "fb3e74e3e80ef6653737325c67964d77b8174469b4f0c959afef84a8d7a0d4ab"
+}

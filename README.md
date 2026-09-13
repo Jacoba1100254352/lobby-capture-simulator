@@ -173,6 +173,13 @@ The September 2026 empirical expansion is documented in [the substitution redesi
 
 A separate public-letter position pilot records two positions agreeing with both EPA's proposal and final action. Its candidate docket-copy match and agency-response link remain unverified; policy agreement is not coded as uptake. The same audit checks metadata fingerprints, distinct submission identities, source-page provenance and the no-promotion boundary. Historical travel archive summaries now provide concrete 2004 exposure leads, but their original forms require login and no verified travel baseline has been acquired.
 
+A separate NAM 2008Q1 original/amendment probe finds empty API affiliate lists
+but two affiliation-website references in the original HTML forms. The additions
+field is not a membership roster, and neither historical website was acquired.
+This outside-cohort measurement check assigns no exposure or controls and does
+not change the frozen LDA/PAC panels. Its source ledger and notebook retain
+query, form-field and hash evidence; independent review remains pending.
+
 The Benefits Council PAC follow-up joins all 24 frozen reports to a separate
 280-record FEC filing inventory, recovering 21 current and three superseded
 version flags without overwriting raw reports. Seven selected report-PDF reviews

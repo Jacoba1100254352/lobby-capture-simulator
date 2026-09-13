@@ -109,6 +109,14 @@ consideration and a time-limited final provision, not full program-life acceptan
 or a comment-caused change. Four facets are part of one existing request, not
 four new observations. Original-file verification and independent review remain
 pending.
+A separate NAM 2008Q1 coalition-disclosure probe reviews header/line-25 text
+and checkbox attributes in two electronic filing versions outside the frozen
+cohort. Both API affiliate lists are empty, but the original HTML forms disclose
+different website addresses. An additions field is not a complete roster;
+historical website contents, pre-reform funding/participation and prior disclosure
+are still missing. The source ledger, notebook and regression checks preserve
+this measurement limitation without assigning exposure or selecting financial
+versions. Independent review remains pending.
 The September 13 UTC travel-publisher review adds earlier-change and measurement
 risks to the substitution design. Published pre-2007 declines require an assessment
 of scrutiny/adaptation and election-cycle composition before selecting a baseline.

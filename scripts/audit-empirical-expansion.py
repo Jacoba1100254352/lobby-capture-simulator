@@ -1126,6 +1126,15 @@ def audit():
     add("lda-filing-family-review", "partial_field_review_not_final_versions",
         "; ".join(f"{key}={value}" for key, value in family_checks.items()),
         "The 22 multi-record groups are candidates, not complete historical families. APGA's partial amendment does not resolve its amount. Five NVG mixed-client groups are not mergeable. A separate AAJ 2005H1 review resolves one reported $4,020,000 Method A expense field using matching covers and an explicit unchanged-expense letter, not a sum of versions or selection of a whole final filing. All fourteen downloaded images were reviewed. The amendment API has no activity rows despite its TOR addendum; original INS/TAX pages name only the House while their API rows also name the Senate. Preserve source discrepancies, independent-review requirements and unchanged raw metadata. Historical identity/version coverage, actor-period aggregation, exposure and control selection remain unresolved.")
+    spec = importlib.util.spec_from_file_location("coalition_review", ROOT / "scripts/review-substitution-coalition-disclosure.py")
+    coalition_module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(coalition_module)
+    coalition_review = json.loads(coalition_module.SOURCE.read_text())
+    coalition_checks = coalition_module.validate_review(coalition_review,
+        read("substitution-lda-filing-metadata.csv"))
+    add("coalition-disclosure-measurement", "empty_affiliate_list_not_zero_disclosure",
+        "; ".join(f"{key}={value}" for key, value in coalition_checks.items()),
+        "Two NAM 2008Q1 versions outside the frozen cohort have empty API affiliate lists but distinct affiliation websites in original HTML line 25. The additions field is not a membership roster; the versions are one actor-period. This saved-ledger check is not raw-source authentication. Recover historical website contents, pre-reform funding/participation and prior disclosure evidence, then independently review comparable exposure groups. No exposure, financial-version selection or causal effect is promoted.")
     fec = read("substitution-fec-report-panel.csv")
     histories = read("substitution-fec-affiliation-history.csv")
     cohort = read("substitution-fec-acquisition-cohort.csv")

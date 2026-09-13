@@ -34,6 +34,14 @@ sourceFilings=427; registrationRecordsExcluded=39; candidateGroups=364; multiRec
 
 Remaining: The 22 multi-record groups are candidates, not complete historical families. APGA's partial amendment does not resolve its amount. Five NVG mixed-client groups are not mergeable. A separate AAJ 2005H1 review resolves one reported $4,020,000 Method A expense field using matching covers and an explicit unchanged-expense letter, not a sum of versions or selection of a whole final filing. All fourteen downloaded images were reviewed. The amendment API has no activity rows despite its TOR addendum; original INS/TAX pages name only the House while their API rows also name the Senate. Preserve source discrepancies, independent-review requirements and unchanged raw metadata. Historical identity/version coverage, actor-period aggregation, exposure and control selection remain unresolved.
 
+## coalition-disclosure-measurement
+
+Status: `empty_affiliate_list_not_zero_disclosure`
+
+queryRows=8; exactClientRows=5; otherClientRowsExcluded=3; reviewedOwnRegistrantForms=2; emptyApiAffiliateListsInReviewedForms=2; distinctDisclosedWebpages=2; reviewedActorPeriods=1; historicalWebsiteContentsAcquired=0; exposureAssignments=0; independentReviewStatus=pending; causalEffect=not_identified
+
+Remaining: Two NAM 2008Q1 versions outside the frozen cohort have empty API affiliate lists but distinct affiliation websites in original HTML line 25. The additions field is not a membership roster; the versions are one actor-period. This saved-ledger check is not raw-source authentication. Recover historical website contents, pre-reform funding/participation and prior disclosure evidence, then independently review comparable exposure groups. No exposure, financial-version selection or causal effect is promoted.
+
 ## alternate-channel-reports
 
 Status: `bounded_affiliation_candidate`

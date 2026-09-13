@@ -24,6 +24,141 @@ PERIODS = load("fec_periods", "prepare-substitution-fec-periods.py")
 AUDIT = load("source_measurement_audit", "audit-empirical-expansion.py")
 FAMILIES = load("lda_families", "review-substitution-lda-families.py")
 PAPER = load("fec_paper", "review-substitution-fec-paper.py")
+COALITION = load("coalition_review", "review-substitution-coalition-disclosure.py")
+
+
+class CoalitionDisclosureTests(unittest.TestCase):
+    def setUp(self):
+        self.review = json.loads(COALITION.SOURCE.read_text())
+        self.metadata = AUDIT.read("substitution-lda-filing-metadata.csv")
+
+    def check(self, refresh=True):
+        if refresh:
+            self.review["reviewFingerprint"] = COALITION.fingerprint(
+                {k: v for k, v in self.review.items() if k != "reviewFingerprint"})
+        return COALITION.validate_review(self.review, self.metadata)
+
+    def html(self, amended=False):
+        """Synthetic template exercises extraction without redistributing a filing."""
+        row = self.review["forms"][int(amended)]["form"]
+        mark = " checked" if amended else ""
+        signed = "/".join((row["signedDate"][5:7], row["signedDate"][8:10], row["signedDate"][:4]))
+        return f'''<p>1. Registrant Name <input checked> Organization/Lobbying Firm
+        <input> Self Employed Individual NATL ASSN OF MANUFACTURERS 2. Address</p>
+        <p>5. Senate ID# 26912-12 7. Client Name <input checked> Self <input>
+        Check if client is a state or local government or instrumentality
+        NATL ASSN OF MANUFACTURERS 6. House ID# 316640000 TYPE OF REPORT
+        8. Year 2008 Q1 (1/1 - 3/31) <input checked> Q2 (4/1 - 6/30) <input>
+        Q3 (7/1 - 9/30) <input> Q4 (10/1 - 12/31) <input>
+        9. Check if this filing amends a previously filed version of this report <input{mark}></p>
+        <p>Signature Digitally Signed By: Synthetic Reviewer Date {signed} LOBBYING ACTIVITY</p>
+        <p>AFFILIATED ORGANIZATIONS 25. Add the following affiliated organization(s)
+        Internet Address: {row["line25Website"].replace("&", "&amp;")}
+        {COALITION.BLANK_TABLE} 26. Name</p>'''
+
+    def test_selected_versions_are_one_period_and_assign_no_exposure(self):
+        before = deepcopy((self.review, self.metadata))
+        checks = self.check(refresh=False)
+        self.assertEqual([checks[k] for k in ("queryRows", "exactClientRows", "otherClientRowsExcluded",
+            "reviewedOwnRegistrantForms", "emptyApiAffiliateListsInReviewedForms", "distinctDisclosedWebpages",
+            "reviewedActorPeriods", "exposureAssignments")], [8, 5, 3, 2, 2, 2, 1, 0])
+        self.assertEqual(checks["causalEffect"], "not_identified")
+        self.assertEqual((self.review, self.metadata), before)
+
+    def test_stale_review_fingerprint_fails(self):
+        self.review["forms"][0]["form"]["line25Website"] += "?changed"
+        with self.assertRaisesRegex(ValueError, "fingerprint"):
+            self.check(refresh=False)
+
+    def test_partial_or_duplicate_query_inventory_fails(self):
+        baseline = deepcopy(self.review)
+        for mode in ("next", "count", "duplicate"):
+            self.review = deepcopy(baseline)
+            if mode == "duplicate":
+                self.review["query"]["projections"][-1] = deepcopy(self.review["query"]["projections"][-2])
+            else:
+                self.review["query"][mode] = "changed"
+            with self.subTest(mode=mode), self.assertRaises(ValueError):
+                self.check()
+
+    def test_wrong_name_cannot_enter_selected_forms(self):
+        self.review["query"]["projections"][-1]["client"]["name"] = "NATIONAL ASSOCIATION OF MARGARINE MANUFACTURERS"
+        with self.assertRaisesRegex(ValueError, "selection"):
+            self.check()
+
+    def test_reviewed_form_identity_and_amendment_must_match(self):
+        baseline = deepcopy(self.review)
+        for field, value in (("amendmentChecked", True), ("clientName", "Different organization"),
+                             ("senateId", "26912-13"), ("year", 2007)):
+            self.review = deepcopy(baseline)
+            self.review["forms"][0]["form"][field] = value
+            with self.subTest(field=field), self.assertRaisesRegex(ValueError, "identity"):
+                self.check()
+
+    def test_website_roster_exposure_and_review_cannot_be_promoted(self):
+        baseline = deepcopy(self.review)
+        for field, value in (("exposureAssignment", "control"), ("independentReviewStatus", "complete"),
+                ("historicalWebsiteContents", "acquired"), ("financialVersionSelection", "final"),
+                ("unit", "independent_event"), ("causalEffect", "zero")):
+            self.review = deepcopy(baseline)
+            self.review[field] = value
+            with self.subTest(field=field), self.assertRaisesRegex(ValueError, "scope"):
+                self.check()
+
+    def test_probe_cannot_silently_join_frozen_panel(self):
+        self.metadata.append({**self.metadata[0], "filingUuid": self.review["forms"][0]["filingUuid"]})
+        with self.assertRaisesRegex(ValueError, "frozen cohort"):
+            self.check()
+
+    def test_html_decodes_url_and_retains_amendment_checkbox(self):
+        for amended in (False, True):
+            self.assertEqual(COALITION.parse_form(self.html(amended)), self.review["forms"][int(amended)]["form"])
+
+    def test_html_missing_duplicate_or_nonblank_fields_fail_closed(self):
+        original = self.html()
+        for changed in (original.replace("Internet Address:", "Absent:"), original + original,
+                        original.replace(COALITION.BLANK_TABLE, COALITION.BLANK_TABLE + " New Affiliate")):
+            with self.assertRaises(ValueError):
+                COALITION.parse_form(changed)
+
+    def test_raw_missing_is_unavailable_and_changed_html_fails(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            directory = Path(temporary)
+            result = COALITION.verify_raw(self.review, directory)
+            self.assertEqual(result["verified"], [])
+            self.assertEqual(len(result["unavailable"]), 3)
+            content = self.html()
+            row = self.review["forms"][0]
+            (directory / row["documentFile"]).write_text(content)
+            with self.assertRaisesRegex(ValueError, "hash"):
+                COALITION.verify_raw(self.review, directory)
+            row["htmlSha256"] = COALITION.hashlib.sha256(content.encode()).hexdigest()
+            self.assertEqual(COALITION.verify_raw(self.review, directory)["verified"], [row["filingUuid"]])
+            row["form"]["line25Website"] += "?unsupported"
+            with self.assertRaisesRegex(ValueError, "parsed-field"):
+                COALITION.verify_raw(self.review, directory)
+
+    def test_raw_cache_compares_canonical_json_and_key_inventory(self):
+        records = deepcopy(self.review["query"]["projections"])
+        for form in self.review["forms"]:
+            record = next(r for r in records if r["filing_uuid"] == form["filingUuid"])
+            record.update({k: None for k in form["apiTopLevelKeys"] if k not in record})
+        response = {"count": len(records), "next": None, "previous": None, "results": records}
+        checksum = COALITION.fingerprint(response)
+        self.review["query"]["responseSha256"] = checksum
+        cache = {"response": response, "responseSha256": checksum,
+                 "retrievedDate": self.review["reviewDate"], "url": self.review["query"]["url"]}
+        with tempfile.TemporaryDirectory() as temporary:
+            directory = Path(temporary)
+            (directory / "query.json").write_text(json.dumps(cache))
+            self.assertEqual(COALITION.verify_raw(self.review, directory)["verified"], ["parsed_response_cache"])
+            self.review["forms"][0]["apiTopLevelKeys"].append("new_website_field")
+            with self.assertRaisesRegex(ValueError, "key inventory"):
+                COALITION.verify_raw(self.review, directory)
+            cache["response"]["results"][0]["affiliated_organizations"] = [{}]
+            (directory / "query.json").write_text(json.dumps(cache))
+            with self.assertRaisesRegex(ValueError, "parsed-response"):
+                COALITION.verify_raw(self.review, directory)
 
 
 class FECPaperReviewTests(unittest.TestCase):
