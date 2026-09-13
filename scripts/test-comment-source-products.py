@@ -22,6 +22,158 @@ AUDIT = importlib.util.module_from_spec(AUDIT_SPEC)
 AUDIT_SPEC.loader.exec_module(AUDIT)
 
 
+PUBLISHER_SPEC = importlib.util.spec_from_file_location(
+    "comment_publisher", Path(__file__).with_name("review-comment-publisher.py")
+)
+PUBLISHER = importlib.util.module_from_spec(PUBLISHER_SPEC)
+PUBLISHER_SPEC.loader.exec_module(PUBLISHER)
+
+
+class CommentPublisherTests(unittest.TestCase):
+    def setUp(self):
+        self.inventory = json.loads((AUDIT.DATA / "comment-publisher-inventory.json").read_text())
+        self.followup = json.loads((AUDIT.DATA / "comment-publisher-warranty-review.json").read_text())
+
+    def check(self, refresh=True):
+        if refresh:
+            for ledger in (self.inventory, self.followup):
+                ledger["reviewFingerprint"] = PUBLISHER.fingerprint({
+                    k: v for k, v in ledger.items() if k != "reviewFingerprint"})
+        return PUBLISHER.validate(self.inventory, self.followup)
+
+    def test_single_letter_is_not_forty_eight_independent_comments(self):
+        result = self.check(False)
+        self.assertEqual(result["publisherLetters"], 1)
+        self.assertEqual(result["visuallyReviewedPages"], 28)
+        self.assertEqual(result["inventoryEntries"], 48)
+        self.assertEqual(result["entryKinds"], {
+            "requested_action": 44, "conditional_request": 1, "retention_position": 3})
+        self.assertEqual(result["warrantyEntriesReviewed"], 4)
+        self.assertEqual(result["otherEntriesAwaitingAdjudication"], 44)
+        self.assertEqual(result["verifiedDocketByteMatches"], 0)
+        self.assertEqual(result["docketRateEligibleEntries"], 0)
+        self.assertEqual(result["causalEffect"], "not_identified")
+
+    def test_changed_review_requires_new_fingerprint(self):
+        self.inventory["requests"][0]["label"] = "altered interpretation"
+        with self.assertRaisesRegex(ValueError, "fingerprint"):
+            self.check(False)
+
+    def test_missing_and_duplicate_requests_fail_even_with_new_hash(self):
+        original = deepcopy(self.inventory)
+        for entries in (original["requests"][:-1], original["requests"] + original["requests"][:1]):
+            self.inventory = deepcopy(original)
+            self.inventory["requests"] = entries
+            self.inventory["requestFrameSha256"] = PUBLISHER.fingerprint(entries)
+            with self.subTest(count=len(entries)), self.assertRaisesRegex(ValueError, "off-frame"):
+                self.check()
+
+    def test_page_coverage_and_request_join_cannot_be_inferred_from_ocr(self):
+        original = deepcopy(self.inventory)
+        for mutation in ("missing_page", "missing_link", "ocr_only"):
+            self.inventory = deepcopy(original)
+            if mutation == "missing_page":
+                self.inventory["pageCoverage"].pop(17)
+            elif mutation == "missing_link":
+                self.inventory["pageCoverage"][17]["requestIds"] = []
+            else:
+                self.inventory["publisher"]["reviewMethod"] = "OCR_only"
+            with self.subTest(mutation=mutation), self.assertRaises(ValueError):
+                self.check()
+
+    def test_metadata_correspondence_does_not_clear_official_bytes(self):
+        self.inventory["authentication"]["byteVersionMatch"] = "verified"
+        with self.assertRaisesRegex(ValueError, "authentication"):
+            self.check()
+
+    def test_docket_size_title_and_attachment_order_are_checked(self):
+        original = deepcopy(self.inventory)
+        for key, value in (("docOrder", 2), ("docAbstract", "different filename"), ("fileFormats", [])):
+            self.inventory = deepcopy(original)
+            metadata = self.inventory["docketMetadata"]
+            metadata["projection"]["attachment"][key] = value
+            metadata["projectionSha256"] = PUBLISHER.fingerprint(metadata["projection"])
+            with self.subTest(key=key), self.assertRaises(ValueError):
+                self.check()
+
+    def test_content_page_count_is_not_attachment_length(self):
+        metadata = self.inventory["docketMetadata"]
+        metadata["projection"]["pageCount"] = 28
+        metadata["projectionSha256"] = PUBLISHER.fingerprint(metadata["projection"])
+        with self.assertRaisesRegex(ValueError, "content page count"):
+            self.check()
+
+    def test_receipt_and_posting_dates_are_separate(self):
+        metadata = self.inventory["docketMetadata"]
+        metadata["projection"]["receiveDate"] = metadata["projection"]["postedDate"]
+        metadata["projectionSha256"] = PUBLISHER.fingerprint(metadata["projection"])
+        with self.assertRaisesRegex(ValueError, "chronology"):
+            self.check()
+
+    def test_retention_condition_and_indirectness_remain_explicit(self):
+        original = deepcopy(self.inventory)
+        for index, key in ((24, "kind"), (8, "kind"), (12, "interpretiveFlag")):
+            self.inventory = deepcopy(original)
+            self.inventory["requests"][index][key] = "requested_action" if key == "kind" else "none"
+            self.inventory["requestFrameSha256"] = PUBLISHER.fingerprint(self.inventory["requests"])
+            with self.subTest(index=index), self.assertRaisesRegex(ValueError, "classification"):
+                self.check()
+
+    def test_followup_cannot_silently_switch_inventory(self):
+        self.followup["inventoryFrameSha256"] = "0" * 64
+        with self.assertRaisesRegex(ValueError, "binding"):
+            self.check()
+
+    def test_warranty_frame_cannot_drop_or_duplicate_a_request(self):
+        original = deepcopy(self.followup)
+        for entries in (original["reviews"][:3], original["reviews"] + original["reviews"][:1]):
+            self.followup = deepcopy(original)
+            self.followup["reviews"] = entries
+            with self.subTest(count=len(entries)), self.assertRaisesRegex(ValueError, "frame"):
+                self.check()
+
+    def test_cross_comment_or_original_page_swap_fails(self):
+        original = deepcopy(self.followup)
+        for key, value in (("citedCommentId", "EPA-HQ-OAR-2022-0985-1598"),
+                           ("citedAttachmentOrder", 2), ("originalPdfPages", [15])):
+            self.followup = deepcopy(original)
+            self.followup["reviews"][0][key] = value
+            with self.subTest(key=key), self.assertRaisesRegex(ValueError, "link mismatch"):
+                self.check()
+
+    def test_pdf_pages_not_footer_form_numbers_and_source_is_bound(self):
+        original = deepcopy(self.followup)
+        for key, value in (("sha256", "0" * 64), ("url", "https://example.org/unreviewed.pdf"),
+                           ("reviewedPages", [{"pdfPage": 175, "printedPage": 29613}])):
+            self.followup = deepcopy(original)
+            self.followup["documents"]["final"][key] = value
+            with self.subTest(key=key), self.assertRaisesRegex(ValueError, "document identity"):
+                self.check()
+
+    def test_shared_comparison_is_not_two_independent_policy_events(self):
+        self.followup["ruleComparisons"] *= 2
+        with self.assertRaisesRegex(ValueError, "multiply policy events"):
+            self.check()
+
+    def test_collective_reply_and_unresolved_process_are_not_acceptance(self):
+        original = deepcopy(self.followup)
+        for index in (0, 1, 2, 3):
+            self.followup = deepcopy(original)
+            self.followup["reviews"][index]["disposition"] = "fully_accepted"
+            with self.subTest(index=index), self.assertRaisesRegex(ValueError, "disposition"):
+                self.check()
+
+    def test_unadjudicated_entries_cannot_become_nonresponses_or_causal_clearance(self):
+        original = deepcopy(self.followup)
+        for key, value in (("remainingEntriesStatus", "no_response"), ("docketRateEligible", True),
+                           ("independentReviewStatus", "complete"), ("causalEffect", "identified"),
+                           ("overallLetterResponseCodingComplete", True), ("currentLegalStatusAssessed", True)):
+            self.followup = deepcopy(original)
+            self.followup["boundary"][key] = value
+            with self.subTest(key=key), self.assertRaisesRegex(ValueError, "boundary"):
+                self.check()
+
+
 class CommentFollowupTests(unittest.TestCase):
     def setUp(self):
         self.sources = json.loads((AUDIT.DATA / "comment-request-followups.json").read_text())

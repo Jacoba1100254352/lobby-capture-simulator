@@ -122,6 +122,14 @@ followupReviews=1; baselineRequests=11; newIndependentRequests=0; crossSectionRe
 
 Remaining: One targeted DTNA follow-up, not an additional request or expanded sample: section 10.3.2 supplies a named-summary/collective-response link, and the April 2024 clause confirms limited credit use through MY2032. The proposal already solicited the option. Preserve the original section-2.5 coding, distinguish caps from discounts, and independently review original-file identity and facet coding. No full acceptance, docket rate, individual effect or current regulatory-status claim is cleared.
 
+## comment-publisher-letter-inventory
+
+Status: `original_publisher_frame_not_docket_rates`
+
+publisherLetters=1; visuallyReviewedPages=28; inventoryEntries=48; entryKinds={'requested_action': 44, 'conditional_request': 1, 'retention_position': 3}; warrantyEntriesReviewed=4; otherEntriesAwaitingAdjudication=44; warrantyResponseLinks={'explicit_named_response': 1, 'named_collective_referral': 2, 'no_separate_disposition_in_reviewed_passages': 1}; metadataSizeTitleMatches=1; verifiedDocketByteMatches=0; independentlyReviewedEntries=0; docketRateEligibleEntries=0; causalEffect=not_identified
+
+Remaining: One access-led MEMA letter, fully visually reviewed, supplies 48 action/retention entries under explicit segmentation, not independent comments. The four-entry warranty follow-up separates an existing-provision explanation, collective component-scope clarification and a list-process request not separately resolved in the reviewed passages. The shared proposed/final clause comparison does not identify individual influence. Forty-four other entries remain unadjudicated, not nonresponses. Exact docket-file version, independent review and a docket sampling frame remain unresolved. Earlier pilot/corpus products are unchanged.
+
 ## gao-partial-adjudication
 
 Status: `not_award_linked`

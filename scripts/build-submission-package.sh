@@ -142,6 +142,8 @@ for source_product in \
   comment-section-inventory.csv \
   comment-section-inventory-source.json \
   comment-request-followups.json \
+  comment-publisher-inventory.json \
+  comment-publisher-warranty-review.json \
   gao-award-linkage-pilot.csv \
   gao-award-linkage-source.json \
   gao-docket-timing-pilot.csv \

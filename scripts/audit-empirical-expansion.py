@@ -1210,6 +1210,16 @@ def audit():
     add("comment-cross-section-followup", "documented_partial_alignment_not_individual_effect",
         "; ".join(f"{key}={value}" for key, value in followup.items()),
         "One targeted DTNA follow-up, not an additional request or expanded sample: section 10.3.2 supplies a named-summary/collective-response link, and the April 2024 clause confirms limited credit use through MY2032. The proposal already solicited the option. Preserve the original section-2.5 coding, distinguish caps from discounts, and independently review original-file identity and facet coding. No full acceptance, docket rate, individual effect or current regulatory-status claim is cleared.")
+    publisher_comment_spec = importlib.util.spec_from_file_location(
+        "comment_publisher", ROOT / "scripts/review-comment-publisher.py")
+    publisher_comment = importlib.util.module_from_spec(publisher_comment_spec)
+    publisher_comment_spec.loader.exec_module(publisher_comment)
+    publisher_inventory = json.loads((DATA / "comment-publisher-inventory.json").read_text(encoding="utf-8"))
+    publisher_followup = json.loads((DATA / "comment-publisher-warranty-review.json").read_text(encoding="utf-8"))
+    publisher_comments = publisher_comment.validate(publisher_inventory, publisher_followup)
+    add("comment-publisher-letter-inventory", "original_publisher_frame_not_docket_rates",
+        "; ".join(f"{key}={value}" for key, value in publisher_comments.items()),
+        "One access-led MEMA letter, fully visually reviewed, supplies 48 action/retention entries under explicit segmentation, not independent comments. The four-entry warranty follow-up separates an existing-provision explanation, collective component-scope clarification and a list-process request not separately resolved in the reviewed passages. The shared proposed/final clause comparison does not identify individual influence. Forty-four other entries remain unadjudicated, not nonresponses. Exact docket-file version, independent review and a docket sampling frame remain unresolved. Earlier pilot/corpus products are unchanged.")
     protests = read("gao-protest-overlay.csv")
     reviewed = [r for r in protests if "Partial source-page review" in r["notes"]]
     add("gao-partial-adjudication", "not_award_linked",

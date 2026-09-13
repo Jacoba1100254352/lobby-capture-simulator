@@ -122,6 +122,13 @@ consideration and a time-limited final provision, not full program-life acceptan
 or a comment-caused change. Four facets are part of one existing request, not
 four new observations. Original-file verification and independent review remain
 pending.
+A publisher-original MEMA inventory separately reviews all 28 pages and records
+48 action/retention entries under a declared segmentation rule. The four-entry
+warranty follow-up links original wording to the agency response and a shared
+proposal/final clause comparison. Metadata title/size agreement does not verify
+the inaccessible docket file's exact version. The access-led frame was not blind
+to prior response snippets; 44 entries remain unadjudicated, not nonresponses.
+Original pilots, independent-review gates and simulator parameters are unchanged.
 A separate NAM 2008Q1 coalition-disclosure probe reviews header/line-25 text
 and checkbox attributes in two electronic filing versions outside the frozen
 cohort. Both API affiliate lists are empty, but the original HTML forms disclose

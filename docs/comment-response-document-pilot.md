@@ -1,5 +1,100 @@
 # Agency-documented comment responses: heavy-duty Phase 3 pilot
 
+## Publisher-original inventory and warranty follow-up, September 13
+
+**Assessment: share with caveats for documentary measurement, not rates or causal
+calibration.** This new source-first product is separate from all older pilots
+below. Their original-file limits and counts are unchanged.
+
+A complete visual review of the [MEMA publisher submission](https://www.mema.org/system/files/EPA-HQ-OAR-2022-0985%20MEMA%20Comments%20EPA%20HD%20GHG%20Ph3%20NPRM%2016June2023%20Final.pdf)
+records 48 action/retention entries from one 28-page letter dated June 16, 2023.
+The inventory includes 44 requested actions, one conditional request and three
+retention positions. These are not 48 comments, independent observations or
+policy changes. Related actions can share a response and are explicitly linked.
+The labels are navigation aids; the cited original pages and locators control
+interpretation, and independent segmentation review is pending.
+
+`comment-publisher-inventory.json` preserves the full page-coverage map, compact
+request labels, repeat/facet decisions and exclusions. Summary/body/appendix
+restatements are collapsed; background claims, illustrative charts, quotations
+and offers of additional data are not automatically extra requests. Distinct
+actions, instruments or addressees remain separate. The ambiguous MY2028
+condition on page 7 is not silently corrected. One indirect request is flagged.
+Retention classifications describe the letter, not verified policy changes.
+The page-2 opening statement on repair-information access is an explicit
+context-only exclusion for independent review, not silently merged into the
+repair-location request. The inventory is a declared coding, not a uniquely
+determined count of every possible interpretation.
+
+This is an access-led case, not a representative docket sample. Search snippets
+had already exposed warranty excerpts and technology-neutrality discussion.
+The whole-letter request frame was frozen before additional response matching,
+but it was neither blinded nor preregistered. Its response-coding status at
+frame freeze is retained; the separate follow-up below supplies later coding.
+
+### Source identity and extraction risk
+
+Public [submission metadata](https://api.regulations.gov/v4/comments/EPA-HQ-OAR-2022-0985-1570?include=attachments)
+identifies comment 1570 and attachment 1. The attachment abstract matches the
+publisher filename, and its reported 6,264,676 bytes match the acquired PDF.
+Receipt and postmark are June 16; posting is June 21. The metadata's one-page
+count describes the content file, not the 28-page attachment. The docket PDF
+returned HTTP 403, so title/size agreement does not establish an exact byte
+version match or independently verified historical archive time.
+
+Ordinary text extraction loses most body text, and OCR also misses highlighted
+requests. All 28 rendered pages were therefore checked; source highlights were
+not added by the reviewer. Extraction cannot certify completeness. Raw public
+source bytes remain ignored; only the minimal projection, hashes and coding
+ledger enter the public package.
+
+### Four-entry warranty comparison
+
+All four inventory entries in the warranty theme were followed up. This theme
+was selected after snippet exposure, not randomly. The [EPA response document](https://www.epa.gov/system/files/documents/2024-03/420r24007.pdf)
+reproduces the relevant wording and original page citations at PDF 1461,
+printed 1443. Its named summary is PDF 1466, printed 1448; the complete
+section-11.2 response is PDF 1467-1468, printed 1449-1450.
+
+| Inventory entry | Bounded finding |
+| --- | --- |
+| r26, repair locations | EPA explicitly names MEMA and says an existing provision addresses the concern. This is not a newly granted repair right. |
+| r27, component specification | A named collective referral leads to a clarification with broader component coverage, not full acceptance of a narrow scope. |
+| r28, wear/adjacency exclusions | The reviewed preamble and clause do not support a blanket exemption. Individual examples are not all separately adjudicated. |
+| r29, supplier-informed list | No separate process decision in the reviewed passages. This is not docket-wide nonresponse or rejection. |
+
+The [historical final preamble](https://www.govinfo.gov/content/pkg/FR-2024-04-22/pdf/2024-06809.pdf)
+III.B.2, PDF 174-175 / printed 29613-29614, explains component coverage.
+The published 40 CFR 1037.120(c) text at PDF 333 / printed 29772 was compared
+with [proposal instruction 51](https://www.govinfo.gov/content/pkg/FR-2023-04-27/pdf/2023-07955.pdf),
+PDF 199-200 / printed 26124-26125. Both versions have broad coverage; the final
+text separates electric/hybrid components into their own sentence. That shared
+comparison belongs to r27 and r28, not two independent policy changes. Printed
+page references and actual PDF indices are recorded separately from footer form
+numbers. This is not a review of current legal operativeness.
+
+### Validation and remaining work
+
+`comment-publisher-warranty-review.json` binds the four reviews to the frozen
+request-frame hash, publisher bytes, agency excerpt, and proposal/final sources.
+`scripts/review-comment-publisher.py` validates identity, page coverage, grain,
+retention/conditional codes and non-attribution boundaries. Its optional source
+arguments verify file hashes and regenerate the metadata projection; ordinary
+offline audit checks do not independently authenticate manual source readings.
+Mutation tests cover missing/duplicated entries, wrong pages or attachments,
+content/attachment page-count confusion, stale bindings, unsupported acceptance,
+and turning unadjudicated entries into nonresponses. The companion notebook
+recomputes counts and displays the four findings.
+
+Forty-four entries have not yet been adjudicated against agency responses.
+They are neither nonresponses nor rejections. The next coding pass should use
+the frozen frame, log search scope and preserve unresolved matches. Exact docket
+version verification, independent coding review, and a justified population
+frame remain requirements before stronger use. No causal simulator parameter
+or older pilot count changes from this increment.
+
+## Original two-request agency-excerpt pilot
+
 Reviewed 2026-09-12. Assessment: **share with caveats** for documentary coding;
 not ready for an uptake rate, causal effect or simulator calibration.
 

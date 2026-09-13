@@ -110,6 +110,7 @@ EMPIRICAL_EXPANSION_PRODUCTS = [
         "comment-response-document-pilot.csv", "comment-response-document-source.json",
         "comment-section-inventory.csv", "comment-section-inventory-source.json",
         "comment-request-followups.json",
+        "comment-publisher-inventory.json", "comment-publisher-warranty-review.json",
         "gao-award-linkage-pilot.csv", "gao-award-linkage-source.json",
         "gao-docket-timing-pilot.csv", "gao-docket-timing-source.json",
         "gao-original-action-review.json",

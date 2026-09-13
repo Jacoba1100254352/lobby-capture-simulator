@@ -270,6 +270,18 @@ not program-life acceptance. EPA had already invited comment on that option.
 The original eleven-request inventory remains unchanged; the follow-up is not
 an additional request, a causal effect or a current regulatory-status claim.
 
+A separate publisher-original MEMA inventory now covers all 28 letter pages and
+48 action/retention entries, including three retention positions and one
+conditional request. It is an access-led single-letter case, not 48 independent
+comments. Metadata title and exact byte size corroborate the publisher file;
+the inaccessible docket attachment's byte version remains unverified. A four-entry
+warranty follow-up distinguishes an existing-provision explanation, collective
+scope clarification and a process request not separately resolved in the reviewed
+passages. Forty-four other entries remain unadjudicated, not nonresponses.
+The [source review and codebook](docs/comment-response-document-pilot.md#publisher-original-inventory-and-warranty-follow-up-september-13)
+and offline notebook retain prior outcome exposure, request segmentation and
+independent-review limits. Earlier pilots and simulator parameters are unchanged.
+
 The archived procurement frame audit scans only the 56 manifest-selected bulk ZIPs.
 All 6,449,101 rows match their saved archive counts and agency/date partitions,
 but 243,700 have blank award types and 4,505,798 lack offers. One blank-type EPA

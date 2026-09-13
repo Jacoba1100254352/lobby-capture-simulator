@@ -1,0 +1,215 @@
+{
+  "schema": "comment-publisher-warranty-review-v1",
+  "reviewDate": "2026-09-13",
+  "reviewer": "Codex source review",
+  "inventoryFile": "comment-publisher-inventory.json",
+  "inventoryFrameSha256": "717738adcf4cba674307d1721c1d8a60429c21f804232c1a57bdc7f28a2f4f39",
+  "publisherSha256": "e6f6c3c34594d69654b4375e29896175b3057f4c6a0c987e141ac229f10d0159",
+  "selection": "All four warranty entries in the frozen publisher inventory. This theme was chosen after prior snippet exposure; it is not a random outcome follow-up.",
+  "documents": {
+    "response": {
+      "url": "https://www.epa.gov/system/files/documents/2024-03/420r24007.pdf",
+      "sha256": "4ce468a6ea85ede970b8189dab82b0ab5112692abcc1f684a585f563b6b4ab8e",
+      "reviewedPages": [
+        {
+          "pdfPage": 1461,
+          "printedPage": 1443
+        },
+        {
+          "pdfPage": 1466,
+          "printedPage": 1448
+        },
+        {
+          "pdfPage": 1467,
+          "printedPage": 1449
+        },
+        {
+          "pdfPage": 1468,
+          "printedPage": 1450
+        }
+      ],
+      "scope": "MEMA excerpt, named summary, and complete section-11.2 response; not all organizations' excerpts or the whole docket."
+    },
+    "proposal": {
+      "url": "https://www.govinfo.gov/content/pkg/FR-2023-04-27/pdf/2023-07955.pdf",
+      "sha256": "30f6f81aadc5313a4762e4234f93a4d937f83c5db75ec2607eb68ce028affc1a",
+      "reviewedPages": [
+        {
+          "pdfPage": 199,
+          "printedPage": 26124
+        },
+        {
+          "pdfPage": 200,
+          "printedPage": 26125
+        }
+      ],
+      "scope": "Instruction 51, proposed 40 CFR 1037.120(c)."
+    },
+    "final": {
+      "url": "https://www.govinfo.gov/content/pkg/FR-2024-04-22/pdf/2024-06809.pdf",
+      "sha256": "9d1b9a74a8528e36b7783ddfacf9b3089f484225431b1496324b5d5d2963eb94",
+      "reviewedPages": [
+        {
+          "pdfPage": 174,
+          "printedPage": 29613
+        },
+        {
+          "pdfPage": 175,
+          "printedPage": 29614
+        },
+        {
+          "pdfPage": 333,
+          "printedPage": 29772
+        }
+      ],
+      "scope": "Historical April 2024 preamble III.B.2 and instruction 60, 40 CFR 1037.120(c); not current legal-status advice."
+    }
+  },
+  "reviews": [
+    {
+      "requestId": "mema-1570-r26",
+      "originalPdfPages": [
+        13,
+        14
+      ],
+      "responseLink": "explicit_named_response",
+      "disposition": "agency_says_existing_provision_addresses_concern",
+      "basis": "EPA names MEMA and points to 40 CFR 1037.125(f); this coding records EPA's explanation, not a newly granted repair right.",
+      "finalPreamblePdfPages": [],
+      "ruleComparisonId": null,
+      "citedCommentId": "EPA-HQ-OAR-2022-0985-1570",
+      "citedAttachmentOrder": 1,
+      "excerptPdfPages": [
+        1461
+      ],
+      "excerptContentMatch": "request_wording_and_original_page_citation_agree",
+      "summaryPdfPages": [
+        1466
+      ],
+      "responsePdfPages": [
+        1467,
+        1468
+      ],
+      "independentReviewStatus": "pending",
+      "individualCausalEffect": "not_identified"
+    },
+    {
+      "requestId": "mema-1570-r27",
+      "originalPdfPages": [
+        14
+      ],
+      "responseLink": "named_collective_referral",
+      "disposition": "clarification_with_broader_component_scope",
+      "basis": "EPA refers the named group to III.B.2; the preamble specifies battery and associated powertrain coverage, including inverters and fuel-cell stacks. Specification does not equal the requested narrow scope.",
+      "finalPreamblePdfPages": [
+        174,
+        175
+      ],
+      "ruleComparisonId": "warranty-components-1037-120-c",
+      "citedCommentId": "EPA-HQ-OAR-2022-0985-1570",
+      "citedAttachmentOrder": 1,
+      "excerptPdfPages": [
+        1461
+      ],
+      "excerptContentMatch": "request_wording_and_original_page_citation_agree",
+      "summaryPdfPages": [
+        1466
+      ],
+      "responsePdfPages": [
+        1467,
+        1468
+      ],
+      "independentReviewStatus": "pending",
+      "individualCausalEffect": "not_identified"
+    },
+    {
+      "requestId": "mema-1570-r28",
+      "originalPdfPages": [
+        14
+      ],
+      "responseLink": "named_collective_referral",
+      "disposition": "blanket_exclusion_not_supported_by_reviewed_rule",
+      "basis": "The reviewed preamble/clauses retain broader coverage and manufacturer-defined covered failures. They do not establish a blanket wear/adjacency exception or adjudicate every example separately.",
+      "finalPreamblePdfPages": [
+        174,
+        175
+      ],
+      "ruleComparisonId": "warranty-components-1037-120-c",
+      "citedCommentId": "EPA-HQ-OAR-2022-0985-1570",
+      "citedAttachmentOrder": 1,
+      "excerptPdfPages": [
+        1461
+      ],
+      "excerptContentMatch": "request_wording_and_original_page_citation_agree",
+      "summaryPdfPages": [
+        1466
+      ],
+      "responsePdfPages": [
+        1467,
+        1468
+      ],
+      "independentReviewStatus": "pending",
+      "individualCausalEffect": "not_identified"
+    },
+    {
+      "requestId": "mema-1570-r29",
+      "originalPdfPages": [
+        14
+      ],
+      "responseLink": "no_separate_disposition_in_reviewed_passages",
+      "disposition": "supplier_list_process_not_separately_resolved",
+      "basis": "The original and reproduced excerpt contain this process request; the reviewed summary, response and preamble do not separately decide it. This is not docket-wide nonresponse or rejection.",
+      "finalPreamblePdfPages": [
+        174,
+        175
+      ],
+      "ruleComparisonId": null,
+      "citedCommentId": "EPA-HQ-OAR-2022-0985-1570",
+      "citedAttachmentOrder": 1,
+      "excerptPdfPages": [
+        1461
+      ],
+      "excerptContentMatch": "request_wording_and_original_page_citation_agree",
+      "summaryPdfPages": [
+        1466
+      ],
+      "responsePdfPages": [
+        1467,
+        1468
+      ],
+      "independentReviewStatus": "pending",
+      "individualCausalEffect": "not_identified"
+    }
+  ],
+  "ruleComparisons": [
+    {
+      "comparisonId": "warranty-components-1037-120-c",
+      "requestIds": [
+        "mema-1570-r27",
+        "mema-1570-r28"
+      ],
+      "proposalPdfPages": [
+        199,
+        200
+      ],
+      "finalPdfPages": [
+        333
+      ],
+      "assessment": "broad_coverage_in_both_versions_with_text_reorganization",
+      "observedChange": "The final text separates electric/hybrid components into their own sentence. Both versions cover more than battery/motors; no blanket wear/adjacency exemption appears in this clause.",
+      "individualAttribution": "not_identified",
+      "distinctPolicyChanges": "not_counted"
+    }
+  ],
+  "boundary": {
+    "officialAttachmentByteMatch": "not_verified",
+    "independentReviewStatus": "pending",
+    "docketRateEligible": false,
+    "overallLetterResponseCodingComplete": false,
+    "currentLegalStatusAssessed": false,
+    "causalEffect": "not_identified",
+    "remainingEntriesStatus": "not_yet_adjudicated_not_nonresponse",
+    "comparisonBoundary": "A named response, collective change or observed text difference cannot identify MEMA's causal contribution. Four linked requests belong to one letter and shared response, not four independent policy events."
+  },
+  "reviewFingerprint": "d4d241577fbcbe40aace88616cdcaa57b2223de220f443c196c6a9ea702f8d39"
+}
