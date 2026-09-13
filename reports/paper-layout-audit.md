@@ -61,12 +61,12 @@ This audit checks generated PDFs for sparse float pages, large whitespace gaps, 
 | paper/supplement.pdf | 8 | 88 | 4603 | 0.887 | 0.041 | no | pass | layout density acceptable |
 | paper/supplement.pdf | 9 | 53 | 4510 | 0.887 | 0.039 | no | pass | layout density acceptable |
 | paper/supplement.pdf | 10 | 52 | 4967 | 0.887 | 0.041 | no | pass | layout density acceptable |
-| paper/supplement.pdf | 11 | 50 | 4933 | 0.887 | 0.041 | yes | pass | layout density acceptable |
-| paper/supplement.pdf | 12 | 50 | 4937 | 0.887 | 0.041 | yes | pass | layout density acceptable |
-| paper/supplement.pdf | 13 | 55 | 4980 | 0.887 | 0.041 | no | pass | layout density acceptable |
-| paper/supplement.pdf | 14 | 103 | 4359 | 0.887 | 0.066 | yes | pass | layout density acceptable |
-| paper/supplement.pdf | 15 | 141 | 3651 | 0.886 | 0.041 | yes | pass | layout density acceptable |
-| paper/supplement.pdf | 16 | 72 | 3584 | 0.887 | 0.077 | yes | pass | layout density acceptable |
-| paper/supplement.pdf | 17 | 91 | 3565 | 0.890 | 0.037 | yes | pass | layout density acceptable |
-| paper/supplement.pdf | 18 | 71 | 3311 | 0.891 | 0.036 | yes | pass | references/declarations page |
-| paper/supplement.pdf | 19 | 40 | 2092 | 0.891 | 0.295 | no | pass | references/declarations page |
+| paper/supplement.pdf | 11 | 50 | 4966 | 0.887 | 0.041 | yes | pass | layout density acceptable |
+| paper/supplement.pdf | 12 | 54 | 4899 | 0.887 | 0.041 | yes | pass | layout density acceptable |
+| paper/supplement.pdf | 13 | 56 | 5004 | 0.887 | 0.041 | no | pass | layout density acceptable |
+| paper/supplement.pdf | 14 | 57 | 4523 | 0.887 | 0.093 | yes | pass | layout density acceptable |
+| paper/supplement.pdf | 15 | 180 | 3564 | 0.891 | 0.036 | yes | pass | layout density acceptable |
+| paper/supplement.pdf | 16 | 64 | 4159 | 0.887 | 0.144 | yes | pass | layout density acceptable |
+| paper/supplement.pdf | 17 | 92 | 3022 | 0.890 | 0.037 | yes | pass | layout density acceptable |
+| paper/supplement.pdf | 18 | 69 | 3377 | 0.887 | 0.040 | yes | pass | references/declarations page |
+| paper/supplement.pdf | 19 | 55 | 2832 | 0.887 | 0.086 | no | pass | references/declarations page |

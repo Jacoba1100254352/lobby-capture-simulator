@@ -100,6 +100,71 @@ frame coverage, page/identity bindings, numeric consistency and claim boundaries
 They do not substitute for independent source adjudication. Procurement and
 substitution identification remain separate unfinished requirements.
 
+## Proposal PTO baseline and archived workbook, September 13
+
+The separate `comment-pto-model-review.json` strengthens existing request r35
+with a proposal-to-final published input comparison. It adds no requests or
+independent observations. The [draft RIA text](https://nepis.epa.gov/Exe/ZyPURL.cgi?Dockey=P10178RN.TXT)
+lists cement mixer at 25% and cement pumper at 40% in Table 2-16 (printed 132).
+Its Table 2-17 (printed 133) assigns 25% to the mixer vehicle. The exact native
+identifier is `19C_Mix_Cl8_MP`; the draft text representation renders it as
+`19C Mix C18 MP`. The visually reviewed final RIA Table 2-18 assigns that
+vehicle 42%. This is a **17-percentage-point published input revision**, not
+an estimated change in emissions, total energy consumption or lobbying power.
+Final Table 2-17 retains separate mixer and pumper rows, assigning both 42%.
+The 17-point comparison does not apply to the pumper's 40% baseline, and no
+separate pumper vehicle is traced in this follow-up.
+
+### Native input lookup and historical identity
+
+EPA's [proposal page](https://www.epa.gov/regulations-emissions-vehicles-and-engines/proposed-rule-greenhouse-gas-emissions-standards-heavy)
+links the [HD TRUCS workbook](https://www.epa.gov/system/files/other-files/2023-04/hd-tech-trucs-tool-2023-04.xlsm).
+The 6,467,235-byte file matches the [June 22, 2023 archived payload](https://web.archive.org/web/20230622081654id_/https://www.epa.gov/system/files/other-files/2023-04/hd-tech-trucs-tool-2023-04.xlsm)
+by SHA256, with the archive index SHA1 digest and Memento timestamp also checked.
+This is the earliest of ten captures returned by the queried index. It postdates
+MEMA's June 16 letter, so it does not establish webpage bytes at proposal
+publication or comment submission. The source ledger records the exact hashes.
+
+Read-only native workbook inspection resolves this narrow chain:
+
+| Worksheet | Cells | Finding |
+| --- | --- | --- |
+| `A2b_Aux Sizing` | M12:O12 | Cement mixer, PTO ID 5, literal fraction 0.25. N12 is a cached shared-formula child of N9. |
+| `A2b_Aux Sizing` | M13:O13 | Cement pumper, PTO ID 6, literal fraction 0.40. N13 is also a shared-formula child. |
+| `A2_Aux Load` | B25, I25, J25 | Mixer vehicle, selected PTO ID 5, INDEX/MATCH lookup with cached fraction 0.25. |
+
+The verifier checks the exact lookup formula, column label, unique PTO-ID match,
+literal percentage source and agreement with the cached result. It preserves
+formula attributes separately from values. It does not recalculate the workbook
+or execute VBA. The initial spreadsheet import exhausted its JavaScript heap
+without producing inspection output; native OOXML inspection supplies this
+bounded evidence instead.
+
+### Version and interpretation limits
+
+The proposal docket's [attachment metadata](https://api.regulations.gov/v4/documents/EPA-HQ-OAR-2022-0985-0830?include=attachments)
+reports a 5,860,657-byte workbook, different from the webpage file. Its bytes
+remain inaccessible. The [final docket metadata](https://api.regulations.gov/v4/documents/EPA-HQ-OAR-2022-0985-3877?include=attachments)
+identifies attachment 1 as the 7,469,339-byte final model and attachment 2 as
+the 313,581-byte output calculator. Array order differs from document order.
+All three docket-workbook downloads returned HTTP 403; the final-workbook
+archive query returned no captures. None is treated as read or executed.
+
+Both RIAs describe the PTO percentage using total-energy language, while their
+conversion descriptions apply it to driving fuel consumption excluding PTO.
+The review preserves this denominator distinction and does not convert the
+input into a verified share of total fuel consumption. The original MEMA
+docket-byte match, scientific accuracy of its range, independent coding and
+the executed final model remain unresolved. The existing request disposition
+and 48-entry inventory are unchanged, and simulator calibration remains closed.
+
+Run `python3 scripts/review-comment-pto.py` for the offline ledger checks.
+Supplying `--workbook` and `--archived-workbook` additionally checks both local
+source files and reproduces the native input lookup. `make empirical-expansion-audit`
+and the companion notebook include the comparison. Consistency checks are not
+independent source adjudication. Procurement and substitution retain their
+separate remaining requirements.
+
 ## Publisher-original inventory and warranty follow-up, September 13
 
 **Assessment: share with caveats for documentary measurement, not rates or causal

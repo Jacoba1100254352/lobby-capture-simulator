@@ -1251,6 +1251,14 @@ def audit():
     add("comment-publisher-letter-inventory", "original_publisher_frame_not_docket_rates",
         "; ".join(f"{key}={value}" for key, value in publisher_comments.items()),
         "One access-led MEMA letter supplies 48 action/retention entries, not independent comments. Seven follow-ups now cover all 48 entries in a bounded first pass; several instruments remain unresolved within declared source scopes. The remaining twenty-entry review confirms the published 42% concrete-mixer PTO input from MEMA's 35-49% range, distinguishes regional modeled utility-truck limits from a blanket exclusion, and records the declined second comment period. EPA did not conduct the higher-power sensitivity; that response names TRALA. An NREL dwell-time study does not verify MEMA's public RFI. The final three appendix requests have appendix-reference provenance, not reproduced request wording. Reports/comment-publisher-case-review provides the 48-entry reading index. Earlier ledgers and shared comparisons remain unchanged; no response rate, independent event count or individual influence is inferred. Original docket-byte identity, independent manual adjudication, complete outcome resolution and a representative sampling frame remain unresolved. Procurement, substitution and simulator calibration are not cleared.")
+    pto_spec = importlib.util.spec_from_file_location("comment_pto", ROOT / "scripts/review-comment-pto.py")
+    pto_module = importlib.util.module_from_spec(pto_spec)
+    pto_spec.loader.exec_module(pto_module)
+    pto_review = json.loads((DATA / "comment-pto-model-review.json").read_text(encoding="utf-8"))
+    pto = pto_module.validate(pto_review)
+    add("comment-pto-published-input-revision", "proposal_baseline_confirmed_final_workbook_unread",
+        "; ".join(f"{key}={value}" for key, value in pto.items()),
+        "Existing MEMA r35 follow-up: the draft RIA and native webpage-workbook lookup assign 25% to 19C_Mix_Cl8_MP; final published Table 2-18 assigns 42%, a 17-percentage-point input change. The June 22, 2023 archived workbook matches the present EPA bytes, but postdates the June 16 letter and differs in size from NPRM docket metadata. Mixer and pumper start at different type-table baselines. Final-model and calculator attachments remain unread. No macros, recalculation, independent adjudication, additional requests, outcome-effect estimate or simulator calibration is cleared.")
     protests = read("gao-protest-overlay.csv")
     reviewed = [r for r in protests if "Partial source-page review" in r["notes"]]
     add("gao-partial-adjudication", "not_award_linked",

@@ -4,10 +4,13 @@
 import csv
 from copy import deepcopy
 import importlib.util
+import io
 import json
 from pathlib import Path
 import tempfile
 import unittest
+from xml.etree import ElementTree as ET
+import zipfile
 
 
 SPEC = importlib.util.spec_from_file_location(
@@ -27,6 +30,78 @@ PUBLISHER_SPEC = importlib.util.spec_from_file_location(
 )
 PUBLISHER = importlib.util.module_from_spec(PUBLISHER_SPEC)
 PUBLISHER_SPEC.loader.exec_module(PUBLISHER)
+
+
+PTO_SPEC = importlib.util.spec_from_file_location("comment_pto", Path(__file__).with_name("review-comment-pto.py"))
+PTO = importlib.util.module_from_spec(PTO_SPEC)
+PTO_SPEC.loader.exec_module(PTO)
+
+
+class CommentPtoWorkbookTests(unittest.TestCase):
+    def setUp(self):
+        self.evidence = json.loads((AUDIT.DATA / "comment-pto-model-review.json").read_text())["nativeEvidence"]
+
+    def source_bytes(self):
+        # A minimal workbook fixture retains the reviewed formula/cache shapes.
+        strings = []
+        stream = io.BytesIO()
+        with zipfile.ZipFile(stream, "w") as archive:
+            workbook = ET.Element("workbook", xmlns=PTO.NS["x"])
+            sheets = ET.SubElement(workbook, "sheets")
+            rels = ET.Element("Relationships")
+            for index, (name, evidence) in enumerate(self.evidence["sheets"].items(), 1):
+                rid = f"rId{index}"
+                ET.SubElement(sheets, "sheet", {"name": name, PTO.RID: rid})
+                ET.SubElement(rels, "Relationship", Id=rid, Target=evidence["member"][3:])
+                worksheet = ET.Element("worksheet", xmlns=PTO.NS["x"])
+                data = ET.SubElement(worksheet, "sheetData")
+                rows = {}
+                for address, record in evidence["cells"].items():
+                    number = "".join(c for c in address if c.isdigit())
+                    if number not in rows:
+                        rows[number] = ET.SubElement(data, "row", r=number)
+                    cell = ET.SubElement(rows[number], "c", r=address)
+                    if record["type"]:
+                        cell.set("t", record["type"])
+                    if record["formulaAttributes"] is not None:
+                        ET.SubElement(cell, "f", record["formulaAttributes"]).text = record["formula"]
+                    value = record["value"]
+                    if record["type"] == "s":
+                        strings.append(value)
+                        value = str(len(strings) - 1)
+                    if value is not None:
+                        ET.SubElement(cell, "v").text = value
+                archive.writestr(evidence["member"], ET.tostring(worksheet))
+            table = ET.Element("sst", xmlns=PTO.NS["x"])
+            for value in strings:
+                ET.SubElement(ET.SubElement(table, "si"), "t").text = value
+            archive.writestr("xl/sharedStrings.xml", ET.tostring(table))
+            archive.writestr("xl/workbook.xml", ET.tostring(workbook))
+            archive.writestr("xl/_rels/workbook.xml.rels", ET.tostring(rels))
+        return stream.getvalue()
+
+    def test_native_read_preserves_shared_formula_child_and_resolves_literal_input(self):
+        extracted = PTO.workbook_evidence(self.source_bytes())
+        self.assertEqual(extracted, self.evidence)
+        cells = extracted["sheets"]["A2b_Aux Sizing"]["cells"]
+        self.assertIsNone(cells["N12"]["formula"])
+        self.assertEqual(cells["N12"]["formulaAttributes"], {"t": "shared", "si": "5"})
+        self.assertIsNone(cells["O12"]["formulaAttributes"])
+        self.assertEqual(extracted["lookup"]["inputFraction"], 0.25)
+
+    def test_ambiguous_id_stale_cache_and_nonliteral_source_cannot_clear_lookup(self):
+        original = deepcopy(self.evidence)
+        for mutation, message in [("duplicate", "ambiguous"), ("cache", "cached fraction"), ("formula", "literal input")]:
+            self.evidence = deepcopy(original)
+            sizing = self.evidence["sheets"]["A2b_Aux Sizing"]["cells"]
+            if mutation == "duplicate":
+                sizing["N13"]["value"] = "5"
+            elif mutation == "cache":
+                self.evidence["sheets"]["A2_Aux Load"]["cells"]["J25"]["value"] = "0.42"
+            else:
+                sizing["O12"].update(formula="0.25", formulaAttributes={})
+            with self.subTest(mutation=mutation), self.assertRaisesRegex(ValueError, message):
+                PTO.workbook_evidence(self.source_bytes())
 
 
 class CommentPublisherTests(unittest.TestCase):

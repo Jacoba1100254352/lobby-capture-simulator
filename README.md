@@ -370,6 +370,15 @@ source pages, bounded dispositions and unresolved facets. Independent review,
 docket-byte identity, representative rates and causal effects remain uncleared;
 procurement, substitution and simulator parameters are unchanged.
 
+A [PTO baseline follow-up](docs/comment-response-document-pilot.md#proposal-pto-baseline-and-archived-workbook-september-13)
+traces the mixer input from 25% in the draft RIA and native proposal-workbook
+lookup to 42% in the final published analysis, a 17-percentage-point revision.
+The June 22, 2023 archived webpage workbook matches the currently linked EPA
+file. It postdates the letter and differs in size from the inaccessible proposal
+docket workbook. Final-model and calculator files remain unread. The source
+ledger and notebook preserve different mixer/pumper baselines, cached formula
+values and the distinction between input revision and outcome effect.
+
 The [substitution comparison review](reports/substitution-comparison-review.md)
 documents a negative identification result for the current evidence freeze.
 Its 72-row source-availability table retains 36 LDA/PAC overlaps, twelve

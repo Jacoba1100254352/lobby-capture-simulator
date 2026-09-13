@@ -1,0 +1,326 @@
+{
+  "schema": "comment-pto-model-review-v1",
+  "reviewDate": "2026-09-13",
+  "reviewer": "Codex source review; independent adjudication pending",
+  "requestId": "mema-1570-r35",
+  "existingReviewFile": "comment-publisher-remaining-review.json",
+  "existingReviewFingerprint": "94891ec1ac308d637e34539aa0f35bcc53d1a1e74cc02e20b3174febe5a9d145",
+  "selection": "Targeted follow-up to a known favorable input-uptake example in one outcome-exposed letter. No new requests, independent observations or sampling frame.",
+  "documents": {
+    "response": {
+      "url": "https://www.epa.gov/system/files/documents/2024-03/420r24007.pdf",
+      "sha256": "4ce468a6ea85ede970b8189dab82b0ab5112692abcc1f684a585f563b6b4ab8e",
+      "byteSize": 16735308,
+      "pageCount": 2114
+    },
+    "ria": {
+      "url": "https://nepis.epa.gov/Exe/ZyPDF.cgi?Dockey=P101A93R.pdf",
+      "sha256": "46e0d7944c94f3b83ffaa30c20d05d69f061a1c244a941e4e3f5e0c2f9043165",
+      "byteSize": 13228970,
+      "pageCount": 961
+    },
+    "draftRia": {
+      "url": "https://nepis.epa.gov/Exe/ZyPURL.cgi?Dockey=P10178RN.TXT",
+      "title": "Greenhouse Gas Emissions Standards for Heavy-Duty Vehicles: Phase 3: Draft Regulatory Impact Analysis",
+      "sha256": "04842233aa113a2a2cdb5b9f032f83b9015f88aa19fe13242a3efc01c7e19ec6",
+      "byteSize": 1545726,
+      "format": "NEPIS HTML text representation",
+      "reviewedPrintedPages": [
+        132,
+        133
+      ],
+      "reviewedTables": [
+        "2-16",
+        "2-17"
+      ],
+      "pdfVisuallyReviewed": false,
+      "scope": "Text representation of PTO type and vehicle-assignment tables plus adjoining methods. The OCR-like vehicle text is '19C Mix C18 MP'; the exact native identifier comes from the workbook, corroborated by the final RIA."
+    }
+  },
+  "sourceLocations": {
+    "publisher": {
+      "file": "comment-publisher-inventory.json",
+      "pdfPages": [
+        20
+      ],
+      "submittedRangePercent": [
+        35,
+        49
+      ]
+    },
+    "response": {
+      "pdfPages": [
+        557,
+        558
+      ],
+      "printedPages": [
+        539,
+        540
+      ],
+      "scope": "Existing bounded PTO response review, with explicit MEMA attribution."
+    },
+    "ria": {
+      "pdfPages": [
+        236,
+        237
+      ],
+      "printedPages": [
+        211,
+        212
+      ],
+      "visualPdfPages": [
+        236,
+        237
+      ],
+      "tables": [
+        "2-17",
+        "2-18"
+      ],
+      "scope": "Final published table values, assignment and accompanying conversion description. Not the executable final workbook."
+    }
+  },
+  "workbook": {
+    "landingPage": "https://www.epa.gov/regulations-emissions-vehicles-and-engines/proposed-rule-greenhouse-gas-emissions-standards-heavy",
+    "url": "https://www.epa.gov/system/files/other-files/2023-04/hd-tech-trucs-tool-2023-04.xlsm",
+    "sha256": "cde55df2ff79df101dfbabe7c9d61671f79180655650f83f62cce92e4eabff7b",
+    "byteSize": 6467235,
+    "inspection": "Read-only ZIP integrity and native OOXML inspection. Values, cached results and shared-formula attributes preserved; no recalculation, export or VBA execution.",
+    "importLimitation": "Artifact Tool import terminated with JavaScript heap exhaustion before producing inspection output. Native OOXML reading supplies the scoped cell evidence."
+  },
+  "archive": {
+    "timestamp": "20230622081654",
+    "url": "https://web.archive.org/web/20230622081654id_/https://www.epa.gov/system/files/other-files/2023-04/hd-tech-trucs-tool-2023-04.xlsm",
+    "mementoDatetime": "Thu, 22 Jun 2023 08:16:54 GMT",
+    "sha256": "cde55df2ff79df101dfbabe7c9d61671f79180655650f83f62cce92e4eabff7b",
+    "byteSize": 6467235,
+    "sha1Base32": "WTJN3MPVFZ6HR33NGZEYWQ5BKXAFRXM6",
+    "cdxDigest": "WTJN3MPVFZ6HR33NGZEYWQ5BKXAFRXM6",
+    "indexUrl": "https://web.archive.org/cdx/search/cdx?url=www.epa.gov%2Fsystem%2Ffiles%2Fother-files%2F2023-04%2Fhd-tech-trucs-tool-2023-04.xlsm&output=json&filter=statuscode%3A200&fl=timestamp%2Coriginal%2Cstatuscode%2Cmimetype%2Cdigest",
+    "captureCount": 10,
+    "scope": "Earliest returned capture verified against the index SHA1 digest, Memento timestamp and present EPA payload. June 22 is after the June 16 MEMA letter; it does not certify the webpage workbook's bytes at initial proposal publication or comment submission."
+  },
+  "docketAttachments": {
+    "proposal": {
+      "documentId": "EPA-HQ-OAR-2022-0985-0830",
+      "attachmentId": "0900006485922913",
+      "title": "Heavy Duty Technology Resources Use Case Scenario (HD TRUCS) Docket NPRM",
+      "docOrder": 1,
+      "url": "https://downloads.regulations.gov/EPA-HQ-OAR-2022-0985-0830/attachment_1.xlsm",
+      "byteSize": 5860657,
+      "modifyDate": "2023-04-14T20:58:48Z",
+      "metadataUrl": "https://api.regulations.gov/v4/documents/EPA-HQ-OAR-2022-0985-0830?include=attachments",
+      "metadataSha256": "48630efe191a58f264dfc09c948ccd234c02da6b26c63c5f8b7a9e52d63e92a2",
+      "downloadStatus": "http_403_not_acquired"
+    },
+    "finalCalculator": {
+      "documentId": "EPA-HQ-OAR-2022-0985-3877",
+      "attachmentId": "090000648649907c",
+      "title": "HD TRUCS Output Calculator",
+      "docOrder": 2,
+      "url": "https://downloads.regulations.gov/EPA-HQ-OAR-2022-0985-3877/attachment_2.xlsm",
+      "byteSize": 313581,
+      "modifyDate": "2024-04-23T01:38:37Z",
+      "metadataUrl": "https://api.regulations.gov/v4/documents/EPA-HQ-OAR-2022-0985-3877?include=attachments",
+      "metadataSha256": "8d655417fe745c94a6b5f386f911ce0da5ee421c5ad5f370920ef29fce790f91",
+      "downloadStatus": "http_403_not_acquired"
+    },
+    "finalModel": {
+      "documentId": "EPA-HQ-OAR-2022-0985-3877",
+      "attachmentId": "090000648649907d",
+      "title": "Heavy Duty Technology Resources Use Case Scenario (HD TRUCS) Docket FRM",
+      "docOrder": 1,
+      "url": "https://downloads.regulations.gov/EPA-HQ-OAR-2022-0985-3877/attachment_1.xlsm",
+      "byteSize": 7469339,
+      "modifyDate": "2024-04-23T01:38:37Z",
+      "metadataUrl": "https://api.regulations.gov/v4/documents/EPA-HQ-OAR-2022-0985-3877?include=attachments",
+      "metadataSha256": "8d655417fe745c94a6b5f386f911ce0da5ee421c5ad5f370920ef29fce790f91",
+      "downloadStatus": "http_403_not_acquired"
+    }
+  },
+  "nativeEvidence": {
+    "sheets": {
+      "A2_Aux Load": {
+        "member": "xl/worksheets/sheet26.xml",
+        "cells": {
+          "B25": {
+            "type": "str",
+            "value": "19C_Mix_Cl8_MP",
+            "formula": "'1_Veh Prop'!B25",
+            "formulaAttributes": {}
+          },
+          "D25": {
+            "type": "str",
+            "value": "Cement Mixer",
+            "formula": "'1_Veh Prop'!G25",
+            "formulaAttributes": {}
+          },
+          "I6": {
+            "type": "s",
+            "value": "PTO ID",
+            "formula": null,
+            "formulaAttributes": null
+          },
+          "J6": {
+            "type": "s",
+            "value": "PTO %",
+            "formula": null,
+            "formulaAttributes": null
+          },
+          "I25": {
+            "type": null,
+            "value": "5",
+            "formula": null,
+            "formulaAttributes": null
+          },
+          "J25": {
+            "type": null,
+            "value": "0.25",
+            "formula": "INDEX('A2b_Aux Sizing'!$M$7:$O$40,MATCH(I25,'A2b_Aux Sizing'!$N$7:$N$40,0),MATCH($J$6,'A2b_Aux Sizing'!$M$6:$O$6,0))",
+            "formulaAttributes": {}
+          }
+        }
+      },
+      "A2b_Aux Sizing": {
+        "member": "xl/worksheets/sheet27.xml",
+        "cells": {
+          "M3": {
+            "type": "s",
+            "value": "Auxiliary Equipement Type",
+            "formula": null,
+            "formulaAttributes": null
+          },
+          "O3": {
+            "type": "s",
+            "value": "Energy Use as a Function of Total Fuel Consumption",
+            "formula": null,
+            "formulaAttributes": null
+          },
+          "O5": {
+            "type": "s",
+            "value": "%",
+            "formula": null,
+            "formulaAttributes": null
+          },
+          "M6": {
+            "type": "s",
+            "value": "Type",
+            "formula": null,
+            "formulaAttributes": null
+          },
+          "N6": {
+            "type": "s",
+            "value": "PTO ID",
+            "formula": null,
+            "formulaAttributes": null
+          },
+          "O6": {
+            "type": "s",
+            "value": "PTO %",
+            "formula": null,
+            "formulaAttributes": null
+          },
+          "N9": {
+            "type": null,
+            "value": "2",
+            "formula": "N8+1",
+            "formulaAttributes": {
+              "t": "shared",
+              "ref": "N9:N40",
+              "si": "5"
+            }
+          },
+          "M12": {
+            "type": "s",
+            "value": "Cement mixer",
+            "formula": null,
+            "formulaAttributes": null
+          },
+          "N12": {
+            "type": null,
+            "value": "5",
+            "formula": null,
+            "formulaAttributes": {
+              "t": "shared",
+              "si": "5"
+            }
+          },
+          "O12": {
+            "type": null,
+            "value": "0.25",
+            "formula": null,
+            "formulaAttributes": null
+          },
+          "M13": {
+            "type": "s",
+            "value": "Cement pumper",
+            "formula": null,
+            "formulaAttributes": null
+          },
+          "N13": {
+            "type": null,
+            "value": "6",
+            "formula": null,
+            "formulaAttributes": {
+              "t": "shared",
+              "si": "5"
+            }
+          },
+          "O13": {
+            "type": null,
+            "value": "0.4",
+            "formula": null,
+            "formulaAttributes": null
+          }
+        }
+      }
+    },
+    "lookup": {
+      "vehicleId": "19C_Mix_Cl8_MP",
+      "ptoId": 5,
+      "auxiliaryType": "Cement mixer",
+      "sourceSheet": "A2b_Aux Sizing",
+      "sourceCell": "O12",
+      "lookupSheet": "A2_Aux Load",
+      "lookupCell": "J25",
+      "inputFraction": 0.25,
+      "cachedFraction": 0.25
+    }
+  },
+  "comparison": {
+    "vehicleId": "19C_Mix_Cl8_MP",
+    "proposalPercent": 25,
+    "finalPercent": 42,
+    "submittedRangePercent": [
+      35,
+      49
+    ],
+    "changePercentagePoints": 17,
+    "proposalMixerTypePercent": 25,
+    "proposalPumperTypePercent": 40,
+    "finalMixerTypePercent": 42,
+    "finalPumperTypePercent": 42,
+    "unit": "Published PTO input percentage, not an emissions, total-energy, welfare or lobbying-effect estimate.",
+    "disposition": "proposal_input_and_published_revision_confirmed_final_workbook_unread"
+  },
+  "sourceCautions": [
+    "The 6,467,235-byte webpage workbook differs in reported size from the 5,860,657-byte NPRM docket attachment. No docket bytes were acquired, so the files cannot be equated or their content differences characterized.",
+    "Final-model attachment 1 and output-calculator attachment 2 are selected by document order and identity, not API array position. Both returned HTTP 403; the final-workbook archive index returned no captures.",
+    "Draft Table 2-16 lists mixer and pumper separately at 25 and 40. Final Table 2-17 retains separate rows but assigns both 42. Only vehicle 19C_Mix_Cl8_MP is traced here; no separate pumper vehicle is established.",
+    "The draft HTML text's C18 typography is not the exact native Cl8 identifier. Native workbook cells and visually reviewed final Table 2-18 establish the scoped vehicle match.",
+    "Both analyses describe a percentage of total energy, while the implementation descriptions multiply the PTO percentage by driving fuel use excluding PTO. Preserve that denominator distinction; no total-fuel-share conversion or scientific validation is claimed.",
+    "The native N12 and N13 PTO identifiers are cached shared-formula children of N9. They are not literal inputs. The O12 and O13 percentage cells are literals. J25 is a formula with a matching cached value.",
+    "Source inspection and consistency tests are not independent manual review, authentication of the original MEMA docket file, or evidence of a causal lobbying effect."
+  ],
+  "boundary": {
+    "newRequests": 0,
+    "independentReview": "pending",
+    "originalCommentDocketBytesVerified": false,
+    "proposalDocketWorkbookBytesVerified": false,
+    "finalWorkbookRead": false,
+    "workbookRecalculated": false,
+    "macrosExecuted": false,
+    "causalEffect": "not_identified",
+    "simulatorCalibrationEligible": false
+  },
+  "reviewFingerprint": "dc910b0c372b503cb88fb1f6605d3512e120494524165dc4f15e76d34621b347"
+}

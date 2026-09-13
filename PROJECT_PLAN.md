@@ -225,6 +225,15 @@ references do not reproduce the last three requests. Several requested
 instruments remain unresolved within reviewed scopes. No independent
 adjudication, docket-version match, representative rate, causal effect or
 simulator recalibration is promoted. Procurement and substitution remain open.
+A scoped r35 follow-up confirms a 25% mixer baseline in the draft RIA and native
+webpage-workbook lookup, versus 42% in the final published analysis. The June 22,
+2023 archived workbook matches the current EPA bytes, but postdates the MEMA
+letter and differs in size from the proposal docket metadata. The 17-point
+input revision is separate from the pumper's 40% baseline and is not a modeled
+outcome effect. Final-model execution, original docket versions and independent
+adjudication remain unresolved. `comment-pto-model-review.json`, the native
+OOXML verifier and the notebook preserve these limits without changing the
+48-entry inventory or simulator parameters.
 A separate NAM 2008Q1 coalition-disclosure probe reviews header/line-25 text
 and checkbox attributes in two electronic filing versions outside the frozen
 cohort. Both API affiliate lists are empty, but the original HTML forms disclose

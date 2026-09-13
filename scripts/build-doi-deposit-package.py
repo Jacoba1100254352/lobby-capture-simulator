@@ -68,6 +68,7 @@ PACKAGE_INPUTS = [
             "comment-publisher-supply-review.json",
             "comment-publisher-inputs-review.json",
             "comment-publisher-remaining-review.json",
+            "comment-pto-model-review.json",
             "gao-award-linkage-pilot.csv", "gao-award-linkage-source.json",
             "gao-docket-timing-pilot.csv", "gao-docket-timing-source.json",
             "gao-original-action-review.json",
