@@ -144,6 +144,14 @@ SCHEMAS = {
             "exclusionFlag": "false",
             "firewallCovered": "false",
         },
+        # Preserve supplied SAM identity/provenance without adding empty metadata
+        # columns to legacy fixture schemas. These are not inferred source facts.
+        "passthrough": [
+            "transactionNumber", "awardingSubtierCode", "referencedIdvPiid", "referencedIdvSubtierCode",
+            "actionObligationDollars", "actionDateSourcePath", "actionObligationSourcePath", "offersSourcePath",
+            "numberOfOffersSourceCode", "numberOfOffersSourceName", "idvNumberOfOffersReceived",
+            "exclusionEvidenceStatus", "parsedRecordSha256",
+        ],
     },
     "revolving-door": {
         "fields": [
@@ -235,7 +243,7 @@ def main() -> int:
         defaults = schema.get("optional", {})
         args.output.parent.mkdir(parents=True, exist_ok=True)
         with args.output.open("w", newline="", encoding="utf-8") as destination:
-            writer = csv.DictWriter(destination, fieldnames=schema["fields"])
+            writer = csv.DictWriter(destination, fieldnames=list(mapping))
             writer.writeheader()
             for row in reader:
                 writer.writerow(
@@ -270,6 +278,9 @@ def resolve_mapping(kind: str, source_fields: list[str], schema: dict[str, objec
             f"Cannot normalize {kind}: missing required fields [{needed}]. "
             f"Available source fields: {available}"
         )
+    for target in schema.get("passthrough", []):
+        if normalize(target) in normalized:
+            mapping[target] = normalized[normalize(target)]
     return mapping
 
 

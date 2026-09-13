@@ -210,6 +210,9 @@ def usaspending_moments(
     national_action_rows = read_rows(national_action_path)
     bulk_summary = read_json(bulk_summary_path)
     sam_action_rows = read_rows(sam_path)
+    for panel in (rows, bridge_rows, usaspending_action_rows, national_action_rows, sam_action_rows):
+        for row in panel:
+            procurement_exclusion_proxy_available(row)
     action_rows, action_note, action_source = procurement_action_panel(usaspending_action_rows, sam_action_rows)
     if not rows and not bridge_rows and not usaspending_action_rows and not national_action_rows and not bulk_summary and not sam_action_rows:
         return [moment(scope, "usaspending", "procurementRows", 0.0, "observed", f"{path} missing or empty")]
@@ -250,7 +253,16 @@ def usaspending_moments(
     price_only_rows = [row for row in competition_rows if flag(row.get("priceOnlyAward"))]
     firewall_rows = [row for row in award_rows if flag(row.get("firewallCovered"))]
     protest_rows = [row for row in award_rows if flag(row.get("protestFiled"))]
-    exclusion_rows = [row for row in competition_rows if flag(row.get("exclusionFlag")) or "EXCLUSION" in row.get("competitionType", "").upper()]
+    exclusion_proxy_frame = [row for row in competition_rows if procurement_exclusion_proxy_available(row)]
+    exclusion_unavailable = len(competition_rows) - len(exclusion_proxy_frame)
+    exclusion_rows = [row for row in exclusion_proxy_frame if flag(row.get("exclusionFlag")) or "EXCLUSION" in row.get("competitionType", "").upper()]
+    exclusion_note = f"legacy exclusion/after-exclusion competition flag among {competition_note}; not a verified historical SAM vendor-exclusion rate"
+    if exclusion_unavailable:
+        exclusion_note = (f"legacy competition proxy among {len(exclusion_proxy_frame)} legacy rows; "
+                          f"{exclusion_unavailable} rows with unobserved exclusion evidence excluded from this denominator; "
+                          "not a historical vendor-exclusion rate")
+        if not exclusion_proxy_frame:
+            exclusion_note += "; numeric zero is an unavailable-value placeholder, not observed non-exclusion"
     limited_competition_rows = [
         row
         for row in competition_rows
@@ -310,13 +322,16 @@ def usaspending_moments(
         moment(scope, "usaspending", "procurementPriceOnlyAwardShare", safe_divide(len(price_only_rows), len(competition_rows)), "observed_proxy", f"share among {competition_note} marked as price-only or one-offer awards"),
         moment(scope, "usaspending", "procurementLimitedCompetitionShare", safe_divide(len(limited_competition_rows), len(competition_rows)), "observed_proxy", f"share among {competition_note} with limited competition, exclusions, or one known offer"),
         moment(scope, "usaspending", "procurementProtestShare", safe_divide(len(protest_rows), len(award_rows)), "observed_proxy", "share of normalized award rows marked with a protest flag"),
-        moment(scope, "usaspending", "procurementExclusionShare", safe_divide(len(exclusion_rows), len(competition_rows)), "observed_proxy", f"legacy exclusion/after-exclusion competition flag among {competition_note}; not a verified historical SAM vendor-exclusion rate"),
+        moment(scope, "usaspending", "procurementExclusionShare", safe_divide(len(exclusion_rows), len(exclusion_proxy_frame)), "diagnostic" if exclusion_unavailable else "observed_proxy", exclusion_note),
         moment(scope, "usaspending", "procurementFirewallCoverageShare", safe_divide(len(firewall_rows), len(award_rows)), "observed_proxy", "share of normalized award rows covered by a procurement-firewall flag"),
         moment(scope, "usaspending", "procurementKnownUeiShare", safe_divide(len(uei_rows), len(award_rows)), "diagnostic", "share of normalized award rows carrying a recipient UEI"),
         moment(scope, "usaspending", "procurementKnownPiidShare", safe_divide(len(piid_rows), len(award_rows)), "diagnostic", "share of normalized award rows carrying a procurement instrument identifier"),
     ]
     if bulk_summary:
         output.extend(bulk_procurement_moments(scope, bulk_summary))
+    if exclusion_unavailable:
+        output.append(moment(scope, "usaspending", "procurementExclusionEvidenceUnavailableRows", exclusion_unavailable,
+                             "diagnostic", "rows excluded from the legacy competition-proxy denominator; historical vendor exclusion remains unobserved"))
     return output
 
 
@@ -591,6 +606,20 @@ def procurement_award_key(row: dict[str, str]) -> str:
             row.get("actionDate", "").strip(),
         ]
     )
+
+
+def procurement_exclusion_proxy_available(row: dict[str, str]) -> bool:
+    """Legacy proxy replay is not a historical vendor-status observation."""
+    if "exclusionEvidenceStatus" not in row:
+        return True
+    status = str(row["exclusionEvidenceStatus"]).strip()
+    if status == "legacy_competition_proxy":
+        return True
+    if status != "not_observed_in_contract_awards":
+        raise ValueError("Unsupported procurement exclusion evidence status")
+    if flag(row.get("exclusionFlag")):
+        raise ValueError("Procurement exclusion flag contradicts unobserved evidence status")
+    return False
 
 
 def has_competition_data(row: dict[str, str]) -> bool:

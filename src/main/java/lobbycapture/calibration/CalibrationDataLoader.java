@@ -112,7 +112,7 @@ public final class CalibrationDataLoader
 				              row.getOrDefault("actionDate", ""),
 				              row.getOrDefault("competitionType", ""),
 				              flag(row.get("protestFiled")),
-				              flag(row.get("exclusionFlag")) || row.getOrDefault("competitionType", "").toUpperCase().contains("EXCLUSION"),
+				              procurementExclusionFlag(row),
 				              flag(row.get("firewallCovered")),
 				              present(row.get("uei")),
 				              present(row.get("piid"))
@@ -157,6 +157,24 @@ public final class CalibrationDataLoader
 		return Double.parseDouble(value);
 	}
 	
+	private static boolean procurementExclusionFlag(Map<String, String> row) {
+		// Unmarked fixtures retain their historical competition-proxy semantics.
+		// Neither that replay nor a false placeholder establishes vendor status.
+		if (row.containsKey("exclusionEvidenceStatus")) {
+			String status = row.get("exclusionEvidenceStatus").trim();
+			if (status.equals("not_observed_in_contract_awards")) {
+				if (flag(row.get("exclusionFlag"))) {
+					throw new IllegalArgumentException("Procurement exclusion flag contradicts unobserved evidence status");
+				}
+				return false;
+			}
+			if (!status.equals("legacy_competition_proxy")) {
+				throw new IllegalArgumentException("Unsupported procurement exclusion evidence status");
+			}
+		}
+		return flag(row.get("exclusionFlag")) || row.getOrDefault("competitionType", "").toUpperCase().contains("EXCLUSION");
+	}
+
 	private static boolean flag(String value) {
 		return value != null && List.of("1", "true", "yes", "y").contains(value.trim().toLowerCase());
 	}

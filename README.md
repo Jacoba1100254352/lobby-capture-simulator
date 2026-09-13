@@ -268,6 +268,14 @@ proposals; these definitions and sources have not been reconciled. The
 baseline timing ledgers remain unchanged, with independent review, representative
 SAM access and historical exclusion evidence still outstanding.
 
+The [SAM downstream checks](docs/procurement-source-reconciliation.md#downstream-exclusion-evidence-boundary)
+preserve all thirteen added provenance fields through generic normalization.
+Java and source reporting honor the explicit unobserved-exclusion marker and
+reject contradictory or unsupported statuses. Unknown exclusions are excluded
+from the legacy proxy denominator, not counted as observed non-exclusion.
+Legacy fixture replay remains a competition proxy, not vendor-status evidence;
+synthetic end-to-end checks add no empirical rows or causal clearance.
+
 A separate [heavy-duty Phase 3 response pilot](docs/comment-response-document-pilot.md)
 links two agency-reproduced request excerpts to explicitly named responses:
 a Cummins clarification and disagreement with an Allison calculation-error claim.

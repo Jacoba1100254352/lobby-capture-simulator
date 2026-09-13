@@ -91,6 +91,44 @@ actual SAM rows. Source access is a separate gate: the current browser check
 reached a signed-out contract-data page, so an authorized sign-in or fresh export
 remains necessary. No account terms were accepted and no frozen panel was refreshed.
 
+### Downstream exclusion-evidence boundary
+
+The September 13 follow-through review reproduced two additional defects with
+synthetic records: generic procurement CSV normalization dropped the SAM
+importer's thirteen added identity/provenance fields, and the Java loader
+reintroduced `exclusionFlag=true` from competition text despite the explicit
+`not_observed_in_contract_awards` marker. The source-moment reporter likewise
+counted the competition wording in its legacy exclusion proxy. None of these
+tests is an observation about an actual excluded vendor.
+
+The generic `usaspending` and `usaspending-actions` routes now preserve those
+thirteen columns when supplied, retaining all 32 importer fields. They do not
+add empty provenance columns to old nineteen-column inputs or infer missing
+source facts. The Java loader honors the unobserved marker while preserving
+the separately named limited-competition procedure proxy. Both Java and the
+source-moment reporter reject a contradictory true exclusion flag, unsupported
+status values, and an explicitly present but blank status. No observed-vendor
+status is accepted without a separately implemented evidence contract.
+
+Unmarked legacy fixtures retain their old competition-proxy behavior for
+reproducibility, not as historical vendor-exclusion evidence. When intentionally
+combining legacy rows with marked rows, `legacy_competition_proxy` explicitly
+declares that old meaning; a blank status is not silently assigned it. The
+reporter excludes unobserved rows from the legacy proxy denominator, reports
+their count, and labels a mixed or all-unobserved result as diagnostic. With no
+legacy rows, its numeric zero is an unavailable-value placeholder, not an
+observed zero exclusion rate.
+
+Eight additional Python regressions cover metadata preservation, legacy replay,
+unknown/contradictory statuses and denominator handling, including a synthetic
+source JSON through export, generic normalization and the actual Java loader.
+Java checks independently exercise its parsing branch; these software checks
+are not independent empirical adjudication. The companion notebook executes
+the downstream suite and displays the all-unobserved and mixed examples.
+Frozen source rows, model coefficients and existing legacy proxy results remain
+unchanged. Representative SAM acquisition, historical intervals and reviewed
+award/protest links remain separate requirements.
+
 ## Protest adjudication advanced
 
 [TechGlobal, Inc., B-424287/B-424287.2](https://www.gao.gov/products/b-424287,b-424287.2)
@@ -385,6 +423,14 @@ independently validate manual interpretation. Solicitation identity, original
 offer provenance, independent review, representative SAM coverage and historical
 exclusion intervals remain open; no baseline timing cells or causal estimates
 are promoted.
+
+A September 13 check of the current page's historical-contracts link reached
+the [OALC FOIA library](https://department.va.gov/administrations-and-offices/acquisition-logistics-and-construction/freedom-of-information-act-requests/).
+Its displayed MSPV contract-records section lists older program generations,
+including Medline's `36C10X23D0003` transition vehicle, not a new source match
+for `36C10X24N0089`. That different parent cannot fill the original-order
+mapping. This was a review of the displayed section, not every library record;
+no FOIA request was submitted and no additional award link was promoted.
 
 ### Offer-count provenance and dictionary-version limits
 

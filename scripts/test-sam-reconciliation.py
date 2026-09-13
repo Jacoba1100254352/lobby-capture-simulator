@@ -7,6 +7,8 @@ import csv
 import importlib.util
 import json
 from pathlib import Path
+import subprocess
+import sys
 import tempfile
 import unittest
 
@@ -23,6 +25,8 @@ def load(name, filename):
 
 FETCH = load("sam_reconciliation_fetch", "fetch-source-data.py")
 AUDIT = load("sam_reconciliation_audit", "audit-sam-contract-awards-export.py")
+NORMALIZER = load("sam_calibration_normalizer", "normalize-calibration.py")
+MOMENTS = load("sam_source_moments", "extract-source-moments.py")
 
 
 def synthetic_record():
@@ -182,6 +186,89 @@ class SamReconciliationTests(unittest.TestCase):
         checks = {row["item"]:row for row in AUDIT.checklist_rows(args, metrics)}
         self.assertEqual(checks["promotion-readiness"]["status"], "blocked")
         self.assertEqual(checks["action-obligation-coverage"]["status"], "blocked")
+
+
+class SamDownstreamTests(unittest.TestCase):
+    def write_csv(self, path, rows):
+        fields = list(dict.fromkeys(key for row in rows for key in row))
+        with path.open("w", newline="") as stream:
+            writer = csv.DictWriter(stream, fieldnames=fields)
+            writer.writeheader()
+            writer.writerows(rows)
+
+    def moments(self, rows):
+        with tempfile.TemporaryDirectory() as tmp:
+            path, missing = Path(tmp) / "sam.csv", Path(tmp) / "missing.csv"
+            self.write_csv(path, rows)
+            result = MOMENTS.usaspending_moments("synthetic", missing, missing, missing, missing, missing, path)
+        return {r["metric"]: r for r in result}
+
+    def test_generic_normalization_preserves_all_sam_provenance(self):
+        row = normalize(synthetic_record())
+        with tempfile.TemporaryDirectory() as tmp:
+            source, target = Path(tmp) / "input.csv", Path(tmp) / "output.csv"
+            self.write_csv(source, [row])
+            for kind in ("usaspending", "usaspending-actions"):
+                subprocess.run([sys.executable, str(ROOT / "scripts/normalize-calibration.py"),
+                                kind, str(source), str(target)], check=True, capture_output=True)
+                with target.open() as stream:
+                    reader = csv.DictReader(stream)
+                    self.assertEqual(reader.fieldnames, FETCH.SAM_CONTRACT_AWARDS_FIELDS)
+                    output = next(reader)
+                self.assertEqual(output, {key: str(value) for key, value in row.items()})
+
+    def test_legacy_normalization_layout_is_unchanged(self):
+        schema = NORMALIZER.SCHEMAS["usaspending"]
+        mapping = NORMALIZER.resolve_mapping("usaspending", FETCH.USASPENDING_FIELDS, schema)
+        self.assertEqual(list(mapping), FETCH.USASPENDING_FIELDS)
+
+    def test_source_export_through_generic_normalizer_and_java_loader(self):
+        if not (ROOT / "out/test-classes/lobbycapture/CalibrationLoaderTest.class").exists():
+            self.skipTest("Run make test to compile the Java integration checker")
+        with tempfile.TemporaryDirectory() as tmp:
+            source, exported, target = [Path(tmp) / name for name in ("source.json", "sam.csv", "model.csv")]
+            source.write_text(json.dumps({"awardSummary": [synthetic_record()]}))
+            FETCH.fetch_sam_contract_awards_export(source, exported)
+            subprocess.run([sys.executable, str(ROOT / "scripts/normalize-calibration.py"),
+                            "usaspending-actions", str(exported), str(target)], check=True, capture_output=True)
+            checked = subprocess.run(["java", "-cp", str(ROOT / "out/classes") + ":" + str(ROOT / "out/test-classes"),
+                                      "lobbycapture.CalibrationLoaderTest", str(target)],
+                                     check=True, capture_output=True, text=True)
+            self.assertIn("normalization-to-Java exclusion check passed", checked.stdout)
+
+    def test_unobserved_sam_exclusions_are_not_a_zero_observed_rate(self):
+        result = self.moments([normalize(synthetic_record())])
+        exclusion = result["procurementExclusionShare"]
+        self.assertEqual(exclusion["value"], "0.0000")
+        self.assertEqual(exclusion["evidenceType"], "diagnostic")
+        self.assertIn("placeholder", exclusion["notes"])
+        self.assertEqual(result["procurementExclusionEvidenceUnavailableRows"]["value"], "1.0000")
+
+    def test_unobserved_rows_do_not_dilute_legacy_proxy_denominator(self):
+        unavailable = normalize(synthetic_record())
+        legacy = dict(unavailable, awardId="SYNTHETIC-LEGACY", exclusionEvidenceStatus="legacy_competition_proxy")
+        result = self.moments([unavailable, legacy])
+        self.assertEqual(result["procurementExclusionShare"]["value"], "1.0000")
+        self.assertEqual(result["procurementExclusionShare"]["evidenceType"], "diagnostic")
+        self.assertIn("1 legacy", result["procurementExclusionShare"]["notes"])
+
+    def test_unmarked_legacy_proxy_replay_remains_explicit(self):
+        row = normalize(synthetic_record())
+        row.pop("exclusionEvidenceStatus")
+        result = self.moments([row])
+        self.assertEqual(result["procurementExclusionShare"]["value"], "1.0000")
+        self.assertIn("not a verified historical", result["procurementExclusionShare"]["notes"])
+
+    def test_blank_unknown_and_claimed_observed_statuses_fail_closed(self):
+        for status in ("", "unknown", "observed_vendor_exclusion"):
+            row = dict(normalize(synthetic_record()), exclusionEvidenceStatus=status)
+            with self.subTest(status=status), self.assertRaisesRegex(ValueError, "exclusion evidence status"):
+                self.moments([row])
+
+    def test_true_flag_cannot_override_unobserved_status(self):
+        row = dict(normalize(synthetic_record()), exclusionFlag="true")
+        with self.assertRaisesRegex(ValueError, "exclusion flag contradicts"):
+            self.moments([row])
 
 
 if __name__ == "__main__":

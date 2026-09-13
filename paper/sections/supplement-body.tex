@@ -152,6 +152,14 @@ retain exact source dollars and action identifiers; synthetic regressions check
 missingness, precision and partial-key collisions. This changes import behavior,
 not the frozen source panel, historical exclusion findings or causal evidence.
 The reconciliation note and companion notebook document the remaining limits.
+A downstream check also preserves supplied provenance through generic CSV
+normalization and prevents Java and reporting from reintroducing exclusion
+flags from competition text when exclusion evidence is explicitly unobserved.
+Unobserved rows do not enter the legacy proxy denominator; numeric zero without
+eligible rows is a diagnostic placeholder, not observed non-exclusion. Invalid
+or contradictory status metadata fails validation. Legacy fixture replay retains
+its competition-proxy meaning, not historical vendor-status evidence. Synthetic
+import-to-Java regressions do not add source observations or causal clearance.
 
 The September 2026 evidence expansion, documented in the supporting-information
 design notes and empirical-expansion audit, adds a separate 2003--2008 LDA source

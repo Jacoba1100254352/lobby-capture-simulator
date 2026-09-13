@@ -28,6 +28,15 @@ historical exclusion evidence. Synthetic regressions and the companion notebook
 check these changes; no live SAM records, frozen snapshot values or simulator
 parameters are promoted by this repair.
 
+A downstream follow-through preserves all thirteen SAM provenance columns through
+generic CSV normalization and prevents Java/reporting from converting an explicit
+unobserved-exclusion marker back into an exclusion flag. Unsupported or
+contradictory statuses fail validation. Reporting separates unobserved rows from
+the legacy competition-proxy denominator; a zero with no eligible rows is only
+an unavailable-value placeholder. Synthetic import-to-Java checks preserve old
+fixture replay without promoting historical vendor status or changing the frozen
+source panel or model coefficients.
+
 The September 2026 empirical work is tracked by `docs/substitution-study-redesign.md`,
 `docs/comment-uptake-pilot.md`, `docs/procurement-source-reconciliation.md`, and
 `reports/empirical-expansion-audit.md`. Expanded source history and observed PAC
