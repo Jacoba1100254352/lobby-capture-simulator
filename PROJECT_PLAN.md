@@ -78,6 +78,19 @@ candidates, producing sixteen provisional pairs across thirteen dockets, not
 verified solicitation identities. All four solicitation identifiers are blank;
 the candidate VISN 8 offer count differs from GAO's timely-proposal count.
 Baseline timing cells and independent-review gates remain unchanged.
+A separate current-publisher review retains all twenty VA delivery-order table
+rows and corroborates three pilot labels, including OGA beyond its previous
+amount-only match. These cover eleven provisional pairs across nine dockets.
+The table repeats one newer parent/child key under two service areas and omits
+the old VISN 8 PIID; no historical absence or supersession is inferred. A visually
+reviewed 2024 DoD slide establishes contemporaneous documentation of the offer-source
+concept, not per-record values or a complete historical specification. Original
+ledgers, offer counts, timing assignments and independent-review gates remain
+unchanged. The saved publisher projection and notebook expose these limits.
+The shared parent IDV's seven-action history and full export add source-reported
+multiple-award context and six offers on the original May 23, 2023 parent action.
+Parent counts and solicitation are not substituted for child fields; the
+retrieval remains a 2026 vintage and supplies no per-record offer-source code.
 A decision-reported SAM check supplies no independently verified historical
 interval. Original-action mappings and independent coding review remain unresolved.
 The full archived bulk frame audit now verifies all 56 selected ZIPs and their

@@ -1,0 +1,648 @@
+{
+  "schema": "gao-procurement-publisher-review-v1",
+  "reviewDate": "2026-09-13",
+  "reviewer": "codex-source-review",
+  "independentReviewStatus": "pending",
+  "selection": "Follow up all four awards in the existing one-decision GAO pilot. Retain the entire twenty-row VA delivery-order table, including non-pilot rows and a repeated newer parent/child key. This current program listing is not a representative award or protest population.",
+  "scope": "Current VA service-area corroboration and historical offer-source documentation. Neither source supplies the original solicitation identity, per-record offer-source code, a historical exclusion interval or a causal comparison.",
+  "sourceAuthentication": "Read the downloaded official VA HTML, extracted every row under the exact two-column delivery-order header, and cross-checked all twenty rows against the public page. Read and visually reviewed the 2024 DoD PDF cover and page 41. Retain raw-byte hashes and native normalized cell text. Offline checks authenticate acquired bytes only when those ignored files are supplied; projected-ledger checks are not independent source/coding review. No employee contacts are retained in this projection. The separate parentVehicleSource also preserves the complete seven-action parent history and a hash-matched IDV export, without treating its other CSV members as additional reviewed parent actions.",
+  "originalReviewFingerprint": "d7816ffb5e7c0f2e27ebd6148ddd620fb8b33043c02c4650637e7c0cf20bb0f0",
+  "vaSource": {
+    "url": "https://department.va.gov/procurement-acquisition-and-logistics/strategic-acquisition-center/sac-medical-surgical-prime-vendor-program-mspv-updated/",
+    "retrievedDate": "2026-09-13",
+    "tableHeading": "MSPV GenZ V1 Delivery Orders (DO) List of Contacts",
+    "header": [
+      "VISN #",
+      "Delivery Order and Performance Period"
+    ],
+    "rawSha256": "9a9aed4c147f7eb0eb40844204df2446a3fea9fffd5d77c42e1e4bfdc536b019",
+    "snapshotScope": "current_page_not_contemporaneous_2024_archive",
+    "pageUpdatedDate": "2026-08-27",
+    "nativeRows": [
+      [
+        "VISN 1 Medline Industries, LP",
+        "Delivery Order: 36C10X23D0032 36C10X25N0001 Performance Period: 01/15/2025\u201401/14/2027"
+      ],
+      [
+        "VISN 2 Medline Industries, LP",
+        "Delivery Order: 36C10X23D0032 36C10X25N0002 Performance Period: 01/15/2025\u201401/14/2027"
+      ],
+      [
+        "VISN 4 Medline Industries, LP",
+        "Delivery Order: 36C10X23D0032 36C10X25N0004 Performance Period: 01/15/2025\u201401/14/2027"
+      ],
+      [
+        "VISN 5 Medline Industries, LP",
+        "Delivery Order: 36C10X23D0032 36C10X25N0003 Performance Period: 01/15/2025\u201401/14/2027"
+      ],
+      [
+        "VISN 6 Medline Industries, LP",
+        "Delivery Order: 36C10X23D0032 36C10X25N0013 Performance Period: 01/15/2025\u201401/14/2027"
+      ],
+      [
+        "VISN 7 Medline Industries, LP",
+        "Delivery Order: 36C10X23D0032 36C10X25N0014 Performance Period: 01/15/2025\u201401/14/2027"
+      ],
+      [
+        "VISN 8 excluding Puerto Rico Medline Industries, LP",
+        "Delivery Order: 36C10X23D0032 36C10X25N0014 Performance Period: 01/15/2025\u201401/14/2027"
+      ],
+      [
+        "VISN 9 Medline Industries, LP",
+        "Delivery Order: 36C10X23D0032 36C10X25N0032 Performance Period: 01/15/2025\u201401/14/2027"
+      ],
+      [
+        "VISN 10 Concordance Healthcare Solutions LLC",
+        "Delivery Order: 36C10X23D0030 36C10X25N0042 Performance Period: 01/15/2025\u201401/14/2027"
+      ],
+      [
+        "VISN 12 Medline Industries, LP",
+        "Delivery Order: 36C10X23D0032 36C10X25N0016 Performance Period: 01/15/2025\u201401/14/2027"
+      ],
+      [
+        "VISN 15 Medline Industries, LP",
+        "Delivery Order: 36C10X23D0032 36C10X25N0008 Performance Period: 01/15/2025\u201401/14/2027"
+      ],
+      [
+        "VISN 16 Medline Industries, LP",
+        "Delivery Order: 36C10X23D0032 36C10X25N0009 Performance Period: 01/15/2025\u201401/14/2027"
+      ],
+      [
+        "VISN 17 Medline Industries, LP",
+        "Delivery Order: 36C10X23D0032 36C10X25N0010 Performance Period: 01/15/2025\u201401/14/2027"
+      ],
+      [
+        "VISN 19 Medline Industries, LP",
+        "Delivery Order: 36C10X23D0032 36C10X24N0074 Performance Period: 06/01/2024\u201405/31/2026"
+      ],
+      [
+        "VISN 20 Medline Industries, LP",
+        "Delivery Order: 36C10X23D0032 36C10X24N0080 Performance Period: 05/10/2024\u201405/09/2026"
+      ],
+      [
+        "VISN 21 Medline Industries, LP",
+        "Delivery Order: 36C10X23D0032 36C10X25N0005 Performance Period: 01/15/2025\u201401/14/2027"
+      ],
+      [
+        "VISN 22 Medline Industries, LP",
+        "Delivery Order: 36C10X23D0032 36C10X24N0108 Performance Period: 06/01/2024 \u2014 05/31/2026"
+      ],
+      [
+        "VISN 23 Medline Industries, LP",
+        "Delivery Order: 36C10X23D0032 36C10X25N0011 Performance Period: 01/15/2025\u201401/14/2027"
+      ],
+      [
+        "Puerto Rico Medline Industries, LP",
+        "Delivery Order: 36C10X23D0032 36C10X25N0006 Performance Period: 01/15/2025\u201401/14/2027"
+      ],
+      [
+        "Other Government Agencies (OGAs) Medline Industries, LP",
+        "Delivery Order: 36C10X23D0032 36C10X24N0088 Performance Period: 06/01/2024 \u2014 05/31/2026"
+      ]
+    ],
+    "rows": [
+      {
+        "rowNumber": 1,
+        "serviceAreaNative": "VISN 1",
+        "awardeeNative": "Medline Industries, LP",
+        "parentPiid": "36C10X23D0032",
+        "piid": "36C10X25N0001",
+        "performanceStartDate": "2025-01-15",
+        "performanceEndDate": "2027-01-14"
+      },
+      {
+        "rowNumber": 2,
+        "serviceAreaNative": "VISN 2",
+        "awardeeNative": "Medline Industries, LP",
+        "parentPiid": "36C10X23D0032",
+        "piid": "36C10X25N0002",
+        "performanceStartDate": "2025-01-15",
+        "performanceEndDate": "2027-01-14"
+      },
+      {
+        "rowNumber": 3,
+        "serviceAreaNative": "VISN 4",
+        "awardeeNative": "Medline Industries, LP",
+        "parentPiid": "36C10X23D0032",
+        "piid": "36C10X25N0004",
+        "performanceStartDate": "2025-01-15",
+        "performanceEndDate": "2027-01-14"
+      },
+      {
+        "rowNumber": 4,
+        "serviceAreaNative": "VISN 5",
+        "awardeeNative": "Medline Industries, LP",
+        "parentPiid": "36C10X23D0032",
+        "piid": "36C10X25N0003",
+        "performanceStartDate": "2025-01-15",
+        "performanceEndDate": "2027-01-14"
+      },
+      {
+        "rowNumber": 5,
+        "serviceAreaNative": "VISN 6",
+        "awardeeNative": "Medline Industries, LP",
+        "parentPiid": "36C10X23D0032",
+        "piid": "36C10X25N0013",
+        "performanceStartDate": "2025-01-15",
+        "performanceEndDate": "2027-01-14"
+      },
+      {
+        "rowNumber": 6,
+        "serviceAreaNative": "VISN 7",
+        "awardeeNative": "Medline Industries, LP",
+        "parentPiid": "36C10X23D0032",
+        "piid": "36C10X25N0014",
+        "performanceStartDate": "2025-01-15",
+        "performanceEndDate": "2027-01-14"
+      },
+      {
+        "rowNumber": 7,
+        "serviceAreaNative": "VISN 8 excluding Puerto Rico",
+        "awardeeNative": "Medline Industries, LP",
+        "parentPiid": "36C10X23D0032",
+        "piid": "36C10X25N0014",
+        "performanceStartDate": "2025-01-15",
+        "performanceEndDate": "2027-01-14"
+      },
+      {
+        "rowNumber": 8,
+        "serviceAreaNative": "VISN 9",
+        "awardeeNative": "Medline Industries, LP",
+        "parentPiid": "36C10X23D0032",
+        "piid": "36C10X25N0032",
+        "performanceStartDate": "2025-01-15",
+        "performanceEndDate": "2027-01-14"
+      },
+      {
+        "rowNumber": 9,
+        "serviceAreaNative": "VISN 10",
+        "awardeeNative": "Concordance Healthcare Solutions LLC",
+        "parentPiid": "36C10X23D0030",
+        "piid": "36C10X25N0042",
+        "performanceStartDate": "2025-01-15",
+        "performanceEndDate": "2027-01-14"
+      },
+      {
+        "rowNumber": 10,
+        "serviceAreaNative": "VISN 12",
+        "awardeeNative": "Medline Industries, LP",
+        "parentPiid": "36C10X23D0032",
+        "piid": "36C10X25N0016",
+        "performanceStartDate": "2025-01-15",
+        "performanceEndDate": "2027-01-14"
+      },
+      {
+        "rowNumber": 11,
+        "serviceAreaNative": "VISN 15",
+        "awardeeNative": "Medline Industries, LP",
+        "parentPiid": "36C10X23D0032",
+        "piid": "36C10X25N0008",
+        "performanceStartDate": "2025-01-15",
+        "performanceEndDate": "2027-01-14"
+      },
+      {
+        "rowNumber": 12,
+        "serviceAreaNative": "VISN 16",
+        "awardeeNative": "Medline Industries, LP",
+        "parentPiid": "36C10X23D0032",
+        "piid": "36C10X25N0009",
+        "performanceStartDate": "2025-01-15",
+        "performanceEndDate": "2027-01-14"
+      },
+      {
+        "rowNumber": 13,
+        "serviceAreaNative": "VISN 17",
+        "awardeeNative": "Medline Industries, LP",
+        "parentPiid": "36C10X23D0032",
+        "piid": "36C10X25N0010",
+        "performanceStartDate": "2025-01-15",
+        "performanceEndDate": "2027-01-14"
+      },
+      {
+        "rowNumber": 14,
+        "serviceAreaNative": "VISN 19",
+        "awardeeNative": "Medline Industries, LP",
+        "parentPiid": "36C10X23D0032",
+        "piid": "36C10X24N0074",
+        "performanceStartDate": "2024-06-01",
+        "performanceEndDate": "2026-05-31"
+      },
+      {
+        "rowNumber": 15,
+        "serviceAreaNative": "VISN 20",
+        "awardeeNative": "Medline Industries, LP",
+        "parentPiid": "36C10X23D0032",
+        "piid": "36C10X24N0080",
+        "performanceStartDate": "2024-05-10",
+        "performanceEndDate": "2026-05-09"
+      },
+      {
+        "rowNumber": 16,
+        "serviceAreaNative": "VISN 21",
+        "awardeeNative": "Medline Industries, LP",
+        "parentPiid": "36C10X23D0032",
+        "piid": "36C10X25N0005",
+        "performanceStartDate": "2025-01-15",
+        "performanceEndDate": "2027-01-14"
+      },
+      {
+        "rowNumber": 17,
+        "serviceAreaNative": "VISN 22",
+        "awardeeNative": "Medline Industries, LP",
+        "parentPiid": "36C10X23D0032",
+        "piid": "36C10X24N0108",
+        "performanceStartDate": "2024-06-01",
+        "performanceEndDate": "2026-05-31"
+      },
+      {
+        "rowNumber": 18,
+        "serviceAreaNative": "VISN 23",
+        "awardeeNative": "Medline Industries, LP",
+        "parentPiid": "36C10X23D0032",
+        "piid": "36C10X25N0011",
+        "performanceStartDate": "2025-01-15",
+        "performanceEndDate": "2027-01-14"
+      },
+      {
+        "rowNumber": 19,
+        "serviceAreaNative": "Puerto Rico",
+        "awardeeNative": "Medline Industries, LP",
+        "parentPiid": "36C10X23D0032",
+        "piid": "36C10X25N0006",
+        "performanceStartDate": "2025-01-15",
+        "performanceEndDate": "2027-01-14"
+      },
+      {
+        "rowNumber": 20,
+        "serviceAreaNative": "Other Government Agencies (OGAs)",
+        "awardeeNative": "Medline Industries, LP",
+        "parentPiid": "36C10X23D0032",
+        "piid": "36C10X24N0088",
+        "performanceStartDate": "2024-06-01",
+        "performanceEndDate": "2026-05-31"
+      }
+    ],
+    "nativeRowsFingerprint": "22c79accc1b3f34f335e1c9ea9e20c1ca1688c072283bb312b59ff1c366a3a9f",
+    "interpretation": "Three exact parent/child keys corroborate VISN 19, VISN 22 and OGA. OGA previously had only a unique rounded-value match. The current table does not contain 36C10X24N0089. It displays 36C10X25N0014 for both VISN 7 and VISN 8 excluding Puerto Rico. Preserve this ambiguity, without correcting the page, mapping the old VISN 8 award by elimination or inferring contract supersession. Performance dates are publisher-reported periods, not action or protest filing dates."
+  },
+  "offerSourceDocumentation": {
+    "url": "https://www.acq.osd.mil/asda/dpc/ce/p2p/docs/training-presentations/2024/P2P%202024%20-%20FPDS%20Reporting%20Basics%20-%20Procurement%20Awards.pdf",
+    "title": "FPDS Reporting Basics - Procurement Awards",
+    "publisher": "U.S. Department of Defense, 2024 Procure-to-Pay and Financial Audit Training Symposium",
+    "retrievedDate": "2026-09-13",
+    "documentYear": 2024,
+    "rawSha256": "baceacbccbc679fa55b94b924dd850e527cf8064ae1fa3d55d2e0648de35835b",
+    "pdfPageCount": 68,
+    "reviewedPdfPages": [
+      1,
+      41
+    ],
+    "reportedServicePackDeploymentDate": "2024-01-27",
+    "reportedDictionaryAdditions": [
+      "Type Of Set-aside Source",
+      "Number Of Offers Received Source"
+    ],
+    "evidenceScope": "dictionary_documentation_not_field_introduction_or_record_values",
+    "recordSpecificOfferSourceRecovered": false,
+    "completeHistoricalDictionaryRecovered": false,
+    "interpretation": "Page 41 documents the offer-source field in a 2024 publication and dates service pack 20.0 to January 27, 2024. Addition to a dictionary does not establish a field introduction date. The slide does not give the four awards' values or a complete contemporaneous 10D/10F definition; the VISN 8 four-offer versus five-timely-proposal difference is unresolved.",
+    "supplementalReleaseNote": {
+      "url": "https://fpds.gov/wiki/index.php?diff=cur&oldid=5021&title=V1.5_SP_20.0",
+      "accessMethod": "public_web_reader_comparison_page_not_acquired_immutable_archive",
+      "olderRevisionDisplayed": "2024-01-30 15:46",
+      "latestRevisionDisplayed": "2025-02-06 15:56",
+      "dictionaryTicket": "IAEREQ-9577/IAEMOD-18759",
+      "idvPropagationTicket": "IAEMOD-20385",
+      "interpretation": "The displayed comparison describes previously undocumented system-generated source fields and a Part 8 BPA/FSS IDV-offer propagation fix. Dictionary inclusion dates must not be equated with first field existence. The old-revision link redirected to SAM; no immutable historical HTML archive or per-award application of these rules was acquired."
+    }
+  },
+  "baselineUnchanged": true,
+  "solicitationIdentityPromoted": false,
+  "awardSpecificDatesPromoted": false,
+  "historicalExclusionsPromoted": false,
+  "offerDiscrepancyResolved": false,
+  "representativeSamExport": false,
+  "causalEffect": "not_identified",
+  "reviewFingerprint": "f46b494d9dcdb5408c56e2bc7832f926382d88f66ad68d4f810d6d6981c5c90d",
+  "parentVehicleSource": {
+    "awardKey": "CONT_IDV_36C10X23D0032_3600",
+    "retrievedDate": "2026-09-13",
+    "scope": "2026_retrieval_of_parent_actions_not_2024_archive_or_order_provenance",
+    "selection": "The shared parent IDV explicitly referenced by all four preselected pilot delivery orders. Project all seven parent actions; other archive CSV members receive only structural count/hash checks, not substantive child-order or funding adjudication.",
+    "sourceAuthentication": "Read all seven parent transaction CSV rows directly; compare their unique source IDs and action dates with the complete seven-row transactions API response. The acquired archive passed CRC checks. Retain exact parent fields, full-row/member/archive hashes and member denominators. Offline checks are not independent source/coding review.",
+    "downloadEndpoint": "https://api.usaspending.gov/api/v2/download/idv/",
+    "downloadRequest": {
+      "award_id": "CONT_IDV_36C10X23D0032_3600",
+      "file_format": "csv"
+    },
+    "downloadJob": {
+      "file_name": "IDV_36C10X23D0032_2026-09-13_H04M46S53467851.zip",
+      "file_url": "https://files.usaspending.gov/generated_downloads/IDV_36C10X23D0032_2026-09-13_H04M46S53467851.zip",
+      "status_url": "https://api.usaspending.gov/api/v2/download/status?file_name=IDV_36C10X23D0032_2026-09-13_H04M46S53467851.zip"
+    },
+    "downloadStatus": {
+      "status": "finished",
+      "message": null,
+      "file_name": "IDV_36C10X23D0032_2026-09-13_H04M46S53467851.zip",
+      "file_url": "https://files.usaspending.gov/generated_downloads/IDV_36C10X23D0032_2026-09-13_H04M46S53467851.zip",
+      "total_size": 371.91,
+      "total_columns": 673,
+      "total_rows": 3609,
+      "seconds_elapsed": "11.823483"
+    },
+    "documentationUrl": "https://github.com/fedspendingtransparency/usaspending-api/blob/master/usaspending_api/api_contracts/contracts/v2/download/idv.md",
+    "archiveSha256": "f764743482a07abc4f3f0c00070fd78443d4cbf909ddf7df484936c4fc876cee",
+    "transactionMember": "IDV_36C10X23D0032_TransactionHistory_1.csv",
+    "historyEndpoint": "https://api.usaspending.gov/api/v2/transactions/",
+    "historyRequest": {
+      "award_id": "CONT_IDV_36C10X23D0032_3600",
+      "page": 1,
+      "limit": 100,
+      "sort": "action_date",
+      "order": "asc"
+    },
+    "historyRawSha256": "d110484de2f8c60260cad5e978550aab0ece3e704bb17e101908bb8fdeb80e38",
+    "historyResponse": {
+      "page_metadata": {
+        "page": 1,
+        "next": null,
+        "previous": null,
+        "hasNext": false,
+        "hasPrevious": false
+      },
+      "results": [
+        {
+          "id": "CONT_TX_3600_-NONE-_36C10X23D0032_0_-NONE-_-NONE-",
+          "type": "IDV_B_B",
+          "type_description": "INDEFINITE DELIVERY / INDEFINITE QUANTITY",
+          "action_date": "2023-05-23",
+          "action_type": null,
+          "action_type_description": null,
+          "modification_number": "0",
+          "description": "MEDICAL/SURGICAL PRIME VENDOR GENERATION-Z VERSION 1 (MSPV GEN-Z V1) IDIQ AWARD TO PROVIDE DISTRIBUTION AND SUPPLY MANAGEMENT FOR VA MEDICAL CENTERS.",
+          "federal_action_obligation": 0.0,
+          "face_value_loan_guarantee": 0.0,
+          "original_loan_subsidy_cost": 0.0
+        },
+        {
+          "id": "CONT_TX_3600_-NONE-_36C10X23D0032_P00001_-NONE-_-NONE-",
+          "type": "IDV_B_B",
+          "type_description": "INDEFINITE DELIVERY / INDEFINITE QUANTITY",
+          "action_date": "2023-07-03",
+          "action_type": "B",
+          "action_type_description": "SUPPLEMENTAL AGREEMENT FOR WORK WITHIN SCOPE",
+          "modification_number": "P00001",
+          "description": "MEDICAL/SURGICAL PRIME VENDOR GENERATION-Z VERSION 1 (MSPV GEN-Z V1) IDIQ AWARD TO PROVIDE DISTRIBUTION AND SUPPLY MANAGEMENT FOR VA MEDICAL CENTERS.",
+          "federal_action_obligation": 0.0,
+          "face_value_loan_guarantee": 0.0,
+          "original_loan_subsidy_cost": 0.0
+        },
+        {
+          "id": "CONT_TX_3600_-NONE-_36C10X23D0032_P00002_-NONE-_-NONE-",
+          "type": "IDV_B_B",
+          "type_description": "INDEFINITE DELIVERY / INDEFINITE QUANTITY",
+          "action_date": "2024-09-27",
+          "action_type": "M",
+          "action_type_description": "OTHER ADMINISTRATIVE ACTION",
+          "modification_number": "P00002",
+          "description": "MEDICAL/SURGICAL PRIME VENDOR GENERATION-Z VERSION 1 (MSPV GEN-Z V1) IDIQ AWARD TO PROVIDE DISTRIBUTION AND SUPPLY MANAGEMENT FOR VA MEDICAL CENTERS.",
+          "federal_action_obligation": 0.0,
+          "face_value_loan_guarantee": 0.0,
+          "original_loan_subsidy_cost": 0.0
+        },
+        {
+          "id": "CONT_TX_3600_-NONE-_36C10X23D0032_P00003_-NONE-_-NONE-",
+          "type": "IDV_B_B",
+          "type_description": "INDEFINITE DELIVERY / INDEFINITE QUANTITY",
+          "action_date": "2025-07-09",
+          "action_type": "B",
+          "action_type_description": "SUPPLEMENTAL AGREEMENT FOR WORK WITHIN SCOPE",
+          "modification_number": "P00003",
+          "description": "MEDICAL/SURGICAL PRIME VENDOR GENERATION-Z VERSION 1 (MSPV GEN-Z V1) IDIQ AWARD TO PROVIDE DISTRIBUTION AND SUPPLY MANAGEMENT FOR VA MEDICAL CENTERS.",
+          "federal_action_obligation": 0.0,
+          "face_value_loan_guarantee": 0.0,
+          "original_loan_subsidy_cost": 0.0
+        },
+        {
+          "id": "CONT_TX_3600_-NONE-_36C10X23D0032_P00004_-NONE-_-NONE-",
+          "type": "IDV_B_B",
+          "type_description": "INDEFINITE DELIVERY / INDEFINITE QUANTITY",
+          "action_date": "2025-12-23",
+          "action_type": "B",
+          "action_type_description": "SUPPLEMENTAL AGREEMENT FOR WORK WITHIN SCOPE",
+          "modification_number": "P00004",
+          "description": "MODIFICATION - IN SCOPE CLARIFICATION FOR RME/DME FOR MSPV GEN-Z V1 SOW",
+          "federal_action_obligation": 0.0,
+          "face_value_loan_guarantee": 0.0,
+          "original_loan_subsidy_cost": 0.0
+        },
+        {
+          "id": "CONT_TX_3600_-NONE-_36C10X23D0032_P00005_-NONE-_-NONE-",
+          "type": "IDV_B_B",
+          "type_description": "INDEFINITE DELIVERY / INDEFINITE QUANTITY",
+          "action_date": "2026-05-22",
+          "action_type": "B",
+          "action_type_description": "SUPPLEMENTAL AGREEMENT FOR WORK WITHIN SCOPE",
+          "modification_number": "P00005",
+          "description": "MODIFICATION - IN SCOPE CLARIFICATION FOR RME/DME FOR MSPV GEN-Z V1 SOW",
+          "federal_action_obligation": 0.0,
+          "face_value_loan_guarantee": 0.0,
+          "original_loan_subsidy_cost": 0.0
+        },
+        {
+          "id": "CONT_TX_3600_-NONE-_36C10X23D0032_P00006_-NONE-_-NONE-",
+          "type": "IDV_B_B",
+          "type_description": "INDEFINITE DELIVERY / INDEFINITE QUANTITY",
+          "action_date": "2026-06-23",
+          "action_type": "B",
+          "action_type_description": "SUPPLEMENTAL AGREEMENT FOR WORK WITHIN SCOPE",
+          "modification_number": "P00006",
+          "description": "MODIFICATION EO 14398 ADDED 52.222-90",
+          "federal_action_obligation": 0.0,
+          "face_value_loan_guarantee": 0.0,
+          "original_loan_subsidy_cost": 0.0
+        }
+      ]
+    },
+    "csvMembers": [
+      {
+        "name": "IDV_36C10X23D0032_Orders_1.csv",
+        "sha256": "fea3e821bea901db52cba0cdeed8dc9e0ad752f21cfda5e28dfc428ed7ea9a73",
+        "rows": 430,
+        "columns": 286
+      },
+      {
+        "name": "IDV_36C10X23D0032_TransactionHistory_1.csv",
+        "sha256": "a812594da43b9abdb505f4825be503bc034ebef6637acabe8c023c80d490e9c3",
+        "rows": 7,
+        "columns": 297
+      },
+      {
+        "name": "IDV_36C10X23D0032_FederalAccountFunding_1.csv",
+        "sha256": "a2bbb7c74c924d28a62bae6ae561abb7a3c6ddc8ed080b08e91770e0de493ca4",
+        "rows": 3172,
+        "columns": 90
+      }
+    ],
+    "transactions": [
+      {
+        "csvRowIncludingHeader": 2,
+        "fullRowFingerprint": "7e33a86d24981f8cbee3d0c4abca91759d654ce17199ca0c2b21d729aa5b20e4",
+        "fields": {
+          "contract_transaction_unique_key": "3600_-NONE-_36C10X23D0032_P00003_-NONE-_-NONE-",
+          "contract_award_unique_key": "CONT_IDV_36C10X23D0032_3600",
+          "award_id_piid": "36C10X23D0032",
+          "modification_number": "P00003",
+          "parent_award_id_piid": "",
+          "action_date": "2025-07-09",
+          "awarding_sub_agency_code": "3600",
+          "recipient_uei": "DMPAKJ9N9K66",
+          "award_type": "",
+          "idv_type_code": "B",
+          "multiple_or_single_award_idv_code": "M",
+          "type_of_idc_code": "B",
+          "solicitation_identifier": "36C10X23R0007",
+          "solicitation_procedures_code": "NP",
+          "number_of_offers_received": "6",
+          "federal_action_obligation": "0.00"
+        }
+      },
+      {
+        "csvRowIncludingHeader": 3,
+        "fullRowFingerprint": "f250b784ff572cc35d6efc7aa21713bfd69725bc085800f2720d9dee8388a96a",
+        "fields": {
+          "contract_transaction_unique_key": "3600_-NONE-_36C10X23D0032_P00001_-NONE-_-NONE-",
+          "contract_award_unique_key": "CONT_IDV_36C10X23D0032_3600",
+          "award_id_piid": "36C10X23D0032",
+          "modification_number": "P00001",
+          "parent_award_id_piid": "",
+          "action_date": "2023-07-03",
+          "awarding_sub_agency_code": "3600",
+          "recipient_uei": "DMPAKJ9N9K66",
+          "award_type": "",
+          "idv_type_code": "B",
+          "multiple_or_single_award_idv_code": "M",
+          "type_of_idc_code": "B",
+          "solicitation_identifier": "36C10X23R0007",
+          "solicitation_procedures_code": "NP",
+          "number_of_offers_received": "6",
+          "federal_action_obligation": "0.00"
+        }
+      },
+      {
+        "csvRowIncludingHeader": 4,
+        "fullRowFingerprint": "83347f63c5b7cc305f88b5c5c0d26b758c5b61effe8eb7b2fc18e99f7bac8310",
+        "fields": {
+          "contract_transaction_unique_key": "3600_-NONE-_36C10X23D0032_P00004_-NONE-_-NONE-",
+          "contract_award_unique_key": "CONT_IDV_36C10X23D0032_3600",
+          "award_id_piid": "36C10X23D0032",
+          "modification_number": "P00004",
+          "parent_award_id_piid": "",
+          "action_date": "2025-12-23",
+          "awarding_sub_agency_code": "3600",
+          "recipient_uei": "DMPAKJ9N9K66",
+          "award_type": "",
+          "idv_type_code": "B",
+          "multiple_or_single_award_idv_code": "M",
+          "type_of_idc_code": "B",
+          "solicitation_identifier": "36C10X23R0007",
+          "solicitation_procedures_code": "NP",
+          "number_of_offers_received": "6",
+          "federal_action_obligation": "0.00"
+        }
+      },
+      {
+        "csvRowIncludingHeader": 5,
+        "fullRowFingerprint": "c0ba906899889baa913cb74340a9514b9b0487dc1519bf7a72164111b622dc39",
+        "fields": {
+          "contract_transaction_unique_key": "3600_-NONE-_36C10X23D0032_P00006_-NONE-_-NONE-",
+          "contract_award_unique_key": "CONT_IDV_36C10X23D0032_3600",
+          "award_id_piid": "36C10X23D0032",
+          "modification_number": "P00006",
+          "parent_award_id_piid": "",
+          "action_date": "2026-06-23",
+          "awarding_sub_agency_code": "3600",
+          "recipient_uei": "DMPAKJ9N9K66",
+          "award_type": "",
+          "idv_type_code": "B",
+          "multiple_or_single_award_idv_code": "M",
+          "type_of_idc_code": "B",
+          "solicitation_identifier": "36C10X23R0007",
+          "solicitation_procedures_code": "NP",
+          "number_of_offers_received": "6",
+          "federal_action_obligation": "0.00"
+        }
+      },
+      {
+        "csvRowIncludingHeader": 6,
+        "fullRowFingerprint": "3fca75114ebd71b45e8ebae4775374a1a0ee95b205a66ea2ca06c801bf301e47",
+        "fields": {
+          "contract_transaction_unique_key": "3600_-NONE-_36C10X23D0032_P00002_-NONE-_-NONE-",
+          "contract_award_unique_key": "CONT_IDV_36C10X23D0032_3600",
+          "award_id_piid": "36C10X23D0032",
+          "modification_number": "P00002",
+          "parent_award_id_piid": "",
+          "action_date": "2024-09-27",
+          "awarding_sub_agency_code": "3600",
+          "recipient_uei": "DMPAKJ9N9K66",
+          "award_type": "",
+          "idv_type_code": "B",
+          "multiple_or_single_award_idv_code": "M",
+          "type_of_idc_code": "B",
+          "solicitation_identifier": "36C10X23R0007",
+          "solicitation_procedures_code": "NP",
+          "number_of_offers_received": "6",
+          "federal_action_obligation": "0.00"
+        }
+      },
+      {
+        "csvRowIncludingHeader": 7,
+        "fullRowFingerprint": "1b82bdb476fc11e5c70c805f3685a965dfce31d43f6f64e759dc6f715ebb651c",
+        "fields": {
+          "contract_transaction_unique_key": "3600_-NONE-_36C10X23D0032_0_-NONE-_-NONE-",
+          "contract_award_unique_key": "CONT_IDV_36C10X23D0032_3600",
+          "award_id_piid": "36C10X23D0032",
+          "modification_number": "0",
+          "parent_award_id_piid": "",
+          "action_date": "2023-05-23",
+          "awarding_sub_agency_code": "3600",
+          "recipient_uei": "DMPAKJ9N9K66",
+          "award_type": "",
+          "idv_type_code": "B",
+          "multiple_or_single_award_idv_code": "M",
+          "type_of_idc_code": "B",
+          "solicitation_identifier": "36C10X23R0007",
+          "solicitation_procedures_code": "NP",
+          "number_of_offers_received": "6",
+          "federal_action_obligation": "0.00"
+        }
+      },
+      {
+        "csvRowIncludingHeader": 8,
+        "fullRowFingerprint": "bf00515d339f223b3d1d957cfcca7127fecb544c96a172cd49140ef9bdb514c5",
+        "fields": {
+          "contract_transaction_unique_key": "3600_-NONE-_36C10X23D0032_P00005_-NONE-_-NONE-",
+          "contract_award_unique_key": "CONT_IDV_36C10X23D0032_3600",
+          "award_id_piid": "36C10X23D0032",
+          "modification_number": "P00005",
+          "parent_award_id_piid": "",
+          "action_date": "2026-05-22",
+          "awarding_sub_agency_code": "3600",
+          "recipient_uei": "DMPAKJ9N9K66",
+          "award_type": "",
+          "idv_type_code": "B",
+          "multiple_or_single_award_idv_code": "M",
+          "type_of_idc_code": "B",
+          "solicitation_identifier": "36C10X23R0007",
+          "solicitation_procedures_code": "NP",
+          "number_of_offers_received": "6",
+          "federal_action_obligation": "0.00"
+        }
+      }
+    ],
+    "offerHeaders": [
+      "number_of_offers_received"
+    ],
+    "interpretation": "The May 23, 2023 modification-0 parent row reports native IDV/IDC codes B/B, multiple-award code M, six offers and parent solicitation 36C10X23R0007. All seven retrieved parent actions retain these codes/count. The native award_type is blank; the API classifies this vehicle IDV_B_B. This is a 2026 retrieval of historical actions, not an immutable point-in-time observation. Parent offers and solicitation are not substituted for the four children's two/four offers and blank solicitation identifiers. No offer-source code or explanation of the VISN 8 four-versus-five discrepancy is supplied."
+  }
+}

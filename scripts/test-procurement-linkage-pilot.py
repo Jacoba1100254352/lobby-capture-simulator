@@ -12,6 +12,9 @@ ROOT = Path(__file__).resolve().parents[1]
 spec = importlib.util.spec_from_file_location("expansion", ROOT / "scripts/audit-empirical-expansion.py")
 audit = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(audit)
+publisher_spec = importlib.util.spec_from_file_location("publisher", ROOT / "scripts/review-procurement-publisher.py")
+publisher = importlib.util.module_from_spec(publisher_spec)
+publisher_spec.loader.exec_module(publisher)
 
 
 class LinkageTests(unittest.TestCase):
@@ -320,6 +323,159 @@ class OriginalActionTests(unittest.TestCase):
         row["potential_total_value_of_award"] = row["federal_action_obligation"]
         with self.assertRaisesRegex(ValueError, "service-area assignment"):
             self.check(rehash=True)
+
+
+class PublisherReviewTests(unittest.TestCase):
+    def setUp(self):
+        self.review = json.loads((audit.DATA / "gao-procurement-publisher-review.json").read_text())
+        self.original = json.loads((audit.DATA / "gao-original-action-review.json").read_text())
+        baseline = json.loads((audit.DATA / "gao-award-linkage-source.json").read_text())
+        self.dockets = json.loads((audit.DATA / "gao-docket-timing-source.json").read_text())
+        _, self.links = audit.original_action_diagnostics(
+            self.original, baseline, self.dockets, audit.read("gao-docket-timing-pilot.csv"))
+
+    def check(self, rehash=False, **kwargs):
+        if rehash:
+            self.review["reviewFingerprint"] = publisher.fingerprint(
+                {k: v for k, v in self.review.items() if k != "reviewFingerprint"})
+        return publisher.validate(self.review, self.original, self.links, self.dockets, **kwargs)
+
+    def reproject(self):
+        va = self.review["vaSource"]
+        va["rows"] = publisher.project_rows(va["nativeRows"])
+        va["nativeRowsFingerprint"] = publisher.fingerprint(va["nativeRows"])
+
+    def test_full_frame_and_corroboration_reproduce_without_mutation(self):
+        before = copy.deepcopy((self.review, self.original, self.links))
+        result, matches = self.check()
+        self.assertEqual(result["publisherRows"], 20)
+        self.assertEqual(result["uniqueParentChildKeys"], 19)
+        self.assertEqual(result["pilotAwardsCorroborated"], 3)
+        self.assertEqual(result["previousAmountOnlyAwardsCorroborated"], 1)
+        self.assertEqual(result["corroboratedProvisionalPairs"], 11)
+        self.assertEqual(result["distinctCorroboratedDockets"], 9)
+        self.assertEqual(result["pilotPiidsAbsentFromCurrentTable"], ["36C10X24N0089"])
+        self.assertEqual(result["recordSpecificOfferSourcesRecovered"], 0)
+        self.assertEqual(result["parentActions"], 7)
+        self.assertEqual(result["parentOriginalActionDate"], "2023-05-23")
+        self.assertEqual(result["parentOriginalReportedOffers"], 6)
+        self.assertEqual(result["parentMultipleAwardCode"], "M")
+        self.assertEqual({r["piid"]: r["serviceArea"] for r in matches}, {
+            "36C10X24N0074": "VISN 19", "36C10X24N0088": "OGA", "36C10X24N0108": "VISN 22"})
+        self.assertEqual((self.review, self.original, self.links), before)
+
+    def test_stale_baseline_and_review_rejected(self):
+        self.original["scope"] += " changed"
+        with self.assertRaisesRegex(ValueError, "fingerprint"):
+            self.check()
+        self.setUp()
+        self.review["scope"] += " changed"
+        with self.assertRaisesRegex(ValueError, "fingerprint"):
+            self.check()
+
+    def test_unmatched_rows_cannot_be_dropped(self):
+        self.review["vaSource"]["nativeRows"].pop(0)
+        self.reproject()
+        with self.assertRaisesRegex(ValueError, "Incomplete publisher frame"):
+            self.check(rehash=True)
+
+    def test_duplicate_current_key_cannot_be_silently_corrected(self):
+        cells = self.review["vaSource"]["nativeRows"][6]
+        cells[1] = cells[1].replace("36C10X25N0014", "36C10X25N0015")
+        self.reproject()
+        with self.assertRaisesRegex(ValueError, "duplicate/unmatched"):
+            self.check(rehash=True)
+
+    def test_old_visn8_cannot_be_assigned_from_newer_label(self):
+        cells = self.review["vaSource"]["nativeRows"][6]
+        cells[1] = cells[1].replace("36C10X25N0014", "36C10X24N0089")
+        self.reproject()
+        with self.assertRaisesRegex(ValueError, "service-area"):
+            self.check(rehash=True)
+
+    def test_parent_identity_must_match_not_just_child(self):
+        cells = self.review["vaSource"]["nativeRows"][-1]
+        cells[1] = cells[1].replace("36C10X23D0032", "36C10X23D0030")
+        self.reproject()
+        with self.assertRaisesRegex(ValueError, "duplicate/unmatched"):
+            self.check(rehash=True)
+
+    def test_native_performance_dates_cannot_be_replaced_with_action_date(self):
+        self.review["vaSource"]["rows"][-1]["performanceStartDate"] = "2024-05-31"
+        with self.assertRaisesRegex(ValueError, "stale native projection"):
+            self.check(rehash=True)
+
+    def test_current_page_cannot_be_backdated_to_2024(self):
+        self.review["vaSource"]["pageUpdatedDate"] = "2024-05-31"
+        with self.assertRaisesRegex(ValueError, "source/date"):
+            self.check(rehash=True)
+
+    def test_unsupported_identity_timing_exclusion_and_causal_promotions_rejected(self):
+        for field in ("solicitationIdentityPromoted", "awardSpecificDatesPromoted", "historicalExclusionsPromoted",
+                      "offerDiscrepancyResolved", "representativeSamExport"):
+            with self.subTest(field=field):
+                self.setUp()
+                self.review[field] = True
+                with self.assertRaisesRegex(ValueError, "promotion"):
+                    self.check(rehash=True)
+
+    def test_dictionary_documentation_does_not_recover_record_values(self):
+        self.review["offerSourceDocumentation"]["recordSpecificOfferSourceRecovered"] = True
+        with self.assertRaisesRegex(ValueError, "Historical documentation"):
+            self.check(rehash=True)
+
+    def test_provisional_dockets_cannot_be_duplicated(self):
+        self.links[0] = self.links[1].copy()
+        with self.assertRaisesRegex(ValueError, "complete provisional links"):
+            self.check()
+
+    def test_provisional_links_must_match_decision_footnotes_not_equal_group_sizes(self):
+        self.links[0]["decisionCaseId"] = "B-422689"
+        with self.assertRaisesRegex(ValueError, "complete provisional links"):
+            self.check()
+
+    def test_parser_requires_unique_table_and_preserves_native_projection(self):
+        from html import escape
+        va = self.review["vaSource"]
+        table = "<table><tr>" + "".join(f"<th>{escape(c)}</th>" for c in va["header"]) + "</tr>"
+        table += "".join("<tr>" + "".join(f"<td>{escape(c)}</td>" for c in row) + "</tr>"
+                         for row in va["nativeRows"]) + "</table>"
+        prefix = f"<h2>{publisher.HEADING}</h2><p>Date last updated: August 27, 2026</p>"
+        parsed = publisher.parse_html((prefix + table).encode())
+        self.assertEqual(parsed["rows"], va["rows"])
+        with self.assertRaisesRegex(ValueError, "ambiguous"):
+            publisher.parse_html((prefix + table + table).encode())
+
+    def test_wrong_raw_bytes_do_not_pass_projection_only_checks(self):
+        with self.assertRaisesRegex(ValueError, "Raw training PDF"):
+            self.check(training_pdf=b"not the acquired PDF")
+        with self.assertRaises(ValueError):
+            self.check(raw_html=b"not the acquired HTML")
+
+    def test_parent_history_must_be_complete(self):
+        self.review["parentVehicleSource"]["historyResponse"]["page_metadata"]["hasNext"] = True
+        with self.assertRaisesRegex(ValueError, "parent history pagination"):
+            self.check(rehash=True)
+
+    def test_parent_original_row_cannot_be_dropped_or_offers_replaced(self):
+        self.review["parentVehicleSource"]["transactions"].pop()
+        with self.assertRaisesRegex(ValueError, "Parent transaction frame"):
+            self.check(rehash=True)
+        self.setUp()
+        original = next(r["fields"] for r in self.review["parentVehicleSource"]["transactions"]
+                        if r["fields"]["modification_number"] == '0')
+        original["number_of_offers_received"] = '4'
+        with self.assertRaisesRegex(ValueError, "Parent reported"):
+            self.check(rehash=True)
+
+    def test_parent_download_total_is_not_parent_history_denominator(self):
+        self.review["parentVehicleSource"]["downloadStatus"]["total_rows"] = 7
+        with self.assertRaisesRegex(ValueError, "Parent download completeness"):
+            self.check(rehash=True)
+
+    def test_parent_raw_hash_cannot_be_bypassed(self):
+        with self.assertRaisesRegex(ValueError, "Raw parent history"):
+            self.check(parent_history=b'{}')
 
 
 if __name__ == "__main__":

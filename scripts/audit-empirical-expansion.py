@@ -1238,11 +1238,19 @@ def audit():
         "; ".join(f"{key}={value}" for key, value in docket.items()),
         "The unchanged baseline used current descriptions and a thirteen-column archive. See the separate original-action follow-up for new transaction-level evidence. Three docket entries list multiple solicitations and one spans four decision service areas. A GAO-reported SAM check has no verified date or underlying interval. No protest rate, final award-specific timing or historical exclusion coverage is promoted.")
     original_review = json.loads((DATA / "gao-original-action-review.json").read_text(encoding="utf-8"))
-    originals, _ = original_action_diagnostics(
+    originals, provisional_links = original_action_diagnostics(
         original_review, sources, docket_sources, read("gao-docket-timing-pilot.csv"))
     add("gao-original-action-followup", "partial_original_description_bridge_pending_review",
         "; ".join(f"{key}={value}" for key, value in originals.items()),
         "Two explicit original-description links and two rounded-value candidates support a sixteen-pair provisional crosswalk, not verified solicitation identity or independent events. The VISN 22 rounded value is $100 below the decision, as GAO notes; the candidate VISN 8 row reports four offers versus five timely proposals in the decision, an unresolved definition/source discrepancy. All four solicitation identifiers are blank. Independently review mapping and count definitions before timing or rate promotion; representative SAM and historical exclusions remain absent.")
+    publisher_spec = importlib.util.spec_from_file_location("procurement_publisher", ROOT / "scripts/review-procurement-publisher.py")
+    publisher_module = importlib.util.module_from_spec(publisher_spec)
+    publisher_spec.loader.exec_module(publisher_module)
+    publisher_review = json.loads((DATA / "gao-procurement-publisher-review.json").read_text(encoding="utf-8"))
+    publisher, _ = publisher_module.validate(publisher_review, original_review, provisional_links, docket_sources)
+    add("gao-current-publisher-corroboration", "three_current_labels_not_historical_clearance",
+        "; ".join(f"{key}={value}" for key, value in publisher.items()),
+        "The complete twenty-row VA table corroborates three pilot awards, including the amount-only OGA candidate. It repeats one newer parent/child key across VISN 7 and VISN 8 and does not list the old VISN 8 PIID. Do not correct the duplicate, infer supersession or equate current performance periods with original-action dates. A 2024 DoD slide documents the offer-source field; the seven-action parent history separately reports a multiple-award IDIQ and six original offers. Neither supplies per-order provenance or resolves the four-versus-five discrepancy. Keep parent solicitation/counts separate. Independent review, solicitation identity, representative SAM and historical exclusions remain unresolved. Baselines and causal claims are unchanged.")
     spec = importlib.util.spec_from_file_location("bulk_frame", ROOT / "scripts/audit-procurement-bulk-frame.py")
     bulk_frame = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(bulk_frame)

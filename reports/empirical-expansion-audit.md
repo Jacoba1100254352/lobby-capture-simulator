@@ -162,6 +162,14 @@ reviewedAwards=4; historyRows=26; originalActions=4; blankSolicitationIdentifier
 
 Remaining: Two explicit original-description links and two rounded-value candidates support a sixteen-pair provisional crosswalk, not verified solicitation identity or independent events. The VISN 22 rounded value is $100 below the decision, as GAO notes; the candidate VISN 8 row reports four offers versus five timely proposals in the decision, an unresolved definition/source discrepancy. All four solicitation identifiers are blank. Independently review mapping and count definitions before timing or rate promotion; representative SAM and historical exclusions remain absent.
 
+## gao-current-publisher-corroboration
+
+Status: `three_current_labels_not_historical_clearance`
+
+publisherRows=20; uniqueParentChildKeys=19; duplicateCurrentKeys={'36C10X25N0014': ['VISN 7', 'VISN 8 excluding Puerto Rico']}; pilotAwardsCorroborated=3; previousAmountOnlyAwardsCorroborated=1; pilotPiidsAbsentFromCurrentTable=['36C10X24N0089']; corroboratedProvisionalPairs=11; distinctCorroboratedDockets=9; parentActions=7; parentOriginalActionDate=2023-05-23; parentOriginalReportedOffers=6; parentMultipleAwardCode=M; parentOfferSourceValuesRecovered=0; offerSourceDocumentedIn2024=True; recordSpecificOfferSourcesRecovered=0; independentlyReviewedMappings=0; awardSpecificDatesPromoted=0; historicalExclusionsPromoted=0; causalEffect=not_identified
+
+Remaining: The complete twenty-row VA table corroborates three pilot awards, including the amount-only OGA candidate. It repeats one newer parent/child key across VISN 7 and VISN 8 and does not list the old VISN 8 PIID. Do not correct the duplicate, infer supersession or equate current performance periods with original-action dates. A 2024 DoD slide documents the offer-source field; the seven-action parent history separately reports a multiple-award IDIQ and six original offers. Neither supplies per-order provenance or resolves the four-versus-five discrepancy. Keep parent solicitation/counts separate. Independent review, solicitation identity, representative SAM and historical exclusions remain unresolved. Baselines and causal claims are unchanged.
+
 ## procurement-archived-bulk-frame
 
 Status: `mixed_frame_missing_offers_not_sam_exclusions`

@@ -180,6 +180,18 @@ This outside-cohort measurement check assigns no exposure or controls and does
 not change the frozen LDA/PAC panels. Its source ledger and notebook retain
 query, form-field and hash evidence; independent review remains pending.
 
+A complete twenty-row current VA delivery-order table now corroborates three
+GAO pilot service-area labels, including the previously amount-only OGA candidate.
+Eleven provisional pairs cover nine distinct dockets; they are not independent
+events. One newer key is repeated across two service areas, and the old VISN 8
+PIID is absent from this current table. A 2024 DoD slide documents the offer-source
+field without supplying per-award values. The separate publisher ledger and
+notebook preserve current-versus-historical scope, unchanged baselines, and the
+unresolved four-versus-five offer/proposal discrepancy.
+The companion seven-action parent history reports a multiple-award IDIQ and six
+offers on its original May 23, 2023 action. Parent counts and solicitation remain
+separate from delivery-order fields; this 2026 retrieval does not recover 10F.
+
 The Benefits Council PAC follow-up joins all 24 frozen reports to a separate
 280-record FEC filing inventory, recovering 21 current and three superseded
 version flags without overwriting raw reports. Seven selected report-PDF reviews

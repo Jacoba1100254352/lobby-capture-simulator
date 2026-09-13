@@ -281,6 +281,52 @@ amount-only mappings, offer-count and solicitation reconciliation, representativ
 and historical exclusion evidence remain required. No rate or causal estimate
 is added.
 
+### Current VA publisher corroboration, separate from original actions
+
+A September 13 UTC follow-up reads VA's [MSPV program page](https://department.va.gov/procurement-acquisition-and-logistics/strategic-acquisition-center/sac-medical-surgical-prime-vendor-program-mspv-updated/),
+whose displayed update date is **August 27, 2026**. The entire delivery-order
+table contains twenty service-area rows and nineteen distinct parent/child
+keys. Its full bounded projection is preserved in
+`gao-procurement-publisher-review.json`, not just the matched rows. The raw HTML
+SHA-256 is `9a9aed4c147f7eb0eb40844204df2446a3fea9fffd5d77c42e1e4bfdc536b019`.
+Staff contacts and other tables are excluded from the public projection.
+
+Three rows explicitly name existing pilot awards under Medline's parent
+`36C10X23D0032`:
+
+| Publisher service area | Child PIID | Evidence added to the original review |
+| --- | --- | --- |
+| VISN 19 | 36C10X24N0074 | current agency label corroborates the original description |
+| VISN 22 | 36C10X24N0108 | current agency label corroborates the original description |
+| Other Government Agencies (OGAs) | 36C10X24N0088 | explicit agency label corroborates the previous rounded-value candidate |
+
+All three display June 1, 2024-May 31, 2026 performance periods. These are not
+action or protest filing dates. The OGA identification now has primary-agency
+documentary support beyond an amount match, but the page is a **current
+publisher statement**, not a contemporaneously archived 2024 record or an
+original solicitation. The original-action ledger is intentionally unchanged.
+Joining these three labels to the decision's separate service-area footnotes
+corroborates **eleven of the sixteen provisional award/docket pairs**, covering
+**nine distinct dockets**. VISN 19 and OGA each have three pairs; VISN 22 has
+five. The shared supplemental docket is not three independent events.
+
+**High-severity identity/temporal limitation:** the table assigns the same newer
+`36C10X25N0014` child and parent to both VISN 7 and VISN 8 excluding Puerto Rico.
+It does not contain the pilot's `36C10X24N0089`. Preserve both displayed rows;
+do not silently correct the duplicate, assign the old award by elimination,
+infer supersession, or treat absence from this current table as historical
+absence. The source of the repeated key is unknown. The page's Historical
+Contracts link leads to a FOIA information page, not an acquired contract archive.
+
+**Assessment: share with caveats for current-label corroboration only.** The
+offline audit derives native-cell projections, duplicate keys, complete-frame
+coverage and the decision-footnote joins. The notebook also replays the parser
+against the hash-matched ignored HTML when available. These checks do not
+independently validate manual interpretation. Solicitation identity, original
+offer provenance, independent review, representative SAM coverage and historical
+exclusion intervals remain open; no baseline timing cells or causal estimates
+are promoted.
+
 ### Offer-count provenance and dictionary-version limits
 
 On September 13 UTC, GSA's public [dictionary article, KB0090014](https://www.fsd.gov/gsafsd_sp/en/fpds-help-data-dictionary-v1-5?id=kb_article_view&sys_kb_id=bc3f142fcf190750d1eaf2c42f851ca4&spa=1)
@@ -295,11 +341,30 @@ Printed pages 119-122 (PDF 121-124) were read and visually checked:
 - **10F**, XML `numberOfOffersSource`, identifies whether the count was entered
   on this action (code `F`) or inherited from a referenced vehicle (codes `A-E`).
 - **10G**, XML `idvNumberOfOffersReceived`, is a separate parent-vehicle count.
-  The revision history records its addition on October 18, 2025 and a change to
+  The revision history records its addition to the dictionary on October 18, 2025 and a change to
   10D's notes on September 20, 2025 (printed page 8, PDF 10).
 
 These later specifications do not establish the rules applied to May 2024
-records. No contemporaneous dictionary or per-record 10F value was recovered.
+records. No complete contemporaneous dictionary or per-record 10F value was
+recovered. Dictionary inclusion is not proof of a field's introduction date.
+
+A separate source review acquires DoD's [2024 FPDS Reporting Basics training](https://www.acq.osd.mil/asda/dpc/ce/p2p/docs/training-presentations/2024/P2P%202024%20-%20FPDS%20Reporting%20Basics%20-%20Procurement%20Awards.pdf),
+SHA-256 `baceacbccbc679fa55b94b924dd850e527cf8064ae1fa3d55d2e0648de35835b`.
+The cover and PDF page 41 were visually reviewed, not all 68 slides. Page 41
+dates service pack 20.0 to January 27, 2024 and lists the set-aside-source and
+offer-count-source elements as dictionary additions. This establishes that the
+offer-source concept was documented in a 2024 publication; it does not supply
+the four awards' field values or a complete historical 10D/10F specification.
+
+The public web reader also displays an [FPDS service-pack revision comparison](https://fpds.gov/wiki/index.php?diff=cur&oldid=5021&title=V1.5_SP_20.0)
+between January 30, 2024 and February 6, 2025. Its dictionary ticket describes
+previously undocumented system-generated fields, while `IAEMOD-20385` describes
+an IDV-offer propagation fix for Part 8 BPAs referencing FSS modifications.
+This further cautions against treating a later dictionary entry as the first
+existence of a field. The old-revision link redirected to SAM; no immutable
+historical HTML archive was acquired. That BPA/FSS example does not establish
+which rule applied to the pilot delivery orders. The source ledger preserves
+the access and interpretation limits separately from the acquired PDF.
 
 Reopening all four hash-matched, 297-column transaction members finds exactly
 one header containing `offer`: `number_of_offers_received`. Thus neither 10F nor
@@ -308,6 +373,26 @@ Each original row reports `fair_opportunity_limited_sources_code=FAIR`; the
 native `idv_type_code` and `multiple_or_single_award_idv_code` cells are blank.
 Those child-row blanks do not classify the referenced vehicle. The notebook
 reproduces this schema/row check when the ignored raw files are available.
+
+The publisher follow-up separately acquires the shared parent's complete
+seven-action history and an official USAspending IDV export. The original
+May 23, 2023 parent row reports `idv_type_code=B`, `type_of_idc_code=B`,
+`multiple_or_single_award_idv_code=M`, six offers, and solicitation
+`36C10X23R0007`. The history API identifies the vehicle as `IDV_B_B`; the CSV's
+generic `award_type` cell is blank. All seven retrieved actions retain the same
+type codes and offer count. These are parent-vehicle observations, not values
+inferred from blank child fields. They describe historical actions in a 2026
+retrieval, not an immutable contemporaneous 2023/2024 snapshot.
+
+`parentVehicleSource` in the new ledger preserves the API response, request/job
+provenance, archive/member/row hashes and all seven native parent projections.
+The archive job reports 3,609 rows across three CSV members, **not 3,609 parent
+actions**; only the seven-row transaction-history member is substantively
+adjudicated here. The other members receive structural count/hash checks.
+The 297-column parent history also exposes only `number_of_offers_received`
+among offer-named headers. Parent six-offer and solicitation values must not
+replace the children's two/four offers or blank solicitation identifiers. This
+additional parent context does not recover 10F or explain the VISN 8 discrepancy.
 
 **Assessment: share with caveats.** The definitions identify additional source
 fields needed for reconciliation; they do not explain the four-versus-five
