@@ -163,6 +163,12 @@ make sam-procurement-refresh
 
 It uses a configured `SAM_CONTRACT_AWARDS_LIVE_CSV`/`SAM_CONTRACT_AWARDS_LIVE_URL` as a manual export path when present. Otherwise it runs a mode-matched preflight first: `make sam-contract-awards-preflight-extract` before keyed asynchronous extract mode, or `make sam-contract-awards-preflight-offset` before synchronous offset mode. A green synchronous preflight does not clear extract-mode quota by itself. The wrapper stops with a temporary-failure exit when SAM.gov reports a quota reset time, and only then runs the selected keyed live snapshot plus `make paper-artifacts-check`. Use `scripts/refresh-sam-procurement-panel.sh --dry-run` to inspect the selected mode without spending quota.
 
+The SAM Exclusions preflight now recognizes the documented v4 `excludedEntity`
+response and displays primary identities separately from each returned action.
+Unknown response shapes fail as unavailable; missing identity and date fields
+remain blank. Its offline regressions do not establish live access or historical
+exclusion coverage. See the [response repair and limits](docs/procurement-source-reconciliation.md#exclusions-preflight-response-repair).
+
 The remaining procurement overlay work is tracked by:
 
 ```sh

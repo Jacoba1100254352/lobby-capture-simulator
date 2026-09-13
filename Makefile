@@ -50,6 +50,7 @@ test: script-checks compile
 	python3 scripts/test-procurement-linkage-pilot.py
 	python3 scripts/test-procurement-bulk-frame.py
 	python3 scripts/test-sam-reconciliation.py
+	python3 scripts/test-sam-exclusions-preflight.py
 	./scripts/test-normalizers.sh
 
 run: compile

@@ -72,7 +72,7 @@ def load_dotenv(path: Path, env: dict[str, str]) -> None:
             env[key] = value
 
 
-def run_preflight(args: argparse.Namespace, env: dict[str, str]) -> tuple[dict[str, str], list[dict[str, str]]]:
+def run_preflight(args: argparse.Namespace, env: dict[str, str]) -> tuple[dict[str, str], list[dict[str, object]]]:
     api_key = env.get("SAM_API_KEY", "").strip()
     if not api_key:
         return (
@@ -150,8 +150,24 @@ def run_preflight(args: argparse.Namespace, env: dict[str, str]) -> tuple[dict[s
             [],
         )
 
-    records = exclusion_records(payload)
-    samples = [sample_record(record) for record in records[:5]]
+    try:
+        records = exclusion_records(payload)
+        # Validate all returned entities before showing the first five samples.
+        decoded = [sample_record(record) for record in records]
+    except ValueError as error:
+        return (
+            {
+                "source": "sam-exclusions",
+                "status": "unavailable",
+                "records": "0",
+                "nextAccessTime": "",
+                "endpoint": redacted_url,
+                "query": configured_query(args, env) or "none",
+                "notes": f"SAM.gov Exclusions response shape is not usable: {error}; no raw payload promoted",
+            },
+            [],
+        )
+    samples = decoded[:5]
     status = "ok" if records else "empty"
     return (
         {
@@ -196,68 +212,55 @@ def classify_error(status_code: int, detail: str) -> tuple[str, str, str]:
 
 
 def exclusion_records(payload: object) -> list[dict[str, object]]:
-    if isinstance(payload, list):
-        return [record for record in payload if isinstance(record, dict)]
-    if not isinstance(payload, dict):
-        return []
-    for key in (
-        "exclusions",
-        "exclusionRecords",
-        "entityExclusions",
-        "results",
-        "data",
-        "records",
-        "content",
-    ):
-        value = payload.get(key)
-        if isinstance(value, list):
-            return [record for record in value if isinstance(record, dict)]
-    embedded = payload.get("_embedded")
-    if isinstance(embedded, dict):
-        for value in embedded.values():
-            if isinstance(value, list):
-                return [record for record in value if isinstance(record, dict)]
-    for value in payload.values():
-        if isinstance(value, dict):
-            nested = exclusion_records(value)
-            if nested:
-                return nested
-    return []
+    # The v4 response has one canonical entity array. Searching arbitrary nested
+    # arrays can mistake metadata or action records for excluded entities.
+    if not isinstance(payload, dict) or "excludedEntity" not in payload:
+        raise ValueError("expected the v4 excludedEntity array")
+    records = payload["excludedEntity"]
+    if not isinstance(records, list) or any(not isinstance(record, dict) for record in records):
+        raise ValueError("excludedEntity must be an array of objects")
+    return records
 
 
-def sample_record(record: dict[str, object]) -> dict[str, str]:
+ACTION_FIELDS = ("createDate", "updateDate", "activateDate", "terminationDate", "terminationType", "recordStatus")
+
+
+def sample_record(record: dict[str, object]) -> dict[str, object]:
+    details = object_section(record, "exclusionDetails")
+    identity = object_section(record, "exclusionIdentification")
+    action_section = object_section(record, "exclusionActions")
+    actions = action_section.get("listOfActions", [])
+    if not isinstance(actions, list) or any(not isinstance(action, dict) for action in actions):
+        raise ValueError("exclusionActions.listOfActions must be an array of objects")
     return {
-        "exclusionId": first_text(record, "exclusionId", "id", "exclusionIdentifier", "recordId"),
-        "uei": first_text(record, "uei", "ueiSAM", "uniqueEntityId", "uniqueEntityIdentifier"),
-        "recipientName": first_text(record, "recipientName", "legalBusinessName", "entityName", "name"),
-        "exclusionType": first_text(record, "exclusionType", "classification", "type", "nature"),
-        "startDate": first_text(record, "startDate", "activationDate", "effectiveDate"),
-        "endDate": first_text(record, "endDate", "terminationDate", "inactiveDate"),
-        "agency": first_text(record, "agency", "excludingAgency", "agencyName", "officeName"),
+        "exclusionId": first_text(record, "exclusionId", "exclusionIdentifier", "recordId"),
+        "uei": first_text(identity, "ueiSAM"),
+        "recipientName": first_text(identity, "entityName", "name"),
+        "classificationType": first_text(details, "classificationType"),
+        "exclusionType": first_text(details, "exclusionType"),
+        "exclusionProgram": first_text(details, "exclusionProgram"),
+        "agency": first_text(details, "excludingAgencyName", "excludingAgencyCode"),
+        "actions": [{field: first_text(action, field) for field in ACTION_FIELDS} for action in actions],
     }
 
 
 def first_text(record: dict[str, object], *keys: str) -> str:
     for key in keys:
-        value = nested_get(record, key)
+        value = record.get(key)
         if value not in (None, ""):
+            if not isinstance(value, (str, int, float)):
+                raise ValueError(f"{key} must contain a scalar value")
             return str(value).strip()
     return ""
 
 
-def nested_get(record: dict[str, object], key: str) -> object:
-    if key in record:
-        return record[key]
-    lowered = key.lower()
-    for candidate, value in record.items():
-        if candidate.lower() == lowered:
-            return value
-    for value in record.values():
-        if isinstance(value, dict):
-            nested = nested_get(value, key)
-            if nested not in (None, ""):
-                return nested
-    return None
+def object_section(record: dict[str, object], key: str) -> dict[str, object]:
+    value = record.get(key)
+    if value is None:
+        return {}
+    if not isinstance(value, dict):
+        raise ValueError(f"{key} must be an object when returned")
+    return value
 
 
 def write_csv(path: Path, row: dict[str, str]) -> None:
@@ -268,7 +271,7 @@ def write_csv(path: Path, row: dict[str, str]) -> None:
         writer.writerow(row)
 
 
-def write_markdown(path: Path, row: dict[str, str], samples: list[dict[str, str]]) -> None:
+def write_markdown(path: Path, row: dict[str, str], samples: list[dict[str, object]]) -> None:
     lines = [
         "# SAM Exclusions Preflight",
         "",
@@ -277,7 +280,7 @@ def write_markdown(path: Path, row: dict[str, str], samples: list[dict[str, str]
         "## Summary",
         "",
         f"- Status: `{row['status']}`",
-        f"- Records returned: `{row['records']}`",
+        f"- Entity records decoded on this page: `{row['records']}`",
         f"- Next access time: `{row['nextAccessTime'] or 'none'}`",
         f"- Endpoint: `{row['endpoint']}`",
         f"- Query: `{row['query']}`",
@@ -286,22 +289,38 @@ def write_markdown(path: Path, row: dict[str, str], samples: list[dict[str, str]
         "",
         "## Promotion Rule",
         "",
-        "Rows from this preflight can become exclusion-overlay evidence only after reviewed UEI, recipient, exclusion type, dates, agency, cause, and source-provenance fields are populated in `data/calibration/first-wave/sam-exclusion-overlay.csv`, followed by `make first-wave-source-products`, `make first-wave-source-readiness`, and `make paper-artifacts-check`.",
+        "The [public v4 API](https://open.gsa.gov/api/exclusions-api/) returns only active records. An empty recognized page is not proof of historical non-exclusion; an unavailable response is not an observed empty page. The page count is not the full query population.",
+        "",
+        "Primary entity fields and returned actions are shown separately. Cross-references and other locations do not fill missing primary identities. Action rows retain source dates and order; they are not historical exclusion intervals. Missing termination dates remain missing, with any returned termination type kept separately. No exclusion identifier is invented when the response omits one.",
+        "",
+        "Before promoting evidence into `data/calibration/first-wave/sam-exclusion-overlay.csv`, review primary UEI identity, exclusion type/program, agency, cause and source provenance. Establish relevant historical coverage and adjudicate dates, revisions and censoring against source records before deriving award-date status. Then run `make first-wave-source-products`, `make first-wave-source-readiness`, and `make paper-artifacts-check`.",
         "",
         "## Sample Shape",
         "",
-        "| Exclusion ID | UEI | Recipient | Type | Start | End | Agency |",
-        "| --- | --- | --- | --- | --- | --- | --- |",
+        "| Entity | Exclusion ID | Primary UEI | Recipient | Classification | Type | Program | Agency |",
+        "| --- | --- | --- | --- | --- | --- | --- | --- |",
     ]
     if samples:
-        for sample in samples:
-            lines.append(
-                "| {exclusionId} | {uei} | {recipientName} | {exclusionType} | {startDate} | {endDate} | {agency} |".format(
-                    **{key: md(value) for key, value in sample.items()}
-                )
-            )
+        fields = ("exclusionId", "uei", "recipientName", "classificationType", "exclusionType", "exclusionProgram", "agency")
+        for index, sample in enumerate(samples, 1):
+            lines.append("| " + " | ".join([str(index)] + [md(sample[field]) for field in fields]) + " |")
     else:
-        lines.append("| none |  |  |  |  |  |  |")
+        lines.append("| none |  |  |  |  |  |  |  |")
+    lines.extend([
+        "", "## Returned Actions", "",
+        "Entity and action numbers are display positions, not source identifiers or an inferred event chronology.",
+        "",
+        "| Entity | Action | Created | Updated | Activated | Termination date | Termination type | Record status |",
+        "| --- | --- | --- | --- | --- | --- | --- | --- |",
+    ])
+    action_count = 0
+    for entity_index, sample in enumerate(samples, 1):
+        for action_index, action in enumerate(sample["actions"], 1):
+            values = [str(entity_index), str(action_index)] + [md(action[field]) for field in ACTION_FIELDS]
+            lines.append("| " + " | ".join(values) + " |")
+            action_count += 1
+    if not action_count:
+        lines.append("| none returned |  |  |  |  |  |  |  |")
     lines.append("")
     path.write_text("\n".join(lines), encoding="utf-8")
 
@@ -341,7 +360,7 @@ def now_utc() -> str:
     return datetime.now(timezone.utc).replace(microsecond=0).isoformat().replace("+00:00", "Z")
 
 
-def md(value: str) -> str:
+def md(value: object) -> str:
     return str(value).replace("|", "\\|").replace("\n", " ")
 
 

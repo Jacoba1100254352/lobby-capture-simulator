@@ -272,6 +272,12 @@ to separate those coefficients; this is not evidence of an actual source shock
 or a null reform effect. A successor estimate requires pre-reform exposure,
 credible controls, comparable measures and historical linkage. Procurement and
 comment requirements remain separate parts of the unfinished empirical goal.
+The exclusions acquisition probe now decodes the documented v4 entity array,
+uses primary identity fields, and preserves separate action records and date
+meanings. Unknown response structures are unavailable rather than observed empty
+pages. Nine synthetic regressions verify this repair without retrying live access
+or promoting historical exclusion intervals. The signed export and historical
+archive acquisition requirements remain open.
 The Java mechanism model and its
 policy parameters have not been recalibrated from these provisional products.
 

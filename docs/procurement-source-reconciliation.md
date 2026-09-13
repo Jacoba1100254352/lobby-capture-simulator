@@ -798,6 +798,37 @@ Run `python3 scripts/review-procurement-partitions.py --scan` to reproduce the
 audit and notebook use that portable mode. These checks do not promote a
 representative SAM export, historical exclusion intervals or causal estimates.
 
+## Exclusions preflight response repair
+
+The September 13 review of the [public v4 API documentation](https://open.gsa.gov/api/exclusions-api/)
+found an acquisition defect in `scripts/probe-sam-exclusions.py`: the parser did
+not recognize the documented top-level `excludedEntity` array. A successful
+response in that structure was therefore reported as an empty page. The sample
+formatter also missed `exclusionActions.listOfActions`, the `activateDate`
+response field and the excluding-agency fields. Its generic recursive lookup did
+not distinguish primary identity sections from other nested objects. This diagnosis was
+reproduced offline with synthetic records; it does not explain or supersede the
+previous live HTTP 401 authorization failure.
+
+The repaired probe decodes the native entity array and treats unknown or malformed
+response structures as unavailable. It reads identity only from
+`exclusionIdentification`, keeps classification, exclusion type and program
+separate, and displays each returned action separately with creation, update,
+activation, termination, termination type and status fields. Missing values remain
+blank; display positions are not source identifiers. The report counts decoded
+entities on the requested page, not actions or the full query population, and
+checks all returned entities before showing up to five samples.
+
+Nine offline regression tests cover native and empty responses, malformed
+structures, primary-versus-linked identity, action-date distinctions, missing
+termination and action information, page-versus-sample counts, redacted request
+metadata and report rendering. Synthetic action rows are not exclusion
+observations. No live request was retried, no archive terms were accepted and no
+source-product or simulator parameter changed in this repair. The API's active-only
+coverage still cannot establish historical non-exclusion. Historical records,
+identity adjudication and date/revision/censoring review remain necessary before
+constructing exclusion intervals at award dates.
+
 ## Historical exclusions: a located but uninspected archive
 
 The September 12 browser inspection of SAM's
