@@ -57,6 +57,27 @@ TECHNOLOGY_CODINGS = {
     32: ("named_summary_collective_response", "vehicle_zero_co2_clause_retained_as_proposed"),
     33: ("named_summary_no_separate_disposition_in_reviewed_section", "carb_engagement_not_separately_resolved"),
 }
+INFRASTRUCTURE_PAGES = {
+    "response": [518, 519, 522, 523, 524, 875, 876, 877, 907, 908, 909, 910, 911,
+                 912, 913, 987, 990, 991, 992, 993],
+    "proposal": [9, 75],
+    "final": [14, 41, 42, 43],
+}
+INFRASTRUCTURE_SCOPES = {
+    "post-rule-monitoring": [518, 519],
+    "implementation-coordination": [524],
+    "charging-infrastructure": list(range(907, 914)),
+    "charging-other": [991, 992, 993],
+}
+INFRASTRUCTURE_CODINGS = {
+    2: ("reproduced_request_collective_response", "continued_coordination_committed_not_complete_priority_alignment"),
+    3: ("reproduced_request_collective_response", "monitoring_committed_not_guaranteed_assumption_fulfillment"),
+    14: ("reproduced_request_thematic_response", "existing_programs_described_increased_targets_not_verified"),
+    16: ("named_summary_collective_response", "v2g_benefits_acknowledged_funding_criterion_not_verified"),
+    18: ("reproduced_request_thematic_response", "monitoring_promised_dashboard_not_separately_resolved"),
+    22: ("reproduced_request_thematic_response", "existing_standards_described_lifecycle_request_not_fully_resolved"),
+    23: ("reproduced_request_no_separate_disposition_in_reviewed_responses", "cybersecurity_policy_not_separately_resolved"),
+}
 
 
 def fingerprint(value):
@@ -324,11 +345,115 @@ def validate_technology(inventory, ledger):
         "technologyScopedRuleComparisons": len(comparisons), "technologySourceCautions": len(cautions)}
 
 
-def validate_all(inventory, warranty, technology):
-    """Aggregate distinct reviewed entries; retain validate() as warranty-only history."""
+def validate_infrastructure(inventory, ledger):
+    """Validate the saved review contract, not the truth of manual adjudication."""
+    check_review(ledger, "comment-publisher-infrastructure-review-v1")
+    require(ledger["inventoryFile"] == "comment-publisher-inventory.json"
+            and ledger["inventoryFrameSha256"] == inventory["requestFrameSha256"]
+            and ledger["publisherSha256"] == inventory["publisher"]["sha256"] == PUBLISHER_SHA,
+            "Infrastructure review has stale inventory/source binding")
+    expected_ids = [f"mema-1570-r{n:02d}" for n in INFRASTRUCTURE_CODINGS]
+    selection = ledger["selection"]
+    require(selection["requestIds"] == expected_ids
+            and selection["mode"] == "targeted_coordination_monitoring_funding_and_charger_standards"
+            and selection["priorOutcomeExposure"] is True and selection["blinded"] is False
+            and bool(selection["scope"]), "Infrastructure selection/frame disclosure mismatch")
+    visual = ledger["publisherReview"]
+    require(visual["pdfPages"] == [4, 9, 10, 11, 12, 23, 25, 26]
+            and visual["method"] == "rendered_pages_with_text_navigation" and visual["scope"],
+            "Infrastructure original visual scope mismatch")
+    require(set(ledger["documents"]) == set(INFRASTRUCTURE_PAGES), "Missing infrastructure document")
+    for name, pages in INFRASTRUCTURE_PAGES.items():
+        doc = ledger["documents"][name]
+        offset = {"response": -18, "proposal": 25925, "final": 29439}[name]
+        require(doc["sha256"] == SOURCE_DOCS[name][0] and doc["url"] == SOURCE_URLS[name]
+                and doc["reviewedPages"] == [{"pdfPage": p, "printedPage": p + offset} for p in pages]
+                and doc["scope"], "Infrastructure source identity/page mapping mismatch")
+    scopes = ledger["responseScopes"]
+    require(set(scopes) == set(INFRASTRUCTURE_SCOPES), "Infrastructure response scopes missing")
+    for name, pages in INFRASTRUCTURE_SCOPES.items():
+        require(scopes[name]["pdfPages"] == pages and scopes[name]["completeGeneralResponse"] is True
+                and scopes[name]["locator"], "Infrastructure reviewed response scope changed")
+    reviews = ledger["reviews"]
+    require([r["requestId"] for r in reviews] == expected_ids, "Infrastructure review frame mismatch")
+    rows = {r["requestId"]: r for r in inventory["requests"]}
+    links = [
+        ([4], [522], [523, 524], ["implementation-coordination"]),
+        ([4], [522], [523, 524], ["implementation-coordination", "post-rule-monitoring"]),
+        ([9], [522, 523], [523, 524], ["implementation-coordination", "charging-infrastructure", "charging-other"]),
+        ([10], [875], [990], ["charging-infrastructure", "charging-other"]),
+        ([10], [875], [], ["charging-infrastructure", "charging-other", "post-rule-monitoring"]),
+        ([11], [876], [990], ["charging-infrastructure", "charging-other"]),
+        ([11, 12], [876, 877], [], ["charging-infrastructure", "charging-other"]),
+    ]
+    for r, number, codes, link in zip(reviews, INFRASTRUCTURE_CODINGS, INFRASTRUCTURE_CODINGS.values(), links):
+        require(r["citedCommentId"] == COMMENT_ID and r["citedAttachmentOrder"] == 1
+                and r["originalPdfPages"] == rows[r["requestId"]]["pdfPages"]
+                and tuple(r[k] for k in ("matchedOriginalPdfPages", "excerptPdfPages",
+                    "summaryPdfPages", "responseScopeIds")) == link
+                and r["excerptContentMatch"] == "selected_request_wording_and_original_page_citations_agree"
+                and r["supportingRationaleExcerptPdfPages"] == ([987] if number == 16 else []),
+                "Infrastructure original/excerpt/response linkage mismatch")
+        expected_comparison = "phase3-monitoring-preamble" if number in {2, 3, 18} else None
+        require((r["responseLink"], r["disposition"]) == codes and r["ruleComparisonId"] == expected_comparison
+                and r["basis"] and r["independentReviewStatus"] == "pending"
+                and r["individualCausalEffect"] == "not_identified", "Unsupported infrastructure coding/promotion")
+    comparisons = ledger["ruleComparisons"]
+    require(len(comparisons) == 1, "Shared infrastructure comparison must not multiply policy events")
+    c = comparisons[0]
+    require(c["comparisonId"] == "phase3-monitoring-preamble"
+            and c["requestIds"] == ["mema-1570-r02", "mema-1570-r03", "mema-1570-r18"]
+            and c["comparisonType"] == "preamble_commitment_not_operative_clause"
+            and c["proposalPdfPages"] == [9, 75] and c["finalPdfPages"] == [14, 41, 42, 43]
+            and c["proposalLocator"] and c["finalLocator"] and c["observedChange"]
+            and c["assessment"] == "existing_monitoring_and_solicitation_extended_to_specific_final_commitments"
+            and c["distinctPolicyChanges"] == "not_counted" and c["individualAttribution"] == "not_identified"
+            and c["facts"] == {
+                "proposalAlreadyDescribesMonitoring": True,
+                "proposalAlreadySolicitsAdditionalInformationAndStakeholders": True,
+                "finalCommitsPeriodicReports": True, "finalDataCollectionStartCalendarYear": 2025,
+                "finalReportsEarliestCalendarYear": 2026, "reportStartQualifier": "as_early_as",
+                "finalAddressesCriticalMaterials": True, "finalNamesDOEAndDOTCoordination": True,
+                "finalSelfAdjustingStandardsLinkage": False,
+                "requestedDashboardAdoptedInReviewedPassages": "not_verified",
+                "allAssumptionsGuaranteed": False, "implementationVerified": False,
+                "operativeClauseChangeAssessed": False}, "Unsupported infrastructure preamble comparison")
+    cautions = ledger["sourceCautions"]
+    expected_cautions = [
+        ("dashboard-versus-dtna-reporting", ["mema-1570-r18"], [10, 26], [875, 990, 991, 992],
+         "different_commenter_and_instrument_preserved", "high"),
+        ("charger-lifecycle-versus-efficiency", ["mema-1570-r22"], [11], [876, 987, 990, 992, 993],
+         "source_scope_mismatch_preserved", "high"),
+        ("corridor-phase-timeline", ["mema-1570-r14"], [9, 25, 26], [912, 991],
+         "source_timeline_tension_not_adjudicated", "medium"),
+    ]
+    require(len(cautions) == len(expected_cautions), "Missing infrastructure source caution")
+    for caution, expected in zip(cautions, expected_cautions):
+        require(tuple(caution[k] for k in ("cautionId", "requestIds", "publisherPdfPages",
+                    "responsePdfPages", "status", "severity")) == expected
+                and caution["finding"] and caution["handling"], "Infrastructure source caution boundary changed")
+    boundary = ledger["boundary"]
+    require(all(boundary.get(k) == v for k, v in {
+        "officialAttachmentByteMatch": "not_verified", "independentReviewStatus": "pending",
+        "docketRateEligible": False, "overallLetterResponseCodingComplete": False,
+        "currentLegalStatusAssessed": False, "causalEffect": "not_identified", "simulatorRecalibrated": False,
+        "remainingEntriesStatus": "not_yet_adjudicated_not_nonresponse"}.items())
+        and boundary["comparisonBoundary"] and boundary["unreviewedAnalysis"],
+        "Unsupported infrastructure review claim boundary")
+    return {"infrastructureEntriesReviewed": len(reviews),
+        "infrastructureResponseLinks": dict(Counter(r["responseLink"] for r in reviews)),
+        "infrastructurePreambleComparisons": len(comparisons), "infrastructureSourceCautions": len(cautions)}
+
+
+def validate_all(inventory, warranty, technology, infrastructure=None):
+    """Aggregate supplied follow-ups; three arguments retain historical 13-entry scope."""
     result = validate(inventory, warranty)
     result.update(validate_technology(inventory, technology))
-    ids = [r["requestId"] for ledger in (warranty, technology) for r in ledger["reviews"]]
+    ledgers = [warranty, technology]
+    if infrastructure is not None:
+        result.update(validate_infrastructure(inventory, infrastructure))
+        ledgers.append(infrastructure)
+    ids = [r["requestId"] for ledger in ledgers for r in ledger["reviews"]]
     require(len(ids) == len(set(ids)), "Overlapping publisher follow-ups inflate review coverage")
     result["boundedResponseReviews"] = len(ids)
     result["otherEntriesAwaitingAdjudication"] = result["inventoryEntries"] - len(ids)
@@ -343,7 +468,8 @@ def main():
     inventory = json.loads((DATA / "comment-publisher-inventory.json").read_text())
     followup = json.loads((DATA / "comment-publisher-warranty-review.json").read_text())
     technology = json.loads((DATA / "comment-publisher-technology-review.json").read_text())
-    result = validate_all(inventory, followup, technology)
+    infrastructure = json.loads((DATA / "comment-publisher-infrastructure-review.json").read_text())
+    result = validate_all(inventory, followup, technology, infrastructure)
     checked = []
     for name, digest in {"publisher_pdf": PUBLISHER_SHA,
             "metadata_json": inventory["docketMetadata"]["rawSha256"],

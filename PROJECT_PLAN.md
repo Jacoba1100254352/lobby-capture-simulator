@@ -138,10 +138,18 @@ the inaccessible docket file's exact version. The access-led frame was not blind
 to prior response snippets. A separate nine-entry technology/fuel follow-up adds
 an explicit new-H2ICE-multiplier refusal, FCEV generation retained as proposed
 with use limits, and an unchanged proposed neat-hydrogen vehicle zero-CO2 clause.
-The combined thirteen bounded reviews leave 35 other entries unadjudicated,
+Seven additional infrastructure entries distinguish continued coordination and
+specified final preamble monitoring commitments from the proposal's existing
+monitoring and solicitation. The requested increased funding targets, bidirectional
+public-purchase condition, Joint Office dashboard and full lifecycle/cybersecurity
+standards are not separately established in the reviewed passages. A reporting
+refusal directed to DTNA is not attributed to MEMA's dashboard request, and a
+grouped efficiency summary does not redefine its lifecycle-standardization request.
+The combined twenty bounded reviews leave 28 other entries unadjudicated,
 not nonresponses; broad assessment and exact CARB-program/engagement questions
-remain only partly resolved. Program-summary, engine-unit and section-reference
-discrepancies are preserved in the ledger, notebook and regression checks.
+remain only partly resolved. Attribution, program-summary, engine-unit,
+section-reference and corridor-timeline cautions are preserved in the ledger,
+notebook and regression checks. No actual post-rule implementation is verified.
 Original pilots, independent-review gates and simulator parameters are unchanged.
 A separate NAM 2008Q1 coalition-disclosure probe reviews header/line-25 text
 and checkbox attributes in two electronic filing versions outside the frozen

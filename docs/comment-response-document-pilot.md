@@ -173,7 +173,7 @@ Three discrepancies remain explicit rather than silently corrected:
 
 ### Validation and remaining work
 
-The combined ledger contains 13 distinct entries with bounded response reviews
+At the warranty-plus-technology checkpoint, the combined ledger contained 13 distinct entries with bounded response reviews
 (four warranty plus nine technology/fuel), leaving 35 entries without a response
 adjudication. This coverage count does not mean all facets of the thirteen are
 resolved. Broad assessment, precise CARB-program and state-engagement requests
@@ -184,13 +184,99 @@ reviewed entries, no docket-rate eligibility and no identified individual effect
 inventory binding, thematic selection, physical/printed page mappings, source
 links, shared comparisons, units and claim boundaries. Its older `validate`
 function remains explicitly warranty-only and returns the historical 44 pending
-entries; the CLI, empirical audit and notebook use the combined 35-entry count.
+entries. A three-argument `validate_all` call retains the historical 35-entry
+pending count; current four-ledger CLI, audit and notebook calls include the
+infrastructure follow-up below.
 Mutation tests reject unsupported acceptance, altered scope, unit/program
 conflation and duplicate coverage. The notebook displays both thematic products
 and the source cautions. Optional archived-source checks verify all five file
 hashes and regenerate the metadata projection, not independent coding or exact
 docket-copy identity. No current regulatory-status or simulator-calibration
 claim is made. Procurement and substitution requirements remain open.
+
+## Infrastructure and monitoring follow-up, September 13
+
+**Assessment: share with caveats as bounded documentary coding, not an uptake
+rate, current legal-status assessment or identified lobbying effect.** The new
+`comment-publisher-infrastructure-review.json` reviews seven existing entries:
+r02, r03, r14, r16, r18, r22 and r23. Selection followed infrastructure/coordination
+topics and prior response navigation, not outcome-blind sampling. The original
+48-entry frame and earlier follow-up ledgers are unchanged. Other infrastructure
+requests, including utility buildout and vehicle-specific modeling, are not
+implicitly reviewed by this thematic grouping.
+
+The original publisher pages 4, 9-12, 23 and 25-26 were rechecked visually.
+Highlighted recommendations missing from OCR govern the request definitions.
+The same hash-bound [EPA response document](https://www.epa.gov/system/files/documents/2024-03/420r24007.pdf),
+[proposal](https://www.govinfo.gov/content/pkg/FR-2023-04-27/pdf/2023-07955.pdf)
+and [April 2024 final publication](https://www.govinfo.gov/content/pkg/FR-2024-04-22/pdf/2024-06809.pdf)
+provide the comparison. Hashes and physical/printed page maps are in the ledger.
+These are historical publications; subsequent implementation and legal status
+are not assessed.
+
+### Request-to-response findings
+
+RTC printed pages are physical PDF pages minus 18. The review reads the complete
+general responses, not all comments, in sections 2.9 (PDF 518-519), 2.10 (524),
+6.1 (907-913) and 6.4 (991-993). Section boundaries prevent a search hit or one
+favorable paragraph from standing in for a complete scoped response.
+
+| Existing request | Original / RTC excerpt PDF pages | Bounded finding |
+| --- | --- | --- |
+| r02, Joint Office coordination | 4 / 522 | Section 2.10 commits continued federal/stakeholder engagement, not complete alignment of every requested regulation or priority. |
+| r03, assumption follow-through | 4 / 522 | Monitoring and reporting cover infrastructure and critical materials; they do not guarantee assumed outcomes or automatic corrective action. |
+| r14, increased interstate funding | 9 / 522-523 | Coordination, existing programs and corridor planning are described. A specific increased funding target answering the request is not verified. |
+| r16, DCFC/bidirectional public purchases | 10 / 875 | Section 6.4 names MEMA among future-proofing commenters and acknowledges V2G benefits, but says these were not quantitatively included in the analysis. The requested funding criterion is not verified. PDF 987 reproduces the rationale, not the actual public-purchase recommendation. |
+| r18, public readiness dashboard | 10 / 875 | Periodic reporting aligns with a broad information objective. A separate adoption of the requested Joint Office dashboard is not established in the compared passages. |
+| r22, charger lifecycle standards | 11 / 876 | Existing NEVI, reliability and voluntary efficiency programs are discussed; full adoption of the installation/operation/maintenance request is not established. |
+| r23, charging cybersecurity policy | 11-12 / 876-877 | No separate disposition of this specific request is found in the complete section-6.1/6.4 general responses. This is not docket-wide nonresponse; reliability and V2G benefits are not cybersecurity standards. |
+
+### Shared preamble comparison
+
+Proposal PDF 9 and 75 (printed 25934 and 26000) describe existing monitoring,
+public compliance reports and an invitation for additional information and
+stakeholders. Final PDF 14 and 41-43 (printed 29453 and 29480-29482), including
+the complete section II.B.2.iii, add specified commitments to engagement,
+infrastructure/material monitoring and periodic reports. The final states data
+collection will begin in CY2025 and reports could begin **as early as CY2026**;
+these are publication-stated plans, not verified dates of actual implementation.
+Possible later guidance, rulemaking or no change remain discretionary. The
+automatic infrastructure-to-stringency mechanism requested by other commenters
+is not adopted; that request is not assigned to MEMA.
+
+This one comparison supports r02, r03 and r18 at different scopes. It is not
+three independent policy changes, an operative CFR-clause comparison, proof
+MEMA originated the proposal, or a measured individual influence effect.
+
+### Source risks and validation
+
+- **High attribution risk:** RTC 991 explicitly opens the public-information
+  response by naming DTNA. Its mandatory-reporting refusal on 992 cannot be
+  treated as an explicit rejection of MEMA's dashboard request.
+- **High scope risk:** RTC 990 groups MECA and MEMA under minimum charger
+  efficiency. The original MEMA request on page 11 concerns installation,
+  operation and maintenance; the reproduced MECA excerpt on RTC 987 explicitly
+  seeks minimum efficiency. Preserve those different instruments.
+- **Medium timeline risk:** RTC 991 prints phase three as 2030-2045 and phase
+  four as 2035-2040 while describing completion by 2040; RTC 912 describes four
+  phases over 2024-2040. This internal tension is retained, not corrected or
+  used as an outcome. The cited strategy schedule is not independently reviewed.
+
+The combined four-ledger check now counts **20 distinct reviewed entries and
+28 awaiting adjudication**, still in one letter. Reviewed entries may retain
+unresolved facets. Zero entries have independent-review clearance or eligibility
+for a docket response rate. The validator and mutation tests protect request
+identity, exact page mappings, shared comparisons, the reporting-start qualifier,
+attribution and scope cautions, and unchanged claim limits. They validate the
+saved contract, not the truth of manual coding. The notebook reruns the checks
+and displays the seven dispositions, comparison facts and cautions.
+
+Independent source/coding review, exact docket-version verification and a
+defensible sampling frame remain separate blockers to stronger claims. Detailed
+grant instruments, underlying charger standards, RIA calculations and actual
+implementation are not independently evaluated by this follow-up. No earlier
+pilot or simulator parameter changes, and procurement/substitution work remains
+unfinished.
 
 ## Original two-request agency-excerpt pilot
 

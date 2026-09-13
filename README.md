@@ -288,9 +288,14 @@ scope clarification and a process request not separately resolved in the reviewe
 passages. A separate nine-entry technology/fuel follow-up distinguishes a declined
 new hydrogen-engine multiplier, FCEV generation retained as proposed with use
 limits, and an unchanged proposed neat-hydrogen vehicle zero-CO2 clause. Broad
-assessment requests remain partly unresolved. The combined thirteen bounded
-reviews leave 35 other entries unadjudicated, not nonresponses; program-summary,
-engine-unit and section-reference discrepancies remain explicit.
+assessment requests remain partly unresolved. A seven-entry infrastructure follow-up
+separates a specified final monitoring/reporting commitment from the proposal's
+existing monitoring and invitation for comment. It does not establish the requested
+funding targets, public-purchase condition, Joint Office dashboard or full charger
+lifecycle/cybersecurity standards. A DTNA reporting refusal is not a named MEMA
+dashboard rejection. The combined twenty bounded reviews leave 28 other entries
+unadjudicated, not nonresponses; attribution, program, unit, reference and timeline
+cautions remain explicit. Preamble commitments are not verified implementation.
 The [source review and codebook](docs/comment-response-document-pilot.md#publisher-original-inventory-and-warranty-follow-up-september-13)
 and offline notebook retain prior outcome exposure, request segmentation and
 independent-review limits. Earlier pilots and simulator parameters are unchanged.

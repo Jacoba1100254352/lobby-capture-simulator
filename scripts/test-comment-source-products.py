@@ -294,6 +294,143 @@ class CommentTechnologyTests(unittest.TestCase):
                 self.check()
 
 
+class CommentInfrastructureTests(unittest.TestCase):
+    def setUp(self):
+        self.inventory = json.loads((AUDIT.DATA / "comment-publisher-inventory.json").read_text())
+        self.warranty = json.loads((AUDIT.DATA / "comment-publisher-warranty-review.json").read_text())
+        self.technology = json.loads((AUDIT.DATA / "comment-publisher-technology-review.json").read_text())
+        self.infrastructure = json.loads((AUDIT.DATA / "comment-publisher-infrastructure-review.json").read_text())
+
+    def check(self, refresh=True):
+        if refresh:
+            self.infrastructure["reviewFingerprint"] = PUBLISHER.fingerprint({
+                k: v for k, v in self.infrastructure.items() if k != "reviewFingerprint"})
+        return PUBLISHER.validate_all(self.inventory, self.warranty, self.technology, self.infrastructure)
+
+    def test_seven_reviews_extend_coverage_without_changing_the_population_or_history(self):
+        before = deepcopy((self.inventory, self.warranty, self.technology, self.infrastructure))
+        result = self.check(False)
+        self.assertEqual((self.inventory, self.warranty, self.technology, self.infrastructure), before)
+        for key, value in {"publisherLetters": 1, "inventoryEntries": 48, "boundedResponseReviews": 20,
+                           "infrastructureEntriesReviewed": 7, "otherEntriesAwaitingAdjudication": 28,
+                           "infrastructurePreambleComparisons": 1, "infrastructureSourceCautions": 3,
+                           "independentlyReviewedEntries": 0, "docketRateEligibleEntries": 0,
+                           "verifiedDocketByteMatches": 0}.items():
+            self.assertEqual(result[key], value)
+        old = PUBLISHER.validate_all(self.inventory, self.warranty, self.technology)
+        self.assertEqual(old["boundedResponseReviews"], 13)
+        self.assertEqual(old["otherEntriesAwaitingAdjudication"], 35)
+
+    def test_stale_fingerprint_and_binding_fail(self):
+        self.infrastructure["inventoryFrameSha256"] = "0" * 64
+        with self.assertRaisesRegex(ValueError, "fingerprint"):
+            self.check(False)
+        with self.assertRaisesRegex(ValueError, "binding"):
+            self.check()
+
+    def test_missing_duplicate_or_previously_reviewed_request_fails(self):
+        original = deepcopy(self.infrastructure)
+        for reviews in (original["reviews"][:-1], original["reviews"] * 2,
+                        original["reviews"][:-1] + self.technology["reviews"][:1]):
+            self.infrastructure = deepcopy(original)
+            self.infrastructure["reviews"] = reviews
+            with self.subTest(count=len(reviews)), self.assertRaisesRegex(ValueError, "frame"):
+                self.check()
+
+    def test_prior_outcome_exposure_and_rendered_originals_are_required(self):
+        self.infrastructure["selection"]["blinded"] = True
+        with self.assertRaisesRegex(ValueError, "selection"):
+            self.check()
+        self.infrastructure["selection"]["blinded"] = False
+        self.infrastructure["publisherReview"]["method"] = "OCR_only"
+        with self.assertRaisesRegex(ValueError, "visual scope"):
+            self.check()
+
+    def test_source_identity_and_page_mapping_fail_when_changed(self):
+        original = deepcopy(self.infrastructure)
+        for key, value in (("url", "https://example.org/different.pdf"), ("sha256", "0" * 64),
+                           ("reviewedPages", [{"pdfPage": 42, "printedPage": 42}])):
+            self.infrastructure = deepcopy(original)
+            self.infrastructure["documents"]["final"][key] = value
+            with self.subTest(key=key), self.assertRaisesRegex(ValueError, "identity/page"):
+                self.check()
+
+    def test_incomplete_general_response_cannot_pass(self):
+        self.infrastructure["responseScopes"]["charging-other"]["pdfPages"] = [992]
+        with self.assertRaisesRegex(ValueError, "scope changed"):
+            self.check()
+
+    def test_background_excerpt_cannot_replace_the_actual_public_purchase_request(self):
+        self.infrastructure["reviews"][3]["excerptPdfPages"] = [987]
+        with self.assertRaisesRegex(ValueError, "linkage"):
+            self.check()
+
+    def test_cross_comment_and_cross_scope_swaps_fail(self):
+        original = deepcopy(self.infrastructure)
+        for key, value in (("citedCommentId", "EPA-HQ-OAR-2022-0985-1555"),
+                           ("citedAttachmentOrder", 2), ("matchedOriginalPdfPages", [26]),
+                           ("responseScopeIds", ["implementation-coordination"])):
+            self.infrastructure = deepcopy(original)
+            self.infrastructure["reviews"][4][key] = value
+            with self.subTest(key=key), self.assertRaisesRegex(ValueError, "linkage"):
+                self.check()
+
+    def test_unresolved_specific_requests_cannot_become_full_acceptance_or_rejection(self):
+        original = deepcopy(self.infrastructure)
+        for index in range(7):
+            for disposition in ("fully_accepted", "explicitly_rejected", "docket_wide_nonresponse"):
+                self.infrastructure = deepcopy(original)
+                self.infrastructure["reviews"][index]["disposition"] = disposition
+                with self.subTest(index=index, code=disposition), self.assertRaisesRegex(ValueError, "coding/promotion"):
+                    self.check()
+
+    def test_preamble_commitment_is_not_implementation_causation_or_an_operative_clause(self):
+        original = deepcopy(self.infrastructure)
+        for key, value in (("comparisonType", "operative_clause_change"), ("individualAttribution", "identified"),
+                           ("distinctPolicyChanges", 3)):
+            self.infrastructure = deepcopy(original)
+            self.infrastructure["ruleComparisons"][0][key] = value
+            with self.subTest(key=key), self.assertRaisesRegex(ValueError, "preamble comparison"):
+                self.check()
+
+    def test_monitoring_baseline_calendar_qualifier_and_dashboard_limits_are_preserved(self):
+        original = deepcopy(self.infrastructure)
+        for key, value in (("proposalAlreadyDescribesMonitoring", False),
+                           ("proposalAlreadySolicitsAdditionalInformationAndStakeholders", False),
+                           ("finalDataCollectionStartCalendarYear", 2026), ("reportStartQualifier", "by"),
+                           ("finalReportsEarliestCalendarYear", 2025), ("implementationVerified", True),
+                           ("finalSelfAdjustingStandardsLinkage", True), ("allAssumptionsGuaranteed", True),
+                           ("requestedDashboardAdoptedInReviewedPassages", True)):
+            self.infrastructure = deepcopy(original)
+            self.infrastructure["ruleComparisons"][0]["facts"][key] = value
+            with self.subTest(key=key), self.assertRaisesRegex(ValueError, "preamble comparison"):
+                self.check()
+
+    def test_shared_monitoring_comparison_cannot_multiply_events(self):
+        self.infrastructure["ruleComparisons"] *= 3
+        with self.assertRaisesRegex(ValueError, "multiply policy events"):
+            self.check()
+
+    def test_attribution_scope_and_timeline_cautions_cannot_disappear(self):
+        original = deepcopy(self.infrastructure)
+        for index in range(3):
+            self.infrastructure = deepcopy(original)
+            self.infrastructure["sourceCautions"].pop(index)
+            with self.subTest(index=index), self.assertRaisesRegex(ValueError, "source caution"):
+                self.check()
+
+    def test_unreviewed_entries_do_not_clear_rates_independence_or_current_status(self):
+        original = deepcopy(self.infrastructure)
+        for key, value in (("remainingEntriesStatus", "no_response"), ("independentReviewStatus", "complete"),
+                           ("causalEffect", "identified"), ("docketRateEligible", True),
+                           ("overallLetterResponseCodingComplete", True), ("simulatorRecalibrated", True),
+                           ("currentLegalStatusAssessed", True), ("officialAttachmentByteMatch", "verified")):
+            self.infrastructure = deepcopy(original)
+            self.infrastructure["boundary"][key] = value
+            with self.subTest(key=key), self.assertRaisesRegex(ValueError, "boundary"):
+                self.check()
+
+
 class CommentFollowupTests(unittest.TestCase):
     def setUp(self):
         self.sources = json.loads((AUDIT.DATA / "comment-request-followups.json").read_text())

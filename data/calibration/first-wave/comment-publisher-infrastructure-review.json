@@ -1,0 +1,537 @@
+{
+  "schema": "comment-publisher-infrastructure-review-v1",
+  "reviewDate": "2026-09-13",
+  "reviewer": "Codex source review; independent adjudication pending",
+  "inventoryFile": "comment-publisher-inventory.json",
+  "inventoryFrameSha256": "717738adcf4cba674307d1721c1d8a60429c21f804232c1a57bdc7f28a2f4f39",
+  "publisherSha256": "e6f6c3c34594d69654b4375e29896175b3057f4c6a0c987e141ac229f10d0159",
+  "selection": {
+    "requestIds": [
+      "mema-1570-r02",
+      "mema-1570-r03",
+      "mema-1570-r14",
+      "mema-1570-r16",
+      "mema-1570-r18",
+      "mema-1570-r22",
+      "mema-1570-r23"
+    ],
+    "mode": "targeted_coordination_monitoring_funding_and_charger_standards",
+    "priorOutcomeExposure": true,
+    "blinded": false,
+    "scope": "Seven previously unadjudicated entries in the existing access-led letter frame. Selected for related implementation/infrastructure requests after prior response navigation, not an outcome-blind sample or every infrastructure request. Original inventory and previous warranty/technology ledgers remain unchanged."
+  },
+  "publisherReview": {
+    "pdfPages": [
+      4,
+      9,
+      10,
+      11,
+      12,
+      23,
+      25,
+      26
+    ],
+    "method": "rendered_pages_with_text_navigation",
+    "scope": "Recheck request wording, highlighted recommendations and appendix restatements. Existing full-letter inventory supplies other page references. OCR omits highlighted recommendations; images govern."
+  },
+  "documents": {
+    "response": {
+      "url": "https://www.epa.gov/system/files/documents/2024-03/420r24007.pdf",
+      "sha256": "4ce468a6ea85ede970b8189dab82b0ab5112692abcc1f684a585f563b6b4ab8e",
+      "reviewedPages": [
+        {
+          "pdfPage": 518,
+          "printedPage": 500
+        },
+        {
+          "pdfPage": 519,
+          "printedPage": 501
+        },
+        {
+          "pdfPage": 522,
+          "printedPage": 504
+        },
+        {
+          "pdfPage": 523,
+          "printedPage": 505
+        },
+        {
+          "pdfPage": 524,
+          "printedPage": 506
+        },
+        {
+          "pdfPage": 875,
+          "printedPage": 857
+        },
+        {
+          "pdfPage": 876,
+          "printedPage": 858
+        },
+        {
+          "pdfPage": 877,
+          "printedPage": 859
+        },
+        {
+          "pdfPage": 907,
+          "printedPage": 889
+        },
+        {
+          "pdfPage": 908,
+          "printedPage": 890
+        },
+        {
+          "pdfPage": 909,
+          "printedPage": 891
+        },
+        {
+          "pdfPage": 910,
+          "printedPage": 892
+        },
+        {
+          "pdfPage": 911,
+          "printedPage": 893
+        },
+        {
+          "pdfPage": 912,
+          "printedPage": 894
+        },
+        {
+          "pdfPage": 913,
+          "printedPage": 895
+        },
+        {
+          "pdfPage": 987,
+          "printedPage": 969
+        },
+        {
+          "pdfPage": 990,
+          "printedPage": 972
+        },
+        {
+          "pdfPage": 991,
+          "printedPage": 973
+        },
+        {
+          "pdfPage": 992,
+          "printedPage": 974
+        },
+        {
+          "pdfPage": 993,
+          "printedPage": 975
+        }
+      ],
+      "scope": "Selected original-linked excerpts and summaries plus complete general responses in sections 2.9, 2.10, 6.1 and 6.4; not the full response document."
+    },
+    "proposal": {
+      "url": "https://www.govinfo.gov/content/pkg/FR-2023-04-27/pdf/2023-07955.pdf",
+      "sha256": "30f6f81aadc5313a4762e4234f93a4d937f83c5db75ec2607eb68ce028affc1a",
+      "reviewedPages": [
+        {
+          "pdfPage": 9,
+          "printedPage": 25934
+        },
+        {
+          "pdfPage": 75,
+          "printedPage": 26000
+        }
+      ],
+      "scope": "Executive Summary C and section II.F implementation-monitoring solicitations, limited to the specified preamble passages."
+    },
+    "final": {
+      "url": "https://www.govinfo.gov/content/pkg/FR-2024-04-22/pdf/2024-06809.pdf",
+      "sha256": "9d1b9a74a8528e36b7783ddfacf9b3089f484225431b1496324b5d5d2963eb94",
+      "reviewedPages": [
+        {
+          "pdfPage": 14,
+          "printedPage": 29453
+        },
+        {
+          "pdfPage": 41,
+          "printedPage": 29480
+        },
+        {
+          "pdfPage": 42,
+          "printedPage": 29481
+        },
+        {
+          "pdfPage": 43,
+          "printedPage": 29482
+        }
+      ],
+      "scope": "Executive Summary C.2.v and complete section II.B.2.iii post-rule engagement/monitoring preamble, not operative CFR clauses or present-day implementation."
+    }
+  },
+  "responseScopes": {
+    "post-rule-monitoring": {
+      "pdfPages": [
+        518,
+        519
+      ],
+      "locator": "Section 2.9 complete general Response, ending before section 2.10 on PDF 519.",
+      "completeGeneralResponse": true
+    },
+    "implementation-coordination": {
+      "pdfPages": [
+        524
+      ],
+      "locator": "Section 2.10 complete general Response, ending before section 2.11 on PDF 524.",
+      "completeGeneralResponse": true
+    },
+    "charging-infrastructure": {
+      "pdfPages": [
+        907,
+        908,
+        909,
+        910,
+        911,
+        912,
+        913
+      ],
+      "locator": "Section 6.1 complete general Response, starting at the bottom of PDF 907 and ending before section 6.2 on PDF 913.",
+      "completeGeneralResponse": true
+    },
+    "charging-other": {
+      "pdfPages": [
+        991,
+        992,
+        993
+      ],
+      "locator": "Section 6.4 complete general Response, starting after the summary on PDF 991 and ending on PDF 993; section 7 starts on PDF 994.",
+      "completeGeneralResponse": true
+    }
+  },
+  "reviews": [
+    {
+      "requestId": "mema-1570-r02",
+      "originalPdfPages": [
+        4,
+        26
+      ],
+      "matchedOriginalPdfPages": [
+        4
+      ],
+      "excerptPdfPages": [
+        522
+      ],
+      "summaryPdfPages": [
+        523,
+        524
+      ],
+      "responseScopeIds": [
+        "implementation-coordination"
+      ],
+      "citedCommentId": "EPA-HQ-OAR-2022-0985-1570",
+      "citedAttachmentOrder": 1,
+      "excerptContentMatch": "selected_request_wording_and_original_page_citations_agree",
+      "supportingRationaleExcerptPdfPages": [],
+      "responseLink": "reproduced_request_collective_response",
+      "disposition": "continued_coordination_committed_not_complete_priority_alignment",
+      "ruleComparisonId": "phase3-monitoring-preamble",
+      "basis": "The reproduced original-page-4 recommendation seeks alignment with the Joint Office throughout implementation. Section 2.10 commits EPA and federal partners to continued engagement and monitoring, with referrals to section 2.9 and the final preamble. This supports broad coordination alignment, not a separate named MEMA disposition, complete alignment of regulations/priorities, or verified implementation.",
+      "independentReviewStatus": "pending",
+      "individualCausalEffect": "not_identified"
+    },
+    {
+      "requestId": "mema-1570-r03",
+      "originalPdfPages": [
+        4
+      ],
+      "matchedOriginalPdfPages": [
+        4
+      ],
+      "excerptPdfPages": [
+        522
+      ],
+      "summaryPdfPages": [
+        523,
+        524
+      ],
+      "responseScopeIds": [
+        "implementation-coordination",
+        "post-rule-monitoring"
+      ],
+      "citedCommentId": "EPA-HQ-OAR-2022-0985-1570",
+      "citedAttachmentOrder": 1,
+      "excerptContentMatch": "selected_request_wording_and_original_page_citations_agree",
+      "supportingRationaleExcerptPdfPages": [],
+      "responseLink": "reproduced_request_collective_response",
+      "disposition": "monitoring_committed_not_guaranteed_assumption_fulfillment",
+      "ruleComparisonId": "phase3-monitoring-preamble",
+      "basis": "MEMA asks EPA to follow through on critical-material, infrastructure and milestone assumptions and take action to realize them. The final preamble specifies data collection, reports and consultation about infrastructure and battery/material supply. EPA leaves later guidance, rulemaking or no change open. Monitoring is aligned with part of the request but is not a guarantee of all assumed outcomes or an automatic standards adjustment.",
+      "independentReviewStatus": "pending",
+      "individualCausalEffect": "not_identified"
+    },
+    {
+      "requestId": "mema-1570-r14",
+      "originalPdfPages": [
+        9,
+        25,
+        26
+      ],
+      "matchedOriginalPdfPages": [
+        9
+      ],
+      "excerptPdfPages": [
+        522,
+        523
+      ],
+      "summaryPdfPages": [
+        523,
+        524
+      ],
+      "responseScopeIds": [
+        "implementation-coordination",
+        "charging-infrastructure",
+        "charging-other"
+      ],
+      "citedCommentId": "EPA-HQ-OAR-2022-0985-1570",
+      "citedAttachmentOrder": 1,
+      "excerptContentMatch": "selected_request_wording_and_original_page_citations_agree",
+      "supportingRationaleExcerptPdfPages": [],
+      "responseLink": "reproduced_request_thematic_response",
+      "disposition": "existing_programs_described_increased_targets_not_verified",
+      "ruleComparisonId": null,
+      "basis": "Original page 9 requests additional interstate infrastructure and increased hydrogen/DCFC funding targets. Section 2.10 commits coordination; sections 6.1 and 6.4 describe existing funding, freight-corridor planning and infrastructure investment. These passages do not establish a new allocation or increased funding target answering MEMA's request. They also do not establish no funding was awarded elsewhere.",
+      "independentReviewStatus": "pending",
+      "individualCausalEffect": "not_identified"
+    },
+    {
+      "requestId": "mema-1570-r16",
+      "originalPdfPages": [
+        2,
+        9,
+        10,
+        23
+      ],
+      "matchedOriginalPdfPages": [
+        10
+      ],
+      "excerptPdfPages": [
+        875
+      ],
+      "summaryPdfPages": [
+        990
+      ],
+      "responseScopeIds": [
+        "charging-infrastructure",
+        "charging-other"
+      ],
+      "citedCommentId": "EPA-HQ-OAR-2022-0985-1570",
+      "citedAttachmentOrder": 1,
+      "excerptContentMatch": "selected_request_wording_and_original_page_citations_agree",
+      "supportingRationaleExcerptPdfPages": [
+        987
+      ],
+      "responseLink": "named_summary_collective_response",
+      "disposition": "v2g_benefits_acknowledged_funding_criterion_not_verified",
+      "ruleComparisonId": null,
+      "basis": "PDF 875 reproduces the specific public-purchase recommendation from original page 10. PDF 987 separately reproduces its page-9/10 rationale, not the grant criterion. Section 6.4 names MEMA among future-proofing commenters, acknowledges potential V2G benefits and says those benefits were not quantitatively included in the rule analysis. Agreement with benefits and descriptions of existing programs do not verify adoption of a DCFC/bidirectional public-funding criterion.",
+      "independentReviewStatus": "pending",
+      "individualCausalEffect": "not_identified"
+    },
+    {
+      "requestId": "mema-1570-r18",
+      "originalPdfPages": [
+        10,
+        26
+      ],
+      "matchedOriginalPdfPages": [
+        10
+      ],
+      "excerptPdfPages": [
+        875
+      ],
+      "summaryPdfPages": [],
+      "responseScopeIds": [
+        "charging-infrastructure",
+        "charging-other",
+        "post-rule-monitoring"
+      ],
+      "citedCommentId": "EPA-HQ-OAR-2022-0985-1570",
+      "citedAttachmentOrder": 1,
+      "excerptContentMatch": "selected_request_wording_and_original_page_citations_agree",
+      "supportingRationaleExcerptPdfPages": [],
+      "responseLink": "reproduced_request_thematic_response",
+      "disposition": "monitoring_promised_dashboard_not_separately_resolved",
+      "ruleComparisonId": "phase3-monitoring-preamble",
+      "basis": "The original-page-10 dashboard request is reproduced in section 6.1. That response promises periodic reports. The final preamble specifies collection and consultation but does not separately adopt the requested Joint Office dashboard in the compared passages. Section 6.4's public-information response begins by naming DTNA; its refusal of mandatory infrastructure reporting must not be recoded as a named refusal of MEMA's dashboard.",
+      "independentReviewStatus": "pending",
+      "individualCausalEffect": "not_identified"
+    },
+    {
+      "requestId": "mema-1570-r22",
+      "originalPdfPages": [
+        11
+      ],
+      "matchedOriginalPdfPages": [
+        11
+      ],
+      "excerptPdfPages": [
+        876
+      ],
+      "summaryPdfPages": [
+        990
+      ],
+      "responseScopeIds": [
+        "charging-infrastructure",
+        "charging-other"
+      ],
+      "citedCommentId": "EPA-HQ-OAR-2022-0985-1570",
+      "citedAttachmentOrder": 1,
+      "excerptContentMatch": "selected_request_wording_and_original_page_citations_agree",
+      "supportingRationaleExcerptPdfPages": [],
+      "responseLink": "reproduced_request_thematic_response",
+      "disposition": "existing_standards_described_lifecycle_request_not_fully_resolved",
+      "ruleComparisonId": null,
+      "basis": "MEMA's original recommendation concerns national installation, operation and maintenance standards. The section-6.4 summary groups MEMA with MECA on minimum charger efficiency, while the reproduced MECA excerpt contains that specific efficiency request. The general responses cite FHWA's existing NEVI standards, reliability efforts and voluntary EnergyStar certification. These provide thematic context but do not separately establish full adoption of MEMA's broader lifecycle-standardization request.",
+      "independentReviewStatus": "pending",
+      "individualCausalEffect": "not_identified"
+    },
+    {
+      "requestId": "mema-1570-r23",
+      "originalPdfPages": [
+        11,
+        12
+      ],
+      "matchedOriginalPdfPages": [
+        11,
+        12
+      ],
+      "excerptPdfPages": [
+        876,
+        877
+      ],
+      "summaryPdfPages": [],
+      "responseScopeIds": [
+        "charging-infrastructure",
+        "charging-other"
+      ],
+      "citedCommentId": "EPA-HQ-OAR-2022-0985-1570",
+      "citedAttachmentOrder": 1,
+      "excerptContentMatch": "selected_request_wording_and_original_page_citations_agree",
+      "supportingRationaleExcerptPdfPages": [],
+      "responseLink": "reproduced_request_no_separate_disposition_in_reviewed_responses",
+      "disposition": "cybersecurity_policy_not_separately_resolved",
+      "ruleComparisonId": null,
+      "basis": "The original-page-11 EV/EVSE cybersecurity recommendation and page-12 risk reference are reproduced. The complete section-6.1 and section-6.4 general responses discuss charging availability, reliability, efficiency and coordination without a separate disposition of this cybersecurity-policy request. Reliability or V2G national-security benefits are not a cybersecurity standard. This is bounded nonresolution, not docket-wide nonresponse.",
+      "independentReviewStatus": "pending",
+      "individualCausalEffect": "not_identified"
+    }
+  ],
+  "ruleComparisons": [
+    {
+      "comparisonId": "phase3-monitoring-preamble",
+      "requestIds": [
+        "mema-1570-r02",
+        "mema-1570-r03",
+        "mema-1570-r18"
+      ],
+      "comparisonType": "preamble_commitment_not_operative_clause",
+      "proposalPdfPages": [
+        9,
+        75
+      ],
+      "finalPdfPages": [
+        14,
+        41,
+        42,
+        43
+      ],
+      "proposalLocator": "Executive Summary C, printed 25934, and end of section II.F, printed 26000.",
+      "finalLocator": "Executive Summary C.2.v, printed 29453, and section II.B.2.iii, printed 29480-29482.",
+      "assessment": "existing_monitoring_and_solicitation_extended_to_specific_final_commitments",
+      "facts": {
+        "proposalAlreadyDescribesMonitoring": true,
+        "proposalAlreadySolicitsAdditionalInformationAndStakeholders": true,
+        "finalCommitsPeriodicReports": true,
+        "finalDataCollectionStartCalendarYear": 2025,
+        "finalReportsEarliestCalendarYear": 2026,
+        "reportStartQualifier": "as_early_as",
+        "finalAddressesCriticalMaterials": true,
+        "finalNamesDOEAndDOTCoordination": true,
+        "finalSelfAdjustingStandardsLinkage": false,
+        "requestedDashboardAdoptedInReviewedPassages": "not_verified",
+        "allAssumptionsGuaranteed": false,
+        "implementationVerified": false,
+        "operativeClauseChangeAssessed": false
+      },
+      "observedChange": "The proposal describes existing monitoring/reporting and solicits additional information, stakeholders and measures. The final adds a specified engagement, infrastructure/material monitoring and periodic-report commitment, with data collection stated for CY2025 and reports as early as CY2026. It preserves discretionary future action, not automatic adjustment. This is a scoped preamble comparison, not evidence MEMA originated or caused the commitment.",
+      "distinctPolicyChanges": "not_counted",
+      "individualAttribution": "not_identified"
+    }
+  ],
+  "sourceCautions": [
+    {
+      "cautionId": "dashboard-versus-dtna-reporting",
+      "requestIds": [
+        "mema-1570-r18"
+      ],
+      "publisherPdfPages": [
+        10,
+        26
+      ],
+      "responsePdfPages": [
+        875,
+        990,
+        991,
+        992
+      ],
+      "status": "different_commenter_and_instrument_preserved",
+      "severity": "high",
+      "finding": "The public-information response explicitly names DTNA and declines mandatory infrastructure reporting; MEMA's original request seeks a Joint Office public-readiness dashboard.",
+      "handling": "Use the response as thematic context only. Do not label MEMA explicitly rejected, equate periodic reports with a dashboard, or infer dashboard adoption from AFDC availability."
+    },
+    {
+      "cautionId": "charger-lifecycle-versus-efficiency",
+      "requestIds": [
+        "mema-1570-r22"
+      ],
+      "publisherPdfPages": [
+        11
+      ],
+      "responsePdfPages": [
+        876,
+        987,
+        990,
+        992,
+        993
+      ],
+      "status": "source_scope_mismatch_preserved",
+      "severity": "high",
+      "finding": "The section-6.4 summary groups MECA and MEMA under minimum charger efficiency. MEMA's reviewed original request addresses installation, operation and maintenance; the reproduced MECA excerpt explicitly asks for minimum efficiency.",
+      "handling": "Keep the original request definition. Do not substitute MECA's wording or interpret the existing-standards discussion as full acceptance of MEMA's request."
+    },
+    {
+      "cautionId": "corridor-phase-timeline",
+      "requestIds": [
+        "mema-1570-r14"
+      ],
+      "publisherPdfPages": [
+        9,
+        25,
+        26
+      ],
+      "responsePdfPages": [
+        912,
+        991
+      ],
+      "status": "source_timeline_tension_not_adjudicated",
+      "severity": "medium",
+      "finding": "RTC PDF 991 prints phase three as 2030-2045 and phase four as 2035-2040 while describing a network by 2040; PDF 912 describes four phases over 2024-2040.",
+      "handling": "Preserve this internal timeline tension without correcting it or using the phase-three year as an implementation outcome. The cited strategy's underlying schedule is not independently reviewed in this ledger."
+    }
+  ],
+  "boundary": {
+    "officialAttachmentByteMatch": "not_verified",
+    "independentReviewStatus": "pending",
+    "docketRateEligible": false,
+    "overallLetterResponseCodingComplete": false,
+    "currentLegalStatusAssessed": false,
+    "causalEffect": "not_identified",
+    "simulatorRecalibrated": false,
+    "remainingEntriesStatus": "not_yet_adjudicated_not_nonresponse",
+    "comparisonBoundary": "Collective responses, referrals, existing programs and final preamble commitments are distinct from full request adoption, operative clause changes, implementation and individual influence. Shared references do not create independent policy events.",
+    "unreviewedAnalysis": "No whole-docket nonresponse inference. Detailed RIA calculations, grant instruments, underlying NEVI/charger standards, strategy schedule and post-rule implementation are not independently compared here. Other letter entries and independent coding review remain open."
+  },
+  "reviewFingerprint": "db50fe03e15ef0f6061672675d8b13a3feebcbe595c4d851ddd5f969bd07ee1c"
+}
