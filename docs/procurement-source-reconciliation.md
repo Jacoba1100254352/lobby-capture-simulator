@@ -841,15 +841,50 @@ The April 2024 file's metadata describes an active-exclusions monthly file,
 but its displayed modification date is May 1, 2026. The historical filename
 alone therefore does not establish an unchanged contemporaneous snapshot.
 
-Selecting the README opened a Terms of Use acceptance dialog. No terms were
-accepted, no login was attempted and no README/archive contents were obtained.
-User review and file provision were requested. Next, inspect the README's
-meaning of `MODIFIED`, original snapshot dates, deletions/revisions and field
-definitions before extracting any firm-level UEI intervals. Restrict acquisition
-to public files and keep any restricted-source material out of the repository.
+Selecting the README initially opened a Terms of Use acceptance dialog. On
+September 13, after explicit user acceptance, the browser's Accept control was
+activated. The signed-out attempt returned to the archive listing without an
+inspectable file; a second attempt produced no download event within fifteen
+seconds. The subsequent sign-in route reached Login.gov, where authentication
+remains pending. These observations establish neither a downloaded README nor
+the cause of the failed delivery. The terms approval is resolved; obtaining the
+files is still open. Next, inspect the README's meaning of `MODIFIED`, original
+snapshot dates, deletions/revisions and field definitions before extracting any
+firm-level UEI intervals. Restrict acquisition to public files and keep any
+restricted-source material out of the repository.
 Snapshots at a few dates cannot establish continuous exclusion status between
 those dates or non-exclusion throughout FY2024. This archive is a concrete
 acquisition lead, not a promoted historical exclusion overlay.
+
+### Public extract layout obtained independently
+
+GSA's [Extracts Download API documentation](https://open.gsa.gov/api/sam-entity-extracts-api/)
+provides a separate authenticated download route. Public downloads require an
+eligible account and API key. Its `fileName` selector must be used without other
+file-selection parameters. This documents a possible route; it does not prove
+that the historical `MODIFIED` filenames or README are available through it.
+The documented daily exclusions extracts contain currently active records.
+
+The linked [public V2 layout](https://open.gsa.gov/api/sam-entity-extracts-api/v1/SAM_Exclusions_Public_Extract_Layout_V2.pdf)
+was obtained September 13 and both pages inspected. Its footer identifies version
+1.5, April 16, 2026. The 171,367-byte PDF has SHA-256
+`b5d9aedcf81398bef1e3499af5cd30b31676966183c2929bdc93a94272775965`.
+Relevant columns are:
+
+| Column | Field | Linkage interpretation |
+| --- | --- | --- |
+| 16 | Open Data Flag | Provider provenance for business name/address; retain before reuse. |
+| 17 / 18 | Deprecated blank / Unique Entity ID | Preserve the empty position; UEI is the separate entity identifier. |
+| 24 / 31 | Active Date / Creation Date | Exclusion activation and creation in SAM are distinct dates. |
+| 25 | Termination Date | Scheduled termination, or `Indefinite` when no date is set. |
+| 26 | Record Status | Intentionally blank because this extract contains only active records. |
+| 28 | SAM Number | Internal exclusion-record identifier, distinct from UEI. |
+
+These definitions apply to this documented layout. They do not validate an
+unread historical file's schema, revisions or coverage. A scheduled termination
+is not proof of an observed termination. Neither the blank status nor a missing
+match establishes historical non-exclusion. Preserve raw values and source
+version before deriving status or intervals.
 
 ## Remaining empirical work
 
