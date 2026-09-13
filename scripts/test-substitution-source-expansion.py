@@ -22,6 +22,135 @@ FEC = load("fec_expansion", "fetch-substitution-fec-reports.py")
 LDA = load("lda_expansion", "build-substitution-historical-lda-panel.py")
 PERIODS = load("fec_periods", "prepare-substitution-fec-periods.py")
 AUDIT = load("source_measurement_audit", "audit-empirical-expansion.py")
+FAMILIES = load("lda_families", "review-substitution-lda-families.py")
+
+
+class LDAFamilyReviewTests(unittest.TestCase):
+    def setUp(self):
+        self.metadata = AUDIT.read("substitution-lda-filing-metadata.csv")
+        self.source = json.loads(FAMILIES.SOURCE.read_text())
+        self.cover = json.loads((AUDIT.DATA / "substitution-lda-date-reviews.json").read_text())
+
+    def check(self, refresh=True):
+        if refresh:
+            self.source["reviewFingerprint"] = FAMILIES.fingerprint(
+                {k: v for k, v in self.source.items() if k != "reviewFingerprint"})
+        return FAMILIES.validate_review(self.metadata, self.source, self.cover)
+
+    def test_complete_candidate_queue_preserves_source_and_no_final_version(self):
+        before = deepcopy(self.metadata)
+        queue, result = self.check(refresh=False)
+        self.assertEqual(queue, AUDIT.read("substitution-lda-family-queue.csv"))
+        expected = dict(candidateGroups=364, multiRecordGroups=22, multiRecordFilings=46,
+                        groupsWithoutAmendmentLabel=10, groupsWithDifferentSourceAmounts=8,
+                        groupsWithPostingTies=3, groupsWithLatestMissingEarlierAmount=2,
+                        groupsWithNoActivityNonzero=1, singletonAmendmentGroups=1,
+                        apgaQueriedApiFilings=2, nvgQueryReturnedFilings=14, identityApiFilingsChecked=2,
+                        reviewedDistinctImages=7, apgaReviewedDistinctImages=5, energyAgencyMismatches=2,
+                        sourceReviewedGroups=2, identityReviewedCovers=2, differentClientCovers=1,
+                        registrationSuffixDiscrepancies=1, unlabelledAmendedCovers=1,
+                        finalVersionsSelected=0)
+        for key, value in expected.items():
+            self.assertEqual(result[key], value, key)
+        self.assertEqual(self.metadata, before)
+        self.assertEqual(sum(r["reviewStatus"] == "source_identity_conflict_not_mergeable" for r in queue), 1)
+
+    def test_stale_review_or_source_metadata_fails(self):
+        self.source["codingNotes"] += " changed"
+        with self.assertRaisesRegex(ValueError, "Stale"):
+            self.check(refresh=False)
+        self.metadata[0]["incomeDollars"] = "0.00"
+        with self.assertRaisesRegex(ValueError, "Stale filing"):
+            self.check()
+
+    def test_duplicate_metadata_and_missing_catalog_code_fail(self):
+        with self.assertRaisesRegex(ValueError, "duplicate"):
+            FAMILIES.candidate_queue(self.metadata + [self.metadata[0]], self.source["filingTypeCatalog"]["entries"])
+        with self.assertRaisesRegex(ValueError, "catalog"):
+            FAMILIES.candidate_queue(self.metadata, [r for r in self.source["filingTypeCatalog"]["entries"] if r["value"] != "MM"])
+
+    def test_query_cannot_hide_pagination_or_drop_a_filing(self):
+        original = deepcopy(self.source)
+        for field, value in (("count", 3), ("next", "https://lda.gov/api/v1/filings/?page=2"),
+                             ("records", self.source["query"]["records"][:1]),
+                             ("url", "https://lda.gov/api/v1/filings/?registrant_id=74077")):
+            self.source = deepcopy(original)
+            self.source["query"][field] = value
+            with self.subTest(field=field), self.assertRaises(ValueError):
+                self.check()
+
+    def test_missing_amendment_amount_is_not_zero_or_original_amount(self):
+        original = deepcopy(self.source)
+        for value in ("0.00", "100000.00"):
+            self.source = deepcopy(original)
+            amended = next(r for r in self.source["query"]["records"] if r["filing_type"] == "MA")
+            amended["expenses"] = value
+            with self.subTest(value=value), self.assertRaisesRegex(ValueError, "projection"):
+                self.check()
+
+    def test_duplicate_pdf_pages_are_not_independent_images(self):
+        self.source["documents"][1]["images"][0]["pdfPages"] = [1]
+        with self.assertRaisesRegex(ValueError, "coverage"):
+            self.check()
+
+    def test_issue_page_cannot_be_called_a_financial_cover(self):
+        self.source["documents"][1]["images"][0]["kind"] = "cover"
+        with self.assertRaisesRegex(ValueError, "Financial cover"):
+            self.check()
+
+    def test_energy_pair_retains_scan_identity_and_blank_to_filled_field(self):
+        original = deepcopy(self.source)
+        for field, value in (("underlyingScanIdentifier", "00000232929"), ("lobbyists", []),
+                             ("receiptTimezone", "America/New_York"), ("financialAmountFieldsPresent", True)):
+            self.source = deepcopy(original)
+            self.source["documents"][1]["images"][0][field] = value
+            with self.subTest(field=field), self.assertRaises(ValueError):
+                self.check()
+
+    def test_api_contact_mismatch_is_not_silently_repaired(self):
+        original = deepcopy(self.source)
+        self.source["query"]["records"][0]["activities"][0]["governmentEntities"][-1]["name"] = "Federal Energy Regulatory Commission"
+        with self.assertRaisesRegex(ValueError, "discrepancies"):
+            self.check()
+        self.source = original
+        self.source["query"]["records"][0]["activities"][0]["lobbyists"] = []
+        with self.assertRaisesRegex(ValueError, "lobbyist"):
+            self.check()
+
+    def test_family_review_does_not_clear_spending_exposure_or_causality(self):
+        original = deepcopy(self.source)
+        for key, value in (("historicalPacketComplete", True), ("finalAmountDollars", "100000.00"),
+                           ("selectedFinalFilingUuid", "50ca0707-6dc1-43a0-9115-89ba56ffd0c7"),
+                           ("agencyExposureCleared", True), ("controlAssignmentCleared", True),
+                           ("causalEffect", "identified")):
+            self.source = deepcopy(original)
+            self.source["boundary"][key] = value
+            with self.subTest(key=key), self.assertRaisesRegex(ValueError, "promotion"):
+                self.check()
+
+    def test_independent_review_cannot_be_self_declared_complete(self):
+        self.source["independentReviewStatus"] = "complete"
+        with self.assertRaises(ValueError):
+            self.check()
+
+    def test_different_client_is_not_a_mergeable_aaj_version(self):
+        original = deepcopy(self.source)
+        for field, value in (("clientName", "AMERICAN ASSOCIATION FOR JUSTICE"),
+                             ("senateId", "76833-113"), ("amendmentBoxChecked", True)):
+            self.source = deepcopy(original)
+            self.source["identityReviews"][1]["form"][field] = value
+            with self.subTest(field=field), self.assertRaises(ValueError):
+                self.check()
+
+    def test_identity_query_cannot_promote_all_returned_filings(self):
+        self.source["identityQuery"]["selectedMetadata"].append(deepcopy(self.source["identityQuery"]["selectedMetadata"][0]))
+        with self.assertRaisesRegex(ValueError, "query scope"):
+            self.check()
+
+    def test_identity_conflicts_cannot_be_silently_corrected(self):
+        self.source["identityReviews"][0]["rawRecordCorrected"] = True
+        with self.assertRaisesRegex(ValueError, "promotion"):
+            self.check()
 
 
 class LDADateReviewTests(unittest.TestCase):

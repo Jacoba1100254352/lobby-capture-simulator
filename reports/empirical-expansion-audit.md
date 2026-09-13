@@ -4,11 +4,11 @@ Current committed source products; no causal-calibration promotion.
 
 ## expanded-lda-history
 
-Status: `source_only`
+Status: `api_attribution_identity_unresolved`
 
 issueRows=1119; filingUUIDs=427; actors=6; years=2003,2004,2005,2006,2007,2008; observedPrePeriodsByActor=cand-372cc95f9387:9;cand-5d1da86118e5:9;cand-9948f2974958:9;cand-b905d6833296:9;cand-d5522e62fad7:9;cand-f7178708cc78:9
 
-Remaining: Validate amendments and exact actor identities; pre-period counts are native reporting periods, not independent quarters or proof of completeness.
+Remaining: Counts reflect source/API attribution, not validated actor histories. A reviewed NVG cover names America Votes despite API attribution to AAJ; that filing is ineligible for AAJ attribution, and the remaining NVG history needs review. Validate amendments and exact identities; pre-period counts are native reporting periods, not independent quarters or proof of completeness.
 
 ## lda-posting-date-anomaly
 
@@ -25,6 +25,14 @@ Status: `source_measures_not_comparable_totals`
 filings=427; amountKinds={'income': 267, 'neither': 71, 'expenses': 89}; expenseMethodMissing=63; sourceZeroFilings=25; incomeExpenseOverlapActorPeriods=74; aliasFilings=15; reviewedForms=2; reviewedExpenseMethods={'C': 1, 'A': 1}
 
 Remaining: Do not add organizational expenses to retained-firm income. Missing API accounting methods need original-form review; the reviewed Method A and Method C reports use different outcome definitions. Reviewed aliases restore only a specified registration, not exhaustive organization coverage. Null amounts remain blank. The separate date-review ledger codes one source zero as censored income; other source zeros remain unadjudicated. No actor spending total or matched control is validated by these checks.
+
+## lda-filing-family-review
+
+Status: `partial_field_review_not_final_versions`
+
+sourceFilings=427; registrationRecordsExcluded=39; candidateGroups=364; multiRecordGroups=22; singletonAmendmentGroups=1; multiRecordFilings=46; groupsWithoutAmendmentLabel=10; groupsWithDifferentSourceAmounts=8; groupsWithPostingTies=3; groupsWithLatestMissingEarlierAmount=2; groupsWithNoActivityNonzero=1; sourceReviewedGroups=2; apgaQueriedApiFilings=2; nvgQueryReturnedFilings=14; identityApiFilingsChecked=2; apgaReviewedDistinctImages=5; reviewedDistinctImages=7; energyAgencyMismatches=2; identityReviewedCovers=2; differentClientCovers=1; registrationSuffixDiscrepancies=1; unlabelledAmendedCovers=1; finalVersionsSelected=0; causalEffect=not_identified
+
+Remaining: The 22 multi-record groups are candidates, not complete families. APGA's amendment download has one issue image and no financial cover; both scanned ENG pages name FERC, unlike their API contact lists. A separate NVG cover pair identifies ATLA and America Votes although the API assigns both to AAJ. That candidate group is not mergeable; the America Votes filing is not eligible for AAJ attribution. The ATLA cover has a different registration suffix and a checked amendment box absent from the API type. Source indexing, the remaining NVG history, historical packet completeness and independent review remain unresolved. No final amount, whole-record replacement, corrected raw record, agency exposure or control assignment is promoted.
 
 ## alternate-channel-reports
 

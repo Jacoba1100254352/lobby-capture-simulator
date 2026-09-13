@@ -8,7 +8,7 @@ Updated 2026-09-12. Status: expanded sources, identification unresolved.
 and six candidate actors over 2003-2008. The acquisition queried eight
 canonical actors; two had no exact-name rows. A reviewed, registration-specific
 AdvaMed name variant restores fifteen filings omitted by the earlier exact-name
-query, retaining all 412 previously acquired filings. All six observed actors now
+query, retaining all 412 previously acquired filings. All six API-attributed candidates now
 have nine distinct pre-enactment reporting periods after excluding registration
 forms. These are chiefly semiannual periods, not independent quarters. A split of
 a semiannual amount cannot add pre-trend information. The original 2007-2008
@@ -103,6 +103,113 @@ filing families and methods before constructing comparable actor-period totals.
 No receipt date repairs treatment exposure, and no matched registration supplies
 a valid untreated control. Independent review and source-date explanations
 remain unresolved.
+
+### Candidate version families and the APGA partial amendment
+
+`substitution-lda-family-queue.csv` inventories all **22 multi-record groups**
+within the frozen acquisition: 46 filings grouped by registrant ID, client
+relationship component, year and native period. Excluding 39 registration
+records leaves 388 report records in 364 candidate groups. This is not a census
+of complete historical version families; even singleton groups can have missing
+versions, and one singleton is itself labeled an amendment. Ten multi-record
+groups have no amendment-labeled filing. A repeated group is therefore neither
+an automatic duplicate nor necessarily an original/amendment pair.
+
+The reproducible queue flags eight groups with different nonmissing source
+amounts, three with tied posting timestamps, two where the latest timestamp has
+no amount although another record has one, and one with a nonzero amount on a
+record labeled No Activity. These are overlapping review flags, not mutually
+exclusive classes or verified source errors. Different decimal representations
+of the same numeric amount are not counted as different amounts. Income and
+expenses remain separate measures. A no-activity label is not a rule for setting
+income to zero, and neither the latest posting nor an amount match selects a
+final version. The other 20 multi-record groups remain unreviewed at source-page
+level by this new family product.
+
+The separately selected APGA 2003H1 group has a terminal [official API query](https://lda.gov/api/v1/filings/?registrant_id=74077&filing_year=2003&filing_period=mid_year&page_size=100)
+with two unique records and no next page. Both reproduce every frozen metadata
+field and identify registration 74077-12 and client API ID 167305. This verifies
+the query scope, not all aliases or the completeness of original paper packets.
+The [original report](https://lda.gov/filings/public/filing/9bd361f7-98e7-46a9-90cd-267ace5ca84c/print/)
+contains four distinct embedded images, each repeated on two PDF pages: cover,
+TAX activity, ENG activity and information update. Its update page removes TRA
+from previously reported issues; that is not another current activity page.
+The [amendment download](https://lda.gov/filings/public/filing/50ca0707-6dc1-43a0-9115-89ba56ffd0c7/print/)
+contains only one distinct ENG issue image, also repeated on two PDF pages.
+Its fax/image pagination refers to a larger sequence. No financial cover is
+present in that download, but these observations do not prove which additional
+pages were filed or how omitted financial fields should inherit values.
+
+| Reviewed field | Original ENG image, PDF 5/6 | Amendment ENG image, PDF 1/2 | API representation |
+| --- | --- | --- | --- |
+| Contacted bodies | House, Senate, FERC | Same three bodies | Original: House, Senate, Treasury; amendment: House and Senate only |
+| Field 18 lobbyist list | Blank | Handwritten Bert Kalisch | Both already name Bert Kalisch |
+| Signature date | July 21, 2003 | July 21, 2003 | API posting dates are different fields, not signature dates |
+| Financial amount fields | Not on this issue page | Not on this issue page | Original expense 100000.00; amendment income and expenses null |
+
+The amendment retains the original ENG scan number 00000232930 beneath the
+later scan number 00000480590. Its receipt stamp is February 24, 2004 at 9:33 AM
+without an explicit timezone. Matching issue text, contacts and the older scan
+number support a field-specific comparison. They do not establish that filling
+the lobbyist field was the only intended amendment. In particular the original
+TAX page, on PDF 3/4, is not the corresponding ENG page.
+
+`substitution-lda-family-review.json` retains the minimal public query projection,
+official filing-type catalog, original PDF and full-image hashes, page/object
+map, transcription and explicit unresolved decisions. Agency names use obvious
+API-label equivalents for comparison, with literal source text retained. Both
+ENG contact lists differ from their scanned pages; the cause of the discrepancy
+is unknown. The API should not be assumed to preserve the original-versus-amended
+field history or provide faithful agency exposure without source validation.
+
+#### NVG: a candidate group contains different clients
+
+The next amount-conflict/posting-tie pair supplies a counterexample to treating
+the API grouping as a real financial-version family. The frozen records and a
+fresh [NVG 2005H2 API query](https://lda.gov/api/v1/filings/?registrant_id=76833&filing_year=2005&filing_period=year_end&page_size=100)
+assign both selected UUIDs to AAJ, client API ID 169036, relationship 330 and
+type YY, with the same February 8, 2006 posting date. The query returns fourteen
+records on one terminal page; only these two covers are reviewed here.
+
+| Selected source cover | Client named on the cover | Full Senate ID | Amendment box | Income disclosure |
+| --- | --- | --- | --- | --- |
+| [b53db4eb](https://lda.gov/filings/public/filing/b53db4eb-a3e2-465a-91b4-51e10da90408/print/) | Association of Trial Lawyers of America | 76833-113 | Checked | $100,000, threshold box checked |
+| [cda90ce4](https://lda.gov/filings/public/filing/cda90ce4-487d-415a-98d9-535be41f6b94/print/) | America Votes | 76833-330 | Unchecked | $60,000, threshold boxes appear unchecked |
+
+Both covers name Nueva Vista Group, LLC and House ID 35960005. The ATLA name
+is consistent with AAJ's historical name, but its suffix 113 and checked
+amendment box differ from the API representation. The America Votes cover
+matches suffix 330 but identifies a different client, so it is **not eligible
+for AAJ attribution**. This pair must not be merged as alternative spending
+versions of one AAJ client-period. The queue marks it
+`source_identity_conflict_not_mergeable`; no replacement identity or final
+amount has been written into the frozen source records.
+
+Each PDF has six rendered pages containing three repeated image objects.
+This identity review covers the full embedded cover only, not its other pages.
+Both have a handwritten February 8, 2006 received date and a July 5, 2006 fax
+header; those dates are preserved separately and do not order amendments.
+The source JSON retains both PDF/cover hashes, the complete query UUID inventory
+and the two exact metadata projections. The remaining twelve queried records
+and other NVG history are not cleared. The frozen acquisition contains 21 NVG
+records including registrations; the full historical client mapping needs
+review before using these rows for actor-level outcomes. The source-indexing
+cause is unknown, and independent review remains pending.
+
+The opened [House amendment guidance](https://lobbyingdisclosure.house.gov/help/WordDocuments/activityreportamendments.htm)
+addresses filing defects and errors or omissions, but its viewed paragraph does
+not resolve field inheritance for this 2003 paper record. The linked archived
+semiannual form returned 404. Rules for personal financial-disclosure amendments
+belong to a different reporting system and have not been imported here.
+
+**Assessment: share with caveats as source-quality findings.** The APGA original
+$100,000 remains an original-filing disclosure, not an adjudicated final
+organization-period amount. The amendment's nulls remain null; no whole-record
+replacement, final spending value, agency exposure or control assignment is
+selected. The high-risk gaps are historical packet/field inheritance and API
+field fidelity, with independent review still pending. Reproduce the queue with
+`python3 scripts/review-substitution-lda-families.py`; the companion notebook
+checks its full membership, source fingerprints, flags and no-promotion boundary.
 
 ### Restored registration and incompatible spending measures
 
@@ -272,7 +379,7 @@ these amount, missingness and date issues.
    aggregating complete 2008 quarterly/monthly reports upward. Seek at least four
    years of genuinely observed pre-period history and multiple pre-event placebo
    windows. The new 2003-2007H1 acquisition meets an eight-half-year source-depth
-   target for all six observed LDA actors and three PAC series after the scoped
+   target for all six API-attributed LDA candidates and three PAC series after the scoped
    AdvaMed alias restoration. This does not establish comparable controls, complete
    historical identity coverage, or a causal design. Treat the reform-straddling
    half-year separately.

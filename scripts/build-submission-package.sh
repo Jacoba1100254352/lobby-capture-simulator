@@ -123,6 +123,8 @@ for source_product in \
   substitution-lda-filing-metadata.csv \
   substitution-lda-filing-reviews.csv \
   substitution-lda-date-reviews.json \
+  substitution-lda-family-review.json \
+  substitution-lda-family-queue.csv \
   substitution-fec-report-panel.csv \
   substitution-fec-affiliation-history.csv \
   substitution-fec-acquisition-cohort.csv \

@@ -1,0 +1,654 @@
+{
+  "schema": "substitution-lda-family-review-v1",
+  "reviewDate": "2026-09-12",
+  "reviewer": "codex-source-review",
+  "independentReviewStatus": "pending",
+  "selection": "One APGA registration-period group selected because its original posting date is anomalous and a candidate amendment has missing amounts. The companion queue covers all multi-record groups in the frozen acquisition, not all actual historical filing families.",
+  "baselineMetadataSha256": "4a5e5e187c24c35a4808deee2339f84ee9f276e9c20e045734d6f9f7d5f97f03",
+  "originalCoverReviewFingerprint": "3f193a30e30ef66fd9e0d739b73602c35853671efe15f510699b0c2ded8dd3f1",
+  "filingTypeCatalog": {
+    "url": "https://lda.gov/api/v1/constants/filing/filingtypes/",
+    "responseSha256": "49fbd39383b0be63fb474878aa229d4e397880a30c2e0dac1a0905bc660a3149",
+    "entries": [
+      {
+        "value": "RR",
+        "name": "Registration"
+      },
+      {
+        "value": "RA",
+        "name": "Registration - Amendment"
+      },
+      {
+        "value": "Q1",
+        "name": "1st Quarter - Report"
+      },
+      {
+        "value": "Q1Y",
+        "name": "1st Quarter - Report (No Activity)"
+      },
+      {
+        "value": "1T",
+        "name": "1st Quarter - Termination"
+      },
+      {
+        "value": "1TY",
+        "name": "1st Quarter - Termination (No Activity)"
+      },
+      {
+        "value": "1A",
+        "name": "1st Quarter - Amendment"
+      },
+      {
+        "value": "1AY",
+        "name": "1st Quarter - Amendment (No Activity)"
+      },
+      {
+        "value": "1@",
+        "name": "1st Quarter - Termination Amendment"
+      },
+      {
+        "value": "1@Y",
+        "name": "1st Quarter - Termination Amendment (No Activity)"
+      },
+      {
+        "value": "Q2",
+        "name": "2nd Quarter - Report"
+      },
+      {
+        "value": "Q2Y",
+        "name": "2nd Quarter - Report (No Activity)"
+      },
+      {
+        "value": "2T",
+        "name": "2nd Quarter - Termination"
+      },
+      {
+        "value": "2TY",
+        "name": "2nd Quarter - Termination (No Activity)"
+      },
+      {
+        "value": "2A",
+        "name": "2nd Quarter - Amendment"
+      },
+      {
+        "value": "2AY",
+        "name": "2nd Quarter - Amendment (No Activity)"
+      },
+      {
+        "value": "2@",
+        "name": "2nd Quarter - Termination Amendment"
+      },
+      {
+        "value": "2@Y",
+        "name": "2nd Quarter - Termination Amendment (No Activity)"
+      },
+      {
+        "value": "Q3",
+        "name": "3rd Quarter - Report"
+      },
+      {
+        "value": "Q3Y",
+        "name": "3rd Quarter - Report (No Activity)"
+      },
+      {
+        "value": "3T",
+        "name": "3rd Quarter - Termination"
+      },
+      {
+        "value": "3TY",
+        "name": "3rd Quarter - Termination (No Activity)"
+      },
+      {
+        "value": "3A",
+        "name": "3rd Quarter - Amendment"
+      },
+      {
+        "value": "3AY",
+        "name": "3rd Quarter - Amendment (No Activity)"
+      },
+      {
+        "value": "3@",
+        "name": "3rd Quarter - Termination Amendment"
+      },
+      {
+        "value": "3@Y",
+        "name": "3rd Quarter - Termination Amendment (No Activity)"
+      },
+      {
+        "value": "Q4",
+        "name": "4th Quarter - Report"
+      },
+      {
+        "value": "Q4Y",
+        "name": "4th Quarter - Report (No Activity)"
+      },
+      {
+        "value": "4T",
+        "name": "4th Quarter - Termination"
+      },
+      {
+        "value": "4TY",
+        "name": "4th Quarter - Termination (No Activity)"
+      },
+      {
+        "value": "4A",
+        "name": "4th Quarter - Amendment"
+      },
+      {
+        "value": "4AY",
+        "name": "4th Quarter - Amendment (No Activity)"
+      },
+      {
+        "value": "4@",
+        "name": "4th Quarter - Termination Amendment"
+      },
+      {
+        "value": "4@Y",
+        "name": "4th Quarter - Termination Amendment (No Activity)"
+      },
+      {
+        "value": "MM",
+        "name": "Mid-Year Report"
+      },
+      {
+        "value": "MMY",
+        "name": "Mid-Year Report (No Activity)"
+      },
+      {
+        "value": "MT",
+        "name": "Mid-Year Termination"
+      },
+      {
+        "value": "MTY",
+        "name": "Mid-Year Termination (No Activity)"
+      },
+      {
+        "value": "MA",
+        "name": "Mid-Year Amendment"
+      },
+      {
+        "value": "MAY",
+        "name": "Mid-Year Amendment (No Activity)"
+      },
+      {
+        "value": "M@",
+        "name": "Mid-Year Termination Amendment"
+      },
+      {
+        "value": "M@Y",
+        "name": "Mid-Year Termination Amendment (No Activity)"
+      },
+      {
+        "value": "YY",
+        "name": "Year-End Report"
+      },
+      {
+        "value": "YYY",
+        "name": "Year-End Report (No Activity)"
+      },
+      {
+        "value": "YT",
+        "name": "Year-End Termination"
+      },
+      {
+        "value": "YTY",
+        "name": "Year-End Termination (No Activity)"
+      },
+      {
+        "value": "YA",
+        "name": "Year-End Amendment"
+      },
+      {
+        "value": "YAY",
+        "name": "Year-End Amendment (No Activity)"
+      },
+      {
+        "value": "Y@",
+        "name": "Year-End Termination Amendment"
+      },
+      {
+        "value": "Y@Y",
+        "name": "Year-End Termination Amendment (No Activity)"
+      }
+    ],
+    "scope": "Current official code labels, not proof of historical no-activity semantics or permission to turn missing amounts into zero."
+  },
+  "query": {
+    "url": "https://lda.gov/api/v1/filings/?registrant_id=74077&filing_year=2003&filing_period=mid_year&page_size=100",
+    "responseSha256": "83bb9c0d92c235cb5838f7028fdd72c9f3901ee9772ada7c102afd8342f73d09",
+    "count": 2,
+    "next": null,
+    "previous": null,
+    "scope": "One terminal API page for this registrant/year/native period; both returned client identities match relationship 12 and client API ID 167305. Not an exhaustive alias search, independent archive, or complete original packet.",
+    "records": [
+      {
+        "filing_uuid": "9bd361f7-98e7-46a9-90cd-267ace5ca84c",
+        "filing_type": "MM",
+        "filing_type_display": "Mid-Year Report",
+        "filing_year": 2003,
+        "filing_period": "mid_year",
+        "dt_posted": "2002-08-29T00:00:00-04:00",
+        "income": null,
+        "expenses": "100000.00",
+        "expenses_method": null,
+        "termination_date": null,
+        "registrant": {
+          "id": 74077,
+          "name": "THE AMERICAN PUBLIC GAS ASSOCIATION"
+        },
+        "client": {
+          "id": 167305,
+          "client_id": 12,
+          "name": "AMERICAN PUBLIC GAS ASSOCIATION"
+        },
+        "activities": [
+          {
+            "issueCode": "ENG",
+            "description": null,
+            "governmentEntities": [
+              {
+                "id": 2,
+                "name": "HOUSE OF REPRESENTATIVES"
+              },
+              {
+                "id": 1,
+                "name": "SENATE"
+              },
+              {
+                "id": 41,
+                "name": "Treasury, Dept of"
+              }
+            ],
+            "lobbyists": [
+              {
+                "id": 20238,
+                "first_name": "BERT",
+                "last_name": "KALISCH"
+              }
+            ]
+          },
+          {
+            "issueCode": "TAX",
+            "description": null,
+            "governmentEntities": [
+              {
+                "id": 2,
+                "name": "HOUSE OF REPRESENTATIVES"
+              },
+              {
+                "id": 1,
+                "name": "SENATE"
+              },
+              {
+                "id": 41,
+                "name": "Treasury, Dept of"
+              }
+            ],
+            "lobbyists": [
+              {
+                "id": 20238,
+                "first_name": "BERT",
+                "last_name": "KALISCH"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "filing_uuid": "50ca0707-6dc1-43a0-9115-89ba56ffd0c7",
+        "filing_type": "MA",
+        "filing_type_display": "Mid-Year Amendment",
+        "filing_year": 2003,
+        "filing_period": "mid_year",
+        "dt_posted": "2004-02-24T00:00:00-05:00",
+        "income": null,
+        "expenses": null,
+        "expenses_method": null,
+        "termination_date": null,
+        "registrant": {
+          "id": 74077,
+          "name": "THE AMERICAN PUBLIC GAS ASSOCIATION"
+        },
+        "client": {
+          "id": 167305,
+          "client_id": 12,
+          "name": "AMERICAN PUBLIC GAS ASSOCIATION"
+        },
+        "activities": [
+          {
+            "issueCode": "ENG",
+            "description": null,
+            "governmentEntities": [
+              {
+                "id": 2,
+                "name": "HOUSE OF REPRESENTATIVES"
+              },
+              {
+                "id": 1,
+                "name": "SENATE"
+              }
+            ],
+            "lobbyists": [
+              {
+                "id": 20238,
+                "first_name": "BERT",
+                "last_name": "KALISCH"
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "documents": [
+    {
+      "filingUuid": "9bd361f7-98e7-46a9-90cd-267ace5ca84c",
+      "url": "https://lda.gov/filings/public/filing/9bd361f7-98e7-46a9-90cd-267ace5ca84c/print/",
+      "pdfSha256": "5876918d52e8da439ded25ff9ff7929e8c110edf06ff67a39c04a4f94d8d5367",
+      "pdfPages": 8,
+      "images": [
+        {
+          "imageId": "original-cover",
+          "pngSha256": "236c4c3bca999d84414905eb3c4c766a5fb8e403ca6b4a1201558055ab282f11",
+          "pdfPages": [
+            1,
+            2
+          ],
+          "objectId": "6 0",
+          "scanIdentifier": "00000232928",
+          "kind": "cover",
+          "width": 1696,
+          "height": 2200,
+          "printedPage": "1 of 4"
+        },
+        {
+          "imageId": "original-tax",
+          "pngSha256": "9732fb20d76176e8bc0b2641e1a0d13e8430e8b837875687e50666cfa2688ffd",
+          "pdfPages": [
+            3,
+            4
+          ],
+          "objectId": "19 0",
+          "scanIdentifier": "00000232929",
+          "kind": "activity",
+          "width": 1696,
+          "height": 2200,
+          "printedPage": "2 of 4",
+          "issueCode": "TAX",
+          "specificIssue": "Use of tax-exempt debt to purchase secure, long-term contracts for the delivery of natural gas",
+          "governmentEntities": [
+            "HOUSE OF REPRESENTATIVES",
+            "SENATE",
+            "Treasury, Dept of"
+          ],
+          "governmentEntitiesText": "House, Senate, and U.S. Department of Treasury",
+          "lobbyists": [
+            "Bert Kalisch"
+          ],
+          "signatureDate": "2003-07-21",
+          "financialAmountFieldsPresent": false
+        },
+        {
+          "imageId": "original-energy",
+          "pngSha256": "e71eb9db8e6a074e03f99de4f8a445284b54e220a7d958a9e01e80167b6283d6",
+          "pdfPages": [
+            5,
+            6
+          ],
+          "objectId": "31 0",
+          "scanIdentifier": "00000232930",
+          "kind": "activity",
+          "width": 1696,
+          "height": 2200,
+          "printedPage": "3 of 4",
+          "lobbyists": [],
+          "issueCode": "ENG",
+          "specificIssue": "Natural gas production and use",
+          "governmentEntities": [
+            "HOUSE OF REPRESENTATIVES",
+            "SENATE",
+            "Federal Energy Regulatory Commission"
+          ],
+          "governmentEntitiesText": "House, Senate, and the Federal Energy Regulatory Commission",
+          "signatureDate": "2003-07-21",
+          "financialAmountFieldsPresent": false
+        },
+        {
+          "imageId": "original-update",
+          "pngSha256": "3a123fe4de1f108a6cfcd94e3578ed1af338f851dcf13da7710c6868d29bb20f",
+          "pdfPages": [
+            7,
+            8
+          ],
+          "objectId": "43 0",
+          "scanIdentifier": "00000232931",
+          "kind": "information_update",
+          "width": 1696,
+          "height": 2200,
+          "printedPage": "4 of 4",
+          "removedIssueCodes": [
+            "TRA"
+          ],
+          "signatureDate": "2003-07-21",
+          "financialAmountFieldsPresent": false
+        }
+      ]
+    },
+    {
+      "filingUuid": "50ca0707-6dc1-43a0-9115-89ba56ffd0c7",
+      "url": "https://lda.gov/filings/public/filing/50ca0707-6dc1-43a0-9115-89ba56ffd0c7/print/",
+      "pdfSha256": "162b775f1d26c6d829c3b475437469a17f76d1a001cab405833f1f1e1426433b",
+      "pdfPages": 2,
+      "images": [
+        {
+          "imageId": "amendment-energy",
+          "pngSha256": "1c77337c3382b5f12588d3b90f7692073d7ac52211bee94a5b4fad4fae7eb17a",
+          "pdfPages": [
+            1,
+            2
+          ],
+          "objectId": "6 0",
+          "scanIdentifier": "00000480590",
+          "kind": "activity",
+          "width": 1696,
+          "height": 2200,
+          "printedPage": "Filing Images Page 2 of 3; fax p.2",
+          "underlyingScanIdentifier": "00000232930",
+          "handwrittenReference": "03 MY AMD-74077-12",
+          "lobbyists": [
+            "Bert Kalisch"
+          ],
+          "receiptStamp": "04 FEB 24 AM 9:33",
+          "receiptDate": "2004-02-24",
+          "receiptTimezone": "not_stated",
+          "issueCode": "ENG",
+          "specificIssue": "Natural gas production and use",
+          "governmentEntities": [
+            "HOUSE OF REPRESENTATIVES",
+            "SENATE",
+            "Federal Energy Regulatory Commission"
+          ],
+          "governmentEntitiesText": "House, Senate, and the Federal Energy Regulatory Commission",
+          "signatureDate": "2003-07-21",
+          "financialAmountFieldsPresent": false
+        }
+      ]
+    }
+  ],
+  "codingNotes": "All five distinct embedded images were visually reviewed across the date-review and family-review increments. PDF duplicate pages share image objects. Agency names are matched to obvious API label equivalents, with literal source text retained; no activity or spending is inferred from the removed TRA code. API original ENG already names Bert Kalisch although the original ENG image field 18 is blank. Amendment ENG handwriting fills that field, but the entire intended amendment cannot be inferred from one available page. Both API ENG agency lists fail to reproduce the FERC contact on both scans.",
+  "amendmentGuidance": {
+    "url": "https://lobbyingdisclosure.house.gov/help/WordDocuments/activityreportamendments.htm",
+    "interpretation": "The opened House manual says to amend upon defects or discovered errors/omissions and use the original filing format. Its viewed paragraph does not establish field inheritance for this 2003 paper filing. The archived semiannual form link returned 404. No financial-disclosure-report amendment rule from the separate Ethics in Government Act system is imported."
+  },
+  "boundary": {
+    "historicalPacketComplete": false,
+    "finalAmountDollars": null,
+    "selectedFinalFilingUuid": null,
+    "rawMetadataUnchanged": true,
+    "agencyExposureCleared": false,
+    "controlAssignmentCleared": false,
+    "causalEffect": "not_identified",
+    "remainingRequirements": "Obtain applicable historical amendment instructions and any other packet pages before assigning a final amount or whole-record replacement. Review the other candidate groups and singleton amendment records, historical actor boundaries, comparable outcomes and pre-reform exposure. The original 100000.00 expense disclosure remains observed at original-filing grain, not adjudicated as final organization-period spending. Independent review remains pending."
+  },
+  "identityQuery": {
+    "url": "https://lda.gov/api/v1/filings/?registrant_id=76833&filing_year=2005&filing_period=year_end&page_size=100",
+    "responseSha256": "513e9b7c7b841232d7d13a1d9f10e0dc496c72ee3e324aebca7c14f613d2909a",
+    "count": 14,
+    "next": null,
+    "previous": null,
+    "returnedFilingUuids": [
+      "d1544158-54ec-4c85-9f31-46aa097bceb6",
+      "ee586a86-eba0-4520-9597-16f3d4d046a6",
+      "934f7dde-aab4-4336-a979-6e0312f21dc9",
+      "9c81d704-dc86-4e52-982d-870d612d8059",
+      "565dbe90-3d6c-4655-b300-ffd79923e5c4",
+      "1b0a1c0c-8cbb-43b9-86a4-19753366f46b",
+      "194eebc0-089b-47f0-ae03-4d1cf5de7093",
+      "b53db4eb-a3e2-465a-91b4-51e10da90408",
+      "cda90ce4-487d-415a-98d9-535be41f6b94",
+      "6e4030fa-3d7c-4a93-8877-a2f5804a1262",
+      "b1c9708c-1430-4ec9-ac47-1288e1f66519",
+      "7ad91586-b38b-46c6-8c8c-85c5cb3c128e",
+      "d284a960-b415-43d0-abed-d83612a6b172",
+      "d23bfd1a-2644-4957-abe0-5911376e4b97"
+    ],
+    "selectedMetadata": [
+      {
+        "canonicalActorId": "cand-f7178708cc78",
+        "primaryName": "AMERICAN ASSOCIATION FOR JUSTICE",
+        "filingUuid": "b53db4eb-a3e2-465a-91b4-51e10da90408",
+        "filingYear": "2005",
+        "filingPeriod": "year_end",
+        "filingType": "YY",
+        "periodStart": "2005-07-01",
+        "periodEnd": "2005-12-31",
+        "clientName": "AMERICAN ASSOCIATION FOR JUSTICE",
+        "clientApiId": "169036",
+        "clientRelationshipId": "330",
+        "registrantName": "NVG, LLC",
+        "registrantApiId": "76833",
+        "incomeDollars": "100000.00",
+        "expensesDollars": "",
+        "expensesMethod": "",
+        "expensesMethodDisplay": "",
+        "amountKind": "income",
+        "sameClientRegistrantName": "false",
+        "dtPosted": "2006-02-08T00:00:00-05:00",
+        "terminationDate": "",
+        "filingDocumentUrl": "https://lda.gov/filings/public/filing/b53db4eb-a3e2-465a-91b4-51e10da90408/print/",
+        "filingApiUrl": "https://lda.gov/api/v1/filings/b53db4eb-a3e2-465a-91b4-51e10da90408/",
+        "aliasReviewId": "",
+        "retrievedDate": "2026-09-12",
+        "sourceFingerprint": "254fe9354029fa5d858dbc169bfda5159e7054327b19213e96f1188e78aabcd3"
+      },
+      {
+        "canonicalActorId": "cand-f7178708cc78",
+        "primaryName": "AMERICAN ASSOCIATION FOR JUSTICE",
+        "filingUuid": "cda90ce4-487d-415a-98d9-535be41f6b94",
+        "filingYear": "2005",
+        "filingPeriod": "year_end",
+        "filingType": "YY",
+        "periodStart": "2005-07-01",
+        "periodEnd": "2005-12-31",
+        "clientName": "AMERICAN ASSOCIATION FOR JUSTICE",
+        "clientApiId": "169036",
+        "clientRelationshipId": "330",
+        "registrantName": "NVG, LLC",
+        "registrantApiId": "76833",
+        "incomeDollars": "60000.00",
+        "expensesDollars": "",
+        "expensesMethod": "",
+        "expensesMethodDisplay": "",
+        "amountKind": "income",
+        "sameClientRegistrantName": "false",
+        "dtPosted": "2006-02-08T00:00:00-05:00",
+        "terminationDate": "",
+        "filingDocumentUrl": "https://lda.gov/filings/public/filing/cda90ce4-487d-415a-98d9-535be41f6b94/print/",
+        "filingApiUrl": "https://lda.gov/api/v1/filings/cda90ce4-487d-415a-98d9-535be41f6b94/",
+        "aliasReviewId": "",
+        "retrievedDate": "2026-09-12",
+        "sourceFingerprint": "bac20ec5620120850d1a2d68d5910dfe9f636f9be5384ed487cf7b312b9f405a"
+      }
+    ],
+    "scope": "All 14 API-listed records in this query returned on one terminal page. Only two selected AAJ-attributed records were compared to their source covers. This does not clear the other 12 records or any historical client mapping."
+  },
+  "identityReviews": [
+    {
+      "filingUuid": "b53db4eb-a3e2-465a-91b4-51e10da90408",
+      "sourceFingerprint": "254fe9354029fa5d858dbc169bfda5159e7054327b19213e96f1188e78aabcd3",
+      "url": "https://lda.gov/filings/public/filing/b53db4eb-a3e2-465a-91b4-51e10da90408/print/",
+      "pdfSha256": "b7ac3cc960dac4783ec75003bc0152f91b313756603c87c547e13188a0e5d4ef",
+      "pngSha256": "98edb99b5eb799f04a126f0eea4c978c0669a12e8179c38d2183d27f4776c7ed",
+      "pdfPages": 6,
+      "coverPdfPages": [
+        1,
+        2
+      ],
+      "coverObjectId": "6 0",
+      "imageSize": [
+        1728,
+        2200
+      ],
+      "reviewScope": "full_embedded_cover_only",
+      "form": {
+        "registrantName": "Nueva Vista Group, LLC",
+        "houseId": "35960005",
+        "senateId": "76833-113",
+        "clientName": "Association of Trial Lawyers of America",
+        "clientSelf": false,
+        "year": 2005,
+        "period": "year_end",
+        "amendmentBoxChecked": true,
+        "incomeDollars": "100000.00",
+        "amountDisclosure": "at_least_threshold_rounded",
+        "receiptDate": "2006-02-08",
+        "receiptTimezone": "not_stated",
+        "faxDate": "2006-07-05"
+      },
+      "disposition": "historical_client_name_with_registration_and_type_conflicts",
+      "rawRecordCorrected": false,
+      "finalAmountSelected": false,
+      "independentReviewStatus": "pending",
+      "remainingRequirements": "The source API assigns both UUIDs to client 169036, relationship 330 and AAJ, but the two covers identify different clients/registration suffixes. Do not merge them as financial versions of one client-period. Resolve source indexing and the remaining NVG history before any actor reassignment or final amount. Separate handwritten received date from the later fax header; only covers have been reviewed."
+    },
+    {
+      "filingUuid": "cda90ce4-487d-415a-98d9-535be41f6b94",
+      "sourceFingerprint": "bac20ec5620120850d1a2d68d5910dfe9f636f9be5384ed487cf7b312b9f405a",
+      "url": "https://lda.gov/filings/public/filing/cda90ce4-487d-415a-98d9-535be41f6b94/print/",
+      "pdfSha256": "80dd92dd517ee5942534f3dca9ddcccba0925abbfb6834c810ffd4f29ebcd212",
+      "pngSha256": "154e3ee4f736489a5e3a6024fd283b26de60e2cf1c23e0d312a8a4d4d609bbba",
+      "pdfPages": 6,
+      "coverPdfPages": [
+        1,
+        2
+      ],
+      "coverObjectId": "6 0",
+      "imageSize": [
+        1728,
+        2200
+      ],
+      "reviewScope": "full_embedded_cover_only",
+      "form": {
+        "registrantName": "Nueva Vista Group, LLC",
+        "houseId": "35960005",
+        "senateId": "76833-330",
+        "clientName": "America Votes",
+        "clientSelf": false,
+        "year": 2005,
+        "period": "year_end",
+        "amendmentBoxChecked": false,
+        "incomeDollars": "60000.00",
+        "amountDisclosure": "numeric_amount_threshold_boxes_unchecked",
+        "receiptDate": "2006-02-08",
+        "receiptTimezone": "not_stated",
+        "faxDate": "2006-07-05"
+      },
+      "disposition": "different_client_not_eligible_for_aaj_attribution",
+      "rawRecordCorrected": false,
+      "finalAmountSelected": false,
+      "independentReviewStatus": "pending",
+      "remainingRequirements": "The source API assigns both UUIDs to client 169036, relationship 330 and AAJ, but the two covers identify different clients/registration suffixes. Do not merge them as financial versions of one client-period. Resolve source indexing and the remaining NVG history before any actor reassignment or final amount. Separate handwritten received date from the later fax header; only covers have been reviewed."
+    }
+  ],
+  "reviewFingerprint": "9e8701b1788f21ad606c608ddaee29eb1c9aa7c171eb307030daaae8b044be96"
+}

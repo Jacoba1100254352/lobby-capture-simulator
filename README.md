@@ -180,6 +180,16 @@ Two covers add filing-specific Method A observations, and one API zero represent
 below-threshold income rather than a point zero. Raw metadata is unchanged;
 filing-family ordering, comparable controls and independent review remain unresolved.
 
+The companion LDA family review now inventories all 22 multi-record candidate
+groups and traces one APGA original/amendment pair at field level. Its single
+available amendment image has no financial cover, and both API energy-contact
+lists differ from the scanned pages. The queue flags conflicting amounts,
+posting ties and missingness without choosing final versions or spending totals.
+A second reviewed pair contains ATLA and America Votes source covers despite
+both API records being attributed to AAJ; that candidate group is not mergeable,
+and the America Votes filing is ineligible for AAJ attribution.
+Run `make empirical-expansion-audit` to regenerate and verify these products.
+
 A separate [heavy-duty Phase 3 response pilot](docs/comment-response-document-pilot.md)
 links two agency-reproduced request excerpts to explicitly named responses:
 a Cummins clarification and disagreement with an Allison calculation-error claim.

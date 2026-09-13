@@ -29,6 +29,7 @@ procurement-bulk-frame-audit:
 empirical-expansion-audit:
 	python3 scripts/prepare-substitution-fec-periods.py
 	python3 scripts/audit-procurement-bulk-frame.py
+	python3 scripts/review-substitution-lda-families.py
 	python3 scripts/audit-empirical-expansion.py
 
 script-checks:

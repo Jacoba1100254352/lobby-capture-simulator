@@ -955,9 +955,9 @@ def audit():
     for row in filings.values():
         if row["filingType"] not in {"RA", "RR"} and row["periodEnd"] < "2007-09-14":
             periods[row["canonicalActorId"]].add((row["periodStart"], row["periodEnd"]))
-    add("expanded-lda-history", "source_only",
+    add("expanded-lda-history", "api_attribution_identity_unresolved",
         f"issueRows={len(lda)}; filingUUIDs={len(filings)}; actors={len(set(r['canonicalActorId'] for r in lda))}; years={','.join(sorted(set(r['filingYear'] for r in lda)))}; observedPrePeriodsByActor=" + ";".join(f"{a}:{len(p)}" for a,p in sorted(periods.items())),
-        "Validate amendments and exact actor identities; pre-period counts are native reporting periods, not independent quarters or proof of completeness.")
+        "Counts reflect source/API attribution, not validated actor histories. A reviewed NVG cover names America Votes despite API attribution to AAJ; that filing is ineligible for AAJ attribution, and the remaining NVG history needs review. Validate amendments and exact identities; pre-period counts are native reporting periods, not independent quarters or proof of completeness.")
     date_sources = json.loads((DATA / "substitution-lda-date-reviews.json").read_text(encoding="utf-8"))
     date_checks = lda_date_review_diagnostics(read("substitution-lda-filing-metadata.csv"), date_sources)
     add("lda-posting-date-anomaly", "source_reviewed_dates_not_orderable",
@@ -968,6 +968,16 @@ def audit():
     add("lda-measurement-comparability", "source_measures_not_comparable_totals",
         "; ".join(f"{key}={value}" for key, value in measurement.items()),
         "Do not add organizational expenses to retained-firm income. Missing API accounting methods need original-form review; the reviewed Method A and Method C reports use different outcome definitions. Reviewed aliases restore only a specified registration, not exhaustive organization coverage. Null amounts remain blank. The separate date-review ledger codes one source zero as censored income; other source zeros remain unadjudicated. No actor spending total or matched control is validated by these checks.")
+    spec = importlib.util.spec_from_file_location("lda_families", ROOT / "scripts/review-substitution-lda-families.py")
+    family_module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(family_module)
+    family_sources = json.loads((DATA / "substitution-lda-family-review.json").read_text())
+    family_queue, family_checks = family_module.validate_review(read("substitution-lda-filing-metadata.csv"), family_sources, date_sources)
+    if family_queue != read("substitution-lda-family-queue.csv"):
+        raise ValueError("LDA candidate-family queue is stale")
+    add("lda-filing-family-review", "partial_field_review_not_final_versions",
+        "; ".join(f"{key}={value}" for key, value in family_checks.items()),
+        "The 22 multi-record groups are candidates, not complete families. APGA's amendment download has one issue image and no financial cover; both scanned ENG pages name FERC, unlike their API contact lists. A separate NVG cover pair identifies ATLA and America Votes although the API assigns both to AAJ. That candidate group is not mergeable; the America Votes filing is not eligible for AAJ attribution. The ATLA cover has a different registration suffix and a checked amendment box absent from the API type. Source indexing, the remaining NVG history, historical packet completeness and independent review remain unresolved. No final amount, whole-record replacement, corrected raw record, agency exposure or control assignment is promoted.")
     fec = read("substitution-fec-report-panel.csv")
     histories = read("substitution-fec-affiliation-history.csv")
     cohort = read("substitution-fec-acquisition-cohort.csv")
