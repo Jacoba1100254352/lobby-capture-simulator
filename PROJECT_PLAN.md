@@ -23,7 +23,14 @@ The September 2026 empirical work is tracked by `docs/substitution-study-redesig
 `reports/empirical-expansion-audit.md`. Expanded source history and observed PAC
 outcomes remain design inputs. The four-PAC acquisition frame retains all 48
 expected committee-half-years, including twelve unresolved periods; 36 are
-usable, one through a source-bound supplemental-filing adjudication. Availability
+usable, one through a source-bound supplemental-filing adjudication. A separate
+280-record FEC filings inventory now supplies 21 current and three superseded
+version flags for all 24 frozen Benefits Council reports. Seven selected report
+PDFs and an FEC letter establish native-form differences, three downloaded
+packets lacking disbursement-summary pages, and a source-confirmed March 2006
+coverage gap. The version-only reconciliation changes coverage reasons but adds
+no usable half-years: eleven remain missing-outcome cases and one a date-gap
+case. Raw values remain unchanged; independent review is pending. Availability
 does not assign treatment/control status. A scoped AdvaMed registration alias
 restores fifteen LDA filings, bringing the source panel to 427 filings. Separate
 filing-grain income/expense metadata and original-form reviews expose accounting

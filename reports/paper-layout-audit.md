@@ -2,7 +2,7 @@
 
 This audit checks generated PDFs for sparse float pages, large whitespace gaps, and figure or table pages without enough surrounding readable text. It is a regression guard, not a substitute for final visual inspection.
 
-- Pages checked: `59`
+- Pages checked: `60`
 - Failures: `0`
 
 | PDF | Page | Blocks | Chars | Coverage | Largest gap | Float label | Status | Note |
@@ -60,9 +60,10 @@ This audit checks generated PDFs for sparse float pages, large whitespace gaps, 
 | paper/supplement.pdf | 7 | 62 | 4076 | 0.886 | 0.040 | no | pass | layout density acceptable |
 | paper/supplement.pdf | 8 | 88 | 4603 | 0.887 | 0.041 | no | pass | layout density acceptable |
 | paper/supplement.pdf | 9 | 53 | 4533 | 0.887 | 0.039 | no | pass | layout density acceptable |
-| paper/supplement.pdf | 10 | 58 | 4893 | 0.887 | 0.040 | no | pass | layout density acceptable |
-| paper/supplement.pdf | 11 | 134 | 4215 | 0.887 | 0.039 | yes | pass | layout density acceptable |
-| paper/supplement.pdf | 12 | 118 | 3985 | 0.879 | 0.048 | yes | pass | layout density acceptable |
-| paper/supplement.pdf | 13 | 89 | 2964 | 0.887 | 0.039 | yes | pass | layout density acceptable |
-| paper/supplement.pdf | 14 | 72 | 3499 | 0.887 | 0.039 | yes | pass | references/declarations page |
-| paper/supplement.pdf | 15 | 57 | 2920 | 0.887 | 0.068 | no | pass | references/declarations page |
+| paper/supplement.pdf | 10 | 52 | 4981 | 0.887 | 0.041 | no | pass | layout density acceptable |
+| paper/supplement.pdf | 11 | 137 | 4161 | 0.887 | 0.039 | yes | pass | layout density acceptable |
+| paper/supplement.pdf | 12 | 118 | 3981 | 0.879 | 0.048 | yes | pass | layout density acceptable |
+| paper/supplement.pdf | 13 | 86 | 3093 | 0.887 | 0.039 | yes | pass | layout density acceptable |
+| paper/supplement.pdf | 14 | 68 | 3599 | 0.887 | 0.039 | no | pass | layout density acceptable |
+| paper/supplement.pdf | 15 | 66 | 2866 | 0.887 | 0.039 | yes | pass | references/declarations page |
+| paper/supplement.pdf | 16 | 11 | 729 | 0.887 | 0.742 | no | pass | short terminal references/declarations page |

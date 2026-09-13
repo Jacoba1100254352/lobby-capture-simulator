@@ -173,6 +173,15 @@ The September 2026 empirical expansion is documented in [the substitution redesi
 
 A separate public-letter position pilot records two positions agreeing with both EPA's proposal and final action. Its candidate docket-copy match and agency-response link remain unverified; policy agreement is not coded as uptake. The same audit checks metadata fingerprints, distinct submission identities, source-page provenance and the no-promotion boundary. Historical travel archive summaries now provide concrete 2004 exposure leads, but their original forms require login and no verified travel baseline has been acquired.
 
+The Benefits Council PAC follow-up joins all 24 frozen reports to a separate
+280-record FEC filing inventory, recovering 21 current and three superseded
+version flags without overwriting raw reports. Seven selected report-PDF reviews
+and an FEC letter document Form 3/Form 3X differences, three downloaded packets
+without disbursement-summary pages, and a source-confirmed March 2006 date gap.
+No additional complete half-year is recovered: eleven periods remain blocked
+by missing outcomes and one by the gap. The source ledger, coverage reasons and
+companion notebook preserve those distinctions; independent review remains open.
+
 The travel-source follow-up in the substitution redesign documents publisher-reported
 declines before the 2007 restrictions, foreign-currency zero coding, and incompatible
 member-only versus member-and-staff coverage. It changes the baseline and source-review

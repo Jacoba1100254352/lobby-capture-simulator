@@ -7,6 +7,7 @@ Amended and unknown-version rows remain in the raw acquisition snapshot.
 
 import csv
 import hashlib
+import importlib.util
 import json
 import re
 from collections import defaultdict
@@ -118,7 +119,14 @@ def apply_adjudications(rows, reviews):
     return effective
 
 
-def prepare_with_coverage(rows, cohort, adjudications=()):
+def paper_version_review(rows, review):
+    spec = importlib.util.spec_from_file_location("fec_paper_review", ROOT / "scripts/review-substitution-fec-paper.py")
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    return module.validate_review(rows, review)
+
+
+def prepare_with_coverage(rows, cohort, adjudications=(), paper_review=None):
     """Retain every expected committee-half-year, including unavailable outcomes.
 
     The cohort is an explicit acquisition frame, not a treatment/control frame.
@@ -150,6 +158,14 @@ def prepare_with_coverage(rows, cohort, adjudications=()):
             raise ValueError("Unexpected FEC version flag")
         grouped[key].append(row)
     effective = apply_adjudications(rows, adjudications)
+    if paper_review is not None:
+        decisions, _ = paper_version_review(rows, paper_review)
+        for source_id, most_recent in decisions.items():
+            row = effective[(paper_review["committeeId"], source_id)]
+            if row.get("adjudicationId"):
+                raise ValueError("Overlapping FEC supplement and paper-version reviews")
+            row["mostRecent"] = str(most_recent).lower()
+            row["paperVersionReviewId"] = paper_review["reviewId"]
     prepared, coverage = [], []
     for (actor, committee), (lower, upper) in sorted(bounds.items()):
         for year in range(lower.year, upper.year + 1):
@@ -159,7 +175,8 @@ def prepare_with_coverage(rows, cohort, adjudications=()):
                 # Cross-half-year reports affect every intersected half-year.
                 native = [r for r in grouped[(actor, committee)] if r["periodStart"] <= end.isoformat() and r["periodEnd"] >= start.isoformat()]
                 resolved = [effective[(r["committeeId"], r["sourceRecordId"])] for r in native]
-                review_ids = ";".join(sorted({r["adjudicationId"] for r in resolved if r.get("adjudicationId")}))
+                review_ids = ";".join(sorted({r[field] for r in resolved for field in ("adjudicationId", "paperVersionReviewId") if r.get(field)}))
+                paper_versions = any(r.get("paperVersionReviewId") for r in resolved)
                 latest = [r for r in resolved if is_latest(r)]
                 unknown = [r for r in resolved if not is_latest(r) and r["mostRecent"] != "false" and r["isAmended"] != "true"]
                 reasons, detail, candidate = [], [], []
@@ -179,12 +196,14 @@ def prepare_with_coverage(rows, cohort, adjudications=()):
                             reasons.append(error.code)
                             detail.append(str(error))
                 accepted = bool(candidate) and not reasons
+                if paper_versions:
+                    detail.append("Version flags reconciled from the source-bound filings endpoint; raw report flags, dates and amounts are unchanged. Financial-source validation remains separate.")
                 if accepted:
                     if len(candidate) != 1 or candidate[0]["halfYear"] != f"{year}H{half}":
                         raise ValueError("Unexpected FEC partition result")
                     candidate[0]["adjudicationIds"] = review_ids
                     if review_ids:
-                        candidate[0]["selectionBasis"] = "source_reviewed_supplement"
+                        candidate[0]["selectionBasis"] = "cross_endpoint_version_flags" if paper_versions else "source_reviewed_supplement"
                     prepared.extend(candidate)
                 coverage.append({
                     "canonicalActorId": actor, "committeeId": committee,
@@ -209,7 +228,8 @@ def main():
         cohort = list(csv.DictReader(source))
     with (DATA / "substitution-fec-version-adjudications.csv").open(newline="", encoding="utf-8") as source:
         adjudications = list(csv.DictReader(source))
-    rows, coverage = prepare_with_coverage(raw, cohort, adjudications)
+    paper_review = json.loads((DATA / "substitution-fec-paper-review.json").read_text())
+    rows, coverage = prepare_with_coverage(raw, cohort, adjudications, paper_review)
     for name, records, fields in [
         ("substitution-fec-halfyear-panel.csv", rows, FIELDS),
         ("substitution-fec-halfyear-coverage.csv", coverage, COVERAGE_FIELDS),

@@ -1149,13 +1149,20 @@ def audit():
     periods_module = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(periods_module)
     adjudications = read("substitution-fec-version-adjudications.csv")
-    expected_halfyears, expected_coverage = periods_module.prepare_with_coverage(fec, cohort, adjudications)
+    paper_review = json.loads((DATA / "substitution-fec-paper-review.json").read_text())
+    _, paper_checks = periods_module.paper_version_review(fec, paper_review)
+    expected_halfyears, expected_coverage = periods_module.prepare_with_coverage(fec, cohort, adjudications, paper_review)
     if halfyears != expected_halfyears or coverage != expected_coverage:
         raise ValueError("FEC prepared series or coverage ledger differs from raw-source reproduction")
     unresolved = [r for r in coverage if r["status"] != "observed_complete"]
     add("alternate-channel-coverage", "partial_outcome_coverage" if unresolved else "complete_source_periods_not_design",
         f"expectedCommitteeHalfYears={len(coverage)}; complete={len(halfyears)}; unresolvedOrMissing={len(unresolved)}; completeByCommittee=" + ";".join(f"{r['committeeId']}:{sum(h['committeeId'] == r['committeeId'] for h in halfyears)}" for r in cohort),
-        "Keep all declared acquisition-frame periods visible; resolve Benefits Council versions, amounts and missing fields. AAJ 2008H2 uses a source-bound supplemental-loan-paperwork adjudication; independent review remains pending. Missing periods are not zero spending.")
+        "Keep all declared acquisition-frame periods visible. Benefits Council version flags are now reconciled through a source-bound reports/filings join; missing financial fields, scan/API amount differences and a source-confirmed date gap remain. AAJ 2008H2 uses a source-bound supplemental-loan-paperwork adjudication; independent review remains pending. Missing periods are not zero spending.")
+    reviewed_coverage = [r for r in coverage if r["committeeId"] == paper_review["committeeId"]]
+    add("alternate-channel-paper-review", "versions_reconciled_financial_coverage_unresolved",
+        "; ".join(f"{key}={value}" for key, value in paper_checks.items())
+        + f"; halfYearReasons={dict(Counter(r['reasonCodes'] for r in reviewed_coverage))}",
+        "The committee-only filings inventory supplies 21 true and three false latest flags for all 24 frozen Benefits Council reports; no amounts or dates are overwritten. Three original 2008 reports visibly use Form 3 despite API F3X classification; a May 15, 2009 letter requests Form 3X. Complete page inventories find no disbursement-summary page in the downloaded post-general original and both year-end packets. This does not prove which pages were originally filed. The 2006Q1 cover and summary end March 1 and preserve cents omitted by the API. Blank fields, missing pages and year-to-date values do not establish numeric period zeros. No additional complete half-year is recovered. Independently review the readings and recover missing financial evidence before promoting outcomes or selecting controls.")
     add("alternate-channel-halfyears", "observed_outcome_not_effect",
         f"completeHalfYears={len(halfyears)}; includedReportVersions={sum(int(r['reportCount']) for r in halfyears)}; sourceReviewedHalfYears={sum(bool(r['adjudicationIds']) for r in halfyears)}; eventClasses={dict(Counter(r['eventClass'] for r in halfyears))}",
         "Latest non-amended reports or explicit source-bound version adjudications, with no unresolved alternative version. Compare with native LDA periods after actor linkage and exposure validation; period completeness is not exhaustive source-image or causal validation.")

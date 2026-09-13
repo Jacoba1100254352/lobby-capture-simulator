@@ -23,6 +23,144 @@ LDA = load("lda_expansion", "build-substitution-historical-lda-panel.py")
 PERIODS = load("fec_periods", "prepare-substitution-fec-periods.py")
 AUDIT = load("source_measurement_audit", "audit-empirical-expansion.py")
 FAMILIES = load("lda_families", "review-substitution-lda-families.py")
+PAPER = load("fec_paper", "review-substitution-fec-paper.py")
+
+
+class FECPaperReviewTests(unittest.TestCase):
+    def setUp(self):
+        self.raw = AUDIT.read("substitution-fec-report-panel.csv")
+        self.review = json.loads(PAPER.SOURCE.read_text())
+
+    def check(self, refresh=True):
+        if refresh:
+            self.review["reviewFingerprint"] = PAPER.fingerprint(
+                {k: v for k, v in self.review.items() if k != "reviewFingerprint"})
+        return PAPER.validate_review(self.raw, self.review)
+
+    def test_complete_join_resolves_versions_but_recovers_no_financial_period(self):
+        before = deepcopy((self.raw, self.review))
+        flags, checks = self.check(refresh=False)
+        self.assertEqual((len(flags), sum(flags.values())), (24, 21))
+        self.assertEqual(checks["filingInventoryRows"], 280)
+        self.assertEqual(checks["reviewedReportPdfs"], 7)
+        self.assertEqual(checks["nativeFormTypeDiscrepancies"], 3)
+        self.assertEqual(checks["packetsWithoutDisbursementSummary"], 3)
+        self.assertEqual(checks["reviewedBlankAmountFields"], 5)
+        cohort = AUDIT.read("substitution-fec-acquisition-cohort.csv")
+        loans = AUDIT.read("substitution-fec-version-adjudications.csv")
+        prepared, coverage = PERIODS.prepare_with_coverage(self.raw, cohort, loans, self.review)
+        self.assertEqual(prepared, PERIODS.prepare_with_coverage(self.raw, cohort, loans)[0])
+        self.assertEqual(len(prepared), 36)
+        self.assertEqual(len(coverage), 48)
+        reviewed = [r for r in coverage if r["committeeId"] == "C00153171"]
+        self.assertEqual(sum(r["reasonCodes"] == "missing_outcome" for r in reviewed), 11)
+        self.assertEqual([r["halfYear"] for r in reviewed if r["reasonCodes"] == "gap_or_overlap"], ["2006H1"])
+        self.assertTrue(all(r["unknownVersionRecordIds"] == "" and r["latestReportCount"] == "0"
+                            and r["status"] == "unresolved" and r["adjudicationIds"] == self.review["reviewId"]
+                            for r in reviewed))
+        self.assertEqual(sum(int(r["eligibleReportCount"]) for r in reviewed), 21)
+        self.assertEqual((self.raw, self.review), before)
+
+    def test_stale_snapshot_or_review_requires_reconciliation(self):
+        self.review["scope"] += " changed"
+        with self.assertRaisesRegex(ValueError, "fingerprint"):
+            self.check(refresh=False)
+        next(r for r in self.raw if r["committeeId"] == "C00153171")["totalDisbursementsDollars"] = "0.00"
+        with self.assertRaisesRegex(ValueError, "projection"):
+            self.check()
+
+    def test_new_or_missing_committee_report_cannot_silently_escape_review(self):
+        self.raw.append({**next(r for r in self.raw if r["committeeId"] == "C00153171"), "sourceRecordId": "file:new"})
+        with self.assertRaisesRegex(ValueError, "entire frozen"):
+            self.check()
+
+    def test_join_cannot_omit_duplicate_or_substitute_an_image(self):
+        initial = deepcopy(self.review)
+        for mode in ("omit", "duplicate", "foreign"):
+            self.review = deepcopy(initial)
+            filings = self.review["matchedFilingProjections"]
+            if mode == "omit":
+                filings.pop()
+            elif mode == "duplicate":
+                filings[-1] = deepcopy(filings[0])
+            else:
+                filings[0]["beginning_image_number"] = "99999999999"
+            with self.subTest(mode=mode), self.assertRaisesRegex(ValueError, "one-to-one"):
+                self.check()
+
+    def test_partial_or_duplicate_inventory_fails(self):
+        initial = deepcopy(self.review)
+        for field, value in (("pagination", "more_pages"), ("count", 279),
+                             ("beginningImageInventory", initial["filingsQuery"]["beginningImageInventory"] * 2)):
+            self.review = deepcopy(initial)
+            self.review["filingsQuery"][field] = value
+            with self.subTest(field=field), self.assertRaisesRegex(ValueError, "inventory"):
+                self.check()
+        self.review = deepcopy(initial)
+        self.review["reportQueries"][0]["count"] = 1
+        with self.assertRaisesRegex(ValueError, "query provenance"):
+            self.check()
+
+    def test_version_flags_must_be_boolean_and_consistent(self):
+        initial = deepcopy(self.review)
+        for value in (None, "true", 1, False):
+            self.review = deepcopy(initial)
+            self.review["matchedFilingProjections"][0]["most_recent"] = value
+            with self.subTest(value=value), self.assertRaisesRegex(ValueError, "version flags"):
+                self.check()
+
+    def test_join_checks_dates_and_identity_not_just_equal_amounts(self):
+        initial = deepcopy(self.review)
+        for field, value in (("committee_id", "C00007450"), ("file_number", -1),
+                             ("coverage_end_date", "2005-12-30"), ("receipt_date", "2006-01-01")):
+            self.review = deepcopy(initial)
+            self.review["matchedFilingProjections"][0][field] = value
+            with self.subTest(field=field), self.assertRaisesRegex(ValueError, "joined filing"):
+                self.check()
+
+    def test_no_blank_zero_or_ytd_period_substitution(self):
+        initial = deepcopy(self.review)
+        blank = next(o for d in self.review["documents"] for o in d["observations"] if o["valueState"] == "blank")
+        blank["valueDollars"] = "0.00"
+        with self.assertRaisesRegex(ValueError, "not a numeric zero"):
+            self.check()
+        self.review = initial
+        ytd = next(o for d in self.review["documents"] for o in d["observations"] if o["column"] == "B")
+        ytd["field"] = "pac_contributions_period"
+        with self.assertRaisesRegex(ValueError, "field location"):
+            self.check()
+
+    def test_form_three_transfers_are_not_form_threex_contributions(self):
+        item = next(o for d in self.review["documents"] for o in d["observations"] if o["field"] == "form3_transfers_period")
+        item["field"] = "pac_contributions_period"
+        item["printedLine"] = 23
+        with self.assertRaisesRegex(ValueError, "field location"):
+            self.check()
+
+    def test_missing_page_claim_requires_every_downloaded_page_reviewed(self):
+        document = next(d for d in self.review["documents"] if d["disbursementSummaryAbsentFromDownloadedPacket"])
+        document["pagesReviewed"].pop()
+        with self.assertRaisesRegex(ValueError, "complete packet"):
+            self.check()
+
+    def test_source_confirmed_date_gap_is_not_repaired(self):
+        self.review["documents"][0]["periodEnd"] = "2006-03-31"
+        with self.assertRaisesRegex(ValueError, "silently corrected"):
+            self.check()
+
+    def test_version_recovery_cannot_promote_amounts_controls_or_enforcement(self):
+        self.review["boundary"]["amountsPromoted"] = True
+        with self.assertRaisesRegex(ValueError, "promotion"):
+            self.check()
+        self.review["boundary"]["amountsPromoted"] = False
+        self.review["formCorrectionLetter"]["establishesEnforcementAction"] = True
+        with self.assertRaisesRegex(ValueError, "letter provenance/boundary"):
+            self.check()
+
+    def test_correction_pairs_cannot_repeat_or_drop_an_original(self):
+        self.review["formCorrectionPairs"][-1] = deepcopy(self.review["formCorrectionPairs"][0])
+        with self.assertRaisesRegex(ValueError, "incomplete or duplicate"):
+            self.check()
 
 
 class LDAFamilyReviewTests(unittest.TestCase):

@@ -48,7 +48,15 @@ Status: `partial_outcome_coverage`
 
 expectedCommitteeHalfYears=48; complete=36; unresolvedOrMissing=12; completeByCommittee=C00153171:0;C00340356:12;C00007450:12;C00024521:12
 
-Remaining: Keep all declared acquisition-frame periods visible; resolve Benefits Council versions, amounts and missing fields. AAJ 2008H2 uses a source-bound supplemental-loan-paperwork adjudication; independent review remains pending. Missing periods are not zero spending.
+Remaining: Keep all declared acquisition-frame periods visible. Benefits Council version flags are now reconciled through a source-bound reports/filings join; missing financial fields, scan/API amount differences and a source-confirmed date gap remain. AAJ 2008H2 uses a source-bound supplemental-loan-paperwork adjudication; independent review remains pending. Missing periods are not zero spending.
+
+## alternate-channel-paper-review
+
+Status: `versions_reconciled_financial_coverage_unresolved`
+
+reportRowsMatched=24; filingInventoryRows=280; filingsLatestTrue=21; filingsLatestFalse=3; reportEndpointUnknownLatest=24; reviewedReportPdfs=7; nativeFormTypeDiscrepancies=3; packetsWithoutDisbursementSummary=3; reviewedBlankAmountFields=5; rawAmountsPromoted=0; datesCorrected=0; independentReviewStatus=pending; causalEffect=not_identified; halfYearReasons={'missing_outcome': 11, 'gap_or_overlap': 1}
+
+Remaining: The committee-only filings inventory supplies 21 true and three false latest flags for all 24 frozen Benefits Council reports; no amounts or dates are overwritten. Three original 2008 reports visibly use Form 3 despite API F3X classification; a May 15, 2009 letter requests Form 3X. Complete page inventories find no disbursement-summary page in the downloaded post-general original and both year-end packets. This does not prove which pages were originally filed. The 2006Q1 cover and summary end March 1 and preserve cents omitted by the API. Blank fields, missing pages and year-to-date values do not establish numeric period zeros. No additional complete half-year is recovered. Independently review the readings and recover missing financial evidence before promoting outcomes or selecting controls.
 
 ## alternate-channel-halfyears
 

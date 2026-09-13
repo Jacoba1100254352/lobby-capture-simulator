@@ -103,6 +103,7 @@ EMPIRICAL_EXPANSION_PRODUCTS = [
         "substitution-fec-affiliation-history.csv", "substitution-fec-halfyear-panel.csv",
         "substitution-fec-acquisition-cohort.csv", "substitution-fec-halfyear-coverage.csv",
         "substitution-fec-version-adjudications.csv",
+        "substitution-fec-paper-review.json",
         "comment-uptake-issue-pilot.csv",
         "comment-position-pilot.csv", "comment-position-source.json",
         "comment-response-document-pilot.csv", "comment-response-document-source.json",

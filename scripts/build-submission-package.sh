@@ -131,6 +131,7 @@ for source_product in \
   substitution-fec-acquisition-cohort.csv \
   substitution-fec-halfyear-coverage.csv \
   substitution-fec-version-adjudications.csv \
+  substitution-fec-paper-review.json \
   substitution-fec-halfyear-panel.csv \
   comment-uptake-issue-pilot.csv \
   comment-position-pilot.csv \

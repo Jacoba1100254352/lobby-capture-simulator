@@ -457,16 +457,69 @@ for this outcome calculation, and explicitly labels AAJ 2008H2
 new source contents invalidate the adjudication. Unreviewed alternative versions
 still block a half-year. Independent review of this decision remains pending.
 
-All 24 Benefits Council reports have unknown latest flags, and several outcome
-cells are missing. The [2003H1 original scan](https://docquery.fec.gov/pdf/867/23038131867/23038131867.pdf),
+All 24 Benefits Council reports retain unknown latest flags in the frozen
+**reports-endpoint** snapshot, and several outcome cells are missing. The
+[2003H1 original scan](https://docquery.fec.gov/pdf/867/23038131867/23038131867.pdf),
 pages 1-4, was visually reviewed on 2026-09-12 by Codex. Its page 4 shows line 23
 $11,798.21 and total disbursements $11,818.21; the API returns $11,798.00 and
 $11,818.00. The independent-expenditure line is blank, not an explicit zero.
 PDF SHA-256: `b90c3d8bd069bbf023bafcc0f6b82351b3f0ba9a5bd8b42fba271ec690c1af1b`.
-The raw API values remain unchanged and no outcome is promoted. The 2006Q1 API
-coverage also ends March 1 before an April 1 next-period start; that original
-filing still needs review. Resolving version flags alone would not resolve
-these amount, missingness and date issues.
+The raw API values remain unchanged and no outcome is promoted.
+
+### Benefits Council: version metadata recovered, financial coverage unresolved
+
+The September 13 UTC follow-up in `substitution-fec-paper-review.json` joins all
+24 frozen reports to a separate [committee-only filings inventory](https://api.open.fec.gov/v1/filings/?committee_id=C00153171).
+That query exhausted pagination and returned 280 distinct beginning-image IDs.
+Six refreshed reports queries, one for each report year 2003-2008, reproduce the
+frozen normalized rows except retrieval time. Beginning-image IDs give a
+one-to-one join for all 24 reports; committee, file number, type, period, receipt
+date and PDF URL also match. The filings endpoint supplies **21 true and three
+false** `most_recent` flags where the reports endpoint supplies null. Its
+`is_amended` projection is unavailable, so preparation retains the reports
+endpoint's separate flag. These are source-version designations, not independent
+proof of complete historical filings.
+
+Preparation applies only the recovered `mostRecent` field to in-memory copies,
+with review ID `fec-benefits-filings-2026-09-13` in the coverage ledger. Raw flags,
+dates and amounts remain untouched. Changed source rows, incomplete joins and
+contradictory flags fail validation. This clears the frozen frame's version
+obstacle but recovers **zero additional complete half-years**: eleven Benefits
+Council periods now report `missing_outcome`; 2006H1 reports `gap_or_overlap`
+before the missing-outcome check. It also has missing outcome cells. The usable
+series remains 36 of 48 expected committee-half-years.
+
+Seven selected report PDFs and a two-page FEC letter were visually reviewed.
+The review is field-specific for four reports; three packets were read page by
+page to establish downloaded page inventories, not to audit transactions.
+
+| Source | Reviewed finding | Consequence |
+| --- | --- | --- |
+| [2006Q1](https://docquery.fec.gov/pdf/147/26039073147/26039073147.pdf), PDF 1, 2 and 4 | Both cover and summary end March 1, not March 31. Line 23 is $3,769.58 and line 31 is $3,778.89; API values are $3,769.00 and $3,778.00. Line 24 is blank. | The March 2-31 gap is source-confirmed, not repaired as an API-only error. Cents and missingness remain separate issues. Itemized activity was not reviewed. |
+| [2008Q3 original](https://docquery.fec.gov/pdf/924/28039861924/28039861924.pdf) and [amendment](https://docquery.fec.gov/pdf/804/29030092804/29030092804.pdf), PDF 1 and 4 of each | The original uses Form 3; its $5,000 is line 18 transfers. The amendment uses Form 3X; its $5,000 is line 23 contributions. | Equal amounts do not make the field definitions equivalent. The amended independent-expenditure field remains blank. |
+| [2008 post-general original](https://docquery.fec.gov/pdf/791/29039971791/29039971791.pdf), all seven pages | A letter precedes Form 3. No disbursement-summary page occurs in the downloaded packet. The letter reports no candidate/PAC contributions during the period. | A reported no-contribution claim does not verify zero total disbursements or independent expenditures. PDF page 4 is a receipts summary. |
+| [2008 post-general amendment](https://docquery.fec.gov/pdf/796/29030092796/29030092796.pdf), PDF 1 and 4 | Form 3X period lines 23, 24 and 31 are blank; line 23's $16,721.22 is in year-to-date column B. | Do not turn blanks into zeros or carry year-to-date values into period spending. |
+| [2008 year-end original](https://docquery.fec.gov/pdf/277/29039981277/29039981277.pdf), all five pages, and [amendment](https://docquery.fec.gov/pdf/814/29030092814/29030092814.pdf), all seven pages | Neither downloaded packet has a disbursement-summary page. PDF page 4 in each is Schedule A. The amendment's page-2 period disbursements cell is blank despite cash arithmetic implying no reduction. | These are packet-specific missing-page observations, not proof of which pages were originally filed or that all period outcomes are zero. |
+
+The [May 15, 2009 FEC letter](https://docquery.fec.gov/pdf/629/29030090629/29030090629.pdf),
+both pages reviewed, references all three late-2008 periods and requests Form
+3X. All three originals visibly use Form 3 although the filings API classifies
+them as F3X. Their May 26, 2009 amendments use Form 3X. The three false latest
+flags belong to those originals. Negative `previous_file_number` values are
+preserved, not joined to null original file numbers. The letter is a request
+for information, not an enforcement outcome; copies are not independent events.
+
+**Assessment: share with caveats for source reconciliation; not usable as an
+expanded financial panel.** The [FEC's data guidance](https://www.fec.gov/data/browse-data/)
+gives paper filings precedence over discrepant data entry. The ledger separates
+native forms, printed lines, columns, actual PDF pages, hashes and transcriptions.
+Acquisition hashes refer to minimum metadata projections, not raw HTTP bodies;
+optional-field projections can collapse absent keys and null. Offline checks
+reproduce the join and coverage. The companion notebook checks available ignored
+acquisition/PDF files, reporting unavailable files as checks not run. Neither
+byte checks nor API agreement independently validates manual reading. Independent
+review, missing financial evidence, historical completeness and a comparable
+treatment/control design remain open.
 
 ## Revised design contract
 
