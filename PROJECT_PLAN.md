@@ -119,6 +119,15 @@ retrieval remains a 2026 vintage and supplies no per-record offer-source code.
 A decision-reported SAM check supplies no independently verified historical
 interval. Original-action mappings and independent coding review remain unresolved.
 
+A June 13, 2024 archive of VA's page, displaying a June 6 update, now explicitly
+labels all four pilot awards and supports all sixteen provisional pairs across
+thirteen dockets. A separate September 6 archive preserves nineteen displayed
+service areas, fourteen TBD entries and a performance-stay note. It repeats
+VISN 19's order under VISN 22 and changes VISN 20's performance start. Both
+source conflicts remain visible. Archive-index and payload checks bind the
+reviewed snapshots; independent adjudication, original solicitation identity,
+offer provenance and exact stay intervals remain open. Baseline timing is unchanged.
+
 A further archived-guidance review records DoD PGI versions labelled January
 31, 2023 and May 30, 2024. Both distinguish specific multiple-award order offers,
 the parent-contract count and the system-generated provenance field. The 2024

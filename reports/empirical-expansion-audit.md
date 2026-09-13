@@ -194,6 +194,14 @@ publisherRows=20; uniqueParentChildKeys=19; duplicateCurrentKeys={'36C10X25N0014
 
 Remaining: The complete twenty-row VA table corroborates three pilot awards, including the amount-only OGA candidate. It repeats one newer parent/child key across VISN 7 and VISN 8 and does not list the old VISN 8 PIID. Do not correct the duplicate, infer supersession or equate current performance periods with original-action dates. In addition to the 2024 training slide, two archive-labelled DoD guidance versions distinguish order offers, parent offers and system-generated provenance. Their 2023/2024 revision labels are not verified historical capture times, field-introduction dates or proof of VA applicability. The seven-action parent history separately reports a multiple-award IDIQ and six original offers. These sources do not supply per-order provenance or resolve the four-versus-five discrepancy. Keep parent solicitation/counts separate. Independent review, solicitation identity, representative SAM and historical exclusions remain unresolved. Baselines and causal claims are unchanged.
 
+## gao-archived-publisher-corroboration
+
+Status: `historical_labels_with_later_source_conflicts`
+
+indexedCaptures=7; reviewedCaptures=2; juneRows=5; junePilotAwardsCorroborated=4; juneCorroboratedProvisionalPairs=16; distinctDockets=13; septemberRows=19; septemberTbdRows=14; septemberDuplicateKeys=[{'parentPiid': '36C10X23D0032', 'piid': '36C10X24N0074', 'serviceAreas': ['VISN 19', 'VISN 22']}]; crossCaptureConflicts=[{'serviceArea': 'VISN 20', 'field': 'performanceStartDate', 'june': '2024-05-10', 'september': '2024-06-01'}, {'serviceArea': 'VISN 22', 'field': 'piid', 'june': '36C10X24N0108', 'september': '36C10X24N0074'}]; septemberMissingCurrentServiceAreas=['VISN 23']; septemberMarkedRows=4; septemberDistinctMarkedKeys=3; independentlyReviewedMappings=0; awardSpecificDatesPromoted=0; stayIntervalsPromoted=0; historicalExclusionsPromoted=0; causalEffect=not_identified
+
+Remaining: The June 2024 archive explicitly labels all four pilot awards, including VISN 8, and corroborates sixteen provisional pairs across thirteen dockets. The September archive repeats the VISN 19 key under VISN 22 and changes VISN 20's performance start. Preserve both snapshots. Its star note reports a protest-related performance stay for four displayed rows but only three distinct keys; it supplies no exact stay interval. TBD and missing display areas are not award absences. Solicitation identity, offer provenance, independent review, representative SAM and historical exclusions remain unresolved; baseline timing and causal claims are unchanged.
+
 ## procurement-archived-bulk-frame
 
 Status: `mixed_frame_missing_offers_not_sam_exclusions`

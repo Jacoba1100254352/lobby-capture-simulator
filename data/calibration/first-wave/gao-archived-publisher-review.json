@@ -1,0 +1,443 @@
+{
+  "schema": "gao-archived-publisher-review-v1",
+  "reviewDate": "2026-09-13",
+  "reviewer": "Codex first-pass source review",
+  "independentReviewStatus": "pending",
+  "selection": "Follow-up of the already selected four-award GAO family. Query the old VA MSPV URL in the Wayback CDX index for successful text/html captures in calendar 2024, without collapse or a result limit. Seven rows were returned. Review June 13, the first indexed capture after the May 31 original actions, and September 6, the latest indexed capture before the September 16 decision. An initial May 16 contextual fetch contains no table; it is not used to infer award absence. This is a purpose-selected source follow-up, not a protest or procurement sampling frame.",
+  "scope": "Two archived versions of one agency page. Preserve every row of the June five-row award table and every entry of the September nineteen-area delivery-order list, with contact fields excluded. Snapshot, displayed update, original action, performance and protest dates are different observations. Capture-index completeness is limited to this URL, period and filters; it is not proof that all historical page versions exist.",
+  "sourceAuthentication": "Read the acquired HTML and the ordinary browser replay. Cross-check all five June award rows and the full nineteen-entry September list plus its star note. The unchanged requested/resolved timestamp, Memento datetime and CDX SHA-1 agree with the acquired archived payload. September is gzip encoded: its compressed payload matches CDX, while the decoded HTML has a separate SHA-256. These checks tie bytes to the archive index; they do not independently verify VA's source assertions or manual interpretation. The public ledger excludes archived cookies and staff contacts.",
+  "archiveIndex": {
+    "endpoint": "https://web.archive.org/cdx/search/cdx",
+    "request": {
+      "url": "www.va.gov/opal/sac/mspv.asp",
+      "output": "json",
+      "filter": [
+        "statuscode:200",
+        "mimetype:text/html"
+      ],
+      "from": "2024",
+      "to": "2024",
+      "fl": "timestamp,original,statuscode,digest"
+    },
+    "rawSha256": "5b6ab42f64f6d7696f98c1c7399585d51e29126d4794fc8d96057de9c622a200",
+    "response": [
+      [
+        "timestamp",
+        "original",
+        "statuscode",
+        "digest"
+      ],
+      [
+        "20240226003814",
+        "https://www.va.gov/opal/sac/mspv.asp",
+        "200",
+        "M7XV4FMB5ZCDKXWXQGIZAVE5AZLRW26J"
+      ],
+      [
+        "20240516171608",
+        "https://www.va.gov/opal/sac/mspv.asp",
+        "200",
+        "XEEONTGVUFRXQKLVHGOZY3XTYNYLMTZO"
+      ],
+      [
+        "20240613162439",
+        "https://www.va.gov/opal/sac/mspv.asp",
+        "200",
+        "RS6MCX7P4SA73PCMFXUAW3UQEL743RPA"
+      ],
+      [
+        "20240906233447",
+        "https://www.va.gov/opal/sac/mspv.asp",
+        "200",
+        "4QGFOH5L4744DZ5EAAVTFSSDEOQFCGI5"
+      ],
+      [
+        "20240917184441",
+        "https://www.va.gov/opal/sac/mspv.asp",
+        "200",
+        "T3TLKY45HTLQ7CHPV5VFAVHQON6FAANM"
+      ],
+      [
+        "20240926180355",
+        "https://www.va.gov/opal/sac/mspv.asp",
+        "200",
+        "L673K33RFZNLRM7BI7VZ5ILS4CMGIQ7X"
+      ],
+      [
+        "20241014075432",
+        "https://www.va.gov/opal/sac/mspv.asp",
+        "200",
+        "6I3JDVFMXQ46PAQBE5HPVKEPVNJVA7S2"
+      ]
+    ]
+  },
+  "captures": [
+    {
+      "requestedUrl": "https://web.archive.org/web/20240613162439id_/https://www.va.gov/opal/sac/mspv.asp",
+      "resolvedUrl": "https://web.archive.org/web/20240613162439id_/https://www.va.gov/opal/sac/mspv.asp",
+      "status": 200,
+      "timestamp": "20240613162439",
+      "mementoDatetime": "Thu, 13 Jun 2024 16:24:39 GMT",
+      "originResponseDate": "Thu, 13 Jun 2024 16:24:34 GMT",
+      "wireEncoding": "identity",
+      "rawSha256": "aeb03678b2a4525762ca0bd1018224f8c83b2d709f025eb493f98b0675a12fd2",
+      "decodedSha256": "aeb03678b2a4525762ca0bd1018224f8c83b2d709f025eb493f98b0675a12fd2",
+      "cdxDigest": "RS6MCX7P4SA73PCMFXUAW3UQEL743RPA",
+      "pageUpdatedDate": "2024-06-06",
+      "nativeRows": [
+        [
+          "VISN 8 (excl. Puerto Rico)",
+          "Medline Industries, LP",
+          "36C10X23D0032 36C10X24N0089",
+          "06/01/2024—05/31/2025"
+        ],
+        [
+          "VISN 19",
+          "Medline Industries, LP",
+          "36C10X23D0032 36C10X24N0074",
+          "06/01/2024—05/31/2025"
+        ],
+        [
+          "VISN 20",
+          "Medline Industries, LP",
+          "36C10X23D0032 36C10X24N0080",
+          "05/10/2024—05/09/2025"
+        ],
+        [
+          "VISN 22",
+          "Medline Industries, LP",
+          "36C10X23D0032 36C10X24N0108",
+          "06/01/2024—05/31/2025"
+        ],
+        [
+          "Other Government Agencies (OGAs)",
+          "Medline Industries, LP",
+          "36C10X23D0032 36C10X24N0088",
+          "06/01/2024—05/31/2025"
+        ]
+      ],
+      "rows": [
+        {
+          "rowNumber": 1,
+          "serviceAreaNative": "VISN 8 (excl. Puerto Rico)",
+          "listingStatus": "named_order",
+          "awardeeNative": "Medline Industries, LP",
+          "parentPiid": "36C10X23D0032",
+          "piid": "36C10X24N0089",
+          "performanceStartDate": "2024-06-01",
+          "performanceEndDate": "2025-05-31",
+          "protestNoteMarker": null
+        },
+        {
+          "rowNumber": 2,
+          "serviceAreaNative": "VISN 19",
+          "listingStatus": "named_order",
+          "awardeeNative": "Medline Industries, LP",
+          "parentPiid": "36C10X23D0032",
+          "piid": "36C10X24N0074",
+          "performanceStartDate": "2024-06-01",
+          "performanceEndDate": "2025-05-31",
+          "protestNoteMarker": null
+        },
+        {
+          "rowNumber": 3,
+          "serviceAreaNative": "VISN 20",
+          "listingStatus": "named_order",
+          "awardeeNative": "Medline Industries, LP",
+          "parentPiid": "36C10X23D0032",
+          "piid": "36C10X24N0080",
+          "performanceStartDate": "2024-05-10",
+          "performanceEndDate": "2025-05-09",
+          "protestNoteMarker": null
+        },
+        {
+          "rowNumber": 4,
+          "serviceAreaNative": "VISN 22",
+          "listingStatus": "named_order",
+          "awardeeNative": "Medline Industries, LP",
+          "parentPiid": "36C10X23D0032",
+          "piid": "36C10X24N0108",
+          "performanceStartDate": "2024-06-01",
+          "performanceEndDate": "2025-05-31",
+          "protestNoteMarker": null
+        },
+        {
+          "rowNumber": 5,
+          "serviceAreaNative": "Other Government Agencies (OGAs)",
+          "listingStatus": "named_order",
+          "awardeeNative": "Medline Industries, LP",
+          "parentPiid": "36C10X23D0032",
+          "piid": "36C10X24N0088",
+          "performanceStartDate": "2024-06-01",
+          "performanceEndDate": "2025-05-31",
+          "protestNoteMarker": null
+        }
+      ],
+      "protestNote": null,
+      "nativeRowsFingerprint": "195410e155e8fc4b9d07f4f1c89b3a19a7f3a8f80cefb8ba2b9dd6ce8d2c9646"
+    },
+    {
+      "requestedUrl": "https://web.archive.org/web/20240906233447id_/https://www.va.gov/opal/sac/mspv.asp",
+      "resolvedUrl": "https://web.archive.org/web/20240906233447id_/https://www.va.gov/opal/sac/mspv.asp",
+      "status": 200,
+      "timestamp": "20240906233447",
+      "mementoDatetime": "Fri, 06 Sep 2024 23:34:47 GMT",
+      "originResponseDate": "Fri, 06 Sep 2024 23:34:47 GMT",
+      "wireEncoding": "gzip",
+      "rawSha256": "60f5da029d4e7f48701fb27e648ef674200accc09c99f592f7f4a46a97e84588",
+      "decodedSha256": "1118eb4e72cc772854bec96f417c5450e92014bd7cff5409ed120b3c72ac21cc",
+      "cdxDigest": "4QGFOH5L4744DZ5EAAVTFSSDEOQFCGI5",
+      "pageUpdatedDate": "2024-09-04",
+      "nativeRows": [
+        "VISN 1 - To be determined (TBD)",
+        "VISN 2 - TBD",
+        "VISN 4 - TBD",
+        "VISN 5 - TBD",
+        "VISN 6 - TBD",
+        "VISN 7 - TBD",
+        "VISN 8 excluding Puerto Rico Medline Industries, LP Delivery Order: 36C10X23D0032 36C10X24N0089* Performance Period: 06/01/2024—05/31/2025",
+        "VISN 9 - TBD",
+        "VISN 10 - TBD",
+        "VISN 12 - TBD",
+        "VISN 15 - TBD",
+        "VISN 16 - TBD",
+        "VISN 17 - TBD",
+        "VISN 19 Medline Industries, LP Delivery Order: 36C10X23D0032 36C10X24N0074* Performance Period: 06/01/2024—05/31/2025",
+        "VISN 20 Medline Industries, LP Delivery Order: 36C10X23D0032 36C10X24N0080 Performance Period: 06/01/2024—05/09/2025",
+        "VISN 21 - TBD",
+        "VISN 22 Medline Industries, LP Delivery Order: 36C10X23D0032 36C10X24N0074* Performance Period: 06/01/2024—05/31/2025",
+        "Puerto Rico - TBD",
+        "Other Government Agencies (OGAs) Medline Industries, LP Delivery Order: 36C10X23D0032 36C10X24N0088* Performance Period: 06/01/2024—05/31/2025"
+      ],
+      "rows": [
+        {
+          "rowNumber": 1,
+          "serviceAreaNative": "VISN 1",
+          "listingStatus": "source_tbd",
+          "awardeeNative": null,
+          "parentPiid": null,
+          "piid": null,
+          "performanceStartDate": null,
+          "performanceEndDate": null,
+          "protestNoteMarker": null
+        },
+        {
+          "rowNumber": 2,
+          "serviceAreaNative": "VISN 2",
+          "listingStatus": "source_tbd",
+          "awardeeNative": null,
+          "parentPiid": null,
+          "piid": null,
+          "performanceStartDate": null,
+          "performanceEndDate": null,
+          "protestNoteMarker": null
+        },
+        {
+          "rowNumber": 3,
+          "serviceAreaNative": "VISN 4",
+          "listingStatus": "source_tbd",
+          "awardeeNative": null,
+          "parentPiid": null,
+          "piid": null,
+          "performanceStartDate": null,
+          "performanceEndDate": null,
+          "protestNoteMarker": null
+        },
+        {
+          "rowNumber": 4,
+          "serviceAreaNative": "VISN 5",
+          "listingStatus": "source_tbd",
+          "awardeeNative": null,
+          "parentPiid": null,
+          "piid": null,
+          "performanceStartDate": null,
+          "performanceEndDate": null,
+          "protestNoteMarker": null
+        },
+        {
+          "rowNumber": 5,
+          "serviceAreaNative": "VISN 6",
+          "listingStatus": "source_tbd",
+          "awardeeNative": null,
+          "parentPiid": null,
+          "piid": null,
+          "performanceStartDate": null,
+          "performanceEndDate": null,
+          "protestNoteMarker": null
+        },
+        {
+          "rowNumber": 6,
+          "serviceAreaNative": "VISN 7",
+          "listingStatus": "source_tbd",
+          "awardeeNative": null,
+          "parentPiid": null,
+          "piid": null,
+          "performanceStartDate": null,
+          "performanceEndDate": null,
+          "protestNoteMarker": null
+        },
+        {
+          "rowNumber": 7,
+          "serviceAreaNative": "VISN 8 excluding Puerto Rico",
+          "listingStatus": "named_order",
+          "awardeeNative": "Medline Industries, LP",
+          "parentPiid": "36C10X23D0032",
+          "piid": "36C10X24N0089",
+          "performanceStartDate": "2024-06-01",
+          "performanceEndDate": "2025-05-31",
+          "protestNoteMarker": true
+        },
+        {
+          "rowNumber": 8,
+          "serviceAreaNative": "VISN 9",
+          "listingStatus": "source_tbd",
+          "awardeeNative": null,
+          "parentPiid": null,
+          "piid": null,
+          "performanceStartDate": null,
+          "performanceEndDate": null,
+          "protestNoteMarker": null
+        },
+        {
+          "rowNumber": 9,
+          "serviceAreaNative": "VISN 10",
+          "listingStatus": "source_tbd",
+          "awardeeNative": null,
+          "parentPiid": null,
+          "piid": null,
+          "performanceStartDate": null,
+          "performanceEndDate": null,
+          "protestNoteMarker": null
+        },
+        {
+          "rowNumber": 10,
+          "serviceAreaNative": "VISN 12",
+          "listingStatus": "source_tbd",
+          "awardeeNative": null,
+          "parentPiid": null,
+          "piid": null,
+          "performanceStartDate": null,
+          "performanceEndDate": null,
+          "protestNoteMarker": null
+        },
+        {
+          "rowNumber": 11,
+          "serviceAreaNative": "VISN 15",
+          "listingStatus": "source_tbd",
+          "awardeeNative": null,
+          "parentPiid": null,
+          "piid": null,
+          "performanceStartDate": null,
+          "performanceEndDate": null,
+          "protestNoteMarker": null
+        },
+        {
+          "rowNumber": 12,
+          "serviceAreaNative": "VISN 16",
+          "listingStatus": "source_tbd",
+          "awardeeNative": null,
+          "parentPiid": null,
+          "piid": null,
+          "performanceStartDate": null,
+          "performanceEndDate": null,
+          "protestNoteMarker": null
+        },
+        {
+          "rowNumber": 13,
+          "serviceAreaNative": "VISN 17",
+          "listingStatus": "source_tbd",
+          "awardeeNative": null,
+          "parentPiid": null,
+          "piid": null,
+          "performanceStartDate": null,
+          "performanceEndDate": null,
+          "protestNoteMarker": null
+        },
+        {
+          "rowNumber": 14,
+          "serviceAreaNative": "VISN 19",
+          "listingStatus": "named_order",
+          "awardeeNative": "Medline Industries, LP",
+          "parentPiid": "36C10X23D0032",
+          "piid": "36C10X24N0074",
+          "performanceStartDate": "2024-06-01",
+          "performanceEndDate": "2025-05-31",
+          "protestNoteMarker": true
+        },
+        {
+          "rowNumber": 15,
+          "serviceAreaNative": "VISN 20",
+          "listingStatus": "named_order",
+          "awardeeNative": "Medline Industries, LP",
+          "parentPiid": "36C10X23D0032",
+          "piid": "36C10X24N0080",
+          "performanceStartDate": "2024-06-01",
+          "performanceEndDate": "2025-05-09",
+          "protestNoteMarker": false
+        },
+        {
+          "rowNumber": 16,
+          "serviceAreaNative": "VISN 21",
+          "listingStatus": "source_tbd",
+          "awardeeNative": null,
+          "parentPiid": null,
+          "piid": null,
+          "performanceStartDate": null,
+          "performanceEndDate": null,
+          "protestNoteMarker": null
+        },
+        {
+          "rowNumber": 17,
+          "serviceAreaNative": "VISN 22",
+          "listingStatus": "named_order",
+          "awardeeNative": "Medline Industries, LP",
+          "parentPiid": "36C10X23D0032",
+          "piid": "36C10X24N0074",
+          "performanceStartDate": "2024-06-01",
+          "performanceEndDate": "2025-05-31",
+          "protestNoteMarker": true
+        },
+        {
+          "rowNumber": 18,
+          "serviceAreaNative": "Puerto Rico",
+          "listingStatus": "source_tbd",
+          "awardeeNative": null,
+          "parentPiid": null,
+          "piid": null,
+          "performanceStartDate": null,
+          "performanceEndDate": null,
+          "protestNoteMarker": null
+        },
+        {
+          "rowNumber": 19,
+          "serviceAreaNative": "Other Government Agencies (OGAs)",
+          "listingStatus": "named_order",
+          "awardeeNative": "Medline Industries, LP",
+          "parentPiid": "36C10X23D0032",
+          "piid": "36C10X24N0088",
+          "performanceStartDate": "2024-06-01",
+          "performanceEndDate": "2025-05-31",
+          "protestNoteMarker": true
+        }
+      ],
+      "protestNote": "*DO awards are currently under GAO protest. Stay of performance in effect until further notice.",
+      "nativeRowsFingerprint": "aeaa64a016226d3d56b97e67c24014e9fa49207e0e0c55d4b330e0dfcca5ee1c"
+    }
+  ],
+  "originalReviewFingerprint": "d7816ffb5e7c0f2e27ebd6148ddd620fb8b33043c02c4650637e7c0cf20bb0f0",
+  "docketSourceFingerprint": "2f1b070edd0c906d78ec50eb8ee992767695c590ade0d14a262b6ab882e9031d",
+  "interpretation": {
+    "june": "A page displaying June 6, captured June 13, explicitly identifies all four pilot awards and a fifth VISN 20 order. VISN 8 excluding Puerto Rico maps directly to 36C10X24N0089. The four pilot base periods run June 1, 2024 through May 31, 2025. They are not original-action or filing dates. The June service-area labels plus the separately reviewed GAO footnotes support sixteen provisional pairs across thirteen dockets; the shared supplemental docket is not an independent event for each award.",
+    "september": "The page displaying September 4, captured September 6, lists nineteen service areas, fourteen marked TBD. VISN 23 is absent from this display, not proven unawarded. It repeats 36C10X24N0074 for VISN 19 and VISN 22, conflicting with June's VISN 22 order 36C10X24N0108. VISN 20's displayed start changes from May 10 to June 1; its end remains May 9, 2025. Do not correct these cells or interpret display changes as contract modifications.",
+    "stay": "Four displayed area rows carry the star note, but only three distinct parent/child keys do because of the repeated VISN 22 key. The note reports a current GAO protest and stay of performance, without start, end, original stay document or case IDs. Preserve it as an archived agency statement at this snapshot, not an exact stay interval, a finding of capture or a blanket four-award timing clearance.",
+    "remaining": "Original solicitations and record-specific offer-count provenance remain missing. The later VISN 22 conflict requires independent source review. All baseline award filedDate and docket piid cells remain unchanged. Representative SAM coverage and historical exclusion intervals are not supplied by these archives."
+  },
+  "reviewFingerprint": "34be9a264ceda5fa1c6ff5f6bd70400a454b3c641aeb253bf5d4c550c2e1b5b0",
+  "baselineUnchanged": true,
+  "solicitationIdentityPromoted": false,
+  "awardSpecificDatesPromoted": false,
+  "stayIntervalsPromoted": false,
+  "historicalExclusionsPromoted": false,
+  "representativeSamExport": false,
+  "causalEffect": "not_identified"
+}

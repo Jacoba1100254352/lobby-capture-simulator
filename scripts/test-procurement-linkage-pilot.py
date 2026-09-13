@@ -3,6 +3,7 @@
 
 import copy
 import csv
+import gzip
 import importlib.util
 import json
 from pathlib import Path
@@ -15,6 +16,9 @@ spec.loader.exec_module(audit)
 publisher_spec = importlib.util.spec_from_file_location("publisher", ROOT / "scripts/review-procurement-publisher.py")
 publisher = importlib.util.module_from_spec(publisher_spec)
 publisher_spec.loader.exec_module(publisher)
+archive_spec = importlib.util.spec_from_file_location("archive", ROOT / "scripts/review-procurement-archive.py")
+archive = importlib.util.module_from_spec(archive_spec)
+archive_spec.loader.exec_module(archive)
 
 
 class LinkageTests(unittest.TestCase):
@@ -525,6 +529,105 @@ class PublisherReviewTests(unittest.TestCase):
     def test_parent_raw_hash_cannot_be_bypassed(self):
         with self.assertRaisesRegex(ValueError, "Raw parent history"):
             self.check(parent_history=b'{}')
+
+
+class ArchivedPublisherTests(unittest.TestCase):
+    def setUp(self):
+        self.review = json.loads((audit.DATA / "gao-archived-publisher-review.json").read_text())
+        self.original = json.loads((audit.DATA / "gao-original-action-review.json").read_text())
+        self.dockets = json.loads((audit.DATA / "gao-docket-timing-source.json").read_text())
+        baseline = json.loads((audit.DATA / "gao-award-linkage-source.json").read_text())
+        _, self.pairs = audit.original_action_diagnostics(
+            self.original, baseline, self.dockets, audit.read("gao-docket-timing-pilot.csv"))
+
+    def check(self, **kwargs):
+        self.review["reviewFingerprint"] = archive.fingerprint(
+            {k: v for k, v in self.review.items() if k != "reviewFingerprint"})
+        return archive.validate(self.review, self.original, self.pairs, self.dockets, **kwargs)
+
+    def test_complete_historical_links_preserve_conflicts_and_unknowns(self):
+        before = copy.deepcopy((self.review, self.original, self.pairs, self.dockets))
+        result = self.check()
+        self.assertEqual((result["junePilotAwardsCorroborated"], result["juneCorroboratedProvisionalPairs"],
+                          result["distinctDockets"]), (4, 16, 13))
+        self.assertEqual((result["septemberRows"], result["septemberTbdRows"]), (19, 14))
+        self.assertEqual((result["septemberMarkedRows"], result["septemberDistinctMarkedKeys"]), (4, 3))
+        self.assertEqual(result["septemberDuplicateKeys"][0]["serviceAreas"], ["VISN 19", "VISN 22"])
+        self.assertEqual(result["crossCaptureConflicts"], [
+            {"serviceArea": "VISN 20", "field": "performanceStartDate", "june": "2024-05-10", "september": "2024-06-01"},
+            {"serviceArea": "VISN 22", "field": "piid", "june": "36C10X24N0108", "september": "36C10X24N0074"}])
+        self.assertEqual(result["septemberMissingCurrentServiceAreas"], ["VISN 23"])
+        self.assertIsNone(self.review["captures"][1]["rows"][0]["piid"])
+        self.assertIsNone(self.review["captures"][0]["rows"][0]["protestNoteMarker"])
+        self.assertEqual(before, (self.review, self.original, self.pairs, self.dockets))
+
+    def test_capture_cannot_redirect_to_a_later_or_current_page(self):
+        self.review["captures"][0]["resolvedUrl"] = archive.ORIGINAL_URL
+        with self.assertRaisesRegex(ValueError, "provenance"):
+            self.check()
+
+    def test_capture_time_is_not_the_displayed_update_date(self):
+        self.review["captures"][0]["mementoDatetime"] = "Thu, 06 Jun 2024 16:24:39 GMT"
+        with self.assertRaisesRegex(ValueError, "provenance"):
+            self.check()
+
+    def test_source_cells_cannot_be_silently_repaired(self):
+        row = self.review["captures"][1]["rows"][16]
+        row["piid"] = "36C10X24N0108"
+        with self.assertRaisesRegex(ValueError, "projection"):
+            self.check()
+
+    def test_capture_timestamp_uses_the_same_utc_instant(self):
+        self.review["captures"][0]["mementoDatetime"] = "Thu, 13 Jun 2024 16:24:39 +0500"
+        with self.assertRaisesRegex(ValueError, "provenance"):
+            self.check()
+
+    def test_tbd_entries_cannot_be_dropped(self):
+        self.review["captures"][1]["nativeRows"].pop(0)
+        with self.assertRaisesRegex(ValueError, "display frame"):
+            self.check()
+
+    def test_stay_notice_cannot_clear_timing_or_exclusion(self):
+        for field in ("stayIntervalsPromoted", "awardSpecificDatesPromoted", "historicalExclusionsPromoted",
+                      "solicitationIdentityPromoted", "representativeSamExport"):
+            with self.subTest(field=field):
+                self.review[field] = True
+                with self.assertRaisesRegex(ValueError, "promotion"):
+                    self.check()
+                self.review[field] = False
+
+    def test_all_decision_pairs_and_index_rows_are_required(self):
+        self.pairs.pop()
+        with self.assertRaisesRegex(ValueError, "complete unchanged"):
+            self.check()
+        self.setUp()
+        self.review["archiveIndex"]["response"].pop()
+        with self.assertRaisesRegex(ValueError, "index projection"):
+            self.check()
+
+    def test_payload_and_index_hash_checks_cannot_be_skipped_when_supplied(self):
+        with self.assertRaisesRegex(ValueError, "payload or CDX"):
+            self.check(raw_sources={archive.JUNE: b"<html>replacement</html>"})
+        with self.assertRaisesRegex(ValueError, "index mismatch"):
+            self.check(raw_index=b"[]")
+
+    def test_gzip_response_is_decoded_before_table_review(self):
+        cells = self.review["captures"][0]["nativeRows"]
+        table = "<table><caption>" + archive.CAPTION + "</caption><tr>" + "".join(
+            "<th>" + field + "</th>" for field in archive.HEADER) + "</tr>"
+        table += "".join("<tr>" + "".join("<td>" + cell + "</td>" for cell in row) + "</tr>" for row in cells) + "</table>"
+        html = ("<p>Last updated June 6, 2024</p>" + table).encode()
+        self.assertEqual(archive.parse(html, archive.JUNE), archive.parse(gzip.compress(html), archive.JUNE))
+        with self.assertRaisesRegex(ValueError, "ambiguous archived award table"):
+            archive.parse(html + table.encode(), archive.JUNE)
+
+    def test_current_source_payloads_when_available(self):
+        raw = ROOT / "data/raw/source-payloads/2024-env"
+        paths = {stamp: raw / f"va-mspv-archive-{stamp}.html" for stamp in (archive.JUNE, archive.SEPTEMBER)}
+        index = raw / "va-mspv-archive-index-20260913.json"
+        if not all(path.is_file() for path in [*paths.values(), index]):
+            self.skipTest("Ignored archived source payloads unavailable; projection tests remain separate")
+        self.check(raw_sources={stamp: path.read_bytes() for stamp, path in paths.items()}, raw_index=index.read_bytes())
 
 
 if __name__ == "__main__":

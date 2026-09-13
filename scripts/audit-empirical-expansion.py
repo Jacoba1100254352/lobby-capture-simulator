@@ -1292,6 +1292,14 @@ def audit():
     add("gao-current-publisher-corroboration", "three_current_labels_not_historical_clearance",
         "; ".join(f"{key}={value}" for key, value in publisher.items()),
         "The complete twenty-row VA table corroborates three pilot awards, including the amount-only OGA candidate. It repeats one newer parent/child key across VISN 7 and VISN 8 and does not list the old VISN 8 PIID. Do not correct the duplicate, infer supersession or equate current performance periods with original-action dates. In addition to the 2024 training slide, two archive-labelled DoD guidance versions distinguish order offers, parent offers and system-generated provenance. Their 2023/2024 revision labels are not verified historical capture times, field-introduction dates or proof of VA applicability. The seven-action parent history separately reports a multiple-award IDIQ and six original offers. These sources do not supply per-order provenance or resolve the four-versus-five discrepancy. Keep parent solicitation/counts separate. Independent review, solicitation identity, representative SAM and historical exclusions remain unresolved. Baselines and causal claims are unchanged.")
+    archive_spec = importlib.util.spec_from_file_location("procurement_archive", ROOT / "scripts/review-procurement-archive.py")
+    archive_module = importlib.util.module_from_spec(archive_spec)
+    archive_spec.loader.exec_module(archive_module)
+    archive_review = json.loads((DATA / "gao-archived-publisher-review.json").read_text(encoding="utf-8"))
+    archived = archive_module.validate(archive_review, original_review, provisional_links, docket_sources)
+    add("gao-archived-publisher-corroboration", "historical_labels_with_later_source_conflicts",
+        "; ".join(f"{key}={value}" for key, value in archived.items()),
+        "The June 2024 archive explicitly labels all four pilot awards, including VISN 8, and corroborates sixteen provisional pairs across thirteen dockets. The September archive repeats the VISN 19 key under VISN 22 and changes VISN 20's performance start. Preserve both snapshots. Its star note reports a protest-related performance stay for four displayed rows but only three distinct keys; it supplies no exact stay interval. TBD and missing display areas are not award absences. Solicitation identity, offer provenance, independent review, representative SAM and historical exclusions remain unresolved; baseline timing and causal claims are unchanged.")
     spec = importlib.util.spec_from_file_location("bulk_frame", ROOT / "scripts/audit-procurement-bulk-frame.py")
     bulk_frame = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(bulk_frame)

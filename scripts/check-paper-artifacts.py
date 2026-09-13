@@ -121,6 +121,7 @@ EMPIRICAL_EXPANSION_PRODUCTS = [
         "gao-docket-timing-pilot.csv", "gao-docket-timing-source.json",
         "gao-original-action-review.json",
         "gao-procurement-publisher-review.json",
+        "gao-archived-publisher-review.json",
         "procurement-bulk-frame-profile.json", "procurement-bulk-type-review.json",
     )
 ]

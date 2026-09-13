@@ -432,6 +432,82 @@ for `36C10X24N0089`. That different parent cannot fill the original-order
 mapping. This was a review of the displayed section, not every library record;
 no FOIA request was submitted and no additional award link was promoted.
 
+### Archived VA labels and conflicting later cells
+
+Reviewed September 13, 2026. The separate
+`gao-archived-publisher-review.json` preserves two actual 2024 captures of the
+old VA MSPV page. The Wayback CDX query for that address, calendar 2024,
+successful responses and HTML content returned seven capture rows, with no
+collapse or result limit. This is the returned index for the specified filters,
+not proof that every historical version was archived. The selected dates are
+the first indexed capture after the May 31 original actions and the latest
+indexed capture before the September 16 decision. The full June award table
+and September delivery-order list were read in acquired HTML and the ordinary
+browser replay. Independent source/coding review remains pending.
+
+The [June 13 capture](https://web.archive.org/web/20240613162439/https://www.va.gov/opal/sac/mspv.asp)
+displays a June 6 page-update date. Its complete five-row table explicitly
+labels these parent/child pairs under `36C10X23D0032` and Medline Industries, LP:
+
+| Service area | Child PIID | Displayed base performance period |
+| --- | --- | --- |
+| VISN 8 excluding Puerto Rico | 36C10X24N0089 | June 1, 2024-May 31, 2025 |
+| VISN 19 | 36C10X24N0074 | June 1, 2024-May 31, 2025 |
+| VISN 20 | 36C10X24N0080 | May 10, 2024-May 9, 2025 |
+| VISN 22 | 36C10X24N0108 | June 1, 2024-May 31, 2025 |
+| Other Government Agencies | 36C10X24N0088 | June 1, 2024-May 31, 2025 |
+
+This recovers direct historical agency-label evidence for VISN 8, previously
+absent from the current page, and corroborates all four pilot awards. Joining
+the labels to the separately reviewed GAO service-area footnotes supports all
+**sixteen provisional pairs across thirteen distinct dockets**. The fifth
+table row, VISN 20, is retained for complete display coverage; it is not added
+to the selected decision family. The June capture precedes the earliest
+recorded filing date among the thirteen reviewed dockets. Capture and displayed
+update dates do not establish the original award date, original solicitation
+identity or any protest filing date. The one-year base periods remain distinct
+from the longer periods displayed by the 2026 page.
+
+The [September 6 capture](https://web.archive.org/web/20240906233447/https://www.va.gov/opal/sac/mspv.asp)
+displays a September 4 update. Its complete bounded list contains **nineteen
+service areas, fourteen marked TBD**, with staff contact fields excluded from
+the public projection. VISN 23 is omitted from this display. Neither TBD nor
+omission establishes an unawarded contract or a missing historical transaction.
+Two material conflicts prevent simply selecting the latest source cells:
+
+- VISN 22 displays `36C10X24N0074`, repeating the VISN 19 key and disagreeing
+  with June's `36C10X24N0108`. The repeated value is preserved without correction.
+- VISN 20's displayed start changes from May 10 to June 1, 2024, while its end
+  remains May 9, 2025. A changed webpage cell is not an adjudicated modification.
+
+Four area entries carry a star linked to an agency notice reporting that the
+orders are under GAO protest and a stay of performance is in effect. Because
+of the repeated key, these are **four displayed rows but three distinct
+parent/child keys**. The notice supplies no case IDs, stay start/end dates or
+underlying stay instrument. It is an archived agency statement at this snapshot,
+not an exact interval or verified four-award stay mapping. The June table's
+lack of a star note is not a finding of no protest or no stay.
+
+The June HTML SHA-256 is
+`aeb03678b2a4525762ca0bd1018224f8c83b2d709f025eb493f98b0675a12fd2`;
+its payload SHA-1 agrees with the CDX digest. September was returned gzip
+encoded. Its encoded payload SHA-256 is
+`60f5da029d4e7f48701fb27e648ef674200accc09c99f592f7f4a46a97e84588`
+and agrees with CDX at the encoded-payload SHA-1 level; its decoded HTML SHA-256
+is `1118eb4e72cc772854bec96f417c5450e92014bd7cff5409ed120b3c72ac21cc`.
+Both resolved replay URLs and Memento datetimes match the requested captures.
+These checks bind acquired bytes to the archive index, not the truth of every
+agency entry. Ignored raw responses retain acquisition evidence; no archived
+cookies or staff contacts are included in the public ledger.
+
+**Assessment: historical label corroboration with explicit source conflicts.**
+The notebook and offline audit reproduce complete display coverage, native
+cell projection, the two conflicts, duplicate keys and the many-to-many docket
+join. Optional raw checks verify encoded/decoded hashes, CDX digests and fresh
+extraction. The independent-review gate, baseline award `filedDate` cells and
+docket `piid` cells remain unchanged. Original solicitations, offer provenance,
+representative SAM coverage and historical exclusion intervals are still absent.
+
 ### Offer-count provenance and dictionary-version limits
 
 On September 13 UTC, GSA's public [dictionary article, KB0090014](https://www.fsd.gov/gsafsd_sp/en/fpds-help-data-dictionary-v1-5?id=kb_article_view&sys_kb_id=bc3f142fcf190750d1eaf2c42f851ca4&spa=1)

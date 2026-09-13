@@ -412,6 +412,14 @@ a decision-reported SAM check as historical exclusion coverage. Its source produ
 accompany the empirical audit and submission packages; the reproducible checks
 are in the repository's `notebooks/empirical-expansion-review.ipynb`.
 
+A [historical VA page review](docs/procurement-source-reconciliation.md#archived-va-labels-and-conflicting-later-cells)
+adds a June 2024 table that explicitly labels all four pilot awards, including
+the previously unresolved VISN 8 order. Its sixteen provisional docket pairs
+retain separate evidence from a September archive with a duplicated VISN 22
+order key, a changed VISN 20 performance date and a protest-related stay notice.
+The full display projections, archive index and payload hashes accompany the
+audit and submission bundles. No exact stay interval or baseline timing is inferred.
+
 ## Paper and Submission Target
 
 The primary paper target is now **Regulation & Governance**. The default build, `make paper`, produces a compile-stable local manuscript from `paper/strategic-channel-substitution-regulatory-capture.tex`. `make paper-word-count` estimates the manuscript against the reported 8,000-10,000-word preferred Regulation & Governance range, including generated references when `paper/strategic-channel-substitution-regulatory-capture.bbl` exists.
