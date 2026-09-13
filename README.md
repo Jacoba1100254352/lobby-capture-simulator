@@ -449,6 +449,12 @@ audit and submission bundles. No exact stay interval or baseline timing is infer
 
 ## Paper and Submission Target
 
+The [empirical study outcome](docs/empirical-study-outcome.md) consolidates the
+current procurement, substitution and comment findings, including the negative
+identification result and the evidence needed to reopen estimation. It accompanies
+the submission and DOI handoff packages. A representative SAM export and the
+remaining design requirements are still unfinished.
+
 The primary paper target is now **Regulation & Governance**. The default build, `make paper`, produces a compile-stable local manuscript from `paper/strategic-channel-substitution-regulatory-capture.tex`. `make paper-word-count` estimates the manuscript against the reported 8,000-10,000-word preferred Regulation & Governance range, including generated references when `paper/strategic-channel-substitution-regulatory-capture.bbl` exists.
 
 The Wiley-template path is available but intentionally separate from the default build:

@@ -130,6 +130,7 @@ EMPIRICAL_EXPANSION_PRODUCTS = [
 EMPIRICAL_EXPANSION_NOTES = [
     ROOT / "docs" / name for name in (
         "substitution-study-redesign.md", "comment-uptake-pilot.md", "comment-response-document-pilot.md", "procurement-source-reconciliation.md",
+        "empirical-study-outcome.md",
     )
 ]
 FIRST_WAVE_REVIEWED_ENTITY_PRODUCTS = {

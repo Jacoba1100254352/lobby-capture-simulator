@@ -278,6 +278,11 @@ meanings. Unknown response structures are unavailable rather than observed empty
 pages. Nine synthetic regressions verify this repair without retrying live access
 or promoting historical exclusion intervals. The signed export and historical
 archive acquisition requirements remain open.
+`docs/empirical-study-outcome.md` consolidates the current cross-study outcome:
+selected procurement linkage and documentary comment uptake are supported, while
+causal effects and representative rates remain unidentified. The synthesis is
+included in the submission and DOI handoff packages and preserves the missing SAM
+export and comparison evidence as unfinished requirements of the full goal.
 The Java mechanism model and its
 policy parameters have not been recalibrated from these provisional products.
 

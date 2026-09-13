@@ -64,7 +64,7 @@ cp "$ROOT_DIR/docs/odd-model.md" "$STAGING_DIR/supporting-information/ODD-model.
 cp "$ROOT_DIR/docs/scenario-catalog.md" "$STAGING_DIR/supporting-information/scenario-catalog.md"
 cp "$ROOT_DIR/docs/validation.md" "$STAGING_DIR/supporting-information/validation-plan.md"
 cp "$ROOT_DIR/docs/source-data-roadmap.md" "$STAGING_DIR/supporting-information/source-data-roadmap.md"
-for note in substitution-study-redesign.md comment-uptake-pilot.md comment-response-document-pilot.md procurement-source-reconciliation.md; do
+for note in substitution-study-redesign.md comment-uptake-pilot.md comment-response-document-pilot.md procurement-source-reconciliation.md empirical-study-outcome.md; do
   cp "$ROOT_DIR/docs/$note" "$STAGING_DIR/supporting-information/$note"
 done
 cp "$ROOT_DIR/reports/source-moments.md" "$STAGING_DIR/supporting-information/source-moments.md"

@@ -80,7 +80,7 @@ PACKAGE_INPUTS = [
     ],
     *[
         PackageInput(f"docs/{name}", f"readiness/{name}", "empirical-design-expansion")
-        for name in ("substitution-study-redesign.md", "comment-uptake-pilot.md", "comment-response-document-pilot.md", "procurement-source-reconciliation.md")
+        for name in ("substitution-study-redesign.md", "comment-uptake-pilot.md", "comment-response-document-pilot.md", "procurement-source-reconciliation.md", "empirical-study-outcome.md")
     ],
     PackageInput("reports/empirical-expansion-audit.md", "readiness/empirical-expansion-audit.md", "empirical-design-expansion"),
     PackageInput("reports/empirical-expansion-audit.csv", "readiness/empirical-expansion-audit.csv", "empirical-design-expansion"),
