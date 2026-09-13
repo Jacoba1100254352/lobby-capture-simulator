@@ -907,5 +907,113 @@ class CommentSourceTests(unittest.TestCase):
                     MODULE.existing_comment_ids(path, "docket")
 
 
+class PublisherTimingTests(unittest.TestCase):
+    def setUp(self):
+        names = ("inventory", "warranty-review", "technology-review", "infrastructure-review", "timing-review")
+        self.ledgers = [json.loads((AUDIT.DATA / f"comment-publisher-{name}.json").read_text()) for name in names]
+        self.timing = self.ledgers[-1]
+
+    def check(self, refresh=True):
+        if refresh:
+            self.timing["reviewFingerprint"] = PUBLISHER.fingerprint({
+                k: v for k, v in self.timing.items() if k != "reviewFingerprint"})
+        return PUBLISHER.validate_all(*self.ledgers)
+
+    def test_two_timing_entries_extend_coverage_without_changing_prior_ledgers(self):
+        before = deepcopy(self.ledgers)
+        result = self.check(False)
+        self.assertEqual(self.ledgers, before)
+        for key, value in {"publisherLetters": 1, "inventoryEntries": 48, "boundedResponseReviews": 22,
+                           "timingEntriesReviewed": 2, "otherEntriesAwaitingAdjudication": 26,
+                           "timingPreambleComparisons": 1, "timingSourceCautions": 3,
+                           "independentlyReviewedEntries": 0, "docketRateEligibleEntries": 0,
+                           "verifiedDocketByteMatches": 0}.items():
+            self.assertEqual(result[key], value)
+        self.assertEqual(PUBLISHER.validate_all(*self.ledgers[:-1])["boundedResponseReviews"], 20)
+
+    def test_stale_fingerprint_and_binding_fail(self):
+        self.timing["inventoryFrameSha256"] = "0" * 64
+        with self.assertRaisesRegex(ValueError, "fingerprint"):
+            self.check(False)
+        with self.assertRaisesRegex(ValueError, "binding"):
+            self.check()
+
+    def test_missing_or_duplicated_request_cannot_change_the_frame(self):
+        for reviews in (self.timing["reviews"][:1], self.timing["reviews"] * 2):
+            with self.subTest(count=len(reviews)):
+                self.timing["reviews"] = reviews
+                with self.assertRaisesRegex(ValueError, "frame"):
+                    self.check()
+
+    def test_selection_and_visual_scope_cannot_be_promoted(self):
+        self.timing["selection"]["blinded"] = True
+        with self.assertRaisesRegex(ValueError, "selection"):
+            self.check()
+        self.timing["selection"]["blinded"] = False
+        self.timing["publisherReview"]["method"] = "OCR_only"
+        with self.assertRaisesRegex(ValueError, "visual"):
+            self.check()
+
+    def test_source_page_map_and_hash_remain_bound(self):
+        self.timing["documents"]["final"]["reviewedPages"][0]["printedPage"] = 29451
+        with self.assertRaisesRegex(ValueError, "source identity"):
+            self.check()
+        self.timing["documents"]["final"]["reviewedPages"][0]["printedPage"] = 29450
+        self.timing["documents"]["final"]["sha256"] = "0" * 64
+        with self.assertRaisesRegex(ValueError, "source identity"):
+            self.check()
+
+    def test_response_cannot_drop_the_rebuttal_and_keep_only_the_favorable_passage(self):
+        self.timing["responseScopes"]["lead-time-and-stability"]["pdfPages"] = [248]
+        with self.assertRaisesRegex(ValueError, "response scope"):
+            self.check()
+
+    def test_ema_response_cannot_become_named_mema_response(self):
+        self.timing["reviews"][0]["responseLink"] = "explicit_named_response"
+        with self.assertRaisesRegex(ValueError, "coding"):
+            self.check()
+
+    def test_conditional_year_cannot_be_silently_repaired(self):
+        self.timing["reviews"][1]["sourceCondition"] = "If EPA chooses to stay with MY2027"
+        with self.assertRaisesRegex(ValueError, "conditional"):
+            self.check()
+
+    def test_cost_nonverification_is_neither_acceptance_nor_nonresponse(self):
+        for value in ("accepted", "rejected", "no_response"):
+            self.timing["reviews"][1]["disposition"] = value
+            with self.assertRaisesRegex(ValueError, "coding"):
+                self.check()
+
+    def test_category_years_and_mixed_outcomes_cannot_be_flattened(self):
+        facts = self.timing["ruleComparisons"][0]["facts"]
+        for key in PUBLISHER.TIMING_FACTS:
+            original = facts[key]
+            facts[key] = not original if isinstance(original, bool) else original + 1
+            with self.subTest(key=key), self.assertRaisesRegex(ValueError, "preamble comparison"):
+                self.check()
+            facts[key] = original
+
+    def test_comparison_is_not_multiple_policy_events(self):
+        self.timing["ruleComparisons"] *= 2
+        with self.assertRaisesRegex(ValueError, "multiply policy"):
+            self.check()
+
+    def test_all_source_cautions_are_required(self):
+        self.timing["sourceCautions"].pop()
+        with self.assertRaisesRegex(ValueError, "source caution"):
+            self.check()
+
+    def test_review_and_causal_boundaries_cannot_be_promoted(self):
+        boundary = self.timing["boundary"]
+        for key, value in (("independentReviewStatus", "cleared"), ("docketRateEligible", True),
+                           ("overallLetterResponseCodingComplete", True), ("currentLegalStatusAssessed", True),
+                           ("simulatorRecalibrated", True), ("causalEffect", "identified")):
+            original = boundary[key]
+            boundary[key] = value
+            with self.subTest(key=key), self.assertRaisesRegex(ValueError, "claim boundary"):
+                self.check()
+            boundary[key] = original
+
+
 if __name__ == "__main__":
     unittest.main()

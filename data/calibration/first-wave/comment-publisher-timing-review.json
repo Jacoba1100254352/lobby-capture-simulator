@@ -1,0 +1,286 @@
+{
+  "schema": "comment-publisher-timing-review-v1",
+  "reviewDate": "2026-09-13",
+  "reviewer": "Codex source review; independent adjudication pending",
+  "inventoryFile": "comment-publisher-inventory.json",
+  "inventoryFrameSha256": "717738adcf4cba674307d1721c1d8a60429c21f804232c1a57bdc7f28a2f4f39",
+  "publisherSha256": "e6f6c3c34594d69654b4375e29896175b3057f4c6a0c987e141ac229f10d0159",
+  "selection": {
+    "requestIds": [
+      "mema-1570-r08",
+      "mema-1570-r09"
+    ],
+    "mode": "complete_timing_topic_in_frozen_letter",
+    "priorOutcomeExposure": true,
+    "blinded": false,
+    "scope": "Both timing-topic entries in the existing access-led inventory. Topic selected during response navigation, not an outcome-blind sample. All prior ledgers and the request frame remain unchanged."
+  },
+  "publisherReview": {
+    "pdfPages": [
+      6,
+      7
+    ],
+    "method": "rendered_pages_with_text_navigation",
+    "scope": "Rechecked the timing heading, four-year request, finalization assumption and conditional cost note. Images govern where ordinary extraction omits body text."
+  },
+  "documents": {
+    "response": {
+      "url": "https://www.epa.gov/system/files/documents/2024-03/420r24007.pdf",
+      "sha256": "4ce468a6ea85ede970b8189dab82b0ab5112692abcc1f684a585f563b6b4ab8e",
+      "reviewedPages": [
+        {
+          "pdfPage": 235,
+          "printedPage": 217
+        },
+        {
+          "pdfPage": 236,
+          "printedPage": 218
+        },
+        {
+          "pdfPage": 244,
+          "printedPage": 226
+        },
+        {
+          "pdfPage": 245,
+          "printedPage": 227
+        },
+        {
+          "pdfPage": 246,
+          "printedPage": 228
+        },
+        {
+          "pdfPage": 247,
+          "printedPage": 229
+        },
+        {
+          "pdfPage": 248,
+          "printedPage": 230
+        },
+        {
+          "pdfPage": 249,
+          "printedPage": 231
+        }
+      ],
+      "scope": "MEMA excerpt, complete section-2.3.3 summary and general response; not all comments or cross-referenced chapters."
+    },
+    "proposal": {
+      "url": "https://www.govinfo.gov/content/pkg/FR-2023-04-27/pdf/2023-07955.pdf",
+      "sha256": "30f6f81aadc5313a4762e4234f93a4d937f83c5db75ec2607eb68ce028affc1a",
+      "reviewedPages": [
+        {
+          "pdfPage": 7,
+          "printedPage": 25932
+        },
+        {
+          "pdfPage": 8,
+          "printedPage": 25933
+        }
+      ],
+      "scope": "Executive Summary C: proposed program and existing solicitation of more gradual alternatives; technology percentages are not mandatory sales shares."
+    },
+    "final": {
+      "url": "https://www.govinfo.gov/content/pkg/FR-2024-04-22/pdf/2024-06809.pdf",
+      "sha256": "9d1b9a74a8528e36b7783ddfacf9b3089f484225431b1496324b5d5d2963eb94",
+      "reviewedPages": [
+        {
+          "pdfPage": 11,
+          "printedPage": 29450
+        },
+        {
+          "pdfPage": 40,
+          "printedPage": 29479
+        }
+      ],
+      "scope": "Executive-summary and II.B.2.i preamble descriptions of category-specific timing and stringency changes, not an operative-clause or current-law audit."
+    }
+  },
+  "responseScopes": {
+    "lead-time-and-stability": {
+      "pdfPages": [
+        245,
+        246,
+        247,
+        248,
+        249
+      ],
+      "locator": "Section 2.3.3 Response from PDF 245 through the paragraph preceding section 2.4 on PDF 249.",
+      "completeGeneralResponse": true
+    }
+  },
+  "reviews": [
+    {
+      "requestId": "mema-1570-r08",
+      "citedCommentId": "EPA-HQ-OAR-2022-0985-1570",
+      "citedAttachmentOrder": 1,
+      "originalPdfPages": [
+        6,
+        7
+      ],
+      "matchedOriginalPdfPages": [
+        6,
+        7
+      ],
+      "excerptPdfPages": [
+        235,
+        236
+      ],
+      "summaryPdfPages": [
+        244,
+        245
+      ],
+      "responseScopeIds": [
+        "lead-time-and-stability"
+      ],
+      "excerptContentMatch": "selected_request_wording_and_original_page_citations_agree",
+      "responseLink": "reproduced_request_collective_response",
+      "disposition": "blanket_four_year_requirement_declined_category_specific_delays",
+      "basis": "The section reproduces MEMA's request. Its general response rejects the claimed statutory minimum, explicitly addressing EMA rather than MEMA by name, while agreeing that some categories need more time. The final preamble retains 2027 for some vehicles and describes category-specific delays, not a uniform four-year rule.",
+      "facets": {
+        "claimedStatutoryMinimum": "rejected_in_collective_response_addressing_EMA",
+        "uniformNoEarlierThan2028": "not_adopted_for_all_categories",
+        "selectedCategoryDelays": "documented_in_final_preamble",
+        "individualAttribution": "not_identified"
+      },
+      "ruleComparisonId": "phase3-category-timing-preamble",
+      "independentReviewStatus": "pending",
+      "individualCausalEffect": "not_identified"
+    },
+    {
+      "requestId": "mema-1570-r09",
+      "citedCommentId": "EPA-HQ-OAR-2022-0985-1570",
+      "citedAttachmentOrder": 1,
+      "originalPdfPages": [
+        7
+      ],
+      "matchedOriginalPdfPages": [
+        7
+      ],
+      "excerptPdfPages": [
+        236
+      ],
+      "summaryPdfPages": [
+        244,
+        245
+      ],
+      "responseScopeIds": [
+        "lead-time-and-stability"
+      ],
+      "excerptContentMatch": "selected_request_wording_and_original_page_citations_agree",
+      "responseLink": "reproduced_request_no_separate_disposition_in_reviewed_response",
+      "disposition": "specific_transition_cost_addition_not_verified",
+      "sourceCondition": "If EPA chooses to stay with MY2028",
+      "conditionInterpretation": "source_condition_ambiguous_not_repaired",
+      "basis": "The original note and agency excerpt agree on the conditional year. The complete timing response discusses reasonable costs and other commenters' cost objections, but does not separately establish addition of the specified facility, financial and scheduling burdens. Its referrals to preamble and RIA cost analyses are not a verified cost-model change.",
+      "ruleComparisonId": null,
+      "independentReviewStatus": "pending",
+      "individualCausalEffect": "not_identified"
+    }
+  ],
+  "ruleComparisons": [
+    {
+      "comparisonId": "phase3-category-timing-preamble",
+      "requestIds": [
+        "mema-1570-r08"
+      ],
+      "comparisonType": "published_preamble_descriptions_not_operative_clause_audit",
+      "proposalPdfPages": [
+        7,
+        8
+      ],
+      "finalPdfPages": [
+        11,
+        40
+      ],
+      "proposalLocator": "Executive Summary C and the solicitation beginning below Table ES-3 and continuing on the next page.",
+      "finalLocator": "Executive-summary timing discussion and section II.B.2.i Final Standards.",
+      "assessment": "partial_category_timing_alignment_not_blanket_acceptance",
+      "observedChange": "The final preamble describes slower early-year stringency and later Phase 3 starts for day-cab and heavy vocational categories. Some 2027 changes remain. Sleeper-cab standards still start in 2030 as proposed; some 2032 standards become more stringent.",
+      "distinctPolicyChanges": "not_counted",
+      "individualAttribution": "not_identified",
+      "facts": {
+        "proposalAlreadySolicitsMoreGradualAlternatives": true,
+        "finalRetainsSome2027Standards": true,
+        "finalDayCabStartModelYear": 2028,
+        "finalHeavyVocationalStartModelYear": 2029,
+        "finalSleeperStartModelYear": 2030,
+        "sleeperStartChangedFromProposal": false,
+        "uniformFourYearMinimumAdopted": false,
+        "finalEarlyYearsLessStringentThanProposed": true,
+        "all2032CategoriesLessStringent": false,
+        "lightMediumVocationalAndDayCab2032MoreStringent": true,
+        "heavyVocational2032LessStringent": true,
+        "sleeper2032StringencyUnchanged": true,
+        "operativeClauseChangeAssessed": false,
+        "currentLegalStatusAssessed": false
+      }
+    }
+  ],
+  "sourceCautions": [
+    {
+      "cautionId": "conditional-my2028",
+      "requestIds": [
+        "mema-1570-r09"
+      ],
+      "publisherPdfPages": [
+        7
+      ],
+      "responsePdfPages": [
+        236
+      ],
+      "status": "source_condition_ambiguous_not_repaired",
+      "severity": "high",
+      "finding": "Both sources retain MY2028 in the conditional note despite the surrounding request for no earlier than MY2028 and an assumed end-2023 finalization.",
+      "handling": "Do not replace the year with MY2027 or infer whether the condition was triggered."
+    },
+    {
+      "cautionId": "ema-is-not-mema",
+      "requestIds": [
+        "mema-1570-r08"
+      ],
+      "publisherPdfPages": [
+        6,
+        7
+      ],
+      "responsePdfPages": [
+        235,
+        236,
+        244,
+        245
+      ],
+      "status": "different_named_commenter_preserved",
+      "severity": "high",
+      "finding": "The request excerpt names MEMA; the legal rebuttal explicitly names EMA. The general summary does not supply an explicit named MEMA response.",
+      "handling": "Retain a collective-response link; do not convert it to an explicit named MEMA rejection or merge the organizations."
+    },
+    {
+      "cautionId": "timing-is-not-blanket-relaxation",
+      "requestIds": [
+        "mema-1570-r08"
+      ],
+      "publisherPdfPages": [
+        6,
+        7
+      ],
+      "responsePdfPages": [
+        248
+      ],
+      "status": "category_year_and_measure_distinctions_preserved",
+      "severity": "high",
+      "finding": "The published final preamble keeps some 2027 standards, calls the sleeper 2030 start unchanged, and describes higher 2032 stringency for several other categories. Proposal technology shares are illustrative rather than mandated sales.",
+      "handling": "Do not code uniform delay, an additional sleeper delay, blanket weakening, or individual causal uptake. Keep this as one existing request and one scoped comparison."
+    }
+  ],
+  "boundary": {
+    "officialAttachmentByteMatch": "not_verified",
+    "independentReviewStatus": "pending",
+    "docketRateEligible": false,
+    "overallLetterResponseCodingComplete": false,
+    "currentLegalStatusAssessed": false,
+    "causalEffect": "not_identified",
+    "simulatorRecalibrated": false,
+    "remainingEntriesStatus": "not_yet_adjudicated_not_nonresponse",
+    "comparisonBoundary": "Historical published preamble and response coding. A mixed response and a later favorable facet do not identify MEMA's causal contribution. No statute, court outcome, current legal force or post-rule implementation is independently assessed.",
+    "unreviewedAnalysis": "No audit of RIA cost-model inputs or the full cost chapters. Supply-chain requests r10/r11 remain unadjudicated; text navigation locates recycling referrals at response PDF 784/791 and critical-material excerpts at 1637, but those links are not completed reviews."
+  },
+  "reviewFingerprint": "447d23725edd212f858d98dae6d54570a113ce694dd34df18f6b1a2036c245ff"
+}

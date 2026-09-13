@@ -304,12 +304,22 @@ separates a specified final monitoring/reporting commitment from the proposal's
 existing monitoring and invitation for comment. It does not establish the requested
 funding targets, public-purchase condition, Joint Office dashboard or full charger
 lifecycle/cybersecurity standards. A DTNA reporting refusal is not a named MEMA
-dashboard rejection. The combined twenty bounded reviews leave 28 other entries
+dashboard rejection. That twenty-review checkpoint leaves 28 other entries
 unadjudicated, not nonresponses; attribution, program, unit, reference and timeline
 cautions remain explicit. Preamble commitments are not verified implementation.
 The [source review and codebook](docs/comment-response-document-pilot.md#publisher-original-inventory-and-warranty-follow-up-september-13)
 and offline notebook retain prior outcome exposure, request segmentation and
 independent-review limits. Earlier pilots and simulator parameters are unchanged.
+
+A separate two-entry timing follow-up brings combined coverage to 22 distinct
+entries, with 26 still unadjudicated. The collective response rejects a claimed
+blanket four-year requirement while the final preamble records category-specific
+delays, retained 2027 standards and a sleeper-cab 2030 start already proposed.
+Some 2032 standards become more stringent. EMA is not MEMA, and the cost note's
+ambiguous MY2028 condition is preserved rather than repaired. Its requested
+cost-model addition is not verified. These are historical response/preamble
+comparisons, not individual influence, current-law findings or independent
+review clearance. See the [timing review](docs/comment-response-document-pilot.md#timing-and-transition-cost-follow-up-september-13).
 
 The archived procurement frame audit scans only the 56 manifest-selected bulk ZIPs.
 All 6,449,101 rows match their saved archive counts and agency/date partitions,

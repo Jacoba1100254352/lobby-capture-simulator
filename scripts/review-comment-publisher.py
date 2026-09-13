@@ -78,6 +78,27 @@ INFRASTRUCTURE_CODINGS = {
     22: ("reproduced_request_thematic_response", "existing_standards_described_lifecycle_request_not_fully_resolved"),
     23: ("reproduced_request_no_separate_disposition_in_reviewed_responses", "cybersecurity_policy_not_separately_resolved"),
 }
+TIMING_PAGES = {
+    "response": [235, 236, 244, 245, 246, 247, 248, 249],
+    "proposal": [7, 8],
+    "final": [11, 40],
+}
+TIMING_FACTS = {
+    "proposalAlreadySolicitsMoreGradualAlternatives": True,
+    "finalRetainsSome2027Standards": True,
+    "finalDayCabStartModelYear": 2028,
+    "finalHeavyVocationalStartModelYear": 2029,
+    "finalSleeperStartModelYear": 2030,
+    "sleeperStartChangedFromProposal": False,
+    "uniformFourYearMinimumAdopted": False,
+    "finalEarlyYearsLessStringentThanProposed": True,
+    "all2032CategoriesLessStringent": False,
+    "lightMediumVocationalAndDayCab2032MoreStringent": True,
+    "heavyVocational2032LessStringent": True,
+    "sleeper2032StringencyUnchanged": True,
+    "operativeClauseChangeAssessed": False,
+    "currentLegalStatusAssessed": False,
+}
 
 
 def fingerprint(value):
@@ -445,14 +466,109 @@ def validate_infrastructure(inventory, ledger):
         "infrastructurePreambleComparisons": len(comparisons), "infrastructureSourceCautions": len(cautions)}
 
 
-def validate_all(inventory, warranty, technology, infrastructure=None):
-    """Aggregate supplied follow-ups; three arguments retain historical 13-entry scope."""
+def validate_timing(inventory, ledger):
+    """Check saved source/coding invariants, not independent substantive review."""
+    check_review(ledger, "comment-publisher-timing-review-v1")
+    require(ledger["inventoryFile"] == "comment-publisher-inventory.json"
+            and ledger["inventoryFrameSha256"] == inventory["requestFrameSha256"]
+            and ledger["publisherSha256"] == inventory["publisher"]["sha256"] == PUBLISHER_SHA,
+            "Timing review has stale inventory/source binding")
+    expected_ids = ["mema-1570-r08", "mema-1570-r09"]
+    require([r["requestId"] for r in inventory["requests"] if r["topic"] == "timing"] == expected_ids,
+            "Timing topic population changed")
+    selection = ledger["selection"]
+    require(selection["requestIds"] == expected_ids
+            and selection["mode"] == "complete_timing_topic_in_frozen_letter"
+            and selection["priorOutcomeExposure"] is True and selection["blinded"] is False
+            and selection["scope"], "Timing selection/frame disclosure mismatch")
+    visual = ledger["publisherReview"]
+    require(visual["pdfPages"] == [6, 7] and visual["method"] == "rendered_pages_with_text_navigation"
+            and visual["scope"], "Timing original visual scope mismatch")
+    require(set(ledger["documents"]) == set(TIMING_PAGES), "Missing timing source document")
+    for name, pages in TIMING_PAGES.items():
+        doc = ledger["documents"][name]
+        offset = {"response": -18, "proposal": 25925, "final": 29439}[name]
+        require(doc["sha256"] == SOURCE_DOCS[name][0] and doc["url"] == SOURCE_URLS[name]
+                and doc["reviewedPages"] == [{"pdfPage": p, "printedPage": p + offset} for p in pages]
+                and doc["scope"], "Timing source identity/page mapping mismatch")
+    scopes = ledger["responseScopes"]
+    require(set(scopes) == {"lead-time-and-stability"}
+            and scopes["lead-time-and-stability"]["pdfPages"] == [245, 246, 247, 248, 249]
+            and scopes["lead-time-and-stability"]["completeGeneralResponse"] is True
+            and scopes["lead-time-and-stability"]["locator"], "Timing response scope mismatch")
+    reviews = ledger["reviews"]
+    require([r["requestId"] for r in reviews] == expected_ids, "Timing review frame mismatch")
+    rows = {r["requestId"]: r for r in inventory["requests"]}
+    codings = [
+        ("reproduced_request_collective_response", "blanket_four_year_requirement_declined_category_specific_delays"),
+        ("reproduced_request_no_separate_disposition_in_reviewed_response", "specific_transition_cost_addition_not_verified"),
+    ]
+    for index, (r, codes) in enumerate(zip(reviews, codings)):
+        require(r["citedCommentId"] == COMMENT_ID and r["citedAttachmentOrder"] == 1
+                and r["originalPdfPages"] == rows[r["requestId"]]["pdfPages"]
+                and r["matchedOriginalPdfPages"] == ([6, 7] if index == 0 else [7])
+                and r["excerptPdfPages"] == ([235, 236] if index == 0 else [236])
+                and r["summaryPdfPages"] == [244, 245]
+                and r["responseScopeIds"] == ["lead-time-and-stability"]
+                and r["excerptContentMatch"] == "selected_request_wording_and_original_page_citations_agree",
+                "Timing original/excerpt/response linkage mismatch")
+        require((r["responseLink"], r["disposition"]) == codes
+                and r["ruleComparisonId"] == ("phase3-category-timing-preamble" if index == 0 else None)
+                and r["basis"] and r["independentReviewStatus"] == "pending"
+                and r["individualCausalEffect"] == "not_identified", "Unsupported timing coding/promotion")
+    require(reviews[0]["facets"] == {
+        "claimedStatutoryMinimum": "rejected_in_collective_response_addressing_EMA",
+        "uniformNoEarlierThan2028": "not_adopted_for_all_categories",
+        "selectedCategoryDelays": "documented_in_final_preamble",
+        "individualAttribution": "not_identified"}, "Timing facet or commenter conflation")
+    require(reviews[1]["sourceCondition"] == "If EPA chooses to stay with MY2028"
+            and reviews[1]["conditionInterpretation"] == "source_condition_ambiguous_not_repaired"
+            and rows[expected_ids[1]]["kind"] == "conditional_request",
+            "Timing conditional source wording must not be repaired")
+    comparisons = ledger["ruleComparisons"]
+    require(len(comparisons) == 1, "Timing comparison must not multiply policy events")
+    c = comparisons[0]
+    require(c["comparisonId"] == "phase3-category-timing-preamble" and c["requestIds"] == expected_ids[:1]
+            and c["comparisonType"] == "published_preamble_descriptions_not_operative_clause_audit"
+            and c["proposalPdfPages"] == [7, 8] and c["finalPdfPages"] == [11, 40]
+            and c["proposalLocator"] and c["finalLocator"] and c["observedChange"]
+            and c["assessment"] == "partial_category_timing_alignment_not_blanket_acceptance"
+            and c["distinctPolicyChanges"] == "not_counted" and c["individualAttribution"] == "not_identified"
+            and c["facts"] == TIMING_FACTS, "Unsupported timing preamble comparison")
+    expected_cautions = [
+        ("conditional-my2028", expected_ids[1:], [7], [236], "source_condition_ambiguous_not_repaired"),
+        ("ema-is-not-mema", expected_ids[:1], [6, 7], [235, 236, 244, 245], "different_named_commenter_preserved"),
+        ("timing-is-not-blanket-relaxation", expected_ids[:1], [6, 7], [248], "category_year_and_measure_distinctions_preserved"),
+    ]
+    require(len(ledger["sourceCautions"]) == len(expected_cautions), "Missing timing source caution")
+    for caution, expected in zip(ledger["sourceCautions"], expected_cautions):
+        require(tuple(caution[k] for k in ("cautionId", "requestIds", "publisherPdfPages",
+                    "responsePdfPages", "status")) == expected and caution["severity"] == "high"
+                and caution["finding"] and caution["handling"], "Timing source caution changed")
+    boundary = ledger["boundary"]
+    require(all(boundary.get(k) == v for k, v in {
+        "officialAttachmentByteMatch": "not_verified", "independentReviewStatus": "pending",
+        "docketRateEligible": False, "overallLetterResponseCodingComplete": False,
+        "currentLegalStatusAssessed": False, "causalEffect": "not_identified", "simulatorRecalibrated": False,
+        "remainingEntriesStatus": "not_yet_adjudicated_not_nonresponse"}.items())
+        and boundary["comparisonBoundary"] and boundary["unreviewedAnalysis"],
+        "Unsupported timing review claim boundary")
+    return {"timingEntriesReviewed": len(reviews),
+        "timingResponseLinks": dict(Counter(r["responseLink"] for r in reviews)),
+        "timingPreambleComparisons": len(comparisons), "timingSourceCautions": len(expected_cautions)}
+
+
+def validate_all(inventory, warranty, technology, infrastructure=None, timing=None):
+    """Aggregate supplied follow-ups; omitted ledgers retain historical review scopes."""
     result = validate(inventory, warranty)
     result.update(validate_technology(inventory, technology))
     ledgers = [warranty, technology]
     if infrastructure is not None:
         result.update(validate_infrastructure(inventory, infrastructure))
         ledgers.append(infrastructure)
+    if timing is not None:
+        result.update(validate_timing(inventory, timing))
+        ledgers.append(timing)
     ids = [r["requestId"] for ledger in ledgers for r in ledger["reviews"]]
     require(len(ids) == len(set(ids)), "Overlapping publisher follow-ups inflate review coverage")
     result["boundedResponseReviews"] = len(ids)
@@ -469,7 +585,8 @@ def main():
     followup = json.loads((DATA / "comment-publisher-warranty-review.json").read_text())
     technology = json.loads((DATA / "comment-publisher-technology-review.json").read_text())
     infrastructure = json.loads((DATA / "comment-publisher-infrastructure-review.json").read_text())
-    result = validate_all(inventory, followup, technology, infrastructure)
+    timing = json.loads((DATA / "comment-publisher-timing-review.json").read_text())
+    result = validate_all(inventory, followup, technology, infrastructure, timing)
     checked = []
     for name, digest in {"publisher_pdf": PUBLISHER_SHA,
             "metadata_json": inventory["docketMetadata"]["rawSha256"],

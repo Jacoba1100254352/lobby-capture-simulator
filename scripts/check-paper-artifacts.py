@@ -113,6 +113,7 @@ EMPIRICAL_EXPANSION_PRODUCTS = [
         "comment-publisher-inventory.json", "comment-publisher-warranty-review.json",
         "comment-publisher-technology-review.json",
         "comment-publisher-infrastructure-review.json",
+        "comment-publisher-timing-review.json",
         "gao-award-linkage-pilot.csv", "gao-award-linkage-source.json",
         "gao-docket-timing-pilot.csv", "gao-docket-timing-source.json",
         "gao-original-action-review.json",

@@ -155,12 +155,21 @@ public-purchase condition, Joint Office dashboard and full lifecycle/cybersecuri
 standards are not separately established in the reviewed passages. A reporting
 refusal directed to DTNA is not attributed to MEMA's dashboard request, and a
 grouped efficiency summary does not redefine its lifecycle-standardization request.
-The combined twenty bounded reviews leave 28 other entries unadjudicated,
+That twenty-review checkpoint leaves 28 other entries unadjudicated,
 not nonresponses; broad assessment and exact CARB-program/engagement questions
 remain only partly resolved. Attribution, program-summary, engine-unit,
 section-reference and corridor-timeline cautions are preserved in the ledger,
 notebook and regression checks. No actual post-rule implementation is verified.
 Original pilots, independent-review gates and simulator parameters are unchanged.
+A separate two-entry timing review raises current combined coverage to 22,
+leaving 26 entries unadjudicated. The complete scoped response declines a claimed
+uniform four-year minimum while the final preamble describes selected category
+delays, some retained 2027 standards and the sleeper 2030 start as already proposed.
+Several 2032 categories become more stringent. The legal rebuttal names EMA,
+not MEMA; the cost note's ambiguous MY2028 condition is not silently repaired.
+The specified cost-model addition remains unverified. Source-bound ledgers and
+regressions preserve this mixed result, pending independent review and no causal
+or current-law clearance. The RIA cost and supply-chain source chains remain open.
 A separate NAM 2008Q1 coalition-disclosure probe reviews header/line-25 text
 and checkbox attributes in two electronic filing versions outside the frozen
 cohort. Both API affiliate lists are empty, but the original HTML forms disclose

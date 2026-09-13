@@ -278,6 +278,69 @@ implementation are not independently evaluated by this follow-up. No earlier
 pilot or simulator parameter changes, and procurement/substitution work remains
 unfinished.
 
+## Timing and transition-cost follow-up, September 13
+
+**Assessment: share with caveats for historical documentary coding, not a
+docket rate, causal effect or current-law assessment.**
+
+The separate `comment-publisher-timing-review.json` covers r08 and r09, the
+entire timing topic in the frozen 48-entry MEMA inventory. Selection occurred
+after response navigation and prior outcome exposure, not through blinded or
+representative sampling. Earlier request and follow-up ledgers are unchanged.
+
+### Original request, complete response and comparison scope
+
+Visual review of the [publisher letter](https://www.mema.org/system/files/EPA-HQ-OAR-2022-0985%20MEMA%20Comments%20EPA%20HD%20GHG%20Ph3%20NPRM%2016June2023%20Final.pdf)
+covers PDF pages 6-7. The [EPA response document](https://www.epa.gov/system/files/documents/2024-03/420r24007.pdf)
+reproduces the requests on PDF pages 235-236 (printed 217-218). The reviewed
+summary spans PDF 244-245, and the complete section-2.3.3 general response spans
+PDF 245-249 (printed 227-231). The ledger binds these pages to document hashes.
+
+| Existing entry | Bounded finding | What is not established |
+| --- | --- | --- |
+| r08, four-year lead time | A collective response rejects the claimed mandatory four-year requirement while accepting a need for more time in selected categories. | An explicit named MEMA rejection, uniform delay or MEMA-caused change. |
+| r09, transition-disruption costs | The request is reproduced, but the specified cost addition is not separately verified in the reviewed timing response. | Acceptance, rejection, nonresponse elsewhere, or a change to the cost model. |
+
+The r08 comparison uses the [proposal](https://www.govinfo.gov/content/pkg/FR-2023-04-27/pdf/2023-07955.pdf)
+PDF 7-8 (printed 25932-25933) and [published final preamble](https://www.govinfo.gov/content/pkg/FR-2024-04-22/pdf/2024-06809.pdf)
+PDF 11 and 40 (printed 29450 and 29479). These are preamble descriptions, not
+an operative-clause audit. The proposal already sought comment on more gradual
+alternatives. The final preamble retains some 2027 standards, moves the day-cab
+start to 2028 and the heavy vocational start to 2029, and retains the sleeper-cab
+2030 start as proposed. The sleeper date is not an additional delay. Early-year
+standards are less stringent than proposed, but 2032 light/medium vocational and
+day-cab standards are more stringent, heavy vocational standards less stringent,
+and sleeper standards unchanged. This is partial category-specific alignment,
+not blanket acceptance or uniformly weaker standards. Technology shares in the
+proposal are illustrative pathways, not mandatory sales shares. The facets
+remain one existing request and one scoped comparison, not independent events.
+
+### Source cautions and validation
+
+The original cost note and EPA excerpt both say, "If EPA chooses to stay with
+MY2028." The condition is ambiguous in context and is not silently changed to
+2027. The original lead-time request also depends on an assumed end-2023
+finalization; that assumption is not converted into a newly inferred deadline.
+The response's legal rebuttal explicitly names **EMA**, a different organization
+from **MEMA**. A collective-response link therefore cannot become an explicit
+named MEMA response. These are high-risk attribution and outcome-coding issues.
+
+The combined four warranty, nine technology/fuel, seven infrastructure and two
+timing reviews now cover **22 distinct entries**, leaving **26 unadjudicated**,
+not nonresponses. No entry has independent-review clearance or docket-rate
+eligibility. Consistency checks and thirteen timing regressions protect source
+binding, complete response scope, category/year distinctions, the ambiguous
+condition, and the no-promotion boundary; they do not independently authenticate
+manual readings. The companion notebook preserves the historical 20/28 checkpoint
+and separately computes the latest 22/26 coverage.
+
+RIA cost-model inputs and the full referenced cost analyses remain unread.
+Battery-cost and mineral-supply requests r10/r11 remain unadjudicated: text
+navigation has located response referrals, not completed that technical source
+chain. Exact docket-file matching, independent review and a justified sampling
+frame remain open. No current legal force, post-rule implementation, individual
+causal effect or simulator recalibration is asserted.
+
 ## Original two-request agency-excerpt pilot
 
 Reviewed 2026-09-12. Assessment: **share with caveats** for documentary coding;
