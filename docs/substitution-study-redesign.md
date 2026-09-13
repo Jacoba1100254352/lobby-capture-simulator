@@ -557,6 +557,58 @@ byte checks nor API agreement independently validates manual reading. Independen
 review, missing financial evidence, historical completeness and a comparable
 treatment/control design remain open.
 
+### Dated PAC organization links: parent and affiliated committee are different roles
+
+The separate `substitution-fec-organization-review.json` retains all four original
+PAC candidates, including Benefits Council with no usable half-years. Four
+committee-specific F1 queries acquired **69 metadata records** on September 13,
+2026. The review selects every receipt in 2003-2008 plus all ties at the latest
+pre-2003 receipt for each committee: **11 documents, 46 PDF pages**, all visually
+reviewed. Selection ignores current `most_recent` flags, which would discard
+historical filings. The query category includes letters as well as Form 1.
+It is not a census of all correspondence, and the last receipt before 2003
+need not be the last substantive statement of every relationship field.
+
+The readings yield **six explicit parent observations for three committees**,
+four separately typed affiliated-committee observations, and one named but
+untyped relationship. All three committees with complete PAC spending series
+have an explicit parent observation before 2003. This strengthens the candidate
+organization matches; it does not establish continuous affiliation across their
+36 outcome periods or identify whose money financed the PAC spending.
+
+| Candidate | Selected receipts | What the original records add |
+| --- | --- | --- |
+| GASPAC, C00007450 | 2000-10-29; 2006-12-11 | The [2000 letter, PDF 1](https://docquery.fec.gov/pdf/380/20036424380/20036424380.pdf) explicitly describes the American Gas Association's PAC and requests its new name. The [2006 packet](https://docquery.fec.gov/pdf/894/26039303894/26039303894.pdf) has only a Form 1 cover and envelope page, with no relationship page. |
+| AdvaMed PAC, C00340356 | 2000-06-30; 2006-09-27 | The [2000 letter, PDF 1](https://docquery.fec.gov/pdf/975/20035694975/20035694975.pdf) names the parent and says it established/administers the fund. It reports the PAC name change effective June 21, 2000 and the parent's previous HIMA name. The [2006 form, PDF 2](https://docquery.fec.gov/pdf/058/26930408058/26930408058.pdf) marks a separate segregated fund but leaves line 6 blank. |
+| AAJ/ATLA PAC, C00024521 | 2001-07-10; 2005-10-25; 2006-12-19; 2008-06-05; 2008-07-25 | [2001 PDF 5](https://docquery.fec.gov/pdf/652/21990170652/21990170652.pdf) identifies ATLA as the connected organization; [2006 PDF 5](https://docquery.fec.gov/pdf/892/26940924892/26940924892.pdf) identifies AAJ. Each separately identifies Consumer Attorneys Federal Pol Committee as an affiliated committee on PDF 2. The [2005 amendment](https://docquery.fec.gov/pdf/799/25971401799/25971401799.pdf) leaves relationship fields blank. The [June 2008 form](https://docquery.fec.gov/pdf/802/28931746802/28931746802.pdf) puts AAJ first on PDF 2 and the affiliated committee on PDF 5; the [July form](https://docquery.fec.gov/pdf/680/28932335680/28932335680.pdf) explicitly marks their respective roles on PDFs 3 and 5. |
+| Benefits Council PAC, C00153171 | 2000-09-29; 2007-01-22 | The [2000 name-change form, PDF 1](https://docquery.fec.gov/pdf/357/20036073357/20036073357.pdf) leaves line 6 blank. The [2007 form, PDF 3](https://docquery.fec.gov/pdf/435/27039343435/27039343435.pdf) names American Benefits Council but leaves the relationship unspecified. Multiple organization-type selections and a candidate-committee selection with no candidate name remain unresolved. |
+
+**The historical API `affiliatedName` is not a stable parent identifier.** For
+AAJ, the 2004/2006 history records the separate affiliated committee while the
+2008 history records the parent. The original forms show both roles. Their
+placement changes; this is not evidence that the parent first became connected
+in 2008 or that the other committee disappeared. Do not replace the lobbying
+actor with the affiliated committee, merge their spending, or assign treatment
+using that single API field.
+
+Blank amendments and missing pages are not relationship cessations. Conversely,
+carrying earlier values forward would impose continuity that this review has
+not independently established. Preserve native/API differences: AdvaMed's
+2006 and ATLA's 2001 covers select New while the API labels amendments. The
+AAJ forms' line-2 date of January 1, 1979 is separate from signature and receipt
+dates; it must not backdate a reported relationship. These are measurement
+cautions, not findings of legal noncompliance.
+
+The frozen cohort, affiliation history and outcome panels remain unchanged.
+`review-substitution-fec-affiliations.py` reproduces the selection and checks
+source bindings; its optional `--raw-directory` check verifies four acquisition
+projections and eleven PDF hashes/page counts. Missing local files are reported
+as unavailable. These checks do not independently adjudicate the readings.
+The companion notebook reproduces counts and the dated relationship table.
+The next link review must resolve substantive amendment continuity and Benefits
+Council's earlier parent identity. Provision-level exposure, comparable controls
+and comparable LDA financial outcomes remain separate prerequisites for fitting.
+
 ## Revised design contract
 
 1. **Define provision-level exposure first.** Identify a specific reform

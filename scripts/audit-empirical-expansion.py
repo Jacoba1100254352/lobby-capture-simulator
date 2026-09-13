@@ -1145,6 +1145,14 @@ def audit():
     expected_histories = {(r["canonicalActorId"], r["committeeId"], str(year + year % 2)) for r in cohort for year in range(int(r["startYear"]), int(r["endYear"]) + 1)}
     if len(histories) != len(expected_histories) or {(r["canonicalActorId"], r["committeeId"], r["cycle"]) for r in histories} != expected_histories:
         raise ValueError("Missing, duplicate or off-cohort FEC historical affiliations")
+    spec = importlib.util.spec_from_file_location("fec_organizations", ROOT / "scripts/review-substitution-fec-affiliations.py")
+    organization_module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(organization_module)
+    organization_review = json.loads(organization_module.SOURCE.read_text())
+    organization_checks = organization_module.validate_review(organization_review, cohort, histories)
+    add("alternate-channel-organizations", "dated_relationships_not_continuous_affiliation",
+        "; ".join(f"{key}={value}" for key, value in organization_checks.items()),
+        "All four acquisition candidates remain. The F1 query and last-pre-2003/all-2003-2008 selection retain dated parent evidence, separate affiliated committees, blank entries and native/API classification differences. AAJ's first relationship field changes placement; it is not a reliable parent identifier. Three committees have explicit pre-window parent observations, not verified continuous affiliation, principal funding identity or reform exposure. The saved-ledger check does not authenticate raw files or independently adjudicate manual readings. Frozen histories and outcomes remain unchanged.")
     if len({(r['committeeId'], r['sourceRecordId']) for r in fec}) != len(fec):
         raise ValueError("Duplicate FEC filing keys")
     overlap, gaps, straddles = report_period_diagnostics(fec)

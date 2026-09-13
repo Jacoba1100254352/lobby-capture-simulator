@@ -25,6 +25,93 @@ AUDIT = load("source_measurement_audit", "audit-empirical-expansion.py")
 FAMILIES = load("lda_families", "review-substitution-lda-families.py")
 PAPER = load("fec_paper", "review-substitution-fec-paper.py")
 COALITION = load("coalition_review", "review-substitution-coalition-disclosure.py")
+ORGANIZATIONS = load("fec_organizations", "review-substitution-fec-affiliations.py")
+
+
+class OrganizationLinkTests(unittest.TestCase):
+    def setUp(self):
+        self.review = json.loads(ORGANIZATIONS.SOURCE.read_text())
+        self.cohort = AUDIT.read("substitution-fec-acquisition-cohort.csv")
+        self.histories = AUDIT.read("substitution-fec-affiliation-history.csv")
+
+    def check(self, refresh=False):
+        if refresh:
+            for query in self.review["queries"]:
+                query["projectionFingerprint"] = ORGANIZATIONS.fingerprint(query["records"])
+            self.review["fingerprint"] = ORGANIZATIONS.fingerprint(
+                {k: v for k, v in self.review.items() if k != "fingerprint"})
+        return ORGANIZATIONS.validate_review(self.review, self.cohort, self.histories)
+
+    def test_retains_dated_roles_without_changing_frozen_inputs(self):
+        before = deepcopy((self.review, self.cohort, self.histories))
+        result = self.check()
+        self.assertEqual([result[k] for k in ("queryRecords", "committeesRetained", "selectedDocuments",
+            "pagesReviewed", "connectedOrganizationObservations", "affiliatedCommitteeObservations",
+            "unspecifiedRelationshipObservations", "committeesWithPreWindowParentObservation",
+            "continuousAffiliationPeriodsCleared")], [69, 4, 11, 46, 6, 4, 1, 3, 0])
+        self.assertEqual((self.review, self.cohort, self.histories), before)
+
+    def test_selection_keeps_pre_window_ties_and_old_versions(self):
+        rows = [{"beginning_image_number": str(i), "receipt_date": d, "most_recent": False}
+                for i, d in enumerate(["2000-01-01", "2002-12-31", "2002-12-31",
+                                       "2003-01-01", "2008-12-31", "2009-01-01"])]
+        self.assertEqual(ORGANIZATIONS.selected_images(rows, "2003-01-01", "2008-12-31"),
+                         {"1", "2", "3", "4"})
+
+    def test_source_or_baseline_drift_requires_review(self):
+        self.review["documents"][0]["findings"] += " changed"
+        with self.assertRaisesRegex(ValueError, "fingerprint"):
+            self.check()
+        self.histories[0]["affiliatedName"] = "Different organization"
+        with self.assertRaisesRegex(ValueError, "baseline"):
+            self.check(refresh=True)
+
+    def test_cannot_drop_an_inconvenient_candidate_or_historical_document(self):
+        baseline = deepcopy(self.review)
+        self.review["queries"].pop()
+        with self.assertRaisesRegex(ValueError, "whole acquisition cohort"):
+            self.check(refresh=True)
+        self.review = baseline
+        self.review["documents"].pop()
+        with self.assertRaisesRegex(ValueError, "Document selection"):
+            self.check(refresh=True)
+
+    def test_cross_committee_or_duplicate_inventory_fails(self):
+        baseline = deepcopy(self.review)
+        self.review["queries"][0]["records"][0]["committee_id"] = "C00153171"
+        with self.assertRaisesRegex(ValueError, "off-committee"):
+            self.check(refresh=True)
+        self.review = baseline
+        query = self.review["queries"][0]
+        query["records"].append(deepcopy(query["records"][0]))
+        query["count"] += 1
+        with self.assertRaisesRegex(ValueError, "Duplicate"):
+            self.check(refresh=True)
+
+    def test_claim_promotion_or_unreviewed_relationship_page_fails(self):
+        baseline = deepcopy(self.review)
+        self.review["boundary"]["continuousAffiliationEstablished"] = True
+        with self.assertRaisesRegex(ValueError, "claim boundary"):
+            self.check(refresh=True)
+        self.review = baseline
+        document = next(d for d in self.review["documents"] if d["relationships"])
+        document["relationships"][0]["pdfPage"] = document["pdfPages"] + 1
+        with self.assertRaisesRegex(ValueError, "relationship role or page"):
+            self.check(refresh=True)
+
+    def test_missing_files_do_not_count_as_verified(self):
+        with tempfile.TemporaryDirectory() as folder:
+            result = ORGANIZATIONS.verify_files(self.review, Path(folder))
+        self.assertEqual(result["verified"], [])
+        self.assertEqual(len(result["unavailable"]), 15)
+        self.assertFalse(result["manualReadingIndependentlyVerified"])
+
+    def test_changed_local_pdf_is_rejected(self):
+        with tempfile.TemporaryDirectory() as folder:
+            document = self.review["documents"][0]
+            (Path(folder) / (document["imageNumber"] + ".pdf")).write_bytes(b"%PDF-changed")
+            with self.assertRaisesRegex(ValueError, "PDF bytes mismatch"):
+                ORGANIZATIONS.verify_files(self.review, Path(folder))
 
 
 class CoalitionDisclosureTests(unittest.TestCase):

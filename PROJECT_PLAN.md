@@ -40,8 +40,14 @@ source panel or model coefficients.
 The September 2026 empirical work is tracked by `docs/substitution-study-redesign.md`,
 `docs/comment-uptake-pilot.md`, `docs/procurement-source-reconciliation.md`, and
 `reports/empirical-expansion-audit.md`. Expanded source history and observed PAC
-outcomes remain design inputs. The four-PAC acquisition frame retains all 48
-expected committee-half-years, including twelve unresolved periods; 36 are
+outcomes remain design inputs. A separate 69-record F1
+query inventory and eleven original documents (46 reviewed pages) distinguish
+connected parents from affiliated committees, with explicit pre-2003 parent
+observations for three candidates. Blank amendments, incomplete packets and
+Benefits Council's earlier identity remain unresolved; no continuous affiliation,
+principal funding or treatment exposure is inferred. The four-PAC acquisition
+frame retains all 48 expected committee-half-years, including twelve unresolved
+periods; 36 are
 usable, one through a source-bound supplemental-filing adjudication. A separate
 280-record FEC filings inventory now supplies 21 current and three superseded
 version flags for all 24 frozen Benefits Council reports. Seven selected report

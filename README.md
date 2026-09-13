@@ -182,6 +182,15 @@ The comment causal-upgrade packet is the matching control artifact for the P2 co
 
 The September 2026 empirical expansion is documented in [the substitution redesign](docs/substitution-study-redesign.md), [comment-uptake pilot](docs/comment-uptake-pilot.md), and [procurement reconciliation](docs/procurement-source-reconciliation.md). It adds 2003-2008 LDA history, 229 reports from four candidate PACs, a coverage ledger retaining all 48 expected committee-half-years (36 usable, including one source-reviewed supplemental-filing decision), and two source-reviewed docket-issue observations. A reviewed AdvaMed registration alias restores fifteen LDA filings, bringing the source panel to 427 filings; separate filing-level metadata and two original-form reviews reveal accounting-method differences and possible income/expense double counting. Missing source amounts remain blank. It also repairs the 500-comment text corpus and separates GAO publication dates from decision dates. A separate FY2024 GAO pilot links four delivery orders from one consolidated decision to both live USAspending records and the archived bulk panel; none is in the small ranked-slice panel. Run `make empirical-expansion-audit` for the offline evidence checks. These products do not assign a valid treatment/control contrast or clear causal-calibration claims.
 
+A [dated PAC organization review](docs/substitution-study-redesign.md#dated-pac-organization-links-parent-and-affiliated-committee-are-different-roles)
+adds eleven original filings across all four candidates. Six parent observations
+support three organization links before 2003. AAJ's forms distinguish its parent
+from a separate affiliated committee that occupies the historical API name
+field. Blank amendments and missing pages remain unresolved; the review does
+not establish continuous affiliation, principal funding or reform exposure.
+The unchanged outcome panels, source ledger and executed notebook retain those
+boundaries, with independent review pending.
+
 A separate public-letter position pilot records two positions agreeing with both EPA's proposal and final action. Its candidate docket-copy match and agency-response link remain unverified; policy agreement is not coded as uptake. The same audit checks metadata fingerprints, distinct submission identities, source-page provenance and the no-promotion boundary. Historical travel archive summaries now provide concrete 2004 exposure leads, but their original forms require login and no verified travel baseline has been acquired.
 
 A separate NAM 2008Q1 original/amendment probe finds empty API affiliate lists

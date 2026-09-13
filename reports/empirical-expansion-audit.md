@@ -42,6 +42,14 @@ queryRows=8; exactClientRows=5; otherClientRowsExcluded=3; reviewedOwnRegistrant
 
 Remaining: Two NAM 2008Q1 versions outside the frozen cohort have empty API affiliate lists but distinct affiliation websites in original HTML line 25. The additions field is not a membership roster; the versions are one actor-period. This saved-ledger check is not raw-source authentication. Recover historical website contents, pre-reform funding/participation and prior disclosure evidence, then independently review comparable exposure groups. No exposure, financial-version selection or causal effect is promoted.
 
+## alternate-channel-organizations
+
+Status: `dated_relationships_not_continuous_affiliation`
+
+queryRecords=69; committeesRetained=4; selectedDocuments=11; pagesReviewed=46; connectedOrganizationObservations=6; affiliatedCommitteeObservations=4; unspecifiedRelationshipObservations=1; committeesWithExplicitParentObservation=3; committeesWithPreWindowParentObservation=3; continuousAffiliationPeriodsCleared=0; causalEffect=not_identified
+
+Remaining: All four acquisition candidates remain. The F1 query and last-pre-2003/all-2003-2008 selection retain dated parent evidence, separate affiliated committees, blank entries and native/API classification differences. AAJ's first relationship field changes placement; it is not a reliable parent identifier. Three committees have explicit pre-window parent observations, not verified continuous affiliation, principal funding identity or reform exposure. The saved-ledger check does not authenticate raw files or independently adjudicate manual readings. Frozen histories and outcomes remain unchanged.
+
 ## alternate-channel-reports
 
 Status: `bounded_affiliation_candidate`

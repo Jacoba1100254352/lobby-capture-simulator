@@ -1,0 +1,1211 @@
+{
+  "fingerprint": "43e6432247e7b3a23a9f85ea5464e407f1332770570ccbc3341b153521c40694",
+  "schema": "substitution-fec-organization-review-v1",
+  "reviewDate": "2026-09-13",
+  "reviewer": "codex-source-audit",
+  "independentReviewStatus": "pending",
+  "selectionRule": "For each of the four unchanged acquisition candidates, retrieve all API filings classified F1; select every receipt in 2003-2008 and all ties at the last pre-2003 receipt. Do not filter historical records on current most_recent flags. All selected PDF pages are visually reviewed. The API F1 category includes correspondence; other categories and earlier substantive registrations may contain missing evidence.",
+  "cohortFingerprint": "886db0b84228bd46d587ba3c52da22df1b91d00ffa0fa63862164b66a8215c47",
+  "historyFingerprint": "9a72cf5e036693b3ce70d447e528c38686f22afb265212e26f8251055b4e2ab0",
+  "boundary": {
+    "unit": "document_relationship_observation",
+    "continuousAffiliationEstablished": false,
+    "blankMeansNoRelationship": false,
+    "principalFundingIdentityEstablished": false,
+    "exposureAssigned": false,
+    "outcomesOverwritten": false,
+    "causalEffect": "not_identified"
+  },
+  "queries": [
+    {
+      "committeeId": "C00007450",
+      "url": "https://api.open.fec.gov/v1/filings/?committee_id=C00007450&form_type=F1",
+      "retrievedAt": "2026-09-13T13:27:44+00:00",
+      "count": 9,
+      "pagination": "all_pages_via_fetch_all",
+      "cacheSha256": "cca2c3921454cce25a65d6e6292d22c210c6ba21f423535a6093b2d6dfba2845",
+      "projectionFingerprint": "3c6f32a066b3baa23921cf34885436f9a79546a871d4453baf78d7bd3498212d",
+      "records": [
+        {
+          "committee_id": "C00007450",
+          "beginning_image_number": "202108249466558588",
+          "receipt_date": "2021-08-24T00:00:00",
+          "form_type": "F1",
+          "amendment_indicator": "A",
+          "most_recent": true,
+          "pdf_url": "https://docquery.fec.gov/pdf/588/202108249466558588/202108249466558588.pdf",
+          "pages": 4,
+          "file_number": 1536256
+        },
+        {
+          "committee_id": "C00007450",
+          "beginning_image_number": "202005279239499538",
+          "receipt_date": "2020-05-27T00:00:00",
+          "form_type": "F1",
+          "amendment_indicator": "A",
+          "most_recent": false,
+          "pdf_url": "https://docquery.fec.gov/pdf/538/202005279239499538/202005279239499538.pdf",
+          "pages": 5,
+          "file_number": 1408603
+        },
+        {
+          "committee_id": "C00007450",
+          "beginning_image_number": "201902279145592578",
+          "receipt_date": "2019-02-27T00:00:00",
+          "form_type": "F1",
+          "amendment_indicator": "A",
+          "most_recent": false,
+          "pdf_url": "https://docquery.fec.gov/pdf/578/201902279145592578/201902279145592578.pdf",
+          "pages": 5,
+          "file_number": 1317861
+        },
+        {
+          "committee_id": "C00007450",
+          "beginning_image_number": "29991785873",
+          "receipt_date": "2009-03-23T00:00:00",
+          "form_type": "F1",
+          "amendment_indicator": "A",
+          "most_recent": false,
+          "pdf_url": "https://docquery.fec.gov/pdf/873/29991785873/29991785873.pdf",
+          "pages": 4,
+          "file_number": 409186
+        },
+        {
+          "committee_id": "C00007450",
+          "beginning_image_number": "26039303894",
+          "receipt_date": "2006-12-11T00:00:00",
+          "form_type": "F1",
+          "amendment_indicator": "A",
+          "most_recent": null,
+          "pdf_url": "https://docquery.fec.gov/pdf/894/26039303894/26039303894.pdf",
+          "pages": 2,
+          "file_number": null
+        },
+        {
+          "committee_id": "C00007450",
+          "beginning_image_number": "20036424380",
+          "receipt_date": "2000-10-29T00:00:00",
+          "form_type": "F1",
+          "amendment_indicator": "A",
+          "most_recent": null,
+          "pdf_url": "https://docquery.fec.gov/pdf/380/20036424380/20036424380.pdf",
+          "pages": 2,
+          "file_number": null
+        },
+        {
+          "committee_id": "C00007450",
+          "beginning_image_number": "94039434690",
+          "receipt_date": "1994-11-17T00:00:00",
+          "form_type": "F1",
+          "amendment_indicator": "A",
+          "most_recent": null,
+          "pdf_url": "https://docquery.fec.gov/pdf/690/94039434690/94039434690.pdf",
+          "pages": 2,
+          "file_number": null
+        },
+        {
+          "committee_id": "C00007450",
+          "beginning_image_number": "83032894543",
+          "receipt_date": "1983-12-28T00:00:00",
+          "form_type": "F1",
+          "amendment_indicator": "A",
+          "most_recent": null,
+          "pdf_url": null,
+          "pages": 2,
+          "file_number": null
+        },
+        {
+          "committee_id": "C00007450",
+          "beginning_image_number": "82032255241",
+          "receipt_date": "1982-03-29T00:00:00",
+          "form_type": "F1",
+          "amendment_indicator": "A",
+          "most_recent": null,
+          "pdf_url": null,
+          "pages": 3,
+          "file_number": null
+        }
+      ]
+    },
+    {
+      "committeeId": "C00024521",
+      "url": "https://api.open.fec.gov/v1/filings/?committee_id=C00024521&form_type=F1",
+      "retrievedAt": "2026-09-13T13:27:44+00:00",
+      "count": 35,
+      "pagination": "all_pages_via_fetch_all",
+      "cacheSha256": "3f1040ebf30302e7e33d91b8f60d7fb37a197ffbc0dfd85dc2e39a2d95e0e3c5",
+      "projectionFingerprint": "9e7bb194b8fea2a31af71a3190fbe3cb1a6ba21908c2eea1a07de3220dc4160b",
+      "records": [
+        {
+          "committee_id": "C00024521",
+          "beginning_image_number": "202506179762187962",
+          "receipt_date": "2025-06-17T00:00:00",
+          "form_type": "F1",
+          "amendment_indicator": "A",
+          "most_recent": false,
+          "pdf_url": "https://docquery.fec.gov/pdf/962/202506179762187962/202506179762187962.pdf",
+          "pages": 4,
+          "file_number": 1895739
+        },
+        {
+          "committee_id": "C00024521",
+          "beginning_image_number": "202506179762190610",
+          "receipt_date": "2025-06-17T00:00:00",
+          "form_type": "F1",
+          "amendment_indicator": "A",
+          "most_recent": true,
+          "pdf_url": "https://docquery.fec.gov/pdf/610/202506179762190610/202506179762190610.pdf",
+          "pages": 4,
+          "file_number": 1895789
+        },
+        {
+          "committee_id": "C00024521",
+          "beginning_image_number": "202302179578662829",
+          "receipt_date": "2023-02-17T00:00:00",
+          "form_type": "F1",
+          "amendment_indicator": "A",
+          "most_recent": false,
+          "pdf_url": "https://docquery.fec.gov/pdf/829/202302179578662829/202302179578662829.pdf",
+          "pages": 4,
+          "file_number": 1689645
+        },
+        {
+          "committee_id": "C00024521",
+          "beginning_image_number": "202212079547229149",
+          "receipt_date": "2022-12-07T00:00:00",
+          "form_type": "F1",
+          "amendment_indicator": "A",
+          "most_recent": false,
+          "pdf_url": "https://docquery.fec.gov/pdf/149/202212079547229149/202212079547229149.pdf",
+          "pages": 5,
+          "file_number": 1666269
+        },
+        {
+          "committee_id": "C00024521",
+          "beginning_image_number": "202207069517819629",
+          "receipt_date": "2022-07-06T00:00:00",
+          "form_type": "F1",
+          "amendment_indicator": "A",
+          "most_recent": false,
+          "pdf_url": "https://docquery.fec.gov/pdf/629/202207069517819629/202207069517819629.pdf",
+          "pages": 5,
+          "file_number": 1606865
+        },
+        {
+          "committee_id": "C00024521",
+          "beginning_image_number": "202005049232364024",
+          "receipt_date": "2020-05-04T00:00:00",
+          "form_type": "F1",
+          "amendment_indicator": "A",
+          "most_recent": false,
+          "pdf_url": "https://docquery.fec.gov/pdf/024/202005049232364024/202005049232364024.pdf",
+          "pages": 4,
+          "file_number": 1404217
+        },
+        {
+          "committee_id": "C00024521",
+          "beginning_image_number": "201801049090366995",
+          "receipt_date": "2018-01-04T00:00:00",
+          "form_type": "F1",
+          "amendment_indicator": "A",
+          "most_recent": false,
+          "pdf_url": "https://docquery.fec.gov/pdf/995/201801049090366995/201801049090366995.pdf",
+          "pages": 5,
+          "file_number": 1195934
+        },
+        {
+          "committee_id": "C00024521",
+          "beginning_image_number": "14940536221",
+          "receipt_date": "2014-02-26T00:00:00",
+          "form_type": "F1",
+          "amendment_indicator": "A",
+          "most_recent": false,
+          "pdf_url": "https://docquery.fec.gov/pdf/221/14940536221/14940536221.pdf",
+          "pages": 6,
+          "file_number": 909807
+        },
+        {
+          "committee_id": "C00024521",
+          "beginning_image_number": "29934417114",
+          "receipt_date": "2009-08-04T00:00:00",
+          "form_type": "F1",
+          "amendment_indicator": "A",
+          "most_recent": false,
+          "pdf_url": "https://docquery.fec.gov/pdf/114/29934417114/29934417114.pdf",
+          "pages": 6,
+          "file_number": 428762
+        },
+        {
+          "committee_id": "C00024521",
+          "beginning_image_number": "29933399233",
+          "receipt_date": "2009-03-27T00:00:00",
+          "form_type": "F1",
+          "amendment_indicator": "A",
+          "most_recent": false,
+          "pdf_url": "https://docquery.fec.gov/pdf/233/29933399233/29933399233.pdf",
+          "pages": 5,
+          "file_number": 409964
+        },
+        {
+          "committee_id": "C00024521",
+          "beginning_image_number": "28932335680",
+          "receipt_date": "2008-07-25T00:00:00",
+          "form_type": "F1",
+          "amendment_indicator": "A",
+          "most_recent": false,
+          "pdf_url": "https://docquery.fec.gov/pdf/680/28932335680/28932335680.pdf",
+          "pages": 6,
+          "file_number": 354291
+        },
+        {
+          "committee_id": "C00024521",
+          "beginning_image_number": "28931746802",
+          "receipt_date": "2008-06-05T00:00:00",
+          "form_type": "F1",
+          "amendment_indicator": "A",
+          "most_recent": false,
+          "pdf_url": "https://docquery.fec.gov/pdf/802/28931746802/28931746802.pdf",
+          "pages": 6,
+          "file_number": 343574
+        },
+        {
+          "committee_id": "C00024521",
+          "beginning_image_number": "26940924892",
+          "receipt_date": "2006-12-19T00:00:00",
+          "form_type": "F1",
+          "amendment_indicator": "A",
+          "most_recent": false,
+          "pdf_url": "https://docquery.fec.gov/pdf/892/26940924892/26940924892.pdf",
+          "pages": 6,
+          "file_number": 266042
+        },
+        {
+          "committee_id": "C00024521",
+          "beginning_image_number": "25971401799",
+          "receipt_date": "2005-10-25T00:00:00",
+          "form_type": "F1",
+          "amendment_indicator": "A",
+          "most_recent": false,
+          "pdf_url": "https://docquery.fec.gov/pdf/799/25971401799/25971401799.pdf",
+          "pages": 4,
+          "file_number": 190765
+        },
+        {
+          "committee_id": "C00024521",
+          "beginning_image_number": "21990170652",
+          "receipt_date": "2001-07-10T00:00:00",
+          "form_type": "F1",
+          "amendment_indicator": "A",
+          "most_recent": false,
+          "pdf_url": "https://docquery.fec.gov/pdf/652/21990170652/21990170652.pdf",
+          "pages": 6,
+          "file_number": 15921
+        },
+        {
+          "committee_id": "C00024521",
+          "beginning_image_number": "21036903625",
+          "receipt_date": "2001-02-05T00:00:00",
+          "form_type": "F1",
+          "amendment_indicator": "A",
+          "most_recent": null,
+          "pdf_url": "https://docquery.fec.gov/pdf/625/21036903625/21036903625.pdf",
+          "pages": 3,
+          "file_number": null
+        },
+        {
+          "committee_id": "C00024521",
+          "beginning_image_number": "99034832960",
+          "receipt_date": "1999-09-24T00:00:00",
+          "form_type": "F1",
+          "amendment_indicator": "A",
+          "most_recent": null,
+          "pdf_url": "https://docquery.fec.gov/pdf/960/99034832960/99034832960.pdf",
+          "pages": 3,
+          "file_number": null
+        },
+        {
+          "committee_id": "C00024521",
+          "beginning_image_number": "97032403261",
+          "receipt_date": "1997-09-19T00:00:00",
+          "form_type": "F1",
+          "amendment_indicator": "A",
+          "most_recent": null,
+          "pdf_url": "https://docquery.fec.gov/pdf/261/97032403261/97032403261.pdf",
+          "pages": 4,
+          "file_number": null
+        },
+        {
+          "committee_id": "C00024521",
+          "beginning_image_number": "97032383459",
+          "receipt_date": "1997-09-05T00:00:00",
+          "form_type": "F1",
+          "amendment_indicator": "A",
+          "most_recent": null,
+          "pdf_url": "https://docquery.fec.gov/pdf/459/97032383459/97032383459.pdf",
+          "pages": 3,
+          "file_number": null
+        },
+        {
+          "committee_id": "C00024521",
+          "beginning_image_number": "97032360870",
+          "receipt_date": "1997-08-21T00:00:00",
+          "form_type": "F1",
+          "amendment_indicator": "A",
+          "most_recent": null,
+          "pdf_url": "https://docquery.fec.gov/pdf/870/97032360870/97032360870.pdf",
+          "pages": 3,
+          "file_number": null
+        },
+        {
+          "committee_id": "C00024521",
+          "beginning_image_number": "96030842597",
+          "receipt_date": "1996-10-10T00:00:00",
+          "form_type": "F1",
+          "amendment_indicator": "A",
+          "most_recent": null,
+          "pdf_url": "https://docquery.fec.gov/pdf/597/96030842597/96030842597.pdf",
+          "pages": 2,
+          "file_number": null
+        },
+        {
+          "committee_id": "C00024521",
+          "beginning_image_number": "96030722703",
+          "receipt_date": "1996-08-13T00:00:00",
+          "form_type": "F1",
+          "amendment_indicator": "A",
+          "most_recent": null,
+          "pdf_url": "https://docquery.fec.gov/pdf/703/96030722703/96030722703.pdf",
+          "pages": 2,
+          "file_number": null
+        },
+        {
+          "committee_id": "C00024521",
+          "beginning_image_number": "96030613066",
+          "receipt_date": "1996-07-11T00:00:00",
+          "form_type": "F1",
+          "amendment_indicator": "A",
+          "most_recent": null,
+          "pdf_url": "https://docquery.fec.gov/pdf/066/96030613066/96030613066.pdf",
+          "pages": 2,
+          "file_number": null
+        },
+        {
+          "committee_id": "C00024521",
+          "beginning_image_number": "95039555081",
+          "receipt_date": "1995-01-09T00:00:00",
+          "form_type": "F1",
+          "amendment_indicator": "A",
+          "most_recent": null,
+          "pdf_url": "https://docquery.fec.gov/pdf/081/95039555081/95039555081.pdf",
+          "pages": 2,
+          "file_number": null
+        },
+        {
+          "committee_id": "C00024521",
+          "beginning_image_number": "95039553283",
+          "receipt_date": "1995-01-09T00:00:00",
+          "form_type": "F1",
+          "amendment_indicator": "A",
+          "most_recent": null,
+          "pdf_url": "https://docquery.fec.gov/pdf/283/95039553283/95039553283.pdf",
+          "pages": 2,
+          "file_number": null
+        },
+        {
+          "committee_id": "C00024521",
+          "beginning_image_number": "92037780909",
+          "receipt_date": "1992-09-04T00:00:00",
+          "form_type": "F1",
+          "amendment_indicator": "A",
+          "most_recent": null,
+          "pdf_url": null,
+          "pages": 2,
+          "file_number": null
+        },
+        {
+          "committee_id": "C00024521",
+          "beginning_image_number": "88035514901",
+          "receipt_date": "1988-10-12T00:00:00",
+          "form_type": "F1",
+          "amendment_indicator": "A",
+          "most_recent": null,
+          "pdf_url": null,
+          "pages": 2,
+          "file_number": null
+        },
+        {
+          "committee_id": "C00024521",
+          "beginning_image_number": "88035242323",
+          "receipt_date": "1988-05-05T00:00:00",
+          "form_type": "F1",
+          "amendment_indicator": "A",
+          "most_recent": null,
+          "pdf_url": null,
+          "pages": 3,
+          "file_number": null
+        },
+        {
+          "committee_id": "C00024521",
+          "beginning_image_number": "85033874045",
+          "receipt_date": "1985-09-12T00:00:00",
+          "form_type": "F1",
+          "amendment_indicator": "A",
+          "most_recent": null,
+          "pdf_url": null,
+          "pages": 2,
+          "file_number": null
+        },
+        {
+          "committee_id": "C00024521",
+          "beginning_image_number": "85033851119",
+          "receipt_date": "1985-08-05T00:00:00",
+          "form_type": "F1",
+          "amendment_indicator": "A",
+          "most_recent": null,
+          "pdf_url": null,
+          "pages": 2,
+          "file_number": null
+        },
+        {
+          "committee_id": "C00024521",
+          "beginning_image_number": "85033832775",
+          "receipt_date": "1985-08-01T00:00:00",
+          "form_type": "F1",
+          "amendment_indicator": "A",
+          "most_recent": null,
+          "pdf_url": null,
+          "pages": 2,
+          "file_number": null
+        },
+        {
+          "committee_id": "C00024521",
+          "beginning_image_number": "85033674673",
+          "receipt_date": "1985-03-11T00:00:00",
+          "form_type": "F1",
+          "amendment_indicator": "A",
+          "most_recent": null,
+          "pdf_url": null,
+          "pages": 2,
+          "file_number": null
+        },
+        {
+          "committee_id": "C00024521",
+          "beginning_image_number": "80031663676",
+          "receipt_date": "1980-10-08T00:00:00",
+          "form_type": "F1",
+          "amendment_indicator": "A",
+          "most_recent": null,
+          "pdf_url": null,
+          "pages": 1,
+          "file_number": null
+        },
+        {
+          "committee_id": "C00024521",
+          "beginning_image_number": "80031555410",
+          "receipt_date": "1980-05-08T00:00:00",
+          "form_type": "F1",
+          "amendment_indicator": "A",
+          "most_recent": null,
+          "pdf_url": null,
+          "pages": 2,
+          "file_number": null
+        },
+        {
+          "committee_id": "C00024521",
+          "beginning_image_number": "79031364083",
+          "receipt_date": "1979-09-20T00:00:00",
+          "form_type": "F1",
+          "amendment_indicator": "A",
+          "most_recent": null,
+          "pdf_url": null,
+          "pages": 12,
+          "file_number": null
+        }
+      ]
+    },
+    {
+      "committeeId": "C00153171",
+      "url": "https://api.open.fec.gov/v1/filings/?committee_id=C00153171&form_type=F1",
+      "retrievedAt": "2026-09-13T13:27:43+00:00",
+      "count": 12,
+      "pagination": "all_pages_via_fetch_all",
+      "cacheSha256": "355117f4d36d23ab130754b6864e70aecab8b0fd0c93d9715a72862ad553b5b6",
+      "projectionFingerprint": "a1442e9a597cab5eae75a82f65adc35ec17a79b34634b97b12bd82b7c9f27227",
+      "records": [
+        {
+          "committee_id": "C00153171",
+          "beginning_image_number": "202604099857052027",
+          "receipt_date": "2026-04-09T00:00:00",
+          "form_type": "F1",
+          "amendment_indicator": "A",
+          "most_recent": true,
+          "pdf_url": "https://docquery.fec.gov/pdf/027/202604099857052027/202604099857052027.pdf",
+          "pages": 4,
+          "file_number": 1959402
+        },
+        {
+          "committee_id": "C00153171",
+          "beginning_image_number": "202510099790720407",
+          "receipt_date": "2025-10-09T00:00:00",
+          "form_type": "F1",
+          "amendment_indicator": "A",
+          "most_recent": false,
+          "pdf_url": "https://docquery.fec.gov/pdf/407/202510099790720407/202510099790720407.pdf",
+          "pages": 4,
+          "file_number": 1918224
+        },
+        {
+          "committee_id": "C00153171",
+          "beginning_image_number": "12952853623",
+          "receipt_date": "2012-08-29T00:00:00",
+          "form_type": "F1",
+          "amendment_indicator": "A",
+          "most_recent": false,
+          "pdf_url": "https://docquery.fec.gov/pdf/623/12952853623/12952853623.pdf",
+          "pages": 4,
+          "file_number": 808219
+        },
+        {
+          "committee_id": "C00153171",
+          "beginning_image_number": "27039343435",
+          "receipt_date": "2007-01-22T00:00:00",
+          "form_type": "F1",
+          "amendment_indicator": "A",
+          "most_recent": null,
+          "pdf_url": "https://docquery.fec.gov/pdf/435/27039343435/27039343435.pdf",
+          "pages": 6,
+          "file_number": null
+        },
+        {
+          "committee_id": "C00153171",
+          "beginning_image_number": "20036073357",
+          "receipt_date": "2000-09-29T00:00:00",
+          "form_type": "F1",
+          "amendment_indicator": "A",
+          "most_recent": null,
+          "pdf_url": "https://docquery.fec.gov/pdf/357/20036073357/20036073357.pdf",
+          "pages": 2,
+          "file_number": null
+        },
+        {
+          "committee_id": "C00153171",
+          "beginning_image_number": "92037534338",
+          "receipt_date": "1992-05-04T00:00:00",
+          "form_type": "F1",
+          "amendment_indicator": "A",
+          "most_recent": null,
+          "pdf_url": null,
+          "pages": 2,
+          "file_number": null
+        },
+        {
+          "committee_id": "C00153171",
+          "beginning_image_number": "87034950555",
+          "receipt_date": "1987-11-24T00:00:00",
+          "form_type": "F1",
+          "amendment_indicator": "A",
+          "most_recent": null,
+          "pdf_url": null,
+          "pages": 2,
+          "file_number": null
+        },
+        {
+          "committee_id": "C00153171",
+          "beginning_image_number": "85033652282",
+          "receipt_date": "1985-02-07T00:00:00",
+          "form_type": "F1",
+          "amendment_indicator": "A",
+          "most_recent": null,
+          "pdf_url": null,
+          "pages": 2,
+          "file_number": null
+        },
+        {
+          "committee_id": "C00153171",
+          "beginning_image_number": "83032853055",
+          "receipt_date": "1983-10-19T00:00:00",
+          "form_type": "F1",
+          "amendment_indicator": "A",
+          "most_recent": null,
+          "pdf_url": null,
+          "pages": 2,
+          "file_number": null
+        },
+        {
+          "committee_id": "C00153171",
+          "beginning_image_number": "82032362038",
+          "receipt_date": "1982-07-14T00:00:00",
+          "form_type": "F1",
+          "amendment_indicator": "A",
+          "most_recent": null,
+          "pdf_url": null,
+          "pages": 3,
+          "file_number": null
+        },
+        {
+          "committee_id": "C00153171",
+          "beginning_image_number": "82032331370",
+          "receipt_date": "1982-06-17T00:00:00",
+          "form_type": "F1",
+          "amendment_indicator": "A",
+          "most_recent": null,
+          "pdf_url": null,
+          "pages": 3,
+          "file_number": null
+        },
+        {
+          "committee_id": "C00153171",
+          "beginning_image_number": "82032260280",
+          "receipt_date": "1982-04-05T00:00:00",
+          "form_type": "F1",
+          "amendment_indicator": "N",
+          "most_recent": null,
+          "pdf_url": null,
+          "pages": 2,
+          "file_number": null
+        }
+      ]
+    },
+    {
+      "committeeId": "C00340356",
+      "url": "https://api.open.fec.gov/v1/filings/?committee_id=C00340356&form_type=F1",
+      "retrievedAt": "2026-09-13T13:27:43+00:00",
+      "count": 13,
+      "pagination": "all_pages_via_fetch_all",
+      "cacheSha256": "b622eeb88f2e19e9cec479a969b1d272a6854564dd81459a2575b9eb06b9810d",
+      "projectionFingerprint": "b5cbb4f577d0c36b2cf0855b397b390534abbfa5bb77e90d110fc9ed28b20365",
+      "records": [
+        {
+          "committee_id": "C00340356",
+          "beginning_image_number": "202302089578190114",
+          "receipt_date": "2023-02-08T00:00:00",
+          "form_type": "F1",
+          "amendment_indicator": "A",
+          "most_recent": true,
+          "pdf_url": "https://docquery.fec.gov/pdf/114/202302089578190114/202302089578190114.pdf",
+          "pages": 4,
+          "file_number": 1687962
+        },
+        {
+          "committee_id": "C00340356",
+          "beginning_image_number": "202202019491465245",
+          "receipt_date": "2022-02-01T00:00:00",
+          "form_type": "F1",
+          "amendment_indicator": "A",
+          "most_recent": false,
+          "pdf_url": "https://docquery.fec.gov/pdf/245/202202019491465245/202202019491465245.pdf",
+          "pages": 4,
+          "file_number": 1566681
+        },
+        {
+          "committee_id": "C00340356",
+          "beginning_image_number": "201809269124247504",
+          "receipt_date": "2018-09-26T00:00:00",
+          "form_type": "F1",
+          "amendment_indicator": "A",
+          "most_recent": false,
+          "pdf_url": "https://docquery.fec.gov/pdf/504/201809269124247504/201809269124247504.pdf",
+          "pages": 4,
+          "file_number": 1264054
+        },
+        {
+          "committee_id": "C00340356",
+          "beginning_image_number": "11931353896",
+          "receipt_date": "2011-05-12T00:00:00",
+          "form_type": "F1",
+          "amendment_indicator": "A",
+          "most_recent": false,
+          "pdf_url": "https://docquery.fec.gov/pdf/896/11931353896/11931353896.pdf",
+          "pages": 4,
+          "file_number": 727953
+        },
+        {
+          "committee_id": "C00340356",
+          "beginning_image_number": "11990070868",
+          "receipt_date": "2011-01-21T00:00:00",
+          "form_type": "F1",
+          "amendment_indicator": "A",
+          "most_recent": false,
+          "pdf_url": "https://docquery.fec.gov/pdf/868/11990070868/11990070868.pdf",
+          "pages": 4,
+          "file_number": 707139
+        },
+        {
+          "committee_id": "C00340356",
+          "beginning_image_number": "10932120649",
+          "receipt_date": "2010-12-20T00:00:00",
+          "form_type": "F1",
+          "amendment_indicator": "A",
+          "most_recent": false,
+          "pdf_url": "https://docquery.fec.gov/pdf/649/10932120649/10932120649.pdf",
+          "pages": 4,
+          "file_number": 524719
+        },
+        {
+          "committee_id": "C00340356",
+          "beginning_image_number": "10930779297",
+          "receipt_date": "2010-05-25T00:00:00",
+          "form_type": "F1",
+          "amendment_indicator": "A",
+          "most_recent": false,
+          "pdf_url": "https://docquery.fec.gov/pdf/297/10930779297/10930779297.pdf",
+          "pages": 4,
+          "file_number": 471779
+        },
+        {
+          "committee_id": "C00340356",
+          "beginning_image_number": "29933400502",
+          "receipt_date": "2009-03-28T00:00:00",
+          "form_type": "F1",
+          "amendment_indicator": "A",
+          "most_recent": false,
+          "pdf_url": "https://docquery.fec.gov/pdf/502/29933400502/29933400502.pdf",
+          "pages": 4,
+          "file_number": 410220
+        },
+        {
+          "committee_id": "C00340356",
+          "beginning_image_number": "26930408058",
+          "receipt_date": "2006-09-27T00:00:00",
+          "form_type": "F1",
+          "amendment_indicator": "A",
+          "most_recent": false,
+          "pdf_url": "https://docquery.fec.gov/pdf/058/26930408058/26930408058.pdf",
+          "pages": 4,
+          "file_number": 239829
+        },
+        {
+          "committee_id": "C00340356",
+          "beginning_image_number": "20035694975",
+          "receipt_date": "2000-06-30T00:00:00",
+          "form_type": "F1",
+          "amendment_indicator": "A",
+          "most_recent": null,
+          "pdf_url": "https://docquery.fec.gov/pdf/975/20035694975/20035694975.pdf",
+          "pages": 2,
+          "file_number": null
+        },
+        {
+          "committee_id": "C00340356",
+          "beginning_image_number": "20035323047",
+          "receipt_date": "2000-03-02T00:00:00",
+          "form_type": "F1",
+          "amendment_indicator": "M",
+          "most_recent": null,
+          "pdf_url": "https://docquery.fec.gov/pdf/047/20035323047/20035323047.pdf",
+          "pages": 2,
+          "file_number": null
+        },
+        {
+          "committee_id": "C00340356",
+          "beginning_image_number": "98033892341",
+          "receipt_date": "1998-10-30T00:00:00",
+          "form_type": "F1",
+          "amendment_indicator": "A",
+          "most_recent": null,
+          "pdf_url": "https://docquery.fec.gov/pdf/341/98033892341/98033892341.pdf",
+          "pages": 2,
+          "file_number": null
+        },
+        {
+          "committee_id": "C00340356",
+          "beginning_image_number": "98033554578",
+          "receipt_date": "1998-09-21T00:00:00",
+          "form_type": "F1",
+          "amendment_indicator": "N",
+          "most_recent": null,
+          "pdf_url": "https://docquery.fec.gov/pdf/578/98033554578/98033554578.pdf",
+          "pages": 2,
+          "file_number": null
+        }
+      ]
+    }
+  ],
+  "documents": [
+    {
+      "committeeId": "C00007450",
+      "imageNumber": "20036424380",
+      "sourceUrl": "https://docquery.fec.gov/pdf/380/20036424380/20036424380.pdf",
+      "sourceFingerprint": "a13a5247a3d5948ff90db812acd377c231ad47c9654644f937ef37edd8f26521",
+      "apiReceiptDate": "2000-10-29",
+      "pdfSha256": "ff3f2b5583af580674fe9120015ede700b7113833ff27bac9b982baf36b2ac72",
+      "pdfPages": 2,
+      "pagesReviewed": [
+        1,
+        2
+      ],
+      "canonicalActorId": "cand-d5522e62fad7",
+      "committeeName": "The American Gas Association Political Action Committee",
+      "documentDate": "2000-10-26",
+      "signedDate": null,
+      "nativeDocument": "name_and_address_change_letter",
+      "pageInventory": [
+        "Letter identifies C00007450 and requests PAC name/address changes; explicitly describes the American Gas Association's PAC.",
+        "FEC envelope replacement page."
+      ],
+      "relationships": [
+        {
+          "name": "American Gas Association",
+          "role": "connected_organization",
+          "pdfPage": 1,
+          "evidence": "The letter explicitly describes the PAC as the association's political action committee; this is a narrative organization link, not a Form 1 relationship checkbox."
+        }
+      ],
+      "findings": "The requested new name is The American Gas Association Political Action Committee, abbreviated GASPAC; the prior name is Gas Employees Political Action Committee. No effective relationship interval or principal contribution is asserted."
+    },
+    {
+      "committeeId": "C00007450",
+      "imageNumber": "26039303894",
+      "sourceUrl": "https://docquery.fec.gov/pdf/894/26039303894/26039303894.pdf",
+      "sourceFingerprint": "9e3dd585848698a7a66ab9e3757ecae7ba2f9dcf1ef451055f3e1bf17d77ff1e",
+      "apiReceiptDate": "2006-12-11",
+      "pdfSha256": "ec7b3803221ee28e747dc9290e4546c24240c9b2da0c9dfed7af20ed3340a83d",
+      "pdfPages": 2,
+      "pagesReviewed": [
+        1,
+        2
+      ],
+      "canonicalActorId": "cand-d5522e62fad7",
+      "committeeName": "American Gas Association Political Action Committee (GASPAC)",
+      "documentDate": "2006-11-30",
+      "signedDate": "2006-11-30",
+      "nativeDocument": "form1_cover_and_envelope_only",
+      "pageInventory": [
+        "Form 1 cover with committee ID and name; no visible New or Amended selection.",
+        "FEC envelope replacement page; no relationship page appears in this downloaded packet."
+      ],
+      "relationships": [],
+      "findings": "The two-page packet contains only the cover and envelope page. The API classifies it as an amendment. No line 6 is present; this cannot erase the relationship in the 2000 letter or certify unchanged affiliation through 2008."
+    },
+    {
+      "committeeId": "C00024521",
+      "imageNumber": "21990170652",
+      "sourceUrl": "https://docquery.fec.gov/pdf/652/21990170652/21990170652.pdf",
+      "sourceFingerprint": "b87cbbe31b293f96f123285103efd4c83cef58fcb568022b4aef70c5b1f44834",
+      "apiReceiptDate": "2001-07-10",
+      "pdfSha256": "486250e87601f4c4edd61a39b2eac1413a45608296cf4369d9e4d8bcc67e3552",
+      "pdfPages": 6,
+      "pagesReviewed": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6
+      ],
+      "canonicalActorId": "cand-f7178708cc78",
+      "committeeName": "Association of Trial Lawyers of America Political Action Committee",
+      "documentDate": "1979-01-01",
+      "signedDate": "2001-07-10",
+      "nativeDocument": "form1",
+      "pageInventory": [
+        "Form 1 cover, C00024521; line 2 January 1, 1979 separate from July 10, 2001 signature; New selected although API amendment_indicator is A.",
+        "Separate segregated fund selected; Consumer Attorneys Federal Pol Committee explicitly labeled Affiliated Committees.",
+        "Custodian and treasurer sections.",
+        "Depository section.",
+        "Additional relationship entry names Association of Trial Lawyers of America as Connected Organizations; trade association selected.",
+        "Blank additional designated-agent section."
+      ],
+      "relationships": [
+        {
+          "name": "Consumer Attorneys Federal Pol Committee",
+          "role": "affiliated_committee",
+          "pdfPage": 2,
+          "evidence": "The relationship field explicitly labels this entry Affiliated Committees."
+        },
+        {
+          "name": "Association of Trial Lawyers of America",
+          "role": "connected_organization",
+          "pdfPage": 5,
+          "evidence": "The additional relationship entry explicitly labels the association Connected Organizations."
+        }
+      ],
+      "findings": "The frozen 2004 API history names the separate affiliated committee, whereas page 5 names the connected organization. The later AAJ name and this historical ATLA name are joined through the same C00024521 committee; no rename-effective date is inferred. The API amendment label and native New box remain distinct."
+    },
+    {
+      "committeeId": "C00024521",
+      "imageNumber": "25971401799",
+      "sourceUrl": "https://docquery.fec.gov/pdf/799/25971401799/25971401799.pdf",
+      "sourceFingerprint": "b289c380b9dc2a274869400783c2fa605c0ab16ab4cda0994cc5ca2f8fe63840",
+      "apiReceiptDate": "2005-10-25",
+      "pdfSha256": "9cdf5b976e28e1951c063c6ccaf4676d680749deb3828505e8f9eb8356da0310",
+      "pdfPages": 4,
+      "pagesReviewed": [
+        1,
+        2,
+        3,
+        4
+      ],
+      "canonicalActorId": "cand-f7178708cc78",
+      "committeeName": "Association of Trial Lawyers of America Political Action Committee (ATLA PAC)",
+      "documentDate": "1979-01-01",
+      "signedDate": "2005-10-25",
+      "nativeDocument": "form1",
+      "pageInventory": [
+        "Form 1 cover, C00024521; amendment selected; historical line 2 date separate from signature.",
+        "Separate segregated fund selected; line 6 blank.",
+        "Custodian, treasurer and agent entries blank.",
+        "Depository entry; no additional relationship entry."
+      ],
+      "relationships": [],
+      "findings": "This four-page amendment contains a depository entry and blank relationship fields. It is not a statement that the earlier parent or affiliated committee ceased to exist; no last-observation carry-forward interval is created."
+    },
+    {
+      "committeeId": "C00024521",
+      "imageNumber": "26940924892",
+      "sourceUrl": "https://docquery.fec.gov/pdf/892/26940924892/26940924892.pdf",
+      "sourceFingerprint": "6ca0872027693177600d4a73b896bec3a2b3fe3df45c7584e3c2752afe3302ec",
+      "apiReceiptDate": "2006-12-19",
+      "pdfSha256": "af836f70b9c9b04030b6dd559939853cf32258b85ceac4fa24cd4fb285dd0058",
+      "pdfPages": 6,
+      "pagesReviewed": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6
+      ],
+      "canonicalActorId": "cand-f7178708cc78",
+      "committeeName": "American Association for Justice Political Action Committee (AAJ PAC)",
+      "documentDate": "1979-01-01",
+      "signedDate": "2006-12-19",
+      "nativeDocument": "form1",
+      "pageInventory": [
+        "Form 1 cover, C00024521; name-changed and amendment boxes selected.",
+        "Separate segregated fund selected; Consumer Attorneys Federal Pol Committee explicitly Affiliated Committee.",
+        "Custodian and treasurer sections.",
+        "Depository section.",
+        "Additional line 6 names American Association for Justice as Connected Organization, membership organization selected.",
+        "Blank designated-agent section."
+      ],
+      "relationships": [
+        {
+          "name": "Consumer Attorneys Federal Pol Committee",
+          "role": "affiliated_committee",
+          "pdfPage": 2,
+          "evidence": "The first line 6 entry is explicitly an Affiliated Committee."
+        },
+        {
+          "name": "American Association for Justice",
+          "role": "connected_organization",
+          "pdfPage": 5,
+          "evidence": "The additional line 6 entry identifies the connected membership organization."
+        }
+      ],
+      "findings": "The frozen 2006 API history retains the affiliated-committee name. This filing separately identifies the connected parent and marks a committee name change. It establishes the reported relationships in this dated filing, not their exact beginning dates."
+    },
+    {
+      "committeeId": "C00024521",
+      "imageNumber": "28931746802",
+      "sourceUrl": "https://docquery.fec.gov/pdf/802/28931746802/28931746802.pdf",
+      "sourceFingerprint": "70b4e21a9432e55396c0244d23f860ef56cf16e77a5db4a0fb8532e2d29a09ba",
+      "apiReceiptDate": "2008-06-05",
+      "pdfSha256": "d47a468dcbad8a5e9146c0da67e2aff10fb8e1a72f8d6b30b280cc54674605f8",
+      "pdfPages": 6,
+      "pagesReviewed": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6
+      ],
+      "canonicalActorId": "cand-f7178708cc78",
+      "committeeName": "AMERICAN ASSOCIATION FOR JUSTICE POLITICAL ACTION COMMITTEE (AAJ PAC)",
+      "documentDate": "1979-01-01",
+      "signedDate": "2008-06-03",
+      "nativeDocument": "form1",
+      "pageInventory": [
+        "Form 1 cover, C00024521; amendment and address-changed boxes selected; June 3 signature separate from June 5 API receipt.",
+        "Separate segregated fund selected; American Association for Justice explicitly Connected Organization, membership organization selected.",
+        "Custodian and treasurer sections.",
+        "Depository section.",
+        "Additional depository and Consumer Attorneys Federal Political Committee explicitly Affiliated Committee.",
+        "Blank designated-agent section."
+      ],
+      "relationships": [
+        {
+          "name": "American Association for Justice",
+          "role": "connected_organization",
+          "pdfPage": 2,
+          "evidence": "Line 6 explicitly identifies the connected organization."
+        },
+        {
+          "name": "Consumer Attorneys Federal Political Committee",
+          "role": "affiliated_committee",
+          "pdfPage": 5,
+          "evidence": "Additional line 6 explicitly identifies a separate affiliated committee."
+        }
+      ],
+      "findings": "The two relationships reverse their placement compared with 2001/2006. The frozen 2008 API affiliatedName now matches the parent, but this is not proof that the affiliated committee disappeared or that the parent first became connected in 2008."
+    },
+    {
+      "committeeId": "C00024521",
+      "imageNumber": "28932335680",
+      "sourceUrl": "https://docquery.fec.gov/pdf/680/28932335680/28932335680.pdf",
+      "sourceFingerprint": "c1f2d45eff9be3fac45123c76cc7623790962e366ccd6a41c155bf0332d15a7e",
+      "apiReceiptDate": "2008-07-25",
+      "pdfSha256": "a9ff17467c3d7fe6dac3a60e255da6a09dd4f91060b19a4d474ff07f6b06efe2",
+      "pdfPages": 6,
+      "pagesReviewed": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6
+      ],
+      "canonicalActorId": "cand-f7178708cc78",
+      "committeeName": "AMERICAN ASSOCIATION FOR JUSTICE POLITICAL ACTION COMMITTEE (AAJ PAC)",
+      "documentDate": "1979-01-01",
+      "signedDate": "2008-07-25",
+      "nativeDocument": "form1",
+      "pageInventory": [
+        "Form 1 cover, C00024521; amendment selected.",
+        "Separate segregated fund and membership organization selected on revised form.",
+        "American Association for Justice with Connected Organization box selected; custodian and treasurer sections.",
+        "Designated-agent and depository sections.",
+        "Consumer Attorneys Federal Political Committee with Affiliated Committee box selected; other additional entries blank.",
+        "Filer text says amendment responds to a July 9, 2008 request and adds email/fax omitted June 5. The referenced request is not acquired here."
+      ],
+      "relationships": [
+        {
+          "name": "American Association for Justice",
+          "role": "connected_organization",
+          "pdfPage": 3,
+          "evidence": "The Connected Organization checkbox is selected for the named association."
+        },
+        {
+          "name": "Consumer Attorneys Federal Political Committee",
+          "role": "affiliated_committee",
+          "pdfPage": 5,
+          "evidence": "The Affiliated Committee checkbox is selected for the separate named committee."
+        }
+      ],
+      "findings": "Both relationship roles are explicitly retained in the later form. The explanatory text describes a contact-field amendment; this review does not certify its administrative sufficiency or establish effective affiliation intervals."
+    },
+    {
+      "committeeId": "C00153171",
+      "imageNumber": "20036073357",
+      "sourceUrl": "https://docquery.fec.gov/pdf/357/20036073357/20036073357.pdf",
+      "sourceFingerprint": "173cef8533933c5116350dc409f9ddcc0150829e94f93650aff07df0e36d61b3",
+      "apiReceiptDate": "2000-09-29",
+      "pdfSha256": "71caedcfbc66d531820d513a37e7903fef4896d064605c2710bab76ef62fb8eb",
+      "pdfPages": 2,
+      "pagesReviewed": [
+        1,
+        2
+      ],
+      "canonicalActorId": "cand-5d1da86118e5",
+      "committeeName": "American Benefits Council Political Action Committee",
+      "documentDate": "2000-09-21",
+      "signedDate": "2000-09-22",
+      "nativeDocument": "form1",
+      "pageInventory": [
+        "Form 1 with C00153171, name-changed and amendment boxes marked; committee type and line 6 blank.",
+        "FEC envelope replacement page."
+      ],
+      "relationships": [],
+      "findings": "The committee name change alone does not resolve the earlier API affiliatedName PRIVATE PENSION & WELFARE PLANS; ASS'N. The earlier registration evidence is not reviewed here; no pre-2003 parent link is promoted."
+    },
+    {
+      "committeeId": "C00153171",
+      "imageNumber": "27039343435",
+      "sourceUrl": "https://docquery.fec.gov/pdf/435/27039343435/27039343435.pdf",
+      "sourceFingerprint": "e76e82f7b97af9efa6e1e1e8b9a5c10f18d9637ebf0a7a4d1e295195ce248ed9",
+      "apiReceiptDate": "2007-01-22",
+      "pdfSha256": "7aa148ac5ec8e80feac810ac9d5fdbc8f248486f9595cd10eae60ae290a66307",
+      "pdfPages": 6,
+      "pagesReviewed": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6
+      ],
+      "canonicalActorId": "cand-5d1da86118e5",
+      "committeeName": "American Benefits Council Political Action Committee",
+      "documentDate": "2007-01-17",
+      "signedDate": "2007-01-17",
+      "nativeDocument": "form1_with_cover_note",
+      "pageInventory": [
+        "Received-stamped handwritten cover note; not used as relationship evidence.",
+        "Form 1 cover, C00153171; amendment selected.",
+        "Line 6 names American Benefits Council but relationship blank. Type-of-committee box (b) marked with candidate blank; corporation, membership organization and trade association marked below line 6.",
+        "Custodian and treasurer sections.",
+        "Depository section.",
+        "FEC envelope replacement page."
+      ],
+      "relationships": [
+        {
+          "name": "American Benefits Council",
+          "role": "named_relationship_unspecified",
+          "pdfPage": 3,
+          "evidence": "Line 6 names the organization but does not specify a relationship. Multiple organization-type selections and a candidate-committee selection remain unresolved."
+        }
+      ],
+      "findings": "Named organizational evidence supports further review but cannot be upgraded to an explicitly typed parent link. The form classification inconsistencies are preserved without inferring an actual candidate committee, a new organizational type or a funding identity."
+    },
+    {
+      "committeeId": "C00340356",
+      "imageNumber": "20035694975",
+      "sourceUrl": "https://docquery.fec.gov/pdf/975/20035694975/20035694975.pdf",
+      "sourceFingerprint": "e8fb0ce074325994c2d6452b8d327ac60623cc84359fa1eefe49fe9497e19095",
+      "apiReceiptDate": "2000-06-30",
+      "pdfSha256": "b20d06268ec57d84dedde39513b18e5ea194f37fbd485b0adf2bf3588e501c88",
+      "pdfPages": 2,
+      "pagesReviewed": [
+        1,
+        2
+      ],
+      "canonicalActorId": "cand-9948f2974958",
+      "committeeName": "Advanced Medical Technology Association PAC (AdvaMed PAC)",
+      "documentDate": "2000-06-30",
+      "signedDate": null,
+      "nativeDocument": "name_change_and_parent_letter",
+      "pageInventory": [
+        "Letter identifies C00340356, June 21, 2000 PAC name change, corresponding parent name change and the parent-administered separate segregated fund.",
+        "FEC envelope replacement page."
+      ],
+      "relationships": [
+        {
+          "name": "Advanced Medical Technology Association",
+          "role": "connected_organization",
+          "pdfPage": 1,
+          "evidence": "The letter states that AdvaMed established and administers this separate segregated fund, and identifies its earlier parent name as Health Industry Manufacturers Association."
+        }
+      ],
+      "findings": "The letter supplies an explicit organizational connection, beyond a similar committee name. The PAC name change is stated effective June 21, 2000; that date is not assigned as the beginning of the parent relationship."
+    },
+    {
+      "committeeId": "C00340356",
+      "imageNumber": "26930408058",
+      "sourceUrl": "https://docquery.fec.gov/pdf/058/26930408058/26930408058.pdf",
+      "sourceFingerprint": "53f47cfd23f8efe7e50b8ecd9f83423ba4c71c9346fc8f6ede13c318ba9003eb",
+      "apiReceiptDate": "2006-09-27",
+      "pdfSha256": "0e45088ba7cc80c87f42eeb84ed6b97474af7b0ba2389f7368fcb031113fe538",
+      "pdfPages": 4,
+      "pagesReviewed": [
+        1,
+        2,
+        3,
+        4
+      ],
+      "canonicalActorId": "cand-9948f2974958",
+      "committeeName": "Advanced Medical Technology Association Political Action Committee",
+      "documentDate": "2006-09-27",
+      "signedDate": "2006-09-27",
+      "nativeDocument": "form1",
+      "pageInventory": [
+        "Form 1 cover, C00340356; New selected although API amendment_indicator is A.",
+        "Separate segregated fund selected; line 6 name, relationship and organization type blank.",
+        "Custodian fields blank; treasurer section.",
+        "Depository section; no additional relationship entry."
+      ],
+      "relationships": [],
+      "findings": "All four pages reviewed. The blank relationship entry is missing information, not a new nonconnected status. The New/Amended source/API disagreement is retained; neither selects a legal establishment date or voids the 2000 parent letter."
+    }
+  ]
+}

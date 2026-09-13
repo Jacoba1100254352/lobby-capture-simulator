@@ -128,6 +128,7 @@ for source_product in \
   substitution-lda-expense-adjudications.csv \
   substitution-fec-report-panel.csv \
   substitution-fec-affiliation-history.csv \
+  substitution-fec-organization-review.json \
   substitution-fec-acquisition-cohort.csv \
   substitution-fec-halfyear-coverage.csv \
   substitution-fec-version-adjudications.csv \
