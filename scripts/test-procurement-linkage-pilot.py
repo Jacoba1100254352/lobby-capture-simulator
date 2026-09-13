@@ -356,6 +356,10 @@ class PublisherReviewTests(unittest.TestCase):
         self.assertEqual(result["distinctCorroboratedDockets"], 9)
         self.assertEqual(result["pilotPiidsAbsentFromCurrentTable"], ["36C10X24N0089"])
         self.assertEqual(result["recordSpecificOfferSourcesRecovered"], 0)
+        self.assertEqual(result["archivedGuidanceSources"], 2)
+        self.assertEqual(result["oldestReviewedGuidanceRevision"], "2023-01-31")
+        self.assertEqual(result["historicalGuidanceFieldDistinctions"], 3)
+        self.assertIs(result["vaGuidanceApplicabilityEstablished"], False)
         self.assertEqual(result["parentActions"], 7)
         self.assertEqual(result["parentOriginalActionDate"], "2023-05-23")
         self.assertEqual(result["parentOriginalReportedOffers"], 6)
@@ -428,6 +432,51 @@ class PublisherReviewTests(unittest.TestCase):
         self.links[0] = self.links[1].copy()
         with self.assertRaisesRegex(ValueError, "complete provisional links"):
             self.check()
+
+    def test_archived_guidance_cannot_clear_va_or_record_specific_claims(self):
+        for field in ("vaApplicabilityEstablished", "fieldIntroductionDateEstablished",
+                      "xmlCodeMappingEstablished", "recordSpecificOfferSourceRecovered",
+                      "offerDiscrepancyResolved", "historicalCaptureTimeVerified"):
+            with self.subTest(field=field):
+                self.setUp()
+                self.review["historicalOfferGuidance"][field] = True
+                with self.assertRaisesRegex(ValueError, "Historical guidance scope"):
+                    self.check(rehash=True)
+
+    def test_archived_guidance_source_frame_and_dates_are_preserved(self):
+        self.review["historicalOfferGuidance"]["sources"].pop()
+        with self.assertRaisesRegex(ValueError, "source frame"):
+            self.check(rehash=True)
+        self.setUp()
+        self.review["historicalOfferGuidance"]["sources"][0]["revisionDateDisplayed"] = "2023-04-27"
+        with self.assertRaisesRegex(ValueError, "source frame"):
+            self.check(rehash=True)
+
+    def test_archived_guidance_does_not_count_acceptable_proposals(self):
+        source = self.review["historicalOfferGuidance"]["sources"][0]
+        source["fieldInterpretations"]["Number of Offers Received"] = "technically_acceptable_proposals"
+        with self.assertRaisesRegex(ValueError, "field distinction"):
+            self.check(rehash=True)
+
+    def test_archived_path_date_is_not_the_displayed_revision(self):
+        source = self.review["historicalOfferGuidance"]["sources"][0]
+        source["archivePathDate"] = source["revisionDateDisplayed"]
+        with self.assertRaisesRegex(ValueError, "provenance"):
+            self.check(rehash=True)
+
+    def test_archived_guidance_cannot_claim_all_pdf_pages_reviewed(self):
+        source = self.review["historicalOfferGuidance"]["sources"][1]
+        source["reviewedPdfPages"] = list(range(1, 28))
+        with self.assertRaisesRegex(ValueError, "PDF review scope"):
+            self.check(rehash=True)
+
+    def test_archived_guidance_raw_sources_must_match_hashes_and_frame(self):
+        for revision in publisher.GUIDANCE_URLS:
+            with self.subTest(revision=revision):
+                with self.assertRaisesRegex(ValueError, "Raw historical guidance hash"):
+                    self.check(raw_guidance={revision: b"different source"})
+        with self.assertRaisesRegex(ValueError, "Unknown historical guidance"):
+            self.check(raw_guidance={"2024-07-29": b"later revision"})
 
     def test_provisional_links_must_match_decision_footnotes_not_equal_group_sizes(self):
         self.links[0]["decisionCaseId"] = "B-422689"

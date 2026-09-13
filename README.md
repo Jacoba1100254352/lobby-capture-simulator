@@ -192,6 +192,14 @@ The companion seven-action parent history reports a multiple-award IDIQ and six
 offers on its original May 23, 2023 action. Parent counts and solicitation remain
 separate from delivery-order fields; this 2026 retrieval does not recover 10F.
 
+Archived DoD guidance labelled January 2023 and May 2024 now separately
+documents order offers, parent-contract offers and system-generated count
+provenance. The source ledger preserves revision versus retrieval dates,
+limited PDF review and unresolved VA applicability. It does not establish a
+field-introduction date, recover per-order values or resolve four offers versus
+five timely proposals. The notebook checks both acquired source hashes when
+the ignored originals are available; no award or simulator values change.
+
 The Benefits Council PAC follow-up joins all 24 frozen reports to a separate
 280-record FEC filing inventory, recovering 21 current and three superseded
 version flags without overwriting raw reports. Seven selected report-PDF reviews

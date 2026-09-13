@@ -93,6 +93,14 @@ Parent counts and solicitation are not substituted for child fields; the
 retrieval remains a 2026 vintage and supplies no per-record offer-source code.
 A decision-reported SAM check supplies no independently verified historical
 interval. Original-action mappings and independent coding review remain unresolved.
+
+A further archived-guidance review records DoD PGI versions labelled January
+31, 2023 and May 30, 2024. Both distinguish specific multiple-award order offers,
+the parent-contract count and the system-generated provenance field. The 2024
+PDF review covers pages 1, 22 and 23, not every provision. These 2026 retrievals
+do not certify historical capture, complete dictionary/code mappings, VA
+applicability or per-award source values. The field-history evidence advances;
+the four-versus-five discrepancy and all empirical-promotion gates remain open.
 The full archived bulk frame audit now verifies all 56 selected ZIPs and their
 6,449,101 rows, while exposing blank award types, extensive missing offer counts,
 and a competition-procedure flag that cannot substitute for historical SAM

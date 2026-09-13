@@ -14,6 +14,10 @@ from html.parser import HTMLParser
 
 VA_URL = "https://department.va.gov/procurement-acquisition-and-logistics/strategic-acquisition-center/sac-medical-surgical-prime-vendor-program-mspv-updated/"
 TRAINING_URL = "https://www.acq.osd.mil/asda/dpc/ce/p2p/docs/training-presentations/2024/P2P%202024%20-%20FPDS%20Reporting%20Basics%20-%20Procurement%20Awards.pdf"
+GUIDANCE_URLS = {
+    "2023-01-31": "https://www.acq.osd.mil/dpap/dars/pgi/pgi_htm/r20230427/PGI204_6.htm",
+    "2024-05-30": "https://www.acq.osd.mil/dpap/dars/pgi/pgi_pdf/r20240530/PGI204_6.pdf",
+}
 HEADING = "MSPV GenZ V1 Delivery Orders (DO) List of Contacts"
 HEADER = ["VISN #", "Delivery Order and Performance Period"]
 PARENT_KEY = "CONT_IDV_36C10X23D0032_3600"
@@ -197,8 +201,59 @@ def parent_diagnostics(source, original_review, raw_archive=None, raw_history=No
             "parentOfferSourceValuesRecovered": 0}
 
 
+def guidance_diagnostics(guidance, raw_guidance=None):
+    """Authenticate optional bytes, not historical publication or VA applicability."""
+    boundary = {
+        "scope": "archived_dod_guidance_not_va_record_or_complete_dictionary",
+        "independentReviewStatus": "pending", "vaApplicabilityEstablished": False,
+        "fieldIntroductionDateEstablished": False, "xmlCodeMappingEstablished": False,
+        "recordSpecificOfferSourceRecovered": False, "offerDiscrepancyResolved": False,
+        "historicalCaptureTimeVerified": False,
+    }
+    if any(guidance.get(k) != v for k, v in boundary.items()):
+        raise ValueError("Historical guidance scope or promotion mismatch")
+    if not guidance.get("selection") or not guidance.get("interpretation"):
+        raise ValueError("Historical guidance selection or interpretation missing")
+    sources = guidance.get("sources", [])
+    if ([s.get("revisionDateDisplayed") for s in sources] != list(GUIDANCE_URLS)
+            or guidance.get("section") != "PGI 204.606(3)(xiv)(M)(1)-(2)"):
+        raise ValueError("Historical guidance source frame or section mismatch")
+    expected_fields = {
+        "Number of Offers Received": "specific_order_count_for_multiple_award_orders",
+        "IDV Number of Offers": "original_contract_count_displayed_separately",
+        "Number of Offers Source": "system_generated_action_entry_or_parent_prepopulation",
+    }
+    for source in sources:
+        revision = source["revisionDateDisplayed"]
+        if (source.get("url") != GUIDANCE_URLS[revision]
+                or source.get("archivePathDate") != {"2023-01-31": "2023-04-27",
+                                                     "2024-05-30": "2024-05-30"}[revision]
+                or not re.fullmatch(r"[0-9a-f]{64}", source.get("rawSha256", ""))
+                or source.get("fieldInterpretations") != expected_fields
+                or not source.get("reviewScope") or not source.get("sourceCautions")
+                or source.get("sourceVintage") != "2026_retrieval_of_archive_labelled_guidance"
+                or not date.fromisoformat(revision) < date(2024, 5, 31)
+                or not date.fromisoformat(source["retrievedDate"]) > date(2024, 5, 31)):
+            raise ValueError("Historical guidance provenance or field distinction mismatch")
+        if revision == "2024-05-30" and (
+                source.get("pdfPageCount") != 27 or source.get("reviewedPdfPages") != [1, 22, 23]
+                or source.get("printedPageLabels") != ["204.6-1", "204.6-22", "204.6-23"]):
+            raise ValueError("Historical guidance PDF review scope mismatch")
+    if raw_guidance is not None:
+        if set(raw_guidance) - set(GUIDANCE_URLS):
+            raise ValueError("Unknown historical guidance raw source")
+        for source in sources:
+            raw = raw_guidance.get(source["revisionDateDisplayed"])
+            if raw is not None and hashlib.sha256(raw).hexdigest() != source["rawSha256"]:
+                raise ValueError("Raw historical guidance hash mismatch")
+    return {"archivedGuidanceSources": len(sources),
+            "oldestReviewedGuidanceRevision": min(GUIDANCE_URLS),
+            "historicalGuidanceFieldDistinctions": len(expected_fields),
+            "vaGuidanceApplicabilityEstablished": False}
+
+
 def validate(review, original_review, provisional_links, docket_sources, raw_html=None, training_pdf=None,
-             parent_archive=None, parent_history=None):
+             parent_archive=None, parent_history=None, raw_guidance=None):
     """Check projections and optional acquired bytes; human review stays separate."""
     if (review.get("schema") != "gao-procurement-publisher-review-v1"
             or review.get("originalReviewFingerprint") != fingerprint(original_review)
@@ -243,6 +298,7 @@ def validate(review, original_review, provisional_links, docket_sources, raw_htm
             raise ValueError("Raw publisher HTML hash or projection mismatch")
     if training_pdf is not None and hashlib.sha256(training_pdf).hexdigest() != training["rawSha256"]:
         raise ValueError("Raw training PDF hash mismatch")
+    guidance = guidance_diagnostics(review.get("historicalOfferGuidance", {}), raw_guidance)
     by_key = defaultdict(list)
     for row in rows:
         by_key[(row["parentPiid"], row["piid"])].append(row)
@@ -292,7 +348,7 @@ def validate(review, original_review, provisional_links, docket_sources, raw_htm
         "pilotPiidsAbsentFromCurrentTable": absent,
         "corroboratedProvisionalPairs": len(supported),
         "distinctCorroboratedDockets": len({r["decisionCaseId"] for r in supported}),
-        **parent, "offerSourceDocumentedIn2024": True, "recordSpecificOfferSourcesRecovered": 0,
+        **parent, **guidance, "offerSourceDocumentedIn2024": True, "recordSpecificOfferSourcesRecovered": 0,
         "independentlyReviewedMappings": 0, "awardSpecificDatesPromoted": 0,
         "historicalExclusionsPromoted": 0, "causalEffect": "not_identified",
     }, corroboration

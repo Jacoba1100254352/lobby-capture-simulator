@@ -316,6 +316,58 @@
       "interpretation": "The displayed comparison describes previously undocumented system-generated source fields and a Part 8 BPA/FSS IDV-offer propagation fix. Dictionary inclusion dates must not be equated with first field existence. The old-revision link redirected to SAM; no immutable historical HTML archive or per-award application of these rules was acquired."
     }
   },
+  "historicalOfferGuidance": {
+    "section": "PGI 204.606(3)(xiv)(M)(1)-(2)",
+    "scope": "archived_dod_guidance_not_va_record_or_complete_dictionary",
+    "selection": "Follow the unresolved original-order offer discrepancy to archived official reporting guidance. Review the two Number of Offers paragraphs and source headers, not every PGI provision. These are two versions of one guidance family, not independent award observations.",
+    "independentReviewStatus": "pending",
+    "vaApplicabilityEstablished": false,
+    "fieldIntroductionDateEstablished": false,
+    "xmlCodeMappingEstablished": false,
+    "recordSpecificOfferSourceRecovered": false,
+    "offerDiscrepancyResolved": false,
+    "historicalCaptureTimeVerified": false,
+    "sources": [
+      {
+        "url": "https://www.acq.osd.mil/dpap/dars/pgi/pgi_htm/r20230427/PGI204_6.htm",
+        "title": "PGI 204.6 - Contract Reporting",
+        "publisher": "U.S. Department of Defense, Defense Acquisition Regulations System",
+        "archivePathDate": "2023-04-27",
+        "revisionDateDisplayed": "2023-01-31",
+        "retrievedDate": "2026-09-13",
+        "sourceVintage": "2026_retrieval_of_archive_labelled_guidance",
+        "rawSha256": "250288e1c9d1ffa2a71939aa22d72382a0630366eb4f925af095a3dbb01b7763",
+        "reviewScope": "Downloaded original HTML; read the revision header, reporting hierarchy and both Number of Offers paragraphs. This is not a full-page legal review or a verified 2023 capture.",
+        "sourceCautions": "The retrieved HTML has replacement glyphs around some field-label quotation marks. Archive-path and displayed revision dates differ and are retained separately. Neither is the retrieval date or proven field-introduction date.",
+        "fieldInterpretations": {
+          "Number of Offers Received": "specific_order_count_for_multiple_award_orders",
+          "IDV Number of Offers": "original_contract_count_displayed_separately",
+          "Number of Offers Source": "system_generated_action_entry_or_parent_prepopulation"
+        }
+      },
+      {
+        "url": "https://www.acq.osd.mil/dpap/dars/pgi/pgi_pdf/r20240530/PGI204_6.pdf",
+        "title": "PGI 204.6 - Contract Reporting",
+        "publisher": "U.S. Department of Defense, Defense Acquisition Regulations System",
+        "archivePathDate": "2024-05-30",
+        "revisionDateDisplayed": "2024-05-30",
+        "retrievedDate": "2026-09-13",
+        "sourceVintage": "2026_retrieval_of_archive_labelled_guidance",
+        "rawSha256": "658b10552bd21d5ddb8c4990eef2c0125e5d64b715316d0ae7c5dad5d0b0c6b8",
+        "pdfPageCount": 27,
+        "reviewedPdfPages": [1, 22, 23],
+        "printedPageLabels": ["204.6-1", "204.6-22", "204.6-23"],
+        "reviewScope": "Visually review the complete rendered cover and pages 22-23. Page 22 introduces (M); page 23 contains both offer paragraphs. Text navigation confirms the 204.606(3)(xiv) hierarchy; other PDF pages are not fully reviewed.",
+        "sourceCautions": "The header still describes the unique entity identifier as DUNS. Preserve this source wording without treating it as the applicable VA identifier definition. Page 1 separates the general FPDS User Manual from DoD-specific policy guidance. A displayed revision date does not certify historical capture, complete currency or VA applicability.",
+        "fieldInterpretations": {
+          "Number of Offers Received": "specific_order_count_for_multiple_award_orders",
+          "IDV Number of Offers": "original_contract_count_displayed_separately",
+          "Number of Offers Source": "system_generated_action_entry_or_parent_prepopulation"
+        }
+      }
+    ],
+    "interpretation": "Both archive-labelled versions distinguish multiple-award order offers, the displayed original-contract count and system-generated count provenance. This is stronger historical documentation than a dictionary-addition slide, but not a complete historical dictionary, verified XML-code mapping, field-introduction date or proof of the rules applied to these VA records. It does not identify acceptable-proposal filtering, recover per-record provenance or resolve four offers versus five timely proposals. Preserve both counts and obtain the original action source and decision-cited agency evidence."
+  },
   "baselineUnchanged": true,
   "solicitationIdentityPromoted": false,
   "awardSpecificDatesPromoted": false,
@@ -323,7 +375,7 @@
   "offerDiscrepancyResolved": false,
   "representativeSamExport": false,
   "causalEffect": "not_identified",
-  "reviewFingerprint": "f46b494d9dcdb5408c56e2bc7832f926382d88f66ad68d4f810d6d6981c5c90d",
+  "reviewFingerprint": "7d51e4e749634eff8c9e6e282532a5105a2f1bc77b14d0204dbcf0b77606350b",
   "parentVehicleSource": {
     "awardKey": "CONT_IDV_36C10X23D0032_3600",
     "retrievedDate": "2026-09-13",

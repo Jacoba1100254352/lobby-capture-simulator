@@ -366,6 +366,39 @@ historical HTML archive was acquired. That BPA/FSS example does not establish
 which rule applied to the pilot delivery orders. The source ledger preserves
 the access and interpretation limits separately from the acquired PDF.
 
+#### Archived reporting guidance predating the award-date label
+
+A further September 13 acquisition recovers official DoD
+[PGI HTML under the April 27, 2023 archive path](https://www.acq.osd.mil/dpap/dars/pgi/pgi_htm/r20230427/PGI204_6.htm),
+whose displayed revision is January 31, 2023, and the
+[May 30, 2024 PGI PDF](https://www.acq.osd.mil/dpap/dars/pgi/pgi_pdf/r20240530/PGI204_6.pdf).
+Both versions' PGI 204.606(3)(xiv)(M)(1)-(2) distinguish three concepts:
+the specific order's offers for multiple-award orders, the separately displayed
+original-contract count, and a system-generated field indicating action entry
+versus prepopulation. These are two versions of one guidance family, not
+independent observations of the VA orders.
+
+The 2023 HTML hash is
+`250288e1c9d1ffa2a71939aa22d72382a0630366eb4f925af095a3dbb01b7763`;
+the 2024 PDF hash is
+`658b10552bd21d5ddb8c4990eef2c0125e5d64b715316d0ae7c5dad5d0b0c6b8`.
+The HTML header, hierarchy and two paragraphs were read. PDF pages 1, 22 and 23
+were visually reviewed, not all 27 pages; their printed labels are 204.6-1,
+204.6-22 and 204.6-23. The HTML retains damaged quotation glyphs, and the PDF
+header still describes the entity identifier as DUNS. Neither is silently
+repaired or adopted as the VA identifier definition.
+
+This strengthens the historical documentation beyond the dictionary-addition
+slide. It does not establish VA applicability, exact XML-code equivalence,
+field-introduction dates or a complete historical dictionary. Archive labels
+and displayed revisions precede the May 31, 2024 actions, but these are 2026
+retrievals without independently verified historical capture times. The
+`historicalOfferGuidance` ledger and notebook preserve these distinctions and
+optionally authenticate the acquired bytes. Neither source supports dropping
+an allegedly unacceptable proposal to reconcile four offers with five timely
+proposals. Per-order source fields and the decision-cited agency evidence remain
+needed; no offer count, solicitation, timing or exclusion value is changed.
+
 Reopening all four hash-matched, 297-column transaction members finds exactly
 one header containing `offer`: `number_of_offers_received`. Thus neither 10F nor
 10G is separately exposed under an offer-named column in these downloads.
