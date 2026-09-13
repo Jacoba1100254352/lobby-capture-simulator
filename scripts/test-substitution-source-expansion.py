@@ -46,14 +46,22 @@ class LDAFamilyReviewTests(unittest.TestCase):
                         groupsWithPostingTies=3, groupsWithLatestMissingEarlierAmount=2,
                         groupsWithNoActivityNonzero=1, singletonAmendmentGroups=1,
                         apgaQueriedApiFilings=2, nvgQueryReturnedFilings=14, identityApiFilingsChecked=2,
-                        reviewedDistinctImages=7, apgaReviewedDistinctImages=5, energyAgencyMismatches=2,
-                        sourceReviewedGroups=2, identityReviewedCovers=2, differentClientCovers=1,
-                        registrationSuffixDiscrepancies=1, unlabelledAmendedCovers=1,
+                        reviewedDistinctImages=22, apgaReviewedDistinctImages=5, energyAgencyMismatches=2,
+                        sourceReviewedGroups=6, initialIdentityReviewedCovers=2, initialDifferentClientCovers=1,
+                        initialRegistrationSuffixDiscrepancies=1, initialUnlabelledAmendedCovers=1,
+                        nvgHistoryReviewedFilings=21, nvgHistoryPdfCovers=17, nvgHistoryHtmlForms=4,
+                        nvgDifferentClientFilings=6, nvgDifferentClientActivityFilings=5,
+                        nvgMixedClientCandidateGroups=5, nvgSourceYearDisagreements=2,
+                        nvgSourceSenateIdDisagreements=6, nvgSourceSenateIdBlank=5,
                         finalVersionsSelected=0)
         for key, value in expected.items():
             self.assertEqual(result[key], value, key)
         self.assertEqual(self.metadata, before)
-        self.assertEqual(sum(r["reviewStatus"] == "source_identity_conflict_not_mergeable" for r in queue), 1)
+        conflicted = [r for r in queue if r["reviewStatus"] == "source_identity_conflict_not_mergeable"]
+        self.assertEqual({(r["filingYear"], r["filingPeriod"]) for r in conflicted},
+                         {("2005", "mid_year"), ("2005", "year_end"), ("2006", "mid_year"),
+                          ("2006", "year_end"), ("2007", "mid_year")})
+        self.assertTrue(all(r["registrantApiId"] == "76833" for r in conflicted))
 
     def test_stale_review_or_source_metadata_fails(self):
         self.source["codingNotes"] += " changed"
@@ -150,6 +158,66 @@ class LDAFamilyReviewTests(unittest.TestCase):
     def test_identity_conflicts_cannot_be_silently_corrected(self):
         self.source["identityReviews"][0]["rawRecordCorrected"] = True
         with self.assertRaisesRegex(ValueError, "promotion"):
+            self.check()
+
+    def test_house_id_transcription_correction_preserves_distinct_clients(self):
+        self.assertEqual([r['form']['houseId'] for r in self.source['identityReviews']], ['35960005', '35960015'])
+        self.source['identityReviews'][1]['form']['houseId'] = '35960005'
+        with self.assertRaises(ValueError):
+            self.check()
+
+    def test_nvg_history_cannot_omit_or_duplicate_a_frozen_record(self):
+        original = deepcopy(self.source)
+        self.source['nvgHistoryReview']['records'].pop()
+        with self.assertRaisesRegex(ValueError, '21-record'):
+            self.check()
+        self.source = original
+        self.source['nvgHistoryReview']['records'][-1] = deepcopy(self.source['nvgHistoryReview']['records'][0])
+        with self.assertRaisesRegex(ValueError, '21-record'):
+            self.check()
+
+    def test_nvg_different_client_cannot_be_promoted_or_renamed(self):
+        original = deepcopy(self.source)
+        for field, value in [('identityDisposition', 'matching_name_identity_not_cleared'),
+                             ('clientName', 'AMERICAN ASSOCIATION FOR JUSTICE')]:
+            self.source = deepcopy(original)
+            review = self.source['nvgHistoryReview']['records'][5]
+            if field == 'clientName':
+                review['form'][field] = value
+                review['identityDisposition'] = 'matching_name_identity_not_cleared'
+            else:
+                review[field] = value
+            with self.subTest(field=field), self.assertRaises(ValueError):
+                self.check()
+
+    def test_nvg_html_is_not_a_reviewed_pdf_scan(self):
+        self.source['nvgHistoryReview']['records'][-1]['pdfPages'] = 1
+        with self.assertRaisesRegex(ValueError, 'HTML'):
+            self.check()
+
+    def test_nvg_cover_year_is_not_overwritten_from_the_api(self):
+        self.source['nvgHistoryReview']['records'][1]['form']['year'] = 2003
+        with self.assertRaisesRegex(ValueError, 'discrepancies'):
+            self.check()
+
+    def test_nvg_registration_is_not_an_activity_period(self):
+        self.source['nvgHistoryReview']['records'][6]['form']['year'] = 2005
+        with self.assertRaisesRegex(ValueError, 'Registration'):
+            self.check()
+
+    def test_nvg_cover_only_review_does_not_clear_actor_history(self):
+        self.source['nvgHistoryReview']['boundary']['actorHistoriesCleared'] = True
+        with self.assertRaisesRegex(ValueError, 'promotion'):
+            self.check()
+
+    def test_nvg_independent_review_and_correction_history_are_required(self):
+        original = deepcopy(self.source)
+        self.source['nvgHistoryReview']['independentReviewStatus'] = 'complete'
+        with self.assertRaises(ValueError):
+            self.check()
+        self.source = original
+        self.source['nvgHistoryReview']['reviewCorrections'] = []
+        with self.assertRaisesRegex(ValueError, 'correction'):
             self.check()
 
 

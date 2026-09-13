@@ -37,9 +37,12 @@ control selection. A companion queue now covers all 22 multi-record candidate
 groups, with one APGA partial-amendment comparison documenting field-level API
 discrepancies. The available amendment issue image has no financial cover;
 final version, amount and agency-exposure assignments remain unresolved.
-A reviewed NVG pair identifies different clients on its covers despite a shared
-API AAJ assignment. The queue marks that pair as not mergeable;
-source indexing and the remaining historical client mapping need review.
+A review of all 21 frozen NVG records finds six America Votes filings under the
+API AAJ assignment, including one registration. Five mixed-client candidate
+groups are marked not mergeable. Seventeen PDF covers and four HTML forms were
+reviewed at identity/timing scope; two source-year disagreements and an explicit
+House-ID transcription correction remain documented. Source indexing, complete
+historical client/version mapping and independent review are not cleared.
 Issue-level comment coding is separate from the
 unreviewed individual-comment linkage product. A separate public-letter pilot
 codes two policy positions already present in both the proposed and final action;

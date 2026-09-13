@@ -630,7 +630,7 @@
       "reviewScope": "full_embedded_cover_only",
       "form": {
         "registrantName": "Nueva Vista Group, LLC",
-        "houseId": "35960005",
+        "houseId": "35960015",
         "senateId": "76833-330",
         "clientName": "America Votes",
         "clientSelf": false,
@@ -650,5 +650,732 @@
       "remainingRequirements": "The source API assigns both UUIDs to client 169036, relationship 330 and AAJ, but the two covers identify different clients/registration suffixes. Do not merge them as financial versions of one client-period. Resolve source indexing and the remaining NVG history before any actor reassignment or final amount. Separate handwritten received date from the later fax header; only covers have been reviewed."
     }
   ],
-  "reviewFingerprint": "9e8701b1788f21ad606c608ddaee29eb1c9aa7c171eb307030daaae8b044be96"
+  "reviewFingerprint": "a3cfe226413794ccd918715433c831c5f9e5d210abea12a92ce0ac2e0e8b98a4",
+  "nvgHistoryReview": {
+    "schema": "nvg-frozen-history-identity-review-v1",
+    "reviewDate": "2026-09-12",
+    "reviewer": "codex-source-review",
+    "independentReviewStatus": "pending",
+    "scope": "All 21 NVG records in the frozen 427-filing metadata acquisition, not an exhaustive public NVG history. Seventeen full embedded PDF covers and four electronic HTML identity/timing field groups were reviewed. Other document pages, all financial amounts and complete version histories are not adjudicated.",
+    "records": [
+      {
+        "filingUuid": "e6750bf8-ed99-41dc-9c6d-37f460d3cbf2",
+        "sourceFingerprint": "d4ad06560aa465e60cb1bdec8649a585a665e44cba3dbbf3bdeae50c16395b59",
+        "url": "https://lda.gov/filings/public/filing/e6750bf8-ed99-41dc-9c6d-37f460d3cbf2/print/",
+        "format": "pdf",
+        "documentSha256": "f44a24c3ee64dacbf0a9bcbe2f486edec9a77d2b97b151842eea01ed454127ae",
+        "pdfPages": 4,
+        "coverPdfPages": [
+          1,
+          2
+        ],
+        "coverObjectId": "6 0",
+        "coverImageSize": [
+          1696,
+          2200
+        ],
+        "coverPngSha256": "83ba29c4bce964890189b30fc8bca05c9602a505d4302e18752f78f39d8d9e2b",
+        "reviewScope": "full_embedded_cover_identity_and_timing",
+        "form": {
+          "registrantName": "Nueva Vista Group",
+          "clientName": "Association of Trial Lawyers of America",
+          "senateId": null,
+          "houseId": null,
+          "year": 2003,
+          "period": "mid_year",
+          "registrationEffectiveDate": null,
+          "receiptDate": "2003-08-20",
+          "receiptTimezone": "not_stated",
+          "amendmentBoxChecked": false,
+          "terminationBoxChecked": false,
+          "terminationDate": null
+        },
+        "identityDisposition": "historical_name_identity_not_cleared",
+        "notes": "Identity and selected timing fields only; no financial-version, agency-contact or actor-total adjudication."
+      },
+      {
+        "filingUuid": "3a8cf433-a935-4a2d-8397-fb15087151d2",
+        "sourceFingerprint": "c92f1bea37a07c5ac1611e07bb2d66a300e2a7c5137eede89b6e5f60b7a1db44",
+        "url": "https://lda.gov/filings/public/filing/3a8cf433-a935-4a2d-8397-fb15087151d2/print/",
+        "format": "pdf",
+        "documentSha256": "b19a3dd8c4f0b16d3132815580c167c5f793950c77fce87378ca283e99363018",
+        "pdfPages": 4,
+        "coverPdfPages": [
+          1,
+          2
+        ],
+        "coverObjectId": "6 0",
+        "coverImageSize": [
+          1696,
+          2200
+        ],
+        "coverPngSha256": "4bedf0c637880baab264c13186bf876b37b8d19e198e7248d1552c87c5e8398b",
+        "reviewScope": "full_embedded_cover_identity_and_timing",
+        "form": {
+          "registrantName": "NUEVA VISTA GROUP",
+          "clientName": "THE ASSOCIATION OF TRIAL LAWYERS OF AMERICA",
+          "senateId": null,
+          "houseId": null,
+          "year": 2004,
+          "period": "year_end",
+          "registrationEffectiveDate": null,
+          "receiptDate": "2004-02-17",
+          "receiptTimezone": "not_stated",
+          "amendmentBoxChecked": false,
+          "terminationBoxChecked": false,
+          "terminationDate": null
+        },
+        "identityDisposition": "historical_name_identity_not_cleared",
+        "notes": "Identity and selected timing fields only; no financial-version, agency-contact or actor-total adjudication. The cover year differs from the API year; receipt year does not repair either field."
+      },
+      {
+        "filingUuid": "f721edd5-cb82-4d06-b19b-b5567ffafc16",
+        "sourceFingerprint": "76ddb91e8f06abc45a2ea2c46c26ac4f0069ab695a0cbe44596321599fe1da94",
+        "url": "https://lda.gov/filings/public/filing/f721edd5-cb82-4d06-b19b-b5567ffafc16/print/",
+        "format": "pdf",
+        "documentSha256": "78fa6198cbcc4963cf04e3789fa8619843864c44d73b143adb47fa3518f875c5",
+        "pdfPages": 4,
+        "coverPdfPages": [
+          1,
+          2
+        ],
+        "coverObjectId": "6 0",
+        "coverImageSize": [
+          1696,
+          2200
+        ],
+        "coverPngSha256": "7600e49ce36ee5aca4e752cf94b41b081372f8d40177f71b8562ca33ae24fba8",
+        "reviewScope": "full_embedded_cover_identity_and_timing",
+        "form": {
+          "registrantName": "Andrea LaRue (Nueva Vista Group)",
+          "clientName": "Association of Trial Lawyers of America",
+          "senateId": null,
+          "houseId": null,
+          "year": null,
+          "period": null,
+          "registrationEffectiveDate": "2003-07-01",
+          "receiptDate": "2003-07-17",
+          "receiptTimezone": "not_stated",
+          "amendmentBoxChecked": false,
+          "terminationBoxChecked": false,
+          "terminationDate": null
+        },
+        "identityDisposition": "historical_name_identity_not_cleared",
+        "notes": "Identity and selected timing fields only; no financial-version, agency-contact or actor-total adjudication."
+      },
+      {
+        "filingUuid": "4be1970e-f72a-48cb-a66e-8065dfd6db8a",
+        "sourceFingerprint": "77e34cf46a13cda292dc57d180253d8390bf0e79a3c6847d194fcb9da6ca5d34",
+        "url": "https://lda.gov/filings/public/filing/4be1970e-f72a-48cb-a66e-8065dfd6db8a/print/",
+        "format": "pdf",
+        "documentSha256": "1c3b5cbfeefa16d6b637c5bf90b2c1be6fb3d2f09bd32f1cf156bf336b5512d2",
+        "pdfPages": 6,
+        "coverPdfPages": [
+          1,
+          2
+        ],
+        "coverObjectId": "6 0",
+        "coverImageSize": [
+          1696,
+          2200
+        ],
+        "coverPngSha256": "e8c8bce8d6a73034ad2e1fc9107ca9ac211b0a90cf6035149eb1bb05311deb9d",
+        "reviewScope": "full_embedded_cover_identity_and_timing",
+        "form": {
+          "registrantName": "Nueva Vista Group, LLC",
+          "clientName": "The Association of Trial Lawyers of America",
+          "senateId": null,
+          "houseId": null,
+          "year": 2004,
+          "period": "mid_year",
+          "registrationEffectiveDate": null,
+          "receiptDate": "2004-08-20",
+          "receiptTimezone": "not_stated",
+          "amendmentBoxChecked": false,
+          "terminationBoxChecked": false,
+          "terminationDate": null
+        },
+        "identityDisposition": "historical_name_identity_not_cleared",
+        "notes": "Identity and selected timing fields only; no financial-version, agency-contact or actor-total adjudication."
+      },
+      {
+        "filingUuid": "72fc2b87-eddd-490e-8c80-44de702686f1",
+        "sourceFingerprint": "1347705b2ff2ee7a278cc1881f0bda7e2b9c26de28c7ec7d3e89ef06c0ec2f22",
+        "url": "https://lda.gov/filings/public/filing/72fc2b87-eddd-490e-8c80-44de702686f1/print/",
+        "format": "pdf",
+        "documentSha256": "d14ea302a377f91ed9d4f6910e6ef9fbeb4107797057d09368d65d4c816c8d96",
+        "pdfPages": 6,
+        "coverPdfPages": [
+          1,
+          2
+        ],
+        "coverObjectId": "6 0",
+        "coverImageSize": [
+          1696,
+          2200
+        ],
+        "coverPngSha256": "ccc4c11f0fcd361009fa06d21fe58271bf34601229c17c1689b7376cbd8c9418",
+        "reviewScope": "full_embedded_cover_identity_and_timing",
+        "form": {
+          "registrantName": "Nueva Vista Group, LLC",
+          "clientName": "Association of Trial Lawyers of America",
+          "senateId": "76833-113",
+          "houseId": "35960005",
+          "year": 2005,
+          "period": "year_end",
+          "registrationEffectiveDate": null,
+          "receiptDate": "2005-02-14",
+          "receiptTimezone": "not_stated",
+          "amendmentBoxChecked": false,
+          "terminationBoxChecked": false,
+          "terminationDate": null
+        },
+        "identityDisposition": "historical_name_identity_not_cleared",
+        "notes": "Identity and selected timing fields only; no financial-version, agency-contact or actor-total adjudication. The cover year differs from the API year; receipt year does not repair either field."
+      },
+      {
+        "filingUuid": "84474d21-427e-4bd8-aa25-79bc54c2bd5e",
+        "sourceFingerprint": "ee59257c6b0245b7e1d75aa6d0c391749ba7e699e6a90fe2e9ece426e84c685e",
+        "url": "https://lda.gov/filings/public/filing/84474d21-427e-4bd8-aa25-79bc54c2bd5e/print/",
+        "format": "pdf",
+        "documentSha256": "fc255b68f312130a2055cb748cbc9a09edc9b19a4214736cd992d583d21497a4",
+        "pdfPages": 2,
+        "coverPdfPages": [
+          1
+        ],
+        "coverObjectId": "6 0",
+        "coverImageSize": [
+          712,
+          969
+        ],
+        "coverPngSha256": "df5d3ba66eec14ef0beca32b502cb649650fbd1e0e73f3980774491dd9248c8a",
+        "reviewScope": "full_embedded_cover_identity_and_timing",
+        "form": {
+          "registrantName": "NUEVA VISTA GROUP",
+          "clientName": "AMERICA VOTES",
+          "senateId": "76833-330",
+          "houseId": null,
+          "year": 2005,
+          "period": "mid_year",
+          "registrationEffectiveDate": null,
+          "receiptDate": "2005-06-16",
+          "receiptTimezone": "not_stated",
+          "amendmentBoxChecked": false,
+          "terminationBoxChecked": false,
+          "terminationDate": null
+        },
+        "identityDisposition": "different_client_not_eligible_for_aaj_attribution",
+        "notes": "Identity and selected timing fields only; no financial-version, agency-contact or actor-total adjudication."
+      },
+      {
+        "filingUuid": "8e4c1558-6449-4e73-bb00-5ec8a927f015",
+        "sourceFingerprint": "6e0dfa5ad37e4f155067432a7f3c3b9f4a88d47c93cc236ccf4640757f01cf27",
+        "url": "https://lda.gov/filings/public/filing/8e4c1558-6449-4e73-bb00-5ec8a927f015/print/",
+        "format": "pdf",
+        "documentSha256": "50881136df816da5f6cb9b45e26901edbab468a524c50cb46872dcbcb15daf9f",
+        "pdfPages": 4,
+        "coverPdfPages": [
+          1,
+          2
+        ],
+        "coverObjectId": "6 0",
+        "coverImageSize": [
+          1696,
+          2200
+        ],
+        "coverPngSha256": "a17abf79f914fc985acc013b7d8d6dd49e83173c2793217bf0dbc649db431a6c",
+        "reviewScope": "full_embedded_cover_identity_and_timing",
+        "form": {
+          "registrantName": "Nueva Vista Group, LLC",
+          "clientName": "America Votes",
+          "senateId": null,
+          "houseId": null,
+          "year": null,
+          "period": null,
+          "registrationEffectiveDate": "2004-04-19",
+          "receiptDate": "2005-04-21",
+          "receiptTimezone": "not_stated",
+          "amendmentBoxChecked": false,
+          "terminationBoxChecked": false,
+          "terminationDate": null
+        },
+        "identityDisposition": "different_client_not_eligible_for_aaj_attribution",
+        "notes": "Identity and selected timing fields only; no financial-version, agency-contact or actor-total adjudication. Registration effective date is a separate field from the 2005 API filing label."
+      },
+      {
+        "filingUuid": "dfa590db-e37c-4b60-8789-1c2eae90add0",
+        "sourceFingerprint": "6e354ba11e0e8966f3d5993920401700d0774f2278b6b8e832ecf879b6ef80cc",
+        "url": "https://lda.gov/filings/public/filing/dfa590db-e37c-4b60-8789-1c2eae90add0/print/",
+        "format": "pdf",
+        "documentSha256": "3bdc0af59ccbb40f6d01fb564c6ac9572ba35ffe517e8067551ee69ea243f6d9",
+        "pdfPages": 2,
+        "coverPdfPages": [
+          1
+        ],
+        "coverObjectId": "6 0",
+        "coverImageSize": [
+          712,
+          969
+        ],
+        "coverPngSha256": "6c0f3b7d2238d81f031a66bed733d554553f0f2678e4e1f8bf4a25352da93a05",
+        "reviewScope": "full_embedded_cover_identity_and_timing",
+        "form": {
+          "registrantName": "NUEVA VISTA GROUP",
+          "clientName": "ASSN OF TRIAL LAWYERS OF AMERICA",
+          "senateId": "76833-113",
+          "houseId": null,
+          "year": 2005,
+          "period": "mid_year",
+          "registrationEffectiveDate": null,
+          "receiptDate": "2005-06-16",
+          "receiptTimezone": "not_stated",
+          "amendmentBoxChecked": false,
+          "terminationBoxChecked": false,
+          "terminationDate": null
+        },
+        "identityDisposition": "historical_name_identity_not_cleared",
+        "notes": "Identity and selected timing fields only; no financial-version, agency-contact or actor-total adjudication."
+      },
+      {
+        "filingUuid": "b53db4eb-a3e2-465a-91b4-51e10da90408",
+        "sourceFingerprint": "254fe9354029fa5d858dbc169bfda5159e7054327b19213e96f1188e78aabcd3",
+        "url": "https://lda.gov/filings/public/filing/b53db4eb-a3e2-465a-91b4-51e10da90408/print/",
+        "format": "pdf",
+        "documentSha256": "b7ac3cc960dac4783ec75003bc0152f91b313756603c87c547e13188a0e5d4ef",
+        "pdfPages": 6,
+        "coverPdfPages": [
+          1,
+          2
+        ],
+        "coverObjectId": "6 0",
+        "coverImageSize": [
+          1728,
+          2200
+        ],
+        "coverPngSha256": "98edb99b5eb799f04a126f0eea4c978c0669a12e8179c38d2183d27f4776c7ed",
+        "reviewScope": "full_embedded_cover_identity_and_timing",
+        "form": {
+          "registrantName": "Nueva Vista Group, LLC",
+          "clientName": "Association of Trial Lawyers of America",
+          "senateId": "76833-113",
+          "houseId": "35960005",
+          "year": 2005,
+          "period": "year_end",
+          "registrationEffectiveDate": null,
+          "receiptDate": "2006-02-08",
+          "receiptTimezone": "not_stated",
+          "amendmentBoxChecked": true,
+          "terminationBoxChecked": false,
+          "terminationDate": null
+        },
+        "identityDisposition": "historical_name_identity_not_cleared",
+        "notes": "Identity and selected timing fields only; no financial-version, agency-contact or actor-total adjudication."
+      },
+      {
+        "filingUuid": "cda90ce4-487d-415a-98d9-535be41f6b94",
+        "sourceFingerprint": "bac20ec5620120850d1a2d68d5910dfe9f636f9be5384ed487cf7b312b9f405a",
+        "url": "https://lda.gov/filings/public/filing/cda90ce4-487d-415a-98d9-535be41f6b94/print/",
+        "format": "pdf",
+        "documentSha256": "80dd92dd517ee5942534f3dca9ddcccba0925abbfb6834c810ffd4f29ebcd212",
+        "pdfPages": 6,
+        "coverPdfPages": [
+          1,
+          2
+        ],
+        "coverObjectId": "6 0",
+        "coverImageSize": [
+          1728,
+          2200
+        ],
+        "coverPngSha256": "154e3ee4f736489a5e3a6024fd283b26de60e2cf1c23e0d312a8a4d4d609bbba",
+        "reviewScope": "full_embedded_cover_identity_and_timing",
+        "form": {
+          "registrantName": "Nueva Vista Group, LLC",
+          "clientName": "America Votes",
+          "senateId": "76833-330",
+          "houseId": "35960015",
+          "year": 2005,
+          "period": "year_end",
+          "registrationEffectiveDate": null,
+          "receiptDate": "2006-02-08",
+          "receiptTimezone": "not_stated",
+          "amendmentBoxChecked": false,
+          "terminationBoxChecked": false,
+          "terminationDate": null
+        },
+        "identityDisposition": "different_client_not_eligible_for_aaj_attribution",
+        "notes": "Identity and selected timing fields only; no financial-version, agency-contact or actor-total adjudication."
+      },
+      {
+        "filingUuid": "70676224-e4e0-4a06-8afb-ab7737eacae9",
+        "sourceFingerprint": "921ecd2e8d67fab396ce4772b1d85029c5a4c38fb6ba442133dace1cf685fd15",
+        "url": "https://lda.gov/filings/public/filing/70676224-e4e0-4a06-8afb-ab7737eacae9/print/",
+        "format": "pdf",
+        "documentSha256": "bed744640401003a817aa6137709146a591196a3d8a1bab91086bd66091e809c",
+        "pdfPages": 2,
+        "coverPdfPages": [
+          1
+        ],
+        "coverObjectId": "6 0",
+        "coverImageSize": [
+          712,
+          969
+        ],
+        "coverPngSha256": "b250308d6aeb89f7ff4ea4a590297142167c032f0da931b48ff4b831f1e2feef",
+        "reviewScope": "full_embedded_cover_identity_and_timing",
+        "form": {
+          "registrantName": "NUEVA VISTA GROUP, LLC.",
+          "clientName": "AMERICA VOTES",
+          "senateId": "76833-330",
+          "houseId": "35960015",
+          "year": 2006,
+          "period": "mid_year",
+          "registrationEffectiveDate": null,
+          "receiptDate": "2006-08-22",
+          "receiptTimezone": "not_stated",
+          "amendmentBoxChecked": false,
+          "terminationBoxChecked": false,
+          "terminationDate": null
+        },
+        "identityDisposition": "different_client_not_eligible_for_aaj_attribution",
+        "notes": "Identity and selected timing fields only; no financial-version, agency-contact or actor-total adjudication."
+      },
+      {
+        "filingUuid": "82782f8c-e4d4-4eee-89bb-1b36b23d0278",
+        "sourceFingerprint": "05f6a71da6665d913f17c486b40bd7787894a58d5cff7156ed46a7c4684ffb53",
+        "url": "https://lda.gov/filings/public/filing/82782f8c-e4d4-4eee-89bb-1b36b23d0278/print/",
+        "format": "pdf",
+        "documentSha256": "981a61f55ba851ad2206c79c59537cf254375bf008a497b666e3d2b608f3ddf0",
+        "pdfPages": 2,
+        "coverPdfPages": [
+          1
+        ],
+        "coverObjectId": "6 0",
+        "coverImageSize": [
+          712,
+          969
+        ],
+        "coverPngSha256": "dd237702f94e65fe16db9a6f06c4e10836787e03eabec17ff01fa897e702dd18",
+        "reviewScope": "full_embedded_cover_identity_and_timing",
+        "form": {
+          "registrantName": "NUEVA VISTA GROUP, LLC.",
+          "clientName": "ASSOCIATION OF TRIAL LAWYERS OF AMERICA",
+          "senateId": "76833-113",
+          "houseId": "35960005",
+          "year": 2006,
+          "period": "mid_year",
+          "registrationEffectiveDate": null,
+          "receiptDate": "2006-08-22",
+          "receiptTimezone": "not_stated",
+          "amendmentBoxChecked": false,
+          "terminationBoxChecked": false,
+          "terminationDate": null
+        },
+        "identityDisposition": "historical_name_identity_not_cleared",
+        "notes": "Identity and selected timing fields only; no financial-version, agency-contact or actor-total adjudication."
+      },
+      {
+        "filingUuid": "2d1c91a8-0d49-4121-a930-a8d0181a8396",
+        "sourceFingerprint": "5bf6c2bff0db03d6c97bb967182f9589d50c81ecba68e1656c8c2a579f2c9129",
+        "url": "https://lda.gov/filings/public/filing/2d1c91a8-0d49-4121-a930-a8d0181a8396/print/",
+        "format": "pdf",
+        "documentSha256": "0b8c7b1c1633e8e2a3486f9aa45067ed033960d1fa19499d33b5a1d1a9128707",
+        "pdfPages": 2,
+        "coverPdfPages": [
+          1
+        ],
+        "coverObjectId": "6 0",
+        "coverImageSize": [
+          712,
+          969
+        ],
+        "coverPngSha256": "55590e22b15bd8694afa36bfdf66fed056e3fe44cb804a088c7b393964d50223",
+        "reviewScope": "full_embedded_cover_identity_and_timing",
+        "form": {
+          "registrantName": "NUEVA VISTA GROUP",
+          "clientName": "AMERICA VOTES",
+          "senateId": "76833-330",
+          "houseId": null,
+          "year": 2006,
+          "period": "year_end",
+          "registrationEffectiveDate": null,
+          "receiptDate": "2007-02-12",
+          "receiptTimezone": "not_stated",
+          "amendmentBoxChecked": false,
+          "terminationBoxChecked": false,
+          "terminationDate": null
+        },
+        "identityDisposition": "different_client_not_eligible_for_aaj_attribution",
+        "notes": "Identity and selected timing fields only; no financial-version, agency-contact or actor-total adjudication."
+      },
+      {
+        "filingUuid": "6e46bb1a-eacb-47a0-96d1-d671f2b04cd9",
+        "sourceFingerprint": "bdf27d89fb754d4c700d13faf487f8e6f227b20e34a72926cef22808ec81aa3f",
+        "url": "https://lda.gov/filings/public/filing/6e46bb1a-eacb-47a0-96d1-d671f2b04cd9/print/",
+        "format": "pdf",
+        "documentSha256": "84f2669fc86fea3a7197d0b56c00675af9ab9dcb97ef694b964f982183bf1670",
+        "pdfPages": 2,
+        "coverPdfPages": [
+          1
+        ],
+        "coverObjectId": "6 0",
+        "coverImageSize": [
+          712,
+          969
+        ],
+        "coverPngSha256": "ce4c2efe21578cbbc4080648b7910663b7ca344824ba0f51bfc27124362acba2",
+        "reviewScope": "full_embedded_cover_identity_and_timing",
+        "form": {
+          "registrantName": "NUEVA VISTA GROUP",
+          "clientName": "ASSN OF TRIAL LAWYERS OF AMERICA",
+          "senateId": "76833-113",
+          "houseId": null,
+          "year": 2006,
+          "period": "year_end",
+          "registrationEffectiveDate": null,
+          "receiptDate": "2007-02-12",
+          "receiptTimezone": "not_stated",
+          "amendmentBoxChecked": false,
+          "terminationBoxChecked": false,
+          "terminationDate": null
+        },
+        "identityDisposition": "historical_name_identity_not_cleared",
+        "notes": "Identity and selected timing fields only; no financial-version, agency-contact or actor-total adjudication."
+      },
+      {
+        "filingUuid": "b7cbb7ae-37f9-438f-be19-9131c9fe1ea8",
+        "sourceFingerprint": "23024cf65247294a14a5127099cc6078fc139d3edb2257ad82f1c7fa2dc93fa9",
+        "url": "https://lda.gov/filings/public/filing/b7cbb7ae-37f9-438f-be19-9131c9fe1ea8/print/",
+        "format": "pdf",
+        "documentSha256": "42368b76c3bfa801b9a97acee27a947d1f23aa259506dca6fa31f271af62750b",
+        "pdfPages": 3,
+        "coverPdfPages": [
+          1
+        ],
+        "coverObjectId": "6 0",
+        "coverImageSize": [
+          712,
+          969
+        ],
+        "coverPngSha256": "725563b6c325115dd339921244b4f1275725ff59cca14ebdc963f04ed5758c88",
+        "reviewScope": "full_embedded_cover_identity_and_timing",
+        "form": {
+          "registrantName": "NUEVA VISTA GROUP",
+          "clientName": "AMERICAN ASSN FOR JUSTICE",
+          "senateId": "76833-330",
+          "houseId": null,
+          "year": 2007,
+          "period": "mid_year",
+          "registrationEffectiveDate": null,
+          "receiptDate": "2007-08-13",
+          "receiptTimezone": "not_stated",
+          "amendmentBoxChecked": false,
+          "terminationBoxChecked": false,
+          "terminationDate": "2007-08-31"
+        },
+        "identityDisposition": "matching_name_identity_not_cleared",
+        "notes": "Identity and selected timing fields only; no financial-version, agency-contact or actor-total adjudication. Termination date is printed although the termination box is unchecked. The Senate suffix is 330, not an inferred 113."
+      },
+      {
+        "filingUuid": "c19a316f-abef-42c0-a06c-05e6a46be749",
+        "sourceFingerprint": "edfa56401c5853436d020a9242cef8aa7b9bde6462d3f817bcef4931292fc9fb",
+        "url": "https://lda.gov/filings/public/filing/c19a316f-abef-42c0-a06c-05e6a46be749/print/",
+        "format": "pdf",
+        "documentSha256": "d7ceb36082faa98ebdaca94c82248eb1a554d7a0cf414bdf7153c830acc12ab8",
+        "pdfPages": 3,
+        "coverPdfPages": [
+          1
+        ],
+        "coverObjectId": "6 0",
+        "coverImageSize": [
+          712,
+          969
+        ],
+        "coverPngSha256": "58a9b98bfa0aca1faa93711b468ca46f84607d02f3712c51fc466ba948d38c94",
+        "reviewScope": "full_embedded_cover_identity_and_timing",
+        "form": {
+          "registrantName": "NUEVA VISTA GROUP",
+          "clientName": "AMERICA VOTES",
+          "senateId": "76833-330",
+          "houseId": null,
+          "year": 2007,
+          "period": "mid_year",
+          "registrationEffectiveDate": null,
+          "receiptDate": "2007-08-14",
+          "receiptTimezone": "not_stated",
+          "amendmentBoxChecked": true,
+          "terminationBoxChecked": true,
+          "terminationDate": "2007-08-31"
+        },
+        "identityDisposition": "different_client_not_eligible_for_aaj_attribution",
+        "notes": "Identity and selected timing fields only; no financial-version, agency-contact or actor-total adjudication."
+      },
+      {
+        "filingUuid": "3ca9400c-73f5-430d-b1b2-d2411fcdd318",
+        "sourceFingerprint": "1a77ef38cf732cf9827e6f2b8f5ea5b96ad5c5e0e8c7f7a91576508f8691f293",
+        "url": "https://lda.gov/filings/public/filing/3ca9400c-73f5-430d-b1b2-d2411fcdd318/print/",
+        "format": "pdf",
+        "documentSha256": "1adf813da70539e90c023e4e5cada0d996d1ca01b3bd135442a444e7c1c71c0a",
+        "pdfPages": 3,
+        "coverPdfPages": [
+          1
+        ],
+        "coverObjectId": "6 0",
+        "coverImageSize": [
+          712,
+          969
+        ],
+        "coverPngSha256": "d99ea6ea0772cbdb31efa956e296c00bda09f6dd2b8d1c7e024e98c8c7cfe017",
+        "reviewScope": "full_embedded_cover_identity_and_timing",
+        "form": {
+          "registrantName": "NUEVA VISTA GROUP",
+          "clientName": "AMERICAN ASSN FOR JUSTICE",
+          "senateId": "76833-113",
+          "houseId": null,
+          "year": 2007,
+          "period": "year_end",
+          "registrationEffectiveDate": null,
+          "receiptDate": "2008-02-13",
+          "receiptTimezone": "not_stated",
+          "amendmentBoxChecked": false,
+          "terminationBoxChecked": false,
+          "terminationDate": null
+        },
+        "identityDisposition": "matching_name_identity_not_cleared",
+        "notes": "Identity and selected timing fields only; no financial-version, agency-contact or actor-total adjudication."
+      },
+      {
+        "filingUuid": "2ea34f2d-af95-43e1-a34f-597983da56e8",
+        "sourceFingerprint": "d04b26bfdbe4d0b5d84820c55430e0ad59ab5a30716ecf2f60c04d40a9c24605",
+        "url": "https://lda.gov/filings/public/filing/2ea34f2d-af95-43e1-a34f-597983da56e8/print/",
+        "format": "html",
+        "documentSha256": "bc2f0e43d8d504dc2efcb66facc4a0ddb8400c4b77d64e9ff830d9e63144cfca",
+        "pdfPages": null,
+        "coverPdfPages": [],
+        "coverObjectId": null,
+        "coverImageSize": null,
+        "coverPngSha256": null,
+        "reviewScope": "html_fields_1_5_6_7_8_9_10",
+        "form": {
+          "registrantName": "NVG, LLC",
+          "clientName": "AMERICAN ASSOCIATION FOR JUSTICE",
+          "senateId": "76833-330",
+          "houseId": "359600005",
+          "year": 2008,
+          "period": "first_quarter",
+          "registrationEffectiveDate": null,
+          "receiptDate": null,
+          "receiptTimezone": "not_reviewed",
+          "amendmentBoxChecked": false,
+          "terminationBoxChecked": false,
+          "terminationDate": null
+        },
+        "identityDisposition": "matching_name_identity_not_cleared",
+        "notes": "Identity and selected timing fields only; no financial-version, agency-contact or actor-total adjudication. The downloaded print response is HTML, not an independently archived historical scan; matching presentation fields do not resolve historical identity."
+      },
+      {
+        "filingUuid": "bcf7c4ad-cebe-4332-9c47-0d35ec390bd0",
+        "sourceFingerprint": "eab99fea334ba43eea6172297962d367e08599832721946d1d9e1d3fe05137af",
+        "url": "https://lda.gov/filings/public/filing/bcf7c4ad-cebe-4332-9c47-0d35ec390bd0/print/",
+        "format": "html",
+        "documentSha256": "5e591975b1994f98e5e69fcd5acd99b4f29ea0b4ecde32da6032cd4fef6507f2",
+        "pdfPages": null,
+        "coverPdfPages": [],
+        "coverObjectId": null,
+        "coverImageSize": null,
+        "coverPngSha256": null,
+        "reviewScope": "html_fields_1_5_6_7_8_9_10",
+        "form": {
+          "registrantName": "NVG, LLC.",
+          "clientName": "AMERICAN ASSOCIATION FOR JUSTICE",
+          "senateId": "76833-330",
+          "houseId": "359600005",
+          "year": 2008,
+          "period": "second_quarter",
+          "registrationEffectiveDate": null,
+          "receiptDate": null,
+          "receiptTimezone": "not_reviewed",
+          "amendmentBoxChecked": false,
+          "terminationBoxChecked": false,
+          "terminationDate": null
+        },
+        "identityDisposition": "matching_name_identity_not_cleared",
+        "notes": "Identity and selected timing fields only; no financial-version, agency-contact or actor-total adjudication. The downloaded print response is HTML, not an independently archived historical scan; matching presentation fields do not resolve historical identity."
+      },
+      {
+        "filingUuid": "c298240c-eb89-4e08-b960-17a08a8ead15",
+        "sourceFingerprint": "f99b780dbf203696cc8fd86e28b5d8b49cd90b4af072c6a576fe1b3c055d7420",
+        "url": "https://lda.gov/filings/public/filing/c298240c-eb89-4e08-b960-17a08a8ead15/print/",
+        "format": "html",
+        "documentSha256": "36e4c3ccbc2f23d69037c90d536d1839d4ef3ab6ff5dbb76e52a27e35dada9e8",
+        "pdfPages": null,
+        "coverPdfPages": [],
+        "coverObjectId": null,
+        "coverImageSize": null,
+        "coverPngSha256": null,
+        "reviewScope": "html_fields_1_5_6_7_8_9_10",
+        "form": {
+          "registrantName": "NVG, LLC.",
+          "clientName": "AMERICAN ASSOCIATION FOR JUSTICE",
+          "senateId": "76833-330",
+          "houseId": "359600005",
+          "year": 2008,
+          "period": "third_quarter",
+          "registrationEffectiveDate": null,
+          "receiptDate": null,
+          "receiptTimezone": "not_reviewed",
+          "amendmentBoxChecked": false,
+          "terminationBoxChecked": false,
+          "terminationDate": null
+        },
+        "identityDisposition": "matching_name_identity_not_cleared",
+        "notes": "Identity and selected timing fields only; no financial-version, agency-contact or actor-total adjudication. The downloaded print response is HTML, not an independently archived historical scan; matching presentation fields do not resolve historical identity."
+      },
+      {
+        "filingUuid": "f7c632ba-6687-4c52-b1dd-9fa6fe1deba7",
+        "sourceFingerprint": "4dceaa260cca2b0ede45f25031f013faefd04fa97daea0965bbd8d507d0dad84",
+        "url": "https://lda.gov/filings/public/filing/f7c632ba-6687-4c52-b1dd-9fa6fe1deba7/print/",
+        "format": "html",
+        "documentSha256": "a6ee65d47e48b09a5e44f9d77230533663288c0239cea116ada0d7d4387f20fe",
+        "pdfPages": null,
+        "coverPdfPages": [],
+        "coverObjectId": null,
+        "coverImageSize": null,
+        "coverPngSha256": null,
+        "reviewScope": "html_fields_1_5_6_7_8_9_10",
+        "form": {
+          "registrantName": "NVG, LLC.",
+          "clientName": "AMERICAN ASSOCIATION FOR JUSTICE",
+          "senateId": "76833-330",
+          "houseId": "359600005",
+          "year": 2008,
+          "period": "fourth_quarter",
+          "registrationEffectiveDate": null,
+          "receiptDate": null,
+          "receiptTimezone": "not_reviewed",
+          "amendmentBoxChecked": false,
+          "terminationBoxChecked": false,
+          "terminationDate": null
+        },
+        "identityDisposition": "matching_name_identity_not_cleared",
+        "notes": "Identity and selected timing fields only; no financial-version, agency-contact or actor-total adjudication. The downloaded print response is HTML, not an independently archived historical scan; matching presentation fields do not resolve historical identity."
+      }
+    ],
+    "reviewCorrections": [
+      {
+        "filingUuid": "cda90ce4-487d-415a-98d9-535be41f6b94",
+        "field": "identityReviews.form.houseId",
+        "previousValue": "35960005",
+        "correctedValue": "35960015",
+        "reason": "Corrected the first reviewer transcription against the unchanged full embedded cover, field 6. This is not an API correction."
+      }
+    ],
+    "boundary": {
+      "rawMetadataUnchanged": true,
+      "actorHistoriesCleared": false,
+      "finalAmountsSelected": 0,
+      "controlAssignmentCleared": false,
+      "causalEffect": "not_identified"
+    }
+  }
 }

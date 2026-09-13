@@ -176,7 +176,9 @@ records on one terminal page; only these two covers are reviewed here.
 | [b53db4eb](https://lda.gov/filings/public/filing/b53db4eb-a3e2-465a-91b4-51e10da90408/print/) | Association of Trial Lawyers of America | 76833-113 | Checked | $100,000, threshold box checked |
 | [cda90ce4](https://lda.gov/filings/public/filing/cda90ce4-487d-415a-98d9-535be41f6b94/print/) | America Votes | 76833-330 | Unchecked | $60,000, threshold boxes appear unchecked |
 
-Both covers name Nueva Vista Group, LLC and House ID 35960005. The ATLA name
+Both covers name Nueva Vista Group, LLC. The House IDs are 35960005 for ATLA
+and 35960015 for America Votes. The latter corrects an earlier reviewer
+transcription, not the raw API or source image. The ATLA name
 is consistent with AAJ's historical name, but its suffix 113 and checked
 amendment box differ from the API representation. The America Votes cover
 matches suffix 330 but identifies a different client, so it is **not eligible
@@ -191,10 +193,50 @@ Both have a handwritten February 8, 2006 received date and a July 5, 2006 fax
 header; those dates are preserved separately and do not order amendments.
 The source JSON retains both PDF/cover hashes, the complete query UUID inventory
 and the two exact metadata projections. The remaining twelve queried records
-and other NVG history are not cleared. The frozen acquisition contains 21 NVG
-records including registrations; the full historical client mapping needs
-review before using these rows for actor-level outcomes. The source-indexing
+are not cleared by that query or cover pair. A follow-up now reviews all 21 NVG
+records in the frozen acquisition, as described below. The source-indexing
 cause is unknown, and independent review remains pending.
+
+#### NVG frozen-history identity review
+
+The follow-up covers the full **21-record frozen NVG subset**, not all public
+NVG filings: seventeen embedded PDF covers and four electronic HTML print forms.
+Some older PDF wrappers crop the underlying scans, so the full embedded image
+was extracted and visually reviewed. The 2008 print responses are HTML, not
+independently archived historical scans. Their identity and selected timing
+fields were read from the downloaded markup. Other pages and financial-version
+histories remain outside this review.
+
+| Source client-name category | Records | Identity disposition |
+| --- | ---: | --- |
+| ATLA name variants | 9 | Historical-name candidates, not fully cleared identities |
+| AAJ name variants | 6 | Matching-name candidates, not fully cleared identities |
+| America Votes | 6 | Ineligible for AAJ attribution; includes one registration and five activity filings |
+
+The America Votes activity filings occupy 2005H1, 2005H2, 2006H1, 2006H2 and
+2007H1 in the API. Each is grouped with an ATLA/AAJ-named report, yielding **five
+mixed-client candidate groups**. The queue marks all five not mergeable. The
+[America Votes registration](https://lda.gov/filings/public/filing/8e4c1558-6449-4e73-bb00-5ec8a927f015/print/)
+has an April 19, 2004 effective date and April 21, 2005 receipt stamp; neither
+turns that registration into an activity-period observation.
+
+Senate suffixes cannot be repaired by one global replacement. Six forms show
+suffix 113 where the API stores 330, five leave the Senate ID blank, and the
+2007H1 AAJ-named cover itself shows 330. Its termination date is filled although
+the termination box is unchecked. The 2008 HTML forms also display 330; their
+agreement with the API does not independently settle the historical mapping.
+Two older activity covers disagree with their API year: `3a8cf433` shows 2004
+against API 2003, and `72fc2b87` shows 2005 against API 2004. Preserve the cover
+year, checked period, receipt date and API label separately; the receipt date
+is not evidence that either year can be silently corrected.
+
+`nvgHistoryReview` in the source JSON records each UUID, original metadata
+fingerprint, document/cover hashes, page or HTML-field scope, transcribed
+identity/timing fields and disposition. The first-pair House-ID correction is
+explicitly logged. This review excludes six incompatible client records from
+AAJ attribution but does not assign final spending values to the other fifteen,
+establish complete historical coverage, or select comparable controls. Raw
+metadata and issue rows remain unchanged. Independent review is still pending.
 
 The opened [House amendment guidance](https://lobbyingdisclosure.house.gov/help/WordDocuments/activityreportamendments.htm)
 addresses filing defects and errors or omissions, but its viewed paragraph does

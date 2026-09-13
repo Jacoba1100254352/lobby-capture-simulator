@@ -185,9 +185,12 @@ groups and traces one APGA original/amendment pair at field level. Its single
 available amendment image has no financial cover, and both API energy-contact
 lists differ from the scanned pages. The queue flags conflicting amounts,
 posting ties and missingness without choosing final versions or spending totals.
-A second reviewed pair contains ATLA and America Votes source covers despite
-both API records being attributed to AAJ; that candidate group is not mergeable,
-and the America Votes filing is ineligible for AAJ attribution.
+A follow-up reviews all 21 frozen NVG records: seventeen full PDF covers and
+four HTML identity/timing sections. Six records name America Votes, including
+one registration, despite API AAJ attribution. Five mixed-client candidate groups
+are not mergeable. The source ledger records two cover/API year disagreements
+and corrects the earlier America Votes House-ID transcription to 35960015.
+The other fifteen records are not thereby cleared as final actor-period outcomes.
 Run `make empirical-expansion-audit` to regenerate and verify these products.
 
 A separate [heavy-duty Phase 3 response pilot](docs/comment-response-document-pilot.md)

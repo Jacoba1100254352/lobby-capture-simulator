@@ -210,14 +210,15 @@ def validate_review(metadata, source, cover_source):
     if any(boundary.get(k) != v for k, v in required.items()) or not boundary["remainingRequirements"]:
         raise ValueError("Unsupported family amount, exposure or causal promotion")
     identity_counts = validate_identity_reviews(metadata, source["identityReviews"], source["identityQuery"])
+    history_counts, mixed_groups = validate_nvg_history(metadata, source["nvgHistoryReview"], source["identityReviews"])
     for row in queue:
-        if tuple(row[f] for f in GROUP_FIELDS) == ("76833", "330", "2005", "year_end"):
+        if tuple(row[f] for f in GROUP_FIELDS) in mixed_groups:
             row["reviewStatus"] = "source_identity_conflict_not_mergeable"
-    return queue, {**counts, "sourceReviewedGroups": 2, "apgaQueriedApiFilings": len(records),
+    return queue, {**counts, "sourceReviewedGroups": 1 + len(mixed_groups), "apgaQueriedApiFilings": len(records),
                    "nvgQueryReturnedFilings": source["identityQuery"]["count"], "identityApiFilingsChecked": 2,
-                   "apgaReviewedDistinctImages": len(images), "reviewedDistinctImages": len(images) + len(source["identityReviews"]),
+                   "apgaReviewedDistinctImages": len(images), "reviewedDistinctImages": len(images) + history_counts["nvgHistoryPdfCovers"],
                    "energyAgencyMismatches": mismatch,
-                   **identity_counts, "finalVersionsSelected": 0, "causalEffect": "not_identified"}
+                   **identity_counts, **history_counts, "finalVersionsSelected": 0, "causalEffect": "not_identified"}
 
 
 def validate_identity_reviews(metadata, reviews, query):
@@ -246,7 +247,7 @@ def validate_identity_reviews(metadata, reviews, query):
             raise ValueError("Client-identity review source provenance mismatch")
         form = review["form"]
         if (form["year"] != int(row["filingYear"]) or form["period"] != row["filingPeriod"]
-                or form["registrantName"] != "Nueva Vista Group, LLC" or form["houseId"] != "35960005"
+                or form["registrantName"] != "Nueva Vista Group, LLC"
                 or form["incomeDollars"] != row["incomeDollars"] or form["clientSelf"] is not False
                 or form["receiptDate"] != "2006-02-08" or form["faxDate"] != "2006-07-05"
                 or form["receiptTimezone"] != "not_stated"):
@@ -256,20 +257,111 @@ def validate_identity_reviews(metadata, reviews, query):
         suffix_mismatch += form["senateId"] != row["registrantApiId"] + "-" + row["clientRelationshipId"]
         unlabelled_amendment += form["amendmentBoxChecked"] and row["filingType"] == "YY"
         if review["filingUuid"] == "cda90ce4-487d-415a-98d9-535be41f6b94":
-            if (form["clientName"] != "America Votes" or form["senateId"] != "76833-330"
+            if (form["clientName"] != "America Votes" or form["senateId"] != "76833-330" or form["houseId"] != "35960015"
                     or form["amendmentBoxChecked"] is not False
                     or review["disposition"] != "different_client_not_eligible_for_aaj_attribution"):
                 raise ValueError("Different-client filing cannot be assigned to AAJ")
             different_client += 1
-        elif (form["clientName"] != "Association of Trial Lawyers of America" or form["senateId"] != "76833-113"
+        elif (form["clientName"] != "Association of Trial Lawyers of America" or form["senateId"] != "76833-113" or form["houseId"] != "35960005"
               or form["amendmentBoxChecked"] is not True
               or review["disposition"] != "historical_client_name_with_registration_and_type_conflicts"):
             raise ValueError("ATLA cover registration/amendment conflicts must remain explicit")
         if (review["rawRecordCorrected"] is not False or review["finalAmountSelected"] is not False
                 or review["independentReviewStatus"] != "pending" or not review["remainingRequirements"]):
             raise ValueError("Unsupported identity-review promotion")
-    return {"identityReviewedCovers": 2, "differentClientCovers": different_client,
-            "registrationSuffixDiscrepancies": suffix_mismatch, "unlabelledAmendedCovers": unlabelled_amendment}
+    return {"initialIdentityReviewedCovers": 2, "initialDifferentClientCovers": different_client,
+            "initialRegistrationSuffixDiscrepancies": suffix_mismatch, "initialUnlabelledAmendedCovers": unlabelled_amendment}
+
+
+def validate_nvg_history(metadata, history, initial_reviews):
+    """Validate the frozen-frame review, not an exhaustive or corrected history."""
+    selected = {r["filingUuid"]: r for r in metadata if r["registrantApiId"] == "76833"}
+    records = history["records"]
+    if (history["schema"] != "nvg-frozen-history-identity-review-v1"
+            or history["independentReviewStatus"] != "pending" or not history["reviewer"] or not history["scope"]
+            or len(selected) != 21 or len(records) != 21 or {r["filingUuid"] for r in records} != set(selected)):
+        raise ValueError("NVG history review must cover the exact frozen 21-record frame")
+    date.fromisoformat(history["reviewDate"])
+    different = set()
+    groups = defaultdict(list)
+    pdf_count = html_count = year_conflicts = suffix_conflicts = missing_ids = 0
+    by_uuid = {}
+    for review in records:
+        row = selected[review["filingUuid"]]
+        form = review["form"]
+        by_uuid[review["filingUuid"]] = review
+        if (review["sourceFingerprint"] != row["sourceFingerprint"] or review["url"] != row["filingDocumentUrl"]
+                or not re_hash(review["documentSha256"]) or not review["notes"]):
+            raise ValueError("NVG history source provenance changed")
+        if review["format"] == "pdf":
+            pdf_count += 1
+            if (review["reviewScope"] != "full_embedded_cover_identity_and_timing"
+                    or not re_hash(review["coverPngSha256"]) or review["coverObjectId"] != "6 0"
+                    or review["coverImageSize"] not in ([712, 969], [1696, 2200], [1728, 2200])
+                    or review["coverPdfPages"] != ([1] if review["coverImageSize"] == [712, 969] else [1, 2])
+                    or review["pdfPages"] not in {2, 3, 4, 6} or form["receiptTimezone"] != "not_stated"):
+                raise ValueError("NVG PDF cover scope or provenance changed")
+            date.fromisoformat(form["receiptDate"])
+        elif review["format"] == "html":
+            html_count += 1
+            if (row["filingYear"] != "2008" or review["reviewScope"] != "html_fields_1_5_6_7_8_9_10"
+                    or review["pdfPages"] is not None or review["coverPdfPages"] != []
+                    or any(review[k] is not None for k in ("coverObjectId", "coverImageSize", "coverPngSha256"))
+                    or form["receiptDate"] is not None or form["receiptTimezone"] != "not_reviewed"
+                    or form["clientName"] != "AMERICAN ASSOCIATION FOR JUSTICE"
+                    or form["senateId"] != "76833-330" or form["houseId"] != "359600005"):
+                raise ValueError("Electronic HTML form is not an independently archived PDF scan")
+        else:
+            raise ValueError("Unsupported NVG source format")
+        name = form["clientName"].upper()
+        if name == "AMERICA VOTES":
+            expected_disposition = "different_client_not_eligible_for_aaj_attribution"
+            different.add(review["filingUuid"])
+        elif "TRIAL LAWYERS OF AMERICA" in name:
+            expected_disposition = "historical_name_identity_not_cleared"
+        elif name in {"AMERICAN ASSN FOR JUSTICE", "AMERICAN ASSOCIATION FOR JUSTICE"}:
+            expected_disposition = "matching_name_identity_not_cleared"
+        else:
+            raise ValueError("Unexpected NVG source client")
+        if review["identityDisposition"] != expected_disposition:
+            raise ValueError("NVG identity disposition cannot promote a historical actor link")
+        if row["filingType"] in {"RR", "RA"}:
+            if form["year"] is not None or form["period"] is not None:
+                raise ValueError("Registration effective dates are not activity-report periods")
+            date.fromisoformat(form["registrationEffectiveDate"])
+        else:
+            if form["period"] != row["filingPeriod"] or form["registrationEffectiveDate"] is not None:
+                raise ValueError("NVG source period changed")
+            year_conflicts += form["year"] != int(row["filingYear"])
+            groups[tuple(row[f] for f in GROUP_FIELDS)].append(review["filingUuid"])
+        missing_ids += form["senateId"] is None
+        suffix_conflicts += form["senateId"] is not None and form["senateId"] != row["registrantApiId"] + "-" + row["clientRelationshipId"]
+    expected_different = {"84474d21-427e-4bd8-aa25-79bc54c2bd5e", "8e4c1558-6449-4e73-bb00-5ec8a927f015",
+                          "cda90ce4-487d-415a-98d9-535be41f6b94", "70676224-e4e0-4a06-8afb-ab7737eacae9",
+                          "2d1c91a8-0d49-4121-a930-a8d0181a8396", "c19a316f-abef-42c0-a06c-05e6a46be749"}
+    if different != expected_different or (pdf_count, html_count, year_conflicts, suffix_conflicts, missing_ids) != (17, 4, 2, 6, 5):
+        raise ValueError("NVG identity, year or registration discrepancies changed")
+    for initial in initial_reviews:
+        reviewed = by_uuid[initial["filingUuid"]]
+        if (reviewed["documentSha256"] != initial["pdfSha256"] or reviewed["coverPngSha256"] != initial["pngSha256"]
+                or any(reviewed["form"][k] != initial["form"][k] for k in
+                       ("registrantName", "clientName", "senateId", "houseId", "year", "period", "receiptDate", "amendmentBoxChecked"))):
+            raise ValueError("NVG history differs from the corrected initial cover review")
+    corrections = history["reviewCorrections"]
+    if (len(corrections) != 1 or corrections[0]["filingUuid"] != "cda90ce4-487d-415a-98d9-535be41f6b94"
+            or corrections[0]["previousValue"] != "35960005" or corrections[0]["correctedValue"] != "35960015"
+            or not corrections[0]["reason"]):
+        raise ValueError("Review transcription correction must remain explicit")
+    boundary = {"rawMetadataUnchanged": True, "actorHistoriesCleared": False, "finalAmountsSelected": 0,
+                "controlAssignmentCleared": False, "causalEffect": "not_identified"}
+    if history["boundary"] != boundary:
+        raise ValueError("Unsupported NVG history promotion")
+    mixed = {key for key, uuids in groups.items() if different.intersection(uuids) and set(uuids) - different}
+    return {"nvgHistoryReviewedFilings": len(records), "nvgHistoryPdfCovers": pdf_count,
+            "nvgHistoryHtmlForms": html_count, "nvgDifferentClientFilings": len(different),
+            "nvgDifferentClientActivityFilings": sum(selected[u]["filingType"] not in {"RR", "RA"} for u in different),
+            "nvgMixedClientCandidateGroups": len(mixed), "nvgSourceYearDisagreements": year_conflicts,
+            "nvgSourceSenateIdDisagreements": suffix_conflicts, "nvgSourceSenateIdBlank": missing_ids}, mixed
 
 
 def re_hash(value):
