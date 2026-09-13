@@ -67,6 +67,7 @@ PACKAGE_INPUTS = [
             "comment-publisher-timing-review.json",
             "comment-publisher-supply-review.json",
             "comment-publisher-inputs-review.json",
+            "comment-publisher-remaining-review.json",
             "gao-award-linkage-pilot.csv", "gao-award-linkage-source.json",
             "gao-docket-timing-pilot.csv", "gao-docket-timing-source.json",
             "gao-original-action-review.json",
@@ -80,6 +81,8 @@ PACKAGE_INPUTS = [
     ],
     PackageInput("reports/empirical-expansion-audit.md", "readiness/empirical-expansion-audit.md", "empirical-design-expansion"),
     PackageInput("reports/empirical-expansion-audit.csv", "readiness/empirical-expansion-audit.csv", "empirical-design-expansion"),
+    PackageInput("reports/comment-publisher-case-review.md", "readiness/comment-publisher-case-review.md", "empirical-design-expansion"),
+    PackageInput("reports/comment-publisher-case-review.csv", "readiness/comment-publisher-case-review.csv", "empirical-design-expansion"),
     PackageInput("reports/procurement-bulk-frame-audit.md", "readiness/procurement-bulk-frame-audit.md", "empirical-design-expansion"),
     PackageInput("reports/procurement-bulk-frame-audit.csv", "readiness/procurement-bulk-frame-audit.csv", "empirical-design-expansion"),
     PackageInput(

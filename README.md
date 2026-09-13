@@ -348,8 +348,8 @@ not full acceptance, statistical confidence levels or observed production.
 Source date/reference differences and pending independent review remain explicit.
 See the [supply-chain review](docs/comment-response-document-pilot.md#supply-chain-methods-and-end-of-life-costs-september-13).
 
-A four-entry study/lightweighting follow-up raises current coverage to 28,
-with 20 still awaiting adjudication. EPA discusses the requested ATRI study but
+A four-entry study/lightweighting follow-up brought coverage to 28,
+with 20 then awaiting adjudication. EPA discusses the requested ATRI study but
 distinguishes its full-fleet estimates from rule impacts. MOVES fleet revisions
 and a separate ACT Research-to-TEMPO adoption update do not establish acquisition
 of the requested ACT bus forecasts. The named lightweighting response refers
@@ -357,6 +357,18 @@ an existing approval route; all six later-phase wheel values and 22 nonwheel
 rows remain as proposed. Retention is not a default-input refresh or awarded
 credits. Source scopes, table units, merged cells and pending independent review
 remain explicit. See the [study/input review](docs/comment-response-document-pilot.md#study-inputs-and-lightweighting-follow-up-september-13).
+
+A [complete first-pass case review](docs/comment-response-document-pilot.md#complete-first-pass-mema-case-review-september-13)
+now covers all 48 existing entries. The remaining twenty-entry ledger confirms
+EPA's use of MEMA's concrete-mixer estimate and the published 42% PTO input,
+distinguishes regional modeled utility-truck limits from blanket exclusion, and
+records a declined second comment period and an unperformed charging sensitivity.
+The sensitivity response names TRALA. A new NREL study does not verify a public
+RFI, and appendix references do not reproduce the final three requests.
+The [48-entry reading index](reports/comment-publisher-case-review.md) preserves
+source pages, bounded dispositions and unresolved facets. Independent review,
+docket-byte identity, representative rates and causal effects remain uncleared;
+procurement, substitution and simulator parameters are unchanged.
 
 The archived procurement frame audit scans only the 56 manifest-selected bulk ZIPs.
 All 6,449,101 rows match their saved archive counts and agency/date partitions,

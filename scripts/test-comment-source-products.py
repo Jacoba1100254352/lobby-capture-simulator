@@ -1270,5 +1270,111 @@ class PublisherInputsTests(unittest.TestCase):
             boundary[key] = old
 
 
+class PublisherRemainingTests(unittest.TestCase):
+    def setUp(self):
+        self.names = ("warranty", "technology", "infrastructure", "timing", "supply", "inputs", "remaining")
+        self.inventory = json.loads((AUDIT.DATA / "comment-publisher-inventory.json").read_text())
+        self.ledgers = [json.loads((AUDIT.DATA / f"comment-publisher-{name}-review.json").read_text())
+                        for name in self.names]
+        self.remaining = self.ledgers[-1]
+
+    def check(self, refresh=True):
+        if refresh:
+            self.remaining["reviewFingerprint"] = PUBLISHER.fingerprint({
+                k: v for k, v in self.remaining.items() if k != "reviewFingerprint"})
+        return PUBLISHER.validate_all(self.inventory, *self.ledgers)
+
+    def test_first_pass_completion_preserves_historical_checkpoint_and_uncertainty(self):
+        before = deepcopy(self.ledgers)
+        old = PUBLISHER.validate_all(self.inventory, *self.ledgers[:-1])
+        current = self.check(False)
+        self.assertEqual((old["boundedResponseReviews"], old["otherEntriesAwaitingAdjudication"]), (28, 20))
+        self.assertEqual((current["boundedResponseReviews"], current["otherEntriesAwaitingAdjudication"]), (48, 0))
+        self.assertTrue(current["firstPassInventoryCoverageComplete"])
+        self.assertFalse(current["allRequestsResolved"])
+        self.assertEqual(current["independentlyReviewedEntries"], 0)
+        self.assertEqual(current["docketRateEligibleEntries"], 0)
+        self.assertEqual(before, self.ledgers)
+
+    def test_remaining_cannot_complete_frame_without_previous_followup(self):
+        with self.assertRaisesRegex(ValueError, "all earlier follow-ups"):
+            PUBLISHER.validate_all(self.inventory, *self.ledgers[:5], remaining=self.remaining)
+
+    def test_stale_identity_and_missing_review_are_detected(self):
+        self.remaining["inventoryFrameSha256"] = "0" * 64
+        with self.assertRaisesRegex(ValueError, "fingerprint"):
+            self.check(False)
+        with self.assertRaisesRegex(ValueError, "binding"):
+            self.check()
+        self.remaining["inventoryFrameSha256"] = self.inventory["requestFrameSha256"]
+        self.remaining["reviews"].pop()
+        with self.assertRaisesRegex(ValueError, "frame"):
+            self.check()
+
+    def test_case_index_requires_one_to_one_complete_request_join(self):
+        named = list(zip(self.names, self.ledgers))
+        rows = PUBLISHER.case_review_rows(self.inventory, named)
+        self.assertEqual([r["requestId"] for r in rows], [r["requestId"] for r in self.inventory["requests"]])
+        pto = next(r for r in rows if r["requestId"] == "mema-1570-r35")
+        self.assertEqual((pto["responsePdfPages"], pto["responsePrintedPages"]), ("557,558", "539,540"))
+        self.assertEqual(pto["publisherPdfPages"], "16,17,20")
+        with self.assertRaisesRegex(ValueError, "Duplicate"):
+            PUBLISHER.case_review_rows(self.inventory, named + named[:1])
+        with self.assertRaisesRegex(ValueError, "exactly the frozen frame"):
+            PUBLISHER.case_review_rows(self.inventory, named[:-1])
+
+    def test_appendix_reference_cannot_become_reproduced_request(self):
+        row = self.remaining["reviews"][-1]
+        row["excerptPdfPages"] = row["appendixReferencePdfPages"]
+        with self.assertRaisesRegex(ValueError, "coding/linkage"):
+            self.check()
+
+    def test_partial_response_and_wrong_page_mapping_are_detected(self):
+        scope = self.remaining["responseScopes"]["hydrogen-timeline"]
+        scope["completeGeneralResponse"] = True
+        with self.assertRaisesRegex(ValueError, "response scope"):
+            self.check()
+        scope["completeGeneralResponse"] = False
+        self.remaining["documents"]["ria"]["reviewedPages"][0]["printedPage"] = 236
+        with self.assertRaisesRegex(ValueError, "source identity/page"):
+            self.check()
+
+    def test_response_continuation_cannot_be_dropped(self):
+        self.remaining["responseScopes"]["technology-readiness"]["pdfPages"].remove(748)
+        with self.assertRaisesRegex(ValueError, "response scope"):
+            self.check()
+
+    def test_named_attribution_and_rfi_status_cannot_be_promoted(self):
+        facts = self.remaining["facts"]["chargingProcedure"]
+        for key, value in (("namedSensitivityCommenter", "MEMA"), ("sensitivityConducted", True),
+                           ("publicRfiVerified", True), ("publicRfiExplicitlyRejected", True)):
+            old = facts[key]
+            facts[key] = value
+            with self.subTest(key=key), self.assertRaisesRegex(ValueError, "facts or attribution"):
+                self.check()
+            facts[key] = old
+
+    def test_input_units_and_modeled_utility_scope_cannot_be_changed(self):
+        for name, key, value in (("concretePto", "table218Percent", 0.42),
+                                  ("utilityAdoption", "dutyCycle", "all"),
+                                  ("utilityAdoption", "observedAdoption", True),
+                                  ("consultation", "technicalAmendmentSeparatelyResolved", True)):
+            facts = self.remaining["facts"][name]
+            old = facts[key]
+            facts[key] = value
+            with self.subTest(key=key), self.assertRaisesRegex(ValueError, "facts or attribution"):
+                self.check()
+            facts[key] = old
+
+    def test_complete_coverage_cannot_clear_independent_review_or_causality(self):
+        for key, value in (("allRequestsResolved", True), ("docketRateEligible", True),
+                           ("independentReviewStatus", "cleared"), ("causalEffect", "identified")):
+            old = self.remaining["boundary"][key]
+            self.remaining["boundary"][key] = value
+            with self.subTest(key=key), self.assertRaisesRegex(ValueError, "claim boundary"):
+                self.check()
+            self.remaining["boundary"][key] = old
+
+
 if __name__ == "__main__":
     unittest.main()

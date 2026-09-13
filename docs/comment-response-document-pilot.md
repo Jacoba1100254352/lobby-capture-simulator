@@ -1,5 +1,105 @@
 # Agency-documented comment responses: heavy-duty Phase 3 pilot
 
+## Complete first-pass MEMA case review, September 13
+
+**Assessment: share with caveats for documentary measurement.** All 48 entries
+in the unchanged publisher-letter frame now have a bounded first-pass review.
+This means 48 covered entries from one letter, not 48 resolved outcomes,
+independent comments, policy events or independently adjudicated observations.
+The sections below retain historical coverage checkpoints. No uptake rate,
+causal lobbying effect or simulator recalibration is eligible.
+
+`comment-publisher-remaining-review.json` adds the twenty previously uncovered
+entries. Selection followed source/outcome exposure and completes an access-led
+case, not a prospective sample. The [combined reading index](../reports/comment-publisher-case-review.md)
+and [CSV](../reports/comment-publisher-case-review.csv) join every original request
+to its source ledger, response pages, disposition and reasoning. Earlier source
+ledgers and the frozen request segmentation are unchanged.
+
+### New documentary findings
+
+The [EPA response document](https://www.epa.gov/system/files/documents/2024-03/420r24007.pdf)
+explicitly says it used the average of MEMA's submitted concrete-mixer PTO
+fuel-use range (PDF 557-558, printed 539-540). The publisher's PDF page 20
+supplies 35-49%. The [final RIA](https://nepis.epa.gov/Exe/ZyPDF.cgi?Dockey=P101A93R.pdf)
+confirms 42% for cement mixer/pumper in Table 2-17 (PDF 236, printed 211)
+and for vehicle `19C_Mix_Cl8_MP` in Table 2-18 (PDF 237, printed 212).
+The recomputed midpoint is 42%. This is a source-traceable example of input
+uptake. It does not establish adoption of the entire PTO expansion request,
+an executed HD TRUCS implementation, the scientific accuracy of MEMA's estimate,
+or an independently identified effect of lobbying.
+
+EPA also links additional regional utility-truck modeling limits to MEMA and
+similar comments (response PDF 567, printed 549): zero modeled ZEV adoption
+in MY2027 and a 14% limit in MY2030 and MY2032. These are model assumptions
+for regional duty cycles, not observed adoption or an exclusion of urban and
+multi-purpose utility vehicles. The preceding 100-mile minimum-range change
+is discussed in response to POET and cannot be solely credited to MEMA.
+
+EPA declines another comment period in the PTO response, but does not separately
+resolve the technical-amendment alternative. It explicitly says the higher-power
+charging sensitivity was not conducted (PDF 947-948). Those paragraphs name
+TRALA, even though MEMA's own request is reproduced on PDF 950. EPA's
+commissioned NREL dwell-time analysis (981-982) does not verify the separate
+request for a public solicitation about dwell times and charger intentions.
+
+### Dispositions of the twenty remaining entries
+
+Page numbers below are response-document PDF ordinals. The source ledger
+records complete versus partial agency-response scopes; the table is a locator,
+not a claim that every page or linked report was independently reviewed.
+
+| Request | Key response pages | Bounded finding |
+|---|---|---|
+| r12, fleet infrastructure partnerships | 524, 907-913 | Existing support and engagement described; specific new partnership not verified. |
+| r13, hydrogen timeline | 1206-1207 | Named response disputes the claimed mismatch and explains Roadmap references; actual alignment not independently established. |
+| r19, federal/state/local coordination | 524, 907-913, 991-993 | Broad engagement commitment; individual state/local actions not verified. |
+| r20, advance utility buildout | 907-913, 991-993 | Planning and investments described; compulsory advance buildout not verified. |
+| r21, workforce/capital alignment | 524, 993 | Workforce support described; alignment with end-user capital plans not verified. |
+| r34, broader vocational inputs | 557-558, 565-567 | Broader underlying sources explained; full requested dataset expansion not verified. |
+| r35, PTO expansion | 557-558; RIA 236-237 | MEMA range used and 42% published input confirmed for the scoped application. |
+| r36, charging sensitivity | 947-948, request 950 | Sensitivity not conducted; response names TRALA. |
+| r37, dwell/intention solicitation | 946-948, 981-982 | NREL study added; requested public RFI not separately verified or rejected. |
+| r38, renewed consultation | 557-558 | Second comment period declined; technical-amendment alternative not separately resolved. |
+| r39, specialized-vehicle timing | 746-748 | Named response explains slower early phase-in; no blanket application-specific delay established. |
+| r40, body-builder/ePTO credits | 209-210, 557-558 | Existing ePTO provisions described; body-builder extension and reproduced MEMA request not verified in reviewed scopes. |
+| r41, variable-worksite fuels | 601 | Liquid hydrogen not explicitly modeled; other fuel/application facets not separately resolved. |
+| r42, emergency utility BEVs | 565-567 | Regional modeled adoption limited; not a blanket exclusion. |
+| r43, emergency custom chassis | 209-210 | EPA says existing eight categories retained; requested extension not verified by a clause comparison. |
+| r44, mission productivity | 209-210, 565-567 | Related sizing and payload explanations; separate mission-productivity factor not verified. |
+| r45, early-adopter reassessment | 209-210, 946-948 | Depot suitability acknowledged; all-three-application reassessment not separately verified. |
+| r46, AB2127 review | Appendix reference 877; 524, 907-913, 991-993 | Specific program review not verified. |
+| r47, state MHDV charging requirements | Appendix reference 877; 907-913, 991-993 | New EPA requirements for ACT/non-ACT states not verified. |
+| r48, FHWA truck/bus guidance | Appendix reference 877; 911, 992 | Existing FHWA guidance described; new EPA-provided guidance not verified. |
+
+### Scope risks and independent review handoff
+
+The last three requests appear in the original Appendix 2 on PDF pages 25-26.
+EPA's PDF 877 points to that appendix without reproducing the requests. The
+ledger leaves request-excerpt pages empty and records the appendix reference
+separately. A CARB footnote referencing AB2127 is not a MEMA response link.
+The workforce summary names South Coast AQMD, and the delegated-assembler
+credit summary names NTEA. Those attributions are preserved.
+
+The r13 review covers only EPA's named timeline discussion on PDF 1206-1207,
+through the monitoring commitment before the AmFree response. It records the
+agency's explanation, not an independent audit of the Roadmap or a finding about
+current infrastructure. The r41 scope is the opening response on PDF 601 before
+the fuel-cell cost discussion. Complete responses are bounded by their following
+section headings, including the r39 continuation onto PDF 748. The source files
+are byte-verified locally; original docket-copy identity remains unverified.
+
+An independent reviewer should check all 48 request boundaries and source
+matches, retain disagreements, and review unresolved instrument facets without
+converting them to rejection or docket-wide nonresponse. The index is generated,
+so independent decisions belong in a separate adjudication record. The broader
+timing change shared by r39 and earlier reviews is not a new policy event.
+
+Offline validation, the companion notebook and packaged reading index verify
+frame coverage, page/identity bindings, numeric consistency and claim boundaries.
+They do not substitute for independent source adjudication. Procurement and
+substitution identification remain separate unfinished requirements.
+
 ## Publisher-original inventory and warranty follow-up, September 13
 
 **Assessment: share with caveats for documentary measurement, not rates or causal
@@ -488,7 +588,7 @@ regulatory comparison. r24 and r25 share this one comparison.
 
 ### Coverage, risks and reproducibility
 
-Current combined coverage is **28 distinct reviewed entries and 20 awaiting
+At this historical checkpoint, coverage was **28 distinct reviewed entries and 20 awaiting
 adjudication**. A reviewed entry may still have an unresolved outcome. There
 remains one letter, zero independently cleared entries, and no docket-rate
 or causal-calibration eligibility. The three evidence comparisons are not

@@ -1,0 +1,1127 @@
+{
+  "reviewFingerprint": "94891ec1ac308d637e34539aa0f35bcc53d1a1e74cc02e20b3174febe5a9d145",
+  "schema": "comment-publisher-remaining-review-v1",
+  "reviewDate": "2026-09-13",
+  "reviewer": "Codex source review; independent adjudication pending",
+  "inventoryFile": "comment-publisher-inventory.json",
+  "inventoryFrameSha256": "717738adcf4cba674307d1721c1d8a60429c21f804232c1a57bdc7f28a2f4f39",
+  "publisherSha256": "e6f6c3c34594d69654b4375e29896175b3057f4c6a0c987e141ac229f10d0159",
+  "selection": {
+    "requestIds": [
+      "mema-1570-r12",
+      "mema-1570-r13",
+      "mema-1570-r19",
+      "mema-1570-r20",
+      "mema-1570-r21",
+      "mema-1570-r34",
+      "mema-1570-r35",
+      "mema-1570-r36",
+      "mema-1570-r37",
+      "mema-1570-r38",
+      "mema-1570-r39",
+      "mema-1570-r40",
+      "mema-1570-r41",
+      "mema-1570-r42",
+      "mema-1570-r43",
+      "mema-1570-r44",
+      "mema-1570-r45",
+      "mema-1570-r46",
+      "mema-1570-r47",
+      "mema-1570-r48"
+    ],
+    "mode": "all_remaining_frozen_inventory_entries",
+    "priorOutcomeExposure": true,
+    "blinded": false,
+    "scope": "All twenty entries not covered by the six earlier follow-ups. This completes first-pass coverage of one access-led letter, not independent adjudication, complete outcome resolution, a representative sample or a response-document census."
+  },
+  "publisherReview": {
+    "pdfPages": [
+      2,
+      8,
+      9,
+      11,
+      14,
+      16,
+      17,
+      18,
+      19,
+      20,
+      21,
+      22,
+      23,
+      25,
+      26
+    ],
+    "method": "rendered_pages_with_text_navigation",
+    "scope": "Original request wording and supporting charts, including highlighted text that plain extraction misses. PDF ordinals are authoritative; the original page-11 header misnumbering is preserved."
+  },
+  "documents": {
+    "response": {
+      "url": "https://www.epa.gov/system/files/documents/2024-03/420r24007.pdf",
+      "sha256": "4ce468a6ea85ede970b8189dab82b0ab5112692abcc1f684a585f563b6b4ab8e",
+      "byteSize": 16735308,
+      "pageCount": 2114,
+      "reviewedPages": [
+        {
+          "pdfPage": 197,
+          "printedPage": 179
+        },
+        {
+          "pdfPage": 198,
+          "printedPage": 180
+        },
+        {
+          "pdfPage": 208,
+          "printedPage": 190
+        },
+        {
+          "pdfPage": 209,
+          "printedPage": 191
+        },
+        {
+          "pdfPage": 210,
+          "printedPage": 192
+        },
+        {
+          "pdfPage": 524,
+          "printedPage": 506
+        },
+        {
+          "pdfPage": 554,
+          "printedPage": 536
+        },
+        {
+          "pdfPage": 555,
+          "printedPage": 537
+        },
+        {
+          "pdfPage": 557,
+          "printedPage": 539
+        },
+        {
+          "pdfPage": 558,
+          "printedPage": 540
+        },
+        {
+          "pdfPage": 565,
+          "printedPage": 547
+        },
+        {
+          "pdfPage": 566,
+          "printedPage": 548
+        },
+        {
+          "pdfPage": 567,
+          "printedPage": 549
+        },
+        {
+          "pdfPage": 598,
+          "printedPage": 580
+        },
+        {
+          "pdfPage": 599,
+          "printedPage": 581
+        },
+        {
+          "pdfPage": 601,
+          "printedPage": 583
+        },
+        {
+          "pdfPage": 744,
+          "printedPage": 726
+        },
+        {
+          "pdfPage": 746,
+          "printedPage": 728
+        },
+        {
+          "pdfPage": 747,
+          "printedPage": 729
+        },
+        {
+          "pdfPage": 748,
+          "printedPage": 730
+        },
+        {
+          "pdfPage": 874,
+          "printedPage": 856
+        },
+        {
+          "pdfPage": 875,
+          "printedPage": 857
+        },
+        {
+          "pdfPage": 876,
+          "printedPage": 858
+        },
+        {
+          "pdfPage": 877,
+          "printedPage": 859
+        },
+        {
+          "pdfPage": 907,
+          "printedPage": 889
+        },
+        {
+          "pdfPage": 908,
+          "printedPage": 890
+        },
+        {
+          "pdfPage": 909,
+          "printedPage": 891
+        },
+        {
+          "pdfPage": 910,
+          "printedPage": 892
+        },
+        {
+          "pdfPage": 911,
+          "printedPage": 893
+        },
+        {
+          "pdfPage": 912,
+          "printedPage": 894
+        },
+        {
+          "pdfPage": 913,
+          "printedPage": 895
+        },
+        {
+          "pdfPage": 941,
+          "printedPage": 923
+        },
+        {
+          "pdfPage": 942,
+          "printedPage": 924
+        },
+        {
+          "pdfPage": 945,
+          "printedPage": 927
+        },
+        {
+          "pdfPage": 946,
+          "printedPage": 928
+        },
+        {
+          "pdfPage": 947,
+          "printedPage": 929
+        },
+        {
+          "pdfPage": 948,
+          "printedPage": 930
+        },
+        {
+          "pdfPage": 950,
+          "printedPage": 932
+        },
+        {
+          "pdfPage": 951,
+          "printedPage": 933
+        },
+        {
+          "pdfPage": 981,
+          "printedPage": 963
+        },
+        {
+          "pdfPage": 982,
+          "printedPage": 964
+        },
+        {
+          "pdfPage": 991,
+          "printedPage": 973
+        },
+        {
+          "pdfPage": 992,
+          "printedPage": 974
+        },
+        {
+          "pdfPage": 993,
+          "printedPage": 975
+        },
+        {
+          "pdfPage": 1196,
+          "printedPage": 1178
+        },
+        {
+          "pdfPage": 1201,
+          "printedPage": 1183
+        },
+        {
+          "pdfPage": 1206,
+          "printedPage": 1188
+        },
+        {
+          "pdfPage": 1207,
+          "printedPage": 1189
+        }
+      ],
+      "visualPdfPages": [
+        197,
+        198,
+        209,
+        210,
+        557,
+        558,
+        565,
+        567,
+        601,
+        747,
+        748,
+        874,
+        876,
+        877,
+        911,
+        947,
+        948,
+        950,
+        981,
+        982,
+        991,
+        992,
+        993,
+        1196,
+        1206,
+        1207
+      ],
+      "scope": "Text review of listed request, summary and response passages, with visual checks on listed pages. Complete and partial agency-response scopes are declared separately. Search hits outside these scopes were navigation only. Not all 2114 pages or linked reports were adjudicated."
+    },
+    "ria": {
+      "url": "https://nepis.epa.gov/Exe/ZyPDF.cgi?Dockey=P101A93R.pdf",
+      "sha256": "46e0d7944c94f3b83ffaa30c20d05d69f061a1c244a941e4e3f5e0c2f9043165",
+      "byteSize": 13228970,
+      "pageCount": 961,
+      "reviewedPages": [
+        {
+          "pdfPage": 236,
+          "printedPage": 211
+        },
+        {
+          "pdfPage": 237,
+          "printedPage": 212
+        }
+      ],
+      "visualPdfPages": [
+        236,
+        237
+      ],
+      "scope": "PTO text and Table 2-17, plus the cement-mixer assignment in Table 2-18. A published input confirmation, not an executed HD TRUCS model audit or a complete proposal/final comparison."
+    }
+  },
+  "responseScopes": {
+    "implementation-coordination": {
+      "pdfPages": [
+        524
+      ],
+      "completeGeneralResponse": true,
+      "locator": "Section 2.10 Response through the Section 2.11 heading."
+    },
+    "charging-infrastructure": {
+      "pdfPages": [
+        907,
+        908,
+        909,
+        910,
+        911,
+        912,
+        913
+      ],
+      "completeGeneralResponse": true,
+      "locator": "Section 6.1 Response through the Section 6.2 heading."
+    },
+    "charging-other": {
+      "pdfPages": [
+        991,
+        992,
+        993
+      ],
+      "completeGeneralResponse": true,
+      "locator": "Section 6.4 Response, including workforce referral; full Section 19.2 is not reviewed."
+    },
+    "pto": {
+      "pdfPages": [
+        557,
+        558
+      ],
+      "completeGeneralResponse": true,
+      "locator": "Section 3.2.5 Response through the following Section 3.3 heading."
+    },
+    "battery-sizing": {
+      "pdfPages": [
+        565,
+        566,
+        567
+      ],
+      "completeGeneralResponse": true,
+      "locator": "Section 3.3.1 Response through the Section 3.3.2 heading."
+    },
+    "technology-readiness": {
+      "pdfPages": [
+        746,
+        747,
+        748
+      ],
+      "completeGeneralResponse": true,
+      "locator": "Section 4.1.1 Response, including the MEMA paragraph continuing onto PDF 748, through the Section 4.1.2 heading."
+    },
+    "vehicle-applications": {
+      "pdfPages": [
+        209,
+        210
+      ],
+      "completeGeneralResponse": true,
+      "locator": "Response starting on PDF 209 through the Section 2.3 heading on PDF 210."
+    },
+    "liquid-hydrogen": {
+      "pdfPages": [
+        601
+      ],
+      "completeGeneralResponse": false,
+      "locator": "Section 3.4.3 opening Response paragraphs before Fuel Cell Costs; subsequent cost response is outside this scope."
+    },
+    "depot-public-charging": {
+      "pdfPages": [
+        946,
+        947,
+        948
+      ],
+      "completeGeneralResponse": true,
+      "locator": "Section 6.3.1 Response through the Section 6.3.2 heading."
+    },
+    "dwell-time": {
+      "pdfPages": [
+        981,
+        982
+      ],
+      "completeGeneralResponse": true,
+      "locator": "Section 6.3.4 Response through the Section 6.4 heading."
+    },
+    "hydrogen-timeline": {
+      "pdfPages": [
+        1206,
+        1207
+      ],
+      "completeGeneralResponse": false,
+      "locator": "Named MEMA paragraph and bullets on PDF 1206, continued on PDF 1207 through the monitoring commitment, before the AmFree response. Other parts of Section 8.1 are not the adjudication scope."
+    }
+  },
+  "reviews": [
+    {
+      "requestId": "mema-1570-r12",
+      "citedCommentId": "EPA-HQ-OAR-2022-0985-1570",
+      "citedAttachmentOrder": 1,
+      "originalPdfPages": [
+        8
+      ],
+      "matchedOriginalPdfPages": [
+        8
+      ],
+      "excerptPdfPages": [
+        874,
+        875
+      ],
+      "summaryPdfPages": [],
+      "appendixReferencePdfPages": [],
+      "responseScopeIds": [
+        "implementation-coordination",
+        "charging-infrastructure"
+      ],
+      "excerptContentMatch": "selected_request_wording_and_original_page_citations_agree",
+      "responseLink": "reproduced_request_thematic_response",
+      "disposition": "existing_fleet_support_described_new_partnership_not_verified",
+      "basis": "EPA describes existing grants, tax credits and stakeholder engagement. These support the infrastructure theme but do not separately verify the specific new government/fleet partnership requested by MEMA.",
+      "independentReviewStatus": "pending",
+      "individualCausalEffect": "not_identified"
+    },
+    {
+      "requestId": "mema-1570-r13",
+      "citedCommentId": "EPA-HQ-OAR-2022-0985-1570",
+      "citedAttachmentOrder": 1,
+      "originalPdfPages": [
+        8,
+        9
+      ],
+      "matchedOriginalPdfPages": [
+        8,
+        9
+      ],
+      "excerptPdfPages": [
+        1196
+      ],
+      "summaryPdfPages": [
+        1201
+      ],
+      "appendixReferencePdfPages": [],
+      "responseScopeIds": [
+        "hydrogen-timeline"
+      ],
+      "excerptContentMatch": "selected_request_wording_and_original_page_citations_agree",
+      "responseLink": "explicit_named_response",
+      "disposition": "claimed_timeline_mismatch_disputed_with_reference_reconciliation",
+      "basis": "EPA names MEMA and distinguishes current-network figures, production scenarios and early-market actions from a requirement for a complete national network. This is a documented response disputing the claimed mismatch, not independent confirmation that the Roadmap, forecasts or actual deployment align.",
+      "independentReviewStatus": "pending",
+      "individualCausalEffect": "not_identified"
+    },
+    {
+      "requestId": "mema-1570-r19",
+      "citedCommentId": "EPA-HQ-OAR-2022-0985-1570",
+      "citedAttachmentOrder": 1,
+      "originalPdfPages": [
+        11,
+        25
+      ],
+      "matchedOriginalPdfPages": [
+        11
+      ],
+      "excerptPdfPages": [
+        876
+      ],
+      "summaryPdfPages": [],
+      "appendixReferencePdfPages": [],
+      "responseScopeIds": [
+        "implementation-coordination",
+        "charging-infrastructure",
+        "charging-other"
+      ],
+      "excerptContentMatch": "selected_request_wording_and_original_page_citations_agree",
+      "responseLink": "reproduced_request_collective_response",
+      "disposition": "coordination_committed_specific_state_local_actions_not_verified",
+      "basis": "The request on original page 11 is reproduced. EPA commits to stakeholder engagement and describes federal coordination and corridor planning. This supports broad alignment, without verifying every state/local action or actual implementation.",
+      "independentReviewStatus": "pending",
+      "individualCausalEffect": "not_identified"
+    },
+    {
+      "requestId": "mema-1570-r20",
+      "citedCommentId": "EPA-HQ-OAR-2022-0985-1570",
+      "citedAttachmentOrder": 1,
+      "originalPdfPages": [
+        11,
+        25
+      ],
+      "matchedOriginalPdfPages": [
+        11
+      ],
+      "excerptPdfPages": [
+        876
+      ],
+      "summaryPdfPages": [],
+      "appendixReferencePdfPages": [],
+      "responseScopeIds": [
+        "charging-infrastructure",
+        "charging-other"
+      ],
+      "excerptContentMatch": "selected_request_wording_and_original_page_citations_agree",
+      "responseLink": "reproduced_request_thematic_response",
+      "disposition": "utility_planning_described_compelled_advance_buildout_not_verified",
+      "basis": "EPA discusses investments, utility planning and anticipated demand. In these reviewed responses it does not establish a requirement compelling utilities to build ahead of demand. This is a scope-limited unresolved instrument, not a finding that no utility action occurred.",
+      "independentReviewStatus": "pending",
+      "individualCausalEffect": "not_identified"
+    },
+    {
+      "requestId": "mema-1570-r21",
+      "citedCommentId": "EPA-HQ-OAR-2022-0985-1570",
+      "citedAttachmentOrder": 1,
+      "originalPdfPages": [
+        2,
+        11
+      ],
+      "matchedOriginalPdfPages": [
+        11
+      ],
+      "excerptPdfPages": [
+        876
+      ],
+      "summaryPdfPages": [],
+      "appendixReferencePdfPages": [],
+      "responseScopeIds": [
+        "implementation-coordination",
+        "charging-other"
+      ],
+      "excerptContentMatch": "selected_request_wording_and_original_page_citations_agree",
+      "responseLink": "reproduced_request_thematic_response",
+      "disposition": "workforce_programs_described_capital_plan_alignment_not_verified",
+      "basis": "EPA lists workforce programs and refers to employment responses. The section 6.4 workforce summary names South Coast AQMD, not MEMA. Training support does not verify alignment of workforce development and incentives with end-user capital plans; the full employment chapter and implementation records were not audited.",
+      "independentReviewStatus": "pending",
+      "individualCausalEffect": "not_identified"
+    },
+    {
+      "requestId": "mema-1570-r34",
+      "citedCommentId": "EPA-HQ-OAR-2022-0985-1570",
+      "citedAttachmentOrder": 1,
+      "originalPdfPages": [
+        14,
+        16,
+        17,
+        19
+      ],
+      "matchedOriginalPdfPages": [
+        14,
+        16,
+        17,
+        19
+      ],
+      "excerptPdfPages": [
+        554,
+        555,
+        951
+      ],
+      "summaryPdfPages": [],
+      "appendixReferencePdfPages": [],
+      "responseScopeIds": [
+        "pto",
+        "battery-sizing"
+      ],
+      "excerptContentMatch": "selected_request_wording_and_original_page_citations_agree",
+      "responseLink": "reproduced_request_thematic_response",
+      "disposition": "broader_sources_explained_full_requested_input_expansion_not_verified",
+      "basis": "EPA explains that its sources cover more than utility boom trucks and defends nationwide FleetDNA, UC Riverside and MOVES data against individual-manufacturer datasets. The specific PTO change is recorded under r35. These passages do not verify adoption of all offered GPS, route, elevation and vocational datasets.",
+      "independentReviewStatus": "pending",
+      "individualCausalEffect": "not_identified"
+    },
+    {
+      "requestId": "mema-1570-r35",
+      "citedCommentId": "EPA-HQ-OAR-2022-0985-1570",
+      "citedAttachmentOrder": 1,
+      "originalPdfPages": [
+        16,
+        17,
+        20
+      ],
+      "matchedOriginalPdfPages": [
+        16,
+        17,
+        20
+      ],
+      "excerptPdfPages": [
+        554,
+        555
+      ],
+      "summaryPdfPages": [
+        557
+      ],
+      "appendixReferencePdfPages": [],
+      "responseScopeIds": [
+        "pto"
+      ],
+      "excerptContentMatch": "selected_request_wording_and_original_page_citations_agree",
+      "responseLink": "explicit_named_response",
+      "disposition": "concrete_mixer_pto_estimate_used_published_input_confirmed",
+      "basis": "EPA explicitly says it averaged MEMA's submitted concrete-mixer range to increase PTO inputs. RIA PDF 236, printed 211, reports 42% for cement mixer/pumper in Table 2-17; PDF 237, printed 212, assigns 42% to 19C_Mix_Cl8_MP in Table 2-18. This confirms documentary input uptake, not every requested PTO expansion, implementation in an executed model, measured lobbying power or a real-world causal effect.",
+      "independentReviewStatus": "pending",
+      "individualCausalEffect": "not_identified"
+    },
+    {
+      "requestId": "mema-1570-r36",
+      "citedCommentId": "EPA-HQ-OAR-2022-0985-1570",
+      "citedAttachmentOrder": 1,
+      "originalPdfPages": [
+        11,
+        16,
+        22
+      ],
+      "matchedOriginalPdfPages": [
+        16
+      ],
+      "excerptPdfPages": [
+        950
+      ],
+      "summaryPdfPages": [],
+      "appendixReferencePdfPages": [],
+      "responseScopeIds": [
+        "depot-public-charging"
+      ],
+      "excerptContentMatch": "selected_request_wording_and_original_page_citations_agree",
+      "responseLink": "reproduced_request_thematic_response",
+      "disposition": "higher_power_sensitivity_not_conducted",
+      "basis": "The actual MEMA sensitivity request is reproduced on PDF 950. The summary and response on 946-948 instead name TRALA when discussing the same kind of sensitivity. EPA explicitly says it did not conduct the HD TRUCS sensitivity. This is thematic non-adoption of the requested analysis, not a named rejection of MEMA; no equivalence of complete MEMA and TRALA submissions is asserted.",
+      "independentReviewStatus": "pending",
+      "individualCausalEffect": "not_identified"
+    },
+    {
+      "requestId": "mema-1570-r37",
+      "citedCommentId": "EPA-HQ-OAR-2022-0985-1570",
+      "citedAttachmentOrder": 1,
+      "originalPdfPages": [
+        16
+      ],
+      "matchedOriginalPdfPages": [
+        16
+      ],
+      "excerptPdfPages": [
+        950
+      ],
+      "summaryPdfPages": [],
+      "appendixReferencePdfPages": [],
+      "responseScopeIds": [
+        "depot-public-charging",
+        "dwell-time"
+      ],
+      "excerptContentMatch": "selected_request_wording_and_original_page_citations_agree",
+      "responseLink": "reproduced_request_no_separate_disposition_in_reviewed_responses",
+      "disposition": "public_dwell_and_intention_rfi_not_verified",
+      "basis": "The request is reproduced, but the reviewed responses do not separately dispose of MEMA's public information solicitation. EPA reports commissioned NREL dwell-time analysis and revised charger sharing; analysis of existing data does not verify a new public RFI about dwell times and charger intentions. No rejection or docket-wide nonresponse is coded.",
+      "independentReviewStatus": "pending",
+      "individualCausalEffect": "not_identified"
+    },
+    {
+      "requestId": "mema-1570-r38",
+      "citedCommentId": "EPA-HQ-OAR-2022-0985-1570",
+      "citedAttachmentOrder": 1,
+      "originalPdfPages": [
+        16,
+        17
+      ],
+      "matchedOriginalPdfPages": [
+        16,
+        17
+      ],
+      "excerptPdfPages": [
+        555
+      ],
+      "summaryPdfPages": [
+        557
+      ],
+      "appendixReferencePdfPages": [],
+      "responseScopeIds": [
+        "pto"
+      ],
+      "excerptContentMatch": "selected_request_wording_and_original_page_citations_agree",
+      "responseLink": "explicit_named_response",
+      "disposition": "second_comment_period_declined_technical_amendment_not_separately_resolved",
+      "basis": "EPA summarizes MEMA's procedural request and explicitly disagrees with opening a second comment period because additional PTO data had already been solicited. The alternative technical-amendment route in MEMA's original is not separately resolved in this response.",
+      "independentReviewStatus": "pending",
+      "individualCausalEffect": "not_identified"
+    },
+    {
+      "requestId": "mema-1570-r39",
+      "citedCommentId": "EPA-HQ-OAR-2022-0985-1570",
+      "citedAttachmentOrder": 1,
+      "originalPdfPages": [
+        17,
+        18
+      ],
+      "matchedOriginalPdfPages": [
+        17
+      ],
+      "excerptPdfPages": [
+        744
+      ],
+      "summaryPdfPages": [
+        746
+      ],
+      "appendixReferencePdfPages": [],
+      "responseScopeIds": [
+        "technology-readiness"
+      ],
+      "excerptContentMatch": "selected_request_wording_and_original_page_citations_agree",
+      "responseLink": "explicit_named_response",
+      "disposition": "specialization_considered_slower_early_phasein_explained",
+      "basis": "EPA names MEMA and explains a more gradual early phase-in, especially for heavy vocational vehicles, in light of manufacturer resources and infrastructure. This partly aligns with specialization concerns, without verifying a blanket delay for every specialized application. The broader timing change shares the existing timing-ledger comparison and is not a new independent event.",
+      "independentReviewStatus": "pending",
+      "individualCausalEffect": "not_identified"
+    },
+    {
+      "requestId": "mema-1570-r40",
+      "citedCommentId": "EPA-HQ-OAR-2022-0985-1570",
+      "citedAttachmentOrder": 1,
+      "originalPdfPages": [
+        18
+      ],
+      "matchedOriginalPdfPages": [],
+      "excerptPdfPages": [],
+      "summaryPdfPages": [
+        208,
+        557
+      ],
+      "appendixReferencePdfPages": [],
+      "responseScopeIds": [
+        "vehicle-applications",
+        "pto"
+      ],
+      "excerptContentMatch": "request_not_reproduced_in_reviewed_scopes",
+      "responseLink": "thematic_response_only",
+      "disposition": "existing_epto_route_described_body_builder_extension_not_verified",
+      "basis": "The original page-18 request includes body builders and accessory electrification after chassis delivery. The reviewed responses describe existing ePTO provisions. The vehicle-application summary attributes a delegated-assembler credit request to NTEA, while PTO excerpts include Odyne. Neither is substituted for a named MEMA response. A new body-builder route or GEM feature is not verified.",
+      "independentReviewStatus": "pending",
+      "individualCausalEffect": "not_identified"
+    },
+    {
+      "requestId": "mema-1570-r41",
+      "citedCommentId": "EPA-HQ-OAR-2022-0985-1570",
+      "citedAttachmentOrder": 1,
+      "originalPdfPages": [
+        18,
+        19,
+        20
+      ],
+      "matchedOriginalPdfPages": [
+        18,
+        19
+      ],
+      "excerptPdfPages": [
+        598,
+        599
+      ],
+      "summaryPdfPages": [
+        601
+      ],
+      "appendixReferencePdfPages": [],
+      "responseScopeIds": [
+        "liquid-hydrogen"
+      ],
+      "excerptContentMatch": "selected_request_wording_and_original_page_citations_agree",
+      "responseLink": "named_summary_collective_response",
+      "disposition": "liquid_hydrogen_not_explicitly_modeled_broader_fuel_request_unresolved",
+      "basis": "EPA summarizes MEMA's requested liquid/renewable-fuel modeling, then states it did not explicitly model liquid hydrogen and assessed gaseous tanks instead. This resolves that component at documentary scope. It does not establish a prohibition on liquid-hydrogen compliance or separately settle every renewable fuel and variable-worksite application requested.",
+      "independentReviewStatus": "pending",
+      "individualCausalEffect": "not_identified"
+    },
+    {
+      "requestId": "mema-1570-r42",
+      "citedCommentId": "EPA-HQ-OAR-2022-0985-1570",
+      "citedAttachmentOrder": 1,
+      "originalPdfPages": [
+        19
+      ],
+      "matchedOriginalPdfPages": [
+        19
+      ],
+      "excerptPdfPages": [
+        951
+      ],
+      "summaryPdfPages": [
+        565
+      ],
+      "appendixReferencePdfPages": [],
+      "responseScopeIds": [
+        "battery-sizing"
+      ],
+      "excerptContentMatch": "selected_request_wording_and_original_page_citations_agree",
+      "responseLink": "explicit_named_response",
+      "disposition": "regional_utility_adoption_limited_not_blanket_bev_exclusion",
+      "basis": "EPA explicitly links additional regional utility-truck modeling limits to MEMA and similar comments: zero modeled ZEV adoption in MY2027 and a 14% limit in MY2030/MY2032. Urban and multi-purpose utility uses are distinguished. The 100-mile minimum range change is discussed separately in response to POET and must not be solely attributed to MEMA. These are model assumptions, not observed adoption or a blanket ban.",
+      "independentReviewStatus": "pending",
+      "individualCausalEffect": "not_identified"
+    },
+    {
+      "requestId": "mema-1570-r43",
+      "citedCommentId": "EPA-HQ-OAR-2022-0985-1570",
+      "citedAttachmentOrder": 1,
+      "originalPdfPages": [
+        21
+      ],
+      "matchedOriginalPdfPages": [
+        21
+      ],
+      "excerptPdfPages": [
+        197
+      ],
+      "summaryPdfPages": [
+        208
+      ],
+      "appendixReferencePdfPages": [],
+      "responseScopeIds": [
+        "vehicle-applications"
+      ],
+      "excerptContentMatch": "selected_request_wording_and_original_page_citations_agree",
+      "responseLink": "named_summary_collective_response",
+      "disposition": "existing_eight_custom_chassis_categories_retained_extension_not_verified",
+      "basis": "EPA names the requested emergency-category extension in its summary, then says it retains the existing eight custom-chassis categories. This does not verify the requested additional emergency category. The operative clauses and category definitions were not independently compared in this follow-up; do not turn this collective response into an explicit named refusal or infer that existing categories never cover emergency uses.",
+      "independentReviewStatus": "pending",
+      "individualCausalEffect": "not_identified"
+    },
+    {
+      "requestId": "mema-1570-r44",
+      "citedCommentId": "EPA-HQ-OAR-2022-0985-1570",
+      "citedAttachmentOrder": 1,
+      "originalPdfPages": [
+        20,
+        21,
+        22
+      ],
+      "matchedOriginalPdfPages": [
+        20,
+        21
+      ],
+      "excerptPdfPages": [
+        197,
+        198
+      ],
+      "summaryPdfPages": [
+        208
+      ],
+      "appendixReferencePdfPages": [],
+      "responseScopeIds": [
+        "vehicle-applications",
+        "battery-sizing"
+      ],
+      "excerptContentMatch": "selected_request_wording_and_original_page_citations_agree",
+      "responseLink": "reproduced_request_no_separate_disposition_in_reviewed_responses",
+      "disposition": "separate_mission_productivity_factor_not_verified",
+      "basis": "EPA reproduces the non-emergency mission-productivity request. Its responses discuss payload, battery sizing, daily VMT, extremes and ICE alternatives but do not separately establish the requested mission-productivity factor. Related modeling changes are not evidence of full one-for-one replacement or acceptance of this specific instrument.",
+      "independentReviewStatus": "pending",
+      "individualCausalEffect": "not_identified"
+    },
+    {
+      "requestId": "mema-1570-r45",
+      "citedCommentId": "EPA-HQ-OAR-2022-0985-1570",
+      "citedAttachmentOrder": 1,
+      "originalPdfPages": [
+        22,
+        23
+      ],
+      "matchedOriginalPdfPages": [
+        22,
+        23
+      ],
+      "excerptPdfPages": [
+        941,
+        942
+      ],
+      "summaryPdfPages": [
+        945,
+        946
+      ],
+      "appendixReferencePdfPages": [],
+      "responseScopeIds": [
+        "depot-public-charging",
+        "vehicle-applications"
+      ],
+      "excerptContentMatch": "selected_request_wording_and_original_page_citations_agree",
+      "responseLink": "reproduced_request_no_separate_disposition_in_reviewed_responses",
+      "disposition": "three_application_readiness_reassessment_not_separately_resolved",
+      "basis": "EPA reproduces the request and acknowledges depot suitability for school buses, transit buses and port drayage. The general response retains depot modeling and adds selected public charging; elsewhere it explains no separate drayage standard. These passages do not separately verify the requested reassessment for all three advanced applications or assign resulting changes to MEMA.",
+      "independentReviewStatus": "pending",
+      "individualCausalEffect": "not_identified"
+    },
+    {
+      "requestId": "mema-1570-r46",
+      "citedCommentId": "EPA-HQ-OAR-2022-0985-1570",
+      "citedAttachmentOrder": 1,
+      "originalPdfPages": [
+        25
+      ],
+      "matchedOriginalPdfPages": [],
+      "excerptPdfPages": [],
+      "summaryPdfPages": [],
+      "appendixReferencePdfPages": [
+        877
+      ],
+      "responseScopeIds": [
+        "implementation-coordination",
+        "charging-infrastructure",
+        "charging-other"
+      ],
+      "excerptContentMatch": "appendix_reference_not_request_wording",
+      "responseLink": "appendix_reference_only_thematic_response",
+      "disposition": "ab2127_program_review_not_verified",
+      "basis": "PDF 877 points readers to MEMA Appendix 2 on original pages 24-26 without reproducing the page-25 AB2127 recommendation. Coordination and best-practice discussion in reviewed responses does not verify review of that specific program. A CARB footnote to AB2127 is not a MEMA request-response match.",
+      "independentReviewStatus": "pending",
+      "individualCausalEffect": "not_identified"
+    },
+    {
+      "requestId": "mema-1570-r47",
+      "citedCommentId": "EPA-HQ-OAR-2022-0985-1570",
+      "citedAttachmentOrder": 1,
+      "originalPdfPages": [
+        26
+      ],
+      "matchedOriginalPdfPages": [],
+      "excerptPdfPages": [],
+      "summaryPdfPages": [],
+      "appendixReferencePdfPages": [
+        877
+      ],
+      "responseScopeIds": [
+        "charging-infrastructure",
+        "charging-other"
+      ],
+      "excerptContentMatch": "appendix_reference_not_request_wording",
+      "responseLink": "appendix_reference_only_thematic_response",
+      "disposition": "state_mhdv_charging_requirements_not_verified",
+      "basis": "The actual request appears on original page 26; PDF 877 only refers to Appendix 2. EPA discusses distinct HD charging needs, existing NEVI programs and state guidance, including that states need not use NEVI funds for HD charging. These responses do not verify new EPA charging requirements for ACT and non-ACT states.",
+      "independentReviewStatus": "pending",
+      "individualCausalEffect": "not_identified"
+    },
+    {
+      "requestId": "mema-1570-r48",
+      "citedCommentId": "EPA-HQ-OAR-2022-0985-1570",
+      "citedAttachmentOrder": 1,
+      "originalPdfPages": [
+        26
+      ],
+      "matchedOriginalPdfPages": [],
+      "excerptPdfPages": [],
+      "summaryPdfPages": [],
+      "appendixReferencePdfPages": [
+        877
+      ],
+      "responseScopeIds": [
+        "charging-infrastructure",
+        "charging-other"
+      ],
+      "excerptContentMatch": "appendix_reference_not_request_wording",
+      "responseLink": "appendix_reference_only_thematic_response",
+      "disposition": "existing_fhwa_guidance_described_new_epa_guidance_not_verified",
+      "basis": "The actual request appears on original page 26; PDF 877 only refers to Appendix 2. EPA describes existing FHWA guidance encouraging future HD needs and a 2023 rule that does not specifically accommodate HD charging. This is not verification of new EPA-provided truck/bus guidance or of MEMA causing the already-existing guidance.",
+      "independentReviewStatus": "pending",
+      "individualCausalEffect": "not_identified"
+    }
+  ],
+  "facts": {
+    "concretePto": {
+      "requestId": "mema-1570-r35",
+      "publisherPdfPage": 20,
+      "submittedRangePercent": [
+        35,
+        49
+      ],
+      "midpointPercent": 42,
+      "responsePdfPages": [
+        557,
+        558
+      ],
+      "riaPdfPages": [
+        236,
+        237
+      ],
+      "table217MixerPercent": 42,
+      "table217PumperPercent": 42,
+      "table218VehicleId": "19C_Mix_Cl8_MP",
+      "table218Percent": 42,
+      "implementedModelRunVerified": false,
+      "wholeRequestedPtoExpansionVerified": false
+    },
+    "utilityAdoption": {
+      "requestId": "mema-1570-r42",
+      "responsePdfPage": 567,
+      "dutyCycle": "regional",
+      "modeledZevPercentByModelYear": {
+        "2027": 0,
+        "2030": 14,
+        "2032": 14
+      },
+      "sourceAttribution": "MEMA_and_similar_comments",
+      "allUtilityVehiclesExcluded": false,
+      "observedAdoption": false,
+      "minimumRangeChangeSolelyMema": false
+    },
+    "chargingProcedure": {
+      "requestIds": [
+        "mema-1570-r36",
+        "mema-1570-r37"
+      ],
+      "memaRequestPdfPage": 950,
+      "sensitivityResponsePdfPages": [
+        947,
+        948
+      ],
+      "namedSensitivityCommenter": "TRALA",
+      "sensitivityConducted": false,
+      "publicRfiVerified": false,
+      "publicRfiExplicitlyRejected": false,
+      "dwellAnalysisResponsePdfPages": [
+        981,
+        982
+      ],
+      "dwellAnalysisAdded": true
+    },
+    "consultation": {
+      "requestId": "mema-1570-r38",
+      "responsePdfPage": 557,
+      "secondCommentPeriodDeclined": true,
+      "technicalAmendmentSeparatelyResolved": false
+    },
+    "customChassis": {
+      "requestId": "mema-1570-r43",
+      "responsePdfPage": 209,
+      "agencySaysExistingCategoryCount": 8,
+      "requestedExtensionVerified": false,
+      "operativeClauseComparison": false
+    }
+  },
+  "sourceCautions": [
+    {
+      "cautionId": "coverage-is-not-outcome-resolution",
+      "severity": "high",
+      "requestIds": [
+        "mema-1570-r12",
+        "mema-1570-r13",
+        "mema-1570-r19",
+        "mema-1570-r20",
+        "mema-1570-r21",
+        "mema-1570-r34",
+        "mema-1570-r35",
+        "mema-1570-r36",
+        "mema-1570-r37",
+        "mema-1570-r38",
+        "mema-1570-r39",
+        "mema-1570-r40",
+        "mema-1570-r41",
+        "mema-1570-r42",
+        "mema-1570-r43",
+        "mema-1570-r44",
+        "mema-1570-r45",
+        "mema-1570-r46",
+        "mema-1570-r47",
+        "mema-1570-r48"
+      ],
+      "finding": "All entries receive a bounded first pass, but several requested instruments remain unresolved in reviewed sources.",
+      "handling": "No adoption rate, failure rate, blanket nonresponse or independent-review clearance. Preserve earlier ledgers as historical checkpoints."
+    },
+    {
+      "cautionId": "named-commenter-is-not-interchangeable",
+      "severity": "high",
+      "requestIds": [
+        "mema-1570-r21",
+        "mema-1570-r36",
+        "mema-1570-r37",
+        "mema-1570-r40",
+        "mema-1570-r42"
+      ],
+      "finding": "TRALA is named in the sensitivity discussion, South Coast AQMD in the workforce summary, NTEA for delegated-assembler credits, and POET for the minimum-range constraint.",
+      "handling": "Keep named, collective and thematic links distinct. Do not infer exclusive MEMA influence from responses shared with other commenters."
+    },
+    {
+      "cautionId": "appendix-reference-is-not-wording-match",
+      "severity": "high",
+      "requestIds": [
+        "mema-1570-r46",
+        "mema-1570-r47",
+        "mema-1570-r48"
+      ],
+      "finding": "PDF 877 refers to Appendix 2; it does not reproduce its three final requests.",
+      "handling": "Match original publisher wording only; leave excerpt pages empty and retain appendix-reference provenance. A CARB AB2127 citation cannot substitute for a MEMA request match."
+    },
+    {
+      "cautionId": "published-input-is-not-estimated-influence",
+      "severity": "high",
+      "requestIds": [
+        "mema-1570-r35",
+        "mema-1570-r42"
+      ],
+      "finding": "An agency-reported input change and modeled adoption limits are not independent real-world treatment effects.",
+      "handling": "Confirm the 42% value in RIA tables, retain the regional/model-year scope of the utility limits, and do not recalibrate lobbying-model parameters."
+    },
+    {
+      "cautionId": "hydrogen-reference-reconciliation-is-an-agency-position",
+      "severity": "high",
+      "requestIds": [
+        "mema-1570-r13"
+      ],
+      "finding": "EPA directly disputes MEMA's asserted timeline mismatch and explains its reading of Roadmap figures and pages.",
+      "handling": "Do not certify actual deployment, original Roadmap projections or historical forecast accuracy. Existing corridor-timeline cautions remain in force."
+    }
+  ],
+  "boundary": {
+    "officialAttachmentByteMatch": "not_verified",
+    "independentReviewStatus": "pending",
+    "docketRateEligible": false,
+    "firstPassInventoryCoverageComplete": true,
+    "allRequestsResolved": false,
+    "currentLegalStatusAssessed": false,
+    "causalEffect": "not_identified",
+    "simulatorRecalibrated": false,
+    "unresolvedMeaning": "No separate verified disposition in declared scopes is not a negative response or proof of absence in the full docket.",
+    "outsideScope": "Original docket attachment bytes; independent manual adjudication; complete agency implementation records and linked RIA/model chapters; prospective representative sampling; causal attribution; procurement and substitution identification."
+  }
+}

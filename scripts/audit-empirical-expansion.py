@@ -1229,12 +1229,18 @@ def audit():
     publisher_timing = json.loads((DATA / "comment-publisher-timing-review.json").read_text(encoding="utf-8"))
     publisher_supply = json.loads((DATA / "comment-publisher-supply-review.json").read_text(encoding="utf-8"))
     publisher_inputs = json.loads((DATA / "comment-publisher-inputs-review.json").read_text(encoding="utf-8"))
+    publisher_remaining = json.loads((DATA / "comment-publisher-remaining-review.json").read_text(encoding="utf-8"))
     publisher_comments = publisher_comment.validate_all(
         publisher_inventory, publisher_followup, publisher_technology, publisher_infrastructure, publisher_timing,
-        publisher_supply, publisher_inputs)
+        publisher_supply, publisher_inputs, publisher_remaining)
+    publisher_comment.write_case_review(publisher_inventory, [
+        ("warranty", publisher_followup), ("technology", publisher_technology),
+        ("infrastructure", publisher_infrastructure), ("timing", publisher_timing),
+        ("supply", publisher_supply), ("inputs", publisher_inputs), ("remaining", publisher_remaining),
+    ], ROOT / "reports")
     add("comment-publisher-letter-inventory", "original_publisher_frame_not_docket_rates",
         "; ".join(f"{key}={value}" for key, value in publisher_comments.items()),
-        "One access-led MEMA letter supplies 48 action/retention entries, not independent comments. Four warranty, nine technology/fuel, seven infrastructure, two timing, two supply-chain and four study/lightweighting reviews cover 28 distinct entries, leaving 20 without response adjudication. The new follow-up verifies ATRI study engagement but not adoption of full-fleet estimates as rule impacts. MOVES fleet revisions and a separate ACT Research-to-TEMPO adoption update do not establish acquisition of the requested ACT bus forecasts. The named lightweighting response refers an existing approval route; all six later-phase wheel values and 22 nonwheel rows remain as proposed. Retention is not a default input refresh, supplier consultation or awarded credits. Shared comparisons identify neither independent events nor individual influence. Earlier distinctions remain: recycling/disposal is not replacement cost; lithium scenarios are not confidence levels; timing changes are category-specific; the MY2028 condition is ambiguous and EMA is not MEMA. Exact docket version, independent review and a sampling frame remain unresolved; earlier pilots and simulator parameters are unchanged.")
+        "One access-led MEMA letter supplies 48 action/retention entries, not independent comments. Seven follow-ups now cover all 48 entries in a bounded first pass; several instruments remain unresolved within declared source scopes. The remaining twenty-entry review confirms the published 42% concrete-mixer PTO input from MEMA's 35-49% range, distinguishes regional modeled utility-truck limits from a blanket exclusion, and records the declined second comment period. EPA did not conduct the higher-power sensitivity; that response names TRALA. An NREL dwell-time study does not verify MEMA's public RFI. The final three appendix requests have appendix-reference provenance, not reproduced request wording. Reports/comment-publisher-case-review provides the 48-entry reading index. Earlier ledgers and shared comparisons remain unchanged; no response rate, independent event count or individual influence is inferred. Original docket-byte identity, independent manual adjudication, complete outcome resolution and a representative sampling frame remain unresolved. Procurement, substitution and simulator calibration are not cleared.")
     protests = read("gao-protest-overlay.csv")
     reviewed = [r for r in protests if "Partial source-page review" in r["notes"]]
     add("gao-partial-adjudication", "not_award_linked",

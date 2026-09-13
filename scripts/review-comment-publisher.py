@@ -7,6 +7,7 @@ Optional local source files additionally verify the archived bytes.
 """
 
 import argparse
+import csv
 from collections import Counter
 from datetime import date, datetime
 import hashlib
@@ -1145,7 +1146,214 @@ def validate_inputs(inventory, ledger):
             "inputsAnalysisComparisons": len(comparisons), "inputsSourceCautions": len(cautions)}
 
 
-def validate_all(inventory, warranty, technology, infrastructure=None, timing=None, supply=None, inputs=None):
+
+REMAINING_REVIEW_BINDINGS = {
+    12: [[8], [874, 875], [], ["implementation-coordination", "charging-infrastructure"], "reproduced_request_thematic_response", "existing_fleet_support_described_new_partnership_not_verified"],
+    13: [[8, 9], [1196], [1201], ["hydrogen-timeline"], "explicit_named_response", "claimed_timeline_mismatch_disputed_with_reference_reconciliation"],
+    19: [[11], [876], [], ["implementation-coordination", "charging-infrastructure", "charging-other"], "reproduced_request_collective_response", "coordination_committed_specific_state_local_actions_not_verified"],
+    20: [[11], [876], [], ["charging-infrastructure", "charging-other"], "reproduced_request_thematic_response", "utility_planning_described_compelled_advance_buildout_not_verified"],
+    21: [[11], [876], [], ["implementation-coordination", "charging-other"], "reproduced_request_thematic_response", "workforce_programs_described_capital_plan_alignment_not_verified"],
+    34: [[14, 16, 17, 19], [554, 555, 951], [], ["pto", "battery-sizing"], "reproduced_request_thematic_response", "broader_sources_explained_full_requested_input_expansion_not_verified"],
+    35: [[16, 17, 20], [554, 555], [557], ["pto"], "explicit_named_response", "concrete_mixer_pto_estimate_used_published_input_confirmed"],
+    36: [[16], [950], [], ["depot-public-charging"], "reproduced_request_thematic_response", "higher_power_sensitivity_not_conducted"],
+    37: [[16], [950], [], ["depot-public-charging", "dwell-time"], "reproduced_request_no_separate_disposition_in_reviewed_responses", "public_dwell_and_intention_rfi_not_verified"],
+    38: [[16, 17], [555], [557], ["pto"], "explicit_named_response", "second_comment_period_declined_technical_amendment_not_separately_resolved"],
+    39: [[17], [744], [746], ["technology-readiness"], "explicit_named_response", "specialization_considered_slower_early_phasein_explained"],
+    40: [[], [], [208, 557], ["vehicle-applications", "pto"], "thematic_response_only", "existing_epto_route_described_body_builder_extension_not_verified"],
+    41: [[18, 19], [598, 599], [601], ["liquid-hydrogen"], "named_summary_collective_response", "liquid_hydrogen_not_explicitly_modeled_broader_fuel_request_unresolved"],
+    42: [[19], [951], [565], ["battery-sizing"], "explicit_named_response", "regional_utility_adoption_limited_not_blanket_bev_exclusion"],
+    43: [[21], [197], [208], ["vehicle-applications"], "named_summary_collective_response", "existing_eight_custom_chassis_categories_retained_extension_not_verified"],
+    44: [[20, 21], [197, 198], [208], ["vehicle-applications", "battery-sizing"], "reproduced_request_no_separate_disposition_in_reviewed_responses", "separate_mission_productivity_factor_not_verified"],
+    45: [[22, 23], [941, 942], [945, 946], ["depot-public-charging", "vehicle-applications"], "reproduced_request_no_separate_disposition_in_reviewed_responses", "three_application_readiness_reassessment_not_separately_resolved"],
+    46: [[], [], [], ["implementation-coordination", "charging-infrastructure", "charging-other"], "appendix_reference_only_thematic_response", "ab2127_program_review_not_verified"],
+    47: [[], [], [], ["charging-infrastructure", "charging-other"], "appendix_reference_only_thematic_response", "state_mhdv_charging_requirements_not_verified"],
+    48: [[], [], [], ["charging-infrastructure", "charging-other"], "appendix_reference_only_thematic_response", "existing_fhwa_guidance_described_new_epa_guidance_not_verified"],
+}
+REMAINING_RESPONSE_SCOPES = {
+    "implementation-coordination": ([524], True),
+    "charging-infrastructure": ([907, 908, 909, 910, 911, 912, 913], True),
+    "charging-other": ([991, 992, 993], True),
+    "pto": ([557, 558], True),
+    "battery-sizing": ([565, 566, 567], True),
+    "technology-readiness": ([746, 747, 748], True),
+    "vehicle-applications": ([209, 210], True),
+    "liquid-hydrogen": ([601], False),
+    "depot-public-charging": ([946, 947, 948], True),
+    "dwell-time": ([981, 982], True),
+    "hydrogen-timeline": ([1206, 1207], False),
+}
+REMAINING_FACTS = {
+    "concretePto": {"requestId": "mema-1570-r35", "publisherPdfPage": 20, "submittedRangePercent": [35, 49], "midpointPercent": 42, "responsePdfPages": [557, 558], "riaPdfPages": [236, 237], "table217MixerPercent": 42, "table217PumperPercent": 42, "table218VehicleId": "19C_Mix_Cl8_MP", "table218Percent": 42, "implementedModelRunVerified": False, "wholeRequestedPtoExpansionVerified": False},
+    "utilityAdoption": {"requestId": "mema-1570-r42", "responsePdfPage": 567, "dutyCycle": "regional", "modeledZevPercentByModelYear": {"2027": 0, "2030": 14, "2032": 14}, "sourceAttribution": "MEMA_and_similar_comments", "allUtilityVehiclesExcluded": False, "observedAdoption": False, "minimumRangeChangeSolelyMema": False},
+    "chargingProcedure": {"requestIds": ["mema-1570-r36", "mema-1570-r37"], "memaRequestPdfPage": 950, "sensitivityResponsePdfPages": [947, 948], "namedSensitivityCommenter": "TRALA", "sensitivityConducted": False, "publicRfiVerified": False, "publicRfiExplicitlyRejected": False, "dwellAnalysisResponsePdfPages": [981, 982], "dwellAnalysisAdded": True},
+    "consultation": {"requestId": "mema-1570-r38", "responsePdfPage": 557, "secondCommentPeriodDeclined": True, "technicalAmendmentSeparatelyResolved": False},
+    "customChassis": {"requestId": "mema-1570-r43", "responsePdfPage": 209, "agencySaysExistingCategoryCount": 8, "requestedExtensionVerified": False, "operativeClauseComparison": False},
+}
+
+
+def validate_remaining(inventory, ledger):
+    """Validate source bindings and limits of the last twenty first-pass reviews."""
+    check_review(ledger, "comment-publisher-remaining-review-v1")
+    require(ledger["inventoryFile"] == "comment-publisher-inventory.json"
+            and ledger["inventoryFrameSha256"] == inventory["requestFrameSha256"]
+            and ledger["publisherSha256"] == inventory["publisher"]["sha256"] == PUBLISHER_SHA,
+            "Remaining review has stale inventory/source binding")
+    ids = [f"mema-1570-r{n:02d}" for n in REMAINING_REVIEW_BINDINGS]
+    selection = ledger["selection"]
+    require(selection["requestIds"] == ids
+            and selection["mode"] == "all_remaining_frozen_inventory_entries"
+            and selection["priorOutcomeExposure"] is True and selection["blinded"] is False
+            and selection["scope"], "Remaining selection/frame disclosure mismatch")
+    visual = ledger["publisherReview"]
+    require(visual["pdfPages"] == [2, 8, 9, 11, 14, 16, 17, 18, 19, 20, 21, 22, 23, 25, 26]
+            and visual["method"] == "rendered_pages_with_text_navigation" and visual["scope"],
+            "Remaining publisher visual scope mismatch")
+    require(set(ledger["responseScopes"]) == set(REMAINING_RESPONSE_SCOPES),
+            "Remaining response scope missing")
+    for name, (pages, complete) in REMAINING_RESPONSE_SCOPES.items():
+        scope = ledger["responseScopes"][name]
+        require(scope["pdfPages"] == pages
+                and scope["completeGeneralResponse"] is complete and scope["locator"],
+                "Remaining response scope mismatch")
+    reviews = ledger["reviews"]
+    require([r["requestId"] for r in reviews] == ids, "Remaining review frame mismatch")
+    frame = {r["requestId"]: r for r in inventory["requests"]}
+    for row, (n, binding) in zip(reviews, REMAINING_REVIEW_BINDINGS.items()):
+        require(row["originalPdfPages"] == frame[row["requestId"]]["pdfPages"]
+                and [row[k] for k in ("matchedOriginalPdfPages", "excerptPdfPages", "summaryPdfPages",
+                                     "responseScopeIds", "responseLink", "disposition")] == binding,
+                "Unsupported remaining coding/linkage")
+        expected_match = ("appendix_reference_not_request_wording" if n >= 46 else
+                          "request_not_reproduced_in_reviewed_scopes" if n == 40 else
+                          "selected_request_wording_and_original_page_citations_agree")
+        require(row["citedCommentId"] == COMMENT_ID and row["citedAttachmentOrder"] == 1
+                and row["excerptContentMatch"] == expected_match
+                and row["appendixReferencePdfPages"] == ([877] if n >= 46 else [])
+                and row["independentReviewStatus"] == "pending"
+                and row["individualCausalEffect"] == "not_identified" and row["basis"],
+                "Remaining evidence representation/claim boundary mismatch")
+    expected_pages = sorted({
+        page for row in reviews for page in
+        row["excerptPdfPages"] + row["summaryPdfPages"] + row["appendixReferencePdfPages"]
+    } | {page for scope in ledger["responseScopes"].values() for page in scope["pdfPages"]})
+    require(set(ledger["documents"]) == {"response", "ria"}, "Remaining source document missing")
+    for name, pages, offset, digest, url in (
+        ("response", expected_pages, 18, SOURCE_DOCS["response"][0], SOURCE_URLS["response"]),
+        ("ria", [236, 237], 25, SUPPLY_EXTRA_DOCS["ria"][0], SUPPLY_EXTRA_DOCS["ria"][1]),
+    ):
+        doc = ledger["documents"][name]
+        require(doc["sha256"] == digest and doc["url"] == url
+                and (doc["byteSize"], doc["pageCount"]) == (
+                    (16735308, 2114) if name == "response" else (13228970, 961))
+                and doc["reviewedPages"] == [
+                    {"pdfPage": p, "printedPage": p - offset} for p in pages]
+                and set(doc["visualPdfPages"]).issubset(pages) and doc["visualPdfPages"]
+                and doc["scope"], "Remaining source identity/page mapping mismatch")
+    require(ledger["facts"] == REMAINING_FACTS, "Unsupported remaining facts or attribution")
+    pto = ledger["facts"]["concretePto"]
+    require(sum(pto["submittedRangePercent"]) / 2 == pto["midpointPercent"]
+            == pto["table217MixerPercent"] == pto["table217PumperPercent"] == pto["table218Percent"],
+            "PTO published values do not reproduce the submitted midpoint")
+    cautions = ledger["sourceCautions"]
+    require({c["cautionId"] for c in cautions} == {
+        "coverage-is-not-outcome-resolution", "named-commenter-is-not-interchangeable",
+        "appendix-reference-is-not-wording-match", "published-input-is-not-estimated-influence",
+        "hydrogen-reference-reconciliation-is-an-agency-position"},
+        "Remaining source cautions missing")
+    require(all(c["severity"] == "high" and c["finding"] and c["handling"]
+                and c["requestIds"] and set(c["requestIds"]).issubset(ids) for c in cautions),
+            "Remaining source caution scope mismatch")
+    boundary = ledger["boundary"]
+    expected_boundary = {
+        "officialAttachmentByteMatch": "not_verified", "independentReviewStatus": "pending",
+        "docketRateEligible": False, "firstPassInventoryCoverageComplete": True,
+        "allRequestsResolved": False, "currentLegalStatusAssessed": False,
+        "causalEffect": "not_identified", "simulatorRecalibrated": False,
+    }
+    require(all(boundary.get(k) == v for k, v in expected_boundary.items())
+            and boundary["unresolvedMeaning"] and boundary["outsideScope"],
+            "Unsupported remaining claim boundary")
+    return {"remainingEntriesReviewed": len(reviews),
+            "remainingResponseLinks": dict(Counter(r["responseLink"] for r in reviews)),
+            "publishedConcretePtoPercent": pto["table218Percent"]}
+
+
+def case_review_rows(inventory, named_ledgers):
+    """Join all first-pass decisions to the unchanged frame, without coding an uptake rate."""
+    decisions = {}
+    for name, ledger in named_ledgers:
+        for row in ledger["reviews"]:
+            require(row["requestId"] not in decisions, "Duplicate request in case review")
+            response_pages = set(row.get("responsePdfPages", []))
+            for scope in row.get("responseScopeIds", []):
+                response_pages.update(ledger["responseScopes"][scope]["pdfPages"])
+            decisions[row["requestId"]] = {
+                "reviewFile": f"comment-publisher-{name}-review.json",
+                "responsePdfPages": ",".join(map(str, sorted(response_pages))),
+                "responsePrintedPages": ",".join(str(p - 18) for p in sorted(response_pages)),
+                "responseLink": row["responseLink"], "disposition": row["disposition"],
+                "basis": row["basis"], "independentReviewStatus": row["independentReviewStatus"],
+                "individualCausalEffect": row["individualCausalEffect"],
+            }
+    require(set(decisions) == {r["requestId"] for r in inventory["requests"]},
+            "Case review must cover exactly the frozen frame")
+    return [{
+        "requestId": row["requestId"], "label": row["label"], "topic": row["topic"],
+        "kind": row["kind"], "interpretiveFlag": row["interpretiveFlag"],
+        "publisherPdfPages": ",".join(map(str, row["pdfPages"])),
+        **decisions[row["requestId"]],
+    } for row in inventory["requests"]]
+
+
+def write_case_review(inventory, named_ledgers, directory):
+    """Write a reproducible reading index; independent decisions stay in a separate review."""
+    rows = case_review_rows(inventory, named_ledgers)
+    directory.mkdir(parents=True, exist_ok=True)
+    with (directory / "comment-publisher-case-review.csv").open("w", newline="", encoding="utf-8") as out:
+        writer = csv.DictWriter(out, fieldnames=list(rows[0]))
+        writer.writeheader()
+        writer.writerows(rows)
+    lines = [
+        "# MEMA comment-response case review",
+        "",
+        "First-pass coverage: 48 entries from one access-led, outcome-exposed publisher letter. "
+        "Every entry has a bounded review; unresolved dispositions remain unresolved. "
+        "None has independent adjudication, verified original-docket byte identity or causal-effect clearance. "
+        "No uptake rate or representative denominator is calculated.",
+        "",
+        "The CSV provides original and response PDF pages, printed response pages, exact disposition, "
+        "source-ledger file and reasoning. It is a generated reading index, not an editable adjudication ledger. "
+        "Consult the source ledger for excerpt/summary distinctions, complete versus partial response scopes, "
+        "source hashes and URLs, and shared rule/analysis comparisons.",
+        "",
+        "An independent reader should check segmentation and request identity against the publisher letter, "
+        "then distinguish named from collective/thematic responses, existing provisions from new changes, "
+        "and verified documentary actions from unresolved requested instruments. Record disagreements in a "
+        "separate adjudication record. Page matches and passing checks do not replace that review.",
+        "",
+        "| Request | Topic | Source ledger | Bounded disposition |",
+        "|---|---|---|---|",
+    ]
+    for row in rows:
+        link = "../data/calibration/first-wave/" + row["reviewFile"]
+        lines.append(f"| {row['requestId']}: {row['label']} | {row['topic']} | "
+                     f"[review]({link}) | {row['disposition'].replace('_', ' ')} |")
+    lines += [
+        "",
+        "Interpretation: the documented 42% PTO input is the midpoint of the submitted 35-49% range "
+        "and appears in the final RIA. Regional utility adoption limits are modeled, not observed. "
+        "The higher-power sensitivity was not conducted; its response names TRALA. An NREL dwell-time "
+        "study does not verify MEMA's requested public RFI. Appendix references do not reproduce "
+        "the AB2127, state-requirement or FHWA-guidance requests.",
+        "",
+        "The previous 28-entry checkpoint remains reproducible by omitting the remaining-review ledger. "
+        "A complete first pass of this letter does not resolve the separate procurement or substitution studies.",
+        "",
+    ]
+    (directory / "comment-publisher-case-review.md").write_text("\n".join(lines), encoding="utf-8")
+
+
+def validate_all(inventory, warranty, technology, infrastructure=None, timing=None, supply=None, inputs=None, remaining=None):
     """Aggregate supplied follow-ups; omitted ledgers retain historical review scopes."""
     result = validate(inventory, warranty)
     result.update(validate_technology(inventory, technology))
@@ -1162,10 +1370,18 @@ def validate_all(inventory, warranty, technology, infrastructure=None, timing=No
     if inputs is not None:
         result.update(validate_inputs(inventory, inputs))
         ledgers.append(inputs)
+    if remaining is not None:
+        result.update(validate_remaining(inventory, remaining))
+        ledgers.append(remaining)
     ids = [r["requestId"] for ledger in ledgers for r in ledger["reviews"]]
     require(len(ids) == len(set(ids)), "Overlapping publisher follow-ups inflate review coverage")
     result["boundedResponseReviews"] = len(ids)
     result["otherEntriesAwaitingAdjudication"] = result["inventoryEntries"] - len(ids)
+    if remaining is not None:
+        require(set(ids) == {r["requestId"] for r in inventory["requests"]},
+                "Complete remaining review requires all earlier follow-ups")
+        result["firstPassInventoryCoverageComplete"] = True
+        result["allRequestsResolved"] = False
     return result
 
 
@@ -1182,7 +1398,8 @@ def main():
     timing = json.loads((DATA / "comment-publisher-timing-review.json").read_text())
     supply = json.loads((DATA / "comment-publisher-supply-review.json").read_text())
     inputs = json.loads((DATA / "comment-publisher-inputs-review.json").read_text())
-    result = validate_all(inventory, followup, technology, infrastructure, timing, supply, inputs)
+    remaining = json.loads((DATA / "comment-publisher-remaining-review.json").read_text())
+    result = validate_all(inventory, followup, technology, infrastructure, timing, supply, inputs, remaining)
     checked = []
     for name, digest in {"publisher_pdf": PUBLISHER_SHA,
             "metadata_json": inventory["docketMetadata"]["rawSha256"],

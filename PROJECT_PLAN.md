@@ -176,7 +176,7 @@ remain only partly resolved. Attribution, program-summary, engine-unit,
 section-reference and corridor-timeline cautions are preserved in the ledger,
 notebook and regression checks. No actual post-rule implementation is verified.
 Original pilots, independent-review gates and simulator parameters are unchanged.
-A separate two-entry timing review raises current combined coverage to 22,
+A separate two-entry timing review brought combined coverage to 22,
 leaving 26 entries unadjudicated. The complete scoped response declines a claimed
 uniform four-year minimum while the final preamble describes selected category
 delays, some retained 2027 standards and the sleeper 2030 start as already proposed.
@@ -195,8 +195,8 @@ or realized supply. The separate ledger, notebook and regressions retain exact
 source scopes, date/reference variants and no-promotion boundaries. Full cost
 inputs, original docket bytes, independent review and causal attribution remain
 unresolved; simulator parameters and earlier follow-ups are unchanged.
-A targeted four-entry study/lightweighting follow-up raises current combined
-coverage to 28, leaving 20 awaiting adjudication. EPA engages with the requested
+A targeted four-entry study/lightweighting follow-up brought combined
+coverage to 28, leaving 20 then awaiting adjudication. EPA engages with the requested
 ATRI study but distinguishes its full-fleet scenario. Other MOVES and
 ACT Research-to-TEMPO model revisions do not verify the requested bus-report
 acquisition. A named response refers an existing lightweighting approval route;
@@ -205,6 +205,17 @@ The ledger preserves the distinction between retention and a new default-input
 refresh, including units, phase labels, merged cells and the axle override.
 No supplier consultation, awarded credits, individual influence, representative
 rate, independent-review clearance or simulator recalibration is promoted.
+A remaining-entry follow-up completes bounded first-pass coverage of all 48
+existing MEMA entries, with an integrated reading index for independent review.
+EPA reports using MEMA's concrete-mixer range; the final RIA confirms its 42%
+midpoint. Regional modeled utility-truck limits, existing custom-chassis
+categories, a declined second comment period and an unperformed charging
+sensitivity remain distinct outcomes. TRALA is named in the sensitivity
+response; NREL data analysis is not a verified public RFI. Appendix-only
+references do not reproduce the last three requests. Several requested
+instruments remain unresolved within reviewed scopes. No independent
+adjudication, docket-version match, representative rate, causal effect or
+simulator recalibration is promoted. Procurement and substitution remain open.
 A separate NAM 2008Q1 coalition-disclosure probe reviews header/line-25 text
 and checkbox attributes in two electronic filing versions outside the frozen
 cohort. Both API affiliate lists are empty, but the original HTML forms disclose
