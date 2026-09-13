@@ -140,6 +140,33 @@ or execute VBA. The initial spreadsheet import exhausted its JavaScript heap
 without producing inspection output; native OOXML inspection supplies this
 bounded evidence instead.
 
+### Native proposal fuel denominator
+
+A further read-only trace follows the same mixer's input into `A3a_Cost`.
+Its `J6` header identifies driving diesel gallons per year; `K6` identifies PTO
+gallons. Cell `K25` multiplies driving fuel in `J25` by the PTO input in
+`A2_Aux Load!J25`. The stored values reconcile without executing Excel:
+3,934.2967990416032 driving gallons times 0.25 equals 983.5741997604008 PTO
+gallons. The annual diesel-cost formula adds these two fuel components before
+multiplying by diesel price. Cell `R25` is a shared-formula child of `R7`,
+whose formula and declared range are retained in the ledger.
+
+Consequently, PTO is **20% of driving plus PTO fuel in this stored proposal
+calculation**, although its input is 25% of driving fuel. This arithmetic ratio
+is not an observed fuel share or a separately calculated source-workbook cell.
+The `A2b_Aux Sizing!O3` total-fuel wording remains visible alongside the driving
+denominator used by the formula. The publisher letter's visually rechecked page
+20 supplies the 35-49% range but no operational denominator definition resolving
+this distinction. No judgment about the empirically correct denominator follows.
+
+`proposalDenominatorReview` in the existing PTO ledger preserves the cells,
+formula attributes, unrounded cached values and derived arithmetic. The native
+verifier now checks this trace in both identical proposal files. It does not
+validate upstream VMT/GEM calculations or extrapolate the proposal formula to
+the unread final workbook. The existing request disposition and 17-point
+published-input comparison are unchanged; neither becomes a total-fuel-share
+change or an executed final-model effect.
+
 ### Version and interpretation limits
 
 The proposal docket's [attachment metadata](https://api.regulations.gov/v4/documents/EPA-HQ-OAR-2022-0985-0830?include=attachments)
@@ -153,7 +180,8 @@ archive query returned no captures. None is treated as read or executed.
 Both RIAs describe the PTO percentage using total-energy language, while their
 conversion descriptions apply it to driving fuel consumption excluding PTO.
 The review preserves this denominator distinction and does not convert the
-input into a verified share of total fuel consumption. The original MEMA
+input into a verified real-world share of total fuel consumption. The scoped
+20% arithmetic above applies only to the proposal's two stored components. The original MEMA
 docket-byte match, scientific accuracy of its range, independent coding and
 the executed final model remain unresolved. The existing request disposition
 and 48-entry inventory are unchanged, and simulator calibration remains closed.

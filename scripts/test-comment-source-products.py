@@ -104,6 +104,31 @@ class CommentPtoWorkbookTests(unittest.TestCase):
                 PTO.workbook_evidence(self.source_bytes())
 
 
+    def test_proposal_denominator_uses_driving_fuel_and_preserves_shared_addition(self):
+        self.evidence = json.loads((AUDIT.DATA / "comment-pto-model-review.json").read_text())["proposalDenominatorReview"]["nativeEvidence"]
+        result = PTO.denominator_evidence(self.source_bytes())
+        self.assertEqual(result["calculation"]["derivedPtoFractionOfDrivingPlusPto"], "0.2")
+        self.assertEqual(result["calculation"]["inputFractionOfDriving"], "0.25")
+        self.assertIsNone(result["sheets"]["A3a_Cost"]["cells"]["R25"]["formula"])
+        self.assertEqual(result, self.evidence)
+
+    def test_changed_denominator_stale_fuel_and_unrelated_shared_formula_fail(self):
+        original = json.loads((AUDIT.DATA / "comment-pto-model-review.json").read_text())["proposalDenominatorReview"]["nativeEvidence"]
+        for mutation, message in [("formula", "multiplication formula"), ("fuel", "do not reconcile"), ("shared", "formula family"), ("label", "denominator labels")]:
+            self.evidence = deepcopy(original)
+            cells = self.evidence["sheets"]["A3a_Cost"]["cells"]
+            if mutation == "formula":
+                cells["K25"]["formula"] = "'A2_Aux Load'!J25/(1-'A2_Aux Load'!J25)*J25"
+            elif mutation == "fuel":
+                cells["K25"]["value"] = "984"
+            elif mutation == "shared":
+                cells["R25"]["formulaAttributes"]["si"] = "2"
+            else:
+                cells["J6"]["value"] = "Total fuel"
+            with self.subTest(mutation=mutation), self.assertRaisesRegex(ValueError, message):
+                PTO.denominator_evidence(self.source_bytes())
+
+
 class CommentPublisherTests(unittest.TestCase):
     def setUp(self):
         self.inventory = json.loads((AUDIT.DATA / "comment-publisher-inventory.json").read_text())

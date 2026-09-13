@@ -378,6 +378,10 @@ file. It postdates the letter and differs in size from the inaccessible proposal
 docket workbook. Final-model and calculator files remain unread. The source
 ledger and notebook preserve different mixer/pumper baselines, cached formula
 values and the distinction between input revision and outcome effect.
+A native calculation trace now verifies that the proposal multiplies driving
+fuel by its 25% PTO input, then adds the two components. PTO is therefore 20%
+of their stored sum. This scoped arithmetic does not establish a measured
+fuel share, an executed final-model result or a causal effect.
 
 The [substitution comparison review](reports/substitution-comparison-review.md)
 documents a negative identification result for the current evidence freeze.

@@ -243,6 +243,11 @@ outcome effect. Final-model execution, original docket versions and independent
 adjudication remain unresolved. `comment-pto-model-review.json`, the native
 OOXML verifier and the notebook preserve these limits without changing the
 48-entry inventory or simulator parameters.
+A native proposal calculation now traces the 25% input into PTO gallons as a
+multiple of driving fuel. The stored components imply a 20% PTO share of their
+sum, with explicit formula and cached-value reconciliation. This sharpens the
+denominator distinction without validating upstream VMT/GEM inputs, resolving
+the submitted range's empirical denominator or executing the final model.
 A separate NAM 2008Q1 coalition-disclosure probe reviews header/line-25 text
 and checkbox attributes in two electronic filing versions outside the frozen
 cohort. Both API affiliate lists are empty, but the original HTML forms disclose

@@ -307,7 +307,7 @@
     "Final-model attachment 1 and output-calculator attachment 2 are selected by document order and identity, not API array position. Both returned HTTP 403; the final-workbook archive index returned no captures.",
     "Draft Table 2-16 lists mixer and pumper separately at 25 and 40. Final Table 2-17 retains separate rows but assigns both 42. Only vehicle 19C_Mix_Cl8_MP is traced here; no separate pumper vehicle is established.",
     "The draft HTML text's C18 typography is not the exact native Cl8 identifier. Native workbook cells and visually reviewed final Table 2-18 establish the scoped vehicle match.",
-    "Both analyses describe a percentage of total energy, while the implementation descriptions multiply the PTO percentage by driving fuel use excluding PTO. Preserve that denominator distinction; no total-fuel-share conversion or scientific validation is claimed.",
+    "Both analyses describe a percentage of total energy, while their implementation descriptions multiply the PTO percentage by driving fuel use excluding PTO. The separate native proposal calculation below verifies that multiplication and derives a 20% share of its two cached fuel components only; no measured total-fuel share, final-model execution or scientific validation is established.",
     "The native N12 and N13 PTO identifiers are cached shared-formula children of N9. They are not literal inputs. The O12 and O13 percentage cells are literals. J25 is a formula with a matching cached value.",
     "Source inspection and consistency tests are not independent manual review, authentication of the original MEMA docket file, or evidence of a causal lobbying effect."
   ],
@@ -322,5 +322,180 @@
     "causalEffect": "not_identified",
     "simulatorCalibrationEligible": false
   },
-  "reviewFingerprint": "dc910b0c372b503cb88fb1f6605d3512e120494524165dc4f15e76d34621b347"
+  "reviewFingerprint": "61a9ab9ec24d5461e24c6942a5041faa9ef06ba95869660ecb2134e0c8c13789",
+  "proposalDenominatorReview": {
+    "reviewDate": "2026-09-13",
+    "source": "The same hash-verified webpage proposal workbook and June 22, 2023 archive recorded above; no final workbook acquired.",
+    "scope": "Stored formulas, labels and cached values for the existing mixer vehicle only. Arithmetic reconciles the selected cached fuel components outside Excel; no workbook recalculation, macro execution or validation of upstream VMT/GEM outputs.",
+    "nativeEvidence": {
+      "sheets": {
+        "A2_Aux Load": {
+          "member": "xl/worksheets/sheet26.xml",
+          "cells": {
+            "B25": {
+              "type": "str",
+              "value": "19C_Mix_Cl8_MP",
+              "formula": "'1_Veh Prop'!B25",
+              "formulaAttributes": {}
+            },
+            "J25": {
+              "type": null,
+              "value": "0.25",
+              "formula": "INDEX('A2b_Aux Sizing'!$M$7:$O$40,MATCH(I25,'A2b_Aux Sizing'!$N$7:$N$40,0),MATCH($J$6,'A2b_Aux Sizing'!$M$6:$O$6,0))",
+              "formulaAttributes": {}
+            },
+            "K6": {
+              "type": "s",
+              "value": "Gallons Per Year_PTO (Diesel)",
+              "formula": null,
+              "formulaAttributes": null
+            },
+            "K25": {
+              "type": null,
+              "value": "983.5741997604008",
+              "formula": "INDEX(A3a_Cost!$B$6:$N$107,MATCH('A2_Aux Load'!B25,A3a_Cost!$B$6:$B$107,0),MATCH(K$6,A3a_Cost!$6:$6,0)-1)",
+              "formulaAttributes": {
+                "t": "array",
+                "ref": "K25"
+              }
+            }
+          }
+        },
+        "A2b_Aux Sizing": {
+          "member": "xl/worksheets/sheet27.xml",
+          "cells": {
+            "O3": {
+              "type": "s",
+              "value": "Energy Use as a Function of Total Fuel Consumption",
+              "formula": null,
+              "formulaAttributes": null
+            },
+            "O12": {
+              "type": null,
+              "value": "0.25",
+              "formula": null,
+              "formulaAttributes": null
+            }
+          }
+        },
+        "A3a_Cost": {
+          "member": "xl/worksheets/sheet29.xml",
+          "cells": {
+            "B25": {
+              "type": "str",
+              "value": "19C_Mix_Cl8_MP",
+              "formula": "'1_Veh Prop'!B25",
+              "formulaAttributes": {}
+            },
+            "J3": {
+              "type": "s",
+              "value": "Annual ICE Diesel Consumption",
+              "formula": null,
+              "formulaAttributes": null
+            },
+            "J5": {
+              "type": "s",
+              "value": "gal/year",
+              "formula": null,
+              "formulaAttributes": null
+            },
+            "J6": {
+              "type": "s",
+              "value": "Gallons Per Year_driving (Diesel)",
+              "formula": null,
+              "formulaAttributes": null
+            },
+            "J25": {
+              "type": null,
+              "value": "3934.2967990416032",
+              "formula": "H25/INDEX('2_ICE Tech'!$B$6:$CJ$107,MATCH($B25,'2_ICE Tech'!$B$6:$B$107,0),MATCH(J$2,'2_ICE Tech'!$6:$6,0)-1)",
+              "formulaAttributes": {
+                "t": "array",
+                "ref": "J25"
+              }
+            },
+            "K3": {
+              "type": "s",
+              "value": "Annual ICE Diesel Consumption for PTO Only",
+              "formula": null,
+              "formulaAttributes": null
+            },
+            "K5": {
+              "type": "s",
+              "value": "gal/year",
+              "formula": null,
+              "formulaAttributes": null
+            },
+            "K6": {
+              "type": "s",
+              "value": "Gallons Per Year_PTO (Diesel)",
+              "formula": null,
+              "formulaAttributes": null
+            },
+            "K25": {
+              "type": null,
+              "value": "983.5741997604008",
+              "formula": "'A2_Aux Load'!J25*J25",
+              "formulaAttributes": {}
+            },
+            "R3": {
+              "type": "s",
+              "value": "Annual ICE Diesel Cost",
+              "formula": null,
+              "formulaAttributes": null
+            },
+            "R5": {
+              "type": "s",
+              "value": "$",
+              "formula": null,
+              "formulaAttributes": null
+            },
+            "R7": {
+              "type": null,
+              "value": "2080.2576232343717",
+              "formula": "(J7+K7)*Diesel_Pr_1",
+              "formulaAttributes": {
+                "t": "shared",
+                "ref": "R7:R38",
+                "si": "3"
+              }
+            },
+            "R25": {
+              "type": null,
+              "value": "15514.614190502631",
+              "formula": null,
+              "formulaAttributes": {
+                "t": "shared",
+                "si": "3"
+              }
+            }
+          }
+        }
+      },
+      "calculation": {
+        "vehicleId": "19C_Mix_Cl8_MP",
+        "inputFractionOfDriving": "0.25",
+        "cachedDrivingGallonsPerYear": "3934.2967990416032",
+        "cachedPtoGallonsPerYear": "983.5741997604008",
+        "derivedDrivingPlusPtoGallonsPerYear": "4917.8709988020040",
+        "derivedPtoFractionOfDrivingPlusPto": "0.2"
+      }
+    },
+    "publisherPdfPagesReviewed": [
+      20
+    ],
+    "findings": [
+      "A3a_Cost!J6 labels driving diesel gallons per year. K25 multiplies J25 by A2_Aux Load!J25, the 0.25 PTO input. Its cached 983.5741997604008 gallons equals 0.25 times the cached 3934.2967990416032 driving gallons.",
+      "The annual diesel-cost formula family adds driving and PTO gallons before multiplying by diesel price. R25 is a cached shared-formula child of R7, whose declared range includes R25; formula attributes remain recorded.",
+      "For these two stored proposal components, PTO divided by driving plus PTO is 0.20. This derived ratio is not a source cell, independently measured fuel share or verified final-model result.",
+      "A2b_Aux Sizing!O3 uses total-fuel-consumption language, while the inspected multiplication uses driving fuel as its denominator. The formula trace makes that distinction explicit without adjudicating which empirical denominator is appropriate.",
+      "The visually rechecked publisher page 20 gives a 35-49% fuel-burn range associated with PTO usage but no operational denominator definition resolving this model distinction. The request remains documented input uptake, not verified scientific calibration."
+    ],
+    "limits": [
+      "The underlying cached annual driving fuel and its VMT/GEM inputs were not independently validated.",
+      "The final workbook remains unread. Do not apply the proposal formula to the published 42% final input to assert an executed final fuel share or effect.",
+      "The 17-percentage-point proposal-to-final comparison still describes published inputs, not a 17-point change in total fuel share or a causal lobbying effect.",
+      "Existing request inventory, dispositions, original docket-version limits and independent-review status remain unchanged."
+    ]
+  }
 }

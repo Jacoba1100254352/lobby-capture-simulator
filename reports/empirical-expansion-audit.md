@@ -150,9 +150,9 @@ Remaining: One access-led MEMA letter supplies 48 action/retention entries, not 
 
 Status: `proposal_baseline_confirmed_final_workbook_unread`
 
-existingRequestFollowups=1; proposalPtoPercent=25; finalPublishedPtoPercent=42; changePercentagePoints=17; archiveByteMatch=True; finalWorkbookRead=False; causalEffect=not_identified
+existingRequestFollowups=1; proposalPtoPercent=25; finalPublishedPtoPercent=42; changePercentagePoints=17; archiveByteMatch=True; finalWorkbookRead=False; proposalPtoPercentOfDrivingPlusPto=20.0; causalEffect=not_identified
 
-Remaining: Existing MEMA r35 follow-up: the draft RIA and native webpage-workbook lookup assign 25% to 19C_Mix_Cl8_MP; final published Table 2-18 assigns 42%, a 17-percentage-point input change. The June 22, 2023 archived workbook matches the present EPA bytes, but postdates the June 16 letter and differs in size from NPRM docket metadata. Mixer and pumper start at different type-table baselines. Final-model and calculator attachments remain unread. No macros, recalculation, independent adjudication, additional requests, outcome-effect estimate or simulator calibration is cleared.
+Remaining: Existing MEMA r35 follow-up: the draft RIA and native webpage-workbook lookup assign 25% to 19C_Mix_Cl8_MP; final published Table 2-18 assigns 42%, a 17-percentage-point input change. The June 22, 2023 archived workbook matches the present EPA bytes, but postdates the June 16 letter and differs in size from NPRM docket metadata. Mixer and pumper start at different type-table baselines. A native proposal formula multiplies driving fuel by 25%, then adds PTO and driving fuel; PTO is 20% of those two stored components. That derived arithmetic does not validate measured fuel shares, upstream VMT/GEM inputs or the empirical denominator of the submitted range. Final-model and calculator attachments remain unread. No macros, workbook recalculation, independent adjudication, additional requests, outcome-effect estimate or simulator calibration is cleared.
 
 ## gao-partial-adjudication
 
